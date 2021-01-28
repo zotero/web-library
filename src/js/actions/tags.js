@@ -254,6 +254,15 @@ const updateTagColors = newTagColors => {
 	}
 }
 
+const removeTagColor = tag => {
+	return async(dispatch, getState) => {
+		const state = getState();
+		const libraryKey = state.current.libraryKey;
+		const newTagColors = [...(state.libraries[libraryKey].tagColors?.value ?? [])].filter(t => t.name !== tag);
+		return await dispatch(updateTagColors(newTagColors));
+	}
+}
+
 export {
 	// fetchTagsForItem,
 	checkColoredTags,
@@ -267,5 +276,6 @@ export {
 	fetchTagsInLibrary,
 	fetchTagSuggestions,
 	filterTags,
+	removeTagColor,
 	updateTagColors,
 };

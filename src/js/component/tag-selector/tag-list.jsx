@@ -10,7 +10,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 
 import Icon from '../ui/icon';
 import { usePrevious, useTags } from '../../hooks';
-import { checkColoredTags, deleteTags, fetchTags } from '../../actions';
+import { checkColoredTags, deleteTags, fetchTags, removeTagColor } from '../../actions';
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
 import { get, noop } from '../../utils';
@@ -20,11 +20,16 @@ import { useFocusManager } from '../../hooks';
 const ROWHEIGHT = 43;
 const PAGESIZE = 100;
 
-const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, isDotMenuOpen, focusNext, focusPrev }) => {
+const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen, focusNext, focusPrev }) => {
 	const dispatch = useDispatch()
 	const tagColorsLength = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'value', 'length'], 0));
 
-	const handleAssignColourClick = useCallback(ev => {
+	const handleRemoveColorClick = useCallback((ev) => {
+		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		dispatch(removeTagColor(tag));
+	}, [dispatch]);
+
+	const handleAssignColorClick = useCallback(ev => {
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
 		onToggleTagManager(tag);
 	}, [onToggleTagManager]);
@@ -53,10 +58,17 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, isDotMenuOpen, f
 			<DropdownMenu right>
 				<DropdownItem
 					disabled={ tagColorsLength >= maxColoredTags }
-					onClick={ handleAssignColourClick }
+					onClick={ handleAssignColorClick }
 				>
 					Assign Colour
 				</DropdownItem>
+				{ hasColor && (
+					<DropdownItem
+						onClick={ handleRemoveColorClick }
+					>
+						Remove Colour
+					</DropdownItem>
+				) }
 				<DropdownItem
 					onClick={ handleDeleteTagClick }
 				>
@@ -121,6 +133,7 @@ const TagListRow = memo(props => {
 			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
 			<div className="truncate">{ tag && tag.tag }</div>
 			{ isManager && tag && <TagDotMenu
+				hasColor={ !!tag.color }
 				isDotMenuOpen={ tag.tag === dotMenuFor }
 				onDotMenuToggle={ onDotMenuToggle }
 				{ ...pick(rest,  ['onToggleTagManager']) }
