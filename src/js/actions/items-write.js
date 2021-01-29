@@ -1045,11 +1045,15 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 }
 
 const chunkedAction = (action, itemKeys, ...args) => {
+	let chunkIndex = 0;
+	const chunkSize = 50;
+
 	return async dispatch => {
-		do {
-			const itemKeysChunk = itemKeys.splice(0, 50);
+		while ((chunkIndex * chunkSize) < itemKeys.length) {
+			const itemKeysChunk = itemKeys.slice(chunkIndex * chunkSize, (chunkIndex * chunkSize) + chunkSize);
 			await dispatch(action(itemKeysChunk, ...args))
-		} while (itemKeys.length > 0);
+			chunkIndex += 1;
+		}
 	}
 }
 
