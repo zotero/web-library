@@ -1,7 +1,7 @@
 import api from 'zotero-api-client';
 import baseMappings from 'zotero-base-mappings';
 import { fetchItemTypeFields } from './meta';
-import { deduplicate, get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
+import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
 reverseMap } from '../utils';
 import { parseDescriptiveString } from '../common/format';
 import { getFilesData } from '../common/event';
@@ -10,6 +10,7 @@ import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
 import { requestTracker } from '.';
 import { sniffForMIMEType } from '../common/mime';
+import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
 
 import {
 	BEGIN_ONGOING,
@@ -61,17 +62,6 @@ import {
 	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
 
-const getToggledTags = (existingTags, tagsToToggle) => {
-	tagsToToggle.forEach(tagToToggle => {
-		if(existingTags.includes(tagToToggle)) {
-			existingTags = existingTags.filter(t => t !== tagToToggle);
-		} else {
-			existingTags.push(tagToToggle);
-		}
-	});
-
-	return deduplicate(existingTags);
-}
 
 const postItemsMultiPatch = async (state, multiPatch) => {
 	const config = state.config;
@@ -590,7 +580,13 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 	};
 }
 
-const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle) => {
+
+const addTagsOnItems = (itemKeys, libraryKey, tagsToToggle) =>
+	toggleTagsOnItems(itemKeys, libraryKey, tagsToToggle, TOGGLE_ADD)
+const removeTagsOnItems = (itemKeys, libraryKey, tagsToToggle) =>
+	toggleTagsOnItems(itemKeys, libraryKey, tagsToToggle, TOGGLE_REMOVE)
+
+const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction = TOGGLE_TOGGLE) => {
 	return async dispatch => {
 		const id = requestTracker.id++;
 
@@ -599,23 +595,24 @@ const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle) => {
 			itemKeys,
 			libraryKey,
 			tagsToToggle,
+			toggleAction,
 			id
 		});
 
 		dispatch(
-			queueToggleTagOnItems(itemKeys, libraryKey, tagsToToggle, id)
+			queueToggleTagOnItems(itemKeys, libraryKey, tagsToToggle, toggleAction, id)
 		);
 	};
 }
 
-const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, id) => {
+const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const multiPatch = itemKeys.map(key => ({
 				key,
-				tags: getToggledTags(state.libraries[libraryKey].items[key].tags.map(t => t.tag), tagsToToggle)
+				tags: getToggledTags(state.libraries[libraryKey].items[key].tags.map(t => t.tag), tagsToToggle, toggleAction)
 					.map(tag => ({ tag }))
 			}));
 

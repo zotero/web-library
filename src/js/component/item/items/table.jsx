@@ -326,6 +326,7 @@ const Table = () => {
 			ev.preventDefault();
 		} else if(Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
 			dispatch(currentToggleTagByIndex(parseInt(ev.key) - 1));
+			return;
 		} else if(isHighlightKeyDown(ev)) {
 			dispatch(triggerHighlightedCollections(true));
 			return;

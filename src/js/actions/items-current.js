@@ -4,8 +4,8 @@ import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedC
 chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,
 chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal } from '.';
 import columnProperties from '../constants/column-properties';
-
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
+import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
 
 const currentDuplicateItem = () => {
 	return async (dispatch, getState) => {
@@ -141,7 +141,7 @@ const currentAddTags = (newTags) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { itemKeys, libraryKey } = state.current;
-		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, newTags));
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, newTags, TOGGLE_ADD));
 	}
 }
 
@@ -149,13 +149,17 @@ const currentToggleTagByIndex = (tagPosition) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey, itemKeys } = state.current;
+		const items = state.libraries[libraryKey].items;
 		const tagColors = state.libraries[libraryKey].tagColors?.value;
 		if(!tagColors[tagPosition]) {
 			return;
 		}
 		const tagToToggle = tagColors[tagPosition].name;
 
-		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, [tagToToggle]));
+		const isThereItemWithoutThisTag = itemKeys.some(ik => !items[ik].tags.some(t => t.tag === tagToToggle));
+		const toggleAction = isThereItemWithoutThisTag ? TOGGLE_ADD : TOGGLE_REMOVE;
+
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, [tagToToggle], toggleAction));
 	}
 }
 
