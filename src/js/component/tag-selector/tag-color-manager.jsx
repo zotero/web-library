@@ -30,7 +30,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 	const indexInTagColors = tagColors.findIndex(tc => tag === tc.name);
 	const options = [...Array.from({ length: tagColors.length }, (_, i) => i), indexInTagColors === -1 ? tagColors.length : null]
 		.filter(o => o !== null)
-		.map(o => ({ label: o.toString(), value: o.toString() }));
+		.map(o => ({ label: (o + 1).toString(), value: o.toString() }));
 	const [tagColor, setTagColor] = useState(indexInTagColors === -1 ? pickAvailableTagColor(colors, tagColors) : tagColors[indexInTagColors].color);
 	const [position, setPosition] = useState(indexInTagColors === -1 ? tagColors.length.toString() : indexInTagColors.toString());
 
