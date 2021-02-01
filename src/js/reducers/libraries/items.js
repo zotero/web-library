@@ -107,7 +107,13 @@ const items = (state = {}, action, metaAndTags) => {
 					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
 			})])
 		case RECEIVE_DELETE_TAGS:
-			return mapObject(state, (itemKey, item) => [itemKey, { ...item, tags: item.tags.filter(t => !action.tags.includes(t.tag)) }]);
+			return mapObject(state, (itemKey, item) => [
+				itemKey,
+				{
+					...item,
+					version: item.tags.some(t => action.tags.includes(t.tag)) ? action.response.getVersion() : item.version, //deleted a tag on this item, update version of the item
+					tags: item.tags.filter(t => !action.tags.includes(t.tag)) }
+			]);
 		default:
 			return state;
 	}
