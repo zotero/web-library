@@ -248,8 +248,16 @@ const updateTagColors = newTagColors => {
 		const state = getState();
 		const libraryKey = state.current.libraryKey;
 		const newSettings = { ...state.libraries[libraryKey].settings };
-		newSettings.tagColors.value = newTagColors;
-		delete newSettings.tagColors.version;
+		if(!('tagColors' in newSettings)) {
+			newSettings.tagColors = {};
+		}
+		if(Array.isArray(newTagColors) && newTagColors.length > 0) {
+			newSettings.tagColors.value = newTagColors;
+			delete newSettings.tagColors.version;
+		} else {
+			delete newSettings.tagColors;
+		}
+
 		return await dispatch(updateLibrarySettings(newSettings, libraryKey));
 	}
 }
