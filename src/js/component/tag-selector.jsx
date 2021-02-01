@@ -20,6 +20,7 @@ const TagSelector = () => {
 	const isTagSelectorOpen = useSelector(state => state.current.isTagSelectorOpen);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const isManaging = useSelector(state => state.modal.id === MANAGE_TAGS);
+	const isLibraryReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
 	const dispatch = useDispatch();
 	const [isBusy] = useDebounce(isFetching, 100);
@@ -112,10 +113,14 @@ const TagSelector = () => {
 								<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
 								Show Automatic
 							</DropdownItem>
-							<DropdownItem divider />
-							<DropdownItem  onClick={ handleManageTagsClick } >
-								Manage Tags
-							</DropdownItem>
+							{ !isLibraryReadOnly && (
+								<React.Fragment>
+									<DropdownItem divider />
+									<DropdownItem  onClick={ handleManageTagsClick } >
+										Manage Tags
+									</DropdownItem>
+								</React.Fragment>
+							) }
 						</DropdownMenu>
 				</UncontrolledDropdown>
 			</div>

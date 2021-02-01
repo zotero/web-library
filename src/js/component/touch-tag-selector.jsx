@@ -38,6 +38,7 @@ SelectedTagRow.propTypes = {
 const TouchTagselectorActions = memo(() => {
 	const dispatch = useDispatch();
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
+	const isLibraryReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleToggleDropdown = useCallback(() => {
@@ -74,10 +75,14 @@ const TouchTagselectorActions = memo(() => {
 					<span className="tick">{ !tagsHideAutomatic ? "✓" : "" }</span>
 					Show Automatic
 				</DropdownItem>
-				<DropdownItem divider />
-				<DropdownItem  onClick={ handleManageTagsClick } >
-					Manage Tags
-				</DropdownItem>
+				{ !isLibraryReadOnly && (
+					<React.Fragment>
+						<DropdownItem divider />
+						<DropdownItem  onClick={ handleManageTagsClick } >
+							Manage Tags
+						</DropdownItem>
+					</React.Fragment>
+				) }
 			</DropdownMenu>
 		</Dropdown>
 	);
