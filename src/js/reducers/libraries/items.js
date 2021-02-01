@@ -1,10 +1,12 @@
 import {
     RECEIVE_ADD_ITEMS_TO_COLLECTION,
+    RECEIVE_ADD_TAGS_TO_ITEMS,
     RECEIVE_CHILD_ITEMS,
     RECEIVE_CREATE_ITEM,
     RECEIVE_CREATE_ITEMS,
     RECEIVE_DELETE_ITEM,
     RECEIVE_DELETE_ITEMS,
+    RECEIVE_DELETE_TAGS,
     RECEIVE_FETCH_ITEM_DETAILS,
     RECEIVE_FETCH_ITEMS,
     RECEIVE_ITEMS_BY_QUERY,
@@ -18,9 +20,8 @@ import {
     RECEIVE_TOP_ITEMS,
     RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM,
+    RECEIVE_UPDATE_LIBRARY_SETTINGS,
     RECEIVE_UPLOAD_ATTACHMENT,
-    RECEIVE_ADD_TAGS_TO_ITEMS,
-    RECEIVE_DELETE_TAGS,
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
@@ -100,6 +101,7 @@ const items = (state = {}, action, metaAndTags) => {
 				}
 			}
 		case RECEIVE_LIBRARY_SETTINGS:
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
 					meta: metaAndTags.meta,
 					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
