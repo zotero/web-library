@@ -10,7 +10,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 
 import Icon from '../ui/icon';
 import { usePrevious, useTags } from '../../hooks';
-import { checkColoredTags, deleteTags, fetchTags, removeTagColor } from '../../actions';
+import { checkColoredTags, removeColorAndDeleteTag, fetchTags, removeTagColor } from '../../actions';
 import Spinner from '../ui/spinner';
 import { pick } from '../../common/immutable';
 import { get, noop } from '../../utils';
@@ -36,7 +36,7 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotM
 
 	const handleDeleteTagClick = useCallback(ev => {
 		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
-		dispatch(deleteTags([tag]));
+		dispatch(removeColorAndDeleteTag(tag));
 	}, [dispatch]);
 
 
