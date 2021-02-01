@@ -32,7 +32,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		.filter(o => o !== null)
 		.map(o => ({ label: (o + 1).toString(), value: o.toString() }));
 	const [tagColor, setTagColor] = useState(indexInTagColors === -1 ? pickAvailableTagColor(colors, tagColors) : tagColors[indexInTagColors].color);
-	const [position, setPosition] = useState(indexInTagColors === -1 ? tagColors.length.toString() : indexInTagColors.toString());
+	const [position, setPosition] = useState(indexInTagColors === -1 ? tagColors.length : indexInTagColors);
 
 	const handleColorPicked = useCallback(newColor => {
 		setTagColor(newColor);
@@ -149,7 +149,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 							inputGroupClassName={ cx('position-selector') }
 							clearable={ false }
 							searchable={ false }
-							value={ position }
+							value={ position.toString() }
 							tabIndex={ 0 }
 							options={ options }
 							onChange={ () => true /* commit on change */ }
@@ -158,7 +158,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 					</div>
 				</div>
 				<p className="info">
-					You can add this tag to selected items by pressing the {position} key on the keyboard.
+					You can add this tag to selected items by pressing the {position + 1} key on the keyboard.
 				</p>
 				<p className="info">
 					Up to {maxColoredTags} tags in each library can have colors assigned.
