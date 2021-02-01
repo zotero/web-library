@@ -65,6 +65,8 @@ const TagSelectorItems = () => {
 	const listRef = useRef(null);
 	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
+	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
+	const prevTagColors = usePrevious(tagColors);
 	const sourceSignature = useSourceSignature();
 	const errorCount = useSelector(state => {
 		switch(state.current.itemsSource) {
@@ -134,10 +136,12 @@ const TagSelectorItems = () => {
 	}, [dispatch, sourceSignature, hasChecked, isFetching]);
 
 	useEffect(() => {
-		if(!hasCheckedColoredTags && !isFetchingColoredTags) {
+		if(!isFetchingColoredTags && typeof(prevTagColors) !== 'undefined' && !shallowEqual(tagColors, prevTagColors)) {
+			dispatch(checkColoredTags());
+		} else if(!hasCheckedColoredTags && !isFetchingColoredTags) {
 			dispatch(checkColoredTags());
 		}
-	}, [dispatch, sourceSignature, hasCheckedColoredTags, isFetchingColoredTags]);
+	}, [dispatch, sourceSignature, prevTagColors, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
 
 	useEffect(() => {
 		setTimeout(maybeLoadMore, 0);
