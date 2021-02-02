@@ -50,10 +50,6 @@
 
 	.touch-footer {
 		@include bp-down(xs) {
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
 			z-index: $z-index-touch-side-footer;
 			transition: transform $nav-transition;
 
