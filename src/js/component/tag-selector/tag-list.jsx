@@ -183,8 +183,14 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
 		// pagination only happens if filtering disabled
-		dispatch(fetchTags(startIndex, stopIndex));
-	}, [dispatch]);
+		// @NOTE: adding duplicatesCount here is a band-aid rather than a proper fix. Tags, as
+		// 		  returned by api, contin duplicates. These are counted and removed from the
+		// 		  displayed list, which creates disrepentancy between list index and remote index so
+		// 		  when infinite scroll asks for rows n through m, we actaully fetch n through m +
+		// 		  duplicates count to be on the safe side. This works for as long as m + duplicates
+		// 		  is less than maximum page allowed by the API.
+		dispatch(fetchTags(startIndex, stopIndex + duplicatesCount));
+	}, [duplicatesCount, dispatch]);
 
 	const handleDotMenuToggle = useCallback(ev => {
 		if(ev === null) {
