@@ -50,7 +50,7 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 	}, [isColorPickerOpen]);
 
 	const handlePositionChange = useCallback(newPosition => {
-		setPosition(newPosition);
+		setPosition(parseInt(newPosition));
 	}, []);
 
 	const handleSetColor = useCallback(() => {
