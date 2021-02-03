@@ -16,7 +16,7 @@ import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource, resiz
 import { ATTACHMENT } from '../../../constants/dnd';
 import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
-triggerHighlightedCollections, currentToggleTagByIndex } from '../../../actions';
+triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
 import { isHighlightKeyDown } from '../../../common/event';
 
@@ -326,6 +326,9 @@ const Table = () => {
 			ev.preventDefault();
 		} else if(Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
 			dispatch(currentToggleTagByIndex(parseInt(ev.key) - 1));
+			return;
+		} else if(ev.key === '0') {
+			dispatch(currentRemoveColoredTags());
 			return;
 		} else if(isHighlightKeyDown(ev)) {
 			dispatch(triggerHighlightedCollections(true));

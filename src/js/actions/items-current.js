@@ -145,6 +145,15 @@ const currentAddTags = (newTags) => {
 	}
 }
 
+const currentRemoveColoredTags = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys, libraryKey } = state.current;
+		const coloredTagsNames = (state.libraries[libraryKey].tagColors?.value ?? []).map(tc => tc.name);
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, coloredTagsNames, TOGGLE_REMOVE));
+	}
+}
+
 const currentToggleTagByIndex = (tagPosition) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -252,6 +261,7 @@ export {
 	currentNewFileModal,
 	currentNewItemModal,
 	currentRecoverTrashItems,
+	currentRemoveColoredTags,
 	currentRemoveItemFromCollection,
 	currentToggleTagByIndex,
 	currentTrashItems,
