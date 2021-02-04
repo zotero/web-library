@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -229,6 +229,14 @@ const Libraries = props => {
 			}
 		}
 	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);
+
+	useEffect(() => {
+		const selectedLibraryNode = treeRef.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
+		if(selectedLibraryNode) {
+			// wait for other effect to dispatch and process toggleOpen, then scroll on next frame
+			setTimeout(() => selectedLibraryNode.scrollIntoView(), 0);
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const getNodeProps = libraryData => {
 		const { key, ...rest } = libraryData;
