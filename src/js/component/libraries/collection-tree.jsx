@@ -260,7 +260,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 		>
 			<Icon type="28/trash" className="touch" width="28" height="28" />
 			<Icon type="16/trash" className="mouse" width="16" height="16" />
-			<div className="truncate" titel="Trash" id={ id.current } >Trash</div>
+			<div className="truncate" title="Trash" id={ id.current } >Trash</div>
 		</Node>
 	);
 });
