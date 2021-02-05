@@ -157,6 +157,8 @@ const Libraries = props => {
 	const stateView = useSelector(state => state.current.view);
 	const view = isPickerMode ? pickerState.view : stateView;
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const firstCollectionKey = useSelector(state => state.current.firstCollectionKey);
+	const firstIsTrash = useSelector(state => state.current.firstIsTrash);
 	const treeRef = useRef();
 	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveBlur, receiveFocus
@@ -232,7 +234,7 @@ const Libraries = props => {
 
 	useEffect(() => {
 		const selectedLibraryNode = treeRef.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
-		if(selectedLibraryNode) {
+		if(selectedLibraryNode && !isTouchOrSmall && !isPickerMode && !firstCollectionKey && !firstIsTrash) {
 			// wait for other effect to dispatch and process toggleOpen, then scroll on next frame
 			setTimeout(() => selectedLibraryNode.scrollIntoView(), 0);
 		}

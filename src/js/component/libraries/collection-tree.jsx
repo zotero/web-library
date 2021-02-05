@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import React, { memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
@@ -260,7 +260,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 		>
 			<Icon type="28/trash" className="touch" width="28" height="28" />
 			<Icon type="16/trash" className="mouse" width="16" height="16" />
-			<div className="truncate" title="Trash" id={ id.current } >Trash</div>
+			<div className="truncate" data-trash title="Trash" id={ id.current } >Trash</div>
 		</Node>
 	);
 });
@@ -276,9 +276,9 @@ TrashNode.propTypes = {
 
 TrashNode.displayName = 'TrashNode';
 
-const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
+const LevelWrapper = forwardRef(({ children, level, hasOpen, isLastLevel }, ref) => {
 	return (
-		<div className={ cx('level', `level-${level}`, {
+		<div ref={ ref } className={ cx('level', `level-${level}`, {
 			'has-open': hasOpen, 'level-last': isLastLevel
 		}) }>
 			<ul className="nav" role="group">
@@ -286,7 +286,9 @@ const LevelWrapper = ({ children, level, hasOpen, isLastLevel }) => {
 			</ul>
 		</div>
 	);
-}
+});
+
+LevelWrapper.displayName = 'LevelWrapper';
 
 LevelWrapper.propTypes = {
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
@@ -697,6 +699,7 @@ CollectionsNodeList.displayName = 'CollectionsNodeList';
 const CollectionTree = props => {
 	const { parentLibraryKey, isPickerMode, pickerNavigate, pickerState, ...rest } = props;
 	const dispatch = useDispatch();
+	const levelWrapperRef = useRef(null);
 	const collections = useSelector(
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.data : {}
 	);
@@ -714,6 +717,7 @@ const CollectionTree = props => {
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isFirstRendering = useSelector(state => state.current.isFirstRendering);
 
 	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
@@ -787,6 +791,22 @@ const CollectionTree = props => {
 		}
 	}, [collections, highlightedCollections, opened, prevHighlightedCollections]);
 
+	useEffect(() => {
+		if(isFirstRendering && !isPickerMode && !isTouchOrSmall) {
+			let targetEl = null;
+
+			if(selectedCollectionKey) {
+				targetEl = levelWrapperRef.current?.querySelector(`[data-collection-key="${selectedCollectionKey}"]`);
+			} else if(isTrash) {
+				targetEl = levelWrapperRef.current?.querySelector('[data-trash]');
+			}
+
+			if(targetEl) {
+				targetEl.scrollIntoView();
+			}
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 	if(isFetchingAllCollections) {
 		// while fetching collections:
 		// On touch we allow animating into next level and render a spinner
@@ -802,7 +822,7 @@ const CollectionTree = props => {
 	}
 
 	return (
-		<LevelWrapper level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
+		<LevelWrapper ref={ levelWrapperRef } level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
 			<CollectionsNodeList
 				allCollections={ allCollections }
 				collections={ topLevelCollections }
