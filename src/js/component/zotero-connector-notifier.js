@@ -10,7 +10,7 @@ const mapItemKeysToTitles = (keys, selectedItemsKeys = [], items) =>
 		if(!(ik in items)) {
 			return acc;
 		}
-		const title = items[ik][Symbol.for('derived')].title;
+		const title = items[ik][Symbol.for('derived')]?.title;
 		const checked = selectedItemsKeys.includes(ik);
 		acc[ik] = { title, checked };
 
