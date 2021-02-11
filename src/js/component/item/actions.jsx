@@ -51,57 +51,68 @@ const ItemActionsTouch = memo(() => {
 	}, [dispatch]);
 
 	return (
-		<Dropdown
-			isOpen={ isOpen }
-			toggle={ handleDropdownToggle }
-			disabled={ isActionsDisabled }
-		>
-			<DropdownToggle
-				color={ null }
+		<React.Fragment>
+			<Dropdown
+				isOpen={ isOpen }
+				toggle={ handleDropdownToggle }
 				disabled={ isActionsDisabled }
-				className="btn-link btn-icon dropdown-toggle item-actions-touch"
 			>
-				<Icon
-					type="24/options"
-					symbol={ isOpen ? 'options-block' : 'options' }
-					width="24"
-					height="24"
-				/>
-			</DropdownToggle>
-			<DropdownMenu right>
-				<DropdownItem onClick={ handleSelectModeToggle } >
-					{ isSelectMode ? 'Cancel' : 'Select Items' }
-				</DropdownItem>
-				<DropdownItem divider />
-				<DropdownItem onClick={ handleSortModalOpen } >
-					Sort By: { sortColumnLabel }
-				</DropdownItem>
-				<DropdownItem onClick={ handleSortOrderToggle } >
-					Sort Order: { sortColumnOrder }
-				</DropdownItem>
-				{ isNewItemAllowed && (
-					<React.Fragment>
-						<DropdownItem divider />
-						<DropdownItem onClick={ handleNewItemModalOpen } >
-							New Item
-						</DropdownItem>
-						<DropdownItem onClick={ handleNewStandaloneNote } >
-							New Standalone Note
-						</DropdownItem>
-						<DropdownItem onClick={ handleNewFileModalOpen } >
-							Upload File
-						</DropdownItem>
-						<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
-							Add By Identifier
-						</DropdownItem>
-					</React.Fragment>
-				)}
-				<DropdownItem divider />
-				<DropdownItem onClick={ handleSubscribeClick }>
-					Subscribe to Feed
-				</DropdownItem>
-			</DropdownMenu>
-		</Dropdown>
+				<DropdownToggle
+					color={ null }
+					disabled={ isActionsDisabled }
+					className="btn-link btn-icon dropdown-toggle item-actions-touch"
+				>
+					<Icon
+						type="24/options"
+						symbol={ isOpen ? 'options-block' : 'options' }
+						width="24"
+						height="24"
+					/>
+				</DropdownToggle>
+				<DropdownMenu right>
+					{ isSingleColumn && (
+						<React.Fragment>
+							<DropdownItem onClick={ handleSelectModeToggle } >
+								{ isSelectMode ? 'Cancel' : 'Select Items' }
+							</DropdownItem>
+							<DropdownItem divider />
+						</React.Fragment>
+					) }
+					<DropdownItem onClick={ handleSortModalOpen } >
+						Sort By: { sortColumnLabel }
+					</DropdownItem>
+					<DropdownItem onClick={ handleSortOrderToggle } >
+						Sort Order: { sortColumnOrder }
+					</DropdownItem>
+					{ isNewItemAllowed && (
+						<React.Fragment>
+							<DropdownItem divider />
+							<DropdownItem onClick={ handleNewItemModalOpen } >
+								New Item
+							</DropdownItem>
+							<DropdownItem onClick={ handleNewStandaloneNote } >
+								New Standalone Note
+							</DropdownItem>
+							<DropdownItem onClick={ handleNewFileModalOpen } >
+								Upload File
+							</DropdownItem>
+							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
+								Add By Identifier
+							</DropdownItem>
+						</React.Fragment>
+					)}
+					<DropdownItem divider />
+					<DropdownItem onClick={ handleSubscribeClick }>
+						Subscribe to Feed
+					</DropdownItem>
+				</DropdownMenu>
+			</Dropdown>
+			{ !isSingleColumn && (
+				<Button onClick={ handleSelectModeToggle } className="btn-link select-button">
+					{ isSelectMode ? 'Cancel' : 'Select' }
+				</Button>
+			)}
+		</React.Fragment>
 	);
 });
 

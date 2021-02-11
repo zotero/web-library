@@ -35,7 +35,7 @@ const TouchHeader = props => {
 	}, [onSelectModeToggle]);
 
 	return (
-		<header className={ cx('touch-header', className) }>
+		<header className={ cx('touch-header', { 'select-mode': isSelectMode }, className) }>
 			<Toolbar>
 				{ isSingleColumn && !isModal && !isSelectMode && (
 					<Searchbar />
@@ -93,7 +93,7 @@ const TouchHeader = props => {
 						</div>
 						<div className="toolbar-right">
 							<Button
-								className="btn-link"
+								className="btn-link select-button"
 								onClick={ handleCancelClick }
 							>
 								Cancel

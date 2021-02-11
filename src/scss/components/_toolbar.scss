@@ -72,6 +72,7 @@
 
 	.tool-group {
 		display: flex;
+		align-items: center;
 
 		@include variant(".toolbar .toolbar-justified") {
 			flex: 1 1 auto;
