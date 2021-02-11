@@ -1,10 +1,14 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import Icon from '../../ui/icon';
-import { navigate } from '../../../actions';
+import { triggerSelectMode, navigate } from '../../../actions';
+import { vec2dist } from '../../../utils';
+
+const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers select mode
+const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
 
 const selectItem = (itemKey, selectedItemKeys, isSelectMode, dispatch) => {
 	if(isSelectMode) {
@@ -33,6 +37,10 @@ const ListRow = memo(props => {
 	const view = useSelector(state => state.current.view);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 
+	const triggerSelectTimeout = useRef(null);
+	const tiggerSelectPosStart = useRef(null);
+	const tiggerSelectPosLatest = useRef(null);
+
 	const shouldBeTabbable = (isSingleColumn && view === 'item-list') || !isSingleColumn;
 	const selectedItemKeys = useSelector(state => state.current.itemKey ?
 		[state.current.itemKey] : state.current.itemKeys,
@@ -51,7 +59,7 @@ const ListRow = memo(props => {
 
 	const handleClick = useCallback(() => {
 		selectItem(itemKey, selectedItemKeys, isSelectMode, dispatch);
-	});
+	}, [dispatch, isSelectMode, itemKey, selectedItemKeys]);
 
 	const handleKeyDown = useCallback(ev => {
 		const index = ev.currentTarget.dataset.index;
@@ -60,7 +68,45 @@ const ListRow = memo(props => {
 			selectItem(keys[index], selectedItemKeys, isSelectMode, dispatch);
 			ev.preventDefault();
 		}
-	});
+	}, [dispatch, isSelectMode, keys, selectedItemKeys]);
+
+	const startSelectMode = useCallback(itemKey => {
+		triggerSelectTimeout.current = null;
+		const distance = vec2dist(tiggerSelectPosLatest.current, tiggerSelectPosStart.current);
+
+		if(!isSelectMode && (!distance || (distance && distance < SELECT_MODE_DEAD_ZONE))) {
+			dispatch(triggerSelectMode(true));
+			dispatch(navigate({ items: [itemKey] }));
+		}
+	}, [dispatch, isSelectMode]);
+
+	const handleTouchStart = useCallback(ev => {
+		const itemKey = ev.currentTarget.dataset.key;
+		if(!isSelectMode && !triggerSelectTimeout.current) {
+			triggerSelectTimeout.current = setTimeout(() => startSelectMode(itemKey), SELECT_MODE_DELAY);
+			tiggerSelectPosStart.current = [ev.touches[0]?.clientX, ev.touches[0]?.clientY];
+			tiggerSelectPosLatest.current = [ev.touches[0]?.clientX, ev.touches[0]?.clientY];
+		}
+	}, [isSelectMode, startSelectMode]);
+
+	const handleTouchEnd = useCallback(() => {
+		if(triggerSelectTimeout.current) {
+			clearTimeout(triggerSelectTimeout.current);
+			triggerSelectTimeout.current = null;
+		}
+	}, []);
+
+	const handleTouchMove = useCallback(ev => {
+		tiggerSelectPosLatest.current = [ev.touches[0]?.clientX, ev.touches[0]?.clientY];
+
+		if(triggerSelectTimeout.current) {
+			const distance = vec2dist(tiggerSelectPosLatest.current, tiggerSelectPosStart.current);
+			if(distance > SELECT_MODE_DEAD_ZONE) {
+				clearTimeout(triggerSelectTimeout.current);
+				triggerSelectTimeout.current = null;
+			}
+		}
+	}, []);
 
 	return (
 		<div
@@ -70,6 +116,9 @@ const ListRow = memo(props => {
 			style={ style }
 			onClick={ handleClick }
 			onKeyDown={ handleKeyDown }
+			onTouchStart={ handleTouchStart }
+			onTouchEnd={ handleTouchEnd }
+			onTouchMove={ handleTouchMove }
 			tabIndex={ shouldBeTabbable ? 0 : null }
 			role={ isSelectMode ? "checkbox" : null }
 			aria-checked={ isSelectMode ? isActive ? "true" : "false" : null }

@@ -407,6 +407,13 @@ const processIdentifierMultipleItems = (items, itemTypes, isUrl = false) => Obje
 	itemType: value.itemType ? ((itemTypes.find(it => it.itemType == value.itemType) || {}).localized || value.itemType) : null
 }));
 
+const vec2dist = (a, b) => {
+	if(Array.isArray(a) && a.length === 2 && Array.isArray(b) && b.length === 2) {
+		const dx = a[0] - b[0], dy = a[1] - b[1];
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+}
+
 export {
 	applyChangesToVisibleColumns,
 	clamp,
@@ -446,4 +453,5 @@ export {
 	splice,
 	stopPropagation,
 	transform,
+	vec2dist,
 };
