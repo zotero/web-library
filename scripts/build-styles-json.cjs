@@ -1,10 +1,9 @@
-const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');
 const fs = require('fs-extra');
 const path = require('path');
 
 const stylesURL = 'https://www.zotero.org/styles-files/styles.json';
-const stylesCacheTime = argv['stylesCacheTime'] || 0;
+const stylesCacheTime = process.env.STYLES_CACHE_TIME ?? 86400000;
 
 const styles = [
 	'apa',

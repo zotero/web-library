@@ -1,14 +1,12 @@
-/*eslint no-console: 0*/
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const https = require('https');
 const httpProxy = require('http-proxy');
 const serveStatic = require('serve-static');
-const argv = require('minimist')(process.argv.slice(2));
-const translateURL = argv['t'] && argv['t'].length ? argv['t'] : 'http://localhost:1969';
-const port = parseInt(argv['p'], 10) || 8001;
+const translateURL = process.env.TRANSLATE_URL ?? 'http://localhost:1969';
+const useHTTPS = !!(process.env.USE_HTTPS && parseInt(process.env.USE_HTTPS));
+const port = process.env.PORT ?? (useHTTPS ? 8443 : 8001);
 
 const serve = serveStatic(path.join(__dirname, '..', 'build'), { 'index': false });
 const proxy = httpProxy.createProxyServer();
@@ -37,9 +35,9 @@ const handler = (req, resp) => {
 			target: `${translateURL}`,
 			secure: false
 		});
-		proxy.on('error', () => {
+		proxy.on('error', err => {
 			resp.statusCode = 502;
-			resp.statusMessage = 'Translation Server not available';
+			resp.statusMessage = `Translation Server not available at ${translateURL}: ${err}`;
 			resp.end();
 		});
 	} else {
@@ -47,6 +45,17 @@ const handler = (req, resp) => {
 	}
 };
 
-http.createServer(handler).listen(port, () => {
-	console.log(`>>> Listening on http://localhost:${port}/\n`);
-});
+if(useHTTPS) {
+	const options = {
+		key: fs.readFileSync(path.join(__dirname, '..', 'cert', 'web-library.key')),
+		cert: fs.readFileSync(path.join(__dirname, '..', 'cert', 'web-library.crt'))
+	};
+
+	https.createServer(options, handler).listen(port, () => {
+		console.log(`>>> Listening on https://0.0.0.0:${port}/\n`);
+	});
+} else {
+	http.createServer(handler).listen(port, () => {
+		console.log(`>>> Listening on http://0.0.0.0:${port}/\n`);
+	});
+}

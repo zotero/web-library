@@ -3,6 +3,7 @@ node_modules
 /sass
 /build
 /data
+/cert
 /_*
 .DS_Store
 coverage

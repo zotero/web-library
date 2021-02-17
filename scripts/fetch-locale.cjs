@@ -1,10 +1,9 @@
-const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');
 const fs = require('fs-extra');
 const path = require('path');
 
 const localeURL = 'https://raw.githubusercontent.com/citation-style-language/locales/master/locales.json';
-const localeCacheTime = argv['localeCacheTime'] || 0;
+const localeCacheTime = process.env.LOCALE_CACHE_TIME ?? 86400000;
 
 (async () => {
 	const localeJsonPath = path.join(__dirname, '..', 'data', 'locale-data.json');

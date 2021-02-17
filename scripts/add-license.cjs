@@ -1,5 +1,3 @@
-'use strict';
-
 const licenseString ='<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->';
 
 const fs = require('fs-extra');
