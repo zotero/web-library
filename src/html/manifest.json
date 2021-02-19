@@ -2,6 +2,7 @@
   "name": "Zotero Web Library",
   "short_name": "Web Library",
   "display": "fullscreen",
+  "start_url": "/",
   "scope": "/",
   "icons": [
     {
