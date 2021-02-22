@@ -1,4 +1,5 @@
 import { CONNECTION_ISSUES, RESET_LIBRARY, DISMISS_ERROR } from '../constants/actions';
+import { buyStorageUrl } from '../constants/defaults';
 const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are discarded
 var errorCounter = 0;
 
@@ -6,38 +7,44 @@ const isDuplicate = (error, prevError) =>
 	error && prevError && error.message === prevError.message &&
 	error.type === prevError.type && !prevError.isDismissed;
 
-const getErrorMessage = error => {
+const processError = ({ error, errorType }) => {
+	var message, cta;
+
 	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.startsWith('NetworkError'))) {
-		return `Unable to communicate with Zotero server. Please check your connection.`;
-	}
-	if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
+		message = `Unable to communicate with Zotero server. Please check your connection.`;
+	} else if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
 		if('options' in error && 'resource' in error.options && error.options.resource.fileUrl === null) {
 			// special case for attachment url requests failing with 404
-			return 'Requested file is not available. It might not have been synced yet.';
+			message = 'Requested file is not available. It might not have been synced yet.';
 		}
 
-		return error.reason ?
-			`Received error from Zotero server: ${error.reason}.` :
-			'Received error from Zotero server.'
+		if(error.reason?.includes('File would exceed quota')) {
+			message = 'File was not uploaded as it would exceed quota.';
+			cta = { type: 'url', label: 'Upgrade Storage', href: buyStorageUrl }
+		} else {
+			message = error.reason ?
+				`Received error from Zotero server: ${error.reason}.` :
+				'Received error from Zotero server.'
+		}
+	} else if(typeof error === 'string') {
+		message = error;
+	} else if('message' in error && error.message) {
+		message = `Unexpected error: ${error.message}`;
+	} else {
+		message = 'Unexpected error.';
 	}
-	if(typeof error === 'string') {
-		return error;
-	}
-	if('message' in error && error.message) {
-		return `Unexpected error: ${error.message}`;
-	}
-	return 'Unexpected error.';
-}
 
-const processError = ({ error, errorType }) => ({
-	id: ++errorCounter,
-	isDismissed: false,
-	message: getErrorMessage(error),
-	raw: JSON.stringify(error),
-	timesOccurred: 1,
-	timestamp: Date.now(),
-	type: errorType || 'error'
-});
+	return {
+		id: ++errorCounter,
+		isDismissed: false,
+		message,
+		cta,
+		raw: JSON.stringify(error),
+		timesOccurred: 1,
+		timestamp: Date.now(),
+		type: errorType || 'error'
+	}
+}
 
 const errors = (state = [], action) => {
 	if(action.type === DISMISS_ERROR) {
