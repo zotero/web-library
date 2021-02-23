@@ -10,8 +10,9 @@ import { navigateExitSearch, triggerSearchMode, } from '../../actions';
 const SearchBar = () => {
 	const dispatch = useDispatch();
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
-	const view = useSelector(state => state.current.view);
-	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isViewThatShowsSearchBar = useSelector(state =>
+		((state.current.view === 'item-details' && state.current.itemsSource !== 'query') || state.current.view !== 'item-details')
+	);
 
 	const handleCancelSearchClick = useCallback(() => {
 		dispatch(triggerSearchMode(false));
@@ -20,7 +21,7 @@ const SearchBar = () => {
 
 	return (
 		<CSSTransition
-			in={ isSearchMode && ((view === 'item-details' && itemsSource !== 'query') || view !== 'item-details') }
+			in={ isSearchMode && isViewThatShowsSearchBar }
 			timeout={ 250 }
 			classNames="fade"
 			unmountOnExit
