@@ -414,8 +414,11 @@ const vec2dist = (a, b) => {
 	}
 }
 
+const cede = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
+
 export {
 	applyChangesToVisibleColumns,
+	cede,
 	clamp,
 	cleanDOI,
 	cleanURL,

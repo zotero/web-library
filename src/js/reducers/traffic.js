@@ -20,6 +20,7 @@ const traffic = (state = {}, action) => {
 				lastError: Date.now(),
 				errorCount: ((state[requestName] || {}).errorCount || 0) + 1,
 				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id),
+				errored: [...(((state[requestName] || {}).errored || [])), action.id].filter(Boolean).slice(-100), // track last 100 errored
 				last: action
 			}
 		}
@@ -43,6 +44,7 @@ const traffic = (state = {}, action) => {
 				...(state[requestName] || {}),
 				lastDrop: Date.now(),
 				ongoing: (((state[requestName] || {}).ongoing || [])).filter(id => id !== action.id),
+				dropped: [...(((state[requestName] || {}).dropped || [])), action.id].filter(Boolean).slice(-100), // track last 100 dropped
 				last: action
 			}
 		}
