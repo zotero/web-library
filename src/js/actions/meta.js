@@ -16,6 +16,7 @@ const fetchItemTypeCreatorTypes = itemType => {
 		const type = 'ITEM_TYPE_CREATOR_TYPES';
 
 		dispatch({
+			id,
 			type: REQUEST_ITEM_TYPE_CREATOR_TYPES,
 			itemType
 		});
@@ -41,6 +42,7 @@ const fetchItemTypeFields = itemType => {
 		const type = 'ITEM_TYPE_FIELDS';
 
 		dispatch({
+			id,
 			type: REQUEST_ITEM_TYPE_FIELDS,
 			itemType
 		});
