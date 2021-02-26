@@ -14,10 +14,94 @@ import {
     REQUEST_CREATE_COLLECTIONS,
     REQUEST_DELETE_COLLECTION,
     REQUEST_UPDATE_COLLECTION,
+    BEGIN_FETCH_COLLECTIONS_SINCE,
+	COMPLETE_FETCH_COLLECTIONS_SINCE,
 } from '../constants/actions';
 
 import { requestTracker, requestWithBackoff } from '.';
 import { cede, get } from '../utils';
+
+const rescheduleBadRequests = (badRequestsArray, allRequestsArray, dispatch, libraryKey, args) => {
+	let hasScheduledNewRequest = false;
+	if(badRequestsArray && badRequestsArray.length) {
+		badRequestsArray.forEach(requestId => {
+			if(!(requestId in allRequestsArray) || allRequestsArray[requestId].rescheduled) {
+				return;
+			}
+			const { start, limit } = allRequestsArray[requestId];
+			const nextId = requestTracker.id++;
+			allRequestsArray[nextId] = {
+				start, limit,
+				promise: dispatch(fetchCollections(libraryKey, { start, limit, ...args }, nextId))
+			};
+			allRequestsArray[requestId].rescheduled = true;
+			hasScheduledNewRequest = true;
+		});
+	}
+	return hasScheduledNewRequest;
+}
+
+const doResilientParallelisedCollectionsFetching = async (dispatch, getState, libraryKey, args) => {
+	var totalResults;
+	const limit = 100; // collections fetched per page
+
+	// get the first page
+	while(true) { // eslint-disable-line no-constant-condition
+		await dispatch(fetchCollections(libraryKey, { start: 0, limit, ...args }));
+		const updatedState = getState();
+		const errorCount = get(updatedState, ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errorCount'], 0);
+		if('since' in args) {
+			totalResults = get(updatedState, ['libraries', libraryKey, 'collections', 'remoteChangesTracker', args.since], null);
+		} else {
+			totalResults = get(updatedState, ['libraries', libraryKey, 'collections', 'totalResults'], null);
+		}
+
+		if(errorCount === 0) {
+			break;
+		} else {
+			await cede(1000);
+		}
+	}
+
+	// got first page, prepare requests for all subsequent pages
+	const remainingCount = Math.max(totalResults - limit, 0);
+	const remainingRequestsNumber = Math.ceil(remainingCount / limit);
+
+	var requests = {};
+
+	for(let i = 0; i < remainingRequestsNumber; i++) {
+		const start = limit + (i * limit);
+		const nextId = requestTracker.id++;
+		requests[nextId] = {
+			start, limit,
+			promise: dispatch(fetchCollections(libraryKey, { start, limit, ...args }, nextId))
+		};
+	}
+
+	// subsequent pages are requested in parallel. Any request dropped or errored is re-requested
+	// this will respect request schedule (see request.js) but it will never give up.
+	while(remainingRequestsNumber > 0) { // eslint-disable-line no-constant-condition
+		const promises = Object.values(requests).map(r => r.promise);
+		await Promise.allSettled(promises);
+		const errored = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errored'], null);
+		const dropped = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'dropped'], null);
+
+		let hasScheduledNewRequest = false;
+
+		hasScheduledNewRequest = hasScheduledNewRequest || rescheduleBadRequests(errored, requests, dispatch, libraryKey, args);
+		hasScheduledNewRequest = hasScheduledNewRequest || rescheduleBadRequests(dropped, requests, dispatch, libraryKey, args);
+
+		const ongoing = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'ongoing'], null);
+
+		if(!hasScheduledNewRequest && ongoing.length === 0) {
+			break;
+		}
+
+		// Promises might have settled but requests can still be ongoing so this is effectively
+		// polling now. Only happens if at least one request failed.
+		await cede(1000);
+	}
+}
 
 const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModified', direction = "desc", ...rest } = {}, requestId = null) => {
 	return async (dispatch, getState) => {
@@ -42,7 +126,8 @@ const fetchCollections = (libraryKey, { start = 0, limit = 50, sort = 'dateModif
 				.collections()
 				.get({ start, limit, sort, direction, ...rest });
 			const collections = response.getData();
-			return { collections, response };
+			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
+			return { collections, response, totalResults };
 		}
 
 		const payload = {
@@ -77,91 +162,7 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 			libraryKey
 		});
 
-		var totalResults;
-		const limit = 100; // collections fetched per page
-
-		// ensure that we get the first page
-		while(true) { // eslint-disable-line no-constant-condition
-			await dispatch(fetchCollections(libraryKey, { start: 0, limit, sort, direction }));
-			const updatedState = getState();
-			const errorCount = get(updatedState, ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errorCount'], 0);
-			totalResults = get(updatedState, ['libraries', libraryKey, 'collections', 'totalResults'], null);
-
-			if(errorCount === 0) {
-				break;
-			} else {
-				await cede(1000);
-			}
-		}
-
-		// got first page, prepare requests for all subsequent pages
-		const remainingCount = totalResults - limit;
-		const remainingRequestsNumber = Math.ceil(remainingCount / limit);
-
-		var requests = {};
-
-		for(let i = 0; i < remainingRequestsNumber; i++) {
-			const start = limit + (i * limit);
-			const nextId = requestTracker.id++;
-			requests[nextId] = {
-				start, limit,
-				promise: dispatch(fetchCollections(libraryKey, { start, limit, sort, direction }, nextId))
-			};
-		}
-
-		while(true) { // eslint-disable-line no-constant-condition
-			const promises = Object.values(requests).map(r => r.promise);
-			console.log(`Fetching all collections: fired ${promises.length} requests so far`);
-			await Promise.allSettled(promises);
-			const errored = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errored'], null);
-			const dropped = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'dropped'], null);
-
-			let hasScheduledNewRequest = false;
-
-			if(errored && errored.length) {
-				errored.forEach(requestId => {
-					if(!(requestId in requests) || requests[requestId].rescheduled) {
-						return;
-					}
-					const { start, limit } = requests[requestId];
-					const nextId = requestTracker.id++;
-					requests[nextId] = {
-						start, limit,
-						promise: dispatch(fetchCollections(libraryKey, { start, limit, sort, direction }, nextId))
-					};
-					requests[requestId].rescheduled = true;
-					hasScheduledNewRequest = true;
-					console.log(`rescheduled ${requestId} as ${nextId} due to an ERROR`);
-				});
-			}
-
-			if(dropped && dropped.length) {
-				dropped.forEach(requestId => {
-					if(!(requestId in requests) || requests[requestId].rescheduled) {
-						return;
-					}
-					const { start, limit } = requests[requestId];
-					const nextId = requestTracker.id++;
-					requests[nextId] = {
-						start, limit,
-						promise: dispatch(fetchCollections(libraryKey, { start, limit, sort, direction }, nextId))
-					};
-					requests[requestId].rescheduled = true;
-					hasScheduledNewRequest = true;
-					console.log(`rescheduled ${requestId} as ${nextId} due to an DROP`);
-				});
-			}
-
-			const ongoing = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'ongoing'], null);
-
-			if(!hasScheduledNewRequest && ongoing.length === 0) {
-				break;
-			}
-
-			// Promises might have settled but requests can still be ongoing so this is effectively
-			// polling now. Only happens if at least one request failed.
-			await cede(1000);
-		}
+		await doResilientParallelisedCollectionsFetching(dispatch, getState, libraryKey, { sort, direction });
 
 		dispatch({
 			type: COMPLETE_FETCH_ALL_COLLECTIONS,
@@ -171,17 +172,19 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 }
 
 const fetchAllCollectionsSince = (version, libraryKey) => {
-	return async dispatch => {
-		var pointer = 0;
-		const limit = 100;
-		var hasMore = false;
+	return async (dispatch, getState) => {
 
-		do {
-			await dispatch(fetchCollections(libraryKey, { start: pointer, limit, since: version }));
-			const totalResults = get(getState(), ['libraries', libraryKey, 'collections', 'totalResults'], null);
-			hasMore = totalResults > pointer + limit;
-			pointer += limit;
-		} while(hasMore === true)
+		dispatch({
+			type: BEGIN_FETCH_COLLECTIONS_SINCE,
+			libraryKey, since: version
+		});
+
+		await doResilientParallelisedCollectionsFetching(dispatch, getState, libraryKey, { since: version });
+
+		dispatch({
+			type: COMPLETE_FETCH_COLLECTIONS_SINCE,
+			libraryKey, since: version
+		});
 	}
 }
 

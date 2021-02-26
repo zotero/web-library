@@ -1,6 +1,8 @@
 import {
 	BEGIN_FETCH_ALL_COLLECTIONS,
+	BEGIN_FETCH_COLLECTIONS_SINCE,
 	COMPLETE_FETCH_ALL_COLLECTIONS,
+	COMPLETE_FETCH_COLLECTIONS_SINCE,
 	ERROR_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_COLLECTIONS_IN_LIBRARY,
 	RECEIVE_CREATE_COLLECTIONS,
@@ -11,10 +13,11 @@ import {
 } from '../../constants/actions.js';
 
 import { indexByKey } from '../../utils';
-import { removeKeys } from '../../common/immutable';
+import { omit } from '../../common/immutable';
 
 const defaultState = {
 	data: {},
+	remoteChangesTracker: {},
 }
 
 const countNewCollections = (action, state) => {
@@ -75,7 +78,11 @@ const collections = (state = defaultState, action) => {
 				isFetching: false,
 				totalResults: 'since' in action ?
 					(state.totalResults || 0) + countNewCollections(action, state.data) :
-					parseInt(action.response.response.headers.get('Total-Results'), 10)
+					action.totalResults,
+				remoteChangesTracker: 'since' in action ? {
+					...state.remoteChangesTracker,
+					[action.since]: action.totalResults
+				} : { ...state.remoteChangesTracker }
 			};
 		case ERROR_COLLECTIONS_IN_LIBRARY:
 			return {
@@ -85,13 +92,13 @@ const collections = (state = defaultState, action) => {
 		case RECEIVE_DELETE_COLLECTION:
 			return {
 				...state,
-				data: removeKeys(state.data, action.collection.key),
+				data: omit(state.data, action.collection.key),
 				totalResults: state.totalResults - 1
 			}
 		case RECEIVE_DELETED_CONTENT:
 			return {
 				...state,
-				data: removeKeys(state.data, action.collectionKeys),
+				data: omit(state.data, action.collectionKeys),
 				totalResults: (state.totalResults || 0) - countRemovedCollections(action, state)
 			}
 		case BEGIN_FETCH_ALL_COLLECTIONS:
@@ -103,6 +110,21 @@ const collections = (state = defaultState, action) => {
 			return {
 				...state,
 				isFetchingAll: false
+			}
+		case BEGIN_FETCH_COLLECTIONS_SINCE:
+			return {
+				...state,
+				remoteChangesTracker: {
+					...state.remoteChangesTracker,
+					[action.since]: null,
+				}
+			}
+		case COMPLETE_FETCH_COLLECTIONS_SINCE:
+			return {
+				...state,
+				remoteChangesTracker: {
+					...omit(state.remoteChangesTracker, action.since)
+				}
 			}
 		default:
 			return state;
