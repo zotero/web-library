@@ -2,7 +2,7 @@ import { get } from '../utils';
 import { ABORT_REQUEST, CONNECTION_ISSUES } from '../constants/actions';
 
 const requestsWaiting = {};
-const requestSchedule = [2, 5, 10, 20, 30, 40, 50, 60];
+const requestSchedule = [1, 2, 5, 10, 20, 30, 40, 50, 60];
 var requestTracker = { id: 1 };
 
 const runRequest = async (dispatch, request, { id, requestType, payload }) => {
