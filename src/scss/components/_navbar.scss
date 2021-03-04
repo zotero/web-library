@@ -99,7 +99,7 @@
 		.truncate {
 			@include text-truncate;
 			display: inline-block;
-			vertical-align: middle;
+			vertical-align: bottom;
 			max-width: 9vw;
 		}
 	}
