@@ -31,7 +31,7 @@ const ZoteroConnectorNotifier = () => {
 	);
 	const item = items && selectedItemKey in items ? items[selectedItemKey] : null;
 
-	const { callback: debouncedNotify } = useDebouncedCallback(() => {
+	const debouncedNotify = useDebouncedCallback(() => {
 		document.dispatchEvent(new Event('ZoteroItemUpdated', {
 			bubbles: true,
 			cancelable: true

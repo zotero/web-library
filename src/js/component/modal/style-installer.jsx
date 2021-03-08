@@ -125,7 +125,7 @@ const StyleInstallerModal = () => {
 		}
 	}, []);
 
-	const { callback: performSearch } = useDebouncedCallback(newFilterValue => {
+	const performSearch = useDebouncedCallback(newFilterValue => {
 		setHasResults(false);
 		setSelectedIndex(null);
 

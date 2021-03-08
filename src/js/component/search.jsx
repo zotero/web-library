@@ -71,7 +71,7 @@ const Search = props => {
 		}
 
 		if(isTouchOrSmall || (!isAdvancedSearch && !newValue.includes('"'))) {
-			performSearchDebounce.callback(newValue, qmodeValue);
+			performSearchDebounce(newValue, qmodeValue);
 		}
 	}, [dispatch, isTouchOrSmall, isAdvancedSearch, performSearchDebounce, qmodeValue]);
 
@@ -79,14 +79,14 @@ const Search = props => {
 		performSearchDebounce.cancel();
 		setSearchValue('');
 		dispatch(toggleAdvancedSearch(false));
-		performSearchDebounce.callback('', qmodeValue);
+		performSearchDebounce('', qmodeValue);
 		inputRef.current.focus();
 	}, [dispatch, performSearchDebounce, qmodeValue]);
 
 	const handleSelectMode = useCallback(ev => {
 		setQmodeValue(ev.currentTarget.dataset.qmode);
 		if(searchValue.length > 0) {
-			performSearchDebounce.callback(searchValue, ev.currentTarget.dataset.qmode);
+			performSearchDebounce(searchValue, ev.currentTarget.dataset.qmode);
 		}
 	}, [performSearchDebounce, searchValue]);
 
@@ -118,7 +118,7 @@ const Search = props => {
 			// see https://github.com/zotero/web-library/issues/408#issuecomment-704819064
 			// we allow this, but only if search input has been blurred since last search
 			if(ev.target === inputRef.current && (hasBlurredSinceLastSearch.current || isAdvancedSearch)) {
-				if(performSearchDebounce.pending()) {
+				if(performSearchDebounce.isPending()) {
 					performSearchDebounce.flush();
 				}
 				dispatch(resetQuery());

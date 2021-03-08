@@ -13,7 +13,7 @@ const TitleUpdater = () => {
 	const selectedItemsKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
 
-	const { callback: debouncedNotify } = useDebouncedCallback(() => {
+	const debouncedNotify = useDebouncedCallback(() => {
 		var title = ['Zotero'];
 
 		if(libraryName) {
