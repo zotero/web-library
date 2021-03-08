@@ -9,7 +9,7 @@
     "build"
   ],
   "type": "module",
-  "browserslist": "last 2 versions",
+  "browserslist": "firefox 68, firefox esr, last 2 versions, not dead, not ie 11",
   "scripts": {
     "serve": "node scripts/server.cjs -p $npm_package_config_port -t $npm_package_config_translation_server",
     "prepack": "run-s clean build",
