@@ -32,7 +32,7 @@ const fetchItems = (
 
 		const makeRequest = async () => {
 			const response = await api.get(queryOptions);
-			if(abortController.signal.aborted) {
+			if(abortController?.signal.aborted) {
 				// Aborted requests should reject the fetch promise, however real-world testing
 				// shows this can execute. Throwing an error ensures this is handled correctly.
 				throw new Error('aborted');
