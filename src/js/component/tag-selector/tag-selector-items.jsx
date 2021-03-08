@@ -100,6 +100,15 @@ const TagSelectorItems = () => {
 		dispatch(navigate({ tags: selectedTags, items: null }));
 	}, [dispatch, selectedTags]);
 
+	const handleClick = useCallback(ev => {
+		const tag = ev.currentTarget.dataset.tag;
+		// @NOTE: the <li> element in this event will be removed while new tags are fetched as a
+		// result of toggleTag(). Need to trigger blur() so that container can accept focus again.
+		// See #372
+		ev.currentTarget.blur();
+		toggleTag(tag);
+	}, [toggleTag]);
+
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
 			return;
@@ -113,15 +122,6 @@ const TagSelectorItems = () => {
 			handleClick(ev);
 		}
 	}, [focusNext, focusPrev, handleClick]);
-
-	const handleClick = useCallback(ev => {
-		const tag = ev.currentTarget.dataset.tag;
-		// @NOTE: the <li> element in this event will be removed while new tags are fetched as a
-		// result of toggleTag(). Need to trigger blur() so that container can accept focus again.
-		// See #372
-		ev.currentTarget.blur();
-		toggleTag(tag);
-	}, [toggleTag]);
 
 	useEffect(() => {
 		if(totalResults === null) {
