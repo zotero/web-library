@@ -1109,14 +1109,19 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 		[fieldKey]: newValue
 	};
 
-	return async dispatch => {
+	return async (dispatch, getState) => {
 		// when changing itemType, map fields from old type-specific to base types and then back to new item-specific types
 		if(fieldKey === 'itemType') {
 			//@TODO: maybe check state if this data is already fetched, then skip
-			const [targetTypeFields, targetTypeCreatorTypes] = await Promise.all([
+			await Promise.all([
 				dispatch(fetchItemTypeFields(newValue)),
 				dispatch(fetchItemTypeCreatorTypes(newValue))
 			]);
+
+			const { itemTypeFields, itemTypeCreatorTypes } = getState().meta;
+
+			const targetTypeFields = itemTypeFields[newValue];
+			const targetTypeCreatorTypes = itemTypeCreatorTypes[newValue];
 
 			const baseValues = {};
 			if(item.itemType in baseMappings) {
