@@ -517,7 +517,8 @@ const CollectionNode = memo(props => {
 	const usesItemsNode = isSingleColumn && !isPickerMode;
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
-	const hasSubCollections = (usesItemsNode || collections.length > 0);
+	const hasSubCollections = collections.length > 0;
+	const hasSubCollectionsOrItemsNode = hasSubCollections || usesItemsNode;
 	const { selectedDepth } = derivedData[collection.key];
 
 	const selectedHasChildren = isCurrentLibrary && selectedCollectionKey && (derivedData[selectedCollectionKey] || {}).hasChildren;
@@ -570,7 +571,7 @@ const CollectionNode = memo(props => {
 			showTwisty={ hasSubCollections }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
-			subtree={ (shouldRenderSubtree && (hasSubCollections || hasVirtual)) ? (
+			subtree={ (shouldRenderSubtree && (hasSubCollectionsOrItemsNode || hasVirtual)) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
 						{ ...omit(props, ['level', 'collection', 'shouldBeTabbable']) }
