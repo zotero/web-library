@@ -7,7 +7,7 @@ import { triggerResizeViewport } from '../actions';
 const ViewportDetector = () => {
 	const dispatch = useDispatch();
 
-	const { callback: throttledWindowResizeHandler } = useThrottledCallback(() => {
+	const throttledWindowResizeHandler = useThrottledCallback(() => {
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
 	}, 250, { leading: false });
 
