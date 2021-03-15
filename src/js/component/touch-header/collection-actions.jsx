@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
@@ -12,6 +12,8 @@ import { toggleModal } from '../../actions';
 
 const CollectionActions = props => {
 	const { collectionKey, collectionHasChildren } = props;
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const collectionParentKey = useSelector(state => state.libraries[state.current.libraryKey]?.collections?.data[collectionKey]?.parentCollection);
 	const dispatch = useDispatch();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -22,12 +24,16 @@ const CollectionActions = props => {
 	const handleNewCollectionClick = useCallback(() => {
 		const opts = {};
 
-		if(collectionKey && collectionHasChildren) {
-			opts['parentCollectionKey'] = collectionKey
+		if(collectionKey) {
+			if(isSingleColumn || (!isSingleColumn && collectionHasChildren)) {
+				opts['parentCollectionKey'] = collectionKey;
+			} else {
+				opts['parentCollectionKey'] = collectionParentKey;
+			}
 		}
 
 		dispatch(toggleModal(COLLECTION_ADD, true, opts));
-	}, [dispatch, collectionHasChildren, collectionKey]);
+	}, [dispatch, collectionKey, collectionHasChildren, collectionParentKey, isSingleColumn]);
 
 	return (
 		<Dropdown
@@ -48,8 +54,9 @@ const CollectionActions = props => {
 			</DropdownToggle>
 			<DropdownMenu right>
 				<DropdownItem onClick={ handleNewCollectionClick }>
-					{ collectionKey && collectionHasChildren ?
-						"Add Subcollection" : "New Collection" }
+					{ collectionKey && (isSingleColumn || (!isSingleColumn && (collectionHasChildren || (!collectionHasChildren && collectionParentKey)))) ?
+						"Add Subcollection" : "New Collection"
+					}
 				</DropdownItem>
 			</DropdownMenu>
 		</Dropdown>
