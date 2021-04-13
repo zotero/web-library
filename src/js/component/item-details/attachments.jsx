@@ -272,7 +272,9 @@ const Attachments = ({ isActive, isReadOnly }) => {
 		) || {}).isFileUploadAllowed
 	);
 
-	const attachments = (keys || [])
+	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched && isTinymceFetched);
+
+	const attachments = (isReady && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'attachment');
 
@@ -287,6 +289,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const fileInput = useRef(null);
 	const addLinkedUrlButtonRef = useRef(null);
 	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
+
 
 
 	const [{ isOver, canDrop }, drop] = useDrop({
@@ -388,7 +391,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 		<TabPane
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
-			isLoading={ shouldUseTabs && !(isFetched && isTinymceFetched) }
+			isLoading={ !isReady }
 			ref={ drop }
 		>
 			<CSSTransition

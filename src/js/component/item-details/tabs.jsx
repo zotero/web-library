@@ -68,8 +68,8 @@ const ItemDetailsTabs = () => {
 	const isReadOnly = isLibraryReadOnly || !!(shouldUseEditMode && !isEditing);
 
 	const isReady = shouldUseTabs || (
-		!shouldUseTabs && (!shouldFetchChildItems || childItemsState.hasChecked) && relatedItemsState.isFetched &&
-		isTinymceFetched && isMetaAvailable
+		!shouldUseTabs && (!shouldFetchChildItems || (childItemsState.hasChecked && !childItemsState.hasMoreItems))
+		&& relatedItemsState.isFetched && isTinymceFetched && isMetaAvailable
 	);
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 

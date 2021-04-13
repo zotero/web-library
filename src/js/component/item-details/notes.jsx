@@ -154,7 +154,10 @@ const Notes = ({ isActive, isReadOnly }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
-	const notes = (keys || [])
+
+	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched && isTinymceFetched);
+
+	const notes = (isReady && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'note');
 
@@ -311,7 +314,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 		<TabPane
 			className="notes"
 			isActive={ isActive }
-			isLoading={ shouldUseTabs && !isFetched }
+			isLoading={ !isReady }
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 			{ !isTouchOrSmall && (
