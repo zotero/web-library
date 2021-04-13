@@ -106,7 +106,8 @@ const Attachment = memo(props => {
 
 	const [isFocused, setIsFocused] = useState(false);
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
-		item: { type: ATTACHMENT, itemKey, libraryKey },
+		type: ATTACHMENT,
+		item: { itemKey, libraryKey },
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
 			if(dropResult) {

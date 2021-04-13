@@ -49,8 +49,8 @@ const SortableField = memo(props => {
 
 	const fieldRef = useRef(null);
 	const [{ isDragging }, drag, preview] = useDrag({
-		item: { type: CREATOR },
-		begin: () => {
+		type: CREATOR,
+		item: () => {
 			const sourceRect = fieldRef.current.getBoundingClientRect();
 			return { index, raw, sourceRect, onReorder };
 		},

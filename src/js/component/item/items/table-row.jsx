@@ -168,11 +168,11 @@ const TableRow = props => {
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isItemsTableFocused);
 
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
-		item: { type: ITEM },
+		type: ITEM,
 		options: {
 			dropEffect: 'copy'
 		},
-		begin: () => {
+		item: () => {
 			return { itemKey, selectedItemKeysLength, itemData, libraryKey }
 		},
 		end: (item, monitor) => {
