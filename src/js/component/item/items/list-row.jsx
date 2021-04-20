@@ -169,8 +169,8 @@ const ListRow = memo(props => {
 								key={ color }
 								type={ index === 0 ? '12/circle' : '12/crescent-circle' }
 								symbol={ index === 0 ?
-									isActive ? 'circle-active' : 'circle' :
-									isActive ? 'crescent-circle-active' : 'crescent-circle'
+									(!isSelectMode && isActive) ? 'circle-active' : 'circle' :
+									(!isSelectMode && isActive) ? 'crescent-circle-active' : 'crescent-circle'
 								}
 								width={ index === 0 ? 12 : 8 }
 								height="12"
