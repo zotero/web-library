@@ -25,7 +25,12 @@ const Tags = props => {
 	const initialTags = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey, 'tags'], []));
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors']));
-	const [tags, setTags] = useState(initialTags.map(t => ({ ...t, id: ++nextId })));
+
+	// tags stored in the item property may require sorting. See #434
+	const sortedTags = [...initialTags];
+	sortByKey(sortedTags, 'tag');
+	const [tags, setTags] = useState(sortedTags.map(t => ({ ...t, id: ++nextId })));
+
 	const isPendingTagChanges = useSelector(state =>
 		(get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey]) || [])
 		.some(({ patch }) => 'tags' in patch)
