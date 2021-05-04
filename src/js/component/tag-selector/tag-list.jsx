@@ -197,8 +197,7 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 			setDotMenuFor(null);
 			return;
 		}
-
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		const tag = ev.currentTarget?.closest ? ev.currentTarget.closest('[data-tag]').dataset.tag : null;
 		setDotMenuFor(tag === dotMenuFor ? null : tag);
 		ev.stopPropagation();
 	}, [dotMenuFor]);
