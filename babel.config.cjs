@@ -10,7 +10,8 @@ const presets = [
 ];
 
 const plugins = [
-	["@babel/plugin-proposal-class-properties", { "loose" : true }]
+	["@babel/plugin-proposal-class-properties", { "loose" : true }],
+	["@babel/plugin-proposal-private-methods", { "loose": true }]
 ];
 
 module.exports = { presets, plugins };
