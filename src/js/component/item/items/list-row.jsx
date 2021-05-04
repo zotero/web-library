@@ -166,7 +166,7 @@ const ListRow = memo(props => {
 
 						{ colors.map((color, index) => (
 							<Icon
-								key={ color }
+								key={ index }
 								type={ index === 0 ? '12/circle' : '12/crescent-circle' }
 								symbol={ index === 0 ?
 									(!isSelectMode && isActive) ? 'circle-active' : 'circle' :

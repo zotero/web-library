@@ -46,7 +46,7 @@ const TitleCell = memo(props => {
 				{ itemData.colors.map((color, index) => (
 					<Icon
 						label={ `${colorNames[color] || ''} circle icon` }
-						key={ color }
+						key={ index }
 						type={ index === 0 ? '10/circle' : '10/crescent-circle' }
 						symbol={ index === 0 ?
 							(isFocused && isSelected ? 'circle-focus' : 'circle') :
