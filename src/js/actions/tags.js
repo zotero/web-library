@@ -1,6 +1,7 @@
 import api from 'zotero-api-client';
 import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
 import { MANAGE_TAGS } from '../constants/modals';
+import { escapeBooleanSearches } from '../common/actions';
 import { requestWithBackoff, updateLibrarySettings } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
@@ -68,6 +69,7 @@ const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 		const state = getState();
 		const config = state.config;
 		const { libraryKey } = state.current;
+
 		const api = getApi({ config, libraryKey }, type, queryConfig);
 
 		dispatch({
@@ -76,7 +78,7 @@ const fetchTagsBase = (type, queryConfig, queryOptions = {}) => {
 		});
 
 		const makeRequest = async () => {
-			const response = await api.get(queryOptions);
+			const response = await api.get(escapeBooleanSearches(queryOptions, 'itemTag'));
 			const tags = response.getData().map((tagData, index) => ({
 				tag: tagData.tag,
 				type: response.getMeta()[index]['type']

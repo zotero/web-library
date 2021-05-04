@@ -1,5 +1,30 @@
 import api from 'zotero-api-client';
 
+const escapeBooleanSearch = p => {
+	p = p.startsWith('-') ? '\\-' + p.slice(1) : p;
+	p = p.replaceAll(' || ', ' \\|| ');
+	return p;
+}
+
+const escapeBooleanSearches = (queryOptions, paramNames) => {
+	const escapedQueryOptions = {};
+	if(!Array.isArray(paramNames)) {
+		paramNames = [paramNames];
+	}
+
+	paramNames.forEach(paramName => {
+		if(paramName in queryOptions) {
+			if(Array.isArray(queryOptions[paramName])) {
+				escapedQueryOptions[paramName] = queryOptions[paramName].map(escapeBooleanSearch)
+			} else {
+				escapedQueryOptions[paramName] = escapeBooleanSearch(queryOptions[paramName]);
+			}
+		}
+	});
+
+	return { ...queryOptions, ...escapedQueryOptions };
+}
+
 const extractItems = response => {
 	return response.getData().map((item, index) => ({
 		...item,
@@ -69,4 +94,4 @@ const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
 	}
 }
 
-export { extractItems, getApiForItems, sequentialChunkedAcion };
+export { escapeBooleanSearches, extractItems, getApiForItems, sequentialChunkedAcion };

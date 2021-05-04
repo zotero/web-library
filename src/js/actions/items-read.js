@@ -1,6 +1,6 @@
 import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
-import { extractItems, getApiForItems } from '../common/actions';
+import { escapeBooleanSearches, extractItems, getApiForItems } from '../common/actions';
 import { get, getAbortController, mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
 import { connectionIssues, requestTracker, requestWithBackoff } from '.';
@@ -20,6 +20,7 @@ const fetchItems = (
 		const id = requestId || requestTracker.id++;
 		const abortController = getAbortController();
 
+
 		dispatch({
 			type: `REQUEST_${type}`, id,
 			libraryKey, ...queryConfig, queryOptions
@@ -31,7 +32,7 @@ const fetchItems = (
 		}
 
 		const makeRequest = async () => {
-			const response = await api.get(queryOptions);
+			const response = await api.get(escapeBooleanSearches(queryOptions, 'tag'));
 			if(abortController?.signal.aborted) {
 				// Aborted requests should reject the fetch promise, however real-world testing
 				// shows this can execute. Throwing an error ensures this is handled correctly.
