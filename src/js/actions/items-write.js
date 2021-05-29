@@ -33,6 +33,7 @@ import {
 	PRE_MOVE_ITEMS_TRASH,
 	PRE_RECOVER_ITEMS_TRASH,
 	PRE_REMOVE_ITEMS_FROM_COLLECTION,
+	PRE_STORE_RELATIONS_IN_SOURCE,
 	PRE_UPDATE_ITEM,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_ADD_TAGS_TO_ITEMS,
@@ -814,42 +815,8 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 		);
 
 		if(shouldStoreRelationInSource) {
-			const multiPatch = itemKeys.map((ik, index) => {
-				const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
-				const newItem = newItems[index];
-				return {
-					key: sourceItem.key,
-					version: sourceItem.version,
-						relations: {
-						...sourceItem.relations,
-						'owl:sameAs': getItemCanonicalUrl({ libraryKey: targetLibraryKey, itemKey: newItem.key })
-					}
-				}
-			});
-			dispatch({
-				itemKeys,
-				libraryKey: sourceLibraryKey,
-				targetLibraryKey,
-				type: REQUEST_STORE_RELATIONS_IN_SOURCE,
-			});
-			try {
-				const { response } = await postItemsMultiPatch(state, multiPatch);
-				dispatch({
-					itemKeys,
-					libraryKey: sourceLibraryKey,
-					response,
-					targetLibraryKey,
-					type: RECEIVE_STORE_RELATIONS_IN_SOURCE,
-				});
-			} catch(error) {
-				dispatch({
-					error,
-					libraryKey: sourceLibraryKey,
-					targetLibraryKey,
-					type: ERROR_STORE_RELATIONS_IN_SOURCE,
-				});
-				throw error;
-			}
+			const targetItemKeys = newItems.map(i => i.key);
+			dispatch(storeRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
 		}
 
 		const registerUploadsPromises = newItems.map(async (newItem, index) => {
@@ -913,6 +880,76 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 		await Promise.all(childItemsCopyPromises);
 
 		return newItems;
+	};
+}
+
+const storeRelationInSoruce = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey) => {
+	return async dispatch => {
+		const id = requestTracker.id++;
+
+		dispatch({
+			type: PRE_STORE_RELATIONS_IN_SOURCE,
+			itemKeys,
+			libraryKey: sourceLibraryKey,
+			targetLibraryKey,
+			id,
+		});
+
+		dispatch(
+			queueStoreRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id)
+		);
+	}
+}
+
+const queueStoreRelationInSoruce = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id) => {
+	return {
+		queue: sourceLibraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const multiPatch = itemKeys.map((ik, index) => {
+				const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
+				const newItemKey = targetItemKeys[index];
+				return {
+					key: sourceItem.key,
+					version: sourceItem.version,
+						relations: {
+						...sourceItem.relations,
+						'owl:sameAs': getItemCanonicalUrl({ libraryKey: targetLibraryKey, itemKey: newItemKey })
+					}
+				}
+			});
+
+			dispatch({
+				type: REQUEST_STORE_RELATIONS_IN_SOURCE,
+				itemKeys,
+				libraryKey: sourceLibraryKey,
+				targetLibraryKey,
+				id,
+			});
+
+			try {
+				const { response } = await postItemsMultiPatch(state, multiPatch);
+				dispatch({
+					itemKeys,
+					libraryKey: sourceLibraryKey,
+					response,
+					targetLibraryKey,
+					type: RECEIVE_STORE_RELATIONS_IN_SOURCE,
+					id,
+				});
+			} catch(error) {
+				dispatch({
+					error,
+					libraryKey: sourceLibraryKey,
+					targetLibraryKey,
+					type: ERROR_STORE_RELATIONS_IN_SOURCE,
+					id,
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
 	};
 }
 
