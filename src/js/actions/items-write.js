@@ -8,7 +8,7 @@ import { getFilesData } from '../common/event';
 import { omit } from '../common/immutable';
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
-import { requestTracker } from '.';
+import { fetchLibrarySettings, requestTracker } from '.';
 import { sniffForMIMEType } from '../common/mime';
 import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
 
@@ -788,6 +788,11 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			} else {
 				shouldStoreRelationInSource = false;
 			}
+		}
+
+		// ensure we have config of the target library. See #441
+		if(get(state, ['libraries', targetLibraryKey, 'tagColors', 'lookup'], null) === null) {
+			await dispatch(fetchLibrarySettings(targetLibraryKey));
 		}
 
 		const newItems = await dispatch(
