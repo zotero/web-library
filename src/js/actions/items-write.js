@@ -460,21 +460,21 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
 
-				dispatch({
-					type: RECEIVE_MOVE_ITEMS_TRASH,
-					libraryKey,
-					response,
-					id,
-					itemKeys,
-					...itemsData,
-					otherItems: state.libraries[libraryKey].items,
-				});
+				if(response.isSuccess()) {
+					dispatch({
+						type: RECEIVE_MOVE_ITEMS_TRASH,
+						libraryKey,
+						response,
+						id,
+						itemKeys,
+						...itemsData,
+						otherItems: state.libraries[libraryKey].items,
+					});
 
-				if(response.isSuccess() && affectedParentItemKeys.length > 0) {
-					dispatch(fetchItemsByKeys(affectedParentItemKeys));
-				}
-
-				if(!response.isSuccess()) {
+					if(affectedParentItemKeys.length > 0) {
+						dispatch(fetchItemsByKeys(affectedParentItemKeys));
+					}
+				} else {
 					dispatch({
 						type: ERROR_MOVE_ITEMS_TRASH,
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
@@ -540,21 +540,20 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
 
-				dispatch({
-					type: RECEIVE_RECOVER_ITEMS_TRASH,
-					libraryKey,
-					response,
-					id,
-					itemKeys,
-					...itemsData,
-					otherItems: state.libraries[libraryKey].items,
-				});
-
-				if(response.isSuccess() && affectedParentItemKeys.length > 0) {
-					dispatch(fetchItemsByKeys(affectedParentItemKeys));
-				}
-
-				if(!response.isSuccess()) {
+				if(response.isSuccess()) {
+					dispatch({
+						type: RECEIVE_RECOVER_ITEMS_TRASH,
+						libraryKey,
+						response,
+						id,
+						itemKeys,
+						...itemsData,
+						otherItems: state.libraries[libraryKey].items,
+					});
+					if(affectedParentItemKeys.length > 0) {
+						dispatch(fetchItemsByKeys(affectedParentItemKeys));
+					}
+				} else {
 					dispatch({
 						type: ERROR_RECOVER_ITEMS_TRASH,
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
@@ -629,19 +628,19 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				dispatch({
-					type: RECEIVE_ADD_TAGS_TO_ITEMS,
-					libraryKey,
-					itemKeys,
-					itemKeysChanged,
-					tagsToToggle,
-					items,
-					response,
-					id,
-					// otherItems: state.libraries[libraryKey].items,
-				});
-
-				if(!response.isSuccess()) {
+				if(response.isSuccess()) {
+					dispatch({
+						type: RECEIVE_ADD_TAGS_TO_ITEMS,
+						libraryKey,
+						itemKeys,
+						itemKeysChanged,
+						tagsToToggle,
+						items,
+						response,
+						id,
+						// otherItems: state.libraries[libraryKey].items,
+					});
+				} else {
 					dispatch({
 						type: ERROR_ADD_TAGS_TO_ITEMS,
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
@@ -718,19 +717,19 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				dispatch({
-					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
-					libraryKey,
-					itemKeys,
-					itemKeysChanged,
-					collectionKey,
-					items,
-					response,
-					id,
-					otherItems: state.libraries[libraryKey].items,
-				});
-
-				if(!response.isSuccess()) {
+				if(response.isSuccess()) {
+					dispatch({
+						type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+						libraryKey,
+						itemKeys,
+						itemKeysChanged,
+						collectionKey,
+						items,
+						response,
+						id,
+						otherItems: state.libraries[libraryKey].items,
+					});
+				} else {
 					dispatch({
 						type: ERROR_ADD_ITEMS_TO_COLLECTION,
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
@@ -997,19 +996,19 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				dispatch({
-					type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
-					libraryKey,
-					itemKeys,
-					itemKeysChanged,
-					collectionKey,
-					items,
-					response,
-					id,
-					otherItems: state.libraries[libraryKey].items,
-				});
-
-				if(!response.isSuccess()) {
+				if(response.isSuccess()) {
+					dispatch({
+						type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+						libraryKey,
+						itemKeys,
+						itemKeysChanged,
+						collectionKey,
+						items,
+						response,
+						id,
+						otherItems: state.libraries[libraryKey].items,
+					});
+				} else {
 					dispatch({
 						type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,
 						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
