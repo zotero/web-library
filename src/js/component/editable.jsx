@@ -20,12 +20,15 @@ class Editable extends React.PureComponent {
 	}
 
 	get className() {
-		const { input, inputComponent } = this.props;
+		// input type auto-detection doesn't work if element is nested (which it can be, see
+		// BoxFieldInput). This causes #440. TODO: drop auto-detection and always use explicit prop
+		// to define textarea/select editables
+		const { input, inputComponent, isSelect, isTextArea } = this.props;
 		return {
 			'editable': true,
 			'editing': this.isActive,
-			'textarea': inputComponent === TextAreaInput || input && input.type === TextAreaInput,
-			'select': inputComponent === SelectInput || input && input.type === SelectInput,
+			'textarea': inputComponent === TextAreaInput || (input && input.type === TextAreaInput) || isTextArea,
+			'select': inputComponent === SelectInput || (input && input.type === SelectInput) || isSelect,
 		};
 	}
 
@@ -77,7 +80,6 @@ class Editable extends React.PureComponent {
 	};
 
 	static propTypes = {
-		tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 		input: PropTypes.element,
 		inputComponent: PropTypes.elementType,
@@ -85,6 +87,9 @@ class Editable extends React.PureComponent {
 		isBusy: PropTypes.bool,
 		isDisabled: PropTypes.bool,
 		isReadOnly: PropTypes.bool,
+		isSelect: PropTypes.bool,
+		isTextArea: PropTypes.bool,
+		tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	};
 }
 

@@ -63,11 +63,13 @@ const BoxFieldInputEditable = memo(props => {
 	const { field, isEditing, isForm, onClick, isActive, onFocus, onBlur } = props;
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const isSelect = pickInputComponent(field) === SelectInput;
+	const isTextArea = pickInputComponent(field) === TextAreaInput;
 	const isPseudoEditable = !isForm && isSelect;
 	const isDisabled = (shouldUseEditMode && !isEditing) || isPseudoEditable || field.isReadOnly;
 	const input = <BoxFieldInput { ...props } field={ field } />;
-	const editableProps = { display: field.display, isActive, input, isBusy: field.processing ||
-	false, isDisabled, onBlur, onClick, onFocus, title: field.title, value: field.value };
+	const editableProps = { display: field.display, isActive, isSelect, isTextArea, input, isBusy:
+		field.processing || false, isDisabled, onBlur, onClick, onFocus, title: field.title, value:
+		field.value };
 
 	var url = null;
 
