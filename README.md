@@ -13,4 +13,6 @@ Installation
 3. Try out the full library example by running `npm start`
 4. Point browser at `http://localhost:8001/` to see the demo
 
+NOTE: Edit the API key in `src/html/index.html` before you start the app. You can find your user id and generate a key here: https://www.zotero.org/settings/keys
+
 To build changes (including compiling bootstrap less style) run `npm build`. For a development build with automatic incremental build on change, use `npm start`.
