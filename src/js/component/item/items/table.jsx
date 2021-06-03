@@ -18,7 +18,7 @@ import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, c
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
-import { isHighlightKeyDown } from '../../../common/event';
+import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 
 const ROWHEIGHT = 26;
 
@@ -308,7 +308,7 @@ const Table = () => {
 			direction = -1;
 		} else if(ev.key === 'ArrowDown') {
 			direction = 1;
-		} else if(ev.key === 'Backspace') {
+		} else if(isDelKeyDown(ev)) {
 			dispatch(currentTrashOrDelete());
 			dispatch(navigate({ items: [], noteKey: null, attachmentKey: null }));
 			return;

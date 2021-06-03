@@ -8,6 +8,11 @@ const isHighlightKeyDown = ev => {
 		(!isWindows && ev.getModifierState('Alt'));
 }
 
+const isDelKeyDown = ev => {
+	const isMac = navigator.platform.startsWith('Mac');
+	return ev.key === 'Delete' || (isMac && ev.key === 'Backspace');
+}
+
 const getFilesData = fileObjs => Promise.all(fileObjs.map(getFileData));
 
 const getFileData = fileObj => {
@@ -27,6 +32,7 @@ const getFileData = fileObj => {
 }
 
 export {
+	isDelKeyDown,
 	isHighlightKeyDown,
 	isTriggerEvent,
 	getFileData,
