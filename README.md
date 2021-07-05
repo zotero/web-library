@@ -9,8 +9,10 @@ Installation
 ------------
 
 1. Clone git repository into target web directory (`git clone https://github.com/zotero/web-library.git`)
-2. run `npm install` to install dev dependencies
-3. Try out the full library example by running `npm start`
+2. Ensure up-to-date version of [Node](https://nodejs.org) is used or run `nvm use` to switch to a preferred version using [nvm](https://github.com/nvm-sh/nvm)
+2. Run `npm install` to install dependencies
+3. Run development proces: `npm start`
 4. Point browser at `http://localhost:8001/` to see the demo
+5. Modyfing source files will trigger incremental build
 
-To build changes (including compiling bootstrap less style) run `npm build`. For a development build with automatic incremental build on change, use `npm start`.
+Production-ready version can be built with `npm run build`. 
