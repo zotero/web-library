@@ -246,7 +246,7 @@ const deleteItems = itemKeys => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
-		const { config } = getState(state);
+		const { config } = state;
 		const items = itemKeys.map(ik => state.libraries[libraryKey].items[ik]);
 
 		dispatch({
