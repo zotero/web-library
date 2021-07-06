@@ -66,6 +66,7 @@ const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
 				.library(libraryKey)
 				.items()
 				.publications()
+				.top()
 		case 'ITEMS_BY_QUERY':
 			var configuredApi = api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -73,7 +74,7 @@ const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
 			if(queryConfig.collectionKey) {
 				configuredApi = configuredApi.collections(queryConfig.collectionKey).top()
 			} else if(queryConfig.isMyPublications) {
-				configuredApi = configuredApi.publications();
+				configuredApi = configuredApi.publications().top();
 			} else if(queryConfig.isTrash) {
 				configuredApi = configuredApi.trash();
 			} else {
