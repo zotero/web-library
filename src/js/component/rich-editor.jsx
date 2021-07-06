@@ -6,7 +6,10 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { default as Dropdown } from 'reactstrap/lib/Dropdown';
+import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
+import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 
 import Button from './ui/button';
 import Icon from './ui/icon';

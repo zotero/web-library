@@ -7,14 +7,14 @@ import Button from '../ui/button';
 import Icon from '../ui/icon';
 import Input from '../form/input';
 import Modal from '../ui/modal';
-import SearchWorkerFactory from 'webworkify';
+import SearchWorker from 'web-worker:../../style-search.worker.js';
 import { addCitationStyle, deleteCitationStyle, toggleModal, fetchStyles } from '../../actions';
 import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { STYLE_INSTALLER } from '../../constants/modals';
 
 const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 
-const SearchWorker = SearchWorkerFactory(require('../../style-search.worker.js'));
+const searchWorker = new SearchWorker();
 
 const StyleItem = memo(props => {
 	const { isActive, isCore, isSelected, isInstalled, onDelete, onInstall, style } = props;
@@ -131,7 +131,7 @@ const StyleInstallerModal = () => {
 
 		if(newFilterValue.length > 0) {
 			setIsSearching(true);
-			SearchWorker.postMessage(['FILTER', newFilterValue.toLowerCase()]);
+			searchWorker.postMessage(['FILTER', newFilterValue.toLowerCase()]);
 		}
 	}, SEARCH_INPUT_DEBOUNCE_DELAY);
 
@@ -163,15 +163,15 @@ const StyleInstallerModal = () => {
 	}, [dispatch, matchedCitationStyles]);
 
 	useEffect(() => {
-		SearchWorker.addEventListener('message', handleWorkerMessage);
+		searchWorker.addEventListener('message', handleWorkerMessage);
 		return () => {
-			SearchWorker.removeEventListener('message', handleWorkerMessage);
+			searchWorker.removeEventListener('message', handleWorkerMessage);
 		}
 	}, [handleWorkerMessage]);
 
 	useEffect(() => {
 		if(stylesData !== null) {
-			SearchWorker.postMessage(['LOAD', stylesData]);
+			searchWorker.postMessage(['LOAD', stylesData]);
 		}
 	}, [stylesData]);
 

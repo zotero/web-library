@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
 
 import { Toolbar, ToolGroup } from './ui/toolbars';
 import Icon from './ui/icon';

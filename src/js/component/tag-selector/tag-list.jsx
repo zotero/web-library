@@ -6,7 +6,10 @@ import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { default as Dropdown } from 'reactstrap/lib/Dropdown';
+import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
+import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 
 import Icon from '../ui/icon';
 import { usePrevious, useTags } from '../../hooks';

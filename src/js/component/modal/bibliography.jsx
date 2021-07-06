@@ -1,7 +1,10 @@
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { default as Dropdown } from 'reactstrap/lib/Dropdown';
+import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
+import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from '../ui/button';

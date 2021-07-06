@@ -3,7 +3,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { NavItem, NavLink } from 'reactstrap/lib';
+import { default as NavLink } from 'reactstrap/lib/NavItem';
+import { default as NavItem } from 'reactstrap/lib/NavLink';
+
 import { pick } from '../../common/immutable';
 
 export default class MobileMenuEntry extends React.PureComponent {

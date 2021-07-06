@@ -2,8 +2,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
-	DropdownMenu, DropdownItem } from 'reactstrap/lib';
+
+import { default as NavItem } from 'reactstrap/lib/NavItem';
+import { default as NavLink } from 'reactstrap/lib/NavLink';
+import { default as UncontrolledDropdown } from 'reactstrap/lib/UncontrolledDropdown';
+import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
+import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
+
 import Icon from './icon';
 import { pick } from '../../common/immutable'
 

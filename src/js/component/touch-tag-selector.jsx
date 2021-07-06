@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
 import TagList from './tag-selector/tag-list';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap/lib';
+import { default as Dropdown } from 'reactstrap/lib/Dropdown';
+import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
+import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 import { filterTags, navigate, toggleHideAutomaticTags, toggleModal, toggleTouchTagSelector } from '../actions';
 import { pluralize } from '../common/format';
 import { Toolbar } from './ui/toolbars';

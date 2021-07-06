@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { CSSTransition } from 'react-transition-group';
+import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 
 const PanelHeader = props => {
 	const { className, children: header } = props;
