@@ -1,4 +1,4 @@
-import './wydr';
+import './wdyr';
 import init from './init';
 
 const targetDom = document.getElementById('zotero-web-library');
