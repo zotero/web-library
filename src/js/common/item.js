@@ -35,6 +35,16 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 	}
 }
 
+const getBestAttachmentIcon = ({ attachmentType, attachmentSize = null }) => {
+	if(attachmentType === 'application/pdf' ) {
+		return 'pdf';
+	} else if(attachmentType === 'text/html' && attachmentSize === null) {
+		return 'web-page-snapshot';
+	} else {
+		return 'document';
+	}
+}
+
 const getDerivedData = (item, itemTypes, tagColors) => {
 	const { itemType, dateAdded, dateModified, extra, journalAbbreviation, language, libraryCatalog,
 	callNumber, rights } = item;
@@ -58,15 +68,13 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
 	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(itemTypeName);
-	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
+	const bestAttachment = get(item, [Symbol.for('links'), 'attachment'], null);
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
 	const year = date.substr(0, 4);
 
 	return {
-		attachmentIconName: attachment ? getAttachmentIcon({
-			linkMode: 'imported_file', contentType: attachment.attachmentType }
-		) : null,
+		attachmentIconName: bestAttachment ? getBestAttachmentIcon(bestAttachment) : null,
 		colors,
 		createdByUser,
 		creator,
