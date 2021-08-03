@@ -153,8 +153,12 @@ const openBestAttachment = itemKey => {
 		const state = getState();
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
 		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
-		const attachmentItemKey = extractItemKey(attachment.href);
-		dispatch(openAttachment(attachmentItemKey, true));
+		if(attachment) {
+			const attachmentItemKey = extractItemKey(attachment.href);
+			dispatch(openAttachment(attachmentItemKey, true));
+		} else {
+			dispatch(openBestAttachmentFallback(itemKey));
+		}
 	}
 };
 

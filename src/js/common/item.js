@@ -4,7 +4,7 @@ import baseMappings from 'zotero-base-mappings';
 import { paramCase } from 'param-case';
 
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
-import { get } from '../utils';
+import { cleanDOI, cleanURL, get } from '../utils';
 
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
@@ -35,14 +35,40 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 	}
 }
 
-const getBestAttachmentIcon = ({ attachmentType, attachmentSize = null }) => {
-	if(attachmentType === 'application/pdf' ) {
-		return 'pdf';
-	} else if(attachmentType === 'text/html' && attachmentSize === null) {
-		return 'web-page-snapshot';
-	} else {
-		return 'document';
+// "attachment" column may be different from attachment icon, depending on context
+const getAttachmentColumnIcon = item => {
+	const bestAttachment = get(item, [Symbol.for('links'), 'attachment'], null);
+
+	if(bestAttachment) {
+		const { attachmentType, attachmentSize = null } = bestAttachment
+		if(attachmentType === 'application/pdf' ) {
+			return 'pdf';
+		} else if(attachmentType === 'text/html' && attachmentSize === null) {
+			return 'web-page-snapshot';
+		} else {
+			return 'document';
+		}
 	}
+
+	if(item.itemType === 'attachment' && item.linkMode !== 'linked_file') {
+		return getAttachmentIcon(item);
+	}
+
+	if(item.url) {
+		const url = cleanURL(item.url, true);
+		if(url) {
+			return 'link';
+		}
+	}
+
+	if(item.DOI) {
+		const doi = cleanDOI(item.DOI);
+		if(doi) {
+			return 'link';
+		}
+	}
+
+	return null;
 }
 
 const getDerivedData = (item, itemTypes, tagColors) => {
@@ -68,13 +94,13 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
 	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(itemTypeName);
-	const bestAttachment = get(item, [Symbol.for('links'), 'attachment'], null);
+
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
 	const year = date.substr(0, 4);
 
 	return {
-		attachmentIconName: bestAttachment ? getBestAttachmentIcon(bestAttachment) : null,
+		attachmentIconName: getAttachmentColumnIcon(item),
 		colors,
 		createdByUser,
 		creator,
