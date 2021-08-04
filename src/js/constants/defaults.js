@@ -29,7 +29,7 @@ export const preferences = {
 	columns: [
 		{
 			field: 'title',
-			fraction: 0.5,
+			fraction: 0.45,
 			isVisible: true,
 			minFraction: 0.1,
 			sort: 'asc',
@@ -127,7 +127,7 @@ export const preferences = {
 		{
 			field: 'attachment',
 			fraction: 0.05,
-			isVisible: false,
+			isVisible: true,
 			minFraction: 0.05,
 		},
 	]

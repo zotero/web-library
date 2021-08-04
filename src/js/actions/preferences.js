@@ -8,6 +8,10 @@ const getRestoredColumns = (userColumns, defaultColumns) => defaultColumns.map(d
 	isVisible: (userColumns.find(uc => uc.field === defaultColumn.field) || defaultColumn).isVisible,
 }));
 
+const getColumnsWithAttachmentVisible = (userColumns) => userColumns.map(
+	uc => ({ ...uc, isVisible: uc.field === 'attachment' ? true : uc.isVisible })
+);
+
 const preferencesLoad = () => {
 	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
 	var preferences;
@@ -24,6 +28,15 @@ const preferencesLoad = () => {
 				userPreferences = {
 					...userPreferences,
 					columns: getRestoredColumns(userPreferences.columns, defaultPreferences.columns),
+					version
+				}
+			}
+			// prior 1.0.27 "attachment" column was hidden by default, switch on for everybody whose
+			// preferences have been created prior to that version
+			if(parseInt(major) === 1 && parseInt(minor) === 0 && parseInt(patch) < 27) {
+				userPreferences = {
+					...userPreferences,
+					columns: getColumnsWithAttachmentVisible(userPreferences.columns),
 					version
 				}
 			}
