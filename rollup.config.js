@@ -6,6 +6,7 @@ import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import sizes from 'rollup-plugin-sizes';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import alias from '@rollup/plugin-alias';
 import { terser } from 'rollup-plugin-terser';
 
 const isProduction = process.env.NODE_ENV?.startsWith('prod');
@@ -25,6 +26,10 @@ const config = {
 		moduleSideEffects: 'no-external',
 	},
 	plugins: [
+		alias({ entries: [
+			// workaround for https://github.com/react-dnd/react-dnd/issues/2772
+			{ find: '@react-dnd/asap', replacement: '@react-dnd/asap/dist/esm/browser/asap.js' },
+        ]}),
 		resolve({
 			preferBuiltins: false,
 			mainFields: ['browser', 'main'],
