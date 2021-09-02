@@ -215,6 +215,11 @@
 					display: none;
 				}
 
+				.tag-circles {
+					display: inline-flex;
+					margin-left: $space-min;
+				}
+
 				.icon {
 					color: $item-creator-date-color;
 				}

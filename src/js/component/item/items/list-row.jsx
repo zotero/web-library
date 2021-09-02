@@ -163,20 +163,22 @@ const ListRow = memo(props => {
 							// <Icon type="16/attachment" width="16" height="16" />
 							// <Icon type="16/note-sm" width="16" height="16" />
 						}
-
-						{ colors.map((color, index) => (
-							<Icon
-								key={ index }
-								type={ index === 0 ? '12/circle' : '12/crescent-circle' }
-								symbol={ index === 0 ?
-									(!isSelectMode && isActive) ? 'circle-active' : 'circle' :
-									(!isSelectMode && isActive) ? 'crescent-circle-active' : 'crescent-circle'
-								}
-								width={ index === 0 ? 12 : 8 }
-								height="12"
-								style={ { color } }
-							/>
-						))}
+						{ itemData.emojis.join(' ') }
+						<span className="tag-circles">
+							{ colors.map((color, index) => (
+								<Icon
+									key={ index }
+									type={ index === 0 ? '12/circle' : '12/crescent-circle' }
+									symbol={ index === 0 ?
+										(!isSelectMode && isActive) ? 'circle-active' : 'circle' :
+										(!isSelectMode && isActive) ? 'crescent-circle-active' : 'crescent-circle'
+									}
+									width={ index === 0 ? 12 : 8 }
+									height="12"
+									style={ { color } }
+								/>
+							))}
+						</span>
 					</div>
 				</div>
 			</div>

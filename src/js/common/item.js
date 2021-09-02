@@ -6,6 +6,12 @@ import { paramCase } from 'param-case';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { cleanDOI, cleanURL, get } from '../utils';
 
+const EMOJI_RE = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
+
+// Remove emoji and zero-width joiner and see if anything's left
+// https://github.com/zotero/zotero/commit/f9035c8fda715add49c2b185ef7e240e7e045ec3
+const _isOnlyEmoji = str => !str.replace(EMOJI_RE, '').replace(/\u200D/g,'');
+
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
 	return itemType in baseMappings && property in baseMappings[itemType] ?
@@ -74,6 +80,7 @@ const getAttachmentColumnIcon = item => {
 const getDerivedData = (item, itemTypes, tagColors) => {
 	const { itemType, dateAdded, dateModified, extra, journalAbbreviation, language, libraryCatalog,
 	callNumber, rights } = item;
+
 	const title = getItemTitle(item);
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 		item[Symbol.for('meta')].creatorSummary :
@@ -81,10 +88,15 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 	const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 		item[Symbol.for('meta')].parsedDate :
 		'';
+	const emojis = [];
 	const colors = item.tags.reduce(
 		(acc, { tag }) => {
 			if(tag in tagColors) {
-				acc.push(tagColors[tag]);
+				if(_isOnlyEmoji(tag)) {
+					emojis.push(tag);
+				} else {
+					acc.push(tagColors[tag]);
+				}
 			}
 			return acc;
 		}, []
@@ -107,6 +119,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		date,
 		dateAdded: dateLocalized(new Date(dateAdded)),
 		dateModified: dateLocalized(new Date(dateModified)),
+		emojis,
 		extra,
 		iconName,
 		itemType: itemTypeName,

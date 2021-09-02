@@ -43,20 +43,23 @@ const TitleCell = memo(props => {
 				{ itemData[columnName] }
 			</div>
 			<div className="tag-colors">
-				{ itemData.colors.map((color, index) => (
-					<Icon
-						label={ `${colorNames[color] || ''} circle icon` }
-						key={ index }
-						type={ index === 0 ? '10/circle' : '10/crescent-circle' }
-						symbol={ index === 0 ?
-							(isFocused && isSelected ? 'circle-focus' : 'circle') :
-							(isFocused && isSelected ? 'crescent-circle-focus' : 'crescent-circle')
-						}
-						width={ index === 0 ? 10 : 7 }
-						height="10"
-						style={ { color } }
-					/>
-				)) }
+				{ itemData.emojis.join(' ') }
+				<span className="tag-circles">
+					{ itemData.colors.map((color, index) => (
+						<Icon
+							label={ `${colorNames[color] || ''} circle icon` }
+							key={ index }
+							type={ index === 0 ? '10/circle' : '10/crescent-circle' }
+							symbol={ index === 0 ?
+								(isFocused && isSelected ? 'circle-focus' : 'circle') :
+								(isFocused && isSelected ? 'crescent-circle-focus' : 'crescent-circle')
+							}
+							width={ index === 0 ? 10 : 7 }
+							height="10"
+							style={ { color } }
+						/>
+					)) }
+				</span>
 			</div>
 		</Cell>
 	);

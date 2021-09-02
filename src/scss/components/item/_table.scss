@@ -304,12 +304,18 @@
 			}
 
 			.tag-colors {
+				align-items: center;
+				display: inline-flex;
 				flex: 0 1 auto;
-				display: flex;
-				padding-left: $space-xs;
 				margin-left: auto; // space-between on .metadata breaks placeholders
-				overflow: hidden;
 				min-width: 0;
+				overflow: hidden;
+				padding-left: $space-xs;
+
+				.tag-circles {
+					display: inline-flex;
+					margin-left: $space-min;
+				}
 			}
 		}
 	}
