@@ -1,28 +1,38 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import RichEditor from '../../component/rich-editor';
 import { dateLocalized } from '../../common/format';
 import { get } from '../../utils';
-import { openAttachment, updateItem } from '../../actions/';
+import { getAttachmentUrl, updateItem } from '../../actions/';
+
+const refreshAttachmentUrl = async (attachmentKey, setAttachmentUrl, dispatch, timeoutRef) => {
+	const url = await dispatch(getAttachmentUrl(attachmentKey));
+	setAttachmentUrl(url);
+	timeoutRef.current = setTimeout(refreshAttachmentUrl, 60000, attachmentKey, setAttachmentUrl, dispatch, timeoutRef);
+}
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
+	const timeoutRef = useRef(null);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const item = useSelector(
 		state => get(state, ['libraries', state.current.libraryKey, 'items', attachmentKey], {}),
 		shallowEqual
 	);
-
-	const handleLinkInteraction = useCallback(ev => {
-		ev.preventDefault();
-		dispatch(openAttachment(attachmentKey));
-	}, [dispatch, attachmentKey]);
+	const [attachmentUrl, setAttachmentUrl] = useState(null);
 
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
+
+	useEffect(() => {
+		if(item[Symbol.for('links')].enclosure) {
+			refreshAttachmentUrl(attachmentKey, setAttachmentUrl, dispatch, timeoutRef);
+			return () => clearTimeout(timeoutRef.current); // eslint-disable-line react-hooks/exhaustive-deps
+		}
+	}, [attachmentKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<React.Fragment>
@@ -44,16 +54,16 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				</li>
 			) }
 			{ item.filename && item.linkMode.startsWith('imported') && (
+				<React.Fragment>
 				<li className="metadata">
 					<div className="key">
 						<div className="truncate">Filename</div>
 					</div>
 					<div className="value">
-						{ item[Symbol.for('links')].enclosure ? (
+						{ attachmentUrl ? (
 							<a
+								href={ attachmentUrl }
 								className="truncate"
-								onMouseDown={ handleLinkInteraction }
-								onClick={ handleLinkInteraction }
 							>
 								{ item.filename }
 							</a>
@@ -64,6 +74,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						) }
 					</div>
 				</li>
+				</React.Fragment>
 			) }
 			{ item.accessDate && (
 				<li className="metadata">
