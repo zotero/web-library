@@ -1,3 +1,4 @@
+import attachmentsUrl from './attachments-url';
 import collections from './collections';
 import deleting from './deleting';
 import items from './items';
@@ -25,6 +26,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 		return {
 			...state,
 			[action.libraryKey]: {
+				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
 				collections: collections(get(state, [action.libraryKey, 'collections']), action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action, {
