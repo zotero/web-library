@@ -1,12 +1,6 @@
-'use strict';
-
 import {
-    ERROR_DELETE_ITEM,
-    ERROR_DELETE_ITEMS,
-    RECEIVE_DELETE_ITEM,
-    RECEIVE_DELETE_ITEMS,
-    REQUEST_DELETE_ITEM,
-    REQUEST_DELETE_ITEMS,
+    ERROR_DELETE_ITEM, ERROR_DELETE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
+    REQUEST_DELETE_ITEM, REQUEST_DELETE_ITEMS,
 } from '../../constants/actions';
 
 const deleting = (state = [], action) => {

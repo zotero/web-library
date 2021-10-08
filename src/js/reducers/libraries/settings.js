@@ -1,6 +1,5 @@
 import {
-    RECEIVE_LIBRARY_SETTINGS,
-    RECEIVE_UPDATE_LIBRARY_SETTINGS,
+	RECEIVE_LIBRARY_SETTINGS, RECEIVE_UPDATE_LIBRARY_SETTINGS,
 } from '../../constants/actions';
 
 const settings = (state = {}, action) => {

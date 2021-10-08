@@ -1,22 +1,13 @@
-'use strict';
-import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys, updateFetchingState } from '../../common/reducers';
+import { populateItemKeys, filterItemKeys, injectExtraItemKeys, updateFetchingState } from
+'../../common/reducers';
 import { indexByKey, get } from '../../utils';
 import { mapObject } from '../../common/immutable';
 
 import {
-	RECEIVE_RECOVER_ITEMS_TRASH,
-    DROP_CHILD_ITEMS,
-    ERROR_CHILD_ITEMS,
-    RECEIVE_CHILD_ITEMS,
-    RECEIVE_CREATE_ITEM,
-    RECEIVE_CREATE_ITEMS,
-    RECEIVE_DELETE_ITEM,
-    RECEIVE_DELETE_ITEMS,
-    RECEIVE_DELETED_CONTENT,
-    RECEIVE_FETCH_ITEMS,
-    RECEIVE_MOVE_ITEMS_TRASH,
-    RECEIVE_UPDATE_ITEM,
-    REQUEST_CHILD_ITEMS,
+	RECEIVE_RECOVER_ITEMS_TRASH, DROP_CHILD_ITEMS, ERROR_CHILD_ITEMS, RECEIVE_CHILD_ITEMS,
+	RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
+	RECEIVE_DELETED_CONTENT, RECEIVE_FETCH_ITEMS, RECEIVE_MOVE_ITEMS_TRASH, RECEIVE_UPDATE_ITEM,
+	REQUEST_CHILD_ITEMS,
 } from '../../constants/actions.js';
 
 const detectChangesInParent = (state, action, items) => {

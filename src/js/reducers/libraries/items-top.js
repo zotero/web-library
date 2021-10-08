@@ -1,20 +1,11 @@
 import { indexByKey } from '../../utils';
-import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../../common/reducers';
+import { injectExtraItemKeys, filterItemKeys, populateItemKeys, sortItemKeysOrClear,
+updateFetchingState } from '../../common/reducers';
 
 import {
-	DROP_TOP_ITEMS,
-	ERROR_TOP_ITEMS,
-	RECEIVE_CREATE_ITEM,
-	RECEIVE_CREATE_ITEMS,
-	RECEIVE_DELETE_ITEM,
-	RECEIVE_DELETE_ITEMS,
-	RECEIVE_DELETED_CONTENT,
-	RECEIVE_FETCH_ITEMS,
-	RECEIVE_MOVE_ITEMS_TRASH,
-	RECEIVE_RECOVER_ITEMS_TRASH,
-	RECEIVE_TOP_ITEMS,
-	REQUEST_TOP_ITEMS,
-	SORT_ITEMS,
+	DROP_TOP_ITEMS, ERROR_TOP_ITEMS, RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM,
+	RECEIVE_DELETE_ITEMS, RECEIVE_DELETED_CONTENT, RECEIVE_FETCH_ITEMS, RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_TOP_ITEMS, REQUEST_TOP_ITEMS, SORT_ITEMS,
 } from '../../constants/actions.js';
 
 const detectChangesInTop = (state, action, items) => {

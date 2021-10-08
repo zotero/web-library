@@ -2,17 +2,9 @@ import { indexByKey } from '../../utils';
 import { filterItemKeys, injectExtraItemKeys, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../../common/reducers';
 
 import {
-    DROP_TRASH_ITEMS,
-    ERROR_TRASH_ITEMS,
-    RECEIVE_DELETE_ITEM,
-    RECEIVE_DELETE_ITEMS,
-    RECEIVE_DELETED_CONTENT,
-    RECEIVE_FETCH_ITEMS,
-    RECEIVE_MOVE_ITEMS_TRASH,
-    RECEIVE_RECOVER_ITEMS_TRASH,
-    RECEIVE_TRASH_ITEMS,
-    REQUEST_TRASH_ITEMS,
-    SORT_ITEMS,
+    DROP_TRASH_ITEMS, ERROR_TRASH_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
+    RECEIVE_DELETED_CONTENT, RECEIVE_FETCH_ITEMS, RECEIVE_MOVE_ITEMS_TRASH,
+    RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_TRASH_ITEMS, REQUEST_TRASH_ITEMS, SORT_ITEMS,
 } from '../../constants/actions.js';
 
 const detectChangesInTrash = (state, action, items) => {

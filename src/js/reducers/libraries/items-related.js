@@ -1,7 +1,5 @@
 import {
-	REQUEST_RELATED_ITEMS,
-    RECEIVE_RELATED_ITEMS,
-    ERROR_RELATED_ITEMS,
+	REQUEST_RELATED_ITEMS, RECEIVE_RELATED_ITEMS, ERROR_RELATED_ITEMS,
 } from '../../constants/actions.js';
 
 const itemsRelated = (state = {}, action) => {
