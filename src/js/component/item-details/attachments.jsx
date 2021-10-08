@@ -14,15 +14,15 @@ import Spinner from '../ui/spinner';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
 import { createAttachments, createAttachmentsFromDropped, moveToTrash, fetchChildItems, navigate,
-sourceFile, openAttachment, toggleModal, updateItem } from '../../actions';
-import { get, getScrollContainerPageCount, getUniqueId, stopPropagation, sortByKey, noop } from '../../utils';
+sourceFile, tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
+import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey,
+noop } from '../../utils';
 import { getFileData } from '../../common/event';
 import { isTriggerEvent } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { useFetchingState, useFocusManager, usePrevious } from '../../hooks';
-
+import { useForceUpdate, useFetchingState, useFocusManager, usePrevious } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -45,33 +45,69 @@ AttachmentIcon.propTypes = {
 };
 
 const AttachmentDownloadIcon = memo(props => {
-	const { attachment, isUploading } = props;
+	const { attachment, itemKey, isUploading } = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
+	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'url']));
+	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'timestamp'], 0));
 	const iconSize = isTouchOrSmall ? '24' : '16';
+	const forceRerender = useForceUpdate();
+	const timeout = useRef(null);
 
-	const handleLinkInteraction = useCallback(ev => {
+	const handleClick = useCallback(ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
-		if(isTriggerEvent(ev) || (ev.type === 'mousedown' && ev.button === 1)) {
-			ev.stopPropagation();
-			ev.preventDefault();
-			dispatch(openAttachment(key));
+
+		ev.stopPropagation();
+		ev.preventDefault();
+
+		if(isFetchingUrl) {
+			return;
 		}
-	}, [dispatch]);
+
+		openDelayedURL(dispatch(tryGetAttachmentURL(key)));
+	}, [dispatch, isFetchingUrl]);
+
+	useEffect(() => {
+		if(url && Date.now() - timestamp < 60000) {
+			const urlExpiresTimestamp = timestamp + 60000;
+			const urlExpriesFromNow = urlExpiresTimestamp - Date.now();
+			console.log('will rererender icon in', { urlExpriesFromNow });
+			clearTimeout(timeout.current);
+			timeout.current = setTimeout(forceRerender, urlExpriesFromNow);
+			return () => clearTimeout(timeout.current);
+		}
+	}, [forceRerender, url, timestamp]);
 
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
-			<a
-				title="Download attachment"
-				className="btn btn-icon"
-				onClick={ handleLinkInteraction }
-				onKeyDown={ handleLinkInteraction }
-				onMouseDown={ handleLinkInteraction }
-				role="button"
-				tabIndex={ -3 }
-			>
-				<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-			</a>
+			<React.Fragment>
+				{ (url && (Date.now() - timestamp < 60000)) ? (
+				<a
+					className="btn btn-icon"
+					href={ url }
+					onClick={ stopPropagation }
+					rel="noreferrer"
+					role="button"
+					tabIndex={ -3 }
+					target="_blank"
+					title="Download attachment"
+				>
+					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+				</a>
+				) : (
+				<a
+					className="btn btn-icon"
+					onClick={ handleClick }
+					role="button"
+					tabIndex={ -3 }
+					title="Download attachment"
+				>
+					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+				</a>
+				)}
+			</React.Fragment>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
 				title="Download attachment"
@@ -93,6 +129,7 @@ AttachmentDownloadIcon.displayName = 'AttachmentDownloadIcon';
 
 AttachmentDownloadIcon.propTypes = {
 	attachment: PropTypes.object,
+	itemKey: PropTypes.string,
 	isUploading: PropTypes.bool,
 };
 
@@ -196,6 +233,7 @@ const Attachment = memo(props => {
 			</div>
 			{ isUploading && <Spinner className="small" /> }
 			<AttachmentDownloadIcon
+				itemKey={ itemKey }
 				attachment={ attachment }
 				isUploading={ isUploading }
 			/>

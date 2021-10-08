@@ -416,6 +416,29 @@ const vec2dist = (a, b) => {
 
 const cede = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay));
 
+/* Enables opening a URL in a new tab circumventing popup blockers, including silent popup blocker
+in Safari iOS (#452). Should only be called synchroneusly from trusted events (preferable click as
+some events don't work in some browsers). New tab is opened immediately to avoid popup blocker,
+then, once `getURLPromise` settles, correct URL is loaded into the new tab or, if `getURLPromise`
+returns false or throws an error, new tab will be closed. */
+const openDelayedURL = getURLPromise => {
+	const windowReference = window.open();
+
+	if(!windowReference) {
+		throw new Error('Failed to open a window.');
+	}
+
+	getURLPromise.then(url => {
+		if(url) {
+			windowReference.location = url;
+		} else {
+			windowReference.close();
+		}
+	});
+
+	getURLPromise.catch(() => windowReference.close());
+}
+
 export {
 	applyChangesToVisibleColumns,
 	cede,
@@ -446,6 +469,7 @@ export {
 	loadJs,
 	mapRelationsToItemKeys,
 	noop,
+	openDelayedURL,
 	processIdentifierMultipleItems,
 	removeRelationByItemKey,
 	resizeVisibleColumns,
