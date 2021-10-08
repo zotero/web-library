@@ -28,11 +28,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if(item[Symbol.for('links')].enclosure) {
+		if(!timeoutRef.current && item[Symbol.for('links')]?.enclosure) {
 			refreshAttachmentUrl(attachmentKey, setAttachmentUrl, dispatch, timeoutRef);
 			return () => clearTimeout(timeoutRef.current); // eslint-disable-line react-hooks/exhaustive-deps
 		}
-	}, [attachmentKey]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [attachmentKey, item]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<React.Fragment>
