@@ -6,12 +6,7 @@ import RichEditor from '../../component/rich-editor';
 import { dateLocalized } from '../../common/format';
 import { get } from '../../utils';
 import { getAttachmentUrl, updateItem } from '../../actions/';
-
-const refreshAttachmentUrl = async (attachmentKey, setAttachmentUrl, dispatch, timeoutRef) => {
-	const url = await dispatch(getAttachmentUrl(attachmentKey));
-	setAttachmentUrl(url);
-	timeoutRef.current = setTimeout(refreshAttachmentUrl, 60000, attachmentKey, setAttachmentUrl, dispatch, timeoutRef);
-}
+import { useForceUpdate } from '../../hooks/';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -21,18 +16,32 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		state => get(state, ['libraries', state.current.libraryKey, 'items', attachmentKey], {}),
 		shallowEqual
 	);
-	const [attachmentUrl, setAttachmentUrl] = useState(null);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'isFetching'], false));
+	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'url']));
+	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'timestamp'], 0));
+	const urlIsFresh = url && Date.now() - timestamp < 60000;
+	const forceRerender = useForceUpdate();
 
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
 
 	useEffect(() => {
-		if(!timeoutRef.current && item[Symbol.for('links')]?.enclosure) {
-			refreshAttachmentUrl(attachmentKey, setAttachmentUrl, dispatch, timeoutRef);
-			return () => clearTimeout(timeoutRef.current); // eslint-disable-line react-hooks/exhaustive-deps
+		if(urlIsFresh) {
+			const urlExpiresTimestamp = timestamp + 60000;
+			const urlExpriesFromNow = urlExpiresTimestamp - Date.now();
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = setTimeout(forceRerender, urlExpriesFromNow);
 		}
-	}, [attachmentKey, item]); // eslint-disable-line react-hooks/exhaustive-deps
+		return () => clearTimeout(timeoutRef.current); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [forceRerender, urlIsFresh, timestamp, attachmentKey, dispatch, isFetchingUrl]);
+
+	useEffect(() => {
+		if(!urlIsFresh && !isFetchingUrl && item[Symbol.for('links')]?.enclosure) {
+			dispatch(getAttachmentUrl(attachmentKey));
+		}
+	}, [attachmentKey, isFetchingUrl, item, urlIsFresh, dispatch]);
 
 	return (
 		<React.Fragment>
@@ -60,10 +69,12 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						<div className="truncate">Filename</div>
 					</div>
 					<div className="value">
-						{ attachmentUrl ? (
+						{ url ? (
 							<a
-								href={ attachmentUrl }
 								className="truncate"
+								href={ url }
+								rel="noreferrer"
+								target="_blank"
 							>
 								{ item.filename }
 							</a>
