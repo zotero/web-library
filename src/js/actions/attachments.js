@@ -17,7 +17,6 @@ const tryGetFirstLink = itemKey => {
 			await dispatch(fetchChildItems(itemKey, { start: 0, limit: 100 }));
 			itemsByParent = get(getState(), ['libraries', state.current.libraryKey, 'itemsByParent', itemKey], null);
 		}
-		console.log({ itemsByParent });
 		if(itemsByParent && itemsByParent.keys.length > 0) {
 			const firstAttachmentKey = itemsByParent.keys[0];
 			const item = get(getState(), ['libraries', state.current.libraryKey, 'items', firstAttachmentKey], null);

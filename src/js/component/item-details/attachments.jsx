@@ -52,6 +52,7 @@ const AttachmentDownloadIcon = memo(props => {
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'timestamp'], 0));
+	const urlIsFresh = url && (Date.now() - timestamp) < 60000;
 	const iconSize = isTouchOrSmall ? '24' : '16';
 	const forceRerender = useForceUpdate();
 	const timeout = useRef(null);
@@ -70,10 +71,9 @@ const AttachmentDownloadIcon = memo(props => {
 	}, [dispatch, isFetchingUrl]);
 
 	useEffect(() => {
-		if(url && Date.now() - timestamp < 60000) {
+		if(urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
 			const urlExpriesFromNow = urlExpiresTimestamp - Date.now();
-			console.log('will rererender icon in', { urlExpriesFromNow });
 			clearTimeout(timeout.current);
 			timeout.current = setTimeout(forceRerender, urlExpriesFromNow);
 			return () => clearTimeout(timeout.current);
@@ -83,7 +83,7 @@ const AttachmentDownloadIcon = memo(props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<React.Fragment>
-				{ (url && (Date.now() - timestamp < 60000)) ? (
+				{ urlIsFresh ? (
 				<a
 					className="btn btn-icon"
 					href={ url }
