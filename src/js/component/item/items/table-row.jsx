@@ -297,13 +297,7 @@ const TableRow = props => {
 		isFileUploadAllowed && onFileHoverOnRow(isOver, dropZone);
 	}, [isOver, dropZone, isFileUploadAllowed, onFileHoverOnRow]);
 
-	const attach = useCallback((domElement) => {
-		drag(domElement);
-		drop(domElement);
-		ref.current = domElement;
-	}, [drag, drop]);
-
-	return (
+	return drag(drop(
 		<div
 			aria-selected={ isSelected }
 			aria-rowindex={ index + 1 }
@@ -315,7 +309,7 @@ const TableRow = props => {
 			onDoubleClick={ handleMouseEvent }
 			onMouseDown={ handleMouseEvent }
 			role="row"
-			ref={ attach }
+			ref={ ref }
 			tabIndex={ -2 }
 		>
 			{ columns.map((c, colIndex) => itemData ? (
@@ -355,7 +349,7 @@ const TableRow = props => {
 				columnName={ c.field }
 			/> ) }
 		</div>
-	);
+	));
 };
 
 TableRow.propTypes = {
