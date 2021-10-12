@@ -8,8 +8,7 @@ const settings = (state = {}, action) => {
 			return {
 				...state,
 				[action.itemKey]: {
-					timestamp: Date.now(),
-					isFetching: true
+					isFetching: true,
 				}
 			}
 		case RECEIVE_ATTACHMENT_URL:
@@ -17,8 +16,9 @@ const settings = (state = {}, action) => {
 				...state,
 				[action.itemKey]: {
 					...(state[action.itemKey] || {}),
+					timestamp: Date.now(),
 					isFetching: false,
-					url: action.url
+					url: action.url,
 				}
 			}
 		case ERROR_ATTACHMENT_URL:
