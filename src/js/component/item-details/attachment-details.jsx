@@ -50,16 +50,18 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			{ item.url && (
 				<li className="metadata">
 					<div className="key">
-						<div className="truncate">Original URL</div>
+						<label>
+							<a target="_blank" rel="nofollow noopener noreferrer" href={ item.url }>
+								<span className="truncate">Original URL</span>
+								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
+							</a>
+						</label>
 					</div>
 					<div className="value">
-						<a
-							target="_blank" rel="nofollow noopener noreferrer"
-							href={ item.url }
-							className="truncate"
-						>
+						<span className="truncate" title={ item.url }>
 							{ item.url }
-						</a>
+						</span>
 					</div>
 				</li>
 			) }
@@ -70,17 +72,17 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						<label>
 							{ url ? (
 							<a target="_blank" rel="nofollow noopener noreferrer" href={ url }>
-								Filename
+								<span className="truncate">Filename</span>
 								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
 								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
 							</a>
 							) : (
-								<div className="truncate">Filename</div>
+								<span className="truncate">Filename</span>
 							) }
 						</label>
 					</div>
 					<div className="value">
-						<span className="truncate no-link">
+						<span className="truncate no-link" title={ item.filename }>
 							{ item.filename }
 						</span>
 					</div>
