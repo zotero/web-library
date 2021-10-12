@@ -47,7 +47,7 @@ const ListRow = memo(props => {
 		shallowEqual
 	);
 
-	const { title = '', creator = '', year = '', iconName = '', colors = [] } = itemData || {};
+	const { title = '', creator = '', year = '', iconName = '', colors = [], emojis = [] } = itemData || {};
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
 
 	const className = cx({
@@ -163,7 +163,7 @@ const ListRow = memo(props => {
 							// <Icon type="16/attachment" width="16" height="16" />
 							// <Icon type="16/note-sm" width="16" height="16" />
 						}
-						{ itemData.emojis.join(' ') }
+						{ emojis.join(' ') }
 						<span className="tag-circles">
 							{ colors.map((color, index) => (
 								<Icon
