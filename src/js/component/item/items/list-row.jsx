@@ -47,7 +47,7 @@ const ListRow = memo(props => {
 		shallowEqual
 	);
 
-	const { title = '', creator = '', year = '', iconName = '', colors = [], emojis = [] } = itemData || {};
+	const { title = '', creator = '', year = '', iconName = '', colors = [], emojis = [], attachmentIconName = '' } = itemData || {};
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
 
 	const className = cx({
@@ -159,9 +159,14 @@ const ListRow = memo(props => {
 					</div>
 					<div className="icons">
 						{
-							// currently blocked #191
-							// <Icon type="16/attachment" width="16" height="16" />
-							// <Icon type="16/note-sm" width="16" height="16" />
+							attachmentIconName && (
+								<React.Fragment>
+								<Icon
+									type={ `16/item-types/light/2x/${attachmentIconName}` }
+									symbol={ isActive && !isSelectMode ? `${attachmentIconName}-white` : itemData.attachmentIconName }
+									width="16"
+									height="16"
+								/>  </React.Fragment>) // eslint-disable-line no-irregular-whitespace
 						}
 						{ emojis.join(' ') }
 						<span className="tag-circles">
