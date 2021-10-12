@@ -7,6 +7,7 @@ import { dateLocalized } from '../../common/format';
 import { get } from '../../utils';
 import { getAttachmentUrl, updateItem } from '../../actions/';
 import { useForceUpdate } from '../../hooks/';
+import Icon from '../ui/icon';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -64,25 +65,24 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			) }
 			{ item.filename && item.linkMode.startsWith('imported') && (
 				<React.Fragment>
-				<li className="metadata">
+				<li className="metadata interactable">
 					<div className="key">
-						<div className="truncate">Filename</div>
+						<label>
+							{ url ? (
+							<a target="_blank" rel="nofollow noopener noreferrer" href={ url }>
+								Filename
+								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
+								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
+							</a>
+							) : (
+								<div className="truncate">Filename</div>
+							) }
+						</label>
 					</div>
 					<div className="value">
-						{ url ? (
-							<a
-								className="truncate"
-								href={ url }
-								rel="noreferrer"
-								target="_blank"
-							>
-								{ item.filename }
-							</a>
-						) : (
-							<span className="truncate no-link">
-								{ item.filename }
-							</span>
-						) }
+						<span className="truncate no-link">
+							{ item.filename }
+						</span>
 					</div>
 				</li>
 				</React.Fragment>
@@ -90,9 +90,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			{ item.accessDate && (
 				<li className="metadata">
 					<div className="key">
-						<div className="truncate">
-							Access Time
-						</div>
+						<label>
+							<div className="truncate">
+								Access Time
+							</div>
+						</label>
 					</div>
 					<div className="value">
 						<div className="truncate">{ dateLocalized(new Date((item.accessDate))) }</div>
@@ -102,7 +104,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			{ item.dateModified && (
 				<li className="metadata">
 					<div className="key">
-						<div className="truncate">Modified Time</div>
+						<label>
+							<div className="truncate">Modified Time</div>
+						</label>
 					</div>
 					<div className="value">
 						<div className="truncate">{ dateLocalized(new Date((item.dateModified))) }</div>

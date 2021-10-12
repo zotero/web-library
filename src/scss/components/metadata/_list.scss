@@ -27,6 +27,11 @@
 		}
 	}
 
+	.attachment-details &, .standalone-attachment & {
+		user-select: text;
+		cursor: auto;
+	}
+
 	.metadata {
 		align-items: flex-start;
 
