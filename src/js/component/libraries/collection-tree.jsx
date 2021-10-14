@@ -614,7 +614,7 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{ isPickerMode ? (
+						{ (isPickerMode && !isReadOnly) ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }

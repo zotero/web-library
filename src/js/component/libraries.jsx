@@ -32,11 +32,12 @@ const LibraryNode = props => {
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
 	// trash) and has no collections
 	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
+	const isPickerSkip = isPickerMode && isReadOnly;
 
 	const handleClick = useCallback(() => {
-		if(isPickerMode) {
+		if(isPickerMode && !isPickerSkip) {
 			pickerNavigate({ library: libraryKey, view: 'library' });
-		} else {
+		} else if(!isPickerMode) {
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}
 	}, [dispatch, isPickerMode, libraryKey, pickerNavigate]);
@@ -50,7 +51,9 @@ const LibraryNode = props => {
 	}, [addVirtual, libraryKey]);
 
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
-		toggleOpen(libraryKey, shouldOpen);
+		if(!(isConfirmedEmpty || isPickerSkip)) {
+			toggleOpen(libraryKey, shouldOpen);
+		}
 	}, [libraryKey, toggleOpen]);
 
 	useEffect(() => {
@@ -78,6 +81,7 @@ const LibraryNode = props => {
 			className={ cx({
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected && !isPickerMode,
+				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
 			}) }
 			aria-labelledby={ id.current }
@@ -85,8 +89,8 @@ const LibraryNode = props => {
 			isOpen={ isOpen && !shouldShowSpinner }
 			onOpen={ handleOpenToggle }
 			onClick={ handleClick }
-			showTwisty={ !isConfirmedEmpty }
-			subtree={ isConfirmedEmpty ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
+			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
+			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
@@ -103,7 +107,7 @@ const LibraryNode = props => {
 				</React.Fragment>
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
-			{ isPickerMode && pickerIncludeLibraries && !shouldShowSpinner && (
+			{ isPickerMode && pickerIncludeLibraries && !isReadOnly && !shouldShowSpinner && (
 				<input
 					type="checkbox"
 					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
@@ -264,7 +268,7 @@ const Libraries = props => {
 	return (
 		<nav
 			aria-label="collection tree"
-			className="collection-tree"
+			className={ cx('collection-tree', { 'picker-mode': isPickerMode }) }
 			onFocus={ receiveFocus }
 			onBlur={ receiveBlur }
 			tabIndex={ 0 }

@@ -102,9 +102,10 @@ const AddItemsToCollectionsModal = () => {
 				) }
 				<Libraries
 					isPickerMode={ true }
-					pickerPick={ pickerPick }
 					picked={ picked }
+					pickerIncludeLibraries={ true }
 					pickerNavigate={ handleNavigation }
+					pickerPick={ pickerPick }
 					pickerState= { { ...navState, picked } }
 				/>
 				</React.Fragment>

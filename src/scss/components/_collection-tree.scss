@@ -192,6 +192,10 @@
 					color: $collection-tree-active-color;
 				}
 			}
+
+			@include state("li.picker-skip > .item-container") {
+				color: $collection-tree-picker-skip-color;
+			}
 		}
 
 		.icon-spin {
