@@ -117,7 +117,7 @@ const LibraryNode = props => {
 			)}
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
 			{
-				!shouldShowSpinner && !isReadOnly && (
+				!shouldShowSpinner && !isReadOnly && !isPickerMode && (
 					<Button
 						aria-label="add collection"
 						className="mouse btn-icon-plus"
