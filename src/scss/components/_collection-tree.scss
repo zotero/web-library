@@ -404,3 +404,11 @@
 		}
 	}
 }
+
+.picker-mode {
+	.icon-spin {
+		@include mouse-and-bp-up(md) {
+			margin-right: $space-sm;
+		}
+	}
+}

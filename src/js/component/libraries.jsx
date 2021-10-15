@@ -107,7 +107,8 @@ const LibraryNode = props => {
 				</React.Fragment>
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
-			{ isPickerMode && pickerIncludeLibraries && !isReadOnly && !shouldShowSpinner && (
+			{ shouldShowSpinner && <Spinner className="small mouse" /> }
+			{ isPickerMode && pickerIncludeLibraries && !isReadOnly && (
 				<input
 					type="checkbox"
 					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
@@ -115,7 +116,6 @@ const LibraryNode = props => {
 					onClick={ stopPropagation }
 				/>
 			)}
-			{ shouldShowSpinner && <Spinner className="small mouse" /> }
 			{
 				!shouldShowSpinner && !isReadOnly && !isPickerMode && (
 					<Button
