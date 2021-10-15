@@ -427,6 +427,19 @@ input[type="checkbox"] {
 
 	// todo
 	@include mouse-and-bp-up(md) {
+		-webkit-appearance: none;
+		appearance: none;
+		flex: 0 0 auto;
+		width: $space-md;
+		height: $space-md;
+		background-color: $input-bg;
+		border: $input-border-width solid $checkbox-border-touch;
+
+		&:checked {
+			border: 0;
+			background: image-url("icons/tick-white-16.svg") no-repeat 0 0 $checkbox-checked-bg-touch;
+		}
+
 		font-size: 16px;
 		margin: 2px 6px 0 0;
 	}
