@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
@@ -11,6 +11,7 @@ import TouchHeader from '../touch-header.jsx';
 import { chunkedCopyToLibrary, chunkedAddToCollection, toggleModal, triggerSelectMode } from '../../actions';
 import { COLLECTION_SELECT } from '../../constants/modals';
 import { useNavigationState } from '../../hooks';
+import { get } from '../../utils.js';
 
 const AddItemsToCollectionsModal = () => {
 	const dispatch = useDispatch();
@@ -18,11 +19,30 @@ const AddItemsToCollectionsModal = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_SELECT);
 	const sourceItemKeys = useSelector(state => state.modal.items);
+	const sourceItemCollections = useSelector(state => (state.modal.items || []).map(ik =>
+		get(state, ['libraries', libraryKey, 'items', ik, 'collections'], [])
+	));
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
 
 	const [isBusy, setBusy] = useState(false);
 	const [picked, setPicked] = useState([]);
+
+
+	const pickerSkipCollections = useMemo(() => {
+		const result = [];
+
+		const occurenceMap = sourceItemCollections.flat().reduce((acc, icKey) =>
+			acc.set(icKey, acc.has(icKey) ? acc.get(icKey) + 1 : 1), new Map()
+		);
+
+		for(const [collectionKey, occurencesCount] of occurenceMap.entries()) {
+			if(occurencesCount === sourceItemKeys.length) {
+				result.push(collectionKey);
+			}
+		}
+		return result;
+	}, [sourceItemCollections, sourceItemKeys]);
 
 	useEffect(() => {
 		if(!isOpen) {
@@ -106,6 +126,7 @@ const AddItemsToCollectionsModal = () => {
 					pickerAllowRoot={ true }
 					pickerNavigate={ handleNavigation }
 					pickerPick={ pickerPick }
+					pickerSkipCollections={ pickerSkipCollections }
 					pickerState= { { ...navState, picked } }
 				/>
 				</React.Fragment>
