@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -14,11 +14,9 @@ import { pick } from '../common/immutable';
 import { useFocusManager, usePrevious } from '../hooks/';
 
 const LibraryNode = props => {
-	const {
-		addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey,
-		name, pickerNavigate, pickerPick, pickerState, picked, pickerIncludeLibraries,
-		shouldBeTabbable, toggleOpen, virtual
-	} = props;
+	const { addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey, name,
+		pickerNavigate, pickerPick, pickerState, picked, pickerAllowRoot, shouldBeTabbable,
+		toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
 	const totalResults = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null));
@@ -40,7 +38,7 @@ const LibraryNode = props => {
 		} else if(!isPickerMode) {
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}
-	}, [dispatch, isPickerMode, libraryKey, pickerNavigate]);
+	}, [dispatch, isPickerMode, isPickerSkip, libraryKey, pickerNavigate]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -54,7 +52,7 @@ const LibraryNode = props => {
 		if(!(isConfirmedEmpty || isPickerSkip)) {
 			toggleOpen(libraryKey, shouldOpen);
 		}
-	}, [libraryKey, toggleOpen]);
+	}, [isConfirmedEmpty, isPickerSkip, libraryKey, toggleOpen]);
 
 	useEffect(() => {
 		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
@@ -69,8 +67,9 @@ const LibraryNode = props => {
 		const isVirtualInThisTree = virtual && virtual.libraryKey === libraryKey;
 
 		return {
-			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd',
-			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'selectedCollectionKey']),
+			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'excludeCollections',
+			'includeCollections', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
+			'onFocusPrev', 'pickerSkipCollections', 'selectedCollectionKey']),
 			isPickerMode, parentLibraryKey, picked, pickerNavigate, pickerPick, pickerState,
 			virtual: isVirtualInThisTree ? virtual : null,
 		}
@@ -108,7 +107,7 @@ const LibraryNode = props => {
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
-			{ isPickerMode && pickerIncludeLibraries && !isReadOnly && (
+			{ isPickerMode && pickerAllowRoot && !isReadOnly && (
 				<input
 					type="checkbox"
 					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
@@ -142,7 +141,7 @@ LibraryNode.propTypes = {
 	libraryKey: PropTypes.string,
 	name: PropTypes.string,
 	picked: PropTypes.array,
-	pickerIncludeLibraries: PropTypes.bool,
+	pickerAllowRoot: PropTypes.bool,
 	pickerNavigate: PropTypes.func,
 	pickerPick: PropTypes.func,
 	pickerState: PropTypes.object,
@@ -152,7 +151,7 @@ LibraryNode.propTypes = {
 };
 
 const Libraries = props => {
-	const { isPickerMode, pickerState } = props;
+	const { isPickerMode, pickerState, includeLibraries, excludeLibraries } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -168,17 +167,26 @@ const Libraries = props => {
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveBlur, receiveFocus
 	} = useFocusManager(treeRef);
 
+	const filteredLibraries = useMemo(
+		() => (includeLibraries || excludeLibraries) ?
+			libraries.filter(l =>
+				(!includeLibraries || includeLibraries.includes(l.key)) &&
+				(!excludeLibraries || (excludeLibraries && !excludeLibraries.includes(l.key)))
+			) : [ ...libraries ],
+		[libraries, includeLibraries, excludeLibraries]
+	);
+
 	const myLibraries = useMemo(
-		() => libraries.filter(l => l.isMyLibrary),
-		[libraries]
+		() => filteredLibraries.filter(l => l.isMyLibrary),
+		[filteredLibraries]
 	);
 	const groupLibraries = useMemo(
-		() => libraries.filter(l => l.isGroupLibrary),
-		[libraries]
+		() => filteredLibraries.filter(l => l.isGroupLibrary),
+		[filteredLibraries]
 	);
 	const otherLibraries = useMemo(
-		() => libraries.filter(l => !l.isMyLibrary && !l.isGroupLibrary),
-		[libraries]
+		() => filteredLibraries.filter(l => !l.isMyLibrary && !l.isGroupLibrary),
+		[filteredLibraries]
 	);
 
 	const [opened, setOpened] = useState([]);
@@ -260,8 +268,9 @@ const Libraries = props => {
 			onDrillDownPrev: focusDrillDownPrev,
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
-			...pick(props, ['picked', 'pickerIncludeLibraries', 'isPickerMode',
-			'selectedCollectionKey', 'pickerNavigate', 'pickerPick', 'pickerState' ])
+			...pick(props, ['isPickerMode', 'includeCollections', 'excludeCollections', 'picked',
+			'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerState',
+			'pickerSkipCollections', 'selectedCollectionKey' ])
 		}
 	}
 
@@ -318,6 +327,8 @@ const Libraries = props => {
 }
 
 Libraries.propTypes = {
+	excludeLibraries: PropTypes.array,
+	includeLibraries: PropTypes.array,
 	isPickerMode: PropTypes.bool,
 	pickerState: PropTypes.object,
 }

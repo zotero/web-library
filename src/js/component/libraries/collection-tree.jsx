@@ -454,7 +454,7 @@ PickerCheckbox.displayName = 'PickerCheckbox';
 const CollectionNode = memo(props => {
 	const { allCollections, derivedData, collection, level, selectedCollectionKey, isCurrentLibrary,
 		parentLibraryKey, renaming, selectNode, setRenaming, virtual, isPickerMode, isReadOnly,
-		shouldBeTabbable, pickerPick, ...rest }  = props;
+		shouldBeTabbable, pickerPick, pickerSkipCollections, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -554,6 +554,8 @@ const CollectionNode = memo(props => {
 		(isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
 		(!isTouchOrSmall && derivedData[collection.key].isOpen);
 
+	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
+
 	return (
 		<Node
 			className={ cx({
@@ -614,14 +616,14 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{ (isPickerMode && !isReadOnly) ? (
+						{ (isPickerMode && !isReadOnly && !isPickerSkip) ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }
 								pickerPick = { pickerPick }
 								{ ...pick(rest, ['picked']) }
 							/>
-						) : !isReadOnly ? (
+						) : (!isReadOnly && !isPickerMode) ? (
 							<DotMenu
 								collection = { collection }
 								setRenaming = { setRenaming }
@@ -656,14 +658,19 @@ CollectionNode.propTypes = {
 
 CollectionNode.displayName = 'CollectionNode';
 
-const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest }) => {
-	const sortedCollections = useMemo(() => {
-		const copiedCollections = [ ...collections ];
-		copiedCollections.sort((c1, c2) =>
+const CollectionsNodeList = memo(({ collections, parentCollectionKey, includeCollections, excludeCollections, ...rest }) => {
+	const sortedFilteredCollections = useMemo(() => {
+		const filteredCollections = (includeCollections || excludeCollections) ?
+			collections.filter(c =>
+				(!includeCollections || includeCollections.includes(c.key)) &&
+				(!excludeCollections || (excludeCollections && !excludeCollections.includes(c.key)))
+			) : [ ...collections ];
+
+		filteredCollections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
 		);
-		return copiedCollections;
-	}, [collections]);
+		return filteredCollections;
+	}, [collections, includeCollections, excludeCollections]);
 
 	return (
 		<React.Fragment>
@@ -672,17 +679,19 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 				{  ...pick(rest, ['isPickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
 				'parentCollectionKey', 'selectedCollectionKey', 'selectNode', 'shouldBeTabbable']) }
 			/>
-			{ sortedCollections.map(c =>
+			{ sortedFilteredCollections.map(c =>
 				<CollectionNode
 					key={ c.key }
 					collection={ c }
 					parentCollectionKey={ parentCollectionKey }
+					includeCollections={ includeCollections }
+					excludeCollections={ excludeCollections }
 					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
 					'commitAdd', 'derivedData', 'dotMenuFor', 'isCurrentLibrary', 'isPickerMode',
 					'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
-					'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey', 'picked', 'pickerPick',
-					'renaming', 'selectedCollectionKey', 'selectNode', 'setDotMenuFor', 'setOpened',
-					'setRenaming', 'shouldBeTabbable', 'virtual',])}
+					'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey', 'pickerSkipCollections',
+					'picked', 'pickerPick', 'renaming', 'selectedCollectionKey', 'selectNode',
+					'setDotMenuFor', 'setOpened', 'setRenaming', 'shouldBeTabbable', 'virtual',])}
 				/>
 			) }
 			<VirtualCollectionNode
@@ -695,6 +704,8 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 
 CollectionsNodeList.propTypes = {
 	collections: PropTypes.array,
+	excludeCollections: PropTypes.array,
+	includeCollections: PropTypes.array,
 	parentCollectionKey: PropTypes.string,
 };
 
@@ -847,9 +858,9 @@ const CollectionTree = props => {
 				setOpened={ setOpened }
 				setRenaming={ setRenaming }
 				shouldBeTabbable={ shouldBeTabbable }
-				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
-				'pickerPick', 'picked', 'onDrillDownNext',
-				'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'virtual']) }
+				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'excludeCollections',
+				'includeCollections', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
+				'onFocusPrev', 'pickerPick', 'picked', 'pickerSkipCollections', 'virtual']) }
 			/>
 			<PublicationsNode
 				isMyLibrary = { isMyLibrary }

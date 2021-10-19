@@ -103,7 +103,7 @@ const AddItemsToCollectionsModal = () => {
 				<Libraries
 					isPickerMode={ true }
 					picked={ picked }
-					pickerIncludeLibraries={ true }
+					pickerAllowRoot={ true }
 					pickerNavigate={ handleNavigation }
 					pickerPick={ pickerPick }
 					pickerState= { { ...navState, picked } }

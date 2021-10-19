@@ -51,25 +51,14 @@ const MoveCollectionsModal = () => {
 				return;
 			}
 
-			if(picked[0].libraryKey === libraryKey) {
-				if(pickedCollectionKey === collectionKey) {
-					//@TODO: handle case where source collection is a non-immediate parent of a target collection
-					return;
-				}
-
-				if(pickedCollectionKey === currentParentCollectionKey) {
-					// @NOTE: if parentCollection hasn't change, don't send the update
-					// otherwise we get an invalid version back (https://github.com/zotero/dataserver/issues/81)
-					return;
-				}
-			}
 			setIsBusy(true);
 			const patch = { parentCollection: pickedCollectionKey };
 			await dispatch(updateCollection(collectionKey, patch, libraryKey));
 			setIsBusy(false);
 			dispatch(toggleModal(MOVE_COLLECTION, false));
 		}
-	}, [collectionKey, currentParentCollectionKey, dispatch, libraryKey, picked]);
+	}, [collectionKey, dispatch, libraryKey, picked]);
+
 
 	const handleCancel = useCallback(() => dispatch(toggleModal(MOVE_COLLECTION, false)), [dispatch]);
 
@@ -91,12 +80,15 @@ const MoveCollectionsModal = () => {
 					onNavigate={ handleNavigation }
 				/>
 				<Libraries
-					pickerIncludeLibraries={ true }
+					pickerAllowRoot={ currentParentCollectionKey !== false }
 					isPickerMode={ true }
 					pickerPick={ handlePick }
 					picked={ picked }
 					pickerNavigate={ handleNavigation }
 					pickerState= { navState }
+					includeLibraries={ [libraryKey] } // TODO #227
+					excludeCollections={ [collectionKey]}
+					pickerSkipCollections={ [currentParentCollectionKey] }
 				/>
 			</div>
 			<div className="modal-footer">
