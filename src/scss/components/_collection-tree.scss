@@ -66,7 +66,7 @@
 	 		}
 		}
 
-		@include variant("li:last-child > .item-container") {
+		@include variant(".collection-tree:not(.picker-mode) li:last-child > .item-container") {
 			@include touch-or-bp-down(sm) {
 				background-color: $sidebar-bg;
 
@@ -88,14 +88,14 @@
 			}
 		}
 
-		@include state("li.selected > .item-container", "li.open > .item-container") {
+		@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
 			@include touch-or-bp-down(sm) {
 				background: $touch-collection-tree-active-bg;
 				@include hairline-disabled(top);
 			}
 		}
 
-		@include state("li.selected + li > .item-container", "li.open + li > .item-container") {
+		@include state("li.selected + li > .item-container", ".collection-tree:not(.picker-mode) li.open + li > .item-container") {
 			@include touch-or-bp-down(sm) {
 				@include hairline-disabled(top);
 			}
@@ -104,6 +104,12 @@
 		@include state("li.selected > .item-container") {
 			@include mouse-and-bp-up(md) {
 				background: $collection-tree-active-bg;
+			}
+		}
+
+		@include state("li.picked > .item-container") {
+			@include mouse-and-bp-up(md) {
+				background: $collection-tree-picked-bg;
 			}
 		}
 
@@ -155,6 +161,10 @@
 					@include state("li.selected > .item-container") {
 						color: $collection-tree-active-icon-color;
 					}
+
+					@include state("li.picked > .item-container") {
+						color: $collection-tree-picked-color;
+					}
 				}
 			}
 		}
@@ -181,7 +191,7 @@
 			color: $collection-tree-color;
 			position: relative;
 
-			@include state("li.selected > .item-container", "li.open > .item-container") {
+			@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
 				@include touch-or-bp-down(sm) {
 					color: $touch-collection-tree-active-color;
 				}
@@ -194,7 +204,15 @@
 			}
 
 			@include state("li.picker-skip > .item-container") {
-				color: $collection-tree-picker-skip-color;
+				@include mouse-and-bp-up(md) {
+					color: $collection-tree-picker-skip-color;
+				}
+			}
+
+			@include state("li.picked > .item-container") {
+				@include mouse-and-bp-up(md) {
+					color: $collection-tree-picked-color;
+				}
 			}
 		}
 

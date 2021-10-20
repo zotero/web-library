@@ -454,7 +454,7 @@ PickerCheckbox.displayName = 'PickerCheckbox';
 const CollectionNode = memo(props => {
 	const { allCollections, derivedData, collection, level, selectedCollectionKey, isCurrentLibrary,
 		parentLibraryKey, renaming, selectNode, setRenaming, virtual, isPickerMode, isReadOnly,
-		shouldBeTabbable, pickerPick, pickerSkipCollections, ...rest }  = props;
+		shouldBeTabbable, picked = [], pickerPick, pickerSkipCollections, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -462,10 +462,15 @@ const CollectionNode = memo(props => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
 	const isHighlighted = highlightedCollections.includes(collection.key);
+	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
 
 	const handleClick = useCallback(() => {
-		selectNode({ collection: collection.key });
-	}, [collection, selectNode]);
+		if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
+			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
+		} else {
+			selectNode({ collection: collection.key });
+		}
+	}, [collection, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
 		if(isTouchOrSmall || isPickerMode) {
@@ -554,13 +559,16 @@ const CollectionNode = memo(props => {
 		(isTouchOrSmall && (shouldSubtreeNodesBeTabbableOnTouch || selectedDepth !== -1)) ||
 		(!isTouchOrSmall && derivedData[collection.key].isOpen);
 
-	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
+	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === parentLibraryKey && c === collection.key);
+
 
 	return (
 		<Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
 				'selected': !isPickerMode && derivedData[collection.key].isSelected,
+				'picked': isPickerMode && isPicked,
+				'picker-skip': isPickerSkip,
 				'collection': true,
 			})}
 			aria-labelledby={ id.current }
@@ -616,12 +624,12 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{ (isPickerMode && !isReadOnly && !isPickerSkip) ? (
+						{ (isPickerMode && !isReadOnly && !isPickerSkip && isTouchOrSmall) ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }
 								pickerPick = { pickerPick }
-								{ ...pick(rest, ['picked']) }
+								picked={ picked }
 							/>
 						) : (!isReadOnly && !isPickerMode) ? (
 							<DotMenu
@@ -644,10 +652,13 @@ CollectionNode.propTypes = {
 	collection: PropTypes.object,
 	derivedData: PropTypes.object,
 	isCurrentLibrary: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
 	level: PropTypes.number,
 	parentLibraryKey: PropTypes.string,
+	picked: PropTypes.array,
 	pickerPick: PropTypes.func,
+	pickerSkipCollections: PropTypes.array,
 	renaming: PropTypes.string,
 	selectedCollectionKey: PropTypes.string,
 	selectNode: PropTypes.func,
@@ -860,7 +871,7 @@ const CollectionTree = props => {
 				shouldBeTabbable={ shouldBeTabbable }
 				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'excludeCollections',
 				'includeCollections', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
-				'onFocusPrev', 'pickerPick', 'picked', 'pickerSkipCollections', 'virtual']) }
+				'onFocusPrev', 'picked', 'pickerPick', 'pickerSkipCollections', 'virtual']) }
 			/>
 			<PublicationsNode
 				isMyLibrary = { isMyLibrary }

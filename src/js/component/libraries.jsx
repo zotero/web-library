@@ -15,7 +15,7 @@ import { useFocusManager, usePrevious } from '../hooks/';
 
 const LibraryNode = props => {
 	const { addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey, name,
-		pickerNavigate, pickerPick, pickerState, picked, pickerAllowRoot, shouldBeTabbable,
+		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, shouldBeTabbable,
 		toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
@@ -25,6 +25,7 @@ const LibraryNode = props => {
 	const id = useRef(getUniqueId('library-'));
 	const hasChecked = totalResults !== null;
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
+	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c);
 
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
@@ -33,12 +34,14 @@ const LibraryNode = props => {
 	const isPickerSkip = isPickerMode && isReadOnly;
 
 	const handleClick = useCallback(() => {
-		if(isPickerMode && !isPickerSkip) {
+		if(isTouchOrSmall && isPickerMode && !isPickerSkip) {
 			pickerNavigate({ library: libraryKey, view: 'library' });
+		} else if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
+			pickerPick({ libraryKey });
 		} else if(!isPickerMode) {
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}
-	}, [dispatch, isPickerMode, isPickerSkip, libraryKey, pickerNavigate]);
+	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, pickerNavigate, pickerPick]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -80,6 +83,7 @@ const LibraryNode = props => {
 			className={ cx({
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected && !isPickerMode,
+				'picked': isPickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
 			}) }
@@ -107,10 +111,10 @@ const LibraryNode = props => {
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
-			{ isPickerMode && pickerAllowRoot && !isReadOnly && (
+			{ isPickerMode && pickerAllowRoot && !isReadOnly && isTouchOrSmall && (
 				<input
 					type="checkbox"
-					checked={ picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c) }
+					checked={ isPicked }
 					onChange={ handlePickerPick }
 					onClick={ stopPropagation }
 				/>
