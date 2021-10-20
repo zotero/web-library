@@ -468,11 +468,11 @@ const CollectionNode = memo(props => {
 	}, [collection, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
-		if(isTouchOrSmall) {
+		if(isTouchOrSmall || isPickerMode) {
 			return;
 		}
 		setRenaming(collection.key);
-	}, [collection, isTouchOrSmall, setRenaming]);
+	}, [collection, isPickerMode, isTouchOrSmall, setRenaming]);
 
 	const handleRenameCancel = useCallback(() => {
 		setRenaming(null);
@@ -572,7 +572,7 @@ const CollectionNode = memo(props => {
 			onDrop={ isTouchOrSmall ? null : handleDrop }
 			onRename={ isTouchOrSmall ? null : handleRenameTrigger }
 			onKeyDown={ handleNodeKeyDown }
-			shouldBeDraggable={ renaming !== collection.key }
+			shouldBeDraggable={ !isPickerMode && renaming !== collection.key }
 			showTwisty={ hasSubCollections }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onOpen', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
