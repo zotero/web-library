@@ -31,10 +31,17 @@
 		margin: 0;
 		padding: 0 $collection-tree-padding-x 0 $collection-tree-padding-left;
 
+
 		@include touch-or-bp-down(sm) {
 			@include hairline(top, $touch-collection-tree-border);
 			padding: $border-width $collection-tree-padding-x-touch 0;
 			background-color: $touch-collection-tree-headings-bg;
+		}
+
+		@include mouse-and-bp-up(md) {
+			@include state(".collection-tree.picker-mode") {
+				padding-left: $collection-tree-picker-padding-left;
+			}
 		}
 	}
 
@@ -308,10 +315,11 @@
 
 			#{$sel} {
 				.item-container {
-					padding-left:
-						$collection-tree-padding-left
-							+ $collection-tree-indent
-							* ($i - 1);
+					padding-left: $collection-tree-padding-left + $collection-tree-indent * ($i - 1);
+
+					@include state(".collection-tree.picker-mode") {
+						padding-left: $collection-tree-picker-padding-left + $collection-tree-indent * ($i - 1);
+					}
 				}
 			}
 		}
