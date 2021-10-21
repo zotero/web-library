@@ -14,6 +14,7 @@ import Spinner from '../../component/ui/spinner';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 import { omit, pick } from '../../common/immutable';
+import { isTriggerEvent } from '../../common/event';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { usePrevious } from '../../hooks/';
 
@@ -516,11 +517,11 @@ const CollectionNode = memo(props => {
 	}, [collection, dispatch]);
 
 	const handleNodeKeyDown = useCallback(ev => {
-		if(isPickerMode && ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' ')) {
+		if(isPickerMode && !isPickerSkip && isTriggerEvent(ev)) {
 			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
 			ev.preventDefault();
 		}
-	}, [collection, pickerPick, isPickerMode, parentLibraryKey]);
+	}, [collection, pickerPick, isPickerMode, isPickerSkip, parentLibraryKey]);
 
 	const usesItemsNode = isSingleColumn && !isPickerMode;
 
