@@ -485,7 +485,7 @@ const CollectionNode = memo(props => {
 	}, [setRenaming]);
 
 	const handleRenameCommit = useCallback(newValue => {
-		if(newValue === '') {
+		if(newValue === '' || (collection.name === newValue)) {
 			setRenaming(null);
 			return;
 		}
