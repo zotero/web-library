@@ -71,18 +71,26 @@ const Node = props => {
 			} else if(srcItemType === COLLECTION) {
 				const {
 					collectionKey: srcCollectionKey,
-					libraryKey: srcLibraryKey
+					libraryKey: srcLibraryKey,
 				} = srcItem;
 				const {
 					targetType,
 					collectionKey: targetCollectionKey,
-					libraryKey: targetLibraryKey
+					libraryKey: targetLibraryKey,
+					getParents: targetGetParents,
 				} = dndData;
 
 				if(!['collection', 'library'].includes(targetType)) {
 					return false;
 				}
-				// TODO: check for parent collection being dragged to its child #453
+
+				const targetParents = targetGetParents(targetCollectionKey);
+
+				if(srcLibraryKey === targetLibraryKey && targetParents.includes(srcCollectionKey)){
+					// check for parent collection being dragged onto its child #453
+					return false;
+				}
+
 				return srcLibraryKey === targetLibraryKey && srcCollectionKey !== targetCollectionKey;
 			} else if(srcItemType === ATTACHMENT) {
 				const { libraryKey: srcLibraryKey } = srcItem;
