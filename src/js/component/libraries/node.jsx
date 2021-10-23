@@ -72,6 +72,7 @@ const Node = props => {
 				const {
 					collectionKey: srcCollectionKey,
 					libraryKey: srcLibraryKey,
+					getParents: srcGetParents,
 				} = srcItem;
 				const {
 					targetType,
@@ -85,10 +86,16 @@ const Node = props => {
 				}
 
 				const targetParents = targetGetParents(targetCollectionKey);
+				const srcParents = srcGetParents(srcCollectionKey);
 
 				if(srcLibraryKey === targetLibraryKey && targetParents.includes(srcCollectionKey)){
 					// check for parent collection being dragged onto its child #453
 					return false;
+				}
+
+				if(srcParents?.[0] === targetCollectionKey) {
+					// check if target collection key is already immediate parent of src collection
+					return false
 				}
 
 				return srcLibraryKey === targetLibraryKey && srcCollectionKey !== targetCollectionKey;
