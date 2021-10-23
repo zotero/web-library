@@ -212,7 +212,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onClick={ handleClick }
-			dndTarget={ { 'targetType': 'publications', libraryKey: parentLibraryKey } }
+			dndData={ { 'targetType': 'publications', libraryKey: parentLibraryKey } }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
@@ -259,7 +259,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onClick={ handleClick }
-			dndTarget={ { 'targetType': 'trash', libraryKey: parentLibraryKey } }
+			dndData={ { 'targetType': 'trash', libraryKey: parentLibraryKey } }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
 			<Icon type="28/trash" className="touch" width="28" height="28" />
@@ -501,7 +501,7 @@ const CollectionNode = memo(props => {
 		ev.stopPropagation();
 	}, []);
 
-	const handleDrag = useCallback((src, target) => {
+	const handleNodeDrop = useCallback((src, target) => {
 		const patch = {
 			parentCollection: target.collectionKey || false
 		};
@@ -510,9 +510,9 @@ const CollectionNode = memo(props => {
 		} else {
 			//@TODO: Support for moving collections across libraries #227
 		}
-	}, [dispatch]);
+	}, [dispatch, setRenaming]);
 
-	const handleDrop = useCallback(async droppedFiles => {
+	const handleFileDrop = useCallback(async droppedFiles => {
 		await dispatch(createAttachmentsFromDropped(droppedFiles, { collection: collection.key }));
 	}, [collection, dispatch]);
 
@@ -574,12 +574,13 @@ const CollectionNode = memo(props => {
 			})}
 			aria-labelledby={ id.current }
 			data-collection-key={ collection.key }
-			dndTarget={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey } }
+			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey } }
 			isOpen={ derivedData[collection.key].isOpen }
 			onClick={ handleClick }
-			onDrag={ isTouchOrSmall ? null : handleDrag }
-			onDrop={ isTouchOrSmall ? null : handleDrop }
+			onNodeDrop={ isTouchOrSmall ? null : handleNodeDrop }
+			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
 			onRename={ isTouchOrSmall ? null : handleRenameTrigger }
+			onRenameCancel={ isTouchOrSmall ? null : handleRenameCancel }
 			onKeyDown={ handleNodeKeyDown }
 			shouldBeDraggable={ !isPickerMode && renaming !== collection.key }
 			showTwisty={ hasSubCollections }

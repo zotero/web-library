@@ -95,7 +95,7 @@ const LibraryNode = props => {
 			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
 			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
-			dndTarget={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
+			dndData={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
 		>
 			{ isReadOnly ? (
