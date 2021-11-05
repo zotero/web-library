@@ -5,25 +5,26 @@ const requestsWaiting = {};
 const requestSchedule = [1, 2, 5, 10, 20, 30, 40, 50, 60];
 var requestTracker = { id: 1 };
 
-const runRequest = async (dispatch, request, { id, requestType, payload }) => {
+const runRequest = async (dispatch, request, { id, type, payload }, requestOpts = {}) => {
 	try {
-		const outcome = await request();
+		const outcome = await request(requestOpts);
 		dispatch({
-			type: `RECEIVE_${requestType}`,
+			type: `RECEIVE_${type}`,
 			...payload, id,
 			...outcome
 		});
+		return outcome;
 	} catch(error) {
 		if(error && (error.name === 'AbortError' || error.message === 'aborted')) {
 			dispatch({
-				type: `DROP_${requestType}`,
+				type: `DROP_${type}`,
 				...payload, id,
 				reason: 'abort',
 				error
 			});
 		} else {
 			dispatch({
-				type: `ERROR_${requestType}`,
+				type: `ERROR_${type}`,
 				...payload, id,
 				silent: true,
 				error
@@ -34,50 +35,50 @@ const runRequest = async (dispatch, request, { id, requestType, payload }) => {
 	}
 }
 
-const dropRequest = (dispatch, requestType) => {
-	const { id, payload, timeout } = requestsWaiting[requestType];
+const dropRequest = (dispatch, type) => {
+	const { id, payload, timeout } = requestsWaiting[type];
 
 	dispatch({
-		type: `DROP_${requestType}`,
+		type: `DROP_${type}`,
 		reason: 'backoff',
 		...payload, id
 	});
 	clearTimeout(timeout);
-	delete requestsWaiting[requestType];
+	delete requestsWaiting[type];
 }
 
-const runRequestWaiting = requestType => {
+const runRequestWaiting = type => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const lastError = get(state, ['traffic', requestType, 'lastError']);
-		const errorCount = get(state, ['traffic', requestType, 'errorCount'], 0);
+		const lastError = get(state, ['traffic', type, 'lastError']);
+		const errorCount = get(state, ['traffic', type, 'errorCount'], 0);
 
 		const requestScheduleIndex = Math.min(requestSchedule.length - 1, errorCount);
 		const nextRequestDelay = requestSchedule[requestScheduleIndex] * 1000;
 		const timeSinceLastError = Date.now() - lastError;
-		if(requestType in requestsWaiting && timeSinceLastError >= nextRequestDelay) {
+		if(type in requestsWaiting && timeSinceLastError >= nextRequestDelay) {
 			// if there is a request waiting and ready, run it
-			const { id, payload, request, timeout } = requestsWaiting[requestType];
+			const { id, payload, request, timeout } = requestsWaiting[type];
 			clearTimeout(timeout);
-			runRequest(dispatch, request, { id, requestType, payload });
-			delete requestsWaiting[requestType];
-		} else if(requestType in requestsWaiting) {
+			runRequest(dispatch, request, { id, type, payload });
+			delete requestsWaiting[type];
+		} else if(type in requestsWaiting) {
 			// if request is not ready, reschedule
 			const nextCheck = (nextRequestDelay - timeSinceLastError) + 200;
-			requestsWaiting[requestType] = {
-				...requestsWaiting[requestType],
-				timeout: setTimeout(() => { dispatch(runRequestWaiting(requestType)) }, nextCheck)
+			requestsWaiting[type] = {
+				...requestsWaiting[type],
+				timeout: setTimeout(() => { dispatch(runRequestWaiting(type)) }, nextCheck)
 			};
 		}
 	}
 }
 
 //NOTE: if requests is backing off, this function resolves with undefined before the request actually executes
-const requestWithBackoff = (request, { id, type: requestType, payload }) => {
+const requestWithBackoff = (request, { id, type, payload }) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const lastError = get(state, ['traffic', requestType, 'lastError']);
-		const errorCount = get(state, ['traffic', requestType, 'errorCount'], 0);
+		const lastError = get(state, ['traffic', type, 'lastError']);
+		const errorCount = get(state, ['traffic', type, 'errorCount'], 0);
 
 		if(lastError) {
 			const requestScheduleIndex = Math.min(requestSchedule.length - 1, errorCount);
@@ -86,22 +87,22 @@ const requestWithBackoff = (request, { id, type: requestType, payload }) => {
 			if(timeSinceLastError < nextRequestDelay) {
 				// queue the request, dropping anything in the queue already
 				const nextCheck = (nextRequestDelay - timeSinceLastError) + 200;
-				if(requestType in requestsWaiting) {
-					dropRequest(dispatch, requestType);
+				if(type in requestsWaiting) {
+					dropRequest(dispatch, type);
 				}
-				requestsWaiting[requestType] = {
+				requestsWaiting[type] = {
 					id, request, payload,
-					timeout: setTimeout(() => { dispatch(runRequestWaiting(requestType)) }, nextCheck)
+					timeout: setTimeout(() => { dispatch(runRequestWaiting(type)) }, nextCheck)
 				};
 			} else {
 				// run the request, if anything is in the queue, drop it
-				if(requestType in requestsWaiting) {
-					dropRequest(dispatch, requestType);
+				if(type in requestsWaiting) {
+					dropRequest(dispatch, type);
 				}
-				return await runRequest(dispatch, request, { id, requestType, payload });
+				return await runRequest(dispatch, request, { id, type, payload });
 			}
 		} else {
-			return await runRequest(dispatch, request, { id, requestType, payload });
+			return await runRequest(dispatch, request, { id, type, payload });
 		}
 	}
 }
@@ -121,14 +122,92 @@ const abortRequest = id => {
 	return { type: ABORT_REQUEST, id }
 }
 
-const abortAllRequests = requestType => {
+const abortAllRequests = type => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const ongoing = get(state, ['traffic', requestType, 'ongoing'], null);
+		const ongoing = get(state, ['traffic', type, 'ongoing'], null);
 		if(ongoing !== null) {
 			ongoing.forEach(id => { dispatch(abortRequest(id)); });
 		}
 	}
 }
 
-export { abortAllRequests, abortRequest, connectionIssues, requestTracker, requestWithBackoff };
+const CACHE_TIMES_KEY = 'zotero-web-library-api-cache-times';
+
+const apiCheckCache = key => {
+	var cacheTimes = {}, okToUseCache = false;
+	try {
+		cacheTimes = JSON.parse(localStorage.getItem(CACHE_TIMES_KEY)) || {};
+	} catch(_) {
+		// ignore
+	}
+
+	if(key in cacheTimes) {
+		okToUseCache = (Date.now() - cacheTimes[key]) < 24 * 60 * 60 * 1000;
+	}
+
+	if(!okToUseCache) {
+		cacheTimes[key] = Date.now();
+		localStorage.setItem(CACHE_TIMES_KEY, JSON.stringify(cacheTimes));
+	}
+
+	return okToUseCache;
+}
+
+const apiResetCache = key => {
+	var cacheTimes = {};
+	try {
+		cacheTimes = JSON.parse(localStorage.getItem(CACHE_TIMES_KEY)) || {};
+		delete cacheTimes[key];
+		localStorage.setItem(CACHE_TIMES_KEY, JSON.stringify(cacheTimes));
+	} catch(_) {
+		// reset all cache times
+		localStorage.removeIem(CACHE_TIMES_KEY);
+	}
+}
+
+const runRequestSimple = async (dispatch, request, { id, type, payload }, requestOpts = {}) => {
+	const outcome = await request(requestOpts);
+	dispatch({
+		type: `RECEIVE_${type}`,
+		...payload, id,
+		...outcome
+	});
+	return outcome;
+}
+
+const requestWithCacheAndBackoff = async (dispatch, request, { id, type, payload }) => {
+	const key = `${type}-${JSON.stringify(payload)}`;
+
+	if(apiCheckCache(key)) {
+		try {
+			const result = await runRequestSimple(
+				dispatch, request, { id, type, payload }, { useCache: true }
+			);
+			return result;
+		} catch(e) {
+			apiResetCache(key);
+		}
+	}
+	return dispatch(requestWithBackoff(request, { id, type, payload }));
+}
+
+const requestWithCache = async (dispatch, request, { id, type, payload }) => {
+	const key = `${type}-${JSON.stringify(payload)}`;
+
+	if(apiCheckCache(key)) {
+		try {
+			const result = await runRequestSimple(
+				dispatch, request, { id, type, payload }, { useCache: true }
+			);
+			return result;
+		} catch(e) {
+			apiResetCache(key);
+		}
+	}
+
+	return runRequest(request, { id, type, payload });
+}
+
+export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, connectionIssues,
+	requestTracker, requestWithBackoff, requestWithCacheAndBackoff, requestWithCache };

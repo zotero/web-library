@@ -5,15 +5,17 @@ import {
     RECEIVE_ITEM_TEMPLATE,
     ERROR_ITEM_TEMPLATE,
 } from '../constants/actions';
-import { requestTracker, requestWithBackoff } from '.';
+import { apiCheckCache, apiResetCache, requestTracker, requestWithCacheAndBackoff } from '.';
 import apiBase from 'zotero-api-client';
 const api = apiBase().api;
+
 
 const fetchItemTypeCreatorTypes = itemType => {
 	return async (dispatch, getState) => {
 		const id = requestTracker.id++;
 		const config = getState().config;
 		const type = 'ITEM_TYPE_CREATOR_TYPES';
+		const payload = { itemType };
 
 		dispatch({
 			id,
@@ -21,17 +23,16 @@ const fetchItemTypeCreatorTypes = itemType => {
 			itemType
 		});
 
-		const makeRequest = async () => {
+		const makeRequest = async ({ useCache = false }) => {
 			const creatorTypes = (await api(config.apiKey, config.apiConfig)
 				.itemTypeCreatorTypes(itemType)
-				.get())
+				.get({ cache: useCache ? 'force-cache' : 'default'}))
 				.getData();
 
-			return { creatorTypes }
+			return { creatorTypes };
 		}
 
-		const payload = { itemType };
-		return dispatch(requestWithBackoff(makeRequest, { id, type, payload }));
+		return requestWithCacheAndBackoff(dispatch, makeRequest, { id, type, payload });
 	};
 };
 
@@ -40,6 +41,7 @@ const fetchItemTypeFields = itemType => {
 		const id = requestTracker.id++;
 		const config = getState().config;
 		const type = 'ITEM_TYPE_FIELDS';
+		const payload = { itemType };
 
 		dispatch({
 			id,
@@ -47,20 +49,20 @@ const fetchItemTypeFields = itemType => {
 			itemType
 		});
 
-		const makeRequest = async () => {
+		const makeRequest = async ({ useCache }) => {
 			const fields = (await api(config.apiKey, config.apiConfig)
 				.itemTypeFields(itemType)
-				.get())
+				.get({ cache: useCache ? 'force-cache' : 'default'}))
 				.getData();
 
-			return { fields }
+			return { fields };
 		}
 
-		const payload = { itemType };
-		return dispatch(requestWithBackoff(makeRequest, { id, type, payload }));
+		return requestWithCacheAndBackoff(dispatch, makeRequest, { id, type, payload });
 	};
 };
 
+// must return template, cannot use backoff
 const fetchItemTemplate = (itemType, opts = {}) => {
 	return async (dispatch, getState) => {
 		dispatch({
@@ -68,8 +70,22 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 			itemType
 		});
 		let config = getState().config;
+		const cacheKey = `ITEM_TEMPLATE-${JSON.stringify({itemType, opts})}`;
 		try {
-			let template = (await api(config.apiKey, config.apiConfig).template(itemType).get(opts)).getData();
+			var template;
+			if(apiCheckCache(cacheKey)) {
+				try {
+					template = (await api(config.apiKey, config.apiConfig)
+						.template(itemType)
+						.get({ ...opts, cache: 'force-cache' }))
+					.getData();
+				} catch(e) {
+					apiResetCache(cacheKey);
+				}
+			}
+			if(!template) {
+				template = (await api(config.apiKey, config.apiConfig).template(itemType).get(opts)).getData();
+			}
 			dispatch({
 				type: RECEIVE_ITEM_TEMPLATE,
 				itemType,

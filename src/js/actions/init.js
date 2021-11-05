@@ -1,7 +1,17 @@
-'use strict';
-
 import api from 'zotero-api-client';
 import { REQUEST_META, RECEIVE_META, ERROR_META, CONFIGURE } from '../constants/actions';
+import { apiCheckCache, apiResetCache } from '.';
+
+const tryCached = async (key, metaApi) => {
+	if(apiCheckCache(key)) {
+		try {
+			return await metaApi.get({ cache: 'force-cache' });
+		} catch(e) {
+			apiResetCache(key);
+		}
+	}
+	return await metaApi.get();
+}
 
 const initialize = () => {
 	return async (dispatch, getState) => {
@@ -12,9 +22,9 @@ const initialize = () => {
 
 		try {
 			const [itemTypes, itemFields, creatorFields] = (await Promise.all([
-				api(null, apiConfig).itemTypes().get(),
-				api(null, apiConfig).itemFields().get(),
-				api(null, apiConfig).creatorFields().get()
+				tryCached('itemTypes', api(null, apiConfig).itemTypes()),
+				tryCached('itemFields', api(null, apiConfig).itemFields()),
+				tryCached('creatorFields', api(null, apiConfig).creatorFields()),
 			])).map(response => response.getData());
 			dispatch({
 				type: RECEIVE_META,
