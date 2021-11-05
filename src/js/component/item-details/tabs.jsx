@@ -48,7 +48,8 @@ const ItemDetailsTabs = () => {
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const shouldFetchChildItems = !['attachment', 'note'].includes(item.itemType);
-	const { isMetaFetching, isMetaAvailable } = useMetaState();
+	const { isItemTypeCreatorTypesAvailable, isFetchingItemTypeCreatorTypes,
+		isItemTypeFieldsAvailable, isFetchingItemTypeFields, isMetaAvailable } = useMetaState();
 
 	const { attachments, notes } = useMemo(() => {
 		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
@@ -104,16 +105,23 @@ const ItemDetailsTabs = () => {
 	}, [relatedItemsState])
 
 	useEffect(() => {
-		// fetch meta on devices that don't use tabs
 		if(shouldUseTabs || !item.itemType) {
 			return;
 		}
-
-		if(!isMetaAvailable && !isMetaFetching) {
-			dispatch(fetchItemTypeCreatorTypes(item.itemType));
-			dispatch(fetchItemTypeFields(item.itemType));
+		if(!isItemTypeCreatorTypesAvailable && !isFetchingItemTypeCreatorTypes) {
+			dispatch(fetchItemTypeCreatorTypes(item.itemType))
 		}
-	}, [isMetaFetching, isMetaAvailable, shouldUseTabs]);
+	}, [dispatch, isFetchingItemTypeCreatorTypes, isItemTypeCreatorTypesAvailable, item.itemType, shouldUseTabs]);
+
+	useEffect(() => {
+		if(shouldUseTabs || !item.itemType) {
+			return;
+		}
+		if(!isItemTypeFieldsAvailable && !isFetchingItemTypeFields) {
+			dispatch(fetchItemTypeFields(item.itemType))
+		}
+	}, [dispatch, isItemTypeFieldsAvailable, isFetchingItemTypeFields, item.itemType, shouldUseTabs]);
+
 
 	useEffect(() => {
 		// fetch tinymce on devices that don't use tabs

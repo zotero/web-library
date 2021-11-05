@@ -9,7 +9,7 @@ import { getBaseMappedValue } from '../../common/item';
 import { TabPane } from '../ui/tabs';
 import { fetchItemTypeCreatorTypes, fetchItemTypeFields } from '../../actions';
 import { get } from '../../utils';
-import { usePrevious } from '../../hooks';
+import { useMetaState } from '../../hooks';
 
 const Info = ({ isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -25,24 +25,24 @@ const Info = ({ isActive, isReadOnly }) => {
 	const title = useSelector(state =>
 		getBaseMappedValue(get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {}), 'title')
 	);
-	const isMetaAvailable = useSelector(
-		state => itemType && itemType in state.meta.itemTypeCreatorTypes && itemType in state.meta.itemTypeFields
-	);
 	const isEditing = useSelector(
 		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
 	);
-	const shouldFetchMeta = useSelector(state => !isMetaAvailable
-		&& !state.fetching.itemTypeCreatorTypes.includes(itemType)
-		&& !state.fetching.itemTypeFields.includes(itemType)
-	);
-	const prevShouldFetchMeta = usePrevious(shouldFetchMeta);
+
+	const { isItemTypeCreatorTypesAvailable, isFetchingItemTypeCreatorTypes,
+		isItemTypeFieldsAvailable, isFetchingItemTypeFields, isMetaAvailable } = useMetaState();
 
 	useEffect(() => {
-		if(shouldFetchMeta && !prevShouldFetchMeta) {
-			dispatch(fetchItemTypeCreatorTypes(itemType));
-			dispatch(fetchItemTypeFields(itemType));
+		if(!isItemTypeCreatorTypesAvailable && !isFetchingItemTypeCreatorTypes) {
+			dispatch(fetchItemTypeCreatorTypes(itemType))
 		}
-	}, [dispatch, itemType, prevShouldFetchMeta, shouldFetchMeta]);
+	}, [dispatch, isFetchingItemTypeCreatorTypes, isItemTypeCreatorTypesAvailable, itemType]);
+
+	useEffect(() => {
+		if(!isItemTypeFieldsAvailable && !isFetchingItemTypeFields) {
+			dispatch(fetchItemTypeFields(itemType))
+		}
+	}, [dispatch, isItemTypeFieldsAvailable, isFetchingItemTypeFields, itemType]);
 
 	return (
 		<TabPane
