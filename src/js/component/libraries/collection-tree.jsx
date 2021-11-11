@@ -475,11 +475,11 @@ const CollectionNode = memo(props => {
 	}, [collection, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
-		if(isTouchOrSmall || isPickerMode) {
+		if(isTouchOrSmall || isReadOnly || isPickerMode) {
 			return;
 		}
 		setRenaming(collection.key);
-	}, [collection, isPickerMode, isTouchOrSmall, setRenaming]);
+	}, [collection, isPickerMode, isReadOnly, isTouchOrSmall, setRenaming]);
 
 	const handleRenameCancel = useCallback(() => {
 		setRenaming(null);
