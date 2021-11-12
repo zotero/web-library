@@ -373,6 +373,7 @@ const DotMenu = memo(props => {
 				className="btn-icon dropdown-toggle"
 				color={ null }
 				title="More"
+				onMouseDown={ stopPropagation }
 				onClick={ handleToggle }
 			>
 				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
@@ -381,22 +382,26 @@ const DotMenu = memo(props => {
 			<DropdownMenu right>
 				<React.Fragment>
 				<DropdownItem
+					onMouseDown={ stopPropagation }
 					onClick={ handleRenameClick }
 				>
 					Rename
 				</DropdownItem>
 				<DropdownItem
+					onMouseDown={ stopPropagation }
 					onClick={ handleDeleteClick }
 				>
 					Delete
 				</DropdownItem>
 				<DropdownItem
+					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
 				>
 					New Subcollection
 				</DropdownItem>
 				{ isTouchOrSmall && (
 					<DropdownItem
+						onMouseDown={ stopPropagation }
 						onClick={ handleMoveCollectionClick }
 					>
 						Move Collection

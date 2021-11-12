@@ -116,6 +116,7 @@ const LibraryNode = props => {
 					type="checkbox"
 					checked={ isPicked }
 					onChange={ handlePickerPick }
+					onMouseDown={ stopPropagation }
 					onClick={ stopPropagation }
 				/>
 			)}
@@ -125,6 +126,7 @@ const LibraryNode = props => {
 						aria-label="add collection"
 						className="mouse btn-icon-plus"
 						icon
+						onMouseDown={ stopPropagation }
 						onClick={ handleAddVirtualClick }
 						tabIndex={ -3 }
 					>
