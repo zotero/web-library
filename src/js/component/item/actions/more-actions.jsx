@@ -13,6 +13,7 @@ import { useItemActionHandlers } from '../../../hooks';
 
 const MoreActionsItems = ({ divider = false }) => {
 	const dispatch = useDispatch();
+	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const { handleDuplicate } = useItemActionHandlers();
@@ -22,7 +23,7 @@ const MoreActionsItems = ({ divider = false }) => {
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = item && (itemsSource === 'collection' || itemsSource === 'top');
+	const canDuplicate = !isReadOnly && item && (itemsSource === 'collection' || itemsSource === 'top');
 
 	const handleViewFileClick = useCallback(() => {
 		openDelayedURL(dispatch(tryGetBestAttachmentURL(item.key)));
@@ -126,13 +127,14 @@ MoreActionsDropdownDesktop.displayName = 'MoreActionsDropdownDesktop';
 const MoreActionsDropdownTouch = memo(() => {
 	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 
 	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 	const isViewFile = attachment !== null;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = item && (itemsSource === 'collection' || itemsSource === 'top');
+	const canDuplicate = !isReadOnly && item && (itemsSource === 'collection' || itemsSource === 'top');
 	const hasAnyAction = isViewFile|| isViewOnline || canDuplicate;
 
 	const [isOpen, setIsOpen] = useState(false);
