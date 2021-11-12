@@ -33,7 +33,7 @@ const LibraryNode = props => {
 	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
 	const isPickerSkip = isPickerMode && isReadOnly;
 
-	const handleClick = useCallback(() => {
+	const handleSelect = useCallback(() => {
 		if(isTouchOrSmall && isPickerMode && !isPickerSkip) {
 			pickerNavigate({ library: libraryKey, view: 'library' });
 		} else if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
@@ -91,7 +91,7 @@ const LibraryNode = props => {
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isOpen={ isOpen && !shouldShowSpinner }
 			onOpen={ handleOpenToggle }
-			onClick={ handleClick }
+			onSelect={ handleSelect }
 			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
 			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }

@@ -224,9 +224,10 @@ const enumerateObjects = (objects, key = 'id', start = 0) => {
 
 const noop = () => {};
 
+// TODO: move to common/event
 const stopPropagation = ev => ev.stopPropagation();
 
-// @TODO: columns util, move elsewhere?
+// TODO: columns util, move elsewhere?
 const resizeVisibleColumns = (visibleColumns, fractionBias, invert = false) => {
 	const isLastColumn = cp => invert ? cp === 0 : cp === visibleColumns.length - 1;
 	const adjustColumnuPointer = cp => invert ? cp - 1 : cp + 1;

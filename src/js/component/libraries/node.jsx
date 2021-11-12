@@ -1,36 +1,29 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd'
 
 import Icon from '../ui/icon';
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
 import { isTriggerEvent } from '../../common/event';
-import { noop } from '../../utils';
+import { stopPropagation, noop } from '../../utils';
 import { pick } from '../../common/immutable';
 
 const Node = props => {
-	const { className, children, dndData, isOpen, onClick = noop, onFileDrop, onNodeDrop, onOpen =
-		noop, onRename, onRenameCancel, showTwisty, onFocusNext = noop, onFocusPrev = noop,
-		onKeyDown = noop, subtree, onDrillDownNext = noop, onDrillDownPrev = noop, shouldBeDraggable,
-		...rest } = props;
+	const { className, children, dndData, isOpen, onFileDrop, onNodeDrop, onOpen = noop, onRename =
+		noop, onRenameCancel = noop, onSelect = noop, showTwisty, onFocusNext = noop, onFocusPrev =
+		noop, onKeyDown = noop, subtree, onDrillDownNext = noop, onDrillDownPrev = noop,
+		shouldBeDraggable, ...rest } = props;
 	const [isFocused, setIsFocused] = useState(false);
-	const isLongPress = useRef(false);
-	const isLongPressCompleted = useRef(false);
-	const ongoingLongPress = useRef(null);
-	const isDraggingRef = useRef(false);
 
-	const [{ isDragging }, drag] = useDrag({
+	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		type: COLLECTION,
 		canDrag: () => shouldBeDraggable,
 		item: () => {
 			onRenameCancel();
 			return dndData;
 		},
-		collect: (monitor) => ({
-			isDragging: monitor.isDragging()
-		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
 			if(dropResult) {
@@ -131,48 +124,18 @@ const Node = props => {
 		}
 	});
 
-	const handleTwistyClick = useCallback(ev => {
+	const handleTwistyMouseDown = useCallback(ev => {
 		ev && ev.stopPropagation();
 		onOpen(ev);
 	}, [onOpen]);
 
-	const handleMouseLeave = useCallback(() => {
-		clearTimeout(ongoingLongPress.current);
-	}, []);
-
-	const handleMouseUp = useCallback(() => {
-		if(isLongPress.current && !isLongPressCompleted.current) {
-			clearTimeout(ongoingLongPress.current);
-			isLongPressCompleted.current = false;
-		}
-	}, []);
-
-	const handleMouseClick = useCallback(ev => {
-		if(!isLongPress.current || !isLongPressCompleted.current) {
-			onClick(ev);
-		}
-		isLongPress.current = false;
-		isLongPressCompleted.current = false;
-	}, [onClick]);
-
 	const handleMouseDown = useCallback(ev => {
-		if(!onRename) {
-			isLongPress.current = false;
-			return;
-		}
+		// node selects on mousedown, not click #461
+		onSelect(ev);
+	}, [onSelect]);
 
-		isLongPress.current = true;
-		isLongPressCompleted.current = false;
-		ev.persist();
-
-		ongoingLongPress.current = setTimeout(() => {
-			isLongPressCompleted.current = true;
-			ev.preventDefault();
-
-			if(!isDraggingRef.current) {
-				onRename(ev);
-			}
-		}, 900);
+	const handleDoubleClick = useCallback(ev => {
+		onRename(ev);
 	}, [onRename]);
 
 	const handleKeyDown = useCallback(ev => {
@@ -185,10 +148,10 @@ const Node = props => {
 		} else if(ev.key === "ArrowUp") {
 			ev.target === ev.currentTarget && onFocusPrev(ev);
 		} else if(isTriggerEvent(ev)) {
-			ev.target === ev.currentTarget && ev.target.click();
+			ev.target === ev.currentTarget && onSelect(ev);
 		}
 		onKeyDown(ev);
-	}, [isOpen, onDrillDownNext, onDrillDownPrev, onFocusNext, onFocusPrev, onKeyDown, onOpen, showTwisty]);
+	}, [isOpen, onDrillDownNext, onDrillDownPrev, onFocusNext, onFocusPrev, onSelect, onKeyDown, onOpen, showTwisty]);
 
 	const handleFocus = useCallback(ev => {
 		if(ev.target === ev.currentTarget) {
@@ -202,15 +165,6 @@ const Node = props => {
 		}
 	}, []);
 
-	useEffect(() => {
-		isDraggingRef.current = isDragging;
-		if(isDragging) {
-			isLongPress.current = false
-			isLongPressCompleted.current = true;
-			clearTimeout(ongoingLongPress.current);
-		}
-	}, [isDragging]);
-
 	return drag(drop(
 		<li className={ cx(className, { focus: isFocused }) }>
 			<div
@@ -220,9 +174,7 @@ const Node = props => {
 				role="treeitem button"
 				aria-expanded={ (subtree || showTwisty) ? isOpen : null }
 				onMouseDown={ handleMouseDown }
-				onMouseUp={ handleMouseUp }
-				onMouseLeave={ handleMouseLeave }
-				onClick={ handleMouseClick }
+				onDoubleClick={ handleDoubleClick }
 				onFocus={ handleFocus }
 				onBlur={ handleBlur }
 				onKeyDown={ handleKeyDown }
@@ -230,7 +182,9 @@ const Node = props => {
 				{ subtree || showTwisty ? (
 					<button
 						className="twisty"
-						onClick={ handleTwistyClick }
+						onDoubleClick={ stopPropagation }
+						onClick={ stopPropagation }
+						onMouseDown={ handleTwistyMouseDown }
 						tabIndex={ -1 }
 						type="button"
 					>
@@ -245,16 +199,11 @@ const Node = props => {
 }
 
 Node.propTypes = {
-	canDrop: PropTypes.bool,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	className: PropTypes.string,
-	connectDragSource: PropTypes.func,
-	connectDropTarget: PropTypes.func,
-	dndTarget: PropTypes.object,
-	isDragging: PropTypes.bool,
+	dndData: PropTypes.object,
 	isOpen: PropTypes.bool,
 	isOver: PropTypes.bool,
-	onClick: PropTypes.func,
 	onDrillDownNext: PropTypes.func,
 	onDrillDownPrev: PropTypes.func,
 	onFileDrop: PropTypes.func,
@@ -264,6 +213,7 @@ Node.propTypes = {
 	onNodeDrop: PropTypes.func,
 	onOpen: PropTypes.func,
 	onRename: PropTypes.func,
+	onSelect: PropTypes.func,
 	showTwisty: PropTypes.bool,
 	subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 }

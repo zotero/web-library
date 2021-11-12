@@ -103,7 +103,7 @@ const ItemsNode = memo(props => {
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
 
-	const handleClick = useCallback(() => {
+	const handleSelect = useCallback(() => {
 		selectNode({
 			view: 'item-list',
 			collection: parentCollectionKey
@@ -119,7 +119,7 @@ const ItemsNode = memo(props => {
 			aria-labelledby={ id.current }
 			className={ cx({ 'selected': isSelected })}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			onClick={ handleClick }
+			onSelect={ handleSelect }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
@@ -195,7 +195,7 @@ VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 
-	const handleClick = useCallback(() => {
+	const handleSelect = useCallback(() => {
 		selectNode({ publications: true });
 	}, [selectNode]);
 
@@ -211,7 +211,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 				'selected': isSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			onClick={ handleClick }
+			onSelect={ handleSelect }
 			dndData={ { 'targetType': 'publications', libraryKey: parentLibraryKey } }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
@@ -242,7 +242,7 @@ PublicationsNode.displayName = 'PublicationsNode';
 const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 
-	const handleClick = useCallback(() => {
+	const handleSelect = useCallback(() => {
 		selectNode({ trash: true });
 	}, [selectNode]);
 
@@ -258,7 +258,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 				'selected': isSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			onClick={ handleClick }
+			onSelect={ handleSelect }
 			dndData={ { 'targetType': 'trash', libraryKey: parentLibraryKey } }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
@@ -466,7 +466,7 @@ const CollectionNode = memo(props => {
 	const isHighlighted = highlightedCollections.includes(collection.key);
 	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
 
-	const handleClick = useCallback(() => {
+	const handleSelect = useCallback(() => {
 		if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
 			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
 		} else {
@@ -577,7 +577,7 @@ const CollectionNode = memo(props => {
 			data-collection-key={ collection.key }
 			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents } }
 			isOpen={ derivedData[collection.key].isOpen }
-			onClick={ handleClick }
+			onSelect={ handleSelect }
 			onNodeDrop={ isTouchOrSmall ? null : handleNodeDrop }
 			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
 			onRename={ isTouchOrSmall ? null : handleRenameTrigger }
