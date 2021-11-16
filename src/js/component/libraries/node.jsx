@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd'
+import { useDebouncedCallback } from 'use-debounce';
 
 import Icon from '../ui/icon';
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
@@ -129,10 +130,10 @@ const Node = props => {
 		onOpen(ev);
 	}, [onOpen]);
 
-	const handleMouseDown = useCallback(ev => {
-		// node selects on mousedown, not click #461
+	const handleMouseDown = useDebouncedCallback(useCallback(ev => {
+		// node selects on mousedown, not click. Debounce to avoid multiple onmousedown events on touch #461
 		onSelect(ev);
-	}, [onSelect]);
+	}, [onSelect]), 100, { leading: true, trailing: false })
 
 	const handleDoubleClick = useCallback(ev => {
 		onRename(ev);

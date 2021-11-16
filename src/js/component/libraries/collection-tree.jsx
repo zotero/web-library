@@ -808,7 +808,7 @@ const CollectionTree = props => {
 	}, [toggleOpen]);
 
 	const selectNode = useCallback(partialPath => {
-		const path = { ...partialPath, library: parentLibraryKey }
+		const path = { ...partialPath, library: parentLibraryKey };
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 	}, [dispatch, isPickerMode, parentLibraryKey, pickerNavigate]);
 
