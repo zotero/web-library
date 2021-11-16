@@ -756,8 +756,11 @@ const CollectionTree = props => {
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
 	const selectedCollectionKey = isPickerMode ? pickerState.collectionKey : stateSelectedCollectionKey;
+	const prevSelectedCollectionKey = usePrevious(selectedCollectionKey);
 	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
 	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
+	const selectedCollection = collections[selectedCollectionKey];
+	const prevSelectedCollection = usePrevious(selectedCollection);
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
@@ -809,9 +812,14 @@ const CollectionTree = props => {
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 	}, [dispatch, isPickerMode, parentLibraryKey, pickerNavigate]);
 
+	const ensurePathToSelectedIsOpened = useCallback(() => {
+		setOpened([...opened, ...path.slice(0, -1)]);
+	}, [opened, path]);
 
 	const derivedData = useMemo(
-		() => makeDerivedData(collections, path, opened, isTouchOrSmall),
+		() => {
+			return makeDerivedData(collections, path, opened, isTouchOrSmall);
+		},
 		[collections, isTouchOrSmall, opened, path]
 	);
 
@@ -844,6 +852,16 @@ const CollectionTree = props => {
 			}
 		}
 	}, [collections, highlightedCollections, opened, prevHighlightedCollections]);
+
+	useEffect(() => {
+		if(selectedCollectionKey !== prevSelectedCollectionKey) {
+			// ignore selected collection key
+			return;
+		}
+		if(selectedCollection?.parentCollection !== prevSelectedCollection?.parentCollection) {
+			ensurePathToSelectedIsOpened();
+		}
+	}, [ensurePathToSelectedIsOpened, prevSelectedCollection, selectedCollection, selectedCollectionKey, prevSelectedCollectionKey]);
 
 	useEffect(() => {
 		if(isFirstRendering && !isPickerMode && !isTouchOrSmall) {
