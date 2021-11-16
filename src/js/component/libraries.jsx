@@ -36,12 +36,12 @@ const LibraryNode = props => {
 	const handleSelect = useCallback(() => {
 		if(isTouchOrSmall && isPickerMode && !isPickerSkip) {
 			pickerNavigate({ library: libraryKey, view: 'library' });
-		} else if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
+		} else if(isPickerMode && pickerAllowRoot && !isPickerSkip && !isTouchOrSmall) {
 			pickerPick({ libraryKey });
 		} else if(!isPickerMode) {
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}
-	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, pickerNavigate, pickerPick]);
+	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, pickerAllowRoot, pickerNavigate, pickerPick]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });

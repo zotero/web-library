@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../ui/button';
+import Icon from '../ui/icon';
 import deepEqual from 'deep-equal';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';
@@ -20,6 +21,7 @@ const MoveCollectionsModal = () => {
 	);
 	const isOpen = useSelector(state => state.modal.id === MOVE_COLLECTION);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [isBusy, setIsBusy] = useState(false);
 	const [picked, setPicked] = useState([]);
 	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
@@ -72,6 +74,7 @@ const MoveCollectionsModal = () => {
 			overlayClassName="modal-centered modal-full-height modal-slide"
 		>
 			<div className="modal-body">
+			{ isTouchOrSmall ? (
 				<TouchHeader
 					isModal={ true }
 					className="darker"
@@ -79,6 +82,22 @@ const MoveCollectionsModal = () => {
 					path={ touchHeaderPath }
 					onNavigate={ handleNavigation }
 				/>
+			) : (
+			<React.Fragment>
+					<div className="modal-header">
+					<h4 className="modal-title truncate">
+						Select target library or collection
+					</h4>
+					<Button
+						icon
+						className="close"
+						onClick={ handleCancel }
+					>
+						<Icon type={ '16/close' } width="16" height="16" />
+					</Button>
+				</div>
+				</React.Fragment>
+			) }
 				<Libraries
 					pickerAllowRoot={ currentParentCollectionKey !== false }
 					isPickerMode={ true }
@@ -91,6 +110,7 @@ const MoveCollectionsModal = () => {
 					pickerSkipCollections={ [collectionKey, currentParentCollectionKey] }
 				/>
 			</div>
+			{ isTouchOrSmall ? (
 			<div className="modal-footer">
 				<div className="modal-footer-left">
 					<Button
@@ -117,6 +137,19 @@ const MoveCollectionsModal = () => {
 					</Button>
 				</div>
 			</div>
+			) : (
+				<React.Fragment>
+					<div className="modal-footer justify-content-end">
+						<Button
+							disabled={ picked.length === 0}
+							className="btn-link"
+							onClick={ handleMove }
+						>
+							Move
+						</Button>
+					</div>
+				</React.Fragment>
+			) }
 		</Modal>
 	);
 }
