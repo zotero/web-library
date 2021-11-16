@@ -440,6 +440,7 @@ const PickerCheckbox = memo(({ collectionKey, pickerPick, picked, parentLibraryK
 			checked={ isChecked }
 			onChange={ handleChange }
 			onClick={ stopPropagation }
+			onMouseDown={ stopPropagation }
 			tabIndex={ -1 }
 			type="checkbox"
 		/>
