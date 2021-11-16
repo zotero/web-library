@@ -78,10 +78,10 @@ const Node = props => {
 					return false;
 				}
 
-				const targetParents = targetGetParents(targetCollectionKey);
-				const srcParents = srcGetParents(srcCollectionKey);
+				const targetParents = targetGetParents ? targetGetParents(targetCollectionKey) : null;
+				const srcParents = srcGetParents ? srcGetParents(srcCollectionKey) : null;
 
-				if(srcLibraryKey === targetLibraryKey && targetParents.includes(srcCollectionKey)){
+				if(srcLibraryKey === targetLibraryKey && targetParents?.includes(srcCollectionKey)) {
 					// check for parent collection being dragged onto its child #453
 					return false;
 				}
