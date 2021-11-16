@@ -70,9 +70,9 @@ const LibraryNode = props => {
 		const isVirtualInThisTree = virtual && virtual.libraryKey === libraryKey;
 
 		return {
-			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'excludeCollections',
-			'includeCollections', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
-			'onFocusPrev', 'pickerSkipCollections', 'selectedCollectionKey']),
+			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
+			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev',
+			'pickerSkipCollections', 'selectedCollectionKey']),
 			isPickerMode, parentLibraryKey, picked, pickerNavigate, pickerPick, pickerState,
 			virtual: isVirtualInThisTree ? virtual : null,
 		}
@@ -274,7 +274,7 @@ const Libraries = props => {
 			onDrillDownPrev: focusDrillDownPrev,
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
-			...pick(props, ['isPickerMode', 'includeCollections', 'excludeCollections', 'picked',
+			...pick(props, ['isPickerMode', 'disabledCollections', 'picked',
 			'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerState',
 			'pickerSkipCollections', 'selectedCollectionKey' ])
 		}

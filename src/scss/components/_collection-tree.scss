@@ -191,6 +191,18 @@
 					margin-right: $space-md - 2px;
 				}
 			}
+
+			@include state("li.picker-skip > .item-container") {
+				@include touch-or-bp-down(sm) {
+					color: $collection-tree-picker-skip-color;
+				}
+			}
+
+			@include state("li.disabled > .item-container") {
+				@include touch-or-bp-down(sm) {
+					color: $collection-tree-disabled;
+				}
+			}
 		}
 
 		> .truncate {
@@ -211,9 +223,11 @@
 			}
 
 			@include state("li.picker-skip > .item-container") {
-				@include mouse-and-bp-up(md) {
-					color: $collection-tree-picker-skip-color;
-				}
+				color: $collection-tree-picker-skip-color;
+			}
+
+			@include state("li.disabled > .item-container") {
+				color: $collection-tree-disabled;
 			}
 
 			@include state("li.picked > .item-container") {

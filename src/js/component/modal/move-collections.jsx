@@ -87,8 +87,8 @@ const MoveCollectionsModal = () => {
 					pickerNavigate={ handleNavigation }
 					pickerState= { navState }
 					includeLibraries={ [libraryKey] } // TODO #227
-					excludeCollections={ [collectionKey]}
-					pickerSkipCollections={ [currentParentCollectionKey] }
+					disabledCollections={ [collectionKey] }
+					pickerSkipCollections={ [collectionKey, currentParentCollectionKey] }
 				/>
 			</div>
 			<div className="modal-footer">
