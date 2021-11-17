@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
-import { default as UncontrolledDropdown } from 'reactstrap/lib/UncontrolledDropdown';
-import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
-import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
-import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
@@ -16,6 +17,43 @@ const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {
 	titleCreatorYear: "Title, Creator, Year",
 	everything: "Title, Creator, Year + Full-Text Content"
+};
+
+const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
+	<UncontrolledDropdown
+		className="dropdown"
+	>
+		<DropdownToggle
+			color={ null }
+			className="btn-icon dropdown-toggle"
+			tabIndex={ -2 }
+			onKeyDown={ onKeyDown }
+		>
+			<Icon type={ '24/search-options' } width="24" height="24" />
+		</DropdownToggle>
+		<DropdownMenu>
+			<DropdownItem
+				data-qmode="titleCreatorYear"
+				onClick={ onSelectMode }
+			>
+				{ modes['titleCreatorYear'] }
+			</DropdownItem>
+			<DropdownItem
+				data-qmode="everything"
+				onClick={ onSelectMode }
+			>
+				{ modes['everything'] }
+			</DropdownItem>
+		</DropdownMenu>
+	</UncontrolledDropdown>
+));
+
+SearchDropdown.displayName = 'SearchDropdown';
+
+SearchDropdown.propTypes = {
+	modes: PropTypes.object,
+	onSelectMode: PropTypes.func,
+	onKeyDown: PropTypes.func,
 };
 
 const Search = props => {
@@ -156,32 +194,11 @@ const Search = props => {
 
 	return (
 		<div className="search input-group">
-			<UncontrolledDropdown
-				className="dropdown"
-			>
-				<DropdownToggle
-					color={ null }
-					className="btn-icon dropdown-toggle"
-					tabIndex={ -2 }
-					onKeyDown={ handleKeyDown }
-				>
-					<Icon type={ '24/search-options' } width="24" height="24" />
-				</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem
-						data-qmode="titleCreatorYear"
-						onClick={ handleSelectMode }
-					>
-						{ modes['titleCreatorYear'] }
-					</DropdownItem>
-					<DropdownItem
-						data-qmode="everything"
-						onClick={ handleSelectMode }
-					>
-						{ modes['everything'] }
-					</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
+			<SearchDropdown
+				modes={ modes }
+				onKeyDown={ handleKeyDown }
+				onSelectMode={ handleSelectMode }
+			/>
 			<input
 				autoFocus={ autoFocus }
 				className="form-control search-input"
@@ -207,6 +224,13 @@ const Search = props => {
 			)}
 		</div>
 	);
+}
+
+Search.propTypes = {
+	autoFocus: PropTypes.bool,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
+	registerAutoFocus: PropTypes.func,
 }
 
 export default memo(Search);
