@@ -9,7 +9,7 @@ import Icon from './ui/icon';
 import Node from './libraries/node';
 import Spinner from './ui/spinner';
 import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
-import { get, stopPropagation, getUniqueId } from '../utils';
+import { get, stopPropagation, getUniqueId, noop } from '../utils';
 import { pick } from '../common/immutable';
 import { useFocusManager, usePrevious } from '../hooks/';
 
@@ -284,8 +284,8 @@ const Libraries = props => {
 		<nav
 			aria-label="collection tree"
 			className={ cx('collection-tree', { 'picker-mode': isPickerMode }) }
-			onFocus={ receiveFocus }
-			onBlur={ receiveBlur }
+			onFocus={ isTouchOrSmall ? noop : receiveFocus }
+			onBlur={ isTouchOrSmall ? noop : receiveBlur }
 			tabIndex={ 0 }
 			ref={ treeRef }
 		>
