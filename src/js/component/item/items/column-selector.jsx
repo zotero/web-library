@@ -98,7 +98,7 @@ const ColumnSelector = props => {
 							styles: {
 								...data.styles,
 								overflow: 'auto',
-								maxHeight: 330,
+								maxHeight: 340,
 							},
 						};
 					},
