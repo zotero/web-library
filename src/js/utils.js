@@ -440,6 +440,13 @@ const openDelayedURL = getURLPromise => {
 	getURLPromise.catch(() => windowReference.close());
 }
 
+// Avoid crashing when localStorage is missing, see #465
+const localStorageWrapper = localStorage ?? {
+	getItem: () => null,
+	setItem: () => undefined,
+	removeItem: () => undefined
+};
+
 export {
 	applyChangesToVisibleColumns,
 	cede,
@@ -468,6 +475,7 @@ export {
 	isLikeURL,
 	JSONTryParse,
 	loadJs,
+	localStorageWrapper,
 	mapRelationsToItemKeys,
 	noop,
 	openDelayedURL,

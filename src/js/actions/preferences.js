@@ -1,4 +1,4 @@
-import { JSONTryParse } from '../utils';
+import { JSONTryParse, localStorageWrapper } from '../utils';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
 import { preferences as defaultPreferences, version } from '../constants/defaults';
 
@@ -15,7 +15,7 @@ const getColumnsWithAttachmentVisible = (userColumns, defaultColumns) =>
 
 
 const preferencesLoad = () => {
-	var userPreferences = JSONTryParse(localStorage.getItem('zotero-web-library-prefs'));
+	var userPreferences = JSONTryParse(localStorageWrapper.getItem('zotero-web-library-prefs'));
 	var preferences;
 	try {
 		if(userPreferences && userPreferences.version !== version) {
@@ -61,12 +61,12 @@ const preferenceChange = (name, value) => {
 			setTimeout(() => {
 				const preferences = {
 					...defaultPreferences,
-					...JSONTryParse(localStorage.getItem('zotero-web-library-prefs')),
+					...JSONTryParse(localStorageWrapper.getItem('zotero-web-library-prefs')),
 					[name]: value,
 					version
 				};
 
-				localStorage.setItem('zotero-web-library-prefs', JSON.stringify(preferences));
+				localStorageWrapper.setItem('zotero-web-library-prefs', JSON.stringify(preferences));
 				resolve();
 			}, 0)
 		}));
