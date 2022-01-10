@@ -9,9 +9,10 @@ const getRestoredColumns = (userColumns, defaultColumns) => defaultColumns.map(d
 }));
 
 const getColumnsWithAttachmentVisible = (userColumns, defaultColumns) =>
-	getRestoredColumns(userColumns, defaultColumns).map(
-		uc => ({ ...uc, isVisible: uc.field === 'attachment' ? true : uc.isVisible })
-	);
+	(userColumns.length === defaultColumns.length ? userColumns : getRestoredColumns(userColumns, defaultColumns))
+		.map(
+			uc => ({ ...uc, isVisible: uc.field === 'attachment' ? true : uc.isVisible })
+		);
 
 
 const preferencesLoad = () => {
