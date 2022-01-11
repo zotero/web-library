@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from './ui/icon';
@@ -7,11 +7,39 @@ import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections,
 toggleTransitions, triggerResizeViewport } from '../actions';
 import { get } from '../utils';
 
-const LoadingCover = () => (
-	<div className="loading-cover">
-		<Icon type={ '32/z' } width="32" height="32" />
-	</div>
-);
+const LoadingCover = () => {
+	const maxRequestsPendingSeen = useRef(0);
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);
+	const progress = Math.round(((maxRequestsPendingSeen.current - requestsPending) / maxRequestsPendingSeen.current) * 100);
+
+	useEffect(() => {
+		if(requestsPending > maxRequestsPendingSeen.current) {
+			maxRequestsPendingSeen.current = requestsPending;
+		}
+	}, [requestsPending])
+
+	return (
+		<div className="loading-cover">
+			<Icon type={ '32/z' } width="32" height="32" />
+			{ (maxRequestsPendingSeen.current > 5 && requestsPending <= maxRequestsPendingSeen.current) && (
+				<div className="circular-progress-bar">
+					<svg viewBox="0 0 200 200">
+						<circle className="back" cx="100" cy="100" r="95" />
+						<circle
+							className="front"
+							strokeDasharray="600"
+							strokeDashoffset={ 600 - (600 * (progress/100)) }
+							cx="100"
+							cy="100"
+							r="95"
+						/>
+					</svg>
+				</div>
+			) }
+		</div>
+	);
+};
 
 const Loader = () => {
 	const dispatch = useDispatch();

@@ -19,4 +19,31 @@
 			color: $primary;
 		}
 	}
+
+	.circular-progress-bar {
+		position: absolute;
+
+		svg {
+			width: 100px;
+			height: 100px;
+			transform: rotate(-90deg);
+			overflow: initial;
+		}
+
+		circle {
+			stroke-width: 20px;
+			fill: none;
+
+			&.back {
+				stroke: $shade-2;
+			}
+
+			&.front {
+				position: relative;
+				stroke-position: inside;
+				stroke: $secondary;
+				z-index: 1;
+			}
+		}
+	}
 }
