@@ -3,11 +3,9 @@
 //
 
 .bibliography-modal {
-	.modal-content {
-		@include mouse-and-bp-up(md) {
-			min-height: calc(100vh - 2 * #{$space-xl});
-			overflow: visible; // Modal needs overflow for split button dropdown, so we need to reset the border-radius
-		}
+	@include mouse-and-bp-up(md) {
+		min-height: calc(100vh - 2 * #{$space-xl});
+		overflow: visible; // Modal needs overflow for split button dropdown, so we need to reset the border-radius
 	}
 
 	.modal-header {

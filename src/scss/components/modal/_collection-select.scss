@@ -4,11 +4,8 @@
 
 .collection-select-modal {
 	align-items: normal; // Stretch modal
-
-	.modal-content {
-		display: flex;
-		flex-direction: column;
-	}
+	display: flex;
+	flex-direction: column;
 
 	.modal-body {
 		flex: 1 1 0;
