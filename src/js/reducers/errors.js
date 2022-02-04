@@ -7,7 +7,7 @@ const isDuplicate = (error, prevError) =>
 	error && prevError && error.message === prevError.message &&
 	error.type === prevError.type && !prevError.isDismissed;
 
-const processError = ({ error, errorType }) => {
+const processError = ({ error, errorType }, meta) => {
 	var message, cta;
 
 	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.startsWith('NetworkError'))) {
@@ -18,7 +18,16 @@ const processError = ({ error, errorType }) => {
 			message = 'Requested file is not available. It might not have been synced yet.';
 		}
 
-		if(error.reason?.includes('File would exceed quota')) {
+		const dateError = error.reason?.match(/^'([a-zA-Z0-9]*)' must be in ISO 8601 or UTC.*?\((.*?)\)$/);
+
+		if(dateError) {
+			const field = dateError[1];
+			const value = dateError[2];
+			const localized = meta?.itemFields?.find(metaData => metaData.field === field)?.localized;
+			message = `'${localized ?? field}' could not be updated because '${value}' is not
+			recognized as date. Please specify date in ISO 8601 or UTC 'YYYY-MM-DD[ hh:mm:ss]'
+			format or use one of the following values: 'now', 'today', 'yesterday'`;
+		} else if(error.reason?.includes('File would exceed quota')) {
 			message = 'File was not uploaded as it would exceed quota.';
 			cta = { type: 'url', label: 'Upgrade Storage', href: buyStorageUrl }
 		} else {
@@ -46,7 +55,7 @@ const processError = ({ error, errorType }) => {
 	}
 }
 
-const errors = (state = [], action) => {
+const errors = (state = [], action, { meta } = {}) => {
 	if(action.type === DISMISS_ERROR) {
 		return state.filter(error => error.id !== action.errorId);
 	} else if(action.type && action.type.startsWith('ERROR_')) {
@@ -57,7 +66,7 @@ const errors = (state = [], action) => {
 			// discard 412, these will trigger RESET_LIBRARY which is handled below
 			return state;
 		}
-		const processedError = processError(action);
+		const processedError = processError(action, meta);
 
 		if(isDuplicate(processedError, state[0])) {
 			return [
