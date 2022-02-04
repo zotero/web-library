@@ -133,6 +133,7 @@ const BoxFieldInput = memo(props => {
 		onCancel,
 		onCommit,
 		options: field.options || null,
+		placeholder: field.placeholder || null,
 		selectOnFocus: !isForm,
 		value: field.value || '',
 		id: field.key,
