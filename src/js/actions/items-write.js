@@ -1214,6 +1214,10 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 			(item.itemType in baseMappings && 'date' in baseMappings[item.itemType] && fieldKey === baseMappings[item.itemType]['date'])
 		) {
 			patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+			if(fieldKey === 'accessDate' && patch[fieldKey].match(/^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9])$/)) {
+				// If date follows ISO format but seconds are missing we silently append 00. See #464
+				patch[fieldKey] += ':00';
+			}
 		}
 
 		dispatch(updateItem(item.key, patch));
