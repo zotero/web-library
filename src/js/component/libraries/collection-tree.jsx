@@ -877,6 +877,10 @@ const CollectionTree = props => {
 				targetEl.scrollIntoView();
 			}
 		}
+		// detect if URL contains non-existing collection key and redirect if it does
+		if(!(stateSelectedCollectionKey in collections)) {
+			dispatch(navigate({ items: null, collection: null, view: 'library' }));
+		}
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if(isFetchingAllCollections) {
