@@ -53,10 +53,6 @@ const items = (state = {}, action, metaAndTags) => {
 				}, metaAndTags)))
 			}
 		case RECEIVE_CHILD_ITEMS:
-			return {
-				...state,
-				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
-			};
 		case RECEIVE_CREATE_ITEMS:
 		case RECEIVE_FETCH_ITEM_DETAILS:
 		case RECEIVE_FETCH_ITEMS:
