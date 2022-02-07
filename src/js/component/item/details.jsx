@@ -21,12 +21,22 @@ const ItemDetails = props => {
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const shouldRedirectToParentItem = !isTrash && itemKey && item && item.parentItem;
+	const lastFetchItemDetailsNoResults = useSelector(state => {
+		const { libraryKey: requestLK, totalResults, queryOptions = {} } = state.traffic?.['FETCH_ITEM_DETAILS']?.last ?? {};
+		return totalResults === 0 && requestLK === libraryKey && queryOptions.itemKey === itemKey;
+	});
 
 	useEffect(() => {
 		if(itemKey && !item) {
 			dispatch(fetchItemDetails(itemKey));
 		}
 	}, [dispatch, item, itemKey]);
+
+	useEffect(() => {
+		if(lastFetchItemDetailsNoResults) {
+			dispatch(navigate({ items: null, view: 'item-list' }));
+		}
+	}, [dispatch, lastFetchItemDetailsNoResults]);
 
 	useEffect(() => {
 		if(shouldRedirectToParentItem) {
