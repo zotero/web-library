@@ -51,8 +51,8 @@
   ],
   "license": "AGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.17.0",
-    "@babel/runtime-corejs3": "^7.17.0",
+    "@babel/runtime": "^7.17.2",
+    "@babel/runtime-corejs3": "^7.17.2",
     "@tinymce/tinymce-react": "^3.13.0",
     "bootstrap-sass": "^3.4.1",
     "classnames": "^2.3.1",
@@ -67,10 +67,10 @@
     "param-case": "^3.0.4",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
-    "react-dnd": "^15.1.0",
-    "react-dnd-html5-backend": "^15.1.1",
+    "react-dnd": "^15.1.1",
+    "react-dnd-html5-backend": "^15.1.2",
     "react-dnd-multi-backend": "^6.0.2",
-    "react-dnd-touch-backend": "^15.1.0",
+    "react-dnd-touch-backend": "^15.1.1",
     "react-dom": "^17.0.2",
     "react-modal": "^3.14.4",
     "react-redux": "^7.2.6",
@@ -90,7 +90,7 @@
     "zotero-base-mappings": "0.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.0",
+    "@babel/core": "^7.17.2",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-transform-async-to-generator": "^7.16.8",
