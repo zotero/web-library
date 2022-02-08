@@ -878,8 +878,8 @@ const CollectionTree = props => {
 			}
 		}
 		// detect if URL contains non-existing collection key and redirect if it does
-		if(!(stateSelectedCollectionKey in collections)) {
-			dispatch(navigate({ items: null, collection: null, view: 'library' }));
+		if(!isPickerMode && stateSelectedCollectionKey && !(stateSelectedCollectionKey in collections)) {
+			dispatch(navigate({ library: stateSelectedLibraryKey, view: 'library' }, true));
 		}
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
