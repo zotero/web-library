@@ -34,7 +34,7 @@ const ItemDetails = props => {
 
 	useEffect(() => {
 		if(lastFetchItemDetailsNoResults) {
-			dispatch(navigate({ items: null, view: 'item-list' }));
+			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }));
 		}
 	}, [dispatch, lastFetchItemDetailsNoResults]);
 
