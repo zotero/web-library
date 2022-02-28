@@ -3,6 +3,8 @@
 // --------------------------------------------------
 
 // Creators field
+@use "sass:math";
+
 .creators-entry {
 	position: relative;
 
@@ -86,7 +88,7 @@
 		@include touch-or-bp-down(sm) {
 			@include state(".editing .creators-entry.virtual") {
 				flex-basis: calc((100% - #{2 * $default-padding-x-touch
-					+ $input-border-width + $space-lg}) * #{$metadata-list-offset / 100%}
+					+ $input-border-width + $space-lg}) * #{math.div($metadata-list-offset, 100%)}
 				); // Align with creators
 			}
 		}
@@ -175,12 +177,12 @@
 
 	.value {
 		@include touch-or-bp-down(sm) {
-			@include state(".editing .creators-entry") {
+			@include state(".editing", ".creators-entry") {
 				align-items: center;
 				padding-right: $creators-value-padding-right-touch;
 			}
 
-			@include state(".editing .creators-entry.single, .editing .creators-entry.virtual") {
+			@include state(".editing .creators-entry.single", ".editing .creators-entry.virtual") {
 				padding-right: $creators-value-padding-right-touch + $space-xs;
 			}
 
@@ -303,7 +305,7 @@
 					display: block;
 					position: absolute;
 					left: $default-padding-x-touch;
-					top: ($line-height-large-touch - $space-lg) / 2;
+					top: ($line-height-large-touch - $space-lg) * 0.5;
 					margin-right: $default-padding-x-touch;
 					width: $space-lg;
 					height: $space-lg;

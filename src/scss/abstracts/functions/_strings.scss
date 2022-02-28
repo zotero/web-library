@@ -23,6 +23,7 @@
 		$first-part: str-slice($string, 1, ($i - 1));
 		$string: str-parse(str-slice($string, ($i + str-length($token))), $token);
 
+
 		@return join(simple-selectors($first-part), $string);
 	}
 

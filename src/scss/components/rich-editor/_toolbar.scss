@@ -62,7 +62,7 @@
 			}
 
 			&:not(:first-child) {
-				margin-left: $space-min / 2;
+				margin-left: $space-min * 0.5;
 			}
 
 			&[title="Link"] {

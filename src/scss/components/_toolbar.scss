@@ -22,7 +22,7 @@
 
 	@include variant(".toolbar.dense") {
 		html:not(.specifity) & {
-			padding: 0 ($space-min / 2);
+			padding: 0 ($space-min * 0.5);
 		}
 	}
 
@@ -80,7 +80,7 @@
 		}
 
 		> * + * {
-			margin-left: $space-min / 2;
+			margin-left: $space-min * 0.5;
 
 			@include variant(".toolbar .toolbar-justified") {
 				margin: 0;
@@ -104,8 +104,8 @@
 			}
 
 			& + .tool-group {
-				margin-left: $space-min / 2;
-				padding-left: $space-min / 2 + $border-width;
+				margin-left: $space-min * 0.5;
+				padding-left: $space-min * 0.5 + $border-width;
 
 				&::before {
 					content: "";

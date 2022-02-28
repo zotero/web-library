@@ -2,7 +2,7 @@
 	.icon-previous {
 		position: absolute;
 		left: $default-padding-x-touch;
-		top: ($line-height-large-touch - $space-md) / 2;
+		top: ($line-height-large-touch - $space-md) * 0.5;
 		z-index: 2;
 		transform: rotate(-90deg);
 	}

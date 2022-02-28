@@ -96,7 +96,7 @@
 				&,
 				.editing & {
 					@include bp-down-normalized(xs) {
-						min-height: calc(50vh - (#{$navbar-height-xs / 2 + $touch-header-height}));
+						min-height: calc(50vh - (#{$navbar-height-xs * 0.5 + $touch-header-height}));
 					}
 				}
 			}

@@ -120,7 +120,7 @@
 		input[type="checkbox"] {
 			position: absolute;
 			left: $item-list-padding-x;
-			top: ($item-list-row-height - $border-width - $space-lg) / 2 + $border-width;
+			top: ($item-list-row-height - $border-width - $space-lg) * 0.5 + $border-width;
 			pointer-events: none; // These are purely decorative
 		}
 
@@ -238,7 +238,7 @@
 		.icon-chevron-13 {
 			position: absolute;
 			right: 12px;
-			top: ($item-list-row-height - $border-width - $space-md) / 2 + $border-width;
+			top: ($item-list-row-height - $border-width - $space-md) * 0.5 + $border-width;
 			transform: rotate(90deg);
 			color: $item-list-chevron-color;
 

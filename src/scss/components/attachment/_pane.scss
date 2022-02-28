@@ -51,7 +51,7 @@
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
 			.scrollbar-style-permanent & {
-				padding-top: $space-min / 2;
+				padding-top: $space-min * 0.5;
 			}
 		}
 	}

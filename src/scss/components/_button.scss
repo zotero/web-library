@@ -196,29 +196,28 @@
 	color: $btn-default-color;
 	border-color: $btn-default-border-color;
 
-	@include state(".btn-default:hover, .btn-file input:hover + .btn-default") {
+	@include state(".btn-default:hover", ".btn-file input:hover + .btn-default") {
 		background-color: $btn-default-hover-bg;
 		box-shadow: 0 2px 4px  rgba($shade-10, 0.06);
 	}
 
-	@include state(".btn-default:active, .btn-file input:active + .btn-default") {
+	@include state(".btn-default:active", ".btn-file input:active + .btn-default") {
 		background-color: darken($shade-1, 4%);
 		box-shadow: none;
 	}
 
-	@include state(".btn-default:disabled, .btn-file input:disabled + .btn-default") {
+	@include state(".btn-default:disabled", ".btn-file input:disabled + .btn-default") {
 		box-shadow: none;
 	}
 
 	.keyboard & {
-		@include state(".btn-default:focus, .btn-file input:focus + .btn-default") {
+		@include state(".btn-default:focus", ".btn-file input:focus + .btn-default") {
 			border-color: $secondary;
 			box-shadow: 0 0 0 $input-btn-focus-width $secondary;
 		}
 
 		@include state(
-			".btn-default:focus:hover,
-			.btn-file input:focus:hover + .btn-default"
+			".btn-default:focus:hover", ".btn-file input:focus:hover + .btn-default"
 		) {
 			border-color: lighten($secondary, 4%);
 	 		box-shadow:
@@ -227,8 +226,7 @@
 		}
 
 		@include state(
-			".btn-default:focus:active,
-			.btn-file input:focus:active + .btn-default"
+			".btn-default:focus:active", ".btn-file input:focus:active + .btn-default"
 		) {
 			border-color: darken($secondary, 8%);
 			box-shadow: 0 0 0 $input-btn-focus-width darken($secondary, 8%);

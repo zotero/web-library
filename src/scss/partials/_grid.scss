@@ -2,6 +2,8 @@
 // Grid
 //
 
+@use "sass:math";
+
 .col {
 	flex: 1 1 0;
 	width: 100%;
@@ -12,8 +14,8 @@
 @for $i from 1 through $grid-columns {
 	.col-#{$i} {
 		@include mouse-and-bp-up(md) {
-			flex: 0 0 calc( 100% / (#{$grid-columns / $i}) );
-			max-width: calc( 100% / (#{$grid-columns / $i}) );
+			flex: 0 0 calc( 100% / (#{math.div($grid-columns, $i)}) );
+			max-width: calc( 100% / (#{math.div($grid-columns, $i)}) );
 		}
 	}
 }

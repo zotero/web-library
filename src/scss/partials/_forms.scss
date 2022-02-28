@@ -23,14 +23,14 @@
 	@include mouse-and-bp-up(md) {
 		display: flex;
 		flex-wrap: wrap;
-		margin: 0 (-$form-grid-gutter-width / 2);
+		margin: 0 (-$form-grid-gutter-width * 0.5);
 	}
 
 	> .col,
 	> [class*="col-"] {
 		@include mouse-and-bp-up(md) {
-			padding-left: $form-grid-gutter-width / 2;
-			padding-right: $form-grid-gutter-width / 2;
+			padding-left: $form-grid-gutter-width * 0.5;
+			padding-right: $form-grid-gutter-width * 0.5;
 		}
 	}
 }
@@ -111,7 +111,7 @@ label {
 
 			.icon {
 				vertical-align: top;
-				margin-top: ($input-btn-height-touch - 28px) / 2;
+				margin-top: ($input-btn-height-touch - 28px) * 0.5;
 			}
 		}
 	}
@@ -135,7 +135,7 @@ label {
 
 		@include touch-or-bp-down(sm) {
 			right: $input-btn-padding-x-touch;
-			top: calc(50% - #{$space-lg / 2});
+			top: calc(50% - #{$space-lg * 0.5});
 		}
 
 		@include mouse-and-bp-up(md) {
@@ -153,7 +153,7 @@ label {
 	&.textarea {
 		@include touch-or-bp-down(sm) {
 			$textarea-padding:
-				($space-thumb - $font-size-mobile * $line-height-base-mobile) / 2;
+				($space-thumb - $font-size-mobile * $line-height-base-mobile) * 0.5;
 
 			padding-top: $textarea-padding;
 			padding-bottom: $textarea-padding;
@@ -415,7 +415,7 @@ input[type="checkbox"] {
 		flex: 0 0 auto;
 		width: $space-lg;
 		height: $space-lg;
-		border-radius: $space-lg / 2;
+		border-radius: $space-lg * 0.5;
 		background-color: $input-bg;
 		border: $input-border-width solid $checkbox-border-touch;
 

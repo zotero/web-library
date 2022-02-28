@@ -2,7 +2,6 @@
 // Zotero Web Library
 // --------------------------------------------------
 
-
 // Abstracts
 // --------------------------------------------------
 
@@ -12,12 +11,10 @@
 @import "abstracts/placeholders";
 @import "abstracts/utilities";
 
-
 // Theme
 // --------------------------------------------------
 
 @import "themes/light";
-
 
 // Base
 // --------------------------------------------------
@@ -27,7 +24,6 @@
 @import "base/base";
 @import "base/type";
 @import "base/utilities";
-
 
 // Partials
 // --------------------------------------------------
@@ -44,7 +40,6 @@
 @import "partials/badge";
 @import "partials/details-list";
 @import "partials/scrollbar";
-
 
 // Components
 // --------------------------------------------------
@@ -66,37 +61,28 @@
 @import "components/searchbar";
 @import "components/auto-resizer";
 @import "components/color-picker";
-
 @import "components/library";
-
 @import "components/navbar";
 @import "components/nav-sidebar";
-
 @import "components/item/list";
 @import "components/item/table";
 @import "components/item/details";
 @import "components/item/drilldown";
-
 @import "components/metadata/list";
 @import "components/metadata/pane";
 @import "components/metadata/abstract";
 @import "components/metadata/title";
 @import "components/metadata/creators";
-
 @import "components/note/pane";
 @import "components/note/list";
-
 @import "components/tag/pane";
 @import "components/tag/list";
 @import "components/tag/selector";
 @import "components/tag/touch-selector";
 @import "components/tag/tag-color-manager";
-
 @import "components/attachment/pane";
 @import "components/attachment/list";
-
 @import "components/related/list";
-
 @import "components/modal/react-modal";
 @import "components/modal/collection-select";
 @import "components/modal/bibliography";
@@ -104,15 +90,14 @@
 @import "components/modal/note";
 @import "components/modal/identifier-picker";
 @import "components/modal/manage-tags";
-
 @import "components/drag-layer";
 @import "components/dropzone";
-
 @import "components/rich-editor/rich-editor";
 @import "components/rich-editor/toolbar-overflow";
 @import "components/rich-editor/modal";
 @import "components/rich-editor/forms";
 @import "components/rich-editor/button";
+
 //@import "components/rich-editor/toolbar";
 //@import "components/rich-editor/pop";
 @import "components/rich-editor/menu";

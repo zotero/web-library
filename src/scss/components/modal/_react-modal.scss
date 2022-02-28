@@ -138,9 +138,9 @@
 
 	.close {
 		@include mouse-and-bp-up(md) {
-			padding: $space-min + $input-border-width + $modal-inner-padding / 2;
-			margin: -$modal-inner-padding / 2;
-			margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
+			padding: $space-min + $input-border-width + $modal-inner-padding * 0.5;
+			margin: -$modal-inner-padding * 0.5;
+			margin-right: -$modal-inner-padding * 0.5 + 2px; // Even spacing
 		}
 	}
 }
@@ -193,11 +193,11 @@
 
 	> .btn {
 		&:not(:first-child) {
-			margin-left: $space-sm / 2;
+			margin-left: $space-sm * 0.5;
 		}
 
 		&:not(:last-child) {
-			margin-right: $space-sm / 2;
+			margin-right: $space-sm * 0.5;
 		}
 	}
 }

@@ -72,12 +72,12 @@
 	.toolbar {
 		@include touch-or-bp-down(sm) {
 			height: $line-height-large-touch + $space-min;
-			padding-top: $space-min / 2;
-			padding-bottom: $space-min / 2;
+			padding-top: $space-min * 0.5;
+			padding-bottom: $space-min * 0.5;
 
 			& + .toolbar {
 				padding-top: 0;
-				height: $line-height-large-touch + $space-min / 2;
+				height: $line-height-large-touch + $space-min * 0.5;
 			}
 		}
 
@@ -92,8 +92,8 @@
 
 					.tool-group {
 						&:first-child {
-							margin-left: $space-min / 2;
-							padding-left: $space-min / 2 + $border-width;
+							margin-left: $space-min * 0.5;
+							padding-left: $space-min * 0.5 + $border-width;
 
 							&::before {
 								content: "";

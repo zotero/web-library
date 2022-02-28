@@ -81,7 +81,7 @@
 			&::before {
 				content: "";
 				width: 44px;
-				margin-left: -$modal-inner-padding / 2 + 2px; // Even spacing
+				margin-left: -$modal-inner-padding * 0.5 + 2px; // Even spacing
 			}
 		}
 
@@ -124,8 +124,8 @@
 		@include mouse-and-bp-up(md) {
 			width: 44px;
 			height: 44px;
-			margin: -$modal-inner-padding / 2;
-			margin-right: -$modal-inner-padding / 2 + 2px; // Even spacing
+			margin: -$modal-inner-padding * 0.5;
+			margin-right: -$modal-inner-padding * 0.5 + 2px; // Even spacing
 			background: image-url("icons/close.svg") no-repeat center center;
 		}
 
@@ -193,21 +193,21 @@
 
 			&:not(:first-child) {
 				@include touch-or-bp-down(sm) {
-					margin-left: $space-md / 2;
+					margin-left: $space-md * 0.5;
 				}
 
 				@include mouse-and-bp-up(md) {
-					margin-left: $space-sm / 2;
+					margin-left: $space-sm * 0.5;
 				}
 			}
 
 			&:not(:last-child) {
 				@include touch-or-bp-down(sm) {
-					margin-right: $space-md / 2;
+					margin-right: $space-md * 0.5;
 				}
 
 				@include mouse-and-bp-up(md) {
-					margin-right: $space-sm / 2;
+					margin-right: $space-sm * 0.5;
 				}
 			}
 		}

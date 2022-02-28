@@ -17,8 +17,8 @@
 
 	.icon-spin {
 		position: absolute;
-		left: calc(50% - #{$icon-spin-size-lg / 2});
-		top: calc(50% - #{$icon-spin-size-lg / 2} + #{$line-height-large / 2});
+		left: calc(50% - #{$icon-spin-size-lg * 0.5});
+		top: calc(50% - #{$icon-spin-size-lg * 0.5} + #{$line-height-large * 0.5});
 	}
 
 	&.dnd-target {
@@ -157,7 +157,7 @@
 				position: absolute;
 				top: 2px;
 				bottom: 2px;
-				left: -$space-xs / 2;
+				left: -$space-xs * 0.5;
 				width: $space-xs;
 				cursor: ew-resize;
 			}
@@ -182,11 +182,11 @@
 	}
 
 	.items-table-body {
-		padding-top: $space-min / 2;
-	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min / 2,
-	 		$item-table-odd-bg ($item-table-row-height + $space-min / 2),
-	 		transparent ($item-table-row-height + $space-min / 2),
-	 		transparent (2 * $item-table-row-height + $space-min / 2));
+		padding-top: $space-min * 0.5;
+	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min * 0.5,
+	 		$item-table-odd-bg ($item-table-row-height + $space-min * 0.5),
+	 		transparent ($item-table-row-height + $space-min * 0.5),
+	 		transparent (2 * $item-table-row-height + $space-min * 0.5));
 	 	background-attachment: local;
 
 

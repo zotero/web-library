@@ -36,7 +36,7 @@
 		align-items: flex-start;
 
 		@include bp-down(xs) {
-			margin-bottom: $font-size-mobile / 2;
+			margin-bottom: $font-size-mobile * 0.5;
 		}
 
 		@include touch-or-bp-down(xs) {
@@ -345,7 +345,7 @@
 				@include touch-or-bp-down(sm) {
 					.icon {
 						vertical-align: top;
-						margin-top: ($line-height-large-touch - $space-lg) / 2;
+						margin-top: ($line-height-large-touch - $space-lg) * 0.5;
 						margin-right: $default-padding-x-touch;
 					}
 				}
@@ -390,11 +390,11 @@
 
 		@include bp-up(sm) {
 			justify-content: flex-end;
-			padding-right: $metadata-list-gutter-mobile / 2;
+			padding-right: $metadata-list-gutter-mobile * 0.5;
 		}
 
 		@include mouse-and-bp-up(md) {
-			padding-right: $metadata-list-gutter / 2;
+			padding-right: $metadata-list-gutter * 0.5;
 		}
 
 		// Edit mode
@@ -468,11 +468,11 @@
 		@include bp-up(sm) {
 			display: flex;
 			align-items: center;
-			padding-left: $metadata-list-gutter-mobile / 2;
+			padding-left: $metadata-list-gutter-mobile * 0.5;
 		}
 
 		@include mouse-and-bp-up(md) {
-			padding-left: $metadata-list-gutter / 2;
+			padding-left: $metadata-list-gutter * 0.5;
 		}
 
 		// Edit mode
@@ -491,8 +491,8 @@
 	@include mouse-and-bp-up(md) {
 		.editable {
 			&.textarea {
-				margin-top: round(($metadata-list-line-height - $font-size-base * $line-height-base) / 2); // Align vertically with label
-				margin-bottom: round(($metadata-list-line-height - $font-size-base * $line-height-base) / 2); // …
+				margin-top: round(($metadata-list-line-height - $font-size-base * $line-height-base) * 0.5); // Align vertically with label
+				margin-bottom: round(($metadata-list-line-height - $font-size-base * $line-height-base) * 0.5); // …
 			}
 		}
 	}

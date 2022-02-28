@@ -89,7 +89,7 @@
 		line-height: $line-height-base;
 
 		.tox-checkbox__input {
-			@extend input[type="checkbox"];
+			@extend [type="checkbox"];
 			height: auto;
 			left: auto;
 			overflow: auto;

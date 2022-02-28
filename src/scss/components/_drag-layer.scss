@@ -41,14 +41,14 @@
 
 	.creator-type {
 		flex: 0 0 calc(
-			#{$metadata-list-offset} - #{$metadata-list-gutter-mobile / 2}
+			#{$metadata-list-offset} - #{$metadata-list-gutter-mobile * 0.5}
 		);
 		color: $key-color;
-		margin-right: $metadata-list-gutter-mobile / 2;
+		margin-right: $metadata-list-gutter-mobile * 0.5;
 	}
 
 	.name {
-		padding-left: $metadata-list-gutter-mobile / 2;
+		padding-left: $metadata-list-gutter-mobile * 0.5;
 		padding-right: $creators-value-padding-right-touch;
 	}
 }
@@ -62,7 +62,7 @@
 	background-color: $items-drag-indicator-bg;
 	opacity: 0.8;
 	padding: 0 $space-sm;
-	border-radius: $item-table-row-height / 2;
+	border-radius: $item-table-row-height * 0.5;
 	transform: translate(-50%, -50%);
 
 	.icon {
