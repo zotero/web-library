@@ -42,7 +42,7 @@ const Select = forwardRef((props, ref) => {
 	const { children, className, disabled, id, onBlur, onChange, onFocus, options, readOnly, searchable,
 	tabIndex = 0, value, ...rest } = props;
 
-	const valueLabel = (options.find(o => o.value === value) || options[0] || {}).label;
+	const valueLabel = (options.find(o => o.value === value) || (value !== null ? { label: value } : false) || options[0] || {}).label;
 	const valueIndex = options.findIndex(o => o.value === value);
 
 	const [isOpen, setIsOpen] = useState(false);

@@ -10,7 +10,7 @@ import { pick } from '../../common/immutable';
 
 const SelectInput = forwardRef((props, ref) => {
 	const { autoFocus, className, clearable, isDisabled, isReadOnly, isRequired, id, placeholder, tabIndex,
-		inputGroupClassName, isBusy, value: initialValue, options, onBlur, onCancel, onCommit, onChange,
+		inputGroupClassName, isBusy, value: initialValue = null, options, onBlur, onCancel, onCommit, onChange,
 		onFocus, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [value, setValue]  = useState(initialValue);
@@ -94,7 +94,7 @@ const SelectInput = forwardRef((props, ref) => {
 						)}
 					</select>
 					<div className={ className }>
-						{ (options.find(o => o.value === value) || options[0] || {}).label }
+						{ (options.find(o => o.value === value) || (value !== null ? { label: value } : false) || options[0] || {}).label }
 					</div>
 				</div>
 			) : (
@@ -111,6 +111,8 @@ const SelectInput = forwardRef((props, ref) => {
 		</div>
 	);
 });
+
+SelectInput.displayName = 'SelectInput';
 
 SelectInput.propTypes = {
 	autoFocus: PropTypes.bool,
