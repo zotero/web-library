@@ -1,5 +1,6 @@
+import { initialize } from '.';
 import { get, localStorageWrapper } from '../utils';
-import { ABORT_REQUEST, CONNECTION_ISSUES } from '../constants/actions';
+import { ABORT_REQUEST, CONNECTION_ISSUES, INVALIDATE_META_CACHE } from '../constants/actions';
 
 const requestsWaiting = {};
 const requestSchedule = [1, 2, 5, 10, 20, 30, 40, 50, 60];
@@ -166,6 +167,17 @@ const apiResetCache = key => {
 	}
 }
 
+const apiResetAllCacheOnce = () => {
+	return async (dispatch, getState) => {
+		const { invalidated } = getState().meta;
+		if(!invalidated) {
+			localStorageWrapper.removeItem(CACHE_TIMES_KEY);
+			dispatch({ type: INVALIDATE_META_CACHE });
+			dispatch(initialize());
+		}
+	}
+}
+
 const runRequestSimple = async (dispatch, request, { id, type, payload }, requestOpts = {}) => {
 	const outcome = await request(requestOpts);
 	dispatch({
@@ -209,5 +221,6 @@ const requestWithCache = async (dispatch, request, { id, type, payload }) => {
 	return runRequest(request, { id, type, payload });
 }
 
-export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, connectionIssues,
-	requestTracker, requestWithBackoff, requestWithCacheAndBackoff, requestWithCache };
+export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, apiResetAllCacheOnce,
+	connectionIssues, requestTracker, requestWithBackoff, requestWithCacheAndBackoff,
+	requestWithCache };

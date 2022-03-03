@@ -1,6 +1,7 @@
 'use strict';
 
 import {
+	INVALIDATE_META_CACHE,
     RECEIVE_META,
     RECEIVE_ITEM_TYPE_CREATOR_TYPES,
     RECEIVE_ITEM_TYPE_FIELDS,
@@ -43,11 +44,17 @@ const itemTemplates = (state = {}, action) => {
 	}
 };
 
-const meta = (state = {
+const defaultState = {
+	itemTypes: [],
+	itemFields: [],
+	creatorFields: [],
 	itemTypeCreatorTypes: {},
 	itemTypeFields: {},
-	itemTemplates: {}
-}, action) => {
+	itemTemplates: {},
+	invalidated: false
+}
+
+const meta = (state = { ...defaultState }, action) => {
 	switch(action.type) {
 		case RECEIVE_META:
 			return {
@@ -71,6 +78,11 @@ const meta = (state = {
 				...state,
 				itemTemplates: itemTemplates(state.itemTemplates, action)
 			};
+		case INVALIDATE_META_CACHE:
+			return {
+				...defaultState,
+				invalidated: true
+			}
 	}
 
 	return state;
