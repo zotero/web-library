@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Icon from './ui/icon';
-import Library from '../component/library';
+import Icon from 'component/ui/icon';
+import EmbedLibrary from 'component/embedded-library';
+import Library from 'component/library';
 import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchAllGroups,
-toggleTransitions, triggerResizeViewport } from '../actions';
-import { get } from '../utils';
+toggleTransitions, triggerResizeViewport } from 'actions';
+import { get } from 'utils';
 
 const LoadingCover = () => {
 	const maxRequestsPendingSeen = useRef(0);
@@ -44,6 +45,7 @@ const LoadingCover = () => {
 const Loader = () => {
 	const dispatch = useDispatch();
 
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const config = useSelector(state => state.config);
@@ -82,7 +84,7 @@ const Loader = () => {
 		}
 	}, []);
 
-	return isReady ? <Library /> : <LoadingCover />;
+	return isReady ? isEmbedded ? <EmbedLibrary /> : <Library /> : <LoadingCover />;
 }
 
 export default Loader;

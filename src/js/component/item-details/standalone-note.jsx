@@ -2,10 +2,10 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import RichEditor from '../../component/rich-editor';
-import { get } from '../../utils';
-import { sourceFile, updateItem } from '../../actions';
-import { TabPane } from '../ui/tabs';
+import RichEditor from 'component/rich-editor';
+import { get } from 'utils';
+import { sourceFile, updateItem } from 'actions';
+import { TabPane } from 'component/ui/tabs';
 
 const StandaloneNote = ({ isActive, isReadOnly }) => {
 	const dispatch = useDispatch();

@@ -201,7 +201,7 @@ const Search = props => {
 			/>
 			<input
 				autoFocus={ autoFocus }
-				className="form-control search-input"
+				className="form-control search-input with-dropdown"
 				onBlur={ handleBlur }
 				onChange={ handleSearchChange }
 				onKeyDown={ handleKeyDown }

@@ -18,17 +18,29 @@ import { MANAGE_TAGS } from '../constants/modals';
 
 const SelectedTagRow = ({ tag, toggleTag }) => {
 	const handleClick = useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
 	return (
 		<li className="tag">
 			<div className="tag-color" style={ tag.color && { color: tag.color } } />
 			<div className="truncate">{ tag.tag }</div>
-			<Button
-				className="btn-circle btn-secondary"
-				onClick={ handleClick }
-			>
-				<Icon type="16/minus-strong" width="16" height="16" />
-			</Button>
+			{ isTouchOrSmall ? (
+				<Button
+					className="btn-circle btn-secondary"
+					onClick={ handleClick }
+				>
+					<Icon type="16/minus-strong" width="16" height="16" />
+				</Button>
+			) : (
+				<Button
+					aria-label="delete attachment"
+					icon
+					onClick={ handleClick }
+					tabIndex={ -3 }
+				>
+					<Icon type={ '16/minus-circle' } width="16" height="16" />
+				</Button>
+			) }
 		</li>
 	);
 }
@@ -101,6 +113,7 @@ const TouchTagSelector = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
 	const isManaging = useSelector(state => state.modal.id === MANAGE_TAGS);
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const { selectedTags } = useTags();
 
 	const handleClick = useCallback(() => {
@@ -147,6 +160,8 @@ const TouchTagSelector = () => {
 			classNames="slide-up"
 			mountOnEnter
 			unmountOnExit
+			enter={ !isEmbedded }
+			exit={ !isEmbedded }
 		>
 			<div className="touch-tag-selector">
 				<header className="touch-header">
@@ -184,6 +199,11 @@ const TouchTagSelector = () => {
 								<Icon type={ '10/x' } width="10" height="10" />
 							</Button>
 						)}
+						{ isEmbedded && (
+							<Button icon className="embedded-only close" onClick={ handleClick } >
+								<Icon type={ '16/close' } width="16" height="16" />
+							</Button>
+						) }
 					</div>
 				</div>
 				{ !isManaging && (

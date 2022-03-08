@@ -11,6 +11,7 @@ const defaultState = {
 	sortDirection: 'asc',
 	streamingApiUrl: '',
 	userId: null,
+	isEmbedded: false,
 };
 
 const determineIfWriteable = (userId, ownerId, writeability, admins) => {
@@ -66,7 +67,7 @@ const config = (state = defaultState, action) => {
 			action.libraries = action.libraries || {};
 			return {
 				...state,
-				...pick(action, ['apiConfig', 'apiKey', 'menus', 'stylesSourceUrl',
+				...pick(action, ['apiConfig', 'apiKey', 'isEmbedded', 'menus', 'stylesSourceUrl',
 					'streamingApiUrl', 'translateUrl', 'userId', 'userSlug', 'websiteUrl', 'tinymceRoot']),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,

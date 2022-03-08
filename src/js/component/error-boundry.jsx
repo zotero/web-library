@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const forumsUrl = 'https://forums.zotero.org/';
 const oldWebLibraryUrl = 'https://www.zotero.org/mylibrary?usenewlibrary=0';
@@ -21,4 +22,25 @@ const CrashHandler = ({ error = {}, info = {} }) => (
 	</div>
 );
 
-export default CrashHandler;
+class ErrorBoundary extends React.PureComponent {
+	constructor(props) {
+		super(props);
+		this.state = { hasError: false };
+	}
+
+	componentDidCatch(error, info) {
+		this.setState({ hasError: true, error, info });
+	}
+
+	render() {
+		return this.state.hasError ?
+			<CrashHandler error={ this.state.error } info={ this.state.info } /> :
+			this.props.children;
+	}
+}
+
+ErrorBoundary.propTypes = {
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+}
+
+export default ErrorBoundary;

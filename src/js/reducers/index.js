@@ -1,5 +1,4 @@
 import combineSectionReducers from 'combine-section-reducers';
-import { connectRouter } from 'connected-react-router';
 
 import config from './config';
 import current from './current';
@@ -20,6 +19,6 @@ import styles from './styles';
 import traffic from './traffic';
 
 
-export default history => combineSectionReducers({ config, current, device, errors, fetching,
+export default (extraReducers = {}) => combineSectionReducers({ config, current, device, errors, fetching,
 	groups, identifier, itemsPublications, libraries, meta, modal, ongoing, preferences, query,
-	router: connectRouter(history), sources, styles, traffic });
+	sources, styles, traffic, ...extraReducers });

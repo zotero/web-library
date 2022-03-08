@@ -1,14 +1,30 @@
 import { makePath } from '../common/navigation';
 import { getItemKeysPath } from '../common/state';
-import { push } from 'connected-react-router';
+import { LOCATION_CHANGE, push } from 'connected-react-router';
 import { clamp, get } from '../utils';
+
+const pushEmbedded = (path) => ({
+	type: LOCATION_CHANGE,
+	payload: {
+		location: {
+			pathname: path,
+			search: '',
+			hash: '',
+			key: '',
+		},
+		action: 'POP',
+		isFirstRendering: false
+	}
+});
 
 const navigate = (path, isAbsolute = false) => {
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
+		const isEmbedded = config.isEmbedded;
+		const pushFn = isEmbedded ? pushEmbedded : push;
 		if(isAbsolute) {
 			const configuredPath = makePath(config, path);
-			dispatch(push(configuredPath));
+			dispatch(pushFn(configuredPath));
 		} else {
 			const updatedPath = {
 				attachmentKey: current.attachmentKey,
@@ -25,7 +41,7 @@ const navigate = (path, isAbsolute = false) => {
 				...path
 			};
 			const configuredPath = makePath(config, updatedPath);
-			dispatch(push(configuredPath));
+			dispatch(pushFn(configuredPath));
 		}
 	}
 };
@@ -144,9 +160,15 @@ const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
+		const { isEmbedded } = state.config;
 		const path = [...getItemKeysPath({ itemsSource, libraryKey, collectionKey }), 'keys'];
 		const keys = get(state, path, []);
 		var newKeys;
+
+		if(isEmbedded) {
+			dispatch(navigate({ items: [targetItemKey ], view: 'item-details' }));
+			return;
+		}
 
 		if(isShiftModifer) {
 			let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;

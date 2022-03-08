@@ -4,8 +4,11 @@ const http = require('http');
 const https = require('https');
 const httpProxy = require('http-proxy');
 const serveStatic = require('serve-static');
+const checkTrue = env => !!(env && (parseInt(env) || env === true || env === "true"));
+
 const translateURL = process.env.TRANSLATE_URL ?? 'http://localhost:1969';
-const useHTTPS = !!(process.env.USE_HTTPS && parseInt(process.env.USE_HTTPS));
+const useHTTPS = checkTrue(process.env.USE_HTTPS);
+const htmlFile = checkTrue(process.env.EMBEDDED) ? 'embedded.html' : 'index.html';
 const port = process.env.PORT ?? (useHTTPS ? 8443 : 8001);
 
 const serve = serveStatic(path.join(__dirname, '..', 'build'), { 'index': false });
@@ -13,7 +16,7 @@ const proxy = httpProxy.createProxyServer();
 
 const handler = (req, resp) => {
 	const fallback = () => {
-		fs.readFile(path.join(__dirname, '..', 'build', 'index.html'), (err, buf) => {
+		fs.readFile(path.join(__dirname, '..', 'build', htmlFile), (err, buf) => {
 			resp.setHeader('Content-Type', 'text/html');
 			resp.end(buf);
 		});

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { useSelector } from 'react-redux';
 
-import ItemsTableToolbar from './items/toolbar';
+import ItemsTableToolbar from 'component/item/items/toolbar';
 import ItemsTable from './items/table';
 import ItemsList from './items/list';
 import TouchHeaderWrap from '../../component/touch-header-wrap';
@@ -14,6 +14,7 @@ const Items = ({ isSearchModeTransitioning }) => {
 	const { isFetching, hasChecked } = useSourceData();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isLarge = useSelector(state => state.device.lg);
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 
 	return (
 		<div className={
@@ -21,7 +22,7 @@ const Items = ({ isSearchModeTransitioning }) => {
 		}>
 			{ isTouchOrSmall ? (
 				<React.Fragment>
-						{ isLarge && <TouchHeaderWrap
+						{ (isLarge && !isEmbedded) && <TouchHeaderWrap
 							className="hidden-mouse hidden-md-down"
 							variant={ TouchHeaderWrap.variants.SOURCE }
 						/> }
@@ -30,7 +31,7 @@ const Items = ({ isSearchModeTransitioning }) => {
 				</React.Fragment>
 			) : (
 				<React.Fragment>
-					<ItemsTableToolbar />
+					{ !isEmbedded && <ItemsTableToolbar /> }
 					<ItemsTable />
 				</React.Fragment>
 			)}

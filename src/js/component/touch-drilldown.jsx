@@ -1,12 +1,12 @@
 import React, { memo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import AttachmentDetails from '../component/item-details/attachment-details';
 import cx from 'classnames';
-import RichEditor from '../component/rich-editor';
-import { get } from '../utils';
-import { updateItem } from '../actions';
-import { useEditMode } from '../hooks';
+
+import AttachmentDetails from 'component/item-details/attachment-details';
+import RichEditor from 'component/rich-editor';
+import { get } from 'utils';
+import { updateItem } from 'actions';
+import { useEditMode } from 'hooks';
 
 const TouchDrilldown = memo(() => {
 	const dispatch = useDispatch();

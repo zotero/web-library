@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import RichEditor from '../../component/rich-editor';
-import { dateLocalized } from '../../common/format';
-import { get } from '../../utils';
-import { getAttachmentUrl, updateItem } from '../../actions/';
-import { useForceUpdate } from '../../hooks/';
-import Icon from '../ui/icon';
+import Icon from 'component/ui/icon';
+import RichEditor from 'component/rich-editor';
+import { dateLocalized } from 'common/format';
+import { get } from 'utils';
+import { getAttachmentUrl, updateItem } from 'actions';
+import { useForceUpdate } from 'hooks';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();

@@ -7,19 +7,19 @@ import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
-import RichEditor from '../../component/rich-editor';
+import Button from 'component/ui/button';
+import Icon from 'component/ui/icon';
+import RichEditor from 'component/rich-editor';
 
-import { get, scrollIntoViewIfNeeded } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
-import { noteAsTitle, pluralize } from '../../common/format';
-import { getScrollContainerPageCount, noop, sortByKey, stopPropagation } from '../../utils';
-import { TabPane } from '../ui/tabs';
-import { Toolbar, ToolGroup } from '../ui/toolbars';
-import { useFetchingState, useFocusManager, usePrevious } from '../../hooks';
+import { get, scrollIntoViewIfNeeded } from 'utils';
+import { isTriggerEvent } from 'common/event';
+import { noteAsTitle, pluralize } from 'common/format';
+import { getScrollContainerPageCount, noop, sortByKey, stopPropagation } from 'utils';
+import { TabPane } from 'component/ui/tabs';
+import { Toolbar, ToolGroup } from 'component/ui/toolbars';
+import { useFetchingState, useFocusManager, usePrevious } from 'hooks';
 import { deleteItem, createItem, updateItem, fetchChildItems, fetchItemTemplate, moveToTrash,
-navigate, sourceFile } from '../../actions';
+navigate, sourceFile } from 'actions';
 
 const PAGE_SIZE = 100;
 

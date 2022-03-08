@@ -1,28 +1,48 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxAsyncQueue from 'redux-async-queue';
 import ReduxThunk from 'redux-thunk';
-import { createBrowserHistory } from 'history';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { connectRouter, LOCATION_CHANGE, routerMiddleware } from 'connected-react-router';
+import { Provider } from 'react-redux';
 
+import { LOCATION_CHANGE } from 'connected-react-router';
+
+import './wdyr';
 import * as defaults from './constants/defaults';
 import createReducers from './reducers';
-import Main from './component/main';
+import ErrorBoundary from './component/error-boundry';
+import Loader from './component/loader';
+import UserTypeDetector from './component/user-type-detector';
+import ViewPortDetector from './component/viewport-detector';
 import { configure } from './actions';
 
+const targetDom = document.getElementById('zotero-web-library');
+const configDom = document.getElementById('zotero-web-library-config');
+const menuConfigDom = document.getElementById('zotero-web-library-menu-config');
+const config = configDom ? JSON.parse(configDom.textContent) : {};
+config.menus = menuConfigDom ? JSON.parse(menuConfigDom.textContent) : null;
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const history = createBrowserHistory();
+
+const EmbeddedMain = ({ store }) => {
+	return (
+		<ErrorBoundary>
+			<Provider store={ store }>
+				<UserTypeDetector />
+				<ViewPortDetector />
+				<Loader />
+			</Provider>
+		</ErrorBoundary>
+	)
+}
 
 const init = (element, config = {}) => {
 	const libraries = { ...defaults.libraries, ...config.libraries };
 	const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
 
 	const store = createStore(
-		createReducers({ router: connectRouter(history) }),
+		createReducers(),
 		composeEnhancers(
 			applyMiddleware(
-				routerMiddleware(history),
 				ReduxThunk,
 				ReduxAsyncQueue
 			)
@@ -56,7 +76,9 @@ const init = (element, config = {}) => {
 			window.WebLibStore.dispatch({ type: 'CONFIGURE', ...defaults, ...config, apiConfig, libraries, menus: null });
 	}
 
-	ReactDOM.render(<Main store={ store } history={ history } />, element);
+	ReactDOM.render(<EmbeddedMain store={ store } />, targetDom);
 }
 
-export default init;
+if(targetDom) {
+	init(targetDom, config);
+}

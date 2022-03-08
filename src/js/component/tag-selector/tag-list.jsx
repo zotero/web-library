@@ -20,7 +20,6 @@ import { get, noop } from '../../utils';
 import { maxColoredTags } from '../../constants/defaults';
 import { useFocusManager } from '../../hooks';
 
-const ROWHEIGHT = 43;
 const PAGESIZE = 100;
 
 const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen, focusNext, focusPrev }) => {
@@ -167,6 +166,7 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 
 	const listRef = useRef(null);
 
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const isFilteringOrHideAutomatic = (tagsSearchString !== '' || tagsHideAutomatic);
@@ -263,7 +263,7 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 										focusDrillDownNext, focusDrillDownPrev, dotMenuFor,
 										onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
 									}
-									itemSize={ ROWHEIGHT }
+									itemSize={ isTouchOrSmall ? 43 : 28 }
 									onItemsRendered={ onItemsRendered }
 									ref={ ref }
 									width={ width }

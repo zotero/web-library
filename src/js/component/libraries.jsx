@@ -15,8 +15,8 @@ import { useFocusManager, usePrevious } from '../hooks/';
 
 const LibraryNode = props => {
 	const { addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey, name,
-		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, shouldBeTabbable,
-		toggleOpen, virtual } = props;
+		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
+		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
 	const totalResults = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null));
@@ -34,14 +34,17 @@ const LibraryNode = props => {
 	const isPickerSkip = isPickerMode && isReadOnly;
 
 	const handleSelect = useCallback(() => {
+		const path = { library: libraryKey, view: 'library' };
 		if(isTouchOrSmall && isPickerMode && !isPickerSkip) {
-			pickerNavigate({ library: libraryKey, view: 'library' });
+			pickerNavigate(path);
 		} else if(isPickerMode && pickerAllowRoot && !isPickerSkip && !isTouchOrSmall) {
 			pickerPick({ libraryKey });
 		} else if(!isPickerMode) {
-			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
+			dispatch(navigate(path, true));
 		}
-	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, pickerAllowRoot, pickerNavigate, pickerPick]);
+		onNodeSelected(path);
+	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, onNodeSelected,
+	pickerAllowRoot, pickerNavigate, pickerPick]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -73,8 +76,8 @@ const LibraryNode = props => {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
 			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev',
 			'pickerSkipCollections', 'selectedCollectionKey']),
-			isPickerMode, parentLibraryKey, picked, pickerNavigate, pickerPick, pickerState,
-			virtual: isVirtualInThisTree ? virtual : null,
+			isPickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
+			pickerState, virtual: isVirtualInThisTree ? virtual : null,
 		}
 	}
 
@@ -146,6 +149,7 @@ LibraryNode.propTypes = {
 	isSelected: PropTypes.bool,
 	libraryKey: PropTypes.string,
 	name: PropTypes.string,
+	onNodeSelected: PropTypes.func,
 	picked: PropTypes.array,
 	pickerAllowRoot: PropTypes.bool,
 	pickerNavigate: PropTypes.func,
@@ -274,7 +278,7 @@ const Libraries = props => {
 			onDrillDownPrev: focusDrillDownPrev,
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
-			...pick(props, ['isPickerMode', 'disabledCollections', 'picked',
+			...pick(props, ['isPickerMode', 'disabledCollections', 'onNodeSelected', 'picked',
 			'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerState',
 			'pickerSkipCollections', 'selectedCollectionKey' ])
 		}

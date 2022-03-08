@@ -6,6 +6,7 @@ import { get } from '../../utils';
 const ItemDetailsInfoView = () => {
 	const itemKey = useSelector(state => state.current.itemKey);
 	const itemKeys = useSelector(state => state.current.itemKeys);
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 
 	const itemsCount = useSelector(state => {
 		const { collectionKey, libraryKey, itemsSource } = state.current;
@@ -23,7 +24,9 @@ const ItemDetailsInfoView = () => {
 	const [label, setLabel] = useState('');
 
 	useEffect(() => {
-		if(itemKeys.length > 0) {
+		if(isEmbedded) {
+			setLabel('');
+		} else if(itemKeys.length > 0) {
 			setLabel([
 				itemKeys.length,
 				pluralize('item', itemKeys.length),
@@ -38,7 +41,7 @@ const ItemDetailsInfoView = () => {
 		} else {
 			setLabel('');
 		}
-	}, [itemsCount, itemKey, itemKeys]);
+	}, [isEmbedded, itemsCount, itemKey, itemKeys]);
 
 	return <div className="info-view">{ label }</div>;
 }

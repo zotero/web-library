@@ -236,7 +236,7 @@ const StyleInstallerModal = () => {
 				<div className="style-search">
 					<Input
 						autoFocus
-						className="form-control form-control-lg search-input"
+						className="form-control form-control-lg style-search-input"
 						isBusy={ isSearching }
 						onChange={ handleFilterInputChange }
 						placeholder="Search"

@@ -30,9 +30,9 @@ const defaultState = {
 	...getViewport(process.env.NODE_ENV === 'test' ? {} : window.innerWidth)
 };
 
-const getDevice = (userType, viewport) => {
-	const isSingleColumn = viewport.xxs || viewport.xs;
+const getDevice = (userType, viewport, { isEmbedded } = {}) => {
 	const isTouchOrSmall = userType === 'touch' || viewport.xxs || viewport.xs || viewport.sm;
+	const isSingleColumn = viewport.xxs || viewport.xs || (isTouchOrSmall && isEmbedded);
 	const shouldUseEditMode = isTouchOrSmall;
 	const shouldUseModalCreatorField = isTouchOrSmall;
 	const shouldUseSidebar = !viewport.lg;
@@ -42,7 +42,7 @@ const getDevice = (userType, viewport) => {
 		shouldUseSidebar, shouldUseTabs };
 };
 
-const device = (state = defaultState, action) => {
+const device = (state = defaultState, action, { config } = {}) => {
 	var viewport;
 	switch(action.type) {
 		case TRIGGER_RESIZE_VIEWPORT:
@@ -51,7 +51,7 @@ const device = (state = defaultState, action) => {
 			return {
 				...state,
 				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType']),
-				...getDevice('userType' in action ? action.userType : state.userType, viewport),
+				...getDevice('userType' in action ? action.userType : state.userType, viewport, config),
 				...viewport,
 				scrollbarWidth: state.userType === 'touch' && action.userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth
 			}

@@ -121,12 +121,6 @@
 			left: 5px;
 			top: 3px;
 		}
-
-		.form-control {
-			html:not(.specifity) & {
-				padding: 5px 25px 5px 36px;
-			}
-		}
 	}
 
 	.search-toggle,

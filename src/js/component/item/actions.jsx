@@ -7,13 +7,13 @@ import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 import { ToolGroup } from '../ui/toolbars';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
-import NewItemSelector from './actions/new-item';
-import ExportActions from './actions/export';
+import NewItemSelector from 'component/item/actions/new-item';
+import ExportActions from 'component/item/actions/export';
 import columnProperties from '../../constants/column-properties';
-import AddByIdentifier from './actions/add-by-identifier';
+import AddByIdentifier from 'component/item/actions/add-by-identifier';
 import { useItemActionHandlers } from '../../hooks';
 import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
-import { MoreActionsDropdownDesktop } from './actions/more-actions';
+import { MoreActionsDropdownDesktop } from 'component/item/actions/more-actions';
 
 const ItemActionsTouch = memo(() => {
 	const dispatch = useDispatch();
@@ -23,6 +23,7 @@ const ItemActionsTouch = memo(() => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const search = useSelector(state => state.current.search);
 	const isResults = search && search.length > 0;
 	const isActionsDisabled = isSearchMode && isSingleColumn && !isResults;
@@ -73,7 +74,7 @@ const ItemActionsTouch = memo(() => {
 					/>
 				</DropdownToggle>
 				<DropdownMenu right>
-					{ isSingleColumn && (
+					{ (isSingleColumn && !isEmbedded) && (
 						<React.Fragment>
 							<DropdownItem onClick={ handleSelectModeToggle } >
 								{ isSelectMode ? 'Cancel' : 'Select Items' }
@@ -104,10 +105,14 @@ const ItemActionsTouch = memo(() => {
 							</DropdownItem>
 						</React.Fragment>
 					)}
-					<DropdownItem divider />
-					<DropdownItem onClick={ handleSubscribeClick }>
-						Subscribe to Feed
-					</DropdownItem>
+					{ !isEmbedded && (
+						<React.Fragment>
+							<DropdownItem divider />
+							<DropdownItem onClick={ handleSubscribeClick }>
+								Subscribe to Feed
+							</DropdownItem>
+						</React.Fragment>
+					) }
 				</DropdownMenu>
 			</Dropdown>
 			{ !isSingleColumn && (

@@ -16,7 +16,7 @@ const TouchSideFooter = memo(() => {
 
 	const handleClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector(!isOpen));
-	});
+	}, [dispatch, isOpen]);
 
 	return ((isSingleColumn && isTagsSelected) || !isSingleColumn) ? (
 		<footer className="touch-footer darker">

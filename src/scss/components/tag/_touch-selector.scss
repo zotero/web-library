@@ -45,11 +45,27 @@
 		align-items: center;
 		height: $line-height-large-touch + $border-width;
 		padding: $border-width $default-padding-x-touch 0;
+
 		@include hairline(
 			top,
 			$touch-tag-selector-border-color,
 			$start: (2 * $default-padding-x-touch + $space-md)
 		);
+
+		@include mouse-and-bp-up(md) {
+			height: 28px;
+			padding: $border-width $default-padding-x;
+
+			@include hairline(
+				top,
+				$touch-tag-selector-border-color,
+				$start: (2 * $default-padding-x + $space-md)
+			);
+
+			&:first-child {
+				@include hairline-disabled(top);
+			}
+		}
 
 		&:first-child {
 			@include hairline-disabled(top);
@@ -113,6 +129,10 @@
 					@media (min-resolution: 2dppx) {
 						box-shadow: 0 1px $touch-tag-selector-border-color;
 						transform: translateY(-0.5px);
+					}
+
+					@include mouse-and-bp-up(md) {
+						left:  2 * $default-padding-x + $space-md;
 					}
 				}
 			}

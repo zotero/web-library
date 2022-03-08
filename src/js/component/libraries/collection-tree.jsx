@@ -15,7 +15,7 @@ import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../consta
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
 import { omit, pick } from '../../common/immutable';
 import { isTriggerEvent } from '../../common/event';
-import { stopPropagation, getUniqueId } from '../../utils.js';
+import { stopPropagation, getUniqueId, noop } from '../../utils.js';
 import { usePrevious } from '../../hooks/';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
@@ -741,7 +741,8 @@ CollectionsNodeList.propTypes = {
 CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
-	const { parentLibraryKey, isPickerMode, pickerNavigate, pickerState, ...rest } = props;
+	const { onNodeSelected = noop, parentLibraryKey, isPickerMode, pickerNavigate = noop,
+	pickerState, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
 	const collections = useSelector(
@@ -810,7 +811,8 @@ const CollectionTree = props => {
 	const selectNode = useCallback(partialPath => {
 		const path = { ...partialPath, library: parentLibraryKey };
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
-	}, [dispatch, isPickerMode, parentLibraryKey, pickerNavigate]);
+		onNodeSelected(path);
+	}, [dispatch, isPickerMode, onNodeSelected, parentLibraryKey, pickerNavigate]);
 
 	const ensurePathToSelectedIsOpened = useCallback(() => {
 		setOpened([...opened, ...path.slice(0, -1)]);
@@ -950,9 +952,10 @@ const CollectionTree = props => {
 
 CollectionTree.propTypes = {
 	isPickerMode: PropTypes.bool,
+	onNodeSelected: PropTypes.func,
 	parentLibraryKey: PropTypes.string,
 	pickerNavigate: PropTypes.func,
-	pickerState: PropTypes.object
+	pickerState: PropTypes.object,
 };
 
 export default memo(CollectionTree);
