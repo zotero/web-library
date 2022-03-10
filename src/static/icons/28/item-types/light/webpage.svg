@@ -1,6 +1,6 @@
 <!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<symbol id="web-page" viewBox="0 0 28 28">
+	<symbol id="webpage" viewBox="0 0 28 28">
 		<path d="M1.75,2h24.5A1.75,1.75,0,0,1,28,3.75V26a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V3.75A1.75,1.75,0,0,1,1.75,2Z" fill="#fff" opacity="0.5"/>
 		<rect x="1" y="9" width="26" height="16" fill="#fff"/>
 		<path d="M1.75,3h24.5a.75.75,0,0,1,.75.75V9a0,0,0,0,1,0,0H1A0,0,0,0,1,1,9V3.75A.75.75,0,0,1,1.75,3Z" fill="#f5f5f5"/>
@@ -11,10 +11,10 @@
 		<path d="M24,17v5H4V17H24m1-1H3v7H25V16Z" fill="#4072e5"/>
 		<path d="M26.25,2H1.75A1.751,1.751,0,0,0,0,3.75V26H28V3.75A1.751,1.751,0,0,0,26.25,2ZM27,25H1V10H27ZM27,9H1V3.75A.75.75,0,0,1,1.75,3h24.5a.75.75,0,0,1,.75.75Z" opacity="0.2"/>
 	</symbol>
-	<symbol id="web-page-active">
+	<symbol id="webpage-active">
 		<rect x="1" y="3" width="26" height="6" fill="#fff" opacity="0.2"/>
 		<rect x="3.5" y="16.5" width="21" height="6" fill="#fff" opacity="0.4"/>
 		<path d="M26,2H2A2,2,0,0,0,0,4V26H28V4A2,2,0,0,0,26,2Zm1,23H1V10H27ZM27,9H1V4A1,1,0,0,1,2,3H26a1,1,0,0,1,1,1ZM5,6A1,1,0,1,1,4,5,1,1,0,0,1,5,6ZM8,6A1,1,0,1,1,7,5,1,1,0,0,1,8,6Zm3,0a1,1,0,1,1-1-1A1,1,0,0,1,11,6ZM24,17v5H4V17H24m1-1H3v7H25V16Z" fill="#fff"/>
 	</symbol>
-	<use xlink:href="#web-page" viewBox="0 0 28 28"/>
+	<use xlink:href="#webpage" viewBox="0 0 28 28"/>
 </svg>

@@ -30,9 +30,9 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 
 	switch(linkMode) {
 		case 'linked_url':
-			return 'web-page-linked';
+			return 'webpage-linked';
 		case 'imported_url':
-			return 'web-page-snapshot';
+			return 'webpage-snapshot';
 		case 'linked_file':
 			return 'document-linked';
 		case 'imported_file':
@@ -105,7 +105,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		item[Symbol.for('meta')].createdByUser.username :
 		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
-	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(itemTypeName);
+	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(item.itemType);
 
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
