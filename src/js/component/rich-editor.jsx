@@ -165,6 +165,10 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 			return;
 		}
 
+		if(isReadOnly) {
+			return;
+		}
+
 		setContent(newContent);
 		onEdit(newContent, id);
 
@@ -172,7 +176,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		timer.current = setTimeout(() => {
 			onChange(newContent, id);
 		}, 500);
-	}, [content, id, onChange, onEdit]);
+	}, [content, isReadOnly, id, onChange, onEdit]);
 
 	const handleButtonClick = useCallback(ev => {
 		if(!editor.current) { return; }
