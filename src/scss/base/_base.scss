@@ -106,3 +106,7 @@ main {
 	min-height: 0;
 	position: relative; // Needed to fix weird touch layout in Chrome’s device emulator
 }
+
+.truncate {
+	@include text-truncate;
+}

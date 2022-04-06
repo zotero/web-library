@@ -9,7 +9,12 @@
 @import "abstracts/functions";
 @import "abstracts/mixins";
 @import "abstracts/placeholders";
-@import "abstracts/utilities";
+
+// Utilities, embedded variant
+//
+@import "embedded/visibility";
+@import "embedded/text";
+@import "embedded/flex";
 
 // Theme
 // --------------------------------------------------
@@ -20,10 +25,10 @@
 // --------------------------------------------------
 
 @import "base/fonts";
-@import "base/normalize";
-@import "base/base";
-@import "base/type";
-@import "base/utilities";
+@import "embedded/normalize";
+@import "embedded/base";
+@import "embedded/type";
+
 
 // Partials
 // --------------------------------------------------
@@ -84,7 +89,7 @@
 @import "components/popover";
 @import "components/crash-handler";
 
-@import "components/embedded/library";
-@import "components/embedded/header";
-@import "components/embedded/footer";
-@import "components/embedded/overrides";
+@import "embedded/library";
+@import "embedded/header";
+@import "embedded/footer";
+@import "embedded/overrides";

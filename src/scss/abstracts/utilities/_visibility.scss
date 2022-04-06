@@ -60,7 +60,7 @@
   }
 }
 
-hidden-touch,
+.hidden-touch,
 .mouse {
 	@include touch-or-bp-down(sm) {
 		display: none !important;

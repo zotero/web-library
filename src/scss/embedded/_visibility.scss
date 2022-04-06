@@ -1,0 +1,88 @@
+//
+// Visibility
+// --------------------------------------------------
+
+
+// Responsive visibility
+
+@each $bp in map-keys($grid-breakpoints) {
+	.zotero-web-library-embedded .hidden-#{$bp}-up {
+		@include bp-up($bp) {
+			display: none !important;
+		}
+	}
+
+	.zotero-web-library-embedded .hidden-#{$bp}-down {
+		@include bp-down($bp) {
+			display: none !important;
+		}
+	}
+}
+
+
+// Responsive visibility for 'mouse devices' only
+
+@each $bp in map-keys($grid-breakpoints) {
+	html:not(.touch) .zotero-web-library-embedded .hidden-mouse-#{$bp}-up {
+		@include bp-up($bp) {
+			display: none !important;
+		}
+	}
+
+	html:not(.touch) .zotero-web-library-embedded .hidden-mouse-#{$bp}-down {
+		@include bp-down($bp) {
+			display: none !important;
+		}
+	}
+}
+
+.zotero-web-library-embedded {
+	.hidden-mouse,
+	.touch {
+		@include mouse-and-bp-up(md) {
+			display: none !important;
+		}
+	}
+}
+
+
+// Responsive visibility for 'touch devices' only
+
+@each $bp in map-keys($grid-breakpoints) {
+	.touch .zotero-web-library-embedded .hidden-touch-#{$bp}-up {
+		@include bp-up($bp) {
+			display: none !important;
+		}
+	}
+
+	.touch .zotero-web-library-embedded .hidden-touch-#{$bp}-down {
+		@include bp-down($bp) {
+			display: none !important;
+		}
+	}
+}
+
+.zotero-web-library-embedded .hidden-touch,
+.mouse .zotero-web-library-embedded {
+	@include touch-or-bp-down(sm) {
+		display: none !important;
+	}
+}
+
+.zotero-web-library-embedded .hidden {
+	display: none !important;
+}
+
+
+// Screen readers only
+
+.zotero-web-library-embedded .offscreen {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

@@ -1,0 +1,81 @@
+//
+// Type
+// --------------------------------------------------
+
+
+.zotero-web-library-embedded {
+	// Font Smoohting
+
+	body {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+
+	// Headings
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: $headings-font-family;
+		color: $headings-color;
+		margin: 0;
+		font-weight: $headings-font-weight;
+		font-size: inherit;
+		line-height: inherit;
+	}
+
+	.h1, .h2 {
+		line-height: $headings-line-height;
+		margin-bottom: 1rem;
+	}
+
+	.h1 {
+		font: {
+			family: BlinkMacSystemFont, "HelveticaNeue-Light", "Helvetica Neue Light",
+				"Helvetica Neue", Helvetica, Arial, sans-serif;
+			size: $font-size-h1;
+			weight: 300;
+		}
+	}
+
+	.h2 {
+		font-size: $font-size-h2;
+		margin-top: ($space-md - 5px);
+	}
+
+
+	// Paragraph
+
+	p {
+		margin: 0 0 1em;
+	}
+
+
+	// Links
+
+	a {
+		color: $link-color;
+		text-decoration: none;
+
+		&:hover {
+			color: $link-hover-color;
+			text-decoration: $link-hover-decoration;
+		}
+	}
+
+
+	// Lists
+
+	ul, ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+
+	// Text selection
+
+	::selection {
+		color: $text-selection-color;
+		background-color: $text-selection-bg;
+	}
+}
