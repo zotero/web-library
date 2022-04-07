@@ -34,7 +34,7 @@
 		}
 
 		&:focus {
-			.keyboard-user & {
+			@include scopedVariant(".keyboard") {
 				outline-offset: -3px;
 
 				& + .result {

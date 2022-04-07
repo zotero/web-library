@@ -2,6 +2,8 @@
 // Zotero Web Library
 // --------------------------------------------------
 
+$scope: ".zotero-wl";
+
 // Abstracts
 // --------------------------------------------------
 
@@ -27,81 +29,86 @@
 // Partials
 // --------------------------------------------------
 
-@import "partials/sidebar";
-@import "partials/navs";
 @import "partials/focus";
-@import "partials/forms";
-@import "partials/loading-cover";
-@import "partials/transitions";
-@import "partials/grid";
-@import "partials/inline-feedback";
-@import "partials/scroll-container";
-@import "partials/badge";
-@import "partials/details-list";
-@import "partials/scrollbar";
+
+#{$scope} {
+	@import "partials/sidebar";
+	@import "partials/navs";
+	@import "partials/forms";
+	@import "partials/loading-cover";
+	@import "partials/transitions";
+	@import "partials/grid";
+	@import "partials/inline-feedback";
+	@import "partials/scroll-container";
+	@import "partials/badge";
+	@import "partials/details-list";
+	@import "partials/scrollbar";
+}
 
 // Components
 // --------------------------------------------------
 
-@import "components/button";
-@import "components/bibliography";
-@import "components/collection-tree";
-@import "components/dropdown";
-@import "components/select";
-@import "components/editable";
-@import "components/icon";
-@import "components/panel";
-@import "components/tabs";
-@import "components/toolbar";
-@import "components/touch-header";
-@import "components/touch-footer";
-@import "components/touch-nav";
-@import "components/search";
-@import "components/searchbar";
-@import "components/auto-resizer";
-@import "components/color-picker";
-@import "components/library";
-@import "components/navbar";
-@import "components/nav-sidebar";
-@import "components/item/list";
-@import "components/item/table";
-@import "components/item/details";
-@import "components/item/drilldown";
-@import "components/metadata/list";
-@import "components/metadata/pane";
-@import "components/metadata/abstract";
-@import "components/metadata/title";
-@import "components/metadata/creators";
-@import "components/note/pane";
-@import "components/note/list";
-@import "components/tag/pane";
-@import "components/tag/list";
-@import "components/tag/selector";
-@import "components/tag/touch-selector";
-@import "components/tag/tag-color-manager";
-@import "components/attachment/pane";
-@import "components/attachment/list";
-@import "components/related/list";
-@import "components/modal/react-modal";
-@import "components/modal/collection-select";
-@import "components/modal/bibliography";
-@import "components/modal/style-installer";
-@import "components/modal/note";
-@import "components/modal/identifier-picker";
-@import "components/modal/manage-tags";
-@import "components/drag-layer";
-@import "components/dropzone";
-@import "components/rich-editor/rich-editor";
-@import "components/rich-editor/toolbar-overflow";
-@import "components/rich-editor/modal";
-@import "components/rich-editor/forms";
-@import "components/rich-editor/button";
+#{$scope} {
+	@import "components/button";
+	@import "components/bibliography";
+	@import "components/collection-tree";
+	@import "components/dropdown";
+	@import "components/select";
+	@import "components/editable";
+	@import "components/icon";
+	@import "components/panel";
+	@import "components/tabs";
+	@import "components/toolbar";
+	@import "components/touch-header";
+	@import "components/touch-footer";
+	@import "components/touch-nav";
+	@import "components/search";
+	@import "components/searchbar";
+	@import "components/auto-resizer";
+	@import "components/color-picker";
+	@import "components/library";
+	@import "components/navbar";
+	@import "components/nav-sidebar";
+	@import "components/item/list";
+	@import "components/item/table";
+	@import "components/item/details";
+	@import "components/item/drilldown";
+	@import "components/metadata/list";
+	@import "components/metadata/pane";
+	@import "components/metadata/abstract";
+	@import "components/metadata/title";
+	@import "components/metadata/creators";
+	@import "components/note/pane";
+	@import "components/note/list";
+	@import "components/tag/pane";
+	@import "components/tag/list";
+	@import "components/tag/selector";
+	@import "components/tag/touch-selector";
+	@import "components/tag/tag-color-manager";
+	@import "components/attachment/pane";
+	@import "components/attachment/list";
+	@import "components/related/list";
+	@import "components/modal/react-modal";
+	@import "components/modal/collection-select";
+	@import "components/modal/bibliography";
+	@import "components/modal/style-installer";
+	@import "components/modal/note";
+	@import "components/modal/identifier-picker";
+	@import "components/modal/manage-tags";
+	@import "components/drag-layer";
+	@import "components/dropzone";
+	@import "components/rich-editor/rich-editor";
+	@import "components/rich-editor/toolbar-overflow";
+	@import "components/rich-editor/modal";
+	@import "components/rich-editor/forms";
+	@import "components/rich-editor/button";
 
-//@import "components/rich-editor/toolbar";
-//@import "components/rich-editor/pop";
-@import "components/rich-editor/menu";
-@import "components/popover";
-@import "components/messages";
-@import "components/ongoing";
-@import "components/new-item-selector";
-@import "components/crash-handler";
+	//@import "components/rich-editor/toolbar";
+	//@import "components/rich-editor/pop";
+	@import "components/rich-editor/menu";
+	@import "components/popover";
+	@import "components/messages";
+	@import "components/ongoing";
+	@import "components/new-item-selector";
+	@import "components/crash-handler";
+}

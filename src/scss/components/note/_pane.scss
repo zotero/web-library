@@ -22,7 +22,7 @@
 		height: $toolbar-height-touch;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			.scrollbar-style-permanent & {
+			@include scopedVariant(".scrollbar-style-permanent") {
 				height: $toolbar-height-touch + $border-width;
 				border-bottom: $border-width solid $notes-toolbar-border-color;
 			}
@@ -87,14 +87,14 @@
 					min-height: calc(50vh - 77px);
 				}
 
-				.editing & {
+				@include bp-down-normalized(xs) {
+					min-height: calc(50vh - (#{$navbar-height-xs * 0.5 + $touch-header-height}));
+				}
+
+				@include scopedVariant(".editing") {
 					@include touch-or-bp-down(sm) {
 						min-height: calc(50vh - 167px);
 					}
-				}
-
-				&,
-				.editing & {
 					@include bp-down-normalized(xs) {
 						min-height: calc(50vh - (#{$navbar-height-xs * 0.5 + $touch-header-height}));
 					}

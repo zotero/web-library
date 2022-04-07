@@ -21,7 +21,7 @@
 		transform $mobile-navbar-nav-transition,
 		visibility 0s linear $nav-transition-duration;
 
-	.navbar-nav-opened & {
+	@include scopedVariant(".navbar-nav-opened") {
 		transform: translate3d(0, 0, 0);
 		visibility: visible;
 		transition: transform $mobile-navbar-nav-transition;
@@ -40,7 +40,7 @@
 		position: relative;
 
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				outline-offset: -$outline-width;
 			}
 		}

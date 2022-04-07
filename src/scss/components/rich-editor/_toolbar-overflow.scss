@@ -20,7 +20,7 @@
 						display: none;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-sub-sup-lg) {
 							display: block;
 						}
@@ -32,7 +32,7 @@
 						display: none;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-remove-format-lg) {
 							display: block;
 						}
@@ -52,7 +52,7 @@
 						display: none;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-blockquote-link-lg) {
 							display: block;
 						}
@@ -76,7 +76,7 @@
 						display: block;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-sub-sup-lg) {
 							display: none;
 						}
@@ -127,7 +127,7 @@
 						display: none;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-lists-lg) {
 							display: block;
 						}
@@ -151,7 +151,7 @@
 						display: block;
 					}
 
-					html.touch & {
+					@include scopedVariant("html.touch") {
 						@media (min-width: $bp-lists-lg) {
 							display: none;
 						}

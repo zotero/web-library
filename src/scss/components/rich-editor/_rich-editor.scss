@@ -32,14 +32,14 @@
 			border-top: none;
 		}
 
-		.editing & {
+		@include scopedVariant(".editing") {
 			@include touch-or-bp-down(sm) {
 				border-top: $border-width solid $tox-edit-area-border-color;
 			}
 		}
 
 		@include bp-down(xs) {
-			html:not(.specifity) .editing & {
+			@include scopedVariant(".editing:not(.specifity)") {
 				border-top: none;
 			}
 		}

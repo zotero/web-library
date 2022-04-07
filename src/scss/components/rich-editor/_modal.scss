@@ -50,7 +50,7 @@
 		z-index: 1;
 
 		@include bp-down(xs) {
-			body:not(.tox-force-desktop) & {
+			@include scopedVariant("body:not(.tox-force-desktop)") {
 				align-self: flex-start;
 				margin: 0;
 				width: 100%;

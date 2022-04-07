@@ -52,7 +52,7 @@
 			}
 
 			&:focus {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					outline-offset: 8px;
 				}
 			}
@@ -69,12 +69,12 @@
 		.nav-link {
 			color: $navbar-link-color;
 
-			html:not(.specifity) & {
+			@include scopedVariant("html:not(.specifity)") {
 				padding: $navbar-padding-y $navbar-padding-x;
 			}
 
 			&:focus {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					outline-offset: -$outline-width;
 				}
 			}
@@ -85,7 +85,7 @@
 		}
 
 		.dropdown-toggle {
-			html:not(.specifity) & {
+			@include scopedVariant("html:not(.specifity)") {
 				@include state(".show .dropdown-toggle") {
 					color: $navbar-dropdown-toggle-active-color;
 
@@ -153,7 +153,7 @@
 		}
 	}
 
-	html:not(.specifity) & {
+	@include scopedVariant("html:not(.specifity)") {
 		.dropdown-menu {
 			padding: $space-xs 0;
 			min-width: 160px;
@@ -194,7 +194,7 @@
 		margin-left: 2 * $navbar-padding-x;
 		text-decoration: none;
 
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			padding: 4.5px $space-sm;
 			border-radius: $input-btn-border-radius;
 		}
@@ -214,7 +214,7 @@
 			background-color $mobile-navbar-nav-transition,
 			visibility 0s linear $nav-transition-duration;
 
-	.navbar-nav-opened & {
+	@include scopedVariant(".navbar-nav-opened") {
 		background-color: rgba(0, 0, 0, 0.1);
 		visibility: visible;
 		transition: background-color $mobile-navbar-nav-transition;

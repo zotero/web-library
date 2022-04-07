@@ -9,7 +9,7 @@ class AutoResizer extends React.PureComponent {
 		const { vertical, children, content } = this.props;
 		return (
 			<div className={ cx('auto-resizer', { vertical, horizontal: !vertical }) } >
-			<div className="content">{ content }</div>
+				<div className="content">{ content }</div>
 				{ children }
 			</div>
 		)

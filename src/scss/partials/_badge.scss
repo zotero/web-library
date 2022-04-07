@@ -25,7 +25,7 @@
 .badge-pill {
 	border-radius: $badge-pill-border-radius;
 
-	html:not(.specifity) & {
+	@include scopedVariant("html:not(.specifity)") {
 		padding-right: $badge-pill-padding-x;
 		padding-left: $badge-pill-padding-x;
 	}

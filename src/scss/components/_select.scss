@@ -49,16 +49,6 @@
 					padding-right:
 						($input-btn-padding-x - 4px)
 						+ $space-md;
-
-					// Does not work => .busy body:not(.touch) …
-					//.busy & {
-					//	padding-right:
-					//		($input-btn-padding-x - 4px)
-					//		+ $space-md
-					//		+ $space-md
-					//		+ $input-border-width
-					//		+ 1px;
-					//}
 				}
 			}
 		}

@@ -54,13 +54,13 @@
 			min-width: 0; // Fix truncation
 
 			&:active {
-				.items-table-wrap:not(.resizing) & {
+				@include scopedVariant(".items-table-wrap:not(.resizing)") {
 					background-color: $item-table-head-active-bg;
 				}
 			}
 
 			&:focus {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					outline-offset: -$outline-width;
 				}
 			}
@@ -75,7 +75,7 @@
 				width: $border-width;
 
 				@include state(".column-header:focus") {
-					.keyboard & {
+					@include scopedVariant(".keyboard") {
 						content: none;
 					}
 				}
@@ -92,7 +92,7 @@
 			}
 
 			&:active {
-				.items-table-wrap:not(.resizing) & {
+				@include scopedVariant(".items-table-wrap:not(.resizing)") {
 					&::before {
 						top: 0;
 						bottom: 0;
@@ -115,7 +115,7 @@
 
 			&:last-child {
 				&::after {
-					html:not(.scrollbar-style-permanent) & {
+					@include scopedVariant("html:not(.scrollbar-style-permanent)") {
 						content: none;
 					}
 				}
@@ -212,7 +212,7 @@
 		}
 
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				outline: none;
 			}
 		}

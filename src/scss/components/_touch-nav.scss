@@ -33,7 +33,7 @@
 		height: 100%;
 		transition: transform $nav-transition;
 
-		.search-cancel & {
+		@include scopedVariant(".search-cancel") {
 			transition: none;
 		}
 	}
@@ -46,7 +46,7 @@
 		transition: transform $nav-transition, color $nav-transition,
 			opacity $nav-transition-duration ease;
 
-		.search-cancel & {
+		@include scopedVariant(".search-cancel") {
 			transition: none;
 		}
 	}
@@ -69,7 +69,7 @@
 		transition: transform $nav-transition, color $nav-transition,
 			opacity $nav-transition;
 
-		.search-cancel & {
+		@include scopedVariant(".search-cancel") {
 			transition: none;
 		}
 	}
@@ -93,7 +93,7 @@
 		opacity: 0;
 		transition: transform $nav-transition, opacity $nav-transition;
 
-		.search-cancel & {
+		@include scopedVariant(".search-cancel") {
 			transition: none;
 		}
 	}

@@ -8,5 +8,6 @@ const config = configDom ? JSON.parse(configDom.textContent) : {};
 config.menus = menuConfigDom ? JSON.parse(menuConfigDom.textContent) : null;
 
 if(targetDom) {
+	targetDom.classList.add('zotero-wl');
 	init(targetDom, config);
 }

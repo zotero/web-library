@@ -100,8 +100,7 @@ fieldset {
 }
 
 label {
-	.editing &,
-	.form-group & {
+	@include scopedVariant(".editing", ".form-group") {
 		@include touch-or-bp-down(sm) {
 			flex: 0 0 auto;
 			line-height: $input-btn-height-touch;
@@ -230,7 +229,7 @@ label {
 		}
 	}
 
-	.busy:not(.textarea) & {
+	@include scopedVariant(".busy:not(.textarea)") {
 		@include touch-or-bp-down(sm) {
 			padding-right: $input-btn-padding-x-touch + $space-lg + 1px;
 		}
@@ -247,7 +246,7 @@ label {
 		}
 	}
 
-	@at-root select#{&} {
+	@at-root #{$scope} select.form-control {
 		&:focus {
 			color: $focus-color;
 		}
@@ -260,24 +259,22 @@ label {
 		padding: $input-btn-padding-y-lg $input-btn-padding-x-lg;
 	}
 
-	.busy:not(.textarea) & {
+	@include scopedVariant(".busy:not(.textarea)") {
 		@include mouse-and-bp-up(md) {
 			padding-right: $icon-spin-size-sm + $icon-spin-spacing-lg;
 		}
 	}
 }
 
-.icon-spin {
-	.form-control-lg + & {
-		@include mouse-and-bp-up(md) {
-			top: $icon-spin-spacing-lg;
-			right: $icon-spin-spacing-lg;
-			width: $icon-spin-size-sm;
-			height: $icon-spin-size-sm;
+.form-control-lg + .icon-spin {
+	@include mouse-and-bp-up(md) {
+		top: $icon-spin-spacing-lg;
+		right: $icon-spin-spacing-lg;
+		width: $icon-spin-size-sm;
+		height: $icon-spin-size-sm;
 
-			path {
-				stroke-width: 1.2px;
-			}
+		path {
+			stroke-width: 1.2px;
 		}
 	}
 }
@@ -285,7 +282,7 @@ label {
 textarea {
 	resize: vertical;
 
-	.auto-resizer & {
+	@include scopedVariant(".auto-resizer") {
 		resize: none;
 	}
 }

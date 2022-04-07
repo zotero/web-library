@@ -18,11 +18,9 @@
 		line-height: $line-height-large;
 	}
 
-	section {
-		& + section {
-			@include touch-or-bp-down(sm) {
-				margin-top: $collection-tree-section-spacing;
-			}
+	section + section {
+		@include touch-or-bp-down(sm) {
+			margin-top: $collection-tree-section-spacing;
 		}
 	}
 
@@ -347,7 +345,7 @@
 			}
 
 			// Always translate root level on phones
-			.view-item-list-active & {
+			@include scopedVariant(".view-item-list-active") {
 				@include bp-down(xs) {
 					transform: translate3d(-25%, 0, 0);
 				}

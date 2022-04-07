@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 
-.zotero-web-library-embedded,
+#{$scope},
 .library-container {
 	height: 100%;
 
@@ -15,7 +15,7 @@
 	}
 }
 
-.zotero-web-library-embedded {
+#{$scope} {
 	background: $body-bg;
 	color: $text-color;
 	font-family: $font-family-base;
@@ -78,13 +78,13 @@
 			overflow: hidden; // Do not overlap open mobile navbar nav
 			transition: transform $mobile-navbar-nav-transition;
 
-			.navbar-nav-opened & {
+			@include scopedVariant(".navbar-nav-opened") {
 				transform: translate3d($content-transform, 0, 0);
 			}
 		}
 
 		@media (max-width: 360px - 1px) {
-			.navbar-nav-opened & {
+			@include scopedVariant(".navbar-nav-opened") {
 				transform: translate3d(-264px, 0, 0); // 4" devices
 			}
 		}

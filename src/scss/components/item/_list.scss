@@ -7,7 +7,7 @@
 	flex: 1 1 auto;
 	flex-direction: column;
 
-	.loading & {
+	@include scopedVariant(".loading") {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -58,7 +58,7 @@
 		}
 
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				outline-offset: -$outline-width;
 				@include hairline-disabled(top);
 

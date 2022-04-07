@@ -1,94 +1,96 @@
-.library-embedded {
-	.touch-tag-selector {
-		width: 50%;
-		border: 1px solid black;
+#{$scope} {
+	.library-embedded {
+		.touch-tag-selector {
+			width: 50%;
+			border: 1px solid black;
 
-		.touch-header {
+			.touch-header {
+				display: none;
+			}
+
+			.touch-footer {
+				height: auto;
+			}
+		}
+
+		.libraries-container {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			overflow: visible;
+			display: flex;
+		}
+
+		.collection-tree h4 {
 			display: none;
 		}
 
-		.touch-footer {
-			height: auto;
-		}
-	}
+		.items {
+			transform: translate3d(100%, 0, 0);
 
-	.libraries-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		overflow: visible;
-		display: flex;
-	}
+			html:not(.touch) & {
+				transform: translate3d(0, 0, 0);
+			}
 
-	.collection-tree h4 {
-		display: none;
-	}
+			html.touch & {
+				@include same(right, bottom, left, top, 0);
+				position: absolute;
+				background-color: $items-bg;
+				transition: transform $nav-transition;
+				display: block;
 
-	.items {
-		transform: translate3d(100%, 0, 0);
-
-		html:not(.touch) & {
-			transform: translate3d(0, 0, 0);
-		}
-
-		html.touch & {
-			@include same(right, bottom, left, top, 0);
-			position: absolute;
-			background-color: $items-bg;
-			transition: transform $nav-transition;
-			display: block;
-
-			@include tablet {
-				overflow: unset;
+				@include tablet {
+					overflow: unset;
+				}
 			}
 		}
-	}
 
-	&.view-item-list-active .items {
-		transform: translate3d(0, 0, 0);
-	}
-
-	&.view-item-details-active .items {
-		transform: translate3d(-25%, 0, 0);
-	}
-
-	.items-container {
-		height: 100%;
-
-		@include tablet {
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			transition: transform $nav-transition;
-		}
-	}
-
-	.item-details {
-		@include same(right, bottom, left, top, 0);
-		position: absolute;
-		transform: translate3d(100%, 0, 0);
-		transition: transform $nav-transition;
-
-		@include touch-and-bp-only(lg) {
-			flex: auto;
-			position: absolute;
-		}
-	}
-
-	&.view-item-details-active .item-details {
-		transform: translate3d(25%, 0, 0);
-
-		html:not(.touch) & {
+		&.view-item-list-active .items {
 			transform: translate3d(0, 0, 0);
 		}
 
-		@include tablet {
+		&.view-item-details-active .items {
+			transform: translate3d(-25%, 0, 0);
+		}
+
+		.items-container {
+			height: 100%;
+
+			@include tablet {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				transition: transform $nav-transition;
+			}
+		}
+
+		.item-details {
+			@include same(right, bottom, left, top, 0);
+			position: absolute;
+			transform: translate3d(100%, 0, 0);
+			transition: transform $nav-transition;
+
+			@include touch-and-bp-only(lg) {
+				flex: auto;
+				position: absolute;
+			}
+		}
+
+		&.view-item-details-active .item-details {
 			transform: translate3d(25%, 0, 0);
-			top: 0;
+
+			html:not(.touch) & {
+				transform: translate3d(0, 0, 0);
+			}
+
+			@include tablet {
+				transform: translate3d(25%, 0, 0);
+				top: 0;
+			}
 		}
 	}
 }

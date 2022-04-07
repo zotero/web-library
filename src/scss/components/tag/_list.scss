@@ -5,7 +5,7 @@
 .tag-selector-list {
 	.tag {
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				outline-offset: -$outline-width;
 				@include hairline-disabled(top);
 			}

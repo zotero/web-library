@@ -21,7 +21,7 @@
 	}
 
 	@include variant(".toolbar.dense") {
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			padding: 0 ($space-min * 0.5);
 		}
 	}

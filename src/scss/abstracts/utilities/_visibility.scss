@@ -6,13 +6,13 @@
 // Responsive visibility
 
 @each $bp in map-keys($grid-breakpoints) {
-  .hidden-#{$bp}-up {
+  #{$scope} .hidden-#{$bp}-up {
     @include bp-up($bp) {
       display: none !important;
     }
   }
 
-  .hidden-#{$bp}-down {
+  #{$scope} .hidden-#{$bp}-down {
     @include bp-down($bp) {
       display: none !important;
     }
@@ -23,20 +23,20 @@
 // Responsive visibility for 'mouse devices' only
 
 @each $bp in map-keys($grid-breakpoints) {
-	html:not(.touch) .hidden-mouse-#{$bp}-up {
+	html:not(.touch) #{$scope} .hidden-mouse-#{$bp}-up {
 		@include bp-up($bp) {
 			display: none !important;
 		}
 	}
 
-  html:not(.touch) .hidden-mouse-#{$bp}-down {
+  html:not(.touch) #{$scope} .hidden-mouse-#{$bp}-down {
     @include bp-down($bp) {
       display: none !important;
     }
   }
 }
 
-.hidden-mouse,
+#{$scope} .hidden-mouse,
 .touch {
 	@include mouse-and-bp-up(md) {
 		display: none !important;
@@ -47,34 +47,34 @@
 // Responsive visibility for 'touch devices' only
 
 @each $bp in map-keys($grid-breakpoints) {
-	.touch .hidden-touch-#{$bp}-up {
+	.touch #{$scope} .hidden-touch-#{$bp}-up {
 		@include bp-up($bp) {
 			display: none !important;
 		}
 	}
 
-  .touch .hidden-touch-#{$bp}-down {
+  .touch #{$scope} .hidden-touch-#{$bp}-down {
     @include bp-down($bp) {
       display: none !important;
     }
   }
 }
 
-.hidden-touch,
+#{$scope} .hidden-touch,
 .mouse {
 	@include touch-or-bp-down(sm) {
 		display: none !important;
 	}
 }
 
-.hidden {
+#{$scope} .hidden {
 	display: none !important;
 }
 
 
 // Screen readers only
 
-.offscreen {
+#{$scope} .offscreen {
   position: absolute;
   width: 1px;
   height: 1px;

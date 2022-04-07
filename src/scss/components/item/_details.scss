@@ -24,7 +24,7 @@
 		transition: transform $nav-transition;
 	}
 
-	.view-item-details-active & {
+	@include scopedVariant(".view-item-details-active") {
 		@include bp-down(sm) {
 			transform: translate3d(0, 0, 0);
 		}
@@ -34,7 +34,7 @@
 		}
 	}
 
-	.touch-tag-selector-active & {
+	@include scopedVariant(".touch-tag-selector-active") {
 		@include bp-down(sm) {
 			bottom: -$touch-footer-height;
 		}
@@ -47,7 +47,7 @@
 	@include bp-down(xs) {
 		top: 0;
 
-		.view-item-details-active & {
+		@include scopedVariant(".view-item-details-active") {
 			transform: translate3d(25%, 0, 0);
 		}
 
@@ -55,14 +55,14 @@
 
 		// Init
 
-		.search-active.view-item-details-active & {
+		@include scopedVariant(".search-active.view-item-details-active") {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
 
 		// Search results
 
-		.search-results.search-init.view-item-list-active & {
+		@include scopedVariant(".search-results.search-init.view-item-list-active") {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
 			transition: opacity $fade-transition, transform $fade-transition $fade-transition-duration;
@@ -70,7 +70,7 @@
 
 		// Cancel search
 
-		.search-cancel.search-active.view-item-details-active & {
+		@include scopedVariant(".search-cancel.search-active.view-item-details-active") {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
@@ -81,7 +81,7 @@
 			}
 		}
 
-		.search-cancel.search-results.view-item-details-active & {
+		@include scopedVariant(".search-cancel.search-results.view-item-details-active") {
 			transform: translate3d(0, 0, 0);
 			opacity: 0;
 			transition: none;
@@ -156,7 +156,7 @@
 	.panel {
 		transition: transform $nav-transition;
 
-		.view-note-active & {
+		@include scopedVariant(".view-note-active") {
 			@include bp-down(sm) {
 				transform: translate3d(-25%, 0, 0);
 			}
@@ -180,7 +180,7 @@
 			padding: 0 $default-padding-x-touch;
 
 			&:focus {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					outline: $outline-width solid $focus-color;
 					outline-offset: -$outline-width;
 				}

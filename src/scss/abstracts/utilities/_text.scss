@@ -1,15 +1,16 @@
 //
 // Text
 // --------------------------------------------------
+#{$scope} {
+	.text-left {
+		text-align: left;
+	}
 
-.text-left {
-	text-align: left;
-}
+	.text-center {
+		text-align: center;
+	}
 
-.text-center {
-	text-align: center;
-}
-
-.text-right {
-	text-align: right;
+	.text-right {
+		text-align: right;
+	}
 }

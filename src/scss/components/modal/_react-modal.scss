@@ -73,7 +73,7 @@
 		overflow: hidden;
 	}
 
-	.modal-scrollable & {
+	@include scopedVariant(".modal-scrollable") {
 		@include bp-up(sm) {
 			display: flex;
 			flex-direction: column;
@@ -116,7 +116,7 @@
 			background-color: $modal-content-bg;
 		}
 
-		.modal-form & {
+		@include scopedVariant(".modal-form") {
 			@include touch-or-bp-down(sm) {
 				background-color: $modal-form-header-bg;
 			}
@@ -161,19 +161,19 @@
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	}
 
-	.modal-scrollable & {
+	@include scopedVariant(".modal-scrollable") {
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				outline: none;
 				border: $outline-width solid $focus-color;
 			}
 		}
 	}
 
-	.modal-form & {
+	@include scopedVariant(".modal-form") {
 		@include touch-or-bp-down(sm) {
 			background-color: $form-bg-touch;
 		}

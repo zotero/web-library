@@ -43,7 +43,7 @@
 	}
 
 	.with-dropdown {
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			padding: 5px 25px 5px 36px;
 		}
 	}
@@ -60,7 +60,7 @@
 		border-radius: 50%;
 		background-color: $icon-color;
 
-		html:not(.specifity).keyboard & {
+		@include scopedVariant("html:not(.specifity).keyboard") {
 			&:focus {
 				border-color: $icon-color;
 				box-shadow: 0 0 0 $input-btn-focus-width $icon-color;

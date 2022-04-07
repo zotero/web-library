@@ -1,20 +1,22 @@
-.embedded-footer {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	padding: 0 $space-sm;
-	background-color: $touch-footer-darker-bg;
-	@include hairline(top, $touch-header-border);
-
-	.embedded-tag-selector {
+#{$scope} {
+	.embedded-footer {
 		display: flex;
 		flex-direction: row;
-		flex: auto;
-	}
+		justify-content: flex-end;
+		padding: 0 $space-sm;
+		background-color: $touch-footer-darker-bg;
+		@include hairline(top, $touch-header-border);
 
-	.embedded-see-on-zotero {
-		html.touch & {
-			line-height: 42px;
+		.embedded-tag-selector {
+			display: flex;
+			flex-direction: row;
+			flex: auto;
+		}
+
+		.embedded-see-on-zotero {
+			html.touch & {
+				line-height: 42px;
+			}
 		}
 	}
 }

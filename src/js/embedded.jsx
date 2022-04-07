@@ -80,6 +80,6 @@ const init = (element, config = {}) => {
 }
 
 if(targetDom) {
-	targetDom.classList.add('zotero-web-library-embedded');
+	targetDom.classList.add('zotero-wle');
 	init(targetDom, config);
 }

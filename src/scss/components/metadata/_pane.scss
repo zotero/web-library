@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 .info {
-	.read-only & {
+	@include scopedVariant(".read-only") {
 		user-select: text;
 		cursor: auto;
 	}

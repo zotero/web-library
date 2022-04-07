@@ -29,7 +29,7 @@
 		height: $toolbar-height-touch;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			.scrollbar-style-permanent & {
+			@include scopedVariant(".scrollbar-style-permanent") {
 				height: $toolbar-height-touch + $border-width;
 				border-bottom: $border-width solid $attachments-toolbar-border-color;
 			}
@@ -50,7 +50,7 @@
 		flex: 1 1 0;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			.scrollbar-style-permanent & {
+			@include scopedVariant(".scrollbar-style-permanent") {
 				padding-top: $space-min * 0.5;
 			}
 		}

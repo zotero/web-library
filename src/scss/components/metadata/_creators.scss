@@ -58,7 +58,7 @@
 
 		// Creators focus state
 		&:focus {
-			.keyboard:not(.specifity) & {
+			@include scopedVariant(".keyboard:not(.specifity)") {
 				outline: none;
 				z-index: 2;
 

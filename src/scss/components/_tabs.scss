@@ -36,7 +36,7 @@
 			}
 
 			&:focus {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					outline-offset: -$outline-width;
 				}
 			}
@@ -70,7 +70,7 @@
 		}
 
 		&.loading {
-			html:not(.specifity) & {
+			@include scopedVariant("html:not(.specifity)") {
 				display: flex;
 				justify-content: center;
 				align-items: center;

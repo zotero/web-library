@@ -18,7 +18,7 @@
 			padding: $space-min;
 		}
 
-		.tag-color-manager & {
+		@include scopedVariant(".tag-color-manager") {
 			@include touch-or-bp-down(sm) {
 				grid-template-columns: repeat(3, $space-thumb);
 				grid-template-rows: repeat(3, $space-thumb);

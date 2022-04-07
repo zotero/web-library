@@ -2,6 +2,7 @@
 // Auto resizer
 // --------------------------------------------------
 
+
 .auto-resizer {
 	flex: 0 0 auto;
 	margin-right: auto;
@@ -19,11 +20,11 @@
 		line-height: normal; // Todo: only when containing editables
 		min-width: $space-sm;
 
-		.textarea & {
+		@include scopedVariant(".textarea") {
 			white-space: pre-wrap;
 			word-wrap: break-word;
 
-			.editing & {
+			@include scopedVariant(".editing") {
 				@include touch-or-bp-down(sm) {
 					padding: 0 $input-btn-padding-x-touch;
 				}

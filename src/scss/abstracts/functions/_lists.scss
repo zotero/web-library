@@ -1,0 +1,16 @@
+@use "sass:list";
+
+@function nth-delete($list, $n) {
+	$result: ();
+	$n: if($n < 0, list.length($list) + $n + 1, $n);
+	$isBracketed: list.is-bracketed($list);
+	$separator: list.separator($list);
+
+	@for $i from 1 through list.length($list) {
+		@if $i != $n {
+			$result: list.append($result, list.nth($list, $i));
+		}
+	}
+
+	@return list.join((), $result, $separator, $isBracketed);
+}

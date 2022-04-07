@@ -80,7 +80,7 @@
 .btn-circle,
 .btn-icon {
 	.icon {
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			vertical-align: top;
 		}
 	}
@@ -146,7 +146,7 @@
 	color: $link-color;
 	background-color: transparent;
 
-	html:not(.specifity) & {
+	@include scopedVariant("html:not(.specifity)") {
 		padding: 0;
 	}
 
@@ -210,7 +210,7 @@
 		box-shadow: none;
 	}
 
-	.keyboard & {
+	@include scopedVariant(".keyboard") {
 		@include state(".btn-default:focus", ".btn-file input:focus + .btn-default") {
 			border-color: $secondary;
 			box-shadow: 0 0 0 $input-btn-focus-width $secondary;

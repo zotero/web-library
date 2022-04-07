@@ -8,7 +8,7 @@
 		padding-bottom: 0;
 
 		&:focus {
-			.keyboard & {
+			@include scopedVariant(".keyboard") {
 				padding-left: $modal-inner-padding - $outline-width;
 				padding-right: $modal-inner-padding - $outline-width;
 				border-bottom-left-radius: $modal-border-radius;

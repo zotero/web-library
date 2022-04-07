@@ -22,7 +22,7 @@
 		.feedback {
 			visibility: visible;
 
-			.dropdown-menu & {
+			@include scopedVariant(".dropdown-menu") {
 				color: $success;
 			}
 		}

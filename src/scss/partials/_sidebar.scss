@@ -35,7 +35,7 @@
 	@include bp-up(md) {
 		flex: 0 0 $sidebar-width-md;
 
-		.touch & {
+		@include scopedVariant(".touch") {
 			flex: 0 0 $sidebar-width-md-touch;
 		}
 	}
@@ -43,7 +43,7 @@
 	@include bp-up(lg) {
 		flex: 0 0 $sidebar-width-lg;
 
-		.touch & {
+		@include scopedVariant(".touch") {
 			flex: 0 0 $sidebar-width-lg-touch;
 		}
 	}
@@ -53,7 +53,7 @@
 			z-index: $z-index-touch-side-footer;
 			transition: transform $nav-transition;
 
-			.touch-tag-selector-active.view-item-details-active & {
+			@include scopedVariant(".touch-tag-selector-active.view-item-details-active") {
 				transform: translate3d(-25%, 0, 0);
 			}
 		}

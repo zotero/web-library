@@ -15,7 +15,7 @@
 	background-color: $shade-0;
 
 	.icon-z {
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			color: $primary;
 		}
 	}

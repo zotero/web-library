@@ -8,7 +8,7 @@
 		margin-bottom: 15px - 7px;
 	}
 
-	.panel.editing & {
+	@include scopedVariant(".panel.editing") {
 		@include touch-or-bp-down(sm) {
 			margin-top: $form-group-margin-touch;
 			margin-bottom: $form-group-margin-touch;
@@ -21,13 +21,13 @@
 	}
 
 	@include variant(".modal .metadata-list.editing") {
-		html:not(.specifity) & {
+		@include scopedVariant("html:not(.specifity)") {
 			margin: ($form-group-margin-touch - $modal-inner-padding)
 				(-$modal-inner-padding);
 		}
 	}
 
-	.attachment-details &, .standalone-attachment & {
+	@include scopedVariant(".attachment-details", ".standalone-attachment") {
 		user-select: text;
 		cursor: auto;
 	}
@@ -70,7 +70,7 @@
 				}
 			}
 
-			.read-only & {
+			@include scopedVariant(".read-only") {
 				display: none;
 			}
 		}
@@ -132,7 +132,7 @@
 						left: 0;
 					}
 
-					html:not(specifity) .modal & {
+					@include scopedVariant(".modal:not(specifity)") {
 						left: 0;
 					}
 
@@ -163,7 +163,7 @@
 						bottom: 0;
 					}
 
-					html:not(.specifity) .modal & {
+					@include scopedVariant(".modal:not(.specifity)") {
 						content: "";
 						left: 0;
 						top: auto;
@@ -180,7 +180,7 @@
 
 			// Editable focus state
 			&:focus-within:not(.creators-entry) {
-				.keyboard & {
+				@include scopedVariant(".keyboard") {
 					z-index: 2;
 
 					&::before,
@@ -216,7 +216,7 @@
 				padding-bottom: $border-width;
 			}
 
-			.modal & {
+			@include scopedVariant(".modal") {
 				padding-bottom: $border-width;
 			}
 
@@ -235,7 +235,7 @@
 					content: "";
 				}
 
-				html:not(.specifity) .modal & {
+				@include scopedVariant(".modal:not(.specifity)") {
 					left: 0;
 					top: auto;
 					bottom: 0;
@@ -261,7 +261,7 @@
 						left: 0;
 					}
 
-					.modal & {
+					@include scopedVariant(".modal") {
 						left: 0;
 					}
 
