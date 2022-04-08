@@ -1,12 +1,23 @@
 #{$scope} {
 	.embedded-header {
+		align-items: center;
+		background-color: $touch-footer-darker-bg;
 		display: flex;
 		flex-direction: row;
+		height: 32px + 2 * $space-sm;
 		justify-content: space-between;
 		padding: $space-sm 0;
-		background-color: $touch-footer-darker-bg;
-		// @include hairline(bottom, $touch-header-border);
 
+		@include scopedVariant(".view-item-details-active") {
+			@include hairline(bottom, $touch-header-border);
+		}
+
+		a:hover {
+			text-decoration: none;
+			.icon {
+				color: $link-hover-color;
+			}
+		}
 
 		.embedded-collection-picker {
 			flex: 1 1 15%;

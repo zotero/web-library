@@ -38,6 +38,7 @@ $scope: ".zotero-wle";
 @import "partials/focus";
 
 #{$scope} {
+	@import "partials/navs";
 	@import "partials/forms";
 	@import "partials/loading-cover";
 	@import "partials/transitions";

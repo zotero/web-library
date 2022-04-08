@@ -95,7 +95,7 @@ const EmbeddedHeader = () => {
 			{ view === 'item-details' && (
 				<React.Fragment>
 					<a className="btn back" onClick={ handleBackClick }>
-						<Icon type="16/chevron-9" width="16" height="16" />
+						<Icon type="16/chevron-13" width="16" height="16" />
 						{ backLabel }
 					</a>
 				</React.Fragment>
