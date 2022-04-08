@@ -45,48 +45,49 @@
 @mixin scopedVariant($selectors...) {
 	@each $selector in $selectors {
 		@if $scope {
-			$parent: list.nth(selector.parse(&), 1);
-			$parentIndex: list.index($parent, $scope);
-			$selectorIndex: list.index($parent, $selector);
-			$shouldScope: true;
+			$parents: selector.parse(&);
+			@each $parent in $parents {
+				$parentIndex: list.index($parent, $scope);
+				$selectorIndex: list.index($parent, $selector);
+				$shouldScope: true;
 
-
-			@if $parentIndex == null {
-				$shouldScope: false;
-			}
-
-			@if string.index(#{list.nth(selector.parse($selector), 1)}, "html") == 1 {
-				$shouldScope: false
-			}
-
-			@if string.index(#{list.nth(selector.parse($selector), 1)}, "body") == 1 {
-				$shouldScope: false
-			}
-
-			@if #{list.nth(selector.parse($selector), 1)} == ".keyboard" {
-				$shouldScope: false
-			}
-
-			@if #{list.nth(selector.parse($selector), 1)} == ".touch" {
-				$shouldScope: false
-			}
-
-			@if #{list.nth(selector.parse($selector), 1)} == ".mouse" {
-				$shouldScope: false
-			}
-
-			@if #{list.nth(selector.parse($selector), 1)} == ".scrollbar-style-permanent" {
-				$shouldScope: false
-			}
-
-			@if $shouldScope {
-				$parent: nth-delete($parent, $parentIndex);
-				@at-root #{$scope} #{$selector} #{$parent} {
-					@content;
+				@if $parentIndex == null {
+					$shouldScope: false;
 				}
-			} @else {
-				@at-root #{$selector} #{&} {
-					@content;
+
+				@if string.index(#{list.nth(selector.parse($selector), 1)}, "html") == 1 {
+					$shouldScope: false
+				}
+
+				@if string.index(#{list.nth(selector.parse($selector), 1)}, "body") == 1 {
+					$shouldScope: false
+				}
+
+				@if #{list.nth(selector.parse($selector), 1)} == ".keyboard" {
+					$shouldScope: false
+				}
+
+				@if #{list.nth(selector.parse($selector), 1)} == ".touch" {
+					$shouldScope: false
+				}
+
+				@if #{list.nth(selector.parse($selector), 1)} == ".mouse" {
+					$shouldScope: false
+				}
+
+				@if #{list.nth(selector.parse($selector), 1)} == ".scrollbar-style-permanent" {
+					$shouldScope: false
+				}
+
+				@if $shouldScope {
+					$parent: nth-delete($parent, $parentIndex);
+					@at-root #{$scope} #{$selector} #{$parent} {
+						@content;
+					}
+				} @else {
+					@at-root #{$selector} #{&} {
+						@content;
+					}
 				}
 			}
 		} @else {
