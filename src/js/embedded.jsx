@@ -80,6 +80,6 @@ const init = (element, config = {}) => {
 }
 
 if(targetDom) {
-	targetDom.classList.add('zotero-wle');
+	targetDom.classList.add(({ ...defaults, ...config }).containterClassName);
 	init(targetDom, config);
 }

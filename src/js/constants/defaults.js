@@ -20,6 +20,7 @@ export const libraries = {
 export const menus = { desktop: [], mobile: [] };
 export const userId = 0;
 export const userSlug = '';
+export const containterClassName = process.env.TARGET === 'embedded' ? 'zotero-wle' : 'zotero-wl';
 
 export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,
