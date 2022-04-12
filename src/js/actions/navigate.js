@@ -134,7 +134,7 @@ const selectFirstItem = (onlyIfNoneSelected = false) => {
 
 		const keys = get(state, path, []);
 		if(keys.length > 0) {
-			dispatch(navigate({ items: [keys[0]], noteKey: null, attachmentKey: null }));
+			dispatch(navigate({ items: [keys[0]], noteKey: null, attachmentKey: null, view: 'item-list' }));
 			return 0;
 		}
 		return null;

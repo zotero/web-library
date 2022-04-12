@@ -18,7 +18,7 @@ import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, c
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
 import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
-import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
+import { isDelKeyDown, isHighlightKeyDown, isTriggerEvent } from '../../../common/event';
 
 const ROWHEIGHT = 26;
 
@@ -97,6 +97,7 @@ const Table = () => {
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const prevErrorCount = usePrevious(errorCount);
 	const isFileUploadAllowed = useSelector(
 		state => (state.config.libraries.find(
@@ -304,7 +305,10 @@ const Table = () => {
 
 	const handleKeyDown = useCallback(async ev => {
 		var direction, magnitude = 1;
-		if(ev.key === 'ArrowUp') {
+		if(isEmbedded && isTriggerEvent(ev)) {
+			dispatch(navigate({ view: 'item-details '}));
+			return;
+		} else if(ev.key === 'ArrowUp') {
 			direction = -1;
 		} else if(ev.key === 'ArrowDown') {
 			direction = 1;

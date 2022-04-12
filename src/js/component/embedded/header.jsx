@@ -1,36 +1,52 @@
-import React, { useCallback, useState, memo } from 'react';
+import React, { useCallback, useState, useRef, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { pluralize } from '../../common/format';
-import { useItemsCount } from '../../hooks';
+import { useItemsCount, useFocusManager } from '../../hooks';
 import ColumnSelector from '../item/items/column-selector';
 import Search from '../search';
-import { navigate } from '../../actions';
+import { navigate, toggleModal } from '../../actions';
 import Icon from '../ui/icon';
 import Button from '../ui/button';
-import Libraries from '../libraries';
+import { isTriggerEvent } from '../../common/event';
+import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 
-const EmbeddedCollectionPicker = () => {
+const EmbeddedCollectionPicker = props => {
+	const { tabIndex = -2, onFocusNext, onFocusPrev } = props;
 	const libraryName = useSelector(state => state.config.libraries?.[0].name);
 	const collectionKey = useSelector(state => state.current.collectionKey)
 	const collectionName = useSelector(state => state.libraries[state.current.libraryKey]?.collections?.data?.[state.current.collectionKey]?.name);
-	const [isCollectionTreeOpen, setIsCollectionTreeOpen] = useState(false);
+
+	const dispatch = useDispatch();
 
 	const handleClick = useCallback(() => {
-		setIsCollectionTreeOpen(true);
-	}, []);
+		dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, true));
+	}, [dispatch]);
 
-	const handleNodeSelected = useCallback(() => {
-		setIsCollectionTreeOpen(false);
-	}, []);
 
-	const handleClose = useCallback(() => {
-		setIsCollectionTreeOpen(false);
-	}, []);
+	const handleKeyDown = useCallback(ev => {
+		if(ev.target !== ev.currentTarget) {
+			return;
+		}
+
+		if(isTriggerEvent(ev) || ev.key === 'ArrowDown') {
+			dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, true));
+			ev.preventDefault();
+		} else if(ev.key === 'ArrowRight') {
+			onFocusNext(ev);
+		} else if(ev.key === 'ArrowLeft') {
+			onFocusPrev(ev);
+		}
+	}, [dispatch, onFocusNext, onFocusPrev]);
 
 	return (
 		<div className="embedded-collection-picker">
-			<Button className="item-container" onClick={ handleClick } >
+			<Button
+				className="item-container"
+				onClick={ handleClick }
+				onKeyDown={ handleKeyDown }
+				tabIndex={ tabIndex }
+			>
 				{ collectionKey ? (
 					<React.Fragment>
 						<Icon type="28/folder" className="touch" width="28" height="28" />
@@ -46,14 +62,6 @@ const EmbeddedCollectionPicker = () => {
 				)}
 				<Icon type="16/chevron-9" width="16" height="16" />
 			</Button>
-			{ isCollectionTreeOpen && (
-				<div className="embedded-collection-tree">
-					<Button icon className="close" onClick={ handleClose } >
-						<Icon type={ '16/close' } width="16" height="16" />
-					</Button>
-					<Libraries onNodeSelected={ handleNodeSelected } />
-				</div>
-			)}
 		</div>
 	);
 }
@@ -70,6 +78,7 @@ const EmbeddedInfoView = () => {
 }
 
 const EmbeddedHeader = () => {
+	const ref = useRef(null);
 	const view = useSelector(state => state.current.view);
 	const dispatch = useDispatch();
 	const backLabel = useSelector(state =>
@@ -77,24 +86,34 @@ const EmbeddedHeader = () => {
 			state.libraries[state.current.libraryKey]?.collections?.data?.[state.current.collectionKey]?.name :
 			state.config.libraries?.[0].name
 	);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(ref, '.search-input');
 
-	const handleBackClick = useCallback(() => {
-		dispatch(navigate({ items: [], view: 'item-list' }));
+	const handleBackClick = useCallback(ev => {
+		if(isTriggerEvent(ev)) {
+			ev.target.blur();
+			dispatch(navigate({ items: [], view: 'item-list' }));
+		}
 	}, [dispatch]);
 
 	return (
-		<div className="embedded-header">
+		<div
+			className="embedded-header"
+			onBlur={ receiveBlur }
+			onFocus={ receiveFocus }
+			ref={ ref }
+			tabIndex={ 0 }
+		>
 			{ view !== 'item-details' && (
 				<React.Fragment>
-					<EmbeddedCollectionPicker />
+					<EmbeddedCollectionPicker tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 					<EmbeddedInfoView />
-					<Search />
-					<ColumnSelector />
+					<Search onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
+					<ColumnSelector tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 				</React.Fragment>
 			)}
 			{ view === 'item-details' && (
 				<React.Fragment>
-					<a className="btn back" onClick={ handleBackClick }>
+					<a className="btn-link back" onKeyDown={ handleBackClick } onClick={ handleBackClick } tabIndex={ -2 }>
 						<Icon type="16/chevron-13" width="16" height="16" />
 						{ backLabel }
 					</a>

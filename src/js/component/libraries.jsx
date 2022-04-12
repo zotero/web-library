@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState, useEffect, useMemo, useRef } from 'react';
+import React, { forwardRef, memo, useCallback, useState, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -160,7 +160,7 @@ LibraryNode.propTypes = {
 	virtual: PropTypes.object,
 };
 
-const Libraries = props => {
+const Libraries = forwardRef((props, ref) => {
 	const { isPickerMode, pickerState, includeLibraries, excludeLibraries } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
@@ -201,6 +201,14 @@ const Libraries = props => {
 
 	const [opened, setOpened] = useState([]);
 	const [virtual, setVirtual] = useState(null);
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if(treeRef.current) {
+				treeRef.current.focus();
+			}
+		}
+	}));
 
 	const isRootActive = view === 'libraries';
 
@@ -255,7 +263,7 @@ const Libraries = props => {
 	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);
 
 	useEffect(() => {
-		const selectedLibraryNode = treeRef.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
+		const selectedLibraryNode = treeRef?.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
 		if(selectedLibraryNode && !isTouchOrSmall && !isPickerMode && !firstCollectionKey && !firstIsTrash) {
 			// wait for other effect to dispatch and process toggleOpen, then scroll on next frame
 			setTimeout(() => selectedLibraryNode.scrollIntoView(), 0);
@@ -334,7 +342,9 @@ const Libraries = props => {
 			</div>
 		</nav>
 	);
-}
+});
+
+Libraries.displayName = 'Libraries';
 
 Libraries.propTypes = {
 	excludeLibraries: PropTypes.array,

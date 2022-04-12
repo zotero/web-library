@@ -10,6 +10,7 @@ import { get } from '../utils';
 import { usePrevious } from '../hooks/';
 import EmbeddedHeader from './embedded/header';
 import EmbeddedFooter from './embedded/footer';
+import EmbeddedLibrariesTreeModal from './embedded/libraries-tree'
 import Libraries from './libraries';
 import TouchHeaderWrap from './touch-header-wrap';
 import ItemsSortModal from './modal/items-sort';
@@ -131,7 +132,9 @@ const Library = () => {
 										'read-only': true,
 									})}>
 										<Items key={ key } />
-										<ItemDetails active={ view === 'item-details' } />
+										{ view === 'item-details' && (
+											<ItemDetails active={ view === 'item-details' } />
+										) }
 									</section>
 								</section>
 							</main>
@@ -152,10 +155,11 @@ const Library = () => {
 					</React.Fragment>
 					)}
 					<TouchTagSelector />
+					<EmbeddedLibrariesTreeModal />
 				</div>
 			</div>
-			<ZoteroStreamingClient />
 			<ItemsSortModal />
+			<ZoteroStreamingClient />
 		</React.Fragment>
 	);
 }

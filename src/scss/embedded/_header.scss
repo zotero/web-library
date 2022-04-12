@@ -38,29 +38,18 @@
 					transform: scaleY(-1);
 					margin-top: 1px;
 				}
-			}
-		}
 
-		.embedded-collection-tree {
-			@include same(top, bottom, left, 0);
-			background: white;
-			border: 1px solid black;
-			height: 100%;
-			padding: $space-xs;
-			position: absolute;
-			width: 50%;
-			z-index: 100;
-			display: flex;
-		    flex-direction: row-reverse;
-	    	align-items: flex-start;
+				@include mouse-keyboard-and-bp-up(md) {
+					&:focus {
+						border-color: $btn-secondary-color;
+						box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+					}
 
-	    	.close {
-	    		margin-top: 6px;
-	    	}
-
-			.collection-tree {
-				h4 {
-					display: none;
+					@include state(".item-container.active") {
+						&, .icon {
+							color: $icon-active-color;
+						}
+					}
 				}
 			}
 		}
