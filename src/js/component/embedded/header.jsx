@@ -113,7 +113,7 @@ const EmbeddedHeader = () => {
 			)}
 			{ view === 'item-details' && (
 				<React.Fragment>
-					<a className="btn-link back" onKeyDown={ handleBackClick } onClick={ handleBackClick } tabIndex={ -2 }>
+					<a className="btn btn-default back" onKeyDown={ handleBackClick } onClick={ handleBackClick } tabIndex={ -2 }>
 						<Icon type="16/chevron-13" width="16" height="16" />
 						{ backLabel }
 					</a>

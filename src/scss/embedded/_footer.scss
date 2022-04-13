@@ -4,9 +4,13 @@
 		background-color: $touch-footer-darker-bg;
 		display: flex;
 		flex-direction: row;
-		height: 26px;
+		height: 32px;
 		justify-content: flex-end;
 		padding: 0 $space-sm;
+
+		@include touch-or-bp-down(sm) {
+			height: 42px;
+		}
 
 		@include hairline(top, $touch-header-border);
 

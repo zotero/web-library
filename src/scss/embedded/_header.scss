@@ -24,10 +24,7 @@
 
 			.item-container {
 				display: flex;
-
-				html:not(.touch) & {
-					margin-top: 3px;
-				}
+				margin-left: $space-min;
 
 				.icon {
 					flex: 0 0 auto;
@@ -36,7 +33,7 @@
 
 				[class*="icon-chevron"] {
 					transform: scaleY(-1);
-					margin-top: 1px;
+					margin-top: 2px;
 				}
 
 				@include mouse-keyboard-and-bp-up(md) {
@@ -70,10 +67,12 @@
 		}
 
 		.back {
+			margin-left: $space-min + 10px;
+			border-color: transparent;
+
 			[class*="icon-chevron"] {
 				transform: rotate(-90deg);
 			}
 		}
-
 	}
 }
