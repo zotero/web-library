@@ -8,6 +8,7 @@ import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 import { toggleModal } from '../../actions';
 import { usePrevious } from '../../hooks';
 import { isTriggerEvent } from '../../common/event';
+import FocusTrap from '../focus-trap';
 
 const EmbeddedLibrariesTreeModal = () => {
 	const dispatch = useDispatch();
@@ -15,22 +16,20 @@ const EmbeddedLibrariesTreeModal = () => {
 	const librariesRef = useRef();
 	const isOpen = useSelector(state => state.modal.id === EMBEDDED_LIBRARIES_TREE);
 	const wasOpen = usePrevious(isOpen);
-
-	const focusOnHeader = () =>
-		ref.current.closest('.library-container').querySelector('.embedded-header').focus();
+	const lastFocus = useRef(null);
 
 	const handleNodeSelected = useCallback(() => {
-		focusOnHeader();
 		dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, false));
 	}, [dispatch]);
 
-	const handleClose = useCallback(() => {
-		dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, false));
+	const handleClose = useCallback(ev => {
+		if(isTriggerEvent(ev)) {
+			dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, false));
+		}
 	}, [dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Escape') {
-			focusOnHeader();
 			dispatch(toggleModal(EMBEDDED_LIBRARIES_TREE, false));
 			ev.preventDefault();
 		}
@@ -41,17 +40,23 @@ const EmbeddedLibrariesTreeModal = () => {
 
 	useEffect(() => {
 		if(isOpen && !wasOpen) {
-			librariesRef.current.focus();
+			lastFocus.current = document.activeElement;
+			librariesRef.current.focus({ preventScroll: true });
+		} else if(wasOpen && !isOpen && lastFocus.current && 'focus' in lastFocus.current) {
+			lastFocus.current.focus({ preventScroll: true });
+			lastFocus.current = null;
 		}
 	}, [isOpen, wasOpen]);
 
 	return isOpen ? (
-		<div className="embedded-collection-tree" onKeyDown={ handleKeyDown } ref={ ref }>
-			<Button icon className="close" onClick={ handleClose } >
-				<Icon type={ '16/close' } width="16" height="16" />
-			</Button>
-			<Libraries ref={ librariesRef } onNodeSelected={ handleNodeSelected } />
-		</div>
+		<FocusTrap targetRef={ librariesRef }>
+			<div className="embedded-collection-tree" onKeyDown={ handleKeyDown } ref={ ref }>
+				<Libraries ref={ librariesRef } onNodeSelected={ handleNodeSelected } />
+				<Button icon className="close" onKeyDown={ handleClose } onClick={ handleClose } >
+					<Icon type={ '16/close' } width="16" height="16" />
+				</Button>
+			</div>
+		</FocusTrap>
 	) : null;
 }
 
