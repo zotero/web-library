@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, memo } from 'react';
 
-const focusables = 'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
+const focusables = 'button:not([disabled]),[href]:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]):not([disabled])';
 
 const FocusTrap = ({ children }) => {
 	const handleFocus = useCallback((ev) => {
