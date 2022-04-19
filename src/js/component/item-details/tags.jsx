@@ -145,7 +145,7 @@ const Tags = props => {
 			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: addTagRef.current });
 		} else if(isTriggerEvent(ev)) {
 			const isAddButton = ev.currentTarget === addTagRef.current;
-			if(!isAddButton && ev.currentTarget === ev.target && ev.target.dataset.tag) {
+			if(!isAddButton && ev.currentTarget === ev.target && ev.target.dataset.tag && !isReadOnly) {
 				setTagRedacted(ev.target.dataset.tag);
 			}
 		} else if(ev.key === 'Home') {
