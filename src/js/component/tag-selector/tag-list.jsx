@@ -2,23 +2,25 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, memo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
-import { default as Dropdown } from 'reactstrap/lib/Dropdown';
-import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
-import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
-import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 import Icon from '../ui/icon';
-import { usePrevious, useTags } from '../../hooks';
-import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
 import Spinner from '../ui/spinner';
-import { pick } from '../../common/immutable';
+import Button from '../ui/button';
+import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
 import { get, noop } from '../../utils';
+import { isTriggerEvent } from '../../common/event';
 import { maxColoredTags } from '../../constants/defaults';
+import { omit, pick } from '../../common/immutable';
 import { useFocusManager } from '../../hooks';
+import { usePrevious, useTags } from '../../hooks';
 
 const PAGESIZE = 100;
 
@@ -99,18 +101,25 @@ TagDotMenu.propTypes = {
 
 TagDotMenu.displayName = 'TagDotMenu';
 
-const TagListRow = memo(props => {
-	const { data, index, style } = props;
-	const { dotMenuFor, tags, toggleTag, isManager, focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, onDotMenuToggle, ...rest } = data;
-	const tag = tags[index];
+const TagListItem = memo(props => {
+	const { className, dotMenuFor, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev,
+	isManager, isSelected = false, onDotMenuToggle = noop, style, tag, toggleTag, ...rest } = props;
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
-	const className = cx({
-		tag: true,
-		odd: (index + 1) % 2 === 1,
-		placeholder: !tag
-	});
+	const handleClick = useCallback(ev => {
+		if(ev.type === 'click' && !isSelected) { // selected tags can only be removed by clicking on a 'minus' icon
+			ev.currentTarget.blur();
+			toggleTag(ev.currentTarget.dataset.tag);
+		}
+	}, [isSelected, toggleTag]);
 
-	const handleClick = useCallback(() => toggleTag(tag.tag), [tag, toggleTag]);
+	const handleUnselect = useCallback(ev => {
+		if(isTriggerEvent) {
+			ev.stopPropagation();
+			ev.currentTarget.blur();
+			toggleTag(ev.currentTarget.closest('[data-tag]').dataset.tag);
+		}
+	}, [toggleTag]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target === ev.currentTarget) {
@@ -124,15 +133,21 @@ const TagListRow = memo(props => {
 		} else if(ev.key === 'ArrowLeft') {
 			focusDrillDownPrev(ev);
 			onDotMenuToggle(null);
+		} else if(isTriggerEvent(ev)) {
+			ev.currentTarget.blur();
+			toggleTag(ev.currentTarget.dataset.tag);
 		}
-	}, [focusNext, focusPrev, focusDrillDownPrev, focusDrillDownNext, onDotMenuToggle]);
+	}, [focusNext, focusPrev, focusDrillDownPrev, focusDrillDownNext, onDotMenuToggle, toggleTag]);
 
 	return (
 		<li
-			tabIndex={ -2 }
+			tabIndex={ tag ? -2 : null }
 			data-tag={ tag ? tag.tag : null }
 			style={ style }
-			className={ className }
+			className={ cx({
+				tag: true,
+				placeholder: !tag,
+			}, className) }
 			onClick={ tag && handleClick }
 			onKeyDown={ handleKeyDown }
 		>
@@ -144,20 +159,65 @@ const TagListRow = memo(props => {
 				onDotMenuToggle={ onDotMenuToggle }
 				{ ...pick(rest,  ['onToggleTagManager']) }
 			/> }
+			{ isSelected && (
+				isTouchOrSmall ? (
+				<Button
+					className="btn-circle btn-secondary"
+					onClick={ handleUnselect }
+					onKeyDown={ handleUnselect }
+				>
+					<Icon type="16/minus-strong" width="16" height="16" />
+				</Button>
+			) : (
+				<Button
+					aria-label="delete attachment"
+					icon
+					onClick={ handleUnselect }
+					onKeyDown={ handleUnselect }
+					tabIndex={ -3 }
+				>
+					<Icon type={ '16/minus-circle' } width="16" height="16" />
+				</Button>
+			)) }
 		</li>
 	);
 });
 
+TagListItem.displayName = 'TagListItem';
+
+TagListItem.propTypes = {
+	className: PropTypes.string,
+	dotMenuFor: PropTypes.string,
+	focusDrillDownNext: PropTypes.func,
+	focusDrillDownPrev: PropTypes.func,
+	focusNext: PropTypes.func,
+	focusPrev: PropTypes.func,
+	isManager: PropTypes.bool,
+	isSelected: PropTypes.bool,
+	onDotMenuToggle: PropTypes.func,
+	style: PropTypes.object,
+	tag: PropTypes.object,
+	toggleTag: PropTypes.func,
+};
+
+const TagListRow = memo(({ data, index, ...rest }) => (
+	<TagListItem
+		tag={ data.tags?.[index] }
+		className={ cx({ odd: (index + 1) % 2 === 1 }) }
+		{ ...omit(data, ['tags', 'index']) }
+		{ ...rest }
+	/>
+));
+
 TagListRow.displayName = 'TagListRow';
 
 TagListRow.propTypes = {
-	data: PropTypes.object,
-	index: PropTypes.number,
-	style: PropTypes.object,
+	data: PropTypes.object.isRequired,
+	index: PropTypes.number.isRequired,
 };
 
 // TagList is used in the ManageTags modal and in TouchTagSelector
-const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
+const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, ref) => {
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
@@ -176,6 +236,14 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFilteringOrHideAutomatic), 100);
 
 	const [dotMenuFor, setDotMenuFor] = useState(null);
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if(listRef.current) {
+				listRef.current.focus();
+			}
+		}
+	}));
 
 	const handleIsItemLoaded = useCallback(index => {
 		if(tags && !!tags[index]) {
@@ -244,15 +312,14 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 					>
 						{({ onItemsRendered, ref }) => (
 							<div
-								tabIndex={ isManager  ? 0 : null }
-								onFocus={ isManager  ? receiveFocus : noop }
-								onBlur={ isManager  ? receiveBlur : noop }
+								tabIndex={ tags.length > 0 ? 0 : null }
+								onFocus={ tags.length > 0 ? receiveFocus : noop }
+								onBlur={ tags.length > 0 ? receiveBlur : noop }
 								ref={ listRef }
-								className="items-list"
 								role="list"
 								aria-multiselectable="true"
 								aria-readonly="true"
-								aria-label="items"
+								aria-label="tags"
 								aria-rowcount={ totalResults }
 							>
 								<List
@@ -280,7 +347,9 @@ const TagList = ({ toggleTag = noop, isManager = false, ...rest }) => {
 			) }
 		</div>
 	);
-};
+});
+
+TagList.displayName = 'TagList';
 
 TagList.propTypes = {
 	isManager: PropTypes.bool,
@@ -288,3 +357,4 @@ TagList.propTypes = {
 }
 
 export default memo(TagList);
+export { TagListItem };

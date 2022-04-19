@@ -90,22 +90,6 @@
 		}
 	}
 
-	.selected-tags {
-		background-color: $touch-tag-selected-bg;
-
-		.tag {
-			&::before,
-			.tag-color:not([style*="color"]) {
-				mix-blend-mode: multiply;
-			}
-
-			.btn-circle {
-				flex: 0 0 auto;
-				margin-left: $default-padding-x-touch;
-			}
-		}
-	}
-
 	.tag-selector-list {
 		position: relative; // Needed for last child hairline hack
 		z-index: 0; // …
@@ -148,6 +132,26 @@
 					@include variant(".tag.odd") {
 						flex: 0 0 calc(85% - 32px);
 					}
+				}
+			}
+		}
+
+		&.selected-tags {
+			background-color: $touch-tag-selected-bg;
+
+			.tag, .tag:last-child {
+				background-color: unset;
+			}
+
+			.tag {
+				&::before,
+				.tag-color:not([style*="color"]) {
+					mix-blend-mode: multiply;
+				}
+
+				.btn-circle {
+					flex: 0 0 auto;
+					margin-left: $default-padding-x-touch;
 				}
 			}
 		}
