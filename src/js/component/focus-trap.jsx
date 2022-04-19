@@ -3,7 +3,7 @@ import React, { useCallback, memo } from 'react';
 
 const focusables = 'button:not([disabled]),[href]:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]):not([disabled])';
 
-const FocusTrap = ({ children }) => {
+const FocusTrap = ({ children, disabled = false }) => {
 	const handleFocus = useCallback((ev) => {
 		const siblingsExclude = [...ev.currentTarget.parentElement.querySelectorAll('[data-focus-trap-after] ~ *')];
 		const siblingsInclude = [...ev.currentTarget.parentElement.querySelectorAll('[data-focus-trap-before] ~ *:not([data-focus-trap-after])')];
@@ -31,9 +31,9 @@ const FocusTrap = ({ children }) => {
 
 	return (
 		<React.Fragment>
-			<div tabIndex={ 0 } data-focus-trap-before onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } />
+			{ !disabled && <div tabIndex={ 0 } data-focus-trap-before onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 			{ children }
-			<div tabIndex={ 0 } data-focus-trap-after onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } />
+			{ !disabled && <div tabIndex={ 0 } data-focus-trap-after onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 		</React.Fragment>
 	);
 }

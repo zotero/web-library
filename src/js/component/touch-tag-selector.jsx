@@ -176,7 +176,7 @@ const TouchTagSelector = () => {
 	}, [tags.length, prevTagsCount])
 
 	return (
-		<FocusTrap>
+		<FocusTrap disabled={ !isOpen }>
 		<CSSTransition
 			in={ isOpen }
 			timeout={ 600 }
