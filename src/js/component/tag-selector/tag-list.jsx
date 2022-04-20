@@ -26,7 +26,7 @@ const PAGESIZE = 100;
 
 const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen, focusNext, focusPrev }) => {
 	const dispatch = useDispatch()
-	const tagColorsLength = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'value', 'length'], 0));
+	const tagColorsLength = useSelector(state => state.libraries?.[state.current.libraryKey]?.tagColors?.value?.length ?? 0);
 	const currentlySelectedTags = useSelector(state => state.current.tags);
 
 	const handleRemoveColorClick = useCallback((ev) => {

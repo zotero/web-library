@@ -825,7 +825,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			const oldItem = state.libraries[sourceLibraryKey].items[itemKeys[index]];
 
 			const { mtime, md5, filename } = oldItem;
-			const fileSize = get(oldItem, [Symbol.for('links'), 'enclosure', 'length'], null);
+			const fileSize = oldItem?.[Symbol.for('links')]?.enclosure?.length;
 
 			if(!mtime || !md5 || !filename || !fileSize) {
 				return Promise.resolve();
