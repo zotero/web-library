@@ -1,10 +1,10 @@
 import deepEqual from 'deep-equal';
-import {
-	DROP_TAGS_IN_LIBRARY, ERROR_TAGS_IN_LIBRARY, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CREATE_ITEM,
-	RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEMS, RECEIVE_LIBRARY_SETTINGS, RECEIVE_TAGS_IN_LIBRARY,
-	RECEIVE_UPDATE_ITEM, REQUEST_TAGS_IN_LIBRARY, RECEIVE_UPDATE_LIBRARY_SETTINGS,
-} from '../../constants/actions';
-import { get } from '../../utils';
+import { DROP_TAGS_IN_LIBRARY, ERROR_TAGS_IN_LIBRARY, RECEIVE_ADD_TAGS_TO_ITEMS,
+	RECEIVE_CREATE_ITEM, RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEMS, RECEIVE_LIBRARY_SETTINGS,
+	RECEIVE_TAGS_IN_LIBRARY, RECEIVE_UPDATE_ITEM, REQUEST_TAGS_IN_LIBRARY,
+	RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS } from
+	'../../constants/actions';
+import { omit } from '../../common/immutable';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 const tagsInLibrary = (state = {}, action, { items } = {}) => {
@@ -27,11 +27,17 @@ const tagsInLibrary = (state = {}, action, { items } = {}) => {
 				...updateFetchingState(state, action),
 			};
 		case RECEIVE_LIBRARY_SETTINGS:
+			return {
+				...state,
+				coloredTags: (action.settings?.tagColors?.value ?? []).map(t => t.name),
+			}
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 			return {
 				...state,
-				coloredTags: get(action, 'settings.tagColors.value', []).map(t => t.name),
+				coloredTags: (action.settingsValue?.value ?? []).map(t => t.name),
 			}
+		case RECEIVE_DELETE_LIBRARY_SETTINGS:
+			return omit(state, 'coloredTags');
 		case RECEIVE_CREATE_ITEM:
 			return 'tags' in action.item && action.item.tags.length > 0 ?
 				{} : state;

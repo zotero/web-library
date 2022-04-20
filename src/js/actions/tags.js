@@ -1,8 +1,9 @@
 import api from 'zotero-api-client';
 import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
 import { MANAGE_TAGS } from '../constants/modals';
+import { maxColoredTags } from '../constants/defaults';
 import { escapeBooleanSearches } from '../common/actions';
-import { requestWithBackoff, updateLibrarySettings } from '.';
+import { deleteLibrarySettings, requestWithBackoff, updateLibrarySettings } from '.';
 
 const getApi = ({ config, libraryKey }, requestType, queryConfig) => {
 	switch(requestType) {
@@ -249,18 +250,20 @@ const updateTagColors = newTagColors => {
 	return async(dispatch, getState) => {
 		const state = getState();
 		const libraryKey = state.current.libraryKey;
-		const newSettings = { ...state.libraries[libraryKey].settings };
-		if(!('tagColors' in newSettings)) {
-			newSettings.tagColors = {};
-		}
-		if(Array.isArray(newTagColors) && newTagColors.length > 0) {
-			newSettings.tagColors.value = newTagColors;
-			delete newSettings.tagColors.version;
-		} else {
-			delete newSettings.tagColors;
+
+		if(Array.isArray(newTagColors)) {
+			// In web library <=v1.0.35, in some scenarios, it was possible to create entry with a
+			// tag with no color and/or with more than allowed number of tags. Ensure invalid
+			// entries are removed.
+			newTagColors = newTagColors.filter(t => t.color);
+			newTagColors.length = Math.min(newTagColors.length, maxColoredTags);
+
+			if(newTagColors.length > 0) {
+				return await dispatch(updateLibrarySettings('tagColors', { value: newTagColors }, libraryKey));
+			}
 		}
 
-		return await dispatch(updateLibrarySettings(newSettings, libraryKey));
+		return await dispatch(deleteLibrarySettings('tagColors', libraryKey));
 	}
 }
 

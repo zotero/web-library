@@ -2,7 +2,8 @@ import api from 'zotero-api-client';
 
 import { REQUEST_LIBRARY_SETTINGS, RECEIVE_LIBRARY_SETTINGS, ERROR_LIBRARY_SETTINGS, RESET_LIBRARY,
 	REQUEST_UPDATE_LIBRARY_SETTINGS, RECEIVE_UPDATE_LIBRARY_SETTINGS, ERROR_UPDATE_LIBRARY_SETTINGS,
-} from '../constants/actions';
+	REQUEST_DELETE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, ERROR_DELETE_LIBRARY_SETTINGS,
+	} from '../constants/actions';
 
 const fetchLibrarySettings = libraryKey => {
 	return async (dispatch, getState) => {
@@ -13,6 +14,7 @@ const fetchLibrarySettings = libraryKey => {
 			type: REQUEST_LIBRARY_SETTINGS,
 			libraryKey
 		});
+
 		try {
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
@@ -39,32 +41,71 @@ const fetchLibrarySettings = libraryKey => {
 	};
 }
 
-const updateLibrarySettings = (settings, libraryKey) => {
+const updateLibrarySettings = (settingsKey, settingsValue, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const config = state.config;
+		const oldValue = state.libraries?.[libraryKey].settings?.[settingsKey];
+		const version = oldValue?.version ?? 0;
 
 		dispatch({
 			type: REQUEST_UPDATE_LIBRARY_SETTINGS,
-			settings,
+			settingsKey,
 			libraryKey
 		});
 		try {
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
-				.settings()
-				.post(settings);
+				.version(version)
+				.settings(settingsKey)
+				.put(settingsValue);
 
 			dispatch({
 				type: RECEIVE_UPDATE_LIBRARY_SETTINGS,
-				settings,
+				settingsKey,
+				settingsValue,
 				libraryKey,
 				response
 			});
 		} catch(error) {
 			dispatch({
 				type: ERROR_UPDATE_LIBRARY_SETTINGS,
-				settings,
+				settingsKey,
+				settingsValue,
+				libraryKey,
+				error
+			});
+			throw error;
+		}
+	};
+}
+
+const deleteLibrarySettings = (settingsKey, libraryKey) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const config = state.config;
+
+		dispatch({
+			type: REQUEST_DELETE_LIBRARY_SETTINGS,
+			settingsKey,
+			libraryKey
+		});
+		try {
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.settings(settingsKey)
+				.delete();
+
+			dispatch({
+				type: RECEIVE_DELETE_LIBRARY_SETTINGS,
+				settingsKey,
+				libraryKey,
+				response
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_DELETE_LIBRARY_SETTINGS,
+				settingsKey,
 				libraryKey,
 				error
 			});
@@ -82,4 +123,4 @@ const resetLibrary = libraryKey => {
 	};
 }
 
-export { fetchLibrarySettings, resetLibrary, updateLibrarySettings };
+export { deleteLibrarySettings, fetchLibrarySettings, resetLibrary, updateLibrarySettings };

@@ -1,12 +1,11 @@
-import {
-    RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHILD_ITEMS,
+import { RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHILD_ITEMS,
     RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
     RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEM_DETAILS, RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_BY_QUERY,
     RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_LIBRARY_SETTINGS, RECEIVE_MOVE_ITEMS_TRASH,
     RECEIVE_PUBLICATIONS_ITEMS, RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_RELATED_ITEMS,
     RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TOP_ITEMS, RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM, RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_UPLOAD_ATTACHMENT,
-} from '../../constants/actions.js';
+    RECEIVE_DELETE_LIBRARY_SETTINGS, } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
 import { mapObject, removeKeys } from '../../common/immutable';
@@ -81,10 +80,19 @@ const items = (state = {}, action, metaAndTags) => {
 				}
 			}
 		case RECEIVE_LIBRARY_SETTINGS:
-		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
 					meta: metaAndTags.meta,
 					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
+			})])
+		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
+					meta: metaAndTags.meta,
+					tagColors: indexByKey(action.settingsValue.value, 'name', ({ color }) => color)
+			})])
+		case RECEIVE_DELETE_LIBRARY_SETTINGS:
+			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
+					meta: metaAndTags.meta,
+					tagColors: {}
 			})])
 		case RECEIVE_DELETE_TAGS:
 			return mapObject(state, (itemKey, item) => [

@@ -1,12 +1,11 @@
 import deepEqual from 'deep-equal';
-import {
-	DROP_COLORED_TAGS_IN_PUBLICATIONS_ITEMS, DROP_TAGS_IN_PUBLICATIONS_ITEMS,
+import { DROP_COLORED_TAGS_IN_PUBLICATIONS_ITEMS, DROP_TAGS_IN_PUBLICATIONS_ITEMS,
 	ERROR_COLORED_TAGS_IN_PUBLICATIONS_ITEMS, ERROR_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_COLORED_TAGS_IN_PUBLICATIONS_ITEMS, RECEIVE_DELETE_TAGS,
 	RECEIVE_FETCH_ITEMS, RECEIVE_LIBRARY_SETTINGS, RECEIVE_TAGS_IN_PUBLICATIONS_ITEMS,
 	RECEIVE_UPDATE_ITEM, RECEIVE_UPDATE_LIBRARY_SETTINGS,
 	REQUEST_COLORED_TAGS_IN_PUBLICATIONS_ITEMS, REQUEST_TAGS_IN_PUBLICATIONS_ITEMS,
-} from '../../constants/actions';
+	RECEIVE_DELETE_LIBRARY_SETTINGS } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 import { omit } from '../../common/immutable';
 
@@ -60,6 +59,7 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 			return filterTags(state, action.tags);
 		case RECEIVE_LIBRARY_SETTINGS:
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
+		case RECEIVE_DELETE_LIBRARY_SETTINGS:
 			return omit(state, 'coloredTags');
 		default:
 			return state;

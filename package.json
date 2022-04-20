@@ -86,7 +86,7 @@
     "redux-thunk": "^2.4.1",
     "tinymce": "^6.0.0",
     "use-debounce": "^7.0.1",
-    "zotero-api-client": "^0.37.2",
+    "zotero-api-client": "^0.39.0",
     "zotero-base-mappings": "0.0.2"
   },
   "devDependencies": {
