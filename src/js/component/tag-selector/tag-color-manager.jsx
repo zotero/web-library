@@ -18,7 +18,7 @@ const colors = ['#FF6666', '#FF8C19', '#999999', '#5FB236', '#009980', '#2EA8E5'
 
 const pickAvailableTagColor = ((colors, tagColorsData) => {
 	const tagColors = tagColorsData.map(tgc => tgc.color);
-	return colors.find(c => !tagColors.includes(c));
+	return colors.find(c => !tagColors.includes(c)) || colors[0];
 });
 
 const TagColorManager = ({ onToggleTagManager, tag }) => {
