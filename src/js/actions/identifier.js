@@ -27,6 +27,11 @@ const searchIdentifier = identifier => {
 		identifier = identifier.trim();
 		const { config } = getState();
 		const { translateUrl } = config;
+		const matchDOI = decodeURIComponent(identifier)
+			.match(/^https?:\/\/doi.org\/(10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,])$/);
+		if(matchDOI) {
+			identifier = matchDOI[1];
+		}
 		const identifierIsUrl = isLikeURL(identifier);
 		if(!identifierIsUrl) {
 			const identifierObjects = extractIdentifiers(identifier);
