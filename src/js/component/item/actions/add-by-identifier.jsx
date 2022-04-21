@@ -23,6 +23,7 @@ const AddByIdentifier = props => {
 	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
+	const containterClassName = useSelector(state => state.config.containterClassName);
 	const prevItem = usePrevious(item);
 	const prevItems = usePrevious(items);
 	const wasSearching = usePrevious(isSearching);
@@ -115,6 +116,7 @@ const AddByIdentifier = props => {
 				placement="bottom"
 				target={ id.current }
 				toggle={ toggleOpen }
+				container={ `.${containterClassName}` }
 				trigger="legacy"
 			>
 				<PopoverHeader>
