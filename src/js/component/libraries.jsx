@@ -74,7 +74,7 @@ const LibraryNode = props => {
 
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
-			'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev',
+			'focusBySelector', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev',
 			'pickerSkipCollections', 'selectedCollectionKey']),
 			isPickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
 			pickerState, virtual: isVirtualInThisTree ? virtual : null,
@@ -174,8 +174,8 @@ const Libraries = forwardRef((props, ref) => {
 	const firstIsTrash = useSelector(state => state.current.firstIsTrash);
 	const treeRef = useRef();
 	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
-	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveBlur, receiveFocus
-	} = useFocusManager(treeRef);
+	const { focusBySelector, focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev,
+	receiveBlur, receiveFocus } = useFocusManager(treeRef);
 
 	const filteredLibraries = useMemo(
 		() => (includeLibraries || excludeLibraries) ?
@@ -286,6 +286,7 @@ const Libraries = forwardRef((props, ref) => {
 			onDrillDownPrev: focusDrillDownPrev,
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
+			focusBySelector,
 			...pick(props, ['isPickerMode', 'disabledCollections', 'onNodeSelected', 'picked',
 			'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerState',
 			'pickerSkipCollections', 'selectedCollectionKey' ])

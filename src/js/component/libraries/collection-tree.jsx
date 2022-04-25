@@ -148,13 +148,25 @@ ItemsNode.displayName = 'ItemsNode';
 
 
 const VirtualCollectionNode = memo(props => {
-	const {  cancelAdd, commitAdd, isPickerMode, parentCollectionKey, parentLibraryKey, virtual, } = props;
+	const {  cancelAdd, commitAdd, focusBySelector, isPickerMode, parentCollectionKey,
+	parentLibraryKey, virtual, } = props;
+	const shouldIgnoreNextBlur = useRef(false);
 
-	const handleEditableCommit = useCallback(newValue => {
+	const handleEditableCommit = useCallback((newValue, hasChanged, ev) => {
+		const upNode = parentCollectionKey ?
+			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${parentCollectionKey}"`) :
+			null;
+		const rootNode = ev.currentTarget.closest('.level-root').querySelector(`[data-key=${parentLibraryKey}]`);
 		commitAdd(parentLibraryKey, parentCollectionKey, newValue);
-	}, [commitAdd, parentCollectionKey, parentLibraryKey]);
+		shouldIgnoreNextBlur.current = true;
+		focusBySelector(upNode ?? rootNode);
+		shouldIgnoreNextBlur.current = false;
 
-	const handleBlur = useCallback(() => false, []);
+	}, [focusBySelector, commitAdd, parentCollectionKey, parentLibraryKey]);
+
+	const handleBlur = useCallback(() => {
+		return shouldIgnoreNextBlur.current;
+	}, []);
 
 	if(isPickerMode || !virtual) {
 		return null;
@@ -303,7 +315,7 @@ LevelWrapper.propTypes = {
 
 
 const DotMenu = memo(props => {
-	const { collection, dotMenuFor, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
+	const { collection, dotMenuFor, focusBySelector, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
 		addVirtual } = props;
 	const dispatch = useDispatch();
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
@@ -327,7 +339,16 @@ const DotMenu = memo(props => {
 		}
 	}, [collection, dispatch, isTouchOrSmall, setRenaming]);
 
-	const handleDeleteClick = useCallback(() => {
+	const handleDeleteClick = useCallback(ev => {
+		const upNode = collection.parentCollection ?
+			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${collection.parentCollection}"`) :
+			null;
+		const rootNode = ev.currentTarget.closest('.level-root').querySelector(`[data-key=${parentLibraryKey}]`);
+
+		setTimeout(() => {
+			focusBySelector(upNode ?? rootNode);
+		}, 0);
+
 		dispatch(deleteCollection(collection, parentLibraryKey));
 
 		if(currentLibraryKey === parentLibraryKey && collection.key === currentCollectionKey) {
@@ -337,8 +358,7 @@ const DotMenu = memo(props => {
 				dispatch(navigate({ library: currentLibraryKey }, true));
 			}
 		}
-
-	}, [dispatch, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
+	}, [dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
 		ev.stopPropagation();
@@ -494,8 +514,10 @@ const CollectionNode = memo(props => {
 		setRenaming(null);
 	}, [setRenaming]);
 
-	const handleRenameCommit = useCallback(newValue => {
-		if(newValue === '' || (collection.name === newValue)) {
+	const handleRenameCommit = useCallback((newValue, hasChanged, ev) => {
+		ev.currentTarget.closest('[data-collection-key]').focus();
+
+		if(!hasChanged || newValue === '' || (collection.name === newValue)) {
 			setRenaming(null);
 			return;
 		}
@@ -567,7 +589,7 @@ const CollectionNode = memo(props => {
 	const shouldSubtreeNodesBeTabbable = shouldSubtreeNodesBeTabbableOnTouch || !isTouchOrSmall;
 
 	const collectionName = collection.key in updating ?
-		updating[collection.key][updating[collection.key].length - 1].patch.name || collection.name :
+		updating[collection.key]?.[updating[collection.key].length - 1]?.patch.name || collection.name :
 		collection.name
 
 	const hasVirtual = virtual && virtual.collectionKey === collection.key;
@@ -659,7 +681,8 @@ const CollectionNode = memo(props => {
 								setRenaming = { setRenaming }
 								parentLibraryKey = { parentLibraryKey }
 								{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
-								'dotMenuFor', 'opened', 'setDotMenuFor', 'setOpened']) }
+								'dotMenuFor', 'focusBySelector', 'onFocusNext', 'opened',
+								'setDotMenuFor', 'setOpened']) }
 							/>
 						) : null }
 					</React.Fragment>
@@ -717,17 +740,18 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 					collection={ c }
 					parentCollectionKey={ parentCollectionKey }
 					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
-					'commitAdd', 'derivedData', 'dotMenuFor', 'disabledCollections', 'getParents',
-					'isCurrentLibrary', 'isPickerMode', 'isReadOnly', 'level', 'onDrillDownNext',
-					'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'onOpen', 'opened',
-					'parentLibraryKey', 'pickerSkipCollections', 'picked', 'pickerPick', 'renaming',
-					'selectedCollectionKey', 'selectNode', 'setDotMenuFor', 'setOpened',
-					'setRenaming', 'shouldBeTabbable', 'virtual',])}
+					'commitAdd', 'derivedData', 'dotMenuFor', 'disabledCollections',
+					'focusBySelector', 'getParents', 'isCurrentLibrary', 'isPickerMode',
+					'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
+					'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey', 'pickerSkipCollections',
+					'picked', 'pickerPick', 'renaming', 'selectedCollectionKey', 'selectNode',
+					'setDotMenuFor', 'setOpened', 'setRenaming', 'shouldBeTabbable', 'virtual',])}
 				/>
 			) }
 			<VirtualCollectionNode
 				parentCollectionKey= { parentCollectionKey }
-				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'parentLibraryKey', 'isPickerMode'] )}
+				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'focusBySelector',
+				'parentLibraryKey', 'isPickerMode'] )}
 			/>
 		</React.Fragment>
 	)
@@ -923,7 +947,7 @@ const CollectionTree = props => {
 				shouldBeTabbable={ shouldBeTabbable }
 				getParents ={ getParents }
 				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'disabledCollections',
-				'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'picked',
+				'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'focusBySelector', 'picked',
 				'pickerPick', 'pickerSkipCollections', 'virtual']) }
 			/>
 			<PublicationsNode
