@@ -18,6 +18,14 @@
 			display: flex;
 			flex-direction: row;
 			flex: auto;
+
+			.tag-summary {
+				line-height: 32px;
+
+				@include touch-or-bp-down(sm) {
+					line-height: 42px;
+				}
+			}
 		}
 
 		.embedded-see-on-zotero {

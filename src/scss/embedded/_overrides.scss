@@ -4,6 +4,10 @@
 			width: 50%;
 			border: 1px solid black;
 
+			@include bp-down(xs) {
+				top: 0;
+			}
+
 			.touch-footer {
 				height: auto;
 			}

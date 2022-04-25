@@ -35,7 +35,7 @@ const EmbeddedTagSelector = () => {
 					height="16"
 				/>
 			</Button>
-			<div>
+			<div className="tag-summary">
 				{ selectedTagNames.length != 0 &&
 					`${selectedTagNames.length} ${pluralize('Tag', selectedTagNames.length)} Selected`
 				}
