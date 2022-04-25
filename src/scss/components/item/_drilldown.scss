@@ -21,12 +21,23 @@
 		width: $item-details-width-lg-touch;
 	}
 
-	.view-note-active &.touch-note,
-	.view-attachment-active &.touch-attachment {
-		transform: translate3d(0, 0, 0);
+	@include scopedVariant('.view-note-active') {
+		&.touch-note {
+			transform: translate3d(0, 0, 0);
 
-		@include bp-down(xs) {
-			transform: translate3d(25%, 0, 0);
+			@include bp-down(xs) {
+				transform: translate3d(25%, 0, 0);
+			}
+		}
+	}
+
+	@include scopedVariant('.view-attachment-active') {
+		&.touch-attachment {
+			transform: translate3d(0, 0, 0);
+
+			@include bp-down(xs) {
+				transform: translate3d(25%, 0, 0);
+			}
 		}
 	}
 
