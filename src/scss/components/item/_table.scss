@@ -137,7 +137,7 @@
 					padding-left: $space-sm - $space-min;
 				}
 
-				@include variant(".column-header:last-child") {
+				@include variant(".column-header:not(.attachment):last-child") {
 					padding-right: $space-sm - $space-min;
 				}
 			}
@@ -290,7 +290,7 @@
 			padding-left: $default-padding-x;
 		}
 
-		&:last-child {
+		&:not(.attachment):last-child {
 			padding-right: $default-padding-x;
 		}
 
