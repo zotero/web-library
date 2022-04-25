@@ -107,8 +107,10 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 		}
 	}, [isDrillDownCarousel]);
 
-	const focusBySelector = useCallback(selector => {
-		const nextEl = ref.current.querySelector(selector);
+	const focusBySelector = useCallback(selectorOrEl => {
+		const nextEl = typeof(selectorOrEl) === 'string' ?
+			ref.current.querySelector(selectorOrEl) :
+			selectorOrEl;
 
 		if(nextEl) {
 			lastFocused.current = nextEl;
