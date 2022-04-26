@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
@@ -170,11 +170,13 @@ const TableRow = props => {
 	//@NOTE: to avoid re-rendering unselected rows on focus change, we only check isFocused if isSelected
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isItemsTableFocused);
 
+	// useDrag options must not be recreated or it will reset drag preview (which we set for empty image)
+	// causing two "ghosts" to appear - the native one (which we don't want) and the one web library renders
+	const useDragOptions = useMemo(() => ({ dropEffect: 'copy' }), []);
+
 	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
 		type: ITEM,
-		options: {
-			dropEffect: 'copy'
-		},
+		options: useDragOptions,
 		item: () => {
 			return { itemKey, selectedItemKeysLength, itemData, libraryKey }
 		},
