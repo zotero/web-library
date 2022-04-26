@@ -64,8 +64,6 @@ const config = {
 	]
 };
 
-// workaround for https://github.com/react-dnd/react-dnd/issues/2772
-const dndAlias = { find: '@react-dnd/asap', replacement: '@react-dnd/asap/dist/esm/browser/asap.js' };
 
 // alias either library and few unused components to a stub to reduce weight in embedded build
 const libraryAliases = [
@@ -96,7 +94,7 @@ const embeddedTargetConfig = {
 	input: './src/js/embedded.jsx',
 	output: { ...config.output, file: './build/static/zotero-web-library-embedded.js' },
 	plugins: [
-		alias({ entries: [dndAlias, ...libraryAliases] }),
+		alias({ entries: [...libraryAliases] }),
 		virtual({ 'react-dnd': stubdnd }),
 		...config.plugins
 	]
@@ -104,7 +102,7 @@ const embeddedTargetConfig = {
 
 const zoteroTargetConfig = {
 	...config,
-	plugins: [alias({ entries: [dndAlias, ...embeddedAliases] }), ...config.plugins]
+	plugins: [alias({ entries: [...embeddedAliases] }), ...config.plugins]
 }
 
 const targets = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxAsyncQueue from 'redux-async-queue';
 import ReduxThunk from 'redux-thunk';
@@ -76,7 +76,8 @@ const init = (element, config = {}) => {
 			window.WebLibStore.dispatch({ type: 'CONFIGURE', ...defaults, ...config, apiConfig, libraries, menus: null });
 	}
 
-	ReactDOM.render(<EmbeddedMain store={ store } />, targetDom);
+	const root = createRoot(targetDom);
+	root.render(<EmbeddedMain store={ store } />);
 }
 
 if(targetDom) {

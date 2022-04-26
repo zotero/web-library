@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import ReduxAsyncQueue from 'redux-async-queue';
 import ReduxThunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
@@ -56,7 +56,8 @@ const init = (element, config = {}) => {
 			window.WebLibStore.dispatch({ type: 'CONFIGURE', ...defaults, ...config, apiConfig, libraries, menus: null });
 	}
 
-	ReactDOM.render(<Main store={ store } history={ history } />, element);
+	const root = createRoot(element);
+	root.render(<Main store={ store } history={ history } />);
 }
 
 export default init;
