@@ -39,6 +39,10 @@
 				transform: translate3d(25%, 0, 0);
 			}
 		}
+
+		.rich-editor {
+			@include hairline(top, $item-details-border);
+		}
 	}
 
 	@each $drilldown in note, attachment {

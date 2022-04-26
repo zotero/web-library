@@ -119,7 +119,7 @@
 			}
 
 			&:first-child {
-				@include variant("main .metadata-list") { // Exclude modals
+				@include variant("#{$scope} main .metadata-list") { // Exclude modals
 					@include bp-up(sm) {
 						padding-top: 0;
 						border-top-left-radius: $input-border-radius;
@@ -136,7 +136,7 @@
 						left: 0;
 					}
 
-					@include variant("main .metadata-list") {
+					@include variant("#{$scope} main .metadata-list") {
 						@include bp-up(sm) {
 							content: none;
 						}
@@ -146,8 +146,7 @@
 
 			&:last-child {
 				padding-bottom: $input-border-width;
-
-				@include variant("main .metadata-list") {
+				@include variant("#{$scope} main .metadata-list") {
 					@include bp-up(sm) {
 						padding-bottom: 0;
 						border-bottom-left-radius: $input-border-radius;
@@ -170,7 +169,7 @@
 						bottom: 0;
 					}
 
-					@include variant("main .metadata-list") {
+					@include variant("#{$scope} main .metadata-list") {
 						@include bp-up-normalized(sm) {
 							content: none;
 						}
@@ -220,7 +219,7 @@
 				padding-bottom: $border-width;
 			}
 
-			@include variant("main .metadata-list") {
+			@include variant("#{$scope} main .metadata-list") {
 				@include touch-or-bp-up(sm) {
 					border-bottom-left-radius: $input-btn-border-radius;
 					border-bottom-right-radius: $input-btn-border-radius;
@@ -248,7 +247,7 @@
 					padding-bottom: $border-width;
 				}
 
-				@include variant("main .metadata-list") {
+				@include variant("#{$scope} main .metadata-list") {
 					@include touch-and-bp-up(sm) {
 						padding-top: 0;
 						border-top-left-radius: $input-btn-border-radius;
@@ -265,7 +264,7 @@
 						left: 0;
 					}
 
-					@include variant("main .metadata-list") {
+					@include variant("#{$scope} main .metadata-list") {
 						@include touch-and-bp-up(sm) {
 							content: none;
 						}
