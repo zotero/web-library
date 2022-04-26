@@ -105,7 +105,8 @@ $grid-breakpoints: (
 // Z-index master list
 
 $z-index-mobile-nav:          0;
-$z-index-rich-editor-touch:  10;
+$z-index-rich-editor-touch:  20;
+$z-index-details-drilldown:  20;
 $z-index-search-backdrop:    20;
 $z-index-hairline:           20;
 $z-index-search-bar:         30;
