@@ -19,6 +19,7 @@
 	@include touch-and-bp-up(lg) {
 		left: auto;
 		width: $item-details-width-lg-touch;
+		border-left: 1px solid mix($item-details-border, $body-bg, 50%);
 	}
 
 	@include scopedVariant('.view-note-active') {
