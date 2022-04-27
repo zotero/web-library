@@ -62,7 +62,9 @@ const Input = memo(forwardRef((props, ref) => {
 		const shouldCancel = onBlur(event);
 		if(shouldCancel) {
 			onCancel(value !== initialValue, ev);
-			input.current.blur();
+			if(input.current) {
+				input.current.blur();
+			}
 		} else {
 			onCommit(value, value !== initialValue, ev);
 		}
