@@ -64,4 +64,14 @@
 			}
 		}
 	}
+
+	&.editing {
+		.metadata .value {
+			@include touch-or-bp-down(sm) {
+				$textarea-padding: ($space-thumb - $font-size-mobile * $line-height-base-mobile) * 0.5;
+				padding-top: $textarea-padding;
+				padding-bottom: $textarea-padding;
+			}
+		}
+	}
 }
