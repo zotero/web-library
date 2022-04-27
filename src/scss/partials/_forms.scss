@@ -114,6 +114,15 @@ label {
 			}
 		}
 	}
+
+	&.icon-label {
+		@include touch-or-bp-down(sm) {
+			.icon {
+				vertical-align: top;
+				margin-top: ($input-btn-height-touch - 28px) * 0.5;
+			}
+		}
+	}
 }
 
 .col-form-label {

@@ -45,7 +45,7 @@ const NewCollectionModal = () => {
 
 	return (
 		<Modal
-			className="modal-touch modal-form"
+			className="modal-touch modal-form new-collection"
 			contentLabel="Add a New Collection"
 			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
@@ -82,7 +82,7 @@ const NewCollectionModal = () => {
 			<div className="modal-body">
 				<div className="form">
 					<div className="form-group">
-						<label htmlFor={ inputId.current }>
+						<label className="icon-label" htmlFor={ inputId.current }>
 							<Icon type="28/folder" width="28" height="28" />
 						</label>
 						<Input
