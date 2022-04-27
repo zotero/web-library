@@ -46,6 +46,16 @@
 		}
 	}
 
+	@include scopedVariant(".touch-tag-selector-active") {
+		@include bp-down(sm) {
+			bottom: -$touch-footer-height;
+		}
+
+		@include touch-and-bp-only(md) {
+			bottom: -$touch-footer-height;
+		}
+	}
+
 	@each $drilldown in note, attachment {
 		&.touch-#{$drilldown} {
 			@include bp-down(xs) {
