@@ -156,7 +156,7 @@
 	.panel {
 		transition: transform $nav-transition;
 
-		@include scopedVariant(".view-note-active") {
+		@include scopedVariant(".view-note-active", ".view-attachment-active") {
 			@include bp-down(sm) {
 				transform: translate3d(-25%, 0, 0);
 			}
