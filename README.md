@@ -11,7 +11,7 @@ Installation
 1. Clone git repository into target web directory (`git clone https://github.com/zotero/web-library.git`)
 2. Ensure up-to-date version of [Node](https://nodejs.org) is used. On systems where [nvm](https://github.com/nvm-sh/nvm) is available it's possible to use `nvm use` to switch to a preferred version of node.
 3. Run `npm install` to install dependencies
-4. Tweak configuration in `src/html/index.html` and/or `src/html/embedded.html`.
+4. Tweak configuration in `src/html/index.html` and/or `src/html/embedded.html`. Default configuration displays a public library in read-only mode. In order to edit a library, change `userId` and provide `apiKey`.
 5. Run development proces: `npm start`
 6. Point browser at `http://localhost:8001/` to see the demo
 7. Modyfing source files will trigger incremental build
