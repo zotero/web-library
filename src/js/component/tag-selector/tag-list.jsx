@@ -114,7 +114,7 @@ const TagListItem = memo(props => {
 	}, [isSelected, toggleTag]);
 
 	const handleUnselect = useCallback(ev => {
-		if(isTriggerEvent) {
+		if(isTriggerEvent(ev)) {
 			ev.stopPropagation();
 			ev.currentTarget.blur();
 			toggleTag(ev.currentTarget.closest('[data-tag]').dataset.tag);
