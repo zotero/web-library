@@ -196,6 +196,7 @@ const VirtualCollectionNode = memo(props => {
 VirtualCollectionNode.propTypes = {
 	cancelAdd: PropTypes.func,
 	commitAdd: PropTypes.func,
+	focusBySelector: PropTypes.func,
 	isPickerMode: PropTypes.bool,
 	parentCollectionKey: PropTypes.string,
 	parentLibraryKey: PropTypes.string,
@@ -455,15 +456,16 @@ const DotMenu = memo(props => {
 });
 
 DotMenu.propTypes = {
+	addVirtual: PropTypes.func,
 	collection: PropTypes.object,
 	dotMenuFor: PropTypes.string,
+	focusBySelector: PropTypes.func,
 	isReadOnly: PropTypes.bool,
 	opened: PropTypes.array,
 	parentLibraryKey: PropTypes.string,
 	setDotMenuFor: PropTypes.func,
 	setOpened: PropTypes.func,
 	setRenaming: PropTypes.func,
-	addVirtual: PropTypes.func,
 };
 
 DotMenu.displayName = 'DotMenu';
