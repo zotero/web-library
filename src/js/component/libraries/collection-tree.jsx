@@ -325,6 +325,14 @@ const DotMenu = memo(props => {
 
 	const isOpen = dotMenuFor === collection.key;
 
+	const closeOnXArrowKey = useCallback(ev => {
+		if(ev.type === 'keydown' && (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight')) {
+			setDotMenuFor(null);
+			return true;
+		}
+		return false;
+	}, [setDotMenuFor])
+
 	const handleToggle = useCallback(ev => {
 		setDotMenuFor(isOpen ? null : collection.key);
 		if(ev.type === 'click') {
@@ -333,9 +341,13 @@ const DotMenu = memo(props => {
 	}, [collection, isOpen, setDotMenuFor]);
 
 	const handleRenameClick = useCallback(ev => {
+		if(closeOnXArrowKey(ev)) {
+			return;
+		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
+
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key }));
 		} else {
@@ -344,9 +356,12 @@ const DotMenu = memo(props => {
 		ev.preventDefault();
 		ev.stopPropagation();
 		setDotMenuFor(null);
-	}, [collection, dispatch, isTouchOrSmall, setDotMenuFor, setRenaming]);
+	}, [closeOnXArrowKey, collection, dispatch, isTouchOrSmall, setDotMenuFor, setRenaming]);
 
 	const handleDeleteClick = useCallback(ev => {
+		if(closeOnXArrowKey(ev)) {
+			return;
+		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
@@ -368,9 +383,12 @@ const DotMenu = memo(props => {
 				dispatch(navigate({ library: currentLibraryKey }, true));
 			}
 		}
-	}, [dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
+	}, [closeOnXArrowKey, dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
+		if(closeOnXArrowKey(ev)) {
+			return;
+		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
@@ -381,14 +399,17 @@ const DotMenu = memo(props => {
 			setOpened([...opened, collection.key ]);
 			addVirtual(parentLibraryKey, collection.key);
 		}
-	}, [addVirtual, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
+	}, [addVirtual, closeOnXArrowKey, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
 
 	const handleMoveCollectionClick = useCallback(ev => {
+		if(closeOnXArrowKey(ev)) {
+			return;
+		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	}, [collection, dispatch, parentLibraryKey]);
+	}, [closeOnXArrowKey, collection, dispatch, parentLibraryKey]);
 
 	// disabled, because of 100 items limit https://github.com/zotero/web-library/issues/367
 	// const handleExportClick = useCallback(() => {
