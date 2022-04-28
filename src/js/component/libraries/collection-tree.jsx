@@ -331,15 +331,24 @@ const DotMenu = memo(props => {
 		}
 	}, [collection, isOpen, setDotMenuFor]);
 
-	const handleRenameClick = useCallback(() => {
+	const handleRenameClick = useCallback(ev => {
+		if(!isTriggerEvent(ev)) {
+			return;
+		}
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key }));
 		} else {
 			setRenaming(collection.key);
 		}
-	}, [collection, dispatch, isTouchOrSmall, setRenaming]);
+		ev.preventDefault();
+		ev.stopPropagation();
+		setDotMenuFor(null);
+	}, [collection, dispatch, isTouchOrSmall, setDotMenuFor, setRenaming]);
 
 	const handleDeleteClick = useCallback(ev => {
+		if(!isTriggerEvent(ev)) {
+			return;
+		}
 		const upNode = collection.parentCollection ?
 			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${collection.parentCollection}"`) :
 			null;
@@ -361,6 +370,9 @@ const DotMenu = memo(props => {
 	}, [dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
+		if(!isTriggerEvent(ev)) {
+			return;
+		}
 		ev.stopPropagation();
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key }));
@@ -370,7 +382,10 @@ const DotMenu = memo(props => {
 		}
 	}, [addVirtual, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
 
-	const handleMoveCollectionClick = useCallback(() => {
+	const handleMoveCollectionClick = useCallback(ev => {
+		if(!isTriggerEvent(ev)) {
+			return;
+		}
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	}, [collection, dispatch, parentLibraryKey]);
 
@@ -402,26 +417,34 @@ const DotMenu = memo(props => {
 			<DropdownMenu right>
 				<React.Fragment>
 				<DropdownItem
+					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleRenameClick }
+					onKeyDown={ handleRenameClick }
 				>
 					Rename
 				</DropdownItem>
 				<DropdownItem
+					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleDeleteClick }
+					onKeyDown={ handleDeleteClick }
 				>
 					Delete
 				</DropdownItem>
 				<DropdownItem
+					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
+					onKeyDown={ handleSubcollectionClick }
 				>
 					New Subcollection
 				</DropdownItem>
 					<DropdownItem
+						onBlur={ stopPropagation }
 						onMouseDown={ stopPropagation }
 						onClick={ handleMoveCollectionClick }
+						onKeyDown={ handleMoveCollectionClick }
 					>
 						Move Collection
 					</DropdownItem>
@@ -488,6 +511,8 @@ const CollectionNode = memo(props => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
 	const isHighlighted = highlightedCollections.includes(collection.key);
+	const prevRenaming = usePrevious(renaming);
+	const inputRef = useRef(null);
 
 	// cannot be picked if isPickerSkip
 	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
@@ -602,6 +627,11 @@ const CollectionNode = memo(props => {
 
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === parentLibraryKey && c === collection.key);
 
+	useEffect(() => {
+		if(prevRenaming === null && renaming === collection.key && inputRef.current.focus) {
+			inputRef.current.focus();
+		}
+	}, [collection.key, renaming, prevRenaming]);
 
 	return (
 		<Node
@@ -650,14 +680,14 @@ const CollectionNode = memo(props => {
 			/>
 			{ renaming === collection.key ? (
 				<Editable
-					autoFocus
-					selectOnFocus
 					isActive={ true }
 					isBusy={ false }
 					onBlur={ () => false /* commit on blur */ }
 					onCancel={ handleRenameCancel }
 					onCommit={ handleRenameCommit }
 					onKeyDown={ handleRenameKeyDown }
+					ref={ inputRef }
+					selectOnFocus
 					value={ collectionName }
 				/> ) : (
 					<React.Fragment>
