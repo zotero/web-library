@@ -75,12 +75,12 @@ const config = (state = defaultState, action) => {
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,
 				libraries: [
-					action.libraries.includeMyLibrary && {
+					action.userId && action.libraries.includeMyLibrary && {
 						id: action.userId,
 						key: `u${action.userId}`,
 						isMyLibrary: true,
-						isReadOnly: false,
-						isFileUploadAllowed: true,
+						isReadOnly: action.apiKey ? false : true,
+						isFileUploadAllowed: action.apiKey ? true : false,
 						name: 'My Library',
 						isExternal: false,
 						isPublic: false,
