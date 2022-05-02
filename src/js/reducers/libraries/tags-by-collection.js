@@ -97,7 +97,7 @@ const tags = (state = {}, action, { items } = {}) => {
 			return {
 				...state,
 				[action.collectionKey]: action.items.some(item => 'tags' in item && item.tags.length > 0) ?
-					{} : state
+					{} : action.collectionKey in state ? state[action.collectionKey] : {}
 			}
 		case RECEIVE_CREATE_ITEMS:
 			return {
