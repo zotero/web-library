@@ -6,6 +6,7 @@ import { FixedSizeList as List } from 'react-window';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd';
+import { useThrottledCallback } from 'use-debounce';
 
 import columnProperties from '../../../constants/column-properties';
 import HeaderRow from './table-header-row';
@@ -203,7 +204,8 @@ const Table = () => {
 		reordering.current = { index, left, width };
 	}, []);
 
-	const handleMouseMove = useCallback(ev => {
+	// throttle resizing to 100Hz (or current framerate) for smoother experience
+	const handleMouseMove = useThrottledCallback(useCallback(ev => {
 		if(resizing.current !== null) {
 			const { origin, index, width } = resizing.current;
 			const offsetPixels = ev.clientX - origin;
@@ -259,10 +261,10 @@ const Table = () => {
 				setReorderTarget({ index: targetIndex , isMovingRight, isMovingLeft });
 			}
 		}
-	}, [columns, scrollbarWidth]);
+	}, [columns, scrollbarWidth]), 10, { leading: true });
 
 	const handleMouseUp = useCallback(ev => {
-		if(resizing.current !== null) {
+		if(resizing.current !== null && resizing.current.newColumns) {
 			ev.preventDefault();
 			const newColumns = columnsData.map(c => ({ ...c }));
 			dispatch(preferenceChange('columns', applyChangesToVisibleColumns(resizing.current.newColumns, newColumns)));
@@ -352,7 +354,7 @@ const Table = () => {
 		} else {
 			focusBySelector(`[data-index="${cursorIndex}"]`);
 		}
-	}, [dispatch, focusBySelector]);
+	}, [dispatch, isEmbedded, focusBySelector]);
 
 	const handleTableFocus = useCallback(ev => {
 		const hasChangedFocused = receiveFocus(ev);

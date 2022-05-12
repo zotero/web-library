@@ -227,28 +227,40 @@ const noop = () => {};
 // TODO: move to common/event
 const stopPropagation = ev => ev.stopPropagation();
 
+const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
+
 // TODO: columns util, move elsewhere?
-const resizeVisibleColumns = (visibleColumns, fractionBias, invert = false) => {
-	const isLastColumn = cp => invert ? cp === 0 : cp === visibleColumns.length - 1;
+const resizeVisibleColumns = (visibleColumns, fractionBias, invert = false, isSecondIteration = false) => {
+	const notLastColumn = cp => invert ? cp >= 0 : cp < visibleColumns.length;
 	const adjustColumnuPointer = cp => invert ? cp - 1 : cp + 1;
 
 	var columnPointer = invert ? visibleColumns.length -1 : 0;
 
-	while (fractionBias !== 0 && !isLastColumn(columnPointer)) {
-		const newFraction = Math.max(
+	while (fractionBias !== 0 && notLastColumn(columnPointer)) {
+		const minRemaningFractions = [...visibleColumns]
+			.filter((_, index) => index !== columnPointer)
+			.map(c => c.minFraction)
+			.reduce((tmf, mf) => tmf + mf, 0);
+		const maxFraction = 1 - minRemaningFractions;
+
+		const newFraction = clamp(
 			visibleColumns[columnPointer].fraction + fractionBias,
-			visibleColumns[columnPointer].minFraction
+			visibleColumns[columnPointer].minFraction,
+			maxFraction
 		);
+
 		const adjustedFraction = newFraction - visibleColumns[columnPointer].fraction;
 		visibleColumns[columnPointer].fraction = newFraction;
 		fractionBias -= adjustedFraction;
 		columnPointer = adjustColumnuPointer(columnPointer);
 	}
 
-	// in edge cases, remove overflow from the last column
 	const totalFraction = visibleColumns.reduce((acc, vc) => acc + vc.fraction, 0);
 	const overflow = -(1 - totalFraction);
-	visibleColumns[visibleColumns.length - 1].fraction -= overflow;
+
+	if(!isSecondIteration && overflow > 0) {
+		resizeVisibleColumns(visibleColumns, -overflow, !invert, true);
+	}
 }
 
 const applyChangesToVisibleColumns = (visibleColumns, allColumns) => {
@@ -343,8 +355,6 @@ const getScrollContainerPageCount = (itemEl, containerEl) => {
 	const itemHeight = itemEl.getBoundingClientRect().height;
 	return Math.floor(containerHeight / itemHeight);
 }
-
-const clamp = (number, min, max) => Math.max(min, Math.min(number, max));
 
 // https://github.com/zotero/zotero/blob/5bb2486040fa1fc617c81b4aea756ba338584f6b/chrome/content/zotero/bindings/itembox.xml#L428-L440
 const getDOIURL = doi => 'https://doi.org/'
