@@ -35,7 +35,13 @@ const config = {
 		compact: isProduction
 	},
 	treeshake: {
-		moduleSideEffects: 'no-external',
+		preset: 'smallest',
+		moduleSideEffects: (id) => {
+			if(id.includes('core-js/')) {
+				return true;
+			}
+			return false;
+		}
 	},
 	plugins: [
 		webWorkerLoader({
@@ -58,12 +64,15 @@ const config = {
 		babel({
 			include: ['src/js/**'],
 			extensions: ['.js', '.jsx'],
-			babelHelpers: 'runtime'
+			babelHelpers: 'bundled'
 		}),
 		filesize({ showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG }),
 	]
 };
 
+const commonAliases = [
+	{ find: /^core-js-pure\/(.*)/, replacement: 'core-js/$1' },
+];
 
 // alias either library and few unused components to a stub to reduce weight in embedded build
 const libraryAliases = [
@@ -94,7 +103,7 @@ const embeddedTargetConfig = {
 	input: './src/js/embedded.jsx',
 	output: { ...config.output, file: './build/static/zotero-web-library-embedded.js' },
 	plugins: [
-		alias({ entries: [...libraryAliases] }),
+		alias({ entries: [...commonAliases, ...libraryAliases] }),
 		virtual({ 'react-dnd': stubdnd }),
 		...config.plugins
 	]
@@ -102,7 +111,7 @@ const embeddedTargetConfig = {
 
 const zoteroTargetConfig = {
 	...config,
-	plugins: [alias({ entries: [...embeddedAliases] }), ...config.plugins]
+	plugins: [alias({ entries: [...commonAliases, ...embeddedAliases] }), ...config.plugins]
 }
 
 const targets = {
