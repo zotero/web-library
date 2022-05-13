@@ -1,60 +1,52 @@
-'use strict';
-
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-class Icon extends React.PureComponent {
-	render() {
-		const style = {
-			color: this.props.color,
-			...this.props.style
-		};
-		const basename = this.props.type.split(/[\\/]/).pop();
-		const symbol = this.props.symbol || basename;
+const Icon = props => {
+	const { className, color, height, label, type, viewBox, width } = props;
+	const style = { color, ...props.style };
+	const basename = type.split(/[\\/]/).pop();
+	const symbol = props.symbol || basename;
 
-		const svgAttr = {
-			className: cx(['icon', `icon-${basename}`, this.props.className]),
-			role: 'img',
-			style
-		};
+	const svgAttr = {
+		className: cx(['icon', `icon-${basename}`, className]),
+		role: 'img',
+		style
+	};
 
-		if(this.props.width) {
-			svgAttr['width'] = parseInt(this.props.width, 10);
-		}
-
-		if(this.props.height) {
-			svgAttr['height'] = parseInt(this.props.height, 10);
-		}
-
-		if(this.props.viewBox) {
-			svgAttr['viewBox'] = this.props.viewBox;
-		}
-
-		if(this.props.label) {
-			svgAttr['aria-label'] = this.props.label;
-		}
-
-		return (
-			<svg { ...svgAttr } viewBox={ this.props.viewBox}>
-				<use
-					xlinkHref={ `/static/icons/${this.props.type}.svg#${symbol}`}
-				/>
-			</svg>
-		);
+	if(width) {
+		svgAttr['width'] = parseInt(width, 10);
 	}
 
-	static propTypes = {
-		className: PropTypes.string,
-		color: PropTypes.string,
-		height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-		label: PropTypes.string,
-		style: PropTypes.object,
-		symbol: PropTypes.string,
-		type: PropTypes.string.isRequired,
-		viewBox: PropTypes.string,
-		width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	if(height) {
+		svgAttr['height'] = parseInt(height, 10);
 	}
+
+	if(viewBox) {
+		svgAttr['viewBox'] = viewBox;
+	}
+
+	if(label) {
+		svgAttr['aria-label'] = label;
+	}
+
+	return (
+		<svg { ...svgAttr } viewBox={ viewBox}>
+			<use xlinkHref={ `/static/icons/${type}.svg#${symbol}`} />
+		</svg>
+	);
 }
 
-export default Icon;
+Icon.propTypes = {
+	className: PropTypes.string,
+	color: PropTypes.string,
+	height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	label: PropTypes.string,
+	style: PropTypes.object,
+	symbol: PropTypes.string,
+	type: PropTypes.string.isRequired,
+	viewBox: PropTypes.string,
+	width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+}
+
+export default memo(Icon);

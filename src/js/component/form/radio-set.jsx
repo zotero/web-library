@@ -1,52 +1,42 @@
-/* eslint-disable react/no-deprecated */
-'use strict';
-
-import React from 'react';
+import React, { useCallback, useId, memo } from 'react';
 import PropTypes from 'prop-types';
-import { noop, getUniqueId } from '../../utils';
+import { noop } from '../../utils';
 
+const RadioSet = props => {
+	const { options = [], value, onChange = noop } = props;
+	const baseId = useId();
 
-class RadioSet extends React.PureComponent {
-	baseId = getUniqueId();
-
-	handleChange = ev => {
-		if(this.props.value !== ev.target.value) {
-			this.props.onChange(ev.target.value);
+	const handleChange = useCallback(ev => {
+		console.log({ value, evtv: ev.target.value });
+		if(ev.target.value !== value) {
+			onChange(ev.target.value);
 		}
-	}
+	}, [onChange, value]);
 
-	render() {
-		const { options, value: selectedValue } = this.props;
-		return (
-			<fieldset className="form-group radios">
-				{ options.map(({ value, label }, index) => (
-					<div key={ value} className="radio">
-						<input
-							id={ this.baseId + '-' + index}
-							value={ value }
-							type="radio"
-							checked={ value === selectedValue }
-							onChange={ this.handleChange }
-						/>
-						<label htmlFor={ this.baseId + '-' + index} key={ value}>
-							{ label }
-						</label>
-					</div>
-				))}
-			</fieldset>
-		)
-	}
-
-	static defaultProps = {
-		onChange: noop,
-		options: [],
-	};
-
-	static propTypes = {
-		onChange: PropTypes.func.isRequired,
-		options: PropTypes.array.isRequired,
-		value: PropTypes.string,
-	};
+	return (
+		<fieldset className="form-group radios">
+			{ options.map(({ value: optValue, label: optLabel }, index) => (
+				<div key={ optValue } className="radio">
+					<input
+						id={ baseId + '-' + index}
+						value={ optValue }
+						type="radio"
+						checked={ optValue === value }
+						onChange={ handleChange }
+					/>
+					<label htmlFor={ baseId + '-' + index}>
+						{ optLabel }
+					</label>
+				</div>
+			))}
+		</fieldset>
+	);
 }
 
-export default RadioSet;
+RadioSet.propTypes = {
+	onChange: PropTypes.func.isRequired,
+	options: PropTypes.array.isRequired,
+	value: PropTypes.string,
+};
+
+export default memo(RadioSet);
