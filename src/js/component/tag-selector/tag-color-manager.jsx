@@ -1,8 +1,8 @@
 import cx from 'classnames';
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { default as Dropdown } from 'reactstrap/lib/Dropdown';
-import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 
 import Icon from '../ui/icon';
 import { useFocusManager } from '../../hooks';

@@ -1,9 +1,9 @@
 import cx from 'classnames';
 import React, { useCallback, useRef, memo } from 'react';
-import { default as UncontrolledDropdown } from 'reactstrap/lib/UncontrolledDropdown';
-import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
-import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
-import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDebounce } from "use-debounce";
 

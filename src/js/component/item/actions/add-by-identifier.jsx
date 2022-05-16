@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { default as Popover } from 'reactstrap/lib/Popover';
-import { default as PopoverHeader } from 'reactstrap/lib/PopoverHeader';
-import { default as PopoverBody } from 'reactstrap/lib/PopoverBody';
+import Popover from 'reactstrap/lib/Popover';
+import PopoverHeader from 'reactstrap/lib/PopoverHeader';
+import PopoverBody from 'reactstrap/lib/PopoverBody';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 

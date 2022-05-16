@@ -17,7 +17,7 @@ const EditToggleButton = props => {
 
 	const handleClick = useCallback(() => {
 		dispatchTriggerEditingItem(!isEditing);
-	});
+	}, [dispatchTriggerEditingItem, isEditing]);
 
 	return (
 		<Button className={ className} onClick={ handleClick }>

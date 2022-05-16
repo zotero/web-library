@@ -1,15 +1,12 @@
-'use strict';
-
-import { Editor } from '@tinymce/tinymce-react';
-
 import cx from 'classnames';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { default as Dropdown } from 'reactstrap/lib/Dropdown';
-import { default as DropdownToggle } from 'reactstrap/lib/DropdownToggle';
-import { default as DropdownMenu } from 'reactstrap/lib/DropdownMenu';
-import { default as DropdownItem } from 'reactstrap/lib/DropdownItem';
 
 import Button from './ui/button';
 import Icon from './ui/icon';
