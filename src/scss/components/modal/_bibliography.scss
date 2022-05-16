@@ -69,21 +69,9 @@
 	}
 
 	.style-selector-container {
-		@include touch-or-bp-down(sm) {
-			flex-direction: column;
-			margin-bottom: $form-group-margin-touch;
-		}
-
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
-		}
-
-		.input-group {
-			@include touch-or-bp-down(sm) {
-				margin-top: -6px;
-				padding-bottom: 9px;
-			}
 		}
 
 		.form-control {
@@ -98,6 +86,19 @@
 		}
 	}
 
+	.style-selector-container, .locale-selector-container {
+		@include touch-or-bp-down(sm) {
+			.col-form-label {
+				flex: 0 0 33%;
+			}
+
+			.col {
+				flex: 0 0 66%;
+				overflow: hidden;
+			}
+		}
+	}
+
 	.style-selector {
 		.select-option:last-child {
 			color: $link-color;
@@ -106,11 +107,24 @@
 		}
 	}
 
-	.language-selector-container {
+	.locale-selector-container {
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
 			padding-left: $space-xs;
+		}
+	}
+
+	.style-selector, .locale-selector {
+		@include touch-or-bp-down(sm) {
+		    height: 100%;
+			padding: 0;
+    		margin: 0;
+    		min-width: 30%;
+
+    		.native-select-wrap > div {
+				@include text-truncate;
+			}
 		}
 	}
 

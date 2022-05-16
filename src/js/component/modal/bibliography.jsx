@@ -256,7 +256,7 @@ const BibliographyModal = () => {
 								</div>
 							</div>
 							<div className="col-3">
-								<div className="form-group form-row language-selector-container">
+								<div className="form-group form-row locale-selector-container">
 									<label
 										htmlFor={ localeSelectorId.current }
 										className="col-form-label"
