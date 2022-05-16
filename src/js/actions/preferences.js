@@ -1,4 +1,4 @@
-import { JSONTryParse, localStorageWrapper } from '../utils';
+import { JSONTryParse, localStorageWrapper, resizeVisibleColumns } from '../utils';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
 import { preferences as defaultPreferences, version } from '../constants/defaults';
 
@@ -13,6 +13,12 @@ const getColumnsWithAttachmentVisible = (userColumns, defaultColumns) =>
 		.map(
 			uc => ({ ...uc, isVisible: uc.field === 'attachment' ? true : uc.isVisible })
 		);
+
+const getColumnsWithRecalculatedFractions = (userColumns) => {
+	const visibleColumns = userColumns.filter(uc => uc.isVisible);
+	resizeVisibleColumns(visibleColumns, 0.001, true, false);
+	return userColumns;
+}
 
 
 const preferencesLoad = () => {
@@ -41,6 +47,19 @@ const preferencesLoad = () => {
 					...userPreferences,
 					columns: getColumnsWithAttachmentVisible(userPreferences.columns, defaultPreferences.columns),
 					version
+				}
+			}
+
+			// prior to 1.1.2 column resizing could produce preferences with a column that ends up
+			// with a negative fraction. To fix this we trigger resizeVisibleColumns with a very
+			// small fraction change (0.001) in order to recalculate correct values.
+			if(parseInt(major) === 1 && parseInt(minor) <= 1 && parseInt(patch) < 2) {
+				if(userPreferences.columns && userPreferences.columns.length) {
+					userPreferences = {
+						...userPreferences,
+						columns: getColumnsWithRecalculatedFractions(userPreferences.columns),
+						version
+					}
 				}
 			}
 		}
