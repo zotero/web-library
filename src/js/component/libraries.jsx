@@ -166,6 +166,7 @@ const Libraries = forwardRef((props, ref) => {
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
+	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
 	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
 	const stateView = useSelector(state => state.current.view);
 	const view = isPickerMode ? pickerState.view : stateView;
@@ -276,7 +277,8 @@ const Libraries = forwardRef((props, ref) => {
 		const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
 		const isOpen = (!isTouchOrSmall && opened.includes(key)) ||
 			(isTouchOrSmall && view !== 'libraries' && selectedLibraryKey == key);
-		const isSelected = !isTouchOrSmall && selectedLibraryKey === key && itemsSource === 'top';
+		const isSelected = !isTouchOrSmall && selectedLibraryKey === key &&
+			!stateSelectedCollectionKey && ['top', 'query'].includes(itemsSource);
 
 		return {
 			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected,
