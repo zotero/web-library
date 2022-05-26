@@ -6,11 +6,12 @@ import { paramCase } from 'param-case';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { cleanDOI, cleanURL, get } from '../utils';
 
-const EMOJI_RE = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
+// eslint-disable-next-line no-misleading-character-class
+const EMOJI_RE = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}|[\u200D\uFE0F]/gu;
 
-// Remove emoji and zero-width joiner and see if anything's left
-// https://github.com/zotero/zotero/commit/f9035c8fda715add49c2b185ef7e240e7e045ec3
-const _isOnlyEmoji = str => !str.replace(EMOJI_RE, '').replace(/\u200D/g,'');
+// Remove emoji, Zero Width Joiner, and Variation Selector-16 and see if anything's left
+// https://github.com/zotero/zotero/commit/d12f3eda61c8385b89d0fca719eb87a5a756edf0
+const _isOnlyEmoji = str => !str.replace(EMOJI_RE, '');
 
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
