@@ -6,12 +6,12 @@ import { paramCase } from 'param-case';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { cleanDOI, cleanURL, get } from '../utils';
 
-// eslint-disable-next-line no-misleading-character-class
-const EMOJI_RE = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}|[\u200D\uFE0F]/gu;
-
-// Remove emoji, Zero Width Joiner, and Variation Selector-16 and see if anything's left
-// https://github.com/zotero/zotero/commit/d12f3eda61c8385b89d0fca719eb87a5a756edf0
-const _isOnlyEmoji = str => !str.replace(EMOJI_RE, '');
+// https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
+const isOnlyEmoji = str => {
+	// Remove emoji, Zero Width Joiner, and Variation Selector-16 and see if anything's left
+	const re = /\p{Extended_Pictographic}|\u200D|\uFE0F/gu;
+	return !str.replace(re, '');
+}
 
 const getBaseMappedValue = (item, property) => {
 	const { itemType } = item;
@@ -93,7 +93,7 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 	const colors = item.tags.reduce(
 		(acc, { tag }) => {
 			if(tag in tagColors) {
-				if(_isOnlyEmoji(tag)) {
+				if(isOnlyEmoji(tag)) {
 					emojis.push(tag);
 				} else {
 					acc.push(tagColors[tag]);
