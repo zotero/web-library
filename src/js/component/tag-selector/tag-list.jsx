@@ -68,13 +68,13 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotM
 					disabled={ tagColorsLength >= maxColoredTags }
 					onClick={ handleAssignColorClick }
 				>
-					Assign Colour
+					Assign Color
 				</DropdownItem>
 				{ hasColor && (
 					<DropdownItem
 						onClick={ handleRemoveColorClick }
 					>
-						Remove Colour
+						Remove Color
 					</DropdownItem>
 				) }
 				<DropdownItem
