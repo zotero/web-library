@@ -8,3 +8,5 @@ node_modules
 .DS_Store
 coverage
 .nyc_output
+
+src/static/pdf-reader/

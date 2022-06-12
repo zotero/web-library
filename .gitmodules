@@ -1,0 +1,3 @@
+[submodule "modules/pdf-reader"]
+	path = modules/pdf-reader
+	url = https://github.com/zotero/pdf-reader.git

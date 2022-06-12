@@ -44,7 +44,7 @@ AttachmentIcon.propTypes = {
 	size: PropTypes.string.isRequired,
 };
 
-const AttachmentDownloadIcon = memo(props => {
+const AttachmentActions = memo(props => {
 	const { attachment, itemKey, isUploading } = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -70,6 +70,11 @@ const AttachmentDownloadIcon = memo(props => {
 		openDelayedURL(dispatch(tryGetAttachmentURL(key)));
 	}, [dispatch, isFetchingUrl]);
 
+	const handleOpenInReader = useCallback(ev => {
+		const { key } = ev.currentTarget.closest('[data-key]').dataset;
+		dispatch(navigate({ attachmentKey: key, noteKey: null, view: 'reader' }));
+	}, [dispatch])
+
 	useEffect(() => {
 		if(urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
@@ -83,6 +88,15 @@ const AttachmentDownloadIcon = memo(props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<React.Fragment>
+				<a
+					className="btn btn-icon"
+					onClick={ handleOpenInReader }
+					role="button"
+					tabIndex={ -3 }
+					title="Open in Reader"
+				>
+					<Icon type={ `${iconSize}/duplicate` } width={ iconSize } height={ iconSize } />
+				</a>
 				{ urlIsFresh ? (
 				<a
 					className="btn btn-icon"
@@ -125,9 +139,9 @@ const AttachmentDownloadIcon = memo(props => {
 	);
 });
 
-AttachmentDownloadIcon.displayName = 'AttachmentDownloadIcon';
+AttachmentActions.displayName = 'AttachmentDownloadIcon';
 
-AttachmentDownloadIcon.propTypes = {
+AttachmentActions.propTypes = {
 	attachment: PropTypes.object,
 	itemKey: PropTypes.string,
 	isUploading: PropTypes.bool,
@@ -232,7 +246,7 @@ const Attachment = memo(props => {
 				}
 			</div>
 			{ isUploading && <Spinner className="small" /> }
-			<AttachmentDownloadIcon
+			<AttachmentActions
 				itemKey={ itemKey }
 				attachment={ attachment }
 				isUploading={ isUploading }

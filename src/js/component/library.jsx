@@ -15,6 +15,7 @@ import MobileNav from './ui/mobile-nav';
 import ModalManager from './modal-manager';
 import Navbar from './ui/navbar';
 import Ongoing from './ongoing';
+import Reader from './reader';
 import SearchBackdrop from './search-backdrop';
 import TagSelector from '../component/tag-selector';
 import TitleUpdater from './title-updater';
@@ -138,70 +139,76 @@ const Library = () => {
 				}) }>
 				<MobileNav />
 				<div className="site-wrapper">
-					<Navbar entries={ menus.desktop } />
-					<main>
-						<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
-							{ (isTouchOrSmall && isSingleColumn) && (
-								<TouchHeaderWrap
-									className="hidden-sm-up darker"
-									variant={ TouchHeaderWrap.variants.MOBILE }
-								/>
-							) }
-							<header className="sidebar">
-								<h2 className="offscreen">Web library</h2>
-								{ (isTouchOrSmall && !isSingleColumn) && (
+					{ view === 'reader' ? (
+						<Reader />
+					) : (
+						<React.Fragment>
+						<Navbar entries={ menus.desktop } />
+						<main>
+							<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
+								{ (isTouchOrSmall && isSingleColumn) && (
 									<TouchHeaderWrap
-										variant={ TouchHeaderWrap.variants.NAVIGATION }
-										className="hidden-xs-down hidden-mouse-md-up darker"
+										className="hidden-sm-up darker"
+										variant={ TouchHeaderWrap.variants.MOBILE }
 									/>
 								) }
-								<Libraries />
-								{ isTouchOrSmall ? (
-									<React.Fragment>
-										<TouchTagSelector />
-										<TouchSideFooter />
-									</React.Fragment>
-									) : <TagSelector /> }
-								<Ongoing />
-							</header>
-							<CSSTransition
-								in={ (isSingleColumn && isSearchMode) || !isSingleColumn }
-								timeout={ 250 }
-								classNames="fade"
-								enter={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
-								exit={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
-							>
-								<section className={ cx('items', {
-									'active': view === 'item-list',
-									'select-mode': isTouchOrSmall && isSelectMode,
-									'read-only': isLibraryReadOnly,
-								})}>
-									{/* Tablet TouchHeader */}
+								<header className="sidebar">
+									<h2 className="offscreen">Web library</h2>
 									{ (isTouchOrSmall && !isSingleColumn) && (
 										<TouchHeaderWrap
-											className="hidden-xs-down hidden-lg-up hidden-mouse darker"
-											variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
+											variant={ TouchHeaderWrap.variants.NAVIGATION }
+											className="hidden-xs-down hidden-mouse-md-up darker"
 										/>
 									) }
-									<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
-									<ItemDetails active={ view === 'item-details' } />
-									{ isTouchOrSmall && <TouchDrilldown /> }
-									<CSSTransition
-										in={ isSingleColumn && isSearchMode && itemsSource !== 'query' }
-										timeout={ 250 }
-										classNames="fade"
-										unmountOnExit
-									>
-										<SearchBackdrop />
-									</CSSTransition>
-								</section>
-							</CSSTransition>
-						</section>
-					</main>
-					<div
-						className="nav-cover"
-						onClick={ handleNavbarToggle }
-					/>
+									<Libraries />
+									{ isTouchOrSmall ? (
+										<React.Fragment>
+											<TouchTagSelector />
+											<TouchSideFooter />
+										</React.Fragment>
+										) : <TagSelector /> }
+									<Ongoing />
+								</header>
+								<CSSTransition
+									in={ (isSingleColumn && isSearchMode) || !isSingleColumn }
+									timeout={ 250 }
+									classNames="fade"
+									enter={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+									exit={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
+								>
+									<section className={ cx('items', {
+										'active': view === 'item-list',
+										'select-mode': isTouchOrSmall && isSelectMode,
+										'read-only': isLibraryReadOnly,
+									})}>
+										{/* Tablet TouchHeader */}
+										{ (isTouchOrSmall && !isSingleColumn) && (
+											<TouchHeaderWrap
+												className="hidden-xs-down hidden-lg-up hidden-mouse darker"
+												variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
+											/>
+										) }
+										<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
+										<ItemDetails active={ view === 'item-details' } />
+										{ isTouchOrSmall && <TouchDrilldown /> }
+										<CSSTransition
+											in={ isSingleColumn && isSearchMode && itemsSource !== 'query' }
+											timeout={ 250 }
+											classNames="fade"
+											unmountOnExit
+										>
+											<SearchBackdrop />
+										</CSSTransition>
+									</section>
+								</CSSTransition>
+							</section>
+						</main>
+						<div
+							className="nav-cover"
+							onClick={ handleNavbarToggle }
+						/>
+						</React.Fragment>
+					)}
 				</div>
 				<ModalManager />
 				<Messages />
