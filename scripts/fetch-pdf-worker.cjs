@@ -6,7 +6,7 @@ const exec = util.promisify(require('child_process').exec);
 const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 
 (async () => {
-	const pdfReaderPath = path.join(__dirname, '..', 'modules', 'pdf-reader');
+	const pdfWorkerPath = path.join(__dirname, '..', 'modules', 'pdf-worker');
 	const modulesFilePath = path.join(__dirname, '..', 'data', 'modules.json');
 	let modulesData = {};
 	try {
@@ -16,15 +16,15 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 	}
 
 	const { storedHash } = modulesData;
-	const { stdout } = await exec('git rev-parse HEAD', { cwd: pdfReaderPath });
+	const { stdout } = await exec('git rev-parse HEAD', { cwd: pdfWorkerPath });
 	const actualHash = stdout.trim();
 
 	if (!storedHash || storedHash !== actualHash) {
-		const targetDir = path.join(__dirname, '..', 'src', 'static', 'pdf-reader');
+		const targetDir = path.join(__dirname, '..', 'src', 'static', 'pdf-worker');
 		try {
 			const filename = actualHash + '.zip';
-			const tmpDir = path.join(__dirname, '..', 'tmp', 'builds', 'pdf-reader');
-			const url = buildsURL + 'client-pdf-reader/' + filename;
+			const tmpDir = path.join(__dirname, '..', 'tmp', 'builds', 'pdf-worker');
+			const url = buildsURL + 'client-pdf-worker/' + filename;
 			
 			await fs.remove(targetDir);
 			await fs.ensureDir(targetDir);
@@ -34,18 +34,16 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 				`cd ${tmpDir}`
 				+ ` && (test -f ${filename} || curl -f ${url} -o ${filename})`
 				+ ` && mkdir -p ${targetDir}`
-				+ ` && unzip ${filename} web/* -d ${targetDir}`
-				+ ` && mv ${targetDir}/web/* ${targetDir}/`
-				+ ` && rm -r ${targetDir}/web`
+				+ ` && unzip -o ${filename} -d ${targetDir}`
 			);
-			console.log(`Obtained pdf-reader from ${url}`);
+			console.log(`Obtained pdf-worker from ${url}`);
 			await fs.remove(tmpDir);
 		} catch (e) {
-			console.log(`Unable to fetch pdf-reader, will build instead...`);
-			await exec('npm ci', { cwd: pdfReaderPath });
-			await exec('npm run build', { cwd: pdfReaderPath });
-			await fs.copy(path.join(pdfReaderPath, 'build', 'web', targetDir));
-			console.log(`pdf-reader build complete`);
+			console.log(`Unable to fetch pdf-worker, will build instead...`);
+			await exec('npm ci', { cwd: pdfWorkerPath });
+			await exec('npm run build', { cwd: pdfWorkerPath });
+			await fs.copy(path.join(pdfWorkerPath, 'build', targetDir));
+			console.log(`pdf-worker build complete`);
 		}
 		await fs.writeJson(modulesFilePath, { ...modulesData, storedHash: actualHash })
 	}
