@@ -6,6 +6,14 @@
 	.header {
 		flex: 0 0 30px;
 		padding: $space-sm;
+		@include hairline(bottom, #ccc);
+	}
+
+	.spinner-wrapper {
+		align-items: center;
+		display: flex;
+		flex: 1 1 auto;
+		justify-content: center;
 	}
 
 	> iframe {
