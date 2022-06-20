@@ -10,3 +10,4 @@ coverage
 .nyc_output
 
 src/static/pdf-reader/
+src/static/pdf-worker/
