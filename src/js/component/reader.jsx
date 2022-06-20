@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
 
@@ -23,6 +23,10 @@ const Reader = () => {
 	const timestamp = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.timestamp ?? 0);
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
 	const prevAttachmentItem = usePrevious(attachmentItem);
+	const currentUserID = useSelector(state => state.config.userId);
+	const currentUserSlug = useSelector(state => state.config.userSlug);
+	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? {});
+	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 
 	const { isFetching, isFetched, pointer, keys } = useFetchingState(
 		['libraries', libraryKey, 'itemsByParent', attachmentKey]
@@ -31,6 +35,28 @@ const Reader = () => {
 	const annotations = (isFetched && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'annotation');
+
+	const currentUser = useMemo(() => (
+		{ id: currentUserID, username: currentUserSlug }
+	), [currentUserID, currentUserSlug]);
+
+	const processedAnnotations = useMemo(() => {
+		const tagColorsMap = new Map(tagColors.map(
+			({ name, color }, position) => ([name, { tag: name, color, position }]))
+		);
+		try {
+			return annotations.map(a => {
+				const { createdByUser, lastModifiedByUser } = a?.[Symbol.for('meta')] ?? {};
+				return annotationItemToJSON(a, { createdByUser, currentUser, isGroup, isReadOnly, lastModifiedByUser, libraryKey, tagColors: tagColorsMap })
+			});
+		} catch (e) {
+			dispatch({
+				type: ERROR_PROCESSING_ANNOTATIONS,
+				error: "Failed to process annotations"
+			});
+			console.error(e);
+		}
+	}, [annotations, dispatch, currentUser, isGroup, isReadOnly, libraryKey, tagColors]);
 
 	const urlIsFresh = !!(url && (Date.now() - timestamp) < 60000);
 	const isReady = isFetched && urlIsFresh;
@@ -49,12 +75,11 @@ const Reader = () => {
 				return;
 			}
 			case 'loadExternalAnnotations': {
-				const importedAnnotations = await pdfWorker.import(message.buf);
-				const allAnnotations = [...annotations, ...importedAnnotations];
-				const jsonAnnotations = allAnnotations.map(x => annotationItemToJSON(x));
+				const importedAnnotations = (await pdfWorker.import(message.buf)).map(ia => annotationItemToJSON(ia));
+				const allAnnotations = [...processedAnnotations, ...importedAnnotations];
 				iframeRef.current.contentWindow.postMessage({
 					action: 'setAnnotations',
-					annotations: jsonAnnotations
+					annotations: allAnnotations
 				});
 				return;
 			}
@@ -73,37 +98,23 @@ const Reader = () => {
 				return;
 			}
 		}
-	}, [annotations, attachmentItem]);
+	}, [annotations, processedAnnotations, attachmentItem]);
 
 	const handleIframeLoaded = useCallback(() => {
 		iframeRef.current.contentWindow.addEventListener('message', handleIframeMessage);
-		// Transform Zotero annotation items into pdf-reader compatible format
-		const jsonAnnotations = [];
-		for (const annotation of annotations) {
-			try {
-				jsonAnnotations.push(annotationItemToJSON(annotation));
-			} catch (e) {
-				dispatch({
-					type: ERROR_PROCESSING_ANNOTATIONS,
-					error: "Failed to process annotations"
-				});
-				console.error(e);
-				continue;
-			}
-		}
 		iframeRef.current.contentWindow.postMessage({
 			action: 'open',
 			url,
-			annotations: jsonAnnotations,
+			annotations: processedAnnotations,
 			state: null, // Do we want to save PDF reader view state?
 			location: null, // Navigate to specific PDF part when opening it
 			readOnly: true,
-			authorName: 'n/a', // TODO: item.library.libraryType === 'group' ? Zotero.Users.getCurrentName() : '',
+			authorName: isGroup ? currentUserSlug : '',
 			sidebarWidth: 240, // Save sidebar width?
 			sidebarOpen: true, // Save sidebar open/close state?
 			rtl: false // TODO: ?
 		});
-	}, [annotations, dispatch, handleIframeMessage, url])
+	}, [currentUserSlug, isGroup, handleIframeMessage, processedAnnotations, url])
 
 	useEffect(() => {
 		if(attachmentKey && !attachmentItem) {

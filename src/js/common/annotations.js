@@ -6,29 +6,27 @@
  * @param {Zotero.Item} item
  * @returns {Object} pdf-reader compatible annotation data
  */
-const annotationItemToJSON = (item) => {
-	var o = {};
-	o.libraryID = item.libraryID;
+const annotationItemToJSON = (item, { currentUser, createdByUser, isGroup, isReadOnly, libraryKey, lastModifiedByUser, tagColors } = {}) => {
+	const o = {};
+	o.libraryID = libraryKey;
 	o.id = item.key;
 	o.type = item.annotationType;
 	o.isExternal = item.annotationIsExternal;
-	var isAuthor = false; // TODO: !item.createdByUserID || item.createdByUserID == Zotero.Users.getCurrentUserID();
-	var isGroup = false; // TODO: item.library.libraryType == 'group';
+	const isAuthor = !item.createdByUser?.id || item.createdByUser?.id === currentUser?.id;
 	if (item.annotationAuthorName) {
 		o.authorName = item.annotationAuthorName;
 		if (isGroup) {
-			// TODO: Fix
-			o.lastModifiedByUser = ''; // Zotero.Users.getName(item.lastModifiedByUserID) || Zotero.Users.getName(item.createdByUserID);
+			o.lastModifiedByUser = lastModifiedByUser?.id || createdByUser?.id;
 		}
 	}
 	else if (!o.isExternal && isGroup) {
-		o.authorName = ''; // TODO: Zotero.Users.getName(item.createdByUserID);
+		o.authorName = createdByUser?.name || createdByUser?.username;
 		o.isAuthorNameAuthoritative = true;
-		if (item.lastModifiedByUserID) {
-			o.lastModifiedByUser = ''; // TODO: Zotero.Users.getName(item.lastModifiedByUserID);
+		if (lastModifiedByUser) {
+			o.lastModifiedByUser = lastModifiedByUser?.name || lastModifiedByUser?.username;
 		}
 	}
-	o.readOnly = o.isExternal || !isAuthor;
+	o.readOnly = isReadOnly || o.isExternal || !isAuthor;
 	if (o.type == 'highlight') {
 		o.text = item.annotationText;
 	}
@@ -41,10 +39,8 @@ const annotationItemToJSON = (item) => {
 	o.position = JSON.parse(item.annotationPosition);
 
 	// Add tags and tag colors
-	// TODO: Add colors to tags
-	var tagColors = new Map(); // Zotero.Tags.getColors(item.libraryID);
-	var tags = item.tags.map((t) => {
-		let obj = {
+	const tags = item.tags.map((t) => {
+		const obj = {
 			name: t.tag
 		};
 		if (tagColors.has(t.tag)) {
@@ -55,13 +51,14 @@ const annotationItemToJSON = (item) => {
 		return obj;
 	});
 	// Sort colored tags by position and other tags by name
-	// TODO: Sort tags
-	// tags.sort((a, b) => {
-	// 	if (!a.color && !b.color) return Zotero.localeCompare(a.name, b.name);
-	// 	if (!a.color && !b.color) return -1;
-	// 	if (!a.color && b.color) return 1;
-	// 	return a.position - b.position;
-	// });
+	tags.sort((a, b) => {
+		if (!a.color && !b.color) {
+			return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+		}
+		if (!a.color && !b.color) { return -1 }
+		if (!a.color && b.color) { return 1 }
+		return a.position - b.position;
+	});
 	// Remove temporary 'position' value
 	tags.forEach(t => delete t.position);
 	o.tags = tags || [];
