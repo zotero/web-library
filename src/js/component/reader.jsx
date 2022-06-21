@@ -1,6 +1,7 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
+import deepEqual from 'deep-equal';
 
 import { annotationItemToJSON } from '../common/annotations.js';
 import { pdfWorker } from '../common/pdf-worker.js';
@@ -27,20 +28,25 @@ const Reader = () => {
 	const currentUserSlug = useSelector(state => state.config.userSlug);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? {});
 	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
+	const [dataState, setDataState] = useState({ isReady: false, processedAnnotations: [], importedAnnotations: [] });
 
 	const { isFetching, isFetched, pointer, keys } = useFetchingState(
 		['libraries', libraryKey, 'itemsByParent', attachmentKey]
 	);
+	const urlIsFresh = !!(url && (Date.now() - timestamp) < 60000);
+	const isAllFetched = isFetched && urlIsFresh;
+	const wasAllFetched = usePrevious(isAllFetched);
 
 	const annotations = (isFetched && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'annotation');
+	const prevAnnotations = usePrevious(annotations);
 
 	const currentUser = useMemo(() => (
 		{ id: currentUserID, username: currentUserSlug }
 	), [currentUserID, currentUserSlug]);
 
-	const processedAnnotations = useMemo(() => {
+	const getProcessedAnnotations = useCallback(() => {
 		const tagColorsMap = new Map(tagColors.map(
 			({ name, color }, position) => ([name, { tag: name, color, position }]))
 		);
@@ -56,10 +62,7 @@ const Reader = () => {
 			});
 			console.error(e);
 		}
-	}, [annotations, dispatch, currentUser, isGroup, isReadOnly, libraryKey, tagColors]);
-
-	const urlIsFresh = !!(url && (Date.now() - timestamp) < 60000);
-	const isReady = isFetched && urlIsFresh;
+	}, [annotations, currentUser, dispatch, isGroup, isReadOnly, libraryKey, tagColors]);
 
 	const handleGoBack = useCallback(() => {
 		dispatch(navigate({ attachmentKey, view: 'item-details' }));
@@ -76,11 +79,12 @@ const Reader = () => {
 			}
 			case 'loadExternalAnnotations': {
 				const importedAnnotations = (await pdfWorker.import(message.buf)).map(ia => annotationItemToJSON(ia));
-				const allAnnotations = [...processedAnnotations, ...importedAnnotations];
+				const allAnnotations = [...dataState.processedAnnotations, ...importedAnnotations];
 				iframeRef.current.contentWindow.postMessage({
 					action: 'setAnnotations',
 					annotations: allAnnotations
 				});
+				setDataState({ ...dataState, importedAnnotations });
 				return;
 			}
 			case 'save': {
@@ -98,14 +102,14 @@ const Reader = () => {
 				return;
 			}
 		}
-	}, [annotations, processedAnnotations, attachmentItem]);
+	}, [annotations, dataState, attachmentItem]);
 
 	const handleIframeLoaded = useCallback(() => {
 		iframeRef.current.contentWindow.addEventListener('message', handleIframeMessage);
 		iframeRef.current.contentWindow.postMessage({
 			action: 'open',
 			url,
-			annotations: processedAnnotations,
+			annotations: dataState.processedAnnotations,
 			state: null, // Do we want to save PDF reader view state?
 			location: null, // Navigate to specific PDF part when opening it
 			readOnly: true,
@@ -114,7 +118,7 @@ const Reader = () => {
 			sidebarOpen: true, // Save sidebar open/close state?
 			rtl: false // TODO: ?
 		});
-	}, [currentUserSlug, isGroup, handleIframeMessage, processedAnnotations, url])
+	}, [currentUserSlug, dataState, isGroup, handleIframeMessage, url])
 
 	useEffect(() => {
 		if(attachmentKey && !attachmentItem) {
@@ -131,10 +135,31 @@ const Reader = () => {
 	}, [dispatch, attachmentKey, isFetching, isFetched, pointer]);
 
 	useEffect(() => {
-		if((!prevAttachmentItem && attachmentItem) && !urlIsFresh && !isFetchingUrl) {
+		if(!urlIsFresh && !isFetchingUrl) {
 			dispatch(tryGetAttachmentURL(attachmentKey));
 		}
 	}, [attachmentKey, attachmentItem, dispatch, isFetchingUrl, prevAttachmentItem, urlIsFresh]);
+
+	useEffect(() => {
+		if(!dataState.isReady && isAllFetched && !wasAllFetched) {
+			// pdf reader not yet loaded so we store processed annotations and begin pdf-reader loading
+			setDataState({
+				...dataState,
+				processedAnnotations: getProcessedAnnotations(),
+				isReady: true
+			});
+		}
+		if(dataState.isReady && ((isAllFetched && !wasAllFetched) || !deepEqual(prevAnnotations, annotations))) {
+			// pdf reader already loaded so just send updated annotations
+			const processedAnnotations = getProcessedAnnotations();
+			const allAnnotations = [...processedAnnotations, ...dataState.importedAnnotations];
+			iframeRef.current.contentWindow.postMessage({
+				action: 'setAnnotations',
+				annotations: allAnnotations
+			});
+			setDataState({ ...dataState, processedAnnotations });
+		}
+	}, [annotations, dataState, isAllFetched, getProcessedAnnotations, prevAnnotations, wasAllFetched])
 
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
 	return (
@@ -144,7 +169,7 @@ const Reader = () => {
 					Back to Web Library
 				</Button>
 			</div>
-			{ isReady ?
+			{ dataState.isReady ?
 				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ pdfReaderURL } /> :
 				<div className="spinner-wrapper">
 					<Spinner />
