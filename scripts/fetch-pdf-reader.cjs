@@ -15,7 +15,7 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 		// modules data file is missing or invalid json, ignore.
 	}
 
-	const { storedHash } = modulesData;
+	const { pdfReader: storedHash } = modulesData;
 	const { stdout } = await exec('git rev-parse HEAD', { cwd: pdfReaderPath });
 	const actualHash = stdout.trim();
 
@@ -44,9 +44,9 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 			console.log(`Unable to fetch pdf-reader, will build instead...`);
 			await exec('npm ci', { cwd: pdfReaderPath });
 			await exec('npm run build', { cwd: pdfReaderPath });
-			await fs.copy(path.join(pdfReaderPath, 'build', 'web', targetDir));
+			await fs.copy(path.join(pdfReaderPath, 'build', 'web'), targetDir);
 			console.log(`pdf-reader build complete`);
 		}
-		await fs.writeJson(modulesFilePath, { ...modulesData, storedHash: actualHash })
+		await fs.writeJson(modulesFilePath, { ...modulesData, pdfReader: actualHash })
 	}
 })();

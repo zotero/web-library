@@ -15,7 +15,7 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 		// modules data file is missing or invalid json, ignore.
 	}
 
-	const { storedHash } = modulesData;
+	const { pdfWorker: storedHash } = modulesData;
 	const { stdout } = await exec('git rev-parse HEAD', { cwd: pdfWorkerPath });
 	const actualHash = stdout.trim();
 
@@ -42,9 +42,9 @@ const buildsURL = 'https://zotero-download.s3.amazonaws.com/ci/';
 			console.log(`Unable to fetch pdf-worker, will build instead...`);
 			await exec('npm ci', { cwd: pdfWorkerPath });
 			await exec('npm run build', { cwd: pdfWorkerPath });
-			await fs.copy(path.join(pdfWorkerPath, 'build', targetDir));
+			await fs.copy(path.join(pdfWorkerPath, 'build'), targetDir);
 			console.log(`pdf-worker build complete`);
 		}
-		await fs.writeJson(modulesFilePath, { ...modulesData, storedHash: actualHash })
+		await fs.writeJson(modulesFilePath, { ...modulesData, pdfWorker: actualHash })
 	}
 })();
