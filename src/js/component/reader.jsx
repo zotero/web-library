@@ -17,7 +17,15 @@ const Reader = () => {
 	const dispatch = useDispatch();
 	const iframeRef = useRef(null);
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const attachmentKey = useSelector(state => state.current.attachmentKey);
+	const attachmentKey = useSelector(state => {
+		if(state.current.attachmentKey) {
+			return state.current.attachmentKey;
+		} else if(state.libraries[libraryKey]?.items[state.current.itemKey].itemType === 'attachment') {
+			return state.current.itemKey;
+		} else {
+			return null
+		}
+	});
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -121,6 +129,10 @@ const Reader = () => {
 	}, [currentUserSlug, dataState, isGroup, handleIframeMessage, url])
 
 	useEffect(() => {
+		if(!attachmentKey) {
+			console.log('not a pdf, redirecting!');
+			dispatch(navigate({ view: 'item-details' }));
+		}
 		if(attachmentKey && !attachmentItem) {
 			dispatch(fetchItemDetails(attachmentKey));
 		}
