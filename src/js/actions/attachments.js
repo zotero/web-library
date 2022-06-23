@@ -1,5 +1,5 @@
-import { fetchChildItems, getAttachmentUrl } from '.';
-import { cleanDOI, cleanURL, get, getDOIURL } from '../utils';
+import { fetchChildItems, navigate, getAttachmentUrl } from '.';
+import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
 
 const extractItemKey = url => {
 	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
@@ -48,20 +48,6 @@ const tryGetAttachmentURL = attachmentItemKey => {
 	}
 }
 
-const tryGetBestAttachmentURL = itemKey => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
-		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
-		if(attachment) {
-			const attachmentItemKey = extractItemKey(attachment.href);
-			return dispatch(getAttachmentUrl(attachmentItemKey));
-		} else {
-			return dispatch(tryGetBestAttachmentURLFallback(itemKey));
-		}
-	}
-};
-
 const tryGetBestAttachmentURLFallback = itemKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -85,4 +71,50 @@ const tryGetBestAttachmentURLFallback = itemKey => {
 	}
 }
 
-export { tryGetAttachmentURL, tryGetBestAttachmentURL, }
+const pickBestItemAction = itemKey => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
+		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
+		if(attachment) {
+			const attachmentItemKey = extractItemKey(attachment.href);
+			if(attachment.attachmentType === 'application/pdf') {
+				// "best" attachment is PDF, open in reader
+				return dispatch(navigate({
+					item: itemKey, attachmentKey: attachmentItemKey, noteKey: null, view: 'reader' })
+				);
+			} else if(attachment) {
+				// "best" attachment exists, but is not PDF, open file
+				return openDelayedURL(dispatch(getAttachmentUrl(attachmentItemKey)));
+			}
+		} else {
+			// no "best" attachment, pick most appropriate fallback
+			return openDelayedURL(dispatch(tryGetBestAttachmentURLFallback(itemKey)));
+		}
+	}
+}
+
+const pickBestAttachmentItemAction = attachmentItemKey => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const item = get(state, ['libraries', state.current.libraryKey, 'items', attachmentItemKey], null);
+
+		const isFile = item && item.linkMode && item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
+		const isLink = item && item.linkMode && item.linkMode === 'linked_url';
+		const hasLink = isFile || isLink;
+
+		if(hasLink) {
+			if(item.contentType === 'application/pdf') {
+				return dispatch(navigate({
+					item: attachmentItemKey, attachmentKey: null, noteKey: null, view: 'reader' })
+				);
+			} else {
+				return openDelayedURL(dispatch(getAttachmentUrl(attachmentItemKey)));
+			}
+		}
+
+		return false;
+	}
+}
+
+export { pickBestAttachmentItemAction, pickBestItemAction, tryGetAttachmentURL }

@@ -7,8 +7,8 @@ import DropdownItem from 'reactstrap/lib/DropdownItem';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from '../../ui/icon';
-import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../../../utils';
-import { currentGoToSubscribeUrl, tryGetBestAttachmentURL } from '../../../actions';
+import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
+import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
 import { useItemActionHandlers } from '../../../hooks';
 
 const MoreActionsItems = ({ divider = false }) => {
@@ -26,7 +26,7 @@ const MoreActionsItems = ({ divider = false }) => {
 	const canDuplicate = !isReadOnly && item && (itemsSource === 'collection' || itemsSource === 'top');
 
 	const handleViewFileClick = useCallback(() => {
-		openDelayedURL(dispatch(tryGetBestAttachmentURL(item.key)));
+		dispatch(pickBestItemAction(item.key));
 	}, [dispatch, item]);
 
 	const handleViewOnlineClick = useCallback(() => {

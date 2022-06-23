@@ -10,9 +10,8 @@ import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
 import { currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
-tryGetAttachmentURL, tryGetBestAttachmentURL, selectItemsMouse } from '../../../actions';
+pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse } from '../../../actions';
 import { useSourceKeys } from '../../../hooks';
-import { openDelayedURL } from '../../../utils';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -283,9 +282,9 @@ const TableRow = props => {
 			}
 			if(event.type === 'dblclick' && itemData.itemTypeRaw !== 'note' && itemData.attachmentIconName !== null) {
 				if(itemData.itemTypeRaw === 'attachment') {
-					openDelayedURL(dispatch(tryGetAttachmentURL(itemData.key)));
+					dispatch(pickBestAttachmentItemAction(itemData.key));
 				} else {
-					openDelayedURL(dispatch(tryGetBestAttachmentURL(itemKey)));
+					dispatch(pickBestItemAction(itemKey));
 				}
 			}
 		}
