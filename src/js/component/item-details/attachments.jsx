@@ -22,6 +22,7 @@ import { isTriggerEvent } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
+import { makePath } from '../../common/navigation';
 import { useForceUpdate, useFetchingState, useFocusManager, usePrevious } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
@@ -49,6 +50,8 @@ const AttachmentActions = memo(props => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const collectionKey = useSelector(state => state.current.collectionKey);
+	const parentItemKey = useSelector(state => state.current.itemKey);
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'timestamp'], 0));
@@ -56,6 +59,21 @@ const AttachmentActions = memo(props => {
 	const iconSize = isTouchOrSmall ? '24' : '16';
 	const forceRerender = useForceUpdate();
 	const timeout = useRef(null);
+	const qmode = useSelector(state => state.current.qmode);
+	const search = useSelector(state => state.current.search);
+	const tags = useSelector(state => state.current.tags);
+	const config = useSelector(state => state.config);
+
+	const openInReaderPath = makePath(config, {
+		library: libraryKey,
+		collection: collectionKey,
+		items: parentItemKey ? [parentItemKey] : null,
+		attachmentKey: itemKey,
+		view: 'reader',
+		qmode: qmode,
+		search: search,
+		tags: tags,
+	});
 
 	const handleClick = useCallback(ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
@@ -71,6 +89,7 @@ const AttachmentActions = memo(props => {
 	}, [dispatch, isFetchingUrl]);
 
 	const handleOpenInReader = useCallback(ev => {
+		ev.preventDefault();
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
 		dispatch(navigate({ attachmentKey: key, noteKey: null, view: 'reader' }));
 	}, [dispatch])
@@ -90,6 +109,7 @@ const AttachmentActions = memo(props => {
 			<React.Fragment>
 				<a
 					className="btn btn-icon"
+					href={ openInReaderPath }
 					onClick={ handleOpenInReader }
 					role="button"
 					tabIndex={ -3 }
