@@ -95,7 +95,7 @@ const AttachmentActions = memo(props => {
 					tabIndex={ -3 }
 					title="Open in Reader"
 				>
-					<Icon type={ `${iconSize}/duplicate` } width={ iconSize } height={ iconSize } />
+					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 				</a>
 				{ urlIsFresh ? (
 				<a
