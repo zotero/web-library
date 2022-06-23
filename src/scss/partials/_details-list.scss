@@ -115,7 +115,7 @@
 		}
 
 		.truncate,
-		a {
+		a:not(.btn-icon) {
 			margin-right: $space-xs;
 		}
 
