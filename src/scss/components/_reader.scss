@@ -4,9 +4,18 @@
 	flex: 1 1 auto;
 
 	.header {
+		display: flex;
 		flex: 0 0 30px;
 		padding: $space-sm;
 		@include hairline(bottom, #ccc);
+
+		.left, .right {
+			flex: 0 0 50%;
+		}
+
+		.right {
+			text-align: right;
+		}
 	}
 
 	.spinner-wrapper {

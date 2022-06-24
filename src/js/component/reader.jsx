@@ -76,6 +76,10 @@ const Reader = () => {
 		dispatch(navigate({ attachmentKey, view: 'item-details' }));
 	}, [attachmentKey, dispatch]);
 
+	const handleExport = useCallback(() => {
+		iframeRef.current.contentWindow.save();
+	}, [])
+
 	const handleIframeMessage = useCallback(async (event) => {
 		if (event.source !== iframeRef.current.contentWindow) {
 			return;
@@ -96,8 +100,6 @@ const Reader = () => {
 				return;
 			}
 			case 'save': {
-				// Currently, this can only be triggered by window.save() in pdf-reader iframe
-				// TODO: Add a button or a key combination i.e. Cmd-s to trigger this action
 				const buf = await pdfWorker.export(message.buf, annotations);
 				const blob = new Blob([buf], { type: "application/pdf" });
 				const blobUrl = URL.createObjectURL(blob);
@@ -177,9 +179,18 @@ const Reader = () => {
 	return (
 		<section className="reader-wrapper">
 			<div className="header">
-				<Button className="btn-link" onClick={ handleGoBack }>
-					Back to Web Library
-				</Button>
+				<div className="left">
+					<Button className="btn-link" onClick={ handleGoBack }>
+						Back to Web Library
+					</Button>
+				</div>
+				<div className="right">
+					{ dataState.isReady && (
+						<Button className="btn-default" onClick={ handleExport }>
+							Download PDF
+						</Button>
+					)}
+				</div>
 			</div>
 			{ dataState.isReady ?
 				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ pdfReaderURL } /> :
