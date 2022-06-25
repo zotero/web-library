@@ -8,10 +8,12 @@ const TitleUpdater = () => {
 	const libraryName = useSelector(state => (state.config.libraries.find(l => l.key === libraryKey) || {}).name);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const collectionKey = useSelector(state => state.current.collectionKey);
+	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const collectionName = useSelector(state => get(state.libraries, [libraryKey, 'collections', collectionKey], {}).name);
 	const selectedItemKey = useSelector(state => state.current.itemKey);
 	const selectedItemsKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
+	const attachmentItem = useSelector(state => get(state, ['libraries', libraryKey, 'items', attachmentKey], null));
 
 	const debouncedNotify = useDebouncedCallback(() => {
 		var title = ['Zotero'];
@@ -39,8 +41,12 @@ const TitleUpdater = () => {
 
 		if(item) {
 			title.push((item[Symbol.for('derived')] || {}).title);
-		} else if(selectedItemsKeys.length > 0) {
+		} else if(selectedItemsKeys.length > 0 && !attachmentItem) {
 			title.push(`${selectedItemsKeys.length} items selected`);
+		}
+
+		if(attachmentItem && (attachmentItem[Symbol.for('derived')] || {}).title) {
+			title.push((attachmentItem[Symbol.for('derived')]).title);
 		}
 
 		title.reverse();
@@ -48,7 +54,9 @@ const TitleUpdater = () => {
 		document.title = title.join(' | ');
 	}, 50);
 
-	useEffect(() => { debouncedNotify(); } , [debouncedNotify, libraryName, itemsSource, item, selectedItemsKeys]);
+	useEffect(() => { debouncedNotify(); } , [
+		attachmentKey, attachmentItem, debouncedNotify, libraryName, itemsSource, item, selectedItemsKeys
+	]);
 
 	return null;
 }
