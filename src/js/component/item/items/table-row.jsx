@@ -151,11 +151,13 @@ const TableRow = props => {
 	const keys = useSourceKeys();
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const libraryKey = useSelector(state => state.current.libraryKey);
-	const isFileUploadAllowed = useSelector(
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
+	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const itemData = useSelector(

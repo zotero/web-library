@@ -100,11 +100,12 @@ const Table = () => {
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const prevErrorCount = usePrevious(errorCount);
-	const isFileUploadAllowed = useSelector(
+	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
+	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
