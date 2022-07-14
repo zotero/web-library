@@ -1,4 +1,4 @@
-import { CONNECTION_ISSUES, RESET_LIBRARY, DISMISS_ERROR } from '../constants/actions';
+import { CONNECTION_ISSUES, DISMISS_ERROR, ERROR_ADD_ITEMS_TO_COLLECTION, ERROR_ADD_TAGS_TO_ITEMS, ERROR_CREATE_COLLECTIONS, ERROR_CREATE_ITEMS, ERROR_DELETE_ITEMS, ERROR_RECOVER_ITEMS_TRASH, ERROR_REMOVE_ITEMS_FROM_COLLECTION, ERROR_TRASH_ITEMS, RESET_LIBRARY } from '../constants/actions';
 import { buyStorageUrl } from '../constants/defaults';
 const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are discarded
 var errorCounter = 0;
@@ -7,7 +7,7 @@ const isDuplicate = (error, prevError) =>
 	error && prevError && error.message === prevError.message &&
 	error.type === prevError.type && !prevError.isDismissed;
 
-const processError = ({ error, errorType }, meta) => {
+const processError = ({ type, error, errorType }, meta) => {
 	var message, cta;
 
 	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.startsWith('NetworkError'))) {
@@ -37,6 +37,13 @@ const processError = ({ error, errorType }, meta) => {
 		}
 	} else if(typeof error === 'string') {
 		message = error;
+	} else if (error !== null && [ERROR_ADD_ITEMS_TO_COLLECTION, ERROR_ADD_TAGS_TO_ITEMS, ERROR_CREATE_COLLECTIONS,
+		ERROR_CREATE_ITEMS, ERROR_DELETE_ITEMS, ERROR_RECOVER_ITEMS_TRASH,
+		ERROR_REMOVE_ITEMS_FROM_COLLECTION, ERROR_TRASH_ITEMS
+	].includes(type)) {
+		// `error` is an object where keys are indexes of the array of the original request
+		const firstError = Object.values(error).find(e => e.message);
+		message = `Some updates failed${firstError ? ': ' + firstError.message : ''}.`;
 	} else if('message' in error && error.message) {
 		message = `Unexpected error: ${error.message}`;
 	} else {
@@ -66,6 +73,7 @@ const errors = (state = [], action, { meta } = {}) => {
 			// discard 412, these will trigger RESET_LIBRARY which is handled below
 			return state;
 		}
+
 		const processedError = processError(action, meta);
 
 		if(isDuplicate(processedError, state[0])) {
