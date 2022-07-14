@@ -1224,11 +1224,14 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 	}
 }
 
-const createAttachments = (filesData, { collection = null, parentItem = null } = {}) => {
+const createAttachments = (filesData, { collection = null, libraryKey = null, parentItem = null } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const id = getUniqueId();
-		const { libraryKey } = state.current;
+
+		if (libraryKey === null) {
+			libraryKey = state.current.libraryKey;
+		}
 
 		dispatch({
 			count: filesData.length,

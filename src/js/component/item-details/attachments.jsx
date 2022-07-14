@@ -363,16 +363,15 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const addLinkedUrlButtonRef = useRef(null);
 	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
 
-
-
 	const [{ isOver, canDrop }, drop] = useDrop({
 		accept: NativeTypes.FILE,
+		canDrop: () => isFileUploadAllowed,
 		collect: monitor => ({
 			isOver: monitor.isOver({ shallow: true }),
 			canDrop: monitor.canDrop(),
 		}),
 		drop: async item => {
-			if(item.files && item.files.length) {
+			if (isFileUploadAllowed && item.files && item.files.length) {
 				dispatch(createAttachmentsFromDropped(item.files, { parentItem: itemKey }));
 			}
 		},

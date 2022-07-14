@@ -226,6 +226,8 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
 			dndData={ { 'targetType': 'publications', libraryKey: parentLibraryKey } }
+			isFileUploadAllowed={ false }
+			isReadOnly={ true }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
 			<Icon type="28/document" className="touch" width="28" height="28" />
@@ -272,6 +274,8 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
+			isFileUploadAllowed={ false }
+			isReadOnly={ true }
 			dndData={ { 'targetType': 'trash', libraryKey: parentLibraryKey } }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 		>
@@ -523,10 +527,10 @@ PickerCheckbox.propTypes = {
 PickerCheckbox.displayName = 'PickerCheckbox';
 
 const CollectionNode = memo(props => {
-	const { allCollections, disabledCollections, derivedData, collection, level, getParents, selectedCollectionKey,
-		isCurrentLibrary, parentLibraryKey, renaming, selectNode, setRenaming, virtual,
-		isPickerMode, isReadOnly, onOpen, shouldBeTabbable, picked = [], pickerPick, pickerSkipCollections,
-		...rest }  = props;
+	const { allCollections, disabledCollections, derivedData, collection, level, getParents,
+		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, selectNode, setRenaming,
+		virtual, isFileUploadAllowed, isPickerMode, isReadOnly, onOpen, shouldBeTabbable, picked = [],
+		pickerPick, pickerSkipCollections, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -593,8 +597,8 @@ const CollectionNode = memo(props => {
 	}, [dispatch]);
 
 	const handleFileDrop = useCallback(async droppedFiles => {
-		await dispatch(createAttachmentsFromDropped(droppedFiles, { collection: collection.key }));
-	}, [collection, dispatch]);
+		await dispatch(createAttachmentsFromDropped(droppedFiles, { libraryKey: parentLibraryKey, collection: collection.key }));
+	}, [collection, dispatch, parentLibraryKey]);
 
 	const handleNodeKeyDown = useCallback(ev => {
 		if(isPickerMode && !isPickerSkip && isTriggerEvent(ev)) {
@@ -669,7 +673,9 @@ const CollectionNode = memo(props => {
 			aria-labelledby={ id.current }
 			data-collection-key={ collection.key }
 			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents } }
+			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ derivedData[collection.key].isOpen }
+			isReadOnly={ isReadOnly }
 			onSelect={ handleSelect }
 			onNodeDrop={ isTouchOrSmall ? null : handleNodeDrop }
 			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
@@ -752,6 +758,7 @@ CollectionNode.propTypes = {
 	disabledCollections: PropTypes.array,
 	getParents: PropTypes.func,
 	isCurrentLibrary: PropTypes.bool,
+	isFileUploadAllowed: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 	level: PropTypes.number,
@@ -795,10 +802,10 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
 					'commitAdd', 'derivedData', 'dotMenuFor', 'disabledCollections',
 					'focusBySelector', 'getParents', 'isCurrentLibrary', 'isPickerMode',
-					'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext',
-					'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey', 'pickerSkipCollections',
-					'picked', 'pickerPick', 'renaming', 'selectedCollectionKey', 'selectNode',
-					'setDotMenuFor', 'setOpened', 'setRenaming', 'shouldBeTabbable', 'virtual',])}
+					'isFileUploadAllowed', 'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev',
+					'onFocusNext', 'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey',
+					'pickerSkipCollections', 'picked', 'pickerPick', 'renaming', 'selectedCollectionKey',
+					'selectNode', 'setDotMenuFor', 'setOpened', 'setRenaming', 'shouldBeTabbable', 'virtual',])}
 				/>
 			) }
 			<VirtualCollectionNode
@@ -912,7 +919,7 @@ const CollectionTree = props => {
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
 
-	const { isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
+	const { isFileUploadAllowed, isReadOnly, isMyLibrary } = libraries.find(l => l.key === parentLibraryKey);
 
 	useEffect(() => {
 		if(!shallowEqual(highlightedCollections, prevHighlightedCollections)) {
@@ -984,6 +991,7 @@ const CollectionTree = props => {
 				derivedData={ derivedData }
 				dotMenuFor={ dotMenuFor }
 				isCurrentLibrary = { isCurrentLibrary }
+				isFileUploadAllowed={ isFileUploadAllowed }
 				isPickerMode={ isPickerMode }
 				isReadOnly={ isReadOnly }
 				itemsSource={ itemsSource }
