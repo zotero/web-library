@@ -305,11 +305,13 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
 	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
-	const isFileUploadAllowed = useSelector(
+	const itemsSource = useSelector(state => state.current.itemsSource);
+	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
+	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
 
 	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched && isTinymceFetched);
 
