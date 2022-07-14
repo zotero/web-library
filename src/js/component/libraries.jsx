@@ -8,13 +8,13 @@ import cx from 'classnames';
 import Icon from './ui/icon';
 import Node from './libraries/node';
 import Spinner from './ui/spinner';
-import { createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
+import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
 import { get, stopPropagation, getUniqueId, noop } from '../utils';
 import { pick } from '../common/immutable';
 import { useFocusManager, usePrevious } from '../hooks/';
 
 const LibraryNode = props => {
-	const { addVirtual, isOpen, isPickerMode, isReadOnly, isSelected, libraryKey, name,
+	const { addVirtual, isOpen, isFileUploadAllowed, isPickerMode, isReadOnly, isSelected, libraryKey, name,
 		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
 		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
@@ -60,6 +60,10 @@ const LibraryNode = props => {
 		}
 	}, [isConfirmedEmpty, isPickerSkip, libraryKey, toggleOpen]);
 
+	const handleFileDrop = useCallback(async droppedFiles => {
+		await dispatch(createAttachmentsFromDropped(droppedFiles, { libraryKey: libraryKey }));
+	}, [dispatch, libraryKey]);
+
 	useEffect(() => {
 		//@NOTE: this should only trigger when library is reset. Otherwise collections are fetched
 		//		 by loader or when library is first opened. See #289
@@ -92,9 +96,12 @@ const LibraryNode = props => {
 			}) }
 			aria-labelledby={ id.current }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
+			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ isOpen && !shouldShowSpinner }
+			isReadOnly={ isReadOnly }
 			onOpen={ handleOpenToggle }
 			onSelect={ handleSelect }
+			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
 			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
 			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
@@ -143,6 +150,7 @@ const LibraryNode = props => {
 
 LibraryNode.propTypes = {
 	addVirtual: PropTypes.func,
+	isFileUploadAllowed: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
 	isReadOnly: PropTypes.bool,

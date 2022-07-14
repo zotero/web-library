@@ -12,7 +12,7 @@ import { stopPropagation, noop } from '../../utils';
 import { pick } from '../../common/immutable';
 
 const Node = props => {
-	const { className, children, dndData, isOpen, onFileDrop, onNodeDrop, onOpen = noop, onRename =
+	const { className, children, dndData, isOpen, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, onOpen = noop, onRename =
 		noop, onRenameCancel = noop, onSelect = noop, showTwisty, onFocusNext = noop, onFocusPrev =
 		noop, onKeyDown = noop, subtree, onDrillDownNext = noop, onDrillDownPrev = noop,
 		shouldBeDraggable, ...rest } = props;
@@ -42,12 +42,14 @@ const Node = props => {
 			canDrop: monitor.canDrop(),
 		}),
 		canDrop: (item, monitor) => {
-
 			if(!monitor.isOver({ shallow: true })) {
 				// extra check is required to confirm drop happens on a collection and not
 				// encompassing library
 				return false;
+			}
 
+			if(isReadOnly) {
+				return;
 			}
 
 			const srcItemType = monitor.getItemType();
@@ -101,6 +103,9 @@ const Node = props => {
 				}
 				return srcLibraryKey === targetLibraryKey;
 			} else if(srcItemType === NativeTypes.FILE) {
+				if (!isFileUploadAllowed) {
+					return false;
+				}
 				if(!['collection', 'library'].includes(dndData.targetType)) {
 					return false;
 				}
