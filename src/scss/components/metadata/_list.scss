@@ -481,6 +481,13 @@
 			}
 		}
 
+		@include scopedVariant(".attachment-details", ".touch-details-drilldown", ".standalone-attachment") {
+			a > .icon {
+				margin-left: $space-min;
+				color: unset;
+			}
+		}
+
 		// Standalone attachments
 		a:hover {
 			color: $link-color;

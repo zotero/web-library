@@ -1,4 +1,4 @@
-import { fetchChildItems, navigate, getAttachmentUrl } from '.';
+import { fetchChildItems, getAttachmentUrl } from '.';
 import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
 import { makePath } from '../common/navigation';
 
