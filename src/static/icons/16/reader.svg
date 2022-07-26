@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="reader" viewBox="0 0 16 16">
-		<path d="m1.96 1h12.1v14h-12.1z" fill="none" stroke="currentColor" stroke-linejoin="round" />
- 		<path d="m3.96 11.3h4.06m-4.06-3.3h8.08m-8.08-3.3h8.08" fill="none" stroke="currentColor" />
+ 		<path d="m4 3.33h8zm-1.67-3h11.3v15.3h-11.3zm1.67 6h8zm0 3h8zm0 3h5z" fill="none" stroke="currentColor" />
 	</symbol>
 	<use xlink:href="#reader" viewBox="0 0 16 16"/>
 </svg>
