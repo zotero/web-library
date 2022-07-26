@@ -20,7 +20,7 @@ const Reader = () => {
 	const attachmentKey = useSelector(state => {
 		if(state.current.attachmentKey) {
 			return state.current.attachmentKey;
-		} else if(state.libraries[libraryKey]?.items[state.current.itemKey].itemType === 'attachment') {
+		} else if (state.current.itemKey) {
 			return state.current.itemKey;
 		} else {
 			return null
@@ -36,6 +36,12 @@ const Reader = () => {
 	const currentUserSlug = useSelector(state => state.config.userSlug);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? {});
 	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
+	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
+	const lastFetchItemDetailsNoResults = useSelector(state => {
+		const { libraryKey: requestLK, totalResults, queryOptions = {} } = state.traffic?.['FETCH_ITEM_DETAILS']?.last ?? {};
+		return totalResults === 0 && requestLK === libraryKey && queryOptions.itemKey === attachmentKey;
+	});
+
 	const [dataState, setDataState] = useState({ isReady: false, processedAnnotations: [], importedAnnotations: [] });
 
 	const { isFetching, isFetched, pointer, keys } = useFetchingState(
@@ -131,10 +137,6 @@ const Reader = () => {
 	}, [currentUserSlug, dataState, isGroup, handleIframeMessage, url])
 
 	useEffect(() => {
-		if(!attachmentKey) {
-			console.log('not a pdf, redirecting!');
-			dispatch(navigate({ view: 'item-details' }));
-		}
 		if(attachmentKey && !attachmentItem) {
 			dispatch(fetchItemDetails(attachmentKey));
 		}
@@ -175,7 +177,20 @@ const Reader = () => {
 		}
 	}, [annotations, dataState, isAllFetched, getProcessedAnnotations, prevAnnotations, wasAllFetched])
 
-	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
+	useEffect(() => {
+		if (attachmentItem && !prevAttachmentItem
+			&& (attachmentItem.itemType !== 'attachment' || attachmentItem.contentType !== 'application/pdf')
+		) {
+				dispatch(navigate({ view: 'item-details' }));
+		}
+	}, [dispatch, attachmentItem, prevAttachmentItem]);
+
+	useEffect(() => {
+		if (lastFetchItemDetailsNoResults) {
+			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }));
+		}
+	}, [dispatch, lastFetchItemDetailsNoResults]);
+
 	return (
 		<section className="reader-wrapper">
 			<div className="header">

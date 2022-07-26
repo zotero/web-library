@@ -1,5 +1,6 @@
 import { fetchChildItems, navigate, getAttachmentUrl } from '.';
 import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
+import { makePath } from '../common/navigation';
 
 const extractItemKey = url => {
 	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
@@ -75,14 +76,26 @@ const pickBestItemAction = itemKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', itemKey], null);
+		const current = state.current;
 		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 		if(attachment) {
 			const attachmentItemKey = extractItemKey(attachment.href);
 			if(attachment.attachmentType === 'application/pdf') {
 				// "best" attachment is PDF, open in reader
-				return dispatch(navigate({
-					item: itemKey, attachmentKey: attachmentItemKey, noteKey: null, view: 'reader' })
-				);
+				const readerPath = makePath(state.config, {
+					attachmentKey: attachmentItemKey,
+					collection: current.collectionKey,
+					items: [itemKey],
+					library: current.libraryKey,
+					noteKey: null,
+					publications: current.isMyPublications,
+					qmode: current.qmode,
+					search: current.search,
+					tags: current.tags,
+					trash: current.isTrash,
+					view: 'reader',
+				});
+				return window.open(readerPath);
 			} else if(attachment) {
 				// "best" attachment exists, but is not PDF, open file
 				return openDelayedURL(dispatch(getAttachmentUrl(attachmentItemKey)));
@@ -97,6 +110,7 @@ const pickBestItemAction = itemKey => {
 const pickBestAttachmentItemAction = attachmentItemKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
+		const current = state.current;
 		const item = get(state, ['libraries', state.current.libraryKey, 'items', attachmentItemKey], null);
 
 		const isFile = item && item.linkMode && item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
@@ -105,9 +119,21 @@ const pickBestAttachmentItemAction = attachmentItemKey => {
 
 		if(hasLink) {
 			if(item.contentType === 'application/pdf') {
-				return dispatch(navigate({
-					item: attachmentItemKey, attachmentKey: null, noteKey: null, view: 'reader' })
-				);
+				console.log('pickBestAttachmentItemAction');
+				const readerPath = makePath(state.config, {
+					attachmentKey: null,
+					collection: current.collectionKey,
+					items: [attachmentItemKey],
+					library: current.libraryKey,
+					noteKey: null,
+					publications: current.isMyPublications,
+					qmode: current.qmode,
+					search: current.search,
+					tags: current.tags,
+					trash: current.isTrash,
+					view: 'reader',
+				});
+				return window.open(readerPath);
 			} else {
 				return openDelayedURL(dispatch(getAttachmentUrl(attachmentItemKey)));
 			}

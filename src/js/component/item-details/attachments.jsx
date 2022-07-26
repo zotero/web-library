@@ -23,7 +23,7 @@ import { pluralize } from '../../common/format';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { makePath } from '../../common/navigation';
-import { useForceUpdate, useFetchingState, useFocusManager, usePrevious } from '../../hooks';
+import { useForceUpdate, useFetchingState, useFocusManager } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -88,12 +88,6 @@ const AttachmentActions = memo(props => {
 		openDelayedURL(dispatch(tryGetAttachmentURL(key)));
 	}, [dispatch, isFetchingUrl]);
 
-	const handleOpenInReader = useCallback(ev => {
-		ev.preventDefault();
-		const { key } = ev.currentTarget.closest('[data-key]').dataset;
-		dispatch(navigate({ attachmentKey: key, noteKey: null, view: 'reader' }));
-	}, [dispatch])
-
 	useEffect(() => {
 		if(urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
@@ -102,21 +96,24 @@ const AttachmentActions = memo(props => {
 			timeout.current = setTimeout(forceRerender, urlExpriesFromNow);
 			return () => clearTimeout(timeout.current);
 		}
-	}, [forceRerender, url, timestamp]);
+	}, [forceRerender, url, timestamp]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<React.Fragment>
-				<a
+				{ attachment.contentType === 'application/pdf' && ( <a
 					className="btn btn-icon"
 					href={ openInReaderPath }
-					onClick={ handleOpenInReader }
+					onClick={ stopPropagation }
+					rel="noreferrer"
 					role="button"
 					tabIndex={ -3 }
+					target="_blank"
 					title="Open in Reader"
 				>
 					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 				</a>
+				) }
 				{ urlIsFresh ? (
 				<a
 					className="btn btn-icon"
@@ -320,6 +317,10 @@ const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
 
 AttachmentDetailsWrap.displayName = 'AttachmentDetailsWrap';
 
+AttachmentDetailsWrap.propTypes = {
+	isReadOnly: PropTypes.bool
+};
+
 const PAGE_SIZE = 100;
 
 const Attachments = ({ isActive, isReadOnly }) => {
@@ -330,8 +331,6 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const { isFetching, isFetched, pointer, keys } = useFetchingState(
 		['libraries', libraryKey, 'itemsByParent', itemKey]
 	);
-	const attachmentKey = useSelector(state => state.current.attachmentKey);
-	const prevAttachmentKey = usePrevious(attachmentKey);
 
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
 	const uploads = useSelector(state => get(state, ['libraries', libraryKey, 'updating', 'uploads'], []));
@@ -357,7 +356,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 
 	const scrollContainerRef = useRef(null);
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, resetLastFocused, focusBySelector } = useFocusManager(
+		receiveBlur, focusBySelector } = useFocusManager(
 			scrollContainerRef, '.attachment.selected', false
 		);
 
@@ -435,15 +434,15 @@ const Attachments = ({ isActive, isReadOnly }) => {
 		}
 	}, [focusBySelector]);
 
-	const handleAddLinkedUrlTouchClick = useCallback(ev => {
+	const handleAddLinkedUrlTouchClick = useCallback(() => {
 		dispatch(toggleModal(ADD_LINKED_URL_TOUCH, true));
 	}, [dispatch]);
 
-	const handleLinkedFileClick = useCallback(ev => {
+	const handleLinkedFileClick = useCallback(() => {
 		setIsAddingLinkedUrl(true);
 	}, []);
 
-	const handleLinkedFileCancel = useCallback(ev => {
+	const handleLinkedFileCancel = useCallback(() => {
 		setIsAddingLinkedUrl(false);
 	}, []);
 
