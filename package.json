@@ -16,6 +16,7 @@
     "postpack": "rimraf build",
     "prebuild": "npm run clean -s && mkdir -p build/static/",
     "clean": "rimraf build",
+    "clean:all": "rimraf build data",
     "build": "run-s \"build:prepare\" \"build:all\" \"build:postprocess\"",
     "build:all": "run-p 'build:js -s' 'build:scss -s' 'build:html -s' 'build:static -s'",
     "build:js": "mkdir -p build/static && NODE_ENV=production rollup -c",
