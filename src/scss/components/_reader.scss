@@ -5,16 +5,17 @@
 
 	.header {
 		display: flex;
-		flex: 0 0 30px;
 		padding: $space-sm;
+		flex-wrap: nowrap;
 		@include hairline(bottom, #ccc);
 
 		.left, .right {
 			flex: 0 0 50%;
+			display: flex;
 		}
 
 		.right {
-			text-align: right;
+			flex-direction: row-reverse;
 		}
 	}
 
@@ -26,6 +27,6 @@
 	}
 
 	> iframe {
-		flex: 1 1 calc(100% - 30px);
+		flex: 1 1 100%;
 	}
 }
