@@ -288,7 +288,33 @@ const fetchSource = (startIndex, stopIndex) => {
 	}
 }
 
+//@TODO: improve redundancy to intermittent failure (see fetchAllItemsSince)
+const fetchAllChildItems = (itemKey, queryOptions = {}, overrides) => {
+	return async (dispatch, getState) => {
+		let pointer = 0;
+		const limit = PAGE_SIZE;
+
+		await dispatch(fetchItems('CHILD_ITEMS', { itemKey }, { ...queryOptions, start: pointer, limit }, overrides));
+		const state = getState();
+		const totalResults = state.libraries[state.current.libraryKey]?.itemsByParent[itemKey]?.totalResults ?? 0;
+		const requests = [];
+		pointer += limit;
+
+		while (pointer < totalResults) {
+			requests.push(
+				dispatch(fetchItems(
+					'CHILD_ITEMS', { itemKey }, { ...queryOptions, start: pointer, limit }, overrides)
+				)
+			);
+			pointer += limit;
+		}
+
+		await Promise.all(requests);
+	}
+}
+
 export {
+	fetchAllChildItems,
 	fetchAllItemsSince,
 	fetchChildItems,
 	fetchItemDetails,

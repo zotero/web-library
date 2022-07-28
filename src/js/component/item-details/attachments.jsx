@@ -13,7 +13,7 @@ import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
-import { createAttachments, createAttachmentsFromDropped, moveToTrash, fetchChildItems, navigate,
+import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveToTrash, fetchChildItems, navigate,
 sourceFile, tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey,
 noop } from '../../utils';
@@ -88,6 +88,11 @@ const AttachmentActions = memo(props => {
 		openDelayedURL(dispatch(tryGetAttachmentURL(key)));
 	}, [dispatch, isFetchingUrl]);
 
+	const handleExportClick = useCallback(ev => {
+		const { key } = ev.currentTarget.closest('[data-key]').dataset;
+		dispatch(exportAttachmentWithAnnotations(key));
+	}, [dispatch]);
+
 	useEffect(() => {
 		if(urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
@@ -101,18 +106,30 @@ const AttachmentActions = memo(props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<React.Fragment>
-				{ attachment.contentType === 'application/pdf' && ( <a
-					className="btn btn-icon"
-					href={ openInReaderPath }
-					onClick={ stopPropagation }
-					rel="noreferrer"
-					role="button"
-					tabIndex={ -3 }
-					target="_blank"
-					title="Open in Reader"
-				>
-					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
-				</a>
+				{ attachment.contentType === 'application/pdf' && (
+					<React.Fragment>
+						<a
+							className="btn btn-icon"
+							href={ openInReaderPath }
+							onClick={ stopPropagation }
+							rel="noreferrer"
+							role="button"
+							tabIndex={ -3 }
+							target="_blank"
+							title="Open in Reader"
+						>
+							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
+						</a>
+							<a
+							className="btn btn-icon"
+							onClick={ handleExportClick }
+							role="button"
+							tabIndex={ -3 }
+							title="Export attachment with annotations"
+						>
+							<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+						</a>
+					</React.Fragment>
 				) }
 				{ urlIsFresh ? (
 				<a
