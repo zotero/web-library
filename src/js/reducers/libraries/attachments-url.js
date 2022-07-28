@@ -9,6 +9,7 @@ const settings = (state = {}, action) => {
 				...state,
 				[action.itemKey]: {
 					isFetching: true,
+					promise: action.promise
 				}
 			}
 		case RECEIVE_ATTACHMENT_URL:

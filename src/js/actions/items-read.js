@@ -209,20 +209,25 @@ const getAttachmentUrl = itemKey => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
-
-		dispatch({
-			type: REQUEST_ATTACHMENT_URL,
-			libraryKey,
-			itemKey
-		});
+		const attachmentURLdata = state.libraries[state.current.libraryKey]?.attachmentsUrl[itemKey];
 
 		try {
-			const response = await api(state.config.apiKey, state.config.apiConfig)
+			const isURLFresh = (attachmentURLdata && Date.now() - attachmentURLdata.timestamp < 60000);
+			const isPromise = attachmentURLdata?.promise instanceof Promise;
+			const promise = (isURLFresh && isPromise) ? attachmentURLdata.promise : api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
 				.items(itemKey)
 				.attachmentUrl()
 				.get();
 
+			dispatch({
+				type: REQUEST_ATTACHMENT_URL,
+				libraryKey,
+				itemKey,
+				promise
+			});
+
+			const response = await promise;
 			const url = response.getData();
 
 			dispatch({
