@@ -1,3 +1,4 @@
+import attachmentsExportPDF from './attachments-export-pdf';
 import attachmentsUrl from './attachments-url';
 import collections from './collections';
 import deleting from './deleting';
@@ -26,6 +27,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 		return {
 			...state,
 			[action.libraryKey]: {
+				attachmentsExportPDF: attachmentsExportPDF(state[action.libraryKey]?.attachmentsExportPDF, action),
 				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
 				collections: collections(get(state, [action.libraryKey, 'collections']), action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),

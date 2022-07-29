@@ -55,6 +55,9 @@ const AttachmentActions = memo(props => {
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'timestamp'], 0));
+	const isPreppingPDF = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[itemKey]?.isFetching);
+	const preppedPDFURL = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[itemKey]?.blobURL);
+	const preppedPDFFileName = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[itemKey]?.fileName);
 	const urlIsFresh = url && (Date.now() - timestamp) < 60000;
 	const iconSize = isTouchOrSmall ? '24' : '16';
 	const forceRerender = useForceUpdate();
@@ -63,6 +66,7 @@ const AttachmentActions = memo(props => {
 	const search = useSelector(state => state.current.search);
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
+	const isPDF = attachment.contentType === 'application/pdf';
 
 	const openInReaderPath = makePath(config, {
 		library: libraryKey,
@@ -106,7 +110,7 @@ const AttachmentActions = memo(props => {
 	return (
 		attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
 			<React.Fragment>
-				{ attachment.contentType === 'application/pdf' && (
+				{ isPDF ? (
 					<React.Fragment>
 						<a
 							className="btn btn-icon"
@@ -120,18 +124,34 @@ const AttachmentActions = memo(props => {
 						>
 							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 						</a>
-							<a
-							className="btn btn-icon"
-							onClick={ handleExportClick }
-							role="button"
-							tabIndex={ -3 }
-							title="Export attachment with annotations"
-						>
-							<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-						</a>
+						{
+							isPreppingPDF ? <Spinner className="small" /> :
+								preppedPDFURL ? (
+									<a
+										className="btn btn-icon"
+										onClick={ stopPropagation }
+										href={ preppedPDFURL }
+										rel="noreferrer"
+										role="button"
+										tabIndex={ -3 }
+										download={ preppedPDFFileName }
+										title="Export attachment with annotations"
+									>
+										<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+									</a>
+								) : (
+									<a
+										className="btn btn-icon"
+										onClick={ handleExportClick }
+										role="button"
+										tabIndex={ -3 }
+										title="Export attachment with annotations"
+									>
+										<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+									</a>
+						) }
 					</React.Fragment>
-				) }
-				{ urlIsFresh ? (
+				) : urlIsFresh ? (
 				<a
 					className="btn btn-icon"
 					href={ url }
@@ -154,7 +174,7 @@ const AttachmentActions = memo(props => {
 				>
 					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 				</a>
-				)}
+				) }
 			</React.Fragment>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a

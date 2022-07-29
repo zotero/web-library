@@ -2,8 +2,7 @@ import { fetchAllChildItems, fetchChildItems, getAttachmentUrl } from '.';
 import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
 import { makePath } from '../common/navigation';
 import { pdfWorker } from '../common/pdf-worker.js';
-import { annotationItemToJSON } from '../common/annotations.js';
-import { ERROR_PROCESSING_ANNOTATIONS  } from '../constants/actions';
+import { REQUEST_EXPORT_PDF, RECEIVE_EXPORT_PDF, ERROR_EXPORT_PDF  } from '../constants/actions';
 import { saveAs } from 'file-saver';
 
 const extractItemKey = url => {
@@ -147,26 +146,51 @@ const pickBestAttachmentItemAction = attachmentItemKey => {
 	}
 }
 
-const exportAttachmentWithAnnotations = attachmentItemKey => {
+const exportAttachmentWithAnnotations = itemKey => {
 	return async (dispatch, getState) => {
-		const attachmentURL = await dispatch(getAttachmentUrl(attachmentItemKey));
-		await dispatch(fetchAllChildItems(attachmentItemKey));
-		const state = getState();
-		const childItems = state.libraries[state.current.libraryKey]?.itemsByParent[attachmentItemKey]?.keys ?? [];
-		const allItems = state.libraries[state.current.libraryKey]?.items;
-		const attachmentItem = allItems[attachmentItemKey];
-		if (attachmentItem.contentType !== 'application/pdf') {
-			throw new Error("Attachment is not a PDF");
-		}
-		const annotations = childItems
-			.map(childItemKey => allItems[childItemKey])
-			.filter(item => !item.deleted && item.itemType === 'annotation');
+		const libraryKey = getState().current.libraryKey;
+		dispatch({
+			type: REQUEST_EXPORT_PDF,
+			itemKey,
+			libraryKey
+		});
 
-		const data = await (await fetch(attachmentURL)).arrayBuffer();
-		const buf = await pdfWorker.export(data, annotations);
-		const blob = new Blob([buf], { type: 'application/pdf' });
-		const fileName = attachmentItem?.filename || 'file.pdf';
-		saveAs(blob, fileName);
+		try {
+			const attachmentURL = await dispatch(getAttachmentUrl(itemKey));
+			await dispatch(fetchAllChildItems(itemKey));
+			const state = getState();
+			const childItems = state.libraries[state.current.libraryKey]?.itemsByParent[itemKey]?.keys ?? [];
+			const allItems = state.libraries[state.current.libraryKey]?.items;
+			const attachmentItem = allItems[itemKey];
+			if (attachmentItem.contentType !== 'application/pdf') {
+				throw new Error("Attachment is not a PDF");
+			}
+			const annotations = childItems
+				.map(childItemKey => allItems[childItemKey])
+				.filter(item => !item.deleted && item.itemType === 'annotation');
+
+			const data = await (await fetch(attachmentURL)).arrayBuffer();
+			const buf = await pdfWorker.export(data, annotations);
+			const blob = new Blob([buf], { type: 'application/pdf' });
+			const fileName = attachmentItem?.filename || 'file.pdf';
+			saveAs(blob, fileName);
+
+			dispatch({
+				type: RECEIVE_EXPORT_PDF,
+				libraryKey,
+				itemKey,
+				fileName,
+				blob,
+				annotations
+			});
+		} catch(error) {
+			dispatch({
+				type: ERROR_EXPORT_PDF,
+				libraryKey,
+				itemKey,
+				error
+			});
+		}
 	}
 }
 
