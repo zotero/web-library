@@ -80,7 +80,8 @@
 			}
 		}
 
-		> .btn {
+		> .btn,
+		> .icon-spin {
 			flex: 0 0 auto;
 
 			@include mouse-and-bp-up(md) {
