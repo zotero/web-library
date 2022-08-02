@@ -5,7 +5,7 @@ import Dropdown from 'reactstrap/lib/Dropdown';
 import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import { stopPropagation } from '../../utils';
+import { stopPropagation, noop } from '../../utils';
 
 import Icon from 'component/ui/icon';
 import RichEditor from 'component/rich-editor';
@@ -17,6 +17,7 @@ import { makePath } from '../../common/navigation';
 import Button from '../../component/ui/button';
 import Spinner from '../ui/spinner';
 import { isTriggerEvent } from '../../common/event';
+import { useFocusManager } from '../../hooks';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -39,7 +40,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const search = useSelector(state => state.current.search);
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isStandaloneAttachment = attachmentKey === itemKey;
+	const downloadOptionsRef = useRef(null);
 	const openInReaderPath = makePath(config, {
 		library: libraryKey,
 		collection: collectionKey,
@@ -56,15 +59,38 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const forceRerender = useForceUpdate();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+	const { focusBySelector, focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(downloadOptionsRef);
+
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
 
-	const handleExport = useCallback(ev => {
-		if(isTriggerEvent(ev)) {
+	const handleExport = useCallback(() => {
 			dispatch(exportAttachmentWithAnnotations(attachmentKey));
-		}
 	}, [attachmentKey, dispatch]);
+
+	const handleKeyDown = useCallback(ev => {
+		const eventInsideDropdown = ev.currentTarget?.classList.contains('dropdown-item');
+
+		if (eventInsideDropdown && ["ArrowLeft", "ArrowRight", "Escape"].includes(ev.key)) {
+			setIsDropdownOpen(false);
+			ev.preventDefault();
+			ev.stopPropagation();
+			focusBySelector('.dropdown-toggle');
+		} else if (isTriggerEvent(ev) && !ev.currentTarget?.classList.contains('dropdown-toggle')) {
+			// simulate click() on button or link, except for droppdown toggle which handles its own events
+			ev.currentTarget.click();
+			console.log(ev.currentTarget);
+			ev.preventDefault();
+			ev.stopPropagation();
+		} else if (ev.key === "ArrowLeft") {
+			focusPrev(ev);
+			setIsDropdownOpen(false);
+		} else if (ev.key === "ArrowRight") {
+			focusNext(ev);
+			setIsDropdownOpen(false);
+		}
+	}, [focusBySelector, focusNext, focusPrev]);
 
 	const handleToggleDropdown = useCallback(() => {
 		setIsDropdownOpen(state => !state);
@@ -151,17 +177,25 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			) }
 		</ol>
 		{ (isPDF || url) && (
-			<div className="download-options">
+			<div
+				tabIndex={ 0 }
+				onBlur={ isTouchOrSmall ? noop : receiveBlur }
+				onFocus={ isTouchOrSmall ? noop : receiveFocus }
+				className="download-options"
+				ref={ downloadOptionsRef }
+			>
 				{ isPDF ? (
 					<React.Fragment>
 					<a
 						className="btn btn-default"
 						href={ openInReaderPath }
 						onClick={ stopPropagation }
+						onKeyDown={ handleKeyDown }
 						rel="noreferrer"
 						role="button"
 						target="_blank"
 						title="Open in Reader"
+						tabIndex={ -2 }
 					>
 						Open
 					</a>
@@ -173,11 +207,13 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						{ preppedPDFURL ? (
 							<a
 								className="btn btn-default export-pdf"
-								onClick={ stopPropagation }
+								download={ preppedPDFFileName }
 								href={ preppedPDFURL }
+								onClick={ stopPropagation }
+								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
-								download={ preppedPDFFileName }
+								tabIndex={ -2 }
 								title="Export attachment with annotations"
 							>
 								Download
@@ -185,16 +221,19 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						) : (
 							<Button
 								className='btn-default export-pdf'
-								onClick={ handleExport }
-								onKeyDown={ handleExport }
 								disabled={ isPreppingPDF }
+								onClick={ handleExport }
+								onKeyDown={ handleKeyDown }
+								tabIndex={ -2 }
 							>
 										{ isPreppingPDF ? <Spinner className="small" /> : "Download" }
 							</Button>
 						) }
 						<DropdownToggle
-							color={ null }
 							className="btn-default btn-icon dropdown-toggle"
+							color={ null }
+							onKeyDown={ handleKeyDown }
+							tabIndex={ -2 }
 						>
 							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -204,9 +243,10 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								className="btn"
 								href={ url }
 								onClick={ stopPropagation }
+								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
-								tabIndex={-3}
+								tabIndex={ -3 }
 								target="_blank"
 								title="Download attachment"
 							>
@@ -220,8 +260,10 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						className="btn btn-default"
 						href={ url }
 						onClick={ stopPropagation }
+						onKeyDown={ handleKeyDown }
 						rel="noreferrer"
 						role="button"
+						tabIndex={ -2 }
 						target="_blank"
 						title="Download attachment"
 					>
