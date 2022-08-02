@@ -7,7 +7,6 @@ import { annotationItemToJSON } from '../common/annotations.js';
 import { pdfWorker } from '../common/pdf-worker.js';
 import { fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL } from '../actions';
 import { useFetchingState, usePrevious } from '../hooks';
-import Button from './ui/button';
 import Spinner from './ui/spinner';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 
@@ -77,14 +76,6 @@ const Reader = () => {
 			console.error(e);
 		}
 	}, [annotations, currentUser, dispatch, isGroup, isReadOnly, libraryKey, tagColors]);
-
-	const handleGoBack = useCallback(() => {
-		dispatch(navigate({ attachmentKey, view: 'item-details' }));
-	}, [attachmentKey, dispatch]);
-
-	const handleExport = useCallback(() => {
-		iframeRef.current.contentWindow.save();
-	}, [])
 
 	const handleIframeMessage = useCallback(async (event) => {
 		if (event.source !== iframeRef.current.contentWindow) {
@@ -193,20 +184,6 @@ const Reader = () => {
 
 	return (
 		<section className="reader-wrapper">
-			<div className="header">
-				<div className="left">
-					<Button className="btn-link" onClick={ handleGoBack }>
-						Back to Web Library
-					</Button>
-				</div>
-				<div className="right">
-					{ dataState.isReady && (
-						<Button className="btn-default" onClick={ handleExport }>
-							Download PDF
-						</Button>
-					)}
-				</div>
-			</div>
 			{ dataState.isReady ?
 				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ pdfReaderURL } /> :
 				<div className="spinner-wrapper">

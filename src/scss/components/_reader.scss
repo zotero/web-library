@@ -3,22 +3,6 @@
 	flex-direction: column;
 	flex: 1 1 auto;
 
-	.header {
-		display: flex;
-		padding: $space-sm;
-		flex-wrap: nowrap;
-		@include hairline(bottom, #ccc);
-
-		.left, .right {
-			flex: 0 0 50%;
-			display: flex;
-		}
-
-		.right {
-			flex-direction: row-reverse;
-		}
-	}
-
 	.spinner-wrapper {
 		align-items: center;
 		display: flex;
