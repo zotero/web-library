@@ -47,6 +47,7 @@ const Loader = () => {
 
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const libraryKey = useSelector(state => state.current.libraryKey);
+	const view = useSelector(state => state.current.view);
 	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const config = useSelector(state => state.config);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
@@ -61,15 +62,18 @@ const Loader = () => {
 	const hasCheckedCollections = useSelector(
 		state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null) !== null
 	);
-	const isWaitingForCollections = !hasCheckedCollections || isFetchingAllCollections;
+	const isReader = view === 'reader';
+	const isWaitingForCollections = !isReader && (!hasCheckedCollections || isFetchingAllCollections);
 
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		if(itemTypes && itemFields && creatorFields && tagColors && !isWaitingForCollections && !isFetchingGroups) {
+		if (isReader && tagColors) {
+			setIsReady(true);
+		} else if(itemTypes && itemFields && creatorFields && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			setIsReady(true);
 		}
-	}, [itemTypes, itemFields, creatorFields, tagColors, isWaitingForCollections, isFetchingGroups]);
+	}, [itemTypes, itemFields, creatorFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());
@@ -77,12 +81,15 @@ const Loader = () => {
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
 		dispatch(fetchLibrarySettings(libraryKey));
 		dispatch(toggleTransitions(true));
-		dispatch(fetchAllCollections(libraryKey));
 
-		if(config.includeUserGroups) {
-			dispatch(fetchAllGroups(userLibraryKey));
+		if(!isReader) {
+			dispatch(fetchAllCollections(libraryKey));
+
+			if(config.includeUserGroups) {
+				dispatch(fetchAllGroups(userLibraryKey));
+			}
 		}
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return isReady ? isEmbedded ? <EmbedLibrary /> : <Library /> : <LoadingCover />;
 }
