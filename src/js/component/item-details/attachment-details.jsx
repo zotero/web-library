@@ -1,20 +1,28 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
+import Dropdown from 'reactstrap/lib/Dropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import { stopPropagation } from '../../utils';
 
 import Icon from 'component/ui/icon';
 import RichEditor from 'component/rich-editor';
 import { dateLocalized } from 'common/format';
 import { get } from 'utils';
-import { getAttachmentUrl, updateItem } from 'actions';
+import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { useForceUpdate } from 'hooks';
 import { makePath } from '../../common/navigation';
+import Button from '../../component/ui/button';
+import Spinner from '../ui/spinner';
+import { isTriggerEvent } from '../../common/event';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const timeoutRef = useRef(null);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
-	const item = useSelector(
+	const attachment = useSelector(
 		state => get(state, ['libraries', state.current.libraryKey, 'items', attachmentKey], {}),
 		shallowEqual
 	);
@@ -22,6 +30,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'isFetching'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'timestamp'], 0));
+	const isPreppingPDF = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.isFetching);
+	const preppedPDFURL = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.blobURL);
+	const preppedPDFFileName = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.fileName);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemKey = useSelector(state => state.current.itemKey);
 	const qmode = useSelector(state => state.current.qmode);
@@ -40,12 +51,24 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		tags: tags,
 	});
 
+	const isPDF = attachment.contentType === 'application/pdf';
 	const urlIsFresh = url && Date.now() - timestamp < 60000;
 	const forceRerender = useForceUpdate();
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
+
+	const handleExport = useCallback(ev => {
+		if(isTriggerEvent(ev)) {
+			dispatch(exportAttachmentWithAnnotations(attachmentKey));
+		}
+	}, [attachmentKey, dispatch]);
+
+	const handleToggleDropdown = useCallback(() => {
+		setIsDropdownOpen(state => !state);
+	}, []);
 
 	useEffect(() => {
 		if(urlIsFresh) {
@@ -58,19 +81,19 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	}, [forceRerender, urlIsFresh, timestamp, attachmentKey, dispatch, isFetchingUrl]);
 
 	useEffect(() => {
-		if(!urlIsFresh && !isFetchingUrl && item[Symbol.for('links')]?.enclosure) {
+		if(!urlIsFresh && !isFetchingUrl && attachment[Symbol.for('links')]?.enclosure) {
 			dispatch(getAttachmentUrl(attachmentKey));
 		}
-	}, [attachmentKey, isFetchingUrl, item, urlIsFresh, dispatch]);
+	}, [attachmentKey, isFetchingUrl, attachment, urlIsFresh, dispatch]);
 
 	return (
 		<React.Fragment>
 		<ol className="metadata-list">
-			{ item.url && (
+			{ attachment.url && (
 				<li className="metadata">
 					<div className="key">
 						<label>
-							<a target="_blank" rel="nofollow noopener noreferrer" href={ item.url }>
+							<a target="_blank" rel="nofollow noopener noreferrer" href={ attachment.url }>
 								<span className="truncate">Original URL</span>
 								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
 								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
@@ -78,45 +101,29 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</label>
 					</div>
 					<div className="value">
-						<span className="truncate" title={ item.url }>
-							{ item.url }
+						<span className="truncate" title={ attachment.url }>
+							{ attachment.url }
 						</span>
 					</div>
 				</li>
 			) }
-			{ item.filename && item.linkMode.startsWith('imported') && (
+			{ attachment.filename && attachment.linkMode.startsWith('imported') && (
 				<React.Fragment>
 				<li className="metadata interactable">
 					<div className="key">
 						<label>
-							{ url ? (
-							<a target="_blank" rel="nofollow noopener noreferrer" href={ url }>
-								<span className="truncate">Filename</span>
-								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
-								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
-							</a>
-							) : (
-								<span className="truncate">Filename</span>
-							) }
+							<span className="truncate">Filename</span>
 						</label>
 					</div>
 					<div className="value">
-						<span className="truncate no-link" title={ item.filename }>
-							{ item.contentType === 'application/pdf' ? (
-								<a target="_blank" rel="nofollow noopener noreferrer" href={ openInReaderPath }>
-									{ item.filename }
-									<Icon type={'16/reader'} className="mouse" width="12" height="12" />
-									<Icon type={'16/reader'} className="touch" width="16" height="16" />
-								</a>
-							) : (
-								<span className="truncate">{ item.filename }</span>
-							) }
+						<span className="truncate no-link" title={ attachment.filename }>
+							<span className="truncate">{ attachment.filename }</span>
 						</span>
 					</div>
 				</li>
 				</React.Fragment>
 			) }
-			{ item.accessDate && (
+			{ attachment.accessDate && (
 				<li className="metadata">
 					<div className="key">
 						<label>
@@ -126,11 +133,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</label>
 					</div>
 					<div className="value">
-						<div className="truncate">{ dateLocalized(new Date((item.accessDate))) }</div>
+						<div className="truncate">{ dateLocalized(new Date((attachment.accessDate))) }</div>
 					</div>
 				</li>
 			) }
-			{ item.dateModified && (
+			{ attachment.dateModified && (
 				<li className="metadata">
 					<div className="key">
 						<label>
@@ -138,16 +145,96 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</label>
 					</div>
 					<div className="value">
-						<div className="truncate">{ dateLocalized(new Date((item.dateModified))) }</div>
+						<div className="truncate">{ dateLocalized(new Date((attachment.dateModified))) }</div>
 					</div>
 				</li>
 			) }
 		</ol>
+		{ (isPDF || url) && (
+			<div className="download-options">
+				{ isPDF ? (
+					<React.Fragment>
+					<a
+						className="btn btn-default"
+						href={ openInReaderPath }
+						onClick={ stopPropagation }
+						rel="noreferrer"
+						role="button"
+						target="_blank"
+						title="Open in Reader"
+					>
+						Open
+					</a>
+					<Dropdown
+						isOpen={ isDropdownOpen }
+						toggle={ handleToggleDropdown }
+						className="btn-group"
+					>
+						{ preppedPDFURL ? (
+							<a
+								className="btn btn-default export-pdf"
+								onClick={ stopPropagation }
+								href={ preppedPDFURL }
+								rel="noreferrer"
+								role="button"
+								download={ preppedPDFFileName }
+								title="Export attachment with annotations"
+							>
+								Download
+							</a>
+						) : (
+							<Button
+								className='btn-default export-pdf'
+								onClick={ handleExport }
+								onKeyDown={ handleExport }
+								disabled={ isPreppingPDF }
+							>
+										{ isPreppingPDF ? <Spinner className="small" /> : "Download" }
+							</Button>
+						) }
+						<DropdownToggle
+							color={ null }
+							className="btn-default btn-icon dropdown-toggle"
+						>
+							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
+							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
+						</DropdownToggle>
+						<DropdownMenu>
+							<DropdownItem
+								className="btn"
+								href={ url }
+								onClick={ stopPropagation }
+								rel="noreferrer"
+								role="button"
+								tabIndex={-3}
+								target="_blank"
+								title="Download attachment"
+							>
+								Download (no annotations)
+							</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+					</React.Fragment>
+				) : url ? (
+					<a
+						className="btn btn-default"
+						href={ url }
+						onClick={ stopPropagation }
+						rel="noreferrer"
+						role="button"
+						target="_blank"
+						title="Download attachment"
+					>
+						Download
+					</a>
+				) : null }
+			</div>
+		) }
 		<RichEditor
 			autoresize={ shouldUseTabs ? false : true }
-			id={ item.key }
+			id={ attachment.key }
 			isReadOnly={ isReadOnly }
-			value={ item.note }
+			value={ attachment.note }
 			onChange={ handleChangeNote }
 		/>
 		</React.Fragment>

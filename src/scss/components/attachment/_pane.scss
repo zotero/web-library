@@ -101,3 +101,35 @@
 		}
 	}
 }
+
+
+.attachment-details,
+.standalone-attachment {
+	.download-options {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding-bottom: $space-xs;
+
+			.export-pdf {
+				min-width: 80px; // prevent button
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				// ensure no extra border when using <a> in .btn-group
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			// ensure no extra border when using <a> in .btn-group
+			.export-pdf + .btn {
+				margin-left: -1px;
+			}
+
+			> .btn + .btn-group,
+			> .btn + .btn {
+				margin-left: $space-xs;
+			}
+		}
+}
