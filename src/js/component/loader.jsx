@@ -91,7 +91,7 @@ const Loader = () => {
 		}
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-	return isReady ? isEmbedded ? <EmbedLibrary /> : <Library /> : <LoadingCover />;
+	return isReady ? isEmbedded ? <EmbedLibrary /> : <Library /> : isReader ? null : <LoadingCover />;
 }
 
 export default Loader;
