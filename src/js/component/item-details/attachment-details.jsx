@@ -55,7 +55,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	});
 
 	const isPDF = attachment.contentType === 'application/pdf';
+	const hasURL = !!attachment[Symbol.for('links')]?.enclosure;
 	const urlIsFresh = url && Date.now() - timestamp < 60000;
+
 	const forceRerender = useForceUpdate();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -107,10 +109,10 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	}, [forceRerender, urlIsFresh, timestamp, attachmentKey, dispatch, isFetchingUrl]);
 
 	useEffect(() => {
-		if(!urlIsFresh && !isFetchingUrl && attachment[Symbol.for('links')]?.enclosure) {
+		if (!urlIsFresh && !isFetchingUrl && hasURL) {
 			dispatch(getAttachmentUrl(attachmentKey));
 		}
-	}, [attachmentKey, isFetchingUrl, attachment, urlIsFresh, dispatch]);
+	}, [attachmentKey, isFetchingUrl, urlIsFresh, dispatch, hasURL]);
 
 	return (
 		<React.Fragment>
@@ -176,7 +178,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				</li>
 			) }
 		</ol>
-		{ (isPDF || url) && (
+		{ (isPDF || hasURL) && (
 			<div
 				tabIndex={ 0 }
 				onBlur={ isTouchOrSmall ? noop : receiveBlur }
@@ -255,9 +257,10 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</DropdownMenu>
 					</Dropdown>
 					</React.Fragment>
-				) : url ? (
+					) : hasURL ? (
 					<a
 						className="btn btn-default"
+						disabled={ !url }
 						href={ url }
 						onClick={ stopPropagation }
 						onKeyDown={ handleKeyDown }
