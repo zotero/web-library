@@ -180,7 +180,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		</ol>
 		{ (isPDF || hasURL) && (
 			<div
-				tabIndex={ 0 }
+				tabIndex={ isTouchOrSmall ? null : 0 }
 				onBlur={ isTouchOrSmall ? noop : receiveBlur }
 				onFocus={ isTouchOrSmall ? noop : receiveFocus }
 				className="download-options"
@@ -197,7 +197,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						role="button"
 						target="_blank"
 						title="Open in Reader"
-						tabIndex={ -2 }
+						tabIndex={ isTouchOrSmall ? null : -2 }
 					>
 						Open
 					</a>
@@ -215,7 +215,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
-								tabIndex={ -2 }
+								tabIndex={ isTouchOrSmall ? null : -2 }
 								title="Export attachment with annotations"
 							>
 								Download
@@ -226,16 +226,16 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								disabled={ isPreppingPDF }
 								onClick={ handleExport }
 								onKeyDown={ handleKeyDown }
-								tabIndex={ -2 }
+								tabIndex={ isTouchOrSmall ? null : -2 }
 							>
-										{ isPreppingPDF ? <Spinner className="small" /> : "Download" }
+											{isPreppingPDF ? <React.Fragment>&nbsp;<Spinner className="small" /></React.Fragment> : "Download" }
 							</Button>
 						) }
 						<DropdownToggle
 							className="btn-default btn-icon dropdown-toggle"
 							color={ null }
 							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
+							tabIndex={ isTouchOrSmall ? null : -2 }
 						>
 							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -248,7 +248,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
-								tabIndex={ -3 }
+								tabIndex={ isTouchOrSmall ? null : -3 }
 								target="_blank"
 								title="Download attachment"
 							>
@@ -266,7 +266,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						onKeyDown={ handleKeyDown }
 						rel="noreferrer"
 						role="button"
-						tabIndex={ -2 }
+						tabIndex={ isTouchOrSmall ? null : -2 }
 						target="_blank"
 						title="Download attachment"
 					>

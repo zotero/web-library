@@ -104,15 +104,27 @@
 
 
 .attachment-details,
-.standalone-attachment {
+.standalone-attachment,
+.touch-details-drilldown {
 	.download-options {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			padding-bottom: $space-xs;
 
+			@include touch-or-bp-down(sm) {
+				padding-top: $space-sm;
+				padding-bottom: $space-sm;
+			}
+
+			.btn {
+				@include touch-or-bp-down(sm) {
+					background-color: $shade-0;
+				}
+			}
+
 			.export-pdf {
-				min-width: 80px; // prevent button
+				min-width: 80px; // prevent button shrinking when showing spinner
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -120,11 +132,19 @@
 				// ensure no extra border when using <a> in .btn-group
 				border-top-right-radius: 0;
 				border-bottom-right-radius: 0;
+
+				@include touch-or-bp-down(sm) {
+					min-width: 106px; // prevent button shrinking when showing spinner
+				}
 			}
 
 			// ensure no extra border when using <a> in .btn-group
 			.export-pdf + .btn {
 				margin-left: -1px;
+			}
+
+			.btn-icon .icon {
+				color: $icon-color;
 			}
 
 			> .btn + .btn-group,
