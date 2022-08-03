@@ -27,6 +27,14 @@
 
 	.tox-tinymce {
 		border: none;
+		border-radius: 0;
+
+		.tox-editor-header {
+			display: none;
+			@include scopedVariant(".editing") {
+				display: block;
+			}
+		}
 
 		@include touch-or-bp-down(sm) {
 			border-top: none;
