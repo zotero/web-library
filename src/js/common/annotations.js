@@ -6,7 +6,7 @@
  * @param {Zotero.Item} item
  * @returns {Object} pdf-reader compatible annotation data
  */
-const annotationItemToJSON = (item, { currentUser, createdByUser, isGroup, isReadOnly, libraryKey, lastModifiedByUser, tagColors } = {}) => {
+const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser, isGroup, isReadOnly, libraryKey, lastModifiedByUser, tagColors = new Set() } = {}) => {
 	const o = {};
 	o.libraryID = libraryKey;
 	o.id = item.key;
@@ -63,7 +63,12 @@ const annotationItemToJSON = (item, { currentUser, createdByUser, isGroup, isRea
 	tags.forEach(t => delete t.position);
 	o.tags = tags || [];
 
-	o.dateModified = item.dateModified;
+	if(item.dateModified) {
+		o.dateModified = item.dateModified;
+	} else {
+		o.dateModified = attachmentItem.dateModified;
+	}
+
 	return o;
 };
 

@@ -66,7 +66,7 @@ const Reader = () => {
 		try {
 			return annotations.map(a => {
 				const { createdByUser, lastModifiedByUser } = a?.[Symbol.for('meta')] ?? {};
-				return annotationItemToJSON(a, { createdByUser, currentUser, isGroup, isReadOnly, lastModifiedByUser, libraryKey, tagColors: tagColorsMap })
+				return annotationItemToJSON(a, { createdByUser, currentUser, isGroup, isReadOnly, lastModifiedByUser, libraryKey, tagColors: tagColorsMap, attachmentItem })
 			});
 		} catch (e) {
 			dispatch({
@@ -75,7 +75,7 @@ const Reader = () => {
 			});
 			console.error(e);
 		}
-	}, [annotations, currentUser, dispatch, isGroup, isReadOnly, libraryKey, tagColors]);
+	}, [annotations, attachmentItem, currentUser, dispatch, isGroup, isReadOnly, libraryKey, tagColors]);
 
 	const handleIframeMessage = useCallback(async (event) => {
 		if (event.source !== iframeRef.current.contentWindow) {
@@ -87,7 +87,7 @@ const Reader = () => {
 				return;
 			}
 			case 'loadExternalAnnotations': {
-				const importedAnnotations = (await pdfWorker.import(message.buf)).map(ia => annotationItemToJSON(ia));
+				const importedAnnotations = (await pdfWorker.import(message.buf)).map(ia => annotationItemToJSON(ia, { attachmentItem }));
 				const allAnnotations = [...dataState.processedAnnotations, ...importedAnnotations];
 				iframeRef.current.contentWindow.postMessage({
 					action: 'setAnnotations',
