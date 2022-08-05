@@ -93,6 +93,7 @@ const AttachmentActions = memo(props => {
 	}, [dispatch, isFetchingUrl]);
 
 	const handleExportClick = useCallback(ev => {
+		ev.stopPropagation();
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
 		dispatch(exportAttachmentWithAnnotations(key));
 	}, [dispatch]);
