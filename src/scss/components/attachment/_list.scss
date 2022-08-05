@@ -4,6 +4,13 @@
 
 .attachment-list {
 	.attachment {
+		> .icon-spin {
+			@include touch-or-bp-down(sm) {
+				margin-left: 13px;
+				margin-right: 4px;
+			}
+		}
+
 		> .icon:first-child,
 		.truncate {
 			@include variant(".attachment.no-link") {
