@@ -68,7 +68,7 @@ const Loader = () => {
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		if (isReader && tagColors) {
+		if (isReader && tagColors && !isFetchingGroups) {
 			setIsReady(true);
 		} else if(itemTypes && itemFields && creatorFields && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			setIsReady(true);
@@ -81,6 +81,11 @@ const Loader = () => {
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
 		dispatch(fetchLibrarySettings(libraryKey));
 		dispatch(toggleTransitions(true));
+
+		if(isReader && config.includeUserGroups && libraryKey !== userLibraryKey) {
+			// we're in reader mode, but in a group so we still need to fetch groups data
+			dispatch(fetchAllGroups(userLibraryKey));
+		}
 
 		if(!isReader) {
 			dispatch(fetchAllCollections(libraryKey));
