@@ -1,14 +1,14 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
+import { useSelector, useDispatch } from 'react-redux';
 import deepEqual from 'deep-equal';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { annotationItemToJSON } from '../common/annotations.js';
-import { pdfWorker } from '../common/pdf-worker.js';
+import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import { fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL } from '../actions';
+import { pdfWorker } from '../common/pdf-worker.js';
 import { useFetchingState, usePrevious } from '../hooks';
 import Spinner from './ui/spinner';
-import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 
 const PAGE_SIZE = 100;
 
@@ -66,7 +66,8 @@ const Reader = () => {
 		try {
 			return annotations.map(a => {
 				const { createdByUser, lastModifiedByUser } = a?.[Symbol.for('meta')] ?? {};
-				return annotationItemToJSON(a, { createdByUser, currentUser, isGroup, isReadOnly, lastModifiedByUser, libraryKey, tagColors: tagColorsMap, attachmentItem })
+				return annotationItemToJSON(a, { attachmentItem, createdByUser, currentUser, isGroup, isReadOnly,
+					lastModifiedByUser, libraryKey, tagColors: tagColorsMap });
 			});
 		} catch (e) {
 			dispatch({
@@ -87,7 +88,9 @@ const Reader = () => {
 				return;
 			}
 			case 'loadExternalAnnotations': {
-				const importedAnnotations = (await pdfWorker.import(message.buf)).map(ia => annotationItemToJSON(ia, { attachmentItem }));
+				const importedAnnotations = (await pdfWorker.import(message.buf)).map(
+					ia => annotationItemToJSON(ia, { attachmentItem })
+				);
 				const allAnnotations = [...dataState.processedAnnotations, ...importedAnnotations];
 				iframeRef.current.contentWindow.postMessage({
 					action: 'setAnnotations',
