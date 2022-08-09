@@ -1,16 +1,16 @@
 import api from 'zotero-api-client';
-import baseMappings from 'zotero-base-mappings';
-import { fetchItemTypeFields } from './meta';
-import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey,
-reverseMap } from '../utils';
-import { parseDescriptiveString } from '../common/format';
-import { getFilesData } from '../common/event';
-import { omit } from '../common/immutable';
+
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
+import { fetchItemTypeFields } from './meta';
 import { fetchLibrarySettings, requestTracker } from '.';
-import { sniffForMIMEType } from '../common/mime';
+import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
+import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
+import { omit } from '../common/immutable';
+import { parseDescriptiveString } from '../common/format';
+import { sniffForMIMEType } from '../common/mime';
+import baseMappings from '../../../data/mappings';
 
 import {
 	BEGIN_ONGOING,

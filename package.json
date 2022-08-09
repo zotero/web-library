@@ -29,7 +29,8 @@
     "build:version": "node scripts/store-version.cjs",
     "build:static": "mkdir -p build/static && rsync -vazL src/static/* build/static/",
     "build:postprocess": "postcss build/static/zotero-web-library.css --use autoprefixer --no-map -r",
-    "build:prepare": "run-p \"build:version\" \"build:locale\" \"build:pdf-reader\" \"build:pdf-worker\" \"build:styles-json\"",
+    "build:prepare": "run-p \"build:version\" \"build:locale\" \"build:pdf-reader\" \"build:pdf-worker\" \"build:styles-json\" \"build:mappings\"",
+    "build:mappings": "node scripts/build-mappings.cjs",
     "devel": "run-p 'devel:js -s' 'devel:scss -s' 'devel:html -s' 'devel:static -s'",
     "devel:js": "rollup -c -w",
     "devel:scss": "nodemon -q -w src/scss --ext 'scss' --exec 'npm run devbuild:scss'",
@@ -89,8 +90,7 @@
     "redux-thunk": "^2.4.1",
     "tinymce": "^6.1.2",
     "use-debounce": "^8.0.3",
-    "zotero-api-client": "^0.40.0",
-    "zotero-base-mappings": "0.0.2"
+    "zotero-api-client": "^0.40.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",

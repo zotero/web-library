@@ -1,8 +1,6 @@
-'use strict';
-
-import baseMappings from 'zotero-base-mappings';
-import columnProperties from './constants/column-properties';
 import { noteAsTitle } from './common/format';
+import baseMappings from '../../data/mappings';
+import columnProperties from './constants/column-properties';
 
 const splice = (array, at, count = 0, ...items) => {
 	if (at == null) {

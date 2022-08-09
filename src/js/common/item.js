@@ -1,10 +1,8 @@
-'use strict';
-
-import baseMappings from 'zotero-base-mappings';
 import { paramCase } from 'param-case';
 
-import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { cleanDOI, cleanURL, get } from '../utils';
+import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
+import baseMappings from '../../../data/mappings';
 
 // https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
 const isOnlyEmoji = str => {

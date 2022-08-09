@@ -1,4 +1,3 @@
-import baseMappings from 'zotero-base-mappings';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useMemo, useState } from 'react';
@@ -6,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import BoxField from './boxfield';
 import Creators from '../form/creators';
+import baseMappings from '../../../../data/mappings';
 import { get } from '../../utils';
 import { getFieldDisplayValue } from '../../common/item';
 import { hideFields, hideIfEmptyFields, noEditFields, extraFields } from '../../constants/item';
