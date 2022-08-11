@@ -7,7 +7,6 @@ const RadioSet = props => {
 	const baseId = useId();
 
 	const handleChange = useCallback(ev => {
-		console.log({ value, evtv: ev.target.value });
 		if(ev.target.value !== value) {
 			onChange(ev.target.value);
 		}

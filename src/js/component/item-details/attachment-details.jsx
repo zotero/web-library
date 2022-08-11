@@ -82,7 +82,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		} else if (isTriggerEvent(ev) && !ev.currentTarget?.classList.contains('dropdown-toggle')) {
 			// simulate click() on button or link, except for droppdown toggle which handles its own events
 			ev.currentTarget.click();
-			console.log(ev.currentTarget);
 			ev.preventDefault();
 			ev.stopPropagation();
 		} else if (ev.key === "ArrowLeft") {

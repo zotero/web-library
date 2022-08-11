@@ -122,7 +122,6 @@ const pickBestAttachmentItemAction = attachmentItemKey => {
 
 		if(hasLink) {
 			if(item.contentType === 'application/pdf') {
-				console.log('pickBestAttachmentItemAction');
 				const readerPath = makePath(state.config, {
 					attachmentKey: null,
 					collection: current.collectionKey,

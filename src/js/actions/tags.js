@@ -273,7 +273,6 @@ const removeTagColor = tag => {
 		const libraryKey = state.current.libraryKey;
 		const oldTagColors = state.libraries[libraryKey].tagColors?.value;
 		const newTagColors = [...(oldTagColors ?? [])].filter(t => t.name !== tag);
-		// console.log({ oldTagColors, newTagColors, });
 		if((oldTagColors?.length ?? 0) === newTagColors.length) {
 			// nothing got filtered
 			return;
