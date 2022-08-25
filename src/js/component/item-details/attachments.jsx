@@ -122,6 +122,7 @@ const AttachmentActions = memo(props => {
 							tabIndex={ -3 }
 							target="_blank"
 							title="Open in Reader"
+							aria-label="Open in Reader"
 						>
 							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 						</a>
@@ -137,6 +138,7 @@ const AttachmentActions = memo(props => {
 										tabIndex={ -3 }
 										download={ preppedPDFFileName }
 										title="Export attachment with annotations"
+										aria-label="Export attachment with annotations"
 									>
 										<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
 									</a>
@@ -147,6 +149,7 @@ const AttachmentActions = memo(props => {
 										role="button"
 										tabIndex={ -3 }
 										title="Export attachment with annotations"
+										aria-label="Export attachment with annotations"
 									>
 										<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 									</a>
@@ -162,6 +165,7 @@ const AttachmentActions = memo(props => {
 					tabIndex={ -3 }
 					target="_blank"
 					title="Download attachment"
+					aria-label="Download attachment"
 				>
 					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 				</a>
@@ -172,6 +176,7 @@ const AttachmentActions = memo(props => {
 					role="button"
 					tabIndex={ -3 }
 					title="Download attachment"
+					aria-label="Download attachment"
 				>
 					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 				</a>
@@ -180,6 +185,7 @@ const AttachmentActions = memo(props => {
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
 				title="Download attachment"
+				aria-label="Download attachment"
 				className="btn btn-icon"
 				href={ attachment.url }
 				onClick={ stopPropagation }
@@ -282,6 +288,7 @@ const Attachment = memo(props => {
 			{ (isTouchOrSmall && !isReadOnly) && (
 				<Button
 					title="Delete attachment"
+					aria-label="Delete attachment"
 					className="btn-circle btn-primary"
 					onClick={ handleDelete }
 					tabIndex={ -1 }
@@ -309,7 +316,8 @@ const Attachment = memo(props => {
 
 			{ (!isTouchOrSmall && !isReadOnly) && (
 				<Button
-					aria-label="delete attachment"
+					title="Delete attachment"
+					aria-label="Delete attachment"
 					icon
 					onClick={ handleDelete }
 					tabIndex={ -3 }
