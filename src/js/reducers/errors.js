@@ -91,7 +91,7 @@ const errors = (state = [], action, { meta } = {}) => {
 		return [{
 				id: ++errorCounter,
 				isDismissed: false,
-				message: 'Current library has been modified outside of Web Library and had to be reset to remote state to allow editing.',
+				message: 'The library was modified remotely and has been reloaded to show current data.',
 				raw: {},
 				timesOccurred: 1,
 				timestamp: Date.now(),
