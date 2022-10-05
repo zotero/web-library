@@ -8,7 +8,7 @@ Web Library is a single-page application implemented in Javascript. It uses Zote
 Installation
 ------------
 
-1. Clone git repository into target web directory (`git clone https://github.com/zotero/web-library.git`)
+1. Clone git repository into target web directory (`git clone --recursive https://github.com/zotero/web-library.git`)
 2. Ensure up-to-date version of [Node](https://nodejs.org) is used. On systems where [nvm](https://github.com/nvm-sh/nvm) is available it's possible to use `nvm use` to switch to a preferred version of node.
 3. Run `npm install` to install dependencies
 4. Tweak configuration in `src/html/index.html` and/or `src/html/embedded.html`. Default configuration displays a public library in read-only mode. In order to edit a library, change `userId` and provide `apiKey`.
