@@ -3,10 +3,10 @@ import React, { memo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import columnProperties from '../../../constants/column-properties';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import Dropdown from 'reactstrap/es/Dropdown';
+import DropdownItem from 'reactstrap/es/DropdownItem';
+import DropdownMenu from 'reactstrap/es/DropdownMenu';
+import DropdownToggle from 'reactstrap/es/DropdownToggle';
 import Icon from '../../ui/icon';
 import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
 import { preferenceChange, restoreColumnsOrder } from '../../../actions';

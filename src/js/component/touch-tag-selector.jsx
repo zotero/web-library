@@ -3,10 +3,10 @@ import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from './ui/button';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import Dropdown from 'reactstrap/es/Dropdown';
+import DropdownItem from 'reactstrap/es/DropdownItem';
+import DropdownMenu from 'reactstrap/es/DropdownMenu';
+import DropdownToggle from 'reactstrap/es/DropdownToggle';
 import FocusTrap from './focus-trap';
 import Icon from './ui/icon';
 import TagList, { TagListItem } from './tag-selector/tag-list';

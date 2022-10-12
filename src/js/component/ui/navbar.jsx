@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useRef } from 'react';
-import Nav from 'reactstrap/lib/Nav';
+import Nav from 'reactstrap/es/Nav';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './button';

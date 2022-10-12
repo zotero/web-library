@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
-import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
+import UncontrolledDropdown from 'reactstrap/es/UncontrolledDropdown';
+import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import DropdownMenu from 'reactstrap/es/DropdownMenu';
+import DropdownItem from 'reactstrap/es/DropdownItem';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';

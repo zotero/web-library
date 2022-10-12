@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 
-import NavItem from 'reactstrap/lib/NavItem';
-import NavLink from 'reactstrap/lib/NavLink';
+import NavItem from 'reactstrap/es/NavItem';
+import NavLink from 'reactstrap/es/NavLink';
 import { pick } from '../../common/immutable';
 
 const MobileMenuEntry = ({ label, ...rest }) => {

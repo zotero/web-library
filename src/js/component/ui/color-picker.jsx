@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback } from 'react';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownMenu from 'reactstrap/es/DropdownMenu';
 import { noop } from '../../utils';
 
 const ColorPicker = props => {

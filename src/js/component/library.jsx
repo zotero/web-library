@@ -1,9 +1,8 @@
 import cx from 'classnames';
-import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
-import MultiBackend from 'react-dnd-multi-backend';
+import { DndProvider } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
-import { DndProvider } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomDragLayer from '../component/drag-layer';
@@ -123,7 +122,7 @@ const Library = () => {
 
 	return (
 		<React.Fragment>
-			<DndProvider backend={ MultiBackend } options={ HTML5toTouch }>
+			<DndProvider options={ HTML5toTouch }>
 			<CustomDragLayer />
 			<div className={ cx('library-container', {
 					'navbar-nav-opened': isNavBarOpen,

@@ -49,7 +49,7 @@ const config = {
 			skipPlugins: ['resolve', 'json', 'commonjs', 'replace', 'babel', 'sizes', 'filesize']
 		}),
 		resolve({
-			moduleDirectories: [path.join(process.cwd(), 'src', 'js'), 'node_modules'],
+			modulePaths: [path.join(process.cwd(), 'src', 'js')],
 			preferBuiltins: false,
 			mainFields: ['browser', 'main'],
 			extensions: ['.js', '.jsx'],

@@ -1,10 +1,10 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import Dropdown from 'reactstrap/lib/Dropdown';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
+import Dropdown from 'reactstrap/es/Dropdown';
+import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import DropdownMenu from 'reactstrap/es/DropdownMenu';
+import DropdownItem from 'reactstrap/es/DropdownItem';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Editable from '../editable';
