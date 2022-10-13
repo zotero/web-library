@@ -199,8 +199,12 @@ const Libraries = forwardRef((props, ref) => {
 		() => filteredLibraries.filter(l => l.isMyLibrary),
 		[filteredLibraries]
 	);
-	const groupLibraries = useMemo(
-		() => filteredLibraries.filter(l => l.isGroupLibrary),
+	const myGroupLibraries = useMemo(
+		() => filteredLibraries.filter(l => l.isGroupLibrary && !l.isExternal),
+		[filteredLibraries]
+	);
+	const otherGroupLibraries = useMemo(
+		() => filteredLibraries.filter(l => l.isGroupLibrary && l.isExternal),
 		[filteredLibraries]
 	);
 	const otherLibraries = useMemo(
@@ -324,14 +328,26 @@ const Libraries = forwardRef((props, ref) => {
 								</ul>
 							</div>
 						)}
-						{ groupLibraries.length > 0 && (
+						{ myGroupLibraries.length > 0 && (
 							<React.Fragment>
-								<h4>Group Libraries</h4>
+								<h4>{ otherGroupLibraries.length > 0 ? 'My ' : '' }Group Libraries</h4>
 								<div className={ cx('level', 'level-0') }>
 									<ul className="nav" role="group">
-										{ groupLibraries.map(lib =>
+										{ myGroupLibraries.map(lib =>
 											<LibraryNode key={ lib.key } { ...getNodeProps(lib) } />
 										) }
+									</ul>
+								</div>
+							</React.Fragment>
+						)}
+						{ otherGroupLibraries.length > 0 && (
+							<React.Fragment>
+								<h4>Other Group Libraries</h4>
+								<div className={cx('level', 'level-0')}>
+									<ul className="nav" role="group">
+										{otherGroupLibraries.map(lib =>
+											<LibraryNode key={lib.key} {...getNodeProps(lib)} />
+										)}
 									</ul>
 								</div>
 							</React.Fragment>
