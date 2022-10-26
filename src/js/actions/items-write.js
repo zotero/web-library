@@ -1224,7 +1224,7 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 	}
 }
 
-const createAttachments = (filesData, { collection = null, libraryKey = null, parentItem = null } = {}) => {
+const createAttachments = (filesData, { linkMode = 'imported_file', collection = null, libraryKey = null, parentItem = null } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const id = getUniqueId();
@@ -1243,7 +1243,7 @@ const createAttachments = (filesData, { collection = null, libraryKey = null, pa
 
 		try {
 			const attachmentTemplate = await dispatch(
-				fetchItemTemplate('attachment', { linkMode: 'imported_file' })
+				fetchItemTemplate('attachment', { linkMode })
 			);
 			const attachmentItems = filesData.map(fd => ({
 				...attachmentTemplate,

@@ -24,6 +24,20 @@ const magicBytesLookup = [
 	[[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], 'image/png', 0],
 ];
 
+const extensionLookup = new Map([
+	['application/pdf', 'pdf'],
+	['text/plain', 'txt'],
+	['text/xml', 'xml'],
+	['text/html', 'html'],
+	['image/gif', 'gif'],
+	['image/jpeg', 'jpg'],
+	['application/msword', 'doc'],
+	['image/jpeg', 'jpg'],
+	['image/vnd.microsoft.icon', 'ico'],
+	['image/png', 'png'],
+	['image/webp', 'webp'],
+]);
+
 const indexOfSequence = (needle, haystack, fromIndex = 0, toIndex = null) => {
 	if(haystack instanceof ArrayBuffer) {
 		haystack = new Uint8Array(haystack);
@@ -60,4 +74,4 @@ const sniffForMIMEType = (bytesArray) => {
 	return '';
 };
 
-export { sniffForMIMEType };
+export { extensionLookup, sniffForMIMEType };

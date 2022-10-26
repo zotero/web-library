@@ -11,13 +11,13 @@ import Icon from 'component/ui/icon';
 import RichEditor from 'component/rich-editor';
 import { dateLocalized } from 'common/format';
 import { get } from 'utils';
-import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
+import { deleteUnusedEmbeddedImages, getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { useForceUpdate } from 'hooks';
 import { makePath } from '../../common/navigation';
 import Button from '../../component/ui/button';
 import Spinner from '../ui/spinner';
 import { isTriggerEvent } from '../../common/event';
-import { useFocusManager } from '../../hooks';
+import { useFocusManager, usePrepForUnmount, usePrevious } from '../../hooks';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -41,6 +41,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const prevAttachmentKey = usePrevious(attachmentKey);
 	const isStandaloneAttachment = attachmentKey === itemKey;
 	const downloadOptionsRef = useRef(null);
 	const openInReaderPath = makePath(config, {
@@ -112,6 +113,16 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			dispatch(getAttachmentUrl(attachmentKey));
 		}
 	}, [attachmentKey, isFetchingUrl, urlIsFresh, dispatch, hasURL]);
+
+	useEffect(() => {
+		if (prevAttachmentKey && prevAttachmentKey !== attachmentKey) {
+			dispatch(deleteUnusedEmbeddedImages(prevAttachmentKey));
+		}
+	}, [attachment, attachmentKey, dispatch, prevAttachmentKey]);
+
+	usePrepForUnmount(lastSeenAttachmentKey => {
+		dispatch(deleteUnusedEmbeddedImages(lastSeenAttachmentKey));
+	}, attachmentKey);
 
 	return (
 		<React.Fragment>

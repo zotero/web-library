@@ -11,3 +11,4 @@ coverage
 
 src/static/pdf-reader/
 src/static/pdf-worker/
+src/static/note-editor/

@@ -14,6 +14,7 @@ export const tinymceRoot = '/static/other/tinymce/';
 export const pdfReaderURL = '/static/pdf-reader/viewer.html';
 export const pdfReaderCMapsRoot = '/static/pdf-reader/cmaps/';
 export const pdfWorkerURL = '/static/pdf-worker/worker.js';
+export const noteEditorURL = '/static/note-editor/editor.html';
 export const maxColoredTags = 9;
 export const libraries = {
 	includeMyLibrary: true,

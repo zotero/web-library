@@ -73,15 +73,26 @@ const deduplicateByHash = (array, hasher) => {
 const getItemCanonicalUrl = ({ libraryKey, itemKey }) =>
 	`http://zotero.org/${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
 
+const getItemFromCanonicalUrl = url => {
+	const match = url.match('https?://zotero.org/(users|groups)/([0-9]+)/items/([A-Z0-9]{8})');
+	if(match) {
+		const [, libraryType, libraryID, itemKey] = match;
+		const libraryKey = `${libraryType === 'users' ? 'u' : 'g'}${libraryID}`;
+		return { libraryKey, itemKey };
+	}
+	return null;
+}
+
 const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true) => {
-	if(!('dc:relation' in relations)) {
+	if (!(relationType in relations)) {
 		return [];
 	}
 	var relatedUrls = Array.isArray(relations[relationType]) ? relations[relationType] : [relations[relationType]];
 
 	const relatedItemKeys = relatedUrls.map(relatedUrl => {
-		let match = relatedUrl.match(`https?://zotero.org/(?:users|groups)/${libraryKey.slice(1)}/items/([A-Z0-9]{8})`);
-		return match ? match[1] : null;
+		const itemData = getItemFromCanonicalUrl(relatedUrl)
+		// cannot relate items in different libraries https://github.com/zotero/zotero/blob/f0a8c9ada38bae33593f331b36384d900e7f4d63/chrome/content/zotero/bindings/relatedbox.xml#L219-L225
+		return itemData && itemData.libraryKey === libraryKey ? itemData.itemKey : null;
 	});
 
 	return shouldRemoveEmpty ? relatedItemKeys.filter(Boolean) : relatedItemKeys;
@@ -455,6 +466,17 @@ const localStorageWrapper = localStorage ?? {
 	removeItem: () => undefined
 };
 
+const parseBase64File = encoded => {
+	const parts = encoded.split(',');
+	const mimeType = parts[0].match(/:(.*?);base64/)?.[1];
+	const decodedData = atob(parts[1]);
+	const bytes = new Uint8Array(decodedData.length);
+	for (var i = 0; i < decodedData.length; i++) {
+		bytes[i] = decodedData.charCodeAt(i);
+	}
+	return { mimeType, bytes };
+}
+
 export {
 	applyChangesToVisibleColumns,
 	cede,
@@ -472,6 +494,7 @@ export {
 	getDOIURL,
 	getFieldNameFromSortKey,
 	getItemCanonicalUrl,
+	getItemFromCanonicalUrl,
 	getLibraryKeyFromTopic,
 	getRequestTypeFromItemsSource,
 	getScrollbarWidth,
@@ -487,6 +510,7 @@ export {
 	mapRelationsToItemKeys,
 	noop,
 	openDelayedURL,
+	parseBase64File,
 	processIdentifierMultipleItems,
 	removeRelationByItemKey,
 	resizeVisibleColumns,

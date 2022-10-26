@@ -17,9 +17,9 @@ import { noteAsTitle, pluralize } from 'common/format';
 import { getScrollContainerPageCount, noop, sortByKey, stopPropagation } from 'utils';
 import { TabPane } from 'component/ui/tabs';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
-import { useFetchingState, useFocusManager, usePrevious } from 'hooks';
-import { deleteItem, createItem, updateItem, fetchChildItems, fetchItemTemplate, moveToTrash,
-navigate, sourceFile } from 'actions';
+import { useFetchingState, useFocusManager, usePrepForUnmount, usePrevious } from 'hooks';
+import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
+	fetchItemTemplate, moveToTrash, navigate, sourceFile } from 'actions';
 
 const PAGE_SIZE = 100;
 
@@ -170,6 +170,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 	const addNoteRef = useRef(null);
 	const hasScrolledIntoViewRef = useRef(false);
 	const noteKeyToAutoDelete = useRef(null);
+	const lastSeenNoteKey = useRef(null);
 
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
 		receiveBlur, resetLastFocused,focusBySelector } = useFocusManager(notesEl, '.note.selected', false);
@@ -296,19 +297,29 @@ const Notes = ({ isActive, isReadOnly }) => {
 
 	// Scroll selected note into view when it's first ready.
 	useEffect(() => {
-		setTimeout(() => {
-			if(!notesEl.current || !selectedNote) {
-				return;
+		if(prevNoteKey !== noteKey) {
+			if (prevNoteKey) {
+				dispatch(deleteUnusedEmbeddedImages(prevNoteKey));
 			}
 
-			const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
+			setTimeout(() => {
+				if(!notesEl.current || !selectedNote) {
+					return;
+				}
 
-			if(selectedNoteEl && !hasScrolledIntoViewRef.current) {
-				scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
-				hasScrolledIntoViewRef.current = true;
-			}
-		}, 0);
-	}, [selectedNote]);
+				const selectedNoteEl = notesEl.current.querySelector(`[data-key="${selectedNote.key}"]`);
+
+				if(selectedNoteEl && !hasScrolledIntoViewRef.current) {
+					scrollIntoViewIfNeeded(selectedNoteEl, notesEl.current);
+					hasScrolledIntoViewRef.current = true;
+				}
+			}, 0);
+		}
+	}, [dispatch, noteKey, notes, prevNoteKey, selectedNote]);
+
+	usePrepForUnmount(lastSeenNoteKey => {
+		dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
+	}, noteKey);
 
 	return (
 		<TabPane

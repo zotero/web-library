@@ -70,7 +70,7 @@ const config = (state = defaultState, action) => {
 				...state,
 				...pick(action, ['apiConfig', 'apiKey', 'containterClassName', 'isEmbedded',
 					'menus', 'stylesSourceUrl', 'streamingApiUrl', 'translateUrl', 'userId',
-					'userSlug', 'websiteUrl', 'pdfReaderURL', 'tinymceRoot']),
+					'userSlug', 'websiteUrl', 'pdfReaderURL', 'noteEditorURL', 'tinymceRoot']),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,

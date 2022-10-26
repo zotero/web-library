@@ -8,6 +8,16 @@ const usePrevious = value => {
 	return ref.current;
 }
 
+// keep track of `value`. When unmounting call `callback` with the most recent value of `value`.
+const usePrepForUnmount = (callback, value) => {
+	const ref = useRef();
+	useEffect(() => {
+		ref.current = value;
+	});
+
+	useEffect(() => () => callback(ref.current), []); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
 // Coerce value to boolean and keep track of it.
 // When it goes false -> true, outputs true immediately
 // When it goes true -> false, remains true for delay ms
@@ -39,4 +49,4 @@ const useBufferGate = (newValue, delay = 250) => {
 	return bufValue;
 }
 
-export { useBufferGate, usePrevious };
+export { useBufferGate, usePrevious, usePrepForUnmount };
