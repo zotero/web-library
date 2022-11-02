@@ -10,7 +10,6 @@ export const buyStorageUrl = websiteUrl + 'storage?ref=usb';
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 export const streamingApiUrl = 'wss://stream.zotero.org/';
 export const translateUrl = 'location' in window ? window.location.origin : '';
-export const tinymceRoot = '/static/other/tinymce/';
 export const pdfReaderURL = '/static/pdf-reader/viewer.html';
 export const pdfReaderCMapsRoot = '/static/pdf-reader/cmaps/';
 export const pdfWorkerURL = '/static/pdf-worker/worker.js';

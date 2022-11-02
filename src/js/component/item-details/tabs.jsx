@@ -16,8 +16,7 @@ import Tags from '../../component/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
 import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
-import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems,
-	sourceFile } from '../../actions';
+import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems, } from '../../actions';
 
 const pickDefaultActiveTab = (itemType, attachmentKey, noteKey) => {
 	switch(itemType) {
@@ -41,8 +40,6 @@ const ItemDetailsTabs = () => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
 	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowEqual);
-	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
-	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
 	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowEqual);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
@@ -70,7 +67,7 @@ const ItemDetailsTabs = () => {
 
 	const isReady = shouldUseTabs || (
 		!shouldUseTabs && (!shouldFetchChildItems || (childItemsState.hasChecked && !childItemsState.hasMoreItems))
-		&& relatedItemsState.isFetched && isTinymceFetched && isMetaAvailable
+		&& relatedItemsState.isFetched && isMetaAvailable
 	);
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 
@@ -121,18 +118,6 @@ const ItemDetailsTabs = () => {
 			dispatch(fetchItemTypeFields(item.itemType))
 		}
 	}, [dispatch, isItemTypeFieldsAvailable, isFetchingItemTypeFields, item.itemType, shouldUseTabs]);
-
-
-	useEffect(() => {
-		// fetch tinymce on devices that don't use tabs
-		if(shouldUseTabs) {
-			return;
-		}
-
-		if(!isTinymceFetched && !isTinymceFetching) {
-			dispatch(sourceFile('tinymce'));
-		}
-	}, [shouldUseTabs, isTinymceFetched, isTinymceFetching]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {

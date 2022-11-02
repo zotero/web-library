@@ -58,7 +58,6 @@
   "dependencies": {
     "@babel/runtime": "^7.20.1",
     "@babel/runtime-corejs3": "^7.20.1",
-    "@tinymce/tinymce-react": "^4.2.0",
     "bootstrap-sass": "^3.4.3",
     "classnames": "^2.3.2",
     "combine-section-reducers": "^1.0.6",
@@ -90,7 +89,6 @@
     "redux": "^4.2.0",
     "redux-async-queue": "^1.0.0",
     "redux-thunk": "^2.4.2",
-    "tinymce": "^6.2.0",
     "use-debounce": "^8.0.4",
     "zotero-api-client": "^0.40.0"
   },

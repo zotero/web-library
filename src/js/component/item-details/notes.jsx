@@ -19,7 +19,7 @@ import { TabPane } from 'component/ui/tabs';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { useFetchingState, useFocusManager, usePrepForUnmount, usePrevious } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
-	fetchItemTemplate, moveToTrash, navigate, sourceFile } from 'actions';
+	fetchItemTemplate, moveToTrash, navigate } from 'actions';
 
 const PAGE_SIZE = 100;
 
@@ -152,10 +152,8 @@ const Notes = ({ isActive, isReadOnly }) => {
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
-	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 
-	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched && isTinymceFetched);
+	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched);
 
 	const notes = (isReady && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
@@ -170,10 +168,9 @@ const Notes = ({ isActive, isReadOnly }) => {
 	const addNoteRef = useRef(null);
 	const hasScrolledIntoViewRef = useRef(false);
 	const noteKeyToAutoDelete = useRef(null);
-	const lastSeenNoteKey = useRef(null);
 
 	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, resetLastFocused,focusBySelector } = useFocusManager(notesEl, '.note.selected', false);
+		receiveBlur, focusBySelector } = useFocusManager(notesEl, '.note.selected', false);
 
 	const selectedNote = notes.find(n => n && n.key === noteKey);
 
@@ -272,12 +269,6 @@ const Notes = ({ isActive, isReadOnly }) => {
 			ev.preventDefault();
 		}
 	}, [focusBySelector]);
-
-	useEffect(() => {
-		if(!isTinymceFetched && !isTinymceFetching) {
-			dispatch(sourceFile('tinymce'));
-		}
-	}, [dispatch, isTinymceFetching, isTinymceFetched]);
 
 	useEffect(() => {
 		if(isActive && !isFetching && !isFetched) {

@@ -14,7 +14,7 @@ import Spinner from '../ui/spinner';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
 import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveToTrash, fetchChildItems, navigate,
-sourceFile, tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
+tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey,
 noop } from '../../utils';
 import { getFileData } from '../../common/event';
@@ -382,8 +382,6 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	const uploads = useSelector(state => get(state, ['libraries', libraryKey, 'updating', 'uploads'], []));
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const isTinymceFetching = useSelector(state => state.sources.fetching.includes('tinymce'));
-	const isTinymceFetched = useSelector(state => state.sources.fetched.includes('tinymce'));
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
@@ -392,7 +390,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 	);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
 
-	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched && isTinymceFetched);
+	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched);
 
 	const attachments = (isReady && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
@@ -499,12 +497,6 @@ const Attachments = ({ isActive, isReadOnly }) => {
 			dispatch(fetchChildItems(itemKey, { start, limit }));
 		}
 	}, [dispatch, itemKey, isActive, isFetching, isFetched, pointer]);
-
-	useEffect(() => {
-		if(!isTinymceFetched && !isTinymceFetching) {
-			dispatch(sourceFile('tinymce'));
-		}
-	}, [dispatch, isTinymceFetching, isTinymceFetched]);
 
 	return (
 		<TabPane

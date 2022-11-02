@@ -334,16 +334,6 @@ const cleanURL = (url, shouldTryHttp = false) => {
 	return false;
 }
 
-const loadJs = async path => {
-	return new Promise((resolve, reject) => {
-		const script = document.createElement('script');
-		script.onload = resolve;
-		script.onerror = reject;
-		script.src = path;
-		document.head.appendChild(script);
-	});
-}
-
 const scrollIntoViewIfNeeded = (element, container, opts = {}) => {
 	const containerTop = container.scrollTop;
 	const containerBottom = containerTop + container.clientHeight;
@@ -505,7 +495,6 @@ export {
 	indexByKey,
 	isLikeURL,
 	JSONTryParse,
-	loadJs,
 	localStorageWrapper,
 	mapRelationsToItemKeys,
 	noop,

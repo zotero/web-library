@@ -98,19 +98,11 @@ $scope: ".zotero-wl";
 	@import "components/modal/manage-tags";
 	@import "components/drag-layer";
 	@import "components/dropzone";
-	@import "components/rich-editor/rich-editor";
-	@import "components/rich-editor/toolbar-overflow";
-	@import "components/rich-editor/modal";
-	@import "components/rich-editor/forms";
-	@import "components/rich-editor/button";
-
-	//@import "components/rich-editor/toolbar";
-	//@import "components/rich-editor/pop";
-	@import "components/rich-editor/menu";
+	@import "components/rich-editor";
 	@import "components/popover";
 	@import "components/messages";
 	@import "components/ongoing";
 	@import "components/new-item-selector";
 	@import "components/crash-handler";
-	@import "components/reader"
+	@import "components/reader";
 }

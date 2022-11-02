@@ -12,7 +12,6 @@ export * from "./library";
 export * from "./meta";
 export * from "./navigate";
 export * from "./preferences";
-export * from "./source";
 export * from "./styles";
 export * from "./tags";
 export * from "./triggers";

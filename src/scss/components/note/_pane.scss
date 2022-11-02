@@ -80,26 +80,5 @@
 				flex: 1 1 0;
 			}
 		}
-
-		.autoresize {
-			.tox-tinymce {
-				@include touch-or-bp-down(sm) {
-					min-height: calc(50vh - 77px);
-				}
-
-				@include bp-down-normalized(xs) {
-					min-height: calc(50vh - (#{$navbar-height-xs * 0.5 + $touch-header-height}));
-				}
-
-				@include scopedVariant(".editing") {
-					@include touch-or-bp-down(sm) {
-						min-height: calc(50vh - 167px);
-					}
-					@include bp-down-normalized(xs) {
-						min-height: calc(50vh - (#{$navbar-height-xs * 0.5 + $touch-header-height}));
-					}
-				}
-			}
-		}
 	}
 }

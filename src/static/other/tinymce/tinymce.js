@@ -1,1 +1,0 @@
-../../../../node_modules/tinymce/tinymce.js
