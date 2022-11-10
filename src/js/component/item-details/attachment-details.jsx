@@ -177,7 +177,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				</li>
 			) }
 		</ol>
-		{ (isPDF || hasURL) && (
+		{ hasURL && (
 			<div
 				tabIndex={ isTouchOrSmall ? null : 0 }
 				onBlur={ isTouchOrSmall ? noop : receiveBlur }
@@ -256,7 +256,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</DropdownMenu>
 					</Dropdown>
 					</React.Fragment>
-					) : hasURL ? (
+					) : (
 					<a
 						className="btn btn-default"
 						disabled={ !url }
@@ -271,7 +271,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 					>
 						Download
 					</a>
-				) : null }
+				) }
 			</div>
 		) }
 		<RichEditor
