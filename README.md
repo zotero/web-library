@@ -9,7 +9,7 @@ Installation
 ------------
 
 1. Clone git repository into target web directory (`git clone --recursive https://github.com/zotero/web-library.git`)
-2. Ensure up-to-date version of [Node](https://nodejs.org) is used. It should be possible to build Web Library with any recent version of Node, see `.nvmrc` for recommended version of Node (usually current LTS). On systems where [nvm](https://github.com/nvm-sh/nvm) is available it's possible to use `nvm install` and `nvm use` to install and switch to a preferred version of node.
+2. Ensure up-to-date version of [Node](https://nodejs.org) is used. It should be possible to build Web Library with any recent version of Node, see `.nvmrc` for recommended version of Node (usually current LTS). On systems where [nvm](https://github.com/nvm-sh/nvm) is available it's possible to use `nvm install` and `nvm use` to install and switch to a preferred version of node. Additionally, [rysnc](https://rsync.samba.org/) should be installed.
 3. Run `npm install` to install dependencies
 4. Tweak configuration in `src/html/index.html` and/or `src/html/embedded.html`. Default configuration displays a public library in read-only mode. In order to edit a library, change `userId` and provide `apiKey`.
 5. Run development proces: `npm start`
