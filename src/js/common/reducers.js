@@ -1,4 +1,4 @@
-import { sortItemsByKey, compareItem } from '../utils';
+import { sortItemsByKey, compareItem, sortByKey } from '../utils';
 import { omit } from '../common/immutable';
 import { getFieldNameFromSortKey } from '../utils';
 
@@ -21,8 +21,7 @@ const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 
 const injectExtraItemKeys = (state, newKeys, items) => {
 	if(!Array.isArray(newKeys)) { newKeys = [newKeys]; }
-	if(!('totalResults' in state && 'keys' in state
-		&& 'sortBy' in state && 'sortDirection' in state)) {
+	if(!('totalResults' in state && 'keys' in state)) {
 		// we don't know enough about target collection to make changes
 		// clear what we know and exit
 		return {};
@@ -40,37 +39,39 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 	}
 
 
-	const { sortBy, sortDirection } = state;
+	const { sortBy, sortDirection} = state;
 
 	newKeys.forEach(newKey => {
 		let injected = false;
 		if(keys.includes(newKey)) {
 			return;
 		}
-		for(let i = 0; i < injectIterationEnd; i++) {
+		if (sortBy && sortDirection) {
+			for(let i = 0; i < injectIterationEnd; i++) {
 
-			if(process.env.NODE_ENV === 'development') {
-				if(!items[keys[i]]) {
-					console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+				if(process.env.NODE_ENV === 'development') {
+					if(!items[keys[i]]) {
+						console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+					}
+
+					if(!items[newKey]) {
+						console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+					}
 				}
 
-				if(!items[newKey]) {
-					console.warn(`Key ${keys[i]} encountered but no item by that key exists in registry. This is probably a race condition.`);
+				var comparisionResult = compareItem(
+					items[keys[i]] || {}, items[newKey] || {}, sortBy
+				);
+
+				if(sortDirection === 'desc') {
+					comparisionResult = comparisionResult * -1;
 				}
-			}
 
-			var comparisionResult = compareItem(
-				items[keys[i]] || {}, items[newKey] || {}, sortBy
-			);
-
-			if(sortDirection === 'desc') {
-				comparisionResult = comparisionResult * -1;
-			}
-
-			if(comparisionResult >= 0) {
-				keys.splice(i, 0, newKey);
-				injected = true;
-				break;
+				if(comparisionResult >= 0) {
+					keys.splice(i, 0, newKey);
+					injected = true;
+					break;
+				}
 			}
 		}
 		if(!injected) { keys.push(newKey); }

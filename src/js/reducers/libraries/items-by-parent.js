@@ -38,7 +38,7 @@ const itemsByParent = (state = {}, action, { items }) => {
 				return {
 					...state,
 					[parentKey]: injectExtraItemKeys(
-						state,
+						state[parentKey],
 						action.item.key,
 						{ ...action.otherItems, [action.item.key]: action.item }
 					)
