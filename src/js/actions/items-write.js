@@ -863,7 +863,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
 			const newItem = newItems[index];
-			const canHaveChildItems = !['attachment', 'note'].includes(newItem.itemType);
+			const canHaveChildItems = !(newItem.itemType === 'annotation' || newItem.linkMode === 'embedded_image');
 			if(!canHaveChildItems) {
 				return [];
 			}
