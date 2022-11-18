@@ -7,7 +7,7 @@ import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
-import { omit } from '../common/immutable';
+import { omit, pick } from '../common/immutable';
 import { parseDescriptiveString } from '../common/format';
 import { sniffForMIMEType } from '../common/mime';
 import baseMappings from '../../../data/mappings';
@@ -61,12 +61,16 @@ import {
 	REQUEST_STORE_RELATIONS_IN_SOURCE,
 	REQUEST_UPDATE_ITEM,
 	REQUEST_UPLOAD_ATTACHMENT,
+	PRE_UPDATE_MULTIPLE_ITEMS,
+	REQUEST_UPDATE_MULTIPLE_ITEMS,
+	RECEIVE_UPDATE_MULTIPLE_ITEMS,
+	ERROR_UPDATE_MULTIPLE_ITEMS,
 } from '../constants/actions';
 
 
-const postItemsMultiPatch = async (state, multiPatch) => {
+const postItemsMultiPatch = async (state, multiPatch, libraryKey = null) => {
+	libraryKey = libraryKey ?? state.current.libraryKey;
 	const config = state.config;
-	const { libraryKey } = state.current;
 	const version = state.libraries[libraryKey].sync.version;
 	const response = await api(config.apiKey, config.apiConfig)
 		.library(libraryKey)
@@ -381,6 +385,62 @@ const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
 		}
 	};
 }
+
+const updateMultipleItems = (multiPatch, libraryKey = null) => {
+	return async (dispatch, getState) => {
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
+
+		dispatch({
+			type: PRE_UPDATE_MULTIPLE_ITEMS,
+			libraryKey,
+			multiPatch,
+			id
+		});
+
+		dispatch(
+			queueUpdateMultipleItems(multiPatch, libraryKey, id)
+		);
+	};
+}
+
+const queueUpdateMultipleItems = (multiPatch, libraryKey, id) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+
+			try {
+				dispatch({
+					type: REQUEST_UPDATE_MULTIPLE_ITEMS,
+					libraryKey,
+					multiPatch,
+					id
+				});
+				const result = await postItemsMultiPatch(state, multiPatch, libraryKey);
+				dispatch({
+					type: RECEIVE_UPDATE_MULTIPLE_ITEMS,
+					...result,
+					libraryKey,
+					multiPatch,
+					id
+				});
+			} catch (error) {
+				dispatch({
+					type: ERROR_UPDATE_MULTIPLE_ITEMS,
+					error,
+					libraryKey,
+					multiPatch,
+					id
+				});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
 
 const uploadAttachment = (itemKey, fileData, libraryKey) => {
 	return async (dispatch, getState) => {
@@ -757,7 +817,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	};
 }
 
-const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetCollectionKeys = [], extraProperties = {}) => {
+const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetCollectionKeys = [], extraProperties = {}, depth = 0, aggrMultiPatch = null) => {
 	if(!Array.isArray(targetCollectionKeys)) {
 		if(targetCollectionKeys === null) {
 			targetCollectionKeys = [];
@@ -818,11 +878,15 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			dispatch(storeRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
 		}
 
+		const oldItems = newItems.map(
+			(_newItem, index) => state.libraries[sourceLibraryKey].items[itemKeys[index]]
+		);
+
 		const registerUploadsPromises = newItems.map(async (newItem, index) => {
 			if(newItem.itemType !== 'attachment') {
 				return Promise.resolve();
 			}
-			const oldItem = state.libraries[sourceLibraryKey].items[itemKeys[index]];
+			const oldItem = oldItems[index];
 
 			const { mtime, md5, filename } = oldItem;
 			const fileSize = oldItem?.[Symbol.for('links')]?.enclosure?.length;
@@ -861,24 +925,61 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			throw error;
 		}
 
+		const noteImagesMap = new Map();
+		const newNotes = newItems.filter(ni => ni.itemType === 'note');
+		for(const newNote of newNotes) {
+			const imageAttachmentKeys = Array.from(
+				newNote.note.matchAll(/data-attachment-key=(?:"|')([A-Z0-9]{8})(?:"|')/ig)
+			).map(m => m[1]);
+			noteImagesMap.set(newNote.key, imageAttachmentKeys);
+		}
+
+		if(depth === 0) {
+			aggrMultiPatch = [];
+		}
+
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
-			const newItem = newItems[index];
-			const canHaveChildItems = !(newItem.itemType === 'annotation' || newItem.linkMode === 'embedded_image');
-			if(!canHaveChildItems) {
-				return [];
-			}
-			await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
-			const childItemsKeys = get(getState(), ['libraries', sourceLibraryKey, 'itemsByParent', ik, 'keys'], []);
-			const patch = { parentItem: newItem.key };
-			if(childItemsKeys && childItemsKeys.length) {
-				return await dispatch(chunkedAction(copyToLibrary, childItemsKeys, sourceLibraryKey, targetLibraryKey, [], patch));
-			}
-			return [];
+				const newItem = newItems[index];
+				const canHaveChildItems = !(newItem.itemType === 'annotation' || newItem.linkMode === 'embedded_image');
+				if(!canHaveChildItems) {
+					return;
+				}
+				await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
+				const childItemsKeys = get(getState(), ['libraries', sourceLibraryKey, 'itemsByParent', ik, 'keys'], []);
+				if(childItemsKeys && childItemsKeys.length) {
+					const newChildItemsChunked = await dispatch(chunkedAction(copyToLibrary, childItemsKeys, sourceLibraryKey, targetLibraryKey, [], { parentItem: newItem.key }, depth + 1, aggrMultiPatch));
+					for (const { newItems: newChildItems, oldItems: oldChildItems } of newChildItemsChunked) {
+						oldChildItems.forEach((oldChildItem, index) => {
+							const newChildItem = newChildItems[index];
+							if (noteImagesMap.get(newChildItem.parentItem)?.includes(oldChildItem.key)) {
+								// Prep a patch that replaces oldChildItem.key with newChildItem.key in newParentItem.note
+								const newParentItem = newItems.find(ni => ni.key === newChildItem.parentItem);
+								let patch = aggrMultiPatch.find(p => p.key === newParentItem.key);
+								if(!patch) {
+									patch = pick(newParentItem, ['key', 'note']);
+									aggrMultiPatch.push(patch);
+								}
+								patch.note = patch.note.replace(
+									new RegExp(`data-attachment-key=(?:"|')${oldChildItem.key}(?:"|')`),
+									`data-attachment-key="${newChildItem.key}"`
+								);
+							}
+						});
+					}
+				}
 		});
 
 		await Promise.all(childItemsCopyPromises);
 
-		return newItems;
+		if (depth === 0 && aggrMultiPatch.length) {
+			// all note updates aggregated throughout recursive process as a single, multi-item POST update
+			await dispatch(updateMultipleItems(aggrMultiPatch, targetLibraryKey));
+		}
+
+		return {
+			newItems,
+			oldItems
+		};
 	};
 }
 
@@ -1087,11 +1188,13 @@ const chunkedAction = (action, itemKeys, ...args) => {
 	const chunkSize = 50;
 
 	return async dispatch => {
+		const results = [];
 		while ((chunkIndex * chunkSize) < itemKeys.length) {
 			const itemKeysChunk = itemKeys.slice(chunkIndex * chunkSize, (chunkIndex * chunkSize) + chunkSize);
-			await dispatch(action(itemKeysChunk, ...args))
+			results.push(await dispatch(action(itemKeysChunk, ...args)));
 			chunkIndex += 1;
 		}
+		return results;
 	}
 }
 
