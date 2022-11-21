@@ -859,7 +859,9 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			createItems(
 				itemKeys.map(ik => {
 					const sourceItem = state.libraries[sourceLibraryKey].items[ik];
-					const newRelations = shouldStoreRelationInSource ? sourceItem.relations : {
+
+					// add 'owl:sameAs' relation for items and notes but not attachments or annotations (based on https://github.com/zotero/zotero/blob/c5a769285b31bde5e78ff51349adc5be8d23871f/chrome/content/zotero/collectionTree.jsx#L1636-L1661)
+					const newRelations = (['attachment', 'annotation'].includes(sourceItem.itemType) || shouldStoreRelationInSource) ? sourceItem.relations : {
 							...sourceItem.relations,
 							'owl:sameAs': getItemCanonicalUrl({ libraryKey: sourceLibraryKey, itemKey: sourceItem.key })
 						};
@@ -874,7 +876,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 		);
 
 		if(shouldStoreRelationInSource) {
-			const targetItemKeys = newItems.map(i => i.key);
+			const targetItemKeys = newItems.filter(i => !['attachment', 'annotation'].includes(i.itemType)).map(i => i.key);
 			dispatch(storeRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
 		}
 
