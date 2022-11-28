@@ -32,6 +32,7 @@ const Note = memo(forwardRef((props, ref) => {
 	const isSelected = useSelector(state => noteKey === state.current.noteKey);
 	const isUpdating = useSelector(state => noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}));
 	const wasSelected = usePrevious(isSelected);
+	const ignoreNextFocus = useRef(false);
 
 	useEffect(() => {
 		if(!isSelected && wasSelected && !isUpdating && note.note === '') {
@@ -58,6 +59,10 @@ const Note = memo(forwardRef((props, ref) => {
 	}, [note, onDuplicate]);
 
 	const handleFocus = useCallback(ev => {
+		if (ignoreNextFocus.current) {
+			ignoreNextFocus.current = false;
+			return;
+		}
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -67,6 +72,10 @@ const Note = memo(forwardRef((props, ref) => {
 
 		dispatch(navigate({ noteKey: note.key, attachmentKey: null }));
 	}, [dispatch, isTouchOrSmall, note]);
+
+	const handleMouseDown = useCallback(() => {
+		ignoreNextFocus.current = true;
+	}, []);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'Escape' && isDropdownOpen) {
@@ -85,6 +94,7 @@ const Note = memo(forwardRef((props, ref) => {
 			data-key={ note.key }
 			ref={ ref }
 			onFocus={ handleFocus }
+			onMouseDown={ handleMouseDown }
 		>
 			<Icon type={ '28/item-types/light/note'} width="28" height="28" className="hidden-mouse" />
 			<div className="multiline-truncate">
