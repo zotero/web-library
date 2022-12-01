@@ -36,7 +36,7 @@
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-		@include mouse-and-bp-up(md) {
+		@include mouse-and-bp-up(lg) {
 			flex: 1 0 0;
 			min-height: 62px;
 			max-height: 62px * 3;
