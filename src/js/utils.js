@@ -451,7 +451,7 @@ const openDelayedURL = getURLPromise => {
 }
 
 // Avoid crashing when localStorage is missing, see #465
-const localStorageWrapper = localStorage ?? {
+const localStorageWrapper = window.localStorage ?? {
 	getItem: () => null,
 	setItem: () => undefined,
 	removeItem: () => undefined

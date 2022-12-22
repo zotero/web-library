@@ -9,9 +9,10 @@ import Loader from './loader';
 import UserTypeDetector from './user-type-detector';
 import ViewPortDetector from './viewport-detector';
 import { routes, redirects } from '../routes';
+import { history } from '../store';
 
 
-const Wrapper = () => {
+export const MainEmbedded = () => {
 	return (
 		<React.Fragment>
 			<UserTypeDetector />
@@ -21,35 +22,34 @@ const Wrapper = () => {
 	)
 }
 
-const Main = ({ store, history }) => {
+export const MainZotero = () => (
+	<ConnectedRouter history={history}>
+		<BrowserRouter>
+			<Switch>
+				{redirects.map(redirect =>
+					<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
+				)}
+				{routes.map(route =>
+					<Route key={route} path={route} component={MainEmbedded} exact />
+				)}
+				<Redirect from="/*" to="/" />
+			</Switch>
+		</BrowserRouter>
+	</ConnectedRouter>
+);
+
+const Main = ({ store }) => {
 	const isEmbedded = store.getState().config.isEmbedded;
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				{ isEmbedded ? (
-					<Wrapper />
-				) : (
-					<ConnectedRouter history={ history }>
-						<BrowserRouter>
-							<Switch>
-								{ redirects.map(redirect =>
-									<Redirect exact key={ redirect.from } from={ redirect.from } to={ redirect.to } />
-								)}
-								{ routes.map(route =>
-									<Route key={ route } path={ route } component={ Wrapper } exact />
-								)}
-								<Redirect from="/*" to="/" />
-							</Switch>
-						</BrowserRouter>
-					</ConnectedRouter>
-				) }
+				{ isEmbedded ? <MainEmbedded /> : <MainZotero /> }
 			</Provider>
 		</ErrorBoundary>
 	);
 }
 
 Main.propTypes = {
-	history: PropTypes.object.isRequired,
 	store: PropTypes.object.isRequired,
 }
 

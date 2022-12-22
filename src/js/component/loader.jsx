@@ -22,7 +22,7 @@ const LoadingCover = () => {
 
 	return (
 		<div className="loading-cover">
-			<Icon type={ '32/z' } width="32" height="32" />
+			<Icon type={'32/z'} width="32" height="32" label="Loading" />
 			{ (maxRequestsPendingSeen.current > 5 && requestsPending <= maxRequestsPendingSeen.current) && (
 				<div className="circular-progress-bar">
 					<svg viewBox="0 0 200 200">
