@@ -1,18 +1,14 @@
 import cx from 'classnames';
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
 
-import Icon from '../ui/icon';
 import { useFocusManager } from '../../hooks';
 import { updateTagColors } from '../../actions';
 import ColorPicker from '../ui/color-picker';
 import Button from '../ui/button';
 import Select from '../form/select';
 import { maxColoredTags } from '../../constants/defaults';
-import { isTriggerEvent } from '../../common/event';
-
 
 const colors = ['#FF6666', '#FF8C19', '#999999', '#5FB236', '#009980', '#2EA8E5', '#576DD9', '#A28AE5', '#A6507B' ];
 
@@ -24,9 +20,8 @@ const pickAvailableTagColor = ((colors, tagColorsData) => {
 const TagColorManager = ({ onToggleTagManager, tag }) => {
 	const dispatch = useDispatch();
 	const ref = useRef(null);
-	const { lookup: tagColorsLookup, value: tagColors } = useSelector(state => state.libraries[state.current.libraryKey].tagColors)
-	const { receiveFocus, receiveBlur, focusDrillDownPrev, focusDrillDownNext } = useFocusManager(ref);
-	const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+	const { value: tagColors } = useSelector(state => state.libraries[state.current.libraryKey].tagColors)
+	const { receiveFocus, receiveBlur } = useFocusManager(ref);
 
 	const indexInTagColors = tagColors.findIndex(tc => tag === tc.name);
 	const options = [...Array.from({ length: tagColors.length }, (_, i) => i), indexInTagColors === -1 ? tagColors.length : null]
@@ -37,18 +32,11 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 
 	const handleColorPicked = useCallback(newColor => {
 		setTagColor(newColor);
-		setIsColorPickerOpen(false);
 	}, []);
 
 	const handleCancelClick = useCallback(() => {
 		onToggleTagManager(null)
 	}, [onToggleTagManager]);
-
-	const handleToggleColorPicker = useCallback(ev => {
-		if(isTriggerEvent(ev) || (ev.keydown && ev.key === 'ArrowDown')) {
-			setIsColorPickerOpen(!isColorPickerOpen);
-		}
-	}, [isColorPickerOpen]);
 
 	const handlePositionChange = useCallback(newPosition => {
 		setPosition(parseInt(newPosition));
@@ -91,13 +79,6 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		}
 	}, [receiveBlur])
 
-	const handleToggleBlur = useCallback(ev => {
-		if(ev.relatedTarget && !ev.relatedTarget.closest('.color-picker')) {
-			setIsColorPickerOpen(false);
-		}
-	}, []);
-
-
 	useEffect(() => {
 		ref.current.focus();
 	}, []);
@@ -115,34 +96,11 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 				<div className="form-group form-row">
 					<label className="col-form-label">Color:</label>
 					<div className="col">
-						<Dropdown
-							isOpen={ isColorPickerOpen }
-							toggle={ handleToggleColorPicker }
-							className="btn-group"
-						>
-							<div onClick={ handleToggleColorPicker }
-								className="color-swatch"
-								style={ { backgroundColor: tagColor } }
-							>
-							</div>
-							<DropdownToggle
-								color={ null }
-								className="btn-icon dropdown-toggle"
-								onKeyDown={ handleToggleColorPicker }
-								tabIndex={ 0 }
-								onBlur={ handleToggleBlur }
-							>
-								<Icon type="16/chevron-9" className="touch" width="16" height="16" />
-								<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
-							</DropdownToggle>
-							<ColorPicker
-								gridCols={ 3 }
-								colors={ colors }
-								onColorPicked={ handleColorPicked }
-								onDrillDownPrev={ focusDrillDownPrev }
-								onDrillDownNext={ focusDrillDownNext }
-							/>
-						</Dropdown>
+						<ColorPicker
+							selectedColor={tagColor}
+							colors={colors}
+							onColorPicked={handleColorPicked}
+						/>
 					</div>
 					<label className="col-form-label">Position:</label>
 					<div className="col">
@@ -188,5 +146,10 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		</div>
 	)
 }
+
+TagColorManager.propTypes = {
+	tag: PropTypes.string,
+	onToggleTagManager: PropTypes.func,
+};
 
 export default memo(TagColorManager);

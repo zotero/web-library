@@ -1,8 +1,5 @@
 import cx from 'classnames';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownItem from 'reactstrap/es/DropdownItem';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from '../ui/dropdown';
 import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,10 +100,10 @@ const Note = memo(forwardRef((props, ref) => {
 			{ !isReadOnly && (
 				<Dropdown
 					isOpen={ isDropdownOpen }
-					toggle={ handleToggleDropdown }
+					onToggle={ handleToggleDropdown }
+					placement="bottom-end"
 				>
 					<DropdownToggle
-						color={ null }
 						tabIndex={ -3 }
 						onClick={ stopPropagation }
 						className={ cx('dropdown-toggle', {
@@ -122,7 +119,7 @@ const Note = memo(forwardRef((props, ref) => {
 						/>
 						<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 					</DropdownToggle>
-					<DropdownMenu right>
+					<DropdownMenu>
 						<DropdownItem onClick={ handleDuplicate }>
 							Duplicate
 						</DropdownItem>

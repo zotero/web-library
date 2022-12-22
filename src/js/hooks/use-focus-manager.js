@@ -18,6 +18,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 		}
 		const target = useCurrentTarget ? ev.currentTarget : ev.target;
 		const nextIndex = tabbables.findIndex(t => t === target) + offset;
+
 		if(isModifierKey(ev)) {
 			// ignore key navigation with modifier keys. See #252
 			return;
@@ -61,7 +62,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 			lastFocused.current = null;
 		} else if(isCarousel) {
 			tabbables[tabbables.length - 1].focus();
-			lastFocused.current = tabbables[0];
+			lastFocused.current = tabbables[tabbables.length - 1];
 		} else {
 			tabbables[0].focus();
 			lastFocused.current = tabbables[0];
@@ -118,21 +119,23 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 		}
 	}, [ref]);
 
-	// const focusOnLast  = useCallback(() => {
-	// 	if(lastFocused.current) {
-	// 		lastFocused.current.focus();
-	// 	}
-	// }, []);
+	const focusOnLast  = useCallback(() => {
+		if(lastFocused.current) {
+			lastFocused.current.focus();
+		}
+	}, []);
 
 	const resetLastFocused = useCallback(() => {
 		lastFocused.current = null;
 	}, []);
 
 	const receiveFocus = useCallback((ev, isBounced = false) => {
-		// if(isFocused) {
+		ev.stopPropagation();
+
 		if(isFocused.current) {
 			return false;
 		}
+
 
 		if(ref.current === null && !isBounced) {
 			ev.persist();
@@ -164,6 +167,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 					lastFocused.current = ref.current.querySelector(initialQuerySelector);
 				}
 			}
+
 			if(lastFocused.current) {
 				lastFocused.current.focus();
 				return true;
@@ -206,8 +210,8 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 	}, []);
 
 	const focusManagerFunctions = useMemo(() => (
-		{ receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus }),
-		[receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus]
+		{ receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus, focusOnLast }),
+		[receiveFocus, receiveBlur, focusNext, focusPrev, focusBySelector, focusDrillDownNext, focusDrillDownPrev, resetLastFocused, registerAutoFocus, focusOnLast]
 	);
 
 	return focusManagerFunctions;

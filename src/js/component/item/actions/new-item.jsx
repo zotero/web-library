@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../../ui/button';
@@ -11,7 +8,7 @@ import Icon from '../../ui/icon';
 import primaryItemTypes from '../../../constants/primary-item-types';
 import { createAttachments } from '../../../actions';
 import { getFilesData } from '../../../common/event';
-import { noop } from '../../../utils';
+import { getPrevSibling, noop } from '../../../utils';
 
 const DropdownItemType = props => {
 	const { itemTypeSpec, onNewItemCreate } = props;
@@ -44,8 +41,8 @@ const NewItemSelector = props => {
 		it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
 	), [itemTypes]);
 
-	const handleToggleDropdown = useCallback(ev => {
-		if(disabled || (ev.target && ev.target.dataset.noToggle)) {
+	const handleToggleDropdown = useCallback(() => {
+		if(disabled) {
 			return;
 		}
 
@@ -54,8 +51,13 @@ const NewItemSelector = props => {
 	}, [disabled, isOpen]);
 
 	const handleToggleMore = useCallback(ev => {
-		setIsSecondaryVisible(true);
 		ev.preventDefault();
+		ev.stopPropagation();
+		if (ev.type === 'keydown') {
+			getPrevSibling(ev.currentTarget, '.dropdown-item').focus();
+		}
+
+		setIsSecondaryVisible(true);
 	}, []);
 
 	const handleKeyDown = useCallback(ev => {
@@ -88,11 +90,11 @@ const NewItemSelector = props => {
 		<Dropdown
 			className="new-item-selector"
 			isOpen={ isOpen }
-			toggle={ handleToggleDropdown }
+			onToggle={ handleToggleDropdown }
+			maxHeight={ 300 }
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
-				color={ null }
 				disabled={ disabled }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }
@@ -100,23 +102,7 @@ const NewItemSelector = props => {
 			>
 				<Icon type={ '16/plus' } width="16" height="16" />
 			</DropdownToggle>
-			<DropdownMenu modifiers={{
-				setMaxHeight: {
-					enabled: true,
-					order: 890,
-					fn: (data) => {
-						return {
-							...data,
-							styles: {
-								...data.styles,
-								overflow: 'auto',
-								maxHeight: 340,
-							},
-						};
-					},
-				},
-			}}
-			>
+			<DropdownMenu>
 
 			{ primaryItemTypesDesc.map(itemTypeSpec => (
 				<DropdownItemType
@@ -153,7 +139,7 @@ const NewItemSelector = props => {
 						onNewItemCreate={ onNewItemCreate }
 					/>
 				)) :
-				<DropdownItem data-no-toggle onClick={ handleToggleMore }>
+				<DropdownItem onClick={ handleToggleMore }>
 					More
 				</DropdownItem>
 			}

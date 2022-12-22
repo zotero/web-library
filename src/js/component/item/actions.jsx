@@ -1,9 +1,6 @@
 import React, { memo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
 import { ToolGroup } from '../ui/toolbars';
 import Button from '../ui/button';
 import Icon from '../ui/icon';
@@ -58,11 +55,10 @@ const ItemActionsTouch = memo(() => {
 		<React.Fragment>
 			<Dropdown
 				isOpen={ isOpen }
-				toggle={ handleDropdownToggle }
+				onToggle={ handleDropdownToggle }
 				disabled={ isActionsDisabled }
 			>
 				<DropdownToggle
-					color={ null }
 					disabled={ isActionsDisabled }
 					className="btn-link btn-icon dropdown-toggle item-actions-touch"
 				>
@@ -73,7 +69,7 @@ const ItemActionsTouch = memo(() => {
 						height="24"
 					/>
 				</DropdownToggle>
-				<DropdownMenu right>
+				<DropdownMenu>
 					{ (isSingleColumn && !isEmbedded) && (
 						<React.Fragment>
 							<DropdownItem onClick={ handleSelectModeToggle } >

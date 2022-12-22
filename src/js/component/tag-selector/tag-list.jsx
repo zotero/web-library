@@ -6,10 +6,7 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
 
 import Icon from '../ui/icon';
 import Spinner from '../ui/spinner';
@@ -51,19 +48,19 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotM
 	return (
 		<Dropdown
 			isOpen={ isDotMenuOpen }
-			toggle={ onDotMenuToggle }
+			onToggle={ onDotMenuToggle }
+			placement="bottom-end"
 		>
 			<DropdownToggle
 				tabIndex={ -3 }
 				className="btn-icon dropdown-toggle"
-				color={ null }
 				title="More"
 				onClick={ onDotMenuToggle }
 			>
 				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
-			<DropdownMenu right>
+			<DropdownMenu>
 				<DropdownItem
 					disabled={ tagColorsLength >= maxColoredTags }
 					onClick={ handleAssignColorClick }

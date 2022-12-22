@@ -150,13 +150,12 @@
 	}
 
 	// Suggestions
-	.dropdown {
-		.dropdown-menu {
-			width: calc(100% + 2 * #{$editable-padding});
-			margin: 3px 0;
-			margin-left: $editable-border-width;
-		}
+	.dropdown-menu {
+		width: calc(100% + 2 * #{$editable-padding});
+		margin: 3px 0;
+		margin-left: $editable-border-width;
 	}
+
 }
 
 .pseudo-editable {

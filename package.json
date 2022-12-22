@@ -58,6 +58,7 @@
   "dependencies": {
     "@babel/runtime": "^7.20.6",
     "@babel/runtime-corejs3": "^7.20.6",
+    "@floating-ui/react-dom": "^1.0.1",
     "bootstrap-sass": "^3.4.3",
     "classnames": "^2.3.2",
     "combine-section-reducers": "^1.0.6",
@@ -85,7 +86,6 @@
     "react-virtualized-auto-sizer": "^1.0.7",
     "react-window": "^1.8.8",
     "react-window-infinite-loader": "^1.0.8",
-    "reactstrap": "<9.0.0",
     "redux": "^4.2.0",
     "redux-async-queue": "^1.0.0",
     "redux-thunk": "^2.4.2",

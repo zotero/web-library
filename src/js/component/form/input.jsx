@@ -4,13 +4,31 @@ import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, u
 
 import AutoResizer from './auto-resizer';
 import Spinner from '../ui/spinner';
-import Suggestions from './suggestions';
-import { noop } from '../../utils';
-import { pick } from '../../common/immutable';
+import { mod, noop } from '../../utils';
+import { omit, pick } from '../../common/immutable';
 import { usePrevious } from '../../hooks';
+import { useFloating, shift } from '@floating-ui/react-dom';
 
 const NATIVE_INPUT_PROPS = ['autoFocus', 'form', 'id', 'inputMode', 'max', 'maxLength',
 'min', 'minLength', 'name', 'placeholder', 'type', 'spellCheck', 'step', 'tabIndex'];
+
+const AutoResizerInput = memo(forwardRef((props, ref) => props.resize ? (
+	<AutoResizer
+		content={props.value}
+		vertical={props.resize === 'vertical'}
+	>
+		<input ref={ ref } {...omit(props, 'resize')} />
+	</AutoResizer>
+	) : (
+		<input ref={ ref } {...omit(props, 'resize')} />
+	)
+));
+
+AutoResizerInput.propTypes = {
+	resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+	value: PropTypes.string
+};
+
 
 const Input = memo(forwardRef((props, ref) => {
 	const { className = 'form-control', inputGroupClassName, isBusy, isDisabled, isReadOnly, isRequired, onBlur = noop, onCancel
@@ -18,13 +36,18 @@ const Input = memo(forwardRef((props, ref) => {
 	suggestions, validationError, value: initialValue, resize, ...rest } = props;
 	const [hasCancelledSuggestions, setHasCancelledSuggestions] = useState(false);
 	const [value, setValue] = useState(initialValue);
-	const input = useRef(null);
-	const suggestionsElement = useRef(null);
+	const [highlighted, setHighlighted] = useState(0);
+	const inputRef = useRef(null);
+	const suggestionsRef = useRef(null);
 	const prevInitialValue = usePrevious(initialValue);
 	const prevValidationError = usePrevious(validationError);
 
 	const hasBeenCancelled = useRef(false);
 	const hasBeenCommitted = useRef(false);
+
+	const { x, y, reference, floating, strategy } = useFloating({
+		placement: 'bottom', middleware: [shift()]
+	});
 
 	//reset on every render
 	hasBeenCancelled.current = false;
@@ -33,18 +56,19 @@ const Input = memo(forwardRef((props, ref) => {
 	const groupClassName = cx({
 		'input-group': true,
 		'input': true,
-		'busy': isBusy
+		'busy': isBusy,
+		'dropdown': suggestions,
+		'show': suggestions && suggestions.length && !hasCancelledSuggestions,
 	}, inputGroupClassName);
 
 	useImperativeHandle(ref, () => ({
 		focus: () => {
-			input.current.focus();
+			inputRef.current.focus();
 			if(selectOnFocus) {
-				input.current.select();
+				inputRef.current.select();
 			}
 		}
 	}));
-
 
 	const handleChange = useCallback(ev => {
 		setValue(ev.currentTarget.value);
@@ -53,17 +77,20 @@ const Input = memo(forwardRef((props, ref) => {
 	}, [onChange]);
 
 	const handleBlur = useCallback(ev => {
-		if(ev.relatedTarget && ev.relatedTarget.dataset.suggestion) {
+		if (ev.relatedTarget && (ev.relatedTarget.dataset.suggestion)) {
 			return;
 		}
 		if (hasBeenCancelled.current || hasBeenCommitted.current) {
 			return;
 		}
-		const shouldCancel = onBlur(event);
+
+		const shouldCancel = onBlur(ev);
+
 		if(shouldCancel) {
 			onCancel(value !== initialValue, ev);
-			if(input.current) {
-				input.current.blur();
+			hasBeenCancelled.current = true;
+			if (inputRef.current) {
+				inputRef.current.blur();
 			}
 		} else {
 			onCommit(value, value !== initialValue, ev);
@@ -78,19 +105,20 @@ const Input = memo(forwardRef((props, ref) => {
 	}, [onFocus, selectOnFocus]);
 
 	const handleKeyDown = useCallback(ev => {
-		switch (event.key) {
+		switch (ev.key) {
 			case 'Escape':
 				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					setHasCancelledSuggestions(true);
 					ev.stopPropagation();
 				} else {
-					onCancel(ev, value !== initialValue);
-					input.current.blur();
+					onCancel(value !== initialValue, ev);
+					hasBeenCancelled.current = true;
+					inputRef.current.blur();
 				}
 			break;
 			case 'Enter':
 				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
-					const newValue = suggestionsElement.current.getSuggestion() || value;
+					const newValue = suggestions[highlighted] || value;
 					setValue(newValue);
 					onCommit(newValue, newValue !== initialValue, ev);
 				} else {
@@ -98,20 +126,20 @@ const Input = memo(forwardRef((props, ref) => {
 				}
 			break;
 			case 'ArrowDown':
+				if (suggestions && suggestions.length && !hasCancelledSuggestions) {
+					setHighlighted(highlighted => mod(highlighted + 1, suggestions.length ));
+					ev.preventDefault();
+				}
+			break;
 			case 'ArrowUp':
 				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
-					// stop cursor from jumping to the begining/end of the input when showing suggestions
+					setHighlighted(highlighted => mod(highlighted - 1, suggestions.length))
 					ev.preventDefault();
 				}
 			break;
 		}
 		onKeyDown(ev);
-	}, [hasCancelledSuggestions, initialValue, onCancel, onCommit, onKeyDown, suggestions, value])
-
-	const handleSuggestionSelect = useCallback((suggestedValue, ev) => {
-		setValue(suggestedValue);
-		onCommit(suggestedValue, suggestedValue !== initialValue, ev);
-	}, [initialValue, onCommit]);
+	}, [hasCancelledSuggestions, highlighted, initialValue, onCancel, onCommit, onKeyDown, suggestions, value])
 
 	useEffect(() => {
 		if(initialValue !== prevInitialValue) {
@@ -120,51 +148,48 @@ const Input = memo(forwardRef((props, ref) => {
 	}, [initialValue, prevInitialValue]);
 
 	useEffect(() => {
-		if(validationError !== prevValidationError && input.current.setCustomValidity) {
-			input.current.setCustomValidity(validationError ? validationError : '');
+		if (validationError !== prevValidationError && inputRef.current.setCustomValidity) {
+			inputRef.current.setCustomValidity(validationError ? validationError : '');
 		}
 	}, [validationError, prevValidationError]);
 
-	const inputProps = {
-		className,
-		disabled: isDisabled,
-		onBlur: handleBlur,
-		onChange: handleChange,
-		onFocus: handleFocus,
-		onKeyDown: handleKeyDown,
-		readOnly: isReadOnly,
-		ref: input,
-		required: isRequired,
-		value,
-		...pick(rest, NATIVE_INPUT_PROPS),
-		...pick(rest, key => key.match(/^(aria-|data-|on[A-Z]).*/))
-	};
-
-	var inputComponent = suggestions ? (
-		<Suggestions
-			onSelect={ handleSuggestionSelect }
-			ref={ suggestionsElement }
-			inputProps={ inputProps }
-			suggestions={ hasCancelledSuggestions ? [] : suggestions }
-		/>
-	) : (
-		<input { ...inputProps } />
-	);
-
-	if(resize) {
-		inputComponent = (
-			<AutoResizer
-				content={ value }
-				vertical={ resize === 'vertical' }
-			>
-				{ inputComponent }
-			</AutoResizer>
-		);
-	}
-
 	return (
 		<div className={ groupClassName }>
-			{ inputComponent }
+			<AutoResizerInput
+				className={ className }
+				disabled={ isDisabled }
+				onBlur={ handleBlur }
+				onChange={ handleChange }
+				onFocus={ handleFocus }
+				onKeyDown={ handleKeyDown }
+				readOnly={ isReadOnly }
+				resize={ resize }
+				ref={(r) => { reference(r); inputRef.current = r; }}
+				required={ isRequired }
+				value={ value }
+				{ ...pick(rest, NATIVE_INPUT_PROPS) }
+				{ ...pick(rest, key => key.match(/^(aria-|data-|on[A-Z]).*/)) }
+			/>
+			{ suggestions && (
+				<div
+					style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
+					ref={r => { floating(r); suggestionsRef.current = r; } }
+					className={ cx("dropdown-menu suggestions", {
+						'show': suggestions.length > 0 && !hasCancelledSuggestions,
+				})}>
+					{ suggestions.map((s, index) =>
+						<div
+							className={ cx("dropdown-item", {
+								'active': index === highlighted,
+							})}
+							data-suggestion={s}
+							key={s}
+						>
+							{s}
+						</div>
+					) }
+				</div>
+			)}
 			{ isBusy ? <Spinner /> : null }
 		</div>
 	);

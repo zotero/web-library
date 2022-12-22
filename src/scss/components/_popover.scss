@@ -2,26 +2,6 @@
 // Popover
 // --------------------------------------------------
 
-// As reactstrap wraps the actual popover in two divs we need to make sure that
-// the div with 'will-change' and the opacity transition has a high enough
-// z-index. We also have to replicate Bootstrap’s fade logic.
-.popover-container {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: $z-index-popover;
-
-	&.fade {
-		transition: opacity 0.15s ease-in-out; // Popover timeout can’t be configured
-	}
-
-	&:not(.show) {
-		opacity: 0;
-	}
-}
-
 .popover {
 	position: absolute;
 	top: 0;
@@ -32,8 +12,13 @@
 	background-color: $popover-bg;
 	box-shadow: $popover-box-shadow;
 	border-radius: $popover-border-radius;
+	display: none;
+	z-index: $z-index-popover;
 
-	.arrow, // Remove when reactstrap switched to popover-arrow
+	&.show {
+		display: block;
+	}
+
 	.popover-arrow {
 		position: absolute;
 		display: block;
@@ -52,7 +37,7 @@
 	}
 }
 
-.bs-popover-top {
+.popover-top {
 	margin-bottom: $popover-arrow-height;
 
 	> .popover-arrow {
@@ -72,7 +57,7 @@
 	}
 }
 
-.bs-popover-right {
+.popover-right {
 	margin-left: $popover-arrow-height;
 
 	> .arrow,
@@ -96,7 +81,7 @@
 	}
 }
 
-.bs-popover-bottom {
+.popover-bottom {
 	margin-top: $popover-arrow-height;
 
 	> .arrow,
@@ -117,7 +102,7 @@
 	}
 }
 
-.bs-popover-left {
+.popover-left {
 	margin-right: $popover-arrow-height;
 
 	> .arrow,
@@ -139,21 +124,6 @@
 			border-left-color: $popover-arrow-color;
 		}
 	}
-}
-
-.bs-popover-auto {
-  &[x-placement^="top"] {
-    @extend .bs-popover-top;
-  }
-  &[x-placement^="right"] {
-    @extend .bs-popover-right;
-  }
-  &[x-placement^="bottom"] {
-    @extend .bs-popover-bottom;
-  }
-  &[x-placement^="left"] {
-    @extend .bs-popover-left;
-  }
 }
 
 .popover-header {

@@ -1,10 +1,7 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Editable from '../editable';
@@ -355,12 +352,11 @@ const DotMenu = memo(props => {
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_RENAME, true, { collectionKey: collection.key }));
 		} else {
-			setRenaming(collection.key);
+			setTimeout(() => {
+				setRenaming(collection.key);
+			}, 100);
 		}
-		ev.preventDefault();
-		ev.stopPropagation();
-		setDotMenuFor(null);
-	}, [closeOnXArrowKey, collection, dispatch, isTouchOrSmall, setDotMenuFor, setRenaming]);
+	}, [closeOnXArrowKey, collection, dispatch, isTouchOrSmall, setRenaming]);
 
 	const handleDeleteClick = useCallback(ev => {
 		if(closeOnXArrowKey(ev)) {
@@ -400,8 +396,10 @@ const DotMenu = memo(props => {
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key }));
 		} else {
-			setOpened([...opened, collection.key ]);
-			addVirtual(parentLibraryKey, collection.key);
+			setTimeout(() => {
+				setOpened([...opened, collection.key ]);
+				addVirtual(parentLibraryKey, collection.key);
+			}, 0);
 		}
 	}, [addVirtual, closeOnXArrowKey, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
 
@@ -427,12 +425,12 @@ const DotMenu = memo(props => {
 	return (
 		<Dropdown
 			isOpen={ isOpen }
-			toggle={ handleToggle }
+			onToggle={ handleToggle }
+			placement="bottom-end"
 		>
 			<DropdownToggle
 				tabIndex={ -3 }
 				className="btn-icon dropdown-toggle"
-				color={ null }
 				title="More"
 				onMouseDown={ stopPropagation }
 				onClick={ handleToggle }
@@ -440,7 +438,7 @@ const DotMenu = memo(props => {
 				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
-			<DropdownMenu right>
+			<DropdownMenu>
 				<React.Fragment>
 				<DropdownItem
 					onBlur={ stopPropagation }

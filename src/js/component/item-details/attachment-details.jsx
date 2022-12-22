@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownItem from 'reactstrap/es/DropdownItem';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from '../ui/dropdown';
 import { stopPropagation, noop } from '../../utils';
 
 import Icon from 'component/ui/icon';
@@ -67,31 +64,29 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
 
-	const handleExport = useCallback(() => {
-			dispatch(exportAttachmentWithAnnotations(attachmentKey));
+	const handleExport = useCallback((ev) => {
+		ev.currentTarget.blur();
+		dispatch(exportAttachmentWithAnnotations(attachmentKey));
 	}, [attachmentKey, dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
-		const eventInsideDropdown = ev.currentTarget?.classList.contains('dropdown-item');
-
-		if (eventInsideDropdown && ["ArrowLeft", "ArrowRight", "Escape"].includes(ev.key)) {
-			setIsDropdownOpen(false);
-			ev.preventDefault();
-			ev.stopPropagation();
-			focusBySelector('.dropdown-toggle');
-		} else if (isTriggerEvent(ev) && !ev.currentTarget?.classList.contains('dropdown-toggle')) {
-			// simulate click() on button or link, except for droppdown toggle which handles its own events
-			ev.currentTarget.click();
-			ev.preventDefault();
-			ev.stopPropagation();
-		} else if (ev.key === "ArrowLeft") {
+		if (ev.key === "ArrowLeft") {
 			focusPrev(ev);
 			setIsDropdownOpen(false);
 		} else if (ev.key === "ArrowRight") {
 			focusNext(ev);
 			setIsDropdownOpen(false);
 		}
-	}, [focusBySelector, focusNext, focusPrev]);
+	}, [focusNext, focusPrev]);
+
+	// const handleClick = useCallback(ev => {
+	// 	if (isTriggerEvent(ev) && !ev.currentTarget?.classList.contains('dropdown-toggle')) {
+	// 		// simulate click() on button or link, except for droppdown toggle which handles its own events
+	// 		ev.currentTarget.click();
+	// 		ev.preventDefault();
+	// 		ev.stopPropagation();
+	// 	}
+	// }, [focusBySelector, focusNext, focusPrev]);
 
 	const handleToggleDropdown = useCallback(() => {
 		setIsDropdownOpen(state => !state);
@@ -190,19 +185,18 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 					<a
 						className="btn btn-default"
 						href={ openInReaderPath }
-						onClick={ stopPropagation }
-						onKeyDown={ handleKeyDown }
 						rel="noreferrer"
 						role="button"
 						target="_blank"
 						title="Open in Reader"
 						tabIndex={ isTouchOrSmall ? null : -2 }
+						onKeyDown={handleKeyDown }
 					>
 						Open
 					</a>
 					<Dropdown
 						isOpen={ isDropdownOpen }
-						toggle={ handleToggleDropdown }
+						onToggle={ handleToggleDropdown }
 						className="btn-group"
 					>
 						{ preppedPDFURL ? (
@@ -210,12 +204,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								className="btn btn-default export-pdf"
 								download={ preppedPDFFileName }
 								href={ preppedPDFURL }
-								onClick={ stopPropagation }
-								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
 								tabIndex={ isTouchOrSmall ? null : -2 }
 								title="Export attachment with annotations"
+								onKeyDown={handleKeyDown}
 							>
 								Download
 							</a>
@@ -224,17 +217,16 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								className='btn-default export-pdf'
 								disabled={ isPreppingPDF }
 								onClick={ handleExport }
-								onKeyDown={ handleKeyDown }
 								tabIndex={ isTouchOrSmall ? null : -2 }
+								onKeyDown={handleKeyDown}
 							>
-											{isPreppingPDF ? <React.Fragment>&nbsp;<Spinner className="small" /></React.Fragment> : "Download" }
+								{isPreppingPDF ? <React.Fragment>&nbsp;<Spinner className="small" /></React.Fragment> : "Download" }
 							</Button>
 						) }
 						<DropdownToggle
 							className="btn-default btn-icon dropdown-toggle"
-							color={ null }
-							onKeyDown={ handleKeyDown }
 							tabIndex={ isTouchOrSmall ? null : -2 }
+							onKeyDown={handleKeyDown}
 						>
 							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -243,13 +235,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 							<DropdownItem
 								className="btn"
 								href={ url }
-								onClick={ stopPropagation }
-								onKeyDown={ handleKeyDown }
 								rel="noreferrer"
 								role="button"
-								tabIndex={ isTouchOrSmall ? null : -3 }
 								target="_blank"
 								title="Download attachment"
+								tag="a"
 							>
 								Download (no annotations)
 							</DropdownItem>
@@ -261,13 +251,12 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						className="btn btn-default"
 						disabled={ !url }
 						href={ url }
-						onClick={ stopPropagation }
-						onKeyDown={ handleKeyDown }
 						rel="noreferrer"
 						role="button"
 						tabIndex={ isTouchOrSmall ? null : -2 }
 						target="_blank"
 						title="Download attachment"
+						onKeyDown={handleKeyDown}
 					>
 						Download
 					</a>

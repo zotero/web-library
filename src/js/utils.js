@@ -468,48 +468,77 @@ const parseBase64File = encoded => {
 	return { mimeType, bytes };
 }
 
+const getNextSibling = (elem, selector) => {
+	let sibling = elem.nextElementSibling;
+
+	while (sibling) {
+		if (sibling.matches(selector)) {
+			return sibling;
+		}
+		sibling = sibling.nextElementSibling;
+	}
+};
+
+const getPrevSibling = (elem, selector) => {
+	let sibling = elem.previousElementSibling;
+
+	while (sibling) {
+		if (sibling.matches(selector)) {
+			return sibling;
+		}
+		sibling = sibling.previousElementSibling;
+	}
+};
+
+const mod = (n, m) => {
+	return ((n % m) + m) % m;
+}
+
 export {
-	applyChangesToVisibleColumns,
-	cede,
-	clamp,
-	cleanDOI,
-	cleanURL,
-	compare,
-	compareItem,
-	deduplicate,
-	deduplicateByHash,
-	deduplicateByKey,
-	enumerateObjects,
-	get,
-	getAbortController,
-	getDOIURL,
-	getFieldNameFromSortKey,
-	getItemCanonicalUrl,
-	getItemFromCanonicalUrl,
-	getLibraryKeyFromTopic,
-	getRequestTypeFromItemsSource,
-	getScrollbarWidth,
-	getScrollContainerPageCount,
-	getSortKeyValue,
-	getUniqueId,
-	indexByGeneratedKey,
-	indexByKey,
-	isLikeURL,
-	JSONTryParse,
-	localStorageWrapper,
-	mapRelationsToItemKeys,
-	noop,
-	openDelayedURL,
-	parseBase64File,
-	processIdentifierMultipleItems,
-	removeRelationByItemKey,
-	resizeVisibleColumns,
-	reverseMap,
-	scrollIntoViewIfNeeded,
-	sortByKey,
-	sortItemsByKey,
-	splice,
-	stopPropagation,
-	transform,
-	vec2dist,
+    applyChangesToVisibleColumns,
+    cede,
+    clamp,
+    cleanDOI,
+    cleanURL,
+    compare,
+    compareItem,
+    deduplicate,
+    deduplicateByHash,
+    deduplicateByKey,
+    enumerateObjects,
+    get,
+    getAbortController,
+    getDOIURL,
+    getFieldNameFromSortKey,
+    getItemCanonicalUrl,
+    getItemFromCanonicalUrl,
+    getLibraryKeyFromTopic,
+    getNextSibling,
+    getPrevSibling,
+    getRequestTypeFromItemsSource,
+    getScrollbarWidth,
+    getScrollContainerPageCount,
+    getSortKeyValue,
+    getUniqueId,
+    indexByGeneratedKey,
+    indexByKey,
+    isLikeURL,
+    JSONTryParse,
+    localStorageWrapper,
+    mapRelationsToItemKeys,
+    mod,
+    noop,
+    openDelayedURL,
+    parseBase64File,
+    processIdentifierMultipleItems,
+    removeRelationByItemKey,
+    resizeVisibleColumns,
+    reverseMap,
+    scrollIntoViewIfNeeded,
+    sortByKey,
+    sortItemsByKey,
+    splice,
+    stopPropagation,
+    transform,
+    vec2dist
 };

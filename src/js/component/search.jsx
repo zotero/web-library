@@ -1,8 +1,5 @@
 import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
-import UncontrolledDropdown from 'reactstrap/es/UncontrolledDropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './ui/dropdown';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,9 +17,7 @@ const modes = {
 };
 
 const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
-	<UncontrolledDropdown
-		className="dropdown"
-	>
+	<UncontrolledDropdown>
 		<DropdownToggle
 			color={ null }
 			className="btn-icon dropdown-toggle"

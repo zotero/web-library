@@ -1,10 +1,7 @@
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Button from '../ui/button';
@@ -46,6 +43,7 @@ const BibliographyModal = () => {
 	const [output, setOutput] = useState(null);
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const wasDropdownOpen = usePrevious(isDropdownOpen);
 
 	const styleSelectorId = useRef(getUniqueId());
 	const localeSelectorId = useRef(getUniqueId());
@@ -109,20 +107,17 @@ const BibliographyModal = () => {
 		}
 	}, [copyToClipboard, output]);
 
-	const handleCopyHtmlClick = useCallback(() => {
+	const handleCopyHtmlClick = useCallback(ev => {
+		ev.preventDefault();
 		copy(output);
 		setIsHtmlCopied(true);
-		setTimeout(() => { setIsHtmlCopied(false); }, 1000);
+		dropdownTimer.current = setTimeout(() => {
+			setIsDropdownOpen(false);
+		}, 950);
+		setTimeout(() => { setIsHtmlCopied(false) }, 1000);
 	}, [output]);
 
-	const handleDropdownToggle = useCallback(ev => {
-		const isFromCopyTrigger = ev.target && ev.target.closest('.clipboard-trigger');
-		if(isDropdownOpen && isFromCopyTrigger) {
-			dropdownTimer.current = setTimeout(() => {
-				setIsDropdownOpen(false);
-			}, 950);
-			return false;
-		}
+	const handleDropdownToggle = useCallback(() => {
 		clearTimeout(dropdownTimer.current);
 		setIsDropdownOpen(!isDropdownOpen);
 	}, [isDropdownOpen]);
@@ -169,6 +164,12 @@ const BibliographyModal = () => {
 			makeOutput();
 		}
 	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
+
+	useEffect(() => {
+		if (!isDropdownOpen && wasDropdownOpen) {
+			setIsHtmlCopied(false);
+		}
+	}, [isDropdownOpen, wasDropdownOpen]);
 
 	const className = cx({
 		'bibliography-modal': true,
@@ -302,7 +303,7 @@ const BibliographyModal = () => {
 				<div className="modal-footer justify-content-end">
 					<Dropdown
 						isOpen={ isDropdownOpen }
-						toggle={ handleDropdownToggle }
+						onToggle={ handleDropdownToggle }
 						className={ cx('btn-group', { 'success': isClipboardCopied}) }
 					>
 						<Button
@@ -322,7 +323,6 @@ const BibliographyModal = () => {
 							</span>
 						</Button>
 						<DropdownToggle
-							color={ null }
 							disabled={ isUpdating }
 							className="btn-lg btn-secondary dropdown-toggle"
 						>

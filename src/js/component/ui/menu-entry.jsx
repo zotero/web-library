@@ -1,28 +1,23 @@
 import React, { memo } from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
-import NavItem from 'reactstrap/es/NavItem';
-import NavLink from 'reactstrap/es/NavLink';
-import UncontrolledDropdown from 'reactstrap/es/UncontrolledDropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './dropdown';
 
 import Icon from './icon';
 import { pick } from '../../common/immutable'
 
 const MenuEntry = props => {
 	const { label, onKeyDown, dropdown, entries, active, position, truncate } = props;
-	const ContainerTag = position === 'right' ? React.Fragment : NavItem;
-	const containerProps = position === 'right' ? {} : { active };
+	const ContainerTag = position === 'right' ? React.Fragment : 'li';
+	const tagProps = position === 'right' ? {} : { className: cx('nav-item', { active }) };
 
 	return dropdown ? (
-		<ContainerTag { ...containerProps }>
-			<UncontrolledDropdown className="dropdown">
+		<ContainerTag { ...tagProps }>
+			<UncontrolledDropdown>
 				<DropdownToggle
 					className="dropdown-toggle nav-link btn-link"
 					onKeyDown={ onKeyDown }
 					tabIndex={ -2 }
-					color={ null }
 				>
 					{ truncate ? <span className="truncate">{ label }</span> : label }
 					<Icon type="16/chevron-9" width="16" height="16" />
@@ -31,7 +26,7 @@ const MenuEntry = props => {
 					{ entries.map((entry, ind) => (
 						entry.separator ?
 							<DropdownItem key={ `divider-${ind}` } divider /> :
-							<DropdownItem key={ entry.href } href={ entry.href }>
+							<DropdownItem key={ entry.href } href={ entry.href } tag="a">
 								{ entry.label }
 							</DropdownItem>
 					))}
@@ -39,20 +34,21 @@ const MenuEntry = props => {
 			</UncontrolledDropdown>
 		</ContainerTag>
 	) : (
-		<ContainerTag { ...containerProps }>
-			<NavLink
-				{ ...pick(props, ['className', 'href', 'onKeyDown']) }
+		<ContainerTag>
+			<a className={ cx( props.className, 'nav-link') }
+				{ ...pick(props, ['href', 'onKeyDown']) }
 				{ ...pick(props, k => k.startsWith('aria-')) }
 				tabIndex={ -2 }
 			>
 				{ truncate ? <span className="truncate">{ label }</span> : label }
-			</NavLink>
+			</a>
 		</ContainerTag>
 	);
 }
 
 MenuEntry.propTypes = {
 	active: PropTypes.bool,
+	className: PropTypes.string,
 	dropdown: PropTypes.bool,
 	entries: PropTypes.array,
 	href: PropTypes.string,

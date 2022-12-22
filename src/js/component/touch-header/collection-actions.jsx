@@ -2,10 +2,7 @@ import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownItem from 'reactstrap/es/DropdownItem';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from '../ui/dropdown';
 import Icon from '../../component/ui/icon';
 import { COLLECTION_ADD } from '../../constants/modals';
 import { toggleModal } from '../../actions';
@@ -38,11 +35,11 @@ const CollectionActions = props => {
 	return (
 		<Dropdown
 			isOpen={ isOpen }
-			toggle={ handleToggleDropdown }
+			onToggle={ handleToggleDropdown }
 			className="new-item-selector"
+			placement="bottom-end"
 		>
 			<DropdownToggle
-				color={ null }
 				className="btn-link btn-icon dropdown-toggle"
 			>
 				<Icon
@@ -52,7 +49,7 @@ const CollectionActions = props => {
 					height="24"
 				/>
 			</DropdownToggle>
-			<DropdownMenu right>
+			<DropdownMenu>
 				<DropdownItem onClick={ handleNewCollectionClick }>
 					{ collectionKey && (isSingleColumn || (!isSingleColumn && (collectionHasChildren || (!collectionHasChildren && collectionParentKey)))) ?
 						"Add Subcollection" : "New Collection"

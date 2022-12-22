@@ -1,9 +1,7 @@
 import cx from 'classnames';
 import React, { useCallback, useRef, memo } from 'react';
-import UncontrolledDropdown from 'reactstrap/es/UncontrolledDropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './ui/dropdown';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDebounce } from "use-debounce";
 
@@ -95,12 +93,11 @@ const TagSelector = () => {
 					isBusy={ isBusy && !isManaging }
 					placeholder="Filter Tags"
 				/>
-				<UncontrolledDropdown className="dropdown">
+				<UncontrolledDropdown placement="top-end">
 						<DropdownToggle
 							className="btn-icon dropdown-toggle tag-selector-actions"
 							onKeyDown={ handleKeyDown }
 							tabIndex={ -2 }
-							color={ null }
 						>
 							<Icon type="16/options" width="16" height="16" />
 						</DropdownToggle>

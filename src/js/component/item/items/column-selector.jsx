@@ -3,12 +3,9 @@ import React, { memo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import columnProperties from '../../../constants/column-properties';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownItem from 'reactstrap/es/DropdownItem';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle }  from '../../ui/dropdown';
 import Icon from '../../ui/icon';
-import { applyChangesToVisibleColumns, resizeVisibleColumns } from '../../../utils';
+import { applyChangesToVisibleColumns, getPrevSibling, resizeVisibleColumns } from '../../../utils';
 import { preferenceChange, restoreColumnsOrder } from '../../../actions';
 
 const ColumnSelector = props => {
@@ -44,12 +41,12 @@ const ColumnSelector = props => {
 	}, [dispatch, columns]);
 
 	const handleToggleDropdown = useCallback(ev => {
-		if(ev.target && ev.target.dataset.noToggle) {
-			return;
-		}
-		setIsOpen(!isOpen);
+		// if(ev.target && ev.target.dataset.noToggle) {
+		// 	return;
+		// }
+		setIsOpen(isOpen => !isOpen);
 		setIsMoreColumnsVisible(false);
-	}, [isOpen]);
+	}, []);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -68,15 +65,20 @@ const ColumnSelector = props => {
 	}, [dispatch]);
 
 	const handleToggleMore = useCallback(ev => {
-		setIsMoreColumnsVisible(true);
 		ev.preventDefault();
+		ev.stopPropagation();
+		if(ev.type === 'keydown') {
+			getPrevSibling(ev.currentTarget, '.dropdown-item').focus();
+		}
+		setIsMoreColumnsVisible(true);
 	}, []);
 
 	return (
 		<Dropdown
 			isOpen={ isOpen }
-			toggle={ handleToggleDropdown }
+			onToggle={ handleToggleDropdown }
 			className="column-selector"
+			placement="bottom-end"
 		>
 			<DropdownToggle
 				aria-label="Column Selector"
@@ -88,23 +90,7 @@ const ColumnSelector = props => {
 			>
 				<Icon type={ '16/columns' } width="16" height="16" />
 			</DropdownToggle>
-			<DropdownMenu right modifiers={{
-				setMaxHeight: {
-					enabled: true,
-					order: 890,
-					fn: (data) => {
-						return {
-							...data,
-							styles: {
-								...data.styles,
-								overflow: 'auto',
-								maxHeight: 340,
-							},
-						};
-					},
-				},
-			}}
-			>
+			<DropdownMenu>
 				{ columns
 					.filter(c => c.field !== 'title')
 					.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))

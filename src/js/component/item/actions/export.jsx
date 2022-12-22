@@ -3,10 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import fileSaver from 'file-saver';
 
 import Icon from '../../ui/icon';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
 import exportFormats from '../../../constants/export-formats';
 import { currentExportItems } from '../../../actions';
 
@@ -32,8 +29,8 @@ const ExportActions = ({ onFocusNext, onFocusPrev, tabIndex }) => {
 	const itemKeysLength = useSelector(state => state.current.itemKeys.length);
 
 	const handleToggleDropdown = useCallback(() => {
-		setIsOpen(!isOpen);
-	}, [isOpen]);
+		setIsOpen(isOpen => !isOpen);
+	}, []);
 
 
 	const handleKeyDown = useCallback(ev => {
@@ -49,10 +46,13 @@ const ExportActions = ({ onFocusNext, onFocusPrev, tabIndex }) => {
 	}, [onFocusNext, onFocusPrev]);
 
 	return (
-		<Dropdown isOpen={ isOpen } toggle={ handleToggleDropdown } >
+		<Dropdown
+			isOpen={ isOpen }
+			onToggle={ handleToggleDropdown }
+			placement="bottom-start"
+		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
-				color={ null }
 				disabled={ itemKeysLength === 0 || itemKeysLength > 100 }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }

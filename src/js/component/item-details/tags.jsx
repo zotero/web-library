@@ -91,6 +91,10 @@ const Tags = props => {
 		}
 	}, [focusOnLast, tagRedacted, tags]);
 
+	const handleEditableBlur = useCallback(() => {
+		return false;
+	}, []);
+
 	const handleEdit = useCallback(ev => {
 		// if(ev.target !== ev.currentTarget) {
 		// 	return;
@@ -256,6 +260,7 @@ const Tags = props => {
 												onChange={ handleChange }
 												onClick={ handleEdit }
 												onCommit={ handleCommit }
+												onBlur={ handleEditableBlur }
 												selectOnFocus
 												suggestions={ suggestions }
 												value={ tag.tag }

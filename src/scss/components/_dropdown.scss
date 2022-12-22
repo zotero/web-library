@@ -32,7 +32,14 @@
 		z-index: $z-index-menu;
 		margin: $space-min 0;
 		display: none;
+		will-change: transform;
+		transform: translate3d(0, 0, 0);
+		top: 0;
 		left: 0; // required for correct popper js rendering
+
+		&:focus {
+			outline: none;
+		}
 
 		@include touch-or-bp-down(sm) {
 			padding: $space-xs 0;
@@ -82,9 +89,14 @@
 		}
 
 		&:hover,
-		&:focus,
 		&.active {
 			background-color: $menu-item-hover-bg;
+		}
+
+		@include scopedVariant(".keyboard") {
+			&:focus {
+				background-color: $menu-item-hover-bg;
+			}
 		}
 
 		&.selected {

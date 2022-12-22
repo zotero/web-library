@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
-import Dropdown from 'reactstrap/es/Dropdown';
-import DropdownToggle from 'reactstrap/es/DropdownToggle';
-import DropdownMenu from 'reactstrap/es/DropdownMenu';
-import DropdownItem from 'reactstrap/es/DropdownItem';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from '../../ui/icon';
@@ -88,11 +85,10 @@ const MoreActionsDropdownDesktop = memo(props => {
 		<Dropdown
 			className="new-item-selector"
 			isOpen={ isOpen }
-			toggle={ handleToggleDropdown }
+			onToggle={ handleToggleDropdown }
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
-				color={ null }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }
 				title="New Item"
@@ -146,11 +142,10 @@ const MoreActionsDropdownTouch = memo(() => {
 	return (
 		<Dropdown
 			isOpen={ isOpen }
-			toggle={ handleDropdownToggle }
+			onToggle={ handleDropdownToggle }
 		>
 			<DropdownToggle
 				disabled={ !hasAnyAction }
-				color={ null }
 				className="btn-link btn-icon dropdown-toggle item-actions-touch"
 			>
 				<Icon
@@ -160,7 +155,7 @@ const MoreActionsDropdownTouch = memo(() => {
 					height="24"
 				/>
 			</DropdownToggle>
-			{ hasAnyAction && ( <DropdownMenu right>
+			{ hasAnyAction && ( <DropdownMenu>
 				<MoreActionsItems />
 			</DropdownMenu> ) }
 		</Dropdown>

@@ -1,24 +1,25 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
+import cx from 'classnames';
 
-import NavItem from 'reactstrap/es/NavItem';
-import NavLink from 'reactstrap/es/NavLink';
 import { pick } from '../../common/immutable';
 
-const MobileMenuEntry = ({ label, ...rest }) => {
+const MobileMenuEntry = ({ className, label, ...rest }) => {
 	return (
-		<NavItem>
-			<NavLink
-				{ ...pick(rest, ['className', 'href', 'onKeyDown']) }
+		<li className="nav-item">
+			<a
+				className={ cx(className, 'nav-link') }
+				{ ...pick(rest, ['href', 'onKeyDown']) }
 				tabIndex={ -2 }
 			>
 				{ label }
-			</NavLink>
-		</NavItem>
+			</a>
+		</li>
 	);
 }
 
 MobileMenuEntry.propTypes = {
+	className: PropTypes.string,
 	label: PropTypes.string,
 }
 

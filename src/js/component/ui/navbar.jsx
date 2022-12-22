@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useRef } from 'react';
-import Nav from 'reactstrap/es/Nav';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from './button';
@@ -66,7 +65,7 @@ const Navbar = memo(({ entries = [] }) => {
 			</h1>
 			<h2 className="offscreen">Site navigation</h2>
 			<nav>
-				<Nav className="main-nav">
+				<ul className="main-nav nav">
 					{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
 						<MenuEntry
 							key={ entry.href || entry.label }
@@ -74,7 +73,7 @@ const Navbar = memo(({ entries = [] }) => {
 							{ ...entry }
 						/>
 					)) }
-				</Nav>
+				</ul>
 			</nav>
 			<Search
 				autoFocus
