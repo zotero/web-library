@@ -1,0 +1,272 @@
+{
+    "config": {
+        "apiConfig": {
+            "apiAuthorityPart": "api.zotero.org",
+            "retry": 2
+        },
+        "apiKey": null,
+        "defaultLibraryKey": "u475425",
+        "libraries": [
+            {
+                "id": "475425",
+                "key": "u475425",
+                "isMyLibrary": true,
+                "isReadOnly": true,
+                "isFileUploadAllowed": false,
+                "name": "My Library",
+                "isExternal": false,
+                "isPublic": false,
+                "slug": "zotero-user"
+            },
+            {
+                "isReadOnly": true,
+                "isFileUploadAllowed": false,
+                "slug": "a_public_library",
+                "isGroupLibrary": true,
+                "id": "123",
+                "isExternal": true,
+                "isPublic": true,
+                "key": "g123",
+                "name": "a public library"
+            }
+        ],
+        "sortBy": "title",
+        "sortDirection": "asc",
+        "streamingApiUrl": "wss://stream.zotero.org/",
+        "userId": "475425",
+        "isEmbedded": false,
+        "containterClassName": "zotero-wl",
+        "menus": {
+            "desktop": [],
+            "mobile": []
+        },
+        "noteEditorURL": "/static/note-editor/editor.html",
+        "pdfReaderURL": "/static/pdf-reader/viewer.html",
+        "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
+        "translateUrl": "http://localhost",
+        "userSlug": "zotero-user",
+        "websiteUrl": "https://www.zotero.org/",
+        "includeMyLibrary": true,
+        "includeUserGroups": false
+    },
+    "current": {
+        "collectionKey": null,
+        "editingItemKey": null,
+        "firstCollectionKey": null,
+        "firstIsTrash": null,
+        "highlightedCollections": [],
+        "isAdvancedSearch": false,
+        "isNavBarOpen": false,
+        "isSearchMode": false,
+        "isSelectMode": false,
+        "isTagSelectorOpen": true,
+        "isTouchTagSelectorOpen": false,
+        "itemKey": null,
+        "itemKeys": [],
+        "itemsSource": null,
+        "isFirstRendering": null,
+        "libraryKey": null,
+        "qmode": "titleCreatorYear",
+        "search": "",
+        "searchState": {},
+        "tags": [],
+        "tagsHideAutomatic": false,
+        "tagsSearchString": "",
+        "userLibraryKey": "u475425",
+        "useTransitions": false,
+        "view": "library"
+    },
+    "device": {
+        "isKeyboardUser": false,
+        "isMouseUser": null,
+        "isSingleColumn": false,
+        "isTouchOrSmall": false,
+        "isTouchUser": null,
+        "scrollbarWidth": 0,
+        "shouldUseEditMode": false,
+        "shouldUseModalCreatorField": false,
+        "shouldUseSidebar": false,
+        "shouldUseTabs": false,
+        "userType": "mouse",
+        "xxs": false,
+        "xs": false,
+        "sm": false,
+        "md": false,
+        "lg": false
+    },
+    "errors": [],
+    "fetching": {
+        "creatorTypes": [],
+        "itemTemplates": [],
+        "itemTypeCreatorTypes": [],
+        "itemTypeFields": [],
+        "tagsInLibrary": [],
+        "meta": false,
+        "allGroups": false
+    },
+    "groups": [],
+    "identifier": {
+        "isError": false,
+        "isSearching": false,
+        "session": null,
+        "result": null,
+        "item": null,
+        "items": null,
+        "identifier": null,
+        "identifierIsUrl": null,
+        "next": null
+    },
+    "itemsPublications": {},
+    "libraries": {},
+    "meta": {
+        "itemTypes": [],
+        "itemFields": [],
+        "creatorFields": [],
+        "itemTypeCreatorTypes": {},
+        "itemTypeFields": {},
+        "itemTemplates": {},
+        "invalidated": false
+    },
+    "modal": {
+        "id": null
+    },
+    "ongoing": [],
+    "preferences": {
+        "defaultPreferences": {
+            "citationStyle": "modern-language-association",
+            "citationLocale": "en-US",
+            "installedCitationStyles": [],
+            "columns": [
+                {
+                    "field": "title",
+                    "fraction": 0.45,
+                    "isVisible": true,
+                    "minFraction": 0.1,
+                    "sort": "asc"
+                },
+                {
+                    "field": "creator",
+                    "fraction": 0.3,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "date",
+                    "fraction": 0.2,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "itemType",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "year",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "publisher",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "publicationTitle",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "journalAbbreviation",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "language",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "libraryCatalog",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "callNumber",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "rights",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "dateAdded",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "dateModified",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "extra",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "createdByUser",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "attachment",
+                    "fraction": 0.05,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                }
+            ]
+        }
+    },
+    "query": {
+        "current": {},
+        "isFetching": false,
+        "itemKeys": [],
+        "requests": [],
+        "tags": {},
+        "totalResults": null
+    },
+    "sources": {
+        "fetching": [],
+        "fetched": []
+    },
+    "styles": {
+        "isFetching": false,
+        "stylesData": null
+    },
+    "traffic": {},
+    "router": {
+        "location": {
+            "pathname": "/",
+            "search": "",
+            "hash": "",
+            "query": {}
+        },
+        "action": "POP"
+    }
+}

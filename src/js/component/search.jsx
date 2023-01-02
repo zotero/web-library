@@ -195,6 +195,7 @@ const Search = props => {
 				onSelectMode={ handleSelectMode }
 			/>
 			<input
+				aria-label={ modes[qmodeValue] }
 				autoFocus={ autoFocus }
 				className="form-control search-input with-dropdown"
 				onBlur={ handleBlur }

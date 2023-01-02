@@ -77,9 +77,15 @@ const Loader = () => {
 
 	useEffect(() => {
 		dispatch(preferencesLoad());
-		dispatch(initialize());
+
+		if (!itemTypes || !itemFields || !creatorFields) {
+			dispatch(initialize());
+		}
+		if (!tagColors) {
+			dispatch(fetchLibrarySettings(libraryKey));
+		}
+
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
-		dispatch(fetchLibrarySettings(libraryKey));
 		dispatch(toggleTransitions(true));
 
 		if(isReader && config.includeUserGroups && libraryKey !== userLibraryKey) {

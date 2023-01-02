@@ -173,7 +173,7 @@ const TagSelectorItems = () => {
 					ref={ listRef }
 					className="tag-selector-list"
 				>
-					{ tags.filter(t => !!t).map(tag => (
+					{ tags.filter(t => t && t.tag).map(tag => (
 						<Tag key={ tag.tag } tag={ tag } onClick={ handleClick } onKeyDown={ handleKeyDown } />
 					)) }
 				</ul>

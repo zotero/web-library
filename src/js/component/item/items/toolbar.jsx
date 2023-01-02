@@ -12,6 +12,7 @@ const ItemsTableToolbar = () => {
 	return (
 		<header className="hidden-sm-down">
 			<Toolbar
+				aria-label="items toolbar"
 				className="hidden-touch hidden-sm-down"
 				onFocus={ receiveFocus }
 				onBlur={ receiveBlur }

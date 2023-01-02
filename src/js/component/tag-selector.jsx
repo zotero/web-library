@@ -62,7 +62,8 @@ const TagSelector = () => {
 	}, [dispatch]);
 
 	return (
-		<div
+		<nav
+			aria-label="tag selector"
 			id={ id.current }
 			className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }
 		>
@@ -92,6 +93,7 @@ const TagSelector = () => {
 					value={ isManaging ? "" : tagsSearchString }
 					isBusy={ isBusy && !isManaging }
 					placeholder="Filter Tags"
+					aria-label="Filter Tags"
 				/>
 				<UncontrolledDropdown placement="top-end">
 						<DropdownToggle
@@ -124,7 +126,7 @@ const TagSelector = () => {
 						</DropdownMenu>
 				</UncontrolledDropdown>
 			</div>
-		</div>
+		</nav>
 	);
 };
 

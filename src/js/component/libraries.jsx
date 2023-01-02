@@ -279,7 +279,7 @@ const Libraries = forwardRef((props, ref) => {
 		const selectedLibraryNode = treeRef?.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
 		if(selectedLibraryNode && !isTouchOrSmall && !isPickerMode && !firstCollectionKey && !firstIsTrash) {
 			// wait for other effect to dispatch and process toggleOpen, then scroll on next frame
-			setTimeout(() => selectedLibraryNode.scrollIntoView(), 0);
+			setTimeout(() => selectedLibraryNode?.scrollIntoView?.(), 0);
 		}
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
