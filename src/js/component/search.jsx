@@ -23,6 +23,7 @@ const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
 			className="btn-icon dropdown-toggle"
 			tabIndex={ -2 }
 			onKeyDown={ onKeyDown }
+			title="Search Mode"
 		>
 			<Icon type={ '24/search-options' } width="24" height="24" />
 		</DropdownToggle>
@@ -214,6 +215,7 @@ const Search = props => {
 					onClick={ handleSearchClear }
 					tabIndex={ -2 }
 					onKeyDown={ handleKeyDown }
+					aria-label="Clear Search"
 				>
 					<Icon type={ '10/x' } width="10" height="10" />
 				</Button>

@@ -100,6 +100,7 @@ const TagSelector = () => {
 							className="btn-icon dropdown-toggle tag-selector-actions"
 							onKeyDown={ handleKeyDown }
 							tabIndex={ -2 }
+							title="Tag Selector Options"
 						>
 							<Icon type="16/options" width="16" height="16" />
 						</DropdownToggle>

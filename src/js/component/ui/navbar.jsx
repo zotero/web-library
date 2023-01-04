@@ -63,8 +63,8 @@ const Navbar = memo(({ entries = [] }) => {
 					Zotero
 				</a>
 			</h1>
-			<h2 className="offscreen">Site navigation</h2>
-			<nav>
+			<h2 id="site-navigation" className="offscreen">Site navigation</h2>
+			<nav aria-labelledby="site-navigation">
 				<ul className="main-nav nav">
 					{ entries.filter(e => e.position === 'left' || !e.position).map( entry => (
 						<MenuEntry
