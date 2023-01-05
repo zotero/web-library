@@ -1,0 +1,19 @@
+[
+    {
+        "tag": "Zotero API",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Zotero+API",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Zotero+API",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    }
+]

@@ -2,15 +2,21 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, getByRole, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render'
+import { JSONtoState } from './utils/state'
 import { MainZotero } from '../src/js/component/main'
 import itemTypes from './fixtures/item-types';
 import itemFields from './fixtures/item-fields';
 import creatorFields from './fixtures/creator-fields';
 import minState from './fixtures/state/minimal.json';
-import state from './fixtures/state/zotero-user.json';
+import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
+import searchResults from './fixtures/zotero-user-search-results.json';
+import searchResultsTags from './fixtures/zotero-user-search-results-tags.json';
+
+const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 
 // disable streaming client
 jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
@@ -21,6 +27,15 @@ jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ hei
 // dropdowns and such update positions asynchronously trigger 'act' warning
 // this is a workaround to silence the warning (https://floating-ui.com/docs/react#testing)
 const waitForPosition = () => act(async () => { });
+
+
+const actWithFakeTimers = async actCallback => {
+	const user = userEvent.setup({ advanceTimers: () => jest.runAllTimers() });
+	jest.useFakeTimers();
+	await actCallback(user);
+	act(() => jest.runOnlyPendingTimers());
+	jest.useRealTimers();
+}
 
 const resizeWindow = (x, y) => {
 	window.innerWidth = x;
@@ -43,9 +58,6 @@ describe('Loading Screen', () => {
 			return res(ctx.json({}));
 		}),
 		rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {
-			if (!req.url.searchParams.get('start')) {
-				console.log('collections start 0', req.method, req.url.href);
-			}
 			return res((res) => {
 				res.headers.set('Total-Results', 5142);
 				res.body = JSON.stringify([]);
@@ -98,7 +110,7 @@ describe('Zotero User\'s read-only library', () => {
 	afterAll(() => server.close());
 
 	test('Shows all UI elements', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: state });
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
 		await waitForPosition();
 		expect(screen.queryByRole('img', { name: 'Loading' })).not.toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'Zotero' })).toBeInTheDocument();
@@ -117,5 +129,54 @@ describe('Zotero User\'s read-only library', () => {
 		expect(screen.getByRole('toolbar', { name: 'items toolbar' })).toBeInTheDocument();
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
 		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+	});
+
+	test('Entering text into search box runs search, clearing it clears search', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		server.use(
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 1);
+					res.body = JSON.stringify(searchResultsTags);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 15);
+					res.body = JSON.stringify(searchResults);
+					return res;
+				});
+			})
+		);
+
+		expect(screen.queryByRole('button', { name: 'Clear Search' })).not.toBeInTheDocument();
+		const searchBox = screen.getByRole('searchbox', { name: 'Title, Creator, Year' });
+
+		await actWithFakeTimers(user => user.type(searchBox, 'Zotero'));
+		await waitForPosition();
+
+		const clearSearchButton = screen.getByRole('button', { name: 'Clear Search' });
+		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
+
+		expect(searchBox).toHaveValue('Zotero');
+		expect(clearSearchButton).toBeInTheDocument();
+
+		expect(screen.getByText('15 items in this view')).toBeInTheDocument();
+		expect(getByRole(tagSelector, 'button', { name: 'Zotero API' })).toBeInTheDocument();
+		expect(screen.getByRole('row', { name: 'Zotero | Home' })).toBeInTheDocument();
+
+		await actWithFakeTimers(user => user.click(clearSearchButton));
+		await waitForPosition();
+
+		expect(searchBox).toHaveValue('');
+
+		await waitFor(() =>
+			screen.getByRole('row', { name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+		);
+
+		expect(screen.queryByRole('row', { name: 'Zotero | Home' })).not.toBeInTheDocument();
 	});
 });

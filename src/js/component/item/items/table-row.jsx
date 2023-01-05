@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
@@ -22,7 +22,7 @@ const selectItem = (itemKey, ev, dispatch) => {
 }
 
 const TitleCell = memo(props => {
-	const { columnName, colIndex, width, isFocused, isSelected, itemData } = props;
+	const { columnName, colIndex, width, isFocused, isSelected, labelledById, itemData } = props;
 	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
 
 	return (
@@ -38,7 +38,7 @@ const TitleCell = memo(props => {
 				width="16"
 				height="16"
 			/>
-			<div className="truncate">
+			<div className="truncate" id={ labelledById }>
 				{ itemData[columnName] }
 			</div>
 			<div className="tag-colors">
@@ -142,6 +142,8 @@ PlaceholderCell.propTypes = {
 };
 
 const TableRow = props => {
+	const id = useId();
+	const labelledById = `${id}-title`;
 	const dispatch = useDispatch();
 	const ref = useRef();
 	const ignoreClicks = useRef({});
@@ -304,6 +306,7 @@ const TableRow = props => {
 		<div
 			aria-selected={ isSelected }
 			aria-rowindex={ index + 1 }
+			aria-labelledby={ labelledById }
 			className={ className }
 			style={ style }
 			data-index={ index }
@@ -318,6 +321,7 @@ const TableRow = props => {
 			{ columns.map((c, colIndex) => itemData ? (
 				c.field === 'title' ? (
 					<TitleCell
+						labelledById={ labelledById }
 						key={ c.field }
 						colIndex={ colIndex }
 						columnName={ c.field }
