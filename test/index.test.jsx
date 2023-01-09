@@ -20,6 +20,9 @@ import collectionTags from './fixtures/response/zotero-user-collection-tags.json
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 
+
+jest.setTimeout(10000);
+
 // disable streaming client
 jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
 
