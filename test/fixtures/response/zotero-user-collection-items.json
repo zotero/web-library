@@ -1,0 +1,854 @@
+[
+    {
+        "key": "3RDD646E",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/3RDD646E",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/3RDD646E",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Confederate History Symposium",
+            "parsedDate": "1984",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3RDD646E",
+            "version": 1,
+            "itemType": "book",
+            "title": "1984 Confederate History Symposium: Hill Junior College, Hillsboro, Texas, April 14, 1984",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Confederate History Symposium"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "[Hillsboro, Tex",
+            "publisher": "Hill Junior College",
+            "date": "1984",
+            "numPages": "117",
+            "language": "",
+            "ISBN": "",
+            "shortTitle": "1984 Confederate History Symposium",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "i-share.carli.illinois.edu Library Catalog",
+            "callNumber": "E487",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "Civil War, 1861-1865",
+                    "type": 1
+                },
+                {
+                    "tag": "Confederate States of America",
+                    "type": 1
+                },
+                {
+                    "tag": "History",
+                    "type": 1
+                },
+                {
+                    "tag": "Lee, Robert E",
+                    "type": 1
+                },
+                {
+                    "tag": "Robert Edward",
+                    "type": 1
+                },
+                {
+                    "tag": "United States",
+                    "type": 1
+                }
+            ],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {},
+            "dateAdded": "2011-03-20T17:07:22Z",
+            "dateModified": "2011-03-20T17:07:22Z"
+        }
+    },
+    {
+        "key": "CGSH4QJS",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/CGSH4QJS",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/CGSH4QJS",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "CGSH4QJS",
+            "version": 1,
+            "itemType": "webpage",
+            "title": "Bryn Mawr Classical Review 2011.01.20",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "http://bmcr.brynmawr.edu/2011/2011-01-20.html",
+            "accessDate": "2011-01-18T23:24:12Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/D534XCVX"
+            },
+            "dateAdded": "2011-01-18T23:24:12Z",
+            "dateModified": "2011-01-18T23:24:12Z"
+        }
+    },
+    {
+        "key": "Q8843GGU",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/Q8843GGU",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/Q8843GGU",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "parsedDate": "2010",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "Q8843GGU",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "Cover",
+            "creators": [],
+            "abstractNote": "",
+            "publicationTitle": "Huntington Library Quarterly",
+            "volume": "73",
+            "issue": "3",
+            "pages": "C1-C4",
+            "date": "09/2010",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "Huntington Library Quarterly",
+            "language": "",
+            "DOI": "10.1525/hlq.2010.73.3.cover",
+            "ISSN": "0018-7895",
+            "shortTitle": "",
+            "url": "http://caliber.ucpress.net/doi/abs/10.1525/hlq.2010.73.3.cover",
+            "accessDate": "2011-01-13T02:26:21Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "CrossRef",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/EI2CXG97"
+            },
+            "dateAdded": "2011-01-13T02:26:21Z",
+            "dateModified": "2011-01-13T02:26:21Z"
+        }
+    },
+    {
+        "key": "GSI5KGHX",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/GSI5KGHX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/GSI5KGHX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "GSI5KGHX",
+            "version": 1,
+            "itemType": "webpage",
+            "title": "DHQ: Digital Humanities Quarterly: Interpretative Quests in Theory and Pedagogy",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "http://www.digitalhumanities.org/dhq/vol/1/1/000002/000002.html",
+            "accessDate": "2011-01-14T18:44:00Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/DDFA2KH4"
+            },
+            "dateAdded": "2011-01-14T18:44:00Z",
+            "dateModified": "2011-01-14T18:44:00Z"
+        }
+    },
+    {
+        "key": "D95D6X2T",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/D95D6X2T",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/D95D6X2T",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Arkush",
+            "parsedDate": "2009-10-01",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "D95D6X2T",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "From Diaspora Nationalism to Radical Diasporism",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Allan",
+                    "lastName": "Arkush"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Modern Judaism",
+            "volume": "29",
+            "issue": "3",
+            "pages": "326-350",
+            "date": "October 01, 2009",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "02761114",
+            "shortTitle": "",
+            "url": "http://www.jstor.org/stable/25609479",
+            "accessDate": "2011-01-13T02:29:37Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "ArticleType: research-article / Full publication date: Oct., 2009 / Copyright © 2009 Oxford University Press",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/UF55EFXN"
+            },
+            "dateAdded": "2011-01-13T02:29:37Z",
+            "dateModified": "2011-01-13T02:29:37Z"
+        }
+    },
+    {
+        "key": "6ACCS8DK",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/6ACCS8DK",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/6ACCS8DK",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "parsedDate": "2010",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "6ACCS8DK",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "Front Matter",
+            "creators": [],
+            "abstractNote": "",
+            "publicationTitle": "Huntington Library Quarterly",
+            "volume": "73",
+            "issue": "3",
+            "pages": "C2-ii",
+            "date": "09/2010",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "Huntington Library Quarterly",
+            "language": "",
+            "DOI": "10.1525/hlq.2010.73.3.fm",
+            "ISSN": "0018-7895",
+            "shortTitle": "",
+            "url": "http://caliber.ucpress.net/doi/abs/10.1525/hlq.2010.73.3.fm",
+            "accessDate": "2011-01-13T02:26:23Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "CrossRef",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/CSD79BJQ"
+            },
+            "dateAdded": "2011-01-13T02:26:23Z",
+            "dateModified": "2011-01-13T02:26:23Z"
+        }
+    },
+    {
+        "key": "PKGRUWTN",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/PKGRUWTN",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/PKGRUWTN",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "parsedDate": "2005-01-01",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "PKGRUWTN",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "Front Matter",
+            "creators": [],
+            "abstractNote": "",
+            "publicationTitle": "Archives of Asian Art",
+            "volume": "55",
+            "issue": "",
+            "pages": "",
+            "date": "January 01, 2005",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "00666637",
+            "shortTitle": "",
+            "url": "http://www.jstor.org/stable/20111323",
+            "accessDate": "2011-01-13T02:28:38Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "ArticleType: misc / Full publication date: 2005 / Copyright © 2005 Asia Society",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/UIEAU758"
+            },
+            "dateAdded": "2011-01-13T02:28:38Z",
+            "dateModified": "2011-01-13T02:28:38Z"
+        }
+    },
+    {
+        "key": "SJX27QXV",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/SJX27QXV",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/SJX27QXV",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Raben",
+            "parsedDate": "2007",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "SJX27QXV",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "Introducing Issues in Humanities Computing",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Joseph",
+                    "lastName": "Raben"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "",
+            "volume": "1",
+            "issue": "1",
+            "pages": "",
+            "date": "Spring 2007",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "http://www.digitalhumanities.org/dhq/vol/1/1/000008/000008.html",
+            "accessDate": "2011-01-14T18:44:19Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Digital Humanities Quarterly",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/NFPZWXAS"
+            },
+            "dateAdded": "2011-01-14T18:44:19Z",
+            "dateModified": "2011-01-14T18:44:19Z"
+        }
+    },
+    {
+        "key": "H6CETZ3V",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/H6CETZ3V",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/H6CETZ3V",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Richards and Schurink",
+            "parsedDate": "2010",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "H6CETZ3V",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "Introduction: The Textuality and Materiality of Reading in Early Modern England",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jennifer",
+                    "lastName": "Richards"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Fred",
+                    "lastName": "Schurink"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Huntington Library Quarterly",
+            "volume": "73",
+            "issue": "3",
+            "pages": "345-361",
+            "date": "09/2010",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "Huntington Library Quarterly",
+            "language": "",
+            "DOI": "10.1525/hlq.2010.73.3.345",
+            "ISSN": "0018-7895",
+            "shortTitle": "Introduction",
+            "url": "http://caliber.ucpress.net/doi/abs/10.1525/hlq.2010.73.3.345",
+            "accessDate": "2011-01-13T02:26:27Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "CrossRef",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/KXADJPCX"
+            },
+            "dateAdded": "2011-01-13T02:26:27Z",
+            "dateModified": "2011-01-13T02:26:27Z"
+        }
+    },
+    {
+        "key": "Q553VBZE",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/Q553VBZE",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/Q553VBZE",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Hamel",
+            "parsedDate": "1913",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "Q553VBZE",
+            "version": 1,
+            "itemType": "book",
+            "title": "Lady Hester Lucy Stanhope: a new light on her life and love affairs.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Frank.",
+                    "lastName": "Hamel"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "London, New York [etc.]",
+            "publisher": "Cassell and company, ltd.",
+            "date": "1913",
+            "numPages": "",
+            "language": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "http://catalog.hathitrust.org/Record/000768963",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "",
+            "callNumber": "",
+            "rights": "",
+            "extra": "2 p. L., [iii]-xvi, 348 p.",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/TIFT5NCE"
+            },
+            "dateAdded": "2011-01-27T17:32:18Z",
+            "dateModified": "2011-01-27T17:32:18Z"
+        }
+    },
+    {
+        "key": "ED8SMRVF",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/ED8SMRVF",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/ED8SMRVF",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Smith",
+            "parsedDate": "2010",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "ED8SMRVF",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "“More swete vnto the eare / than holsome for ye mynde”: Embodying Early Modern Women's Reading",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Helen",
+                    "lastName": "Smith"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Huntington Library Quarterly",
+            "volume": "73",
+            "issue": "3",
+            "pages": "413-432",
+            "date": "09/2010",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "Huntington Library Quarterly",
+            "language": "",
+            "DOI": "10.1525/hlq.2010.73.3.413",
+            "ISSN": "0018-7895",
+            "shortTitle": "“More swete vnto the eare / than holsome for ye mynde”",
+            "url": "http://caliber.ucpress.net/doi/abs/10.1525/hlq.2010.73.3.413",
+            "accessDate": "2011-01-13T02:26:30Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "CrossRef",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/RBJSR8NM"
+            },
+            "dateAdded": "2011-01-13T02:26:30Z",
+            "dateModified": "2011-01-13T02:26:30Z"
+        }
+    },
+    {
+        "key": "TCW9QJP5",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/TCW9QJP5",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/TCW9QJP5",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Inbari",
+            "parsedDate": "2009-10-01",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "TCW9QJP5",
+            "version": 1,
+            "itemType": "journalArticle",
+            "title": "When Prophecy Fails? The Theology of the Oslo Process—Rabbinical Responses to a Crisis of Faith",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Motti",
+                    "lastName": "Inbari"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Modern Judaism",
+            "volume": "29",
+            "issue": "3",
+            "pages": "303-325",
+            "date": "October 01, 2009",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "02761114",
+            "shortTitle": "When Prophecy Fails?",
+            "url": "http://www.jstor.org/stable/25609478",
+            "accessDate": "2011-01-13T02:29:34Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "ArticleType: research-article / Full publication date: Oct., 2009 / Copyright © 2009 Oxford University Press",
+            "tags": [],
+            "collections": [
+                "9MK5KS97"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/KJ3NXH4I"
+            },
+            "dateAdded": "2011-01-13T02:29:34Z",
+            "dateModified": "2011-01-13T02:29:34Z"
+        }
+    }
+]

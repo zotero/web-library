@@ -114,6 +114,7 @@ const ItemsNode = memo(props => {
 	return (
 		<Node
 			aria-labelledby={ id.current }
+			aria-selected={ isSelected }
 			className={ cx({ 'selected': isSelected })}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -216,6 +217,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 	return (
 		<Node
 			aria-labelledby={ id.current }
+			aria-selected={ isSelected }
 			className={ cx({
 				'publications': true,
 				'selected': isSelected
@@ -265,6 +267,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 	return (
 		<Node
 			aria-labelledby={ id.current }
+			aria-selected={ isSelected }
 			className={ cx({
 				'trash': true,
 				'selected': isSelected
@@ -669,6 +672,7 @@ const CollectionNode = memo(props => {
 				'collection': true,
 			})}
 			aria-labelledby={ id.current }
+			aria-selected={ !isPickerMode && derivedData[collection.key].isSelected }
 			data-collection-key={ collection.key }
 			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents } }
 			isFileUploadAllowed={ isFileUploadAllowed }

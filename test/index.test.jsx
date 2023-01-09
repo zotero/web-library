@@ -5,16 +5,18 @@ import { setupServer } from 'msw/node'
 import { act, getByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { renderWithProviders } from './utils/render'
-import { JSONtoState } from './utils/state'
-import { MainZotero } from '../src/js/component/main'
-import itemTypes from './fixtures/item-types';
-import itemFields from './fixtures/item-fields';
-import creatorFields from './fixtures/creator-fields';
+import { renderWithProviders } from './utils/render';
+import { JSONtoState } from './utils/state';
+import { MainZotero } from '../src/js/component/main';
 import minState from './fixtures/state/minimal.json';
 import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
-import searchResults from './fixtures/zotero-user-search-results.json';
-import searchResultsTags from './fixtures/zotero-user-search-results-tags.json';
+import itemTypes from './fixtures/response/item-types';
+import itemFields from './fixtures/response/item-fields';
+import creatorFields from './fixtures/response/creator-fields';
+import searchResults from './fixtures/response/zotero-user-search-results.json';
+import searchResultsTags from './fixtures/response/zotero-user-search-results-tags.json';
+import collectionItems from './fixtures/response/zotero-user-collection-items.json';
+import collectionTags from './fixtures/response/zotero-user-collection-tags.json';
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 
@@ -173,10 +175,64 @@ describe('Zotero User\'s read-only library', () => {
 
 		expect(searchBox).toHaveValue('');
 
-		await waitFor(() =>
-			screen.getByRole('row', { name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+		expect(screen.getByRole('row',
+			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+		).toBeInTheDocument();
+
+		expect(screen.queryByRole('row',
+			{ name: 'Zotero | Home' })
+		).not.toBeInTheDocument();
+	});
+
+	test('Navigating to a collection', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		server.use(
+			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 12);
+					res.body = JSON.stringify(collectionItems);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 6);
+					res.body = JSON.stringify(collectionTags);
+					return res;
+				});
+			}),
 		);
 
-		expect(screen.queryByRole('row', { name: 'Zotero | Home' })).not.toBeInTheDocument();
+		expect(screen.getByRole('treeitem',
+			{ name: 'My Library', selected: true })
+		).toBeInTheDocument();
+
+		const collectionItem = screen.getByRole('treeitem',{ name: 'Humanities', selected: false });
+		await actWithFakeTimers(user => user.click(collectionItem));
+		await waitForPosition();
+
+		expect(screen.getByRole('treeitem',
+			{ name: 'Humanities', selected: true })
+		).toBeInTheDocument();
+
+		expect(screen.queryByRole('treeitem',
+			{ name: 'My Library', selected: true })
+		).not.toBeInTheDocument();
+
+		expect(screen.queryByRole('treeitem',
+			{ name: 'My Library', selected: false })
+		).toBeInTheDocument();
+
+		expect(screen.getByRole('row',
+			{ name: 'Lady Hester Lucy Stanhope: a new light on her life and love affairs.' })
+		).toBeInTheDocument();
+
+		expect(screen.queryByRole('row',
+			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+		).not.toBeInTheDocument();
+
+		expect(screen.getByText('12 items in this view')).toBeInTheDocument();
 	});
 });

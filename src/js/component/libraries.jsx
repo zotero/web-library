@@ -95,6 +95,7 @@ const LibraryNode = props => {
 				'busy': shouldShowSpinner
 			}) }
 			aria-labelledby={ id.current }
+			aria-selected={ isSelected && !isPickerMode }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ isOpen && !shouldShowSpinner }
