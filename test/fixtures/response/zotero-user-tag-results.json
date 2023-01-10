@@ -1,0 +1,114 @@
+[
+    {
+        "key": "J3MJMN9U",
+        "version": 1,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "Z public library",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/z_public_library",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/items/J3MJMN9U",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/z_public_library/items/J3MJMN9U",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Spielberg et al.",
+            "parsedDate": "2008",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "J3MJMN9U",
+            "version": 1,
+            "itemType": "film",
+            "title": "Indiana Jones and the Temple of Doom",
+            "creators": [
+                {
+                    "creatorType": "contributor",
+                    "firstName": "Steven",
+                    "lastName": "Spielberg"
+                },
+                {
+                    "creatorType": "contributor",
+                    "firstName": "Harrison",
+                    "lastName": "Ford"
+                },
+                {
+                    "creatorType": "contributor",
+                    "firstName": "Kate",
+                    "lastName": "Capshaw"
+                },
+                {
+                    "creatorType": "contributor",
+                    "firstName": "Amrish",
+                    "lastName": "Puri"
+                }
+            ],
+            "abstractNote": "",
+            "distributor": "Paramount",
+            "date": "2008",
+            "genre": "",
+            "videoRecordingFormat": "",
+            "runningTime": "",
+            "language": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "josiah.brown.edu Library Catalog",
+            "callNumber": "PN1997.I5353",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "Adventure films",
+                    "type": 1
+                },
+                {
+                    "tag": "Antiquities",
+                    "type": 1
+                },
+                {
+                    "tag": "Fantasy films",
+                    "type": 1
+                },
+                {
+                    "tag": "Feature films",
+                    "type": 1
+                },
+                {
+                    "tag": "Fiction films",
+                    "type": 1
+                },
+                {
+                    "tag": "Film sequels",
+                    "type": 1
+                },
+                {
+                    "tag": "Jones, Indiana (Fictitious character)",
+                    "type": 1
+                }
+            ],
+            "collections": [
+                "ZXRVVG77"
+            ],
+            "relations": {
+                "owl:sameAs": "http://zotero.org/groups/36222/items/53TFNFJ6"
+            },
+            "dateAdded": "2011-01-18T23:20:36Z",
+            "dateModified": "2011-01-18T23:20:36Z"
+        }
+    }
+]

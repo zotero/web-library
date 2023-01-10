@@ -40,6 +40,7 @@ const Tag = memo(props => {
 		role="button"
 		style={ tag.color && { color: tag.color} }
 		tabIndex={ tag.disabled ? null : -2 }
+		aria-pressed={ tag.selected }
 		>
 			<span className="tag-label">{ tag.tag }</span>
 		</li>

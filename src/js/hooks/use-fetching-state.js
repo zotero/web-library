@@ -116,7 +116,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		}
 
 		for(let tag of sourceTags) {
-			if(typeof(tag) === 'undefined') {
+			if(typeof(tag) === 'undefined' || tag === null) {
 				if(isFiltering && shouldSkipDisabledAndSelected) {
 					continue;
 				}

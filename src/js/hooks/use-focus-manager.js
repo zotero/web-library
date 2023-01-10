@@ -190,7 +190,7 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 	const receiveBlur = useCallback(ev => {
 		if(ev.relatedTarget &&
 			(ev.relatedTarget === ref.current || (
-			!ev.relatedTarget.dataFocusRoot && ev.relatedTarget.closest('[data-focus-root]') === ref.current))
+			!ev?.relatedTarget?.dataFocusRoot && ev?.relatedTarget?.closest?.('[data-focus-root]') === ref.current))
 		) {
 			return false;
 		}

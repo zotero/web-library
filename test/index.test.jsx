@@ -2,7 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { act, getByRole, screen, waitFor } from '@testing-library/react'
+import { act, getByRole, getAllByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -17,9 +17,10 @@ import searchResults from './fixtures/response/zotero-user-search-results.json';
 import searchResultsTags from './fixtures/response/zotero-user-search-results-tags.json';
 import collectionItems from './fixtures/response/zotero-user-collection-items.json';
 import collectionTags from './fixtures/response/zotero-user-collection-tags.json';
+import tagResults from './fixtures/response/zotero-user-tag-results.json';
+import tagResultsTags from './fixtures/response/zotero-user-tag-results-tags.json';
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
-
 
 jest.setTimeout(10000);
 
@@ -28,6 +29,8 @@ jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
 
 // mock auto-sizer (https://github.com/bvaughn/react-window/issues/454)
 jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 640 }));
+
+Element.prototype.scrollIntoView = jest.fn();
 
 // dropdowns and such update positions asynchronously trigger 'act' warning
 // this is a workaround to silence the warning (https://floating-ui.com/docs/react#testing)
@@ -237,5 +240,67 @@ describe('Zotero User\'s read-only library', () => {
 		).not.toBeInTheDocument();
 
 		expect(screen.getByText('12 items in this view')).toBeInTheDocument();
+	});
+
+	test('Filtering tags', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		const filterTagsInput = screen.getByRole('searchbox', { name: 'Filter Tags' });
+
+		await actWithFakeTimers(user => user.type(filterTagsInput, 'Film'));
+		await waitForPosition();
+
+		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
+		const tagButtons = getAllByRole(tagSelector, 'button')
+			.filter(tb => tb.getAttribute('aria-label') !== 'collapse tag selector')
+			.filter(tb => tb.getAttribute('title') !== 'Tag Selector Options');
+
+		expect(tagButtons).toHaveLength(8);
+	});
+
+	test('Filtering items by tag', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		server.use(
+			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 1);
+					res.body = JSON.stringify(tagResults);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 7);
+					res.body = JSON.stringify(tagResultsTags);
+					return res;
+				});
+			})
+		);
+
+		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
+		const tagButton = getByRole(tagSelector, 'button', { name: 'Adventure films', pressed: false });
+
+		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+
+		await actWithFakeTimers(user => user.click(tagButton));
+		await waitForPosition();
+
+		expect(screen.getByRole('row',
+			{ name: 'Indiana Jones and the Temple of Doom' })
+		).toBeInTheDocument();
+
+		expect(getByRole(tagSelector, 'button',
+			{ name: 'Adventure films', pressed: true })
+		).toBeInTheDocument();
+
+		expect(getByRole(tagSelector, 'button',
+			{ name: 'Fantasy films', pressed: false })
+		).toBeInTheDocument();
+
+		expect(screen.getByText('1 item in this view')).toBeInTheDocument();
+
 	});
 });
