@@ -11,7 +11,7 @@ import { configure } from './actions';
 const init = (element, config = {}) => {
 	const libraries = { ...defaults.libraries, ...config.libraries };
 	const apiConfig = { ...defaults.apiConfig, ...config.apiConfig };
-	const store = setupStore();
+	const { store, history } = setupStore();
 
 	store.dispatch(
 		configure({ ...defaults, ...config, apiConfig, libraries })
@@ -41,7 +41,7 @@ const init = (element, config = {}) => {
 	}
 
 	const root = createRoot(element);
-	root.render(<Main store={ store } />);
+	root.render(<Main store={ store } history={ history } />);
 }
 
 export default init;

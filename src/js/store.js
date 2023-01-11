@@ -6,11 +6,14 @@ import { createBrowserHistory } from 'history';
 
 import createReducers from './reducers';
 
-export const history = createBrowserHistory();
+export const setupStore = preloadedState => {
+	const history = createBrowserHistory();
+	const store = configureStore({
+		reducer: createReducers({ router: connectRouter(history) }),
+		middleware: [routerMiddleware(history), ReduxThunk, ReduxAsyncQueue],
+		devTools: true,
+		preloadedState
+	});
 
-export const setupStore = preloadedState => configureStore({
-	reducer: createReducers({ router: connectRouter(history) }),
-	middleware: [routerMiddleware(history), ReduxThunk, ReduxAsyncQueue],
-	devTools: true,
-	preloadedState
-});
+	return { store, history };
+}

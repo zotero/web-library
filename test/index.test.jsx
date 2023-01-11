@@ -85,6 +85,11 @@ describe('Loading Screen', () => {
 		});
 	});
 
+	beforeEach(() => {
+		delete window.location;
+		window.location = new URL('http://localhost/');
+	});
+
 	afterEach(() => server.resetHandlers());
 
 	afterAll(() => server.close());
@@ -112,6 +117,11 @@ describe('Zotero User\'s read-only library', () => {
 			onUnhandledRequest: 'error',
 		});
 		resizeWindow(1280, 720);
+	});
+
+	beforeEach(() => {
+		delete window.location;
+		window.location = new URL('http://localhost/');
 	});
 
 	afterEach(() => server.resetHandlers());

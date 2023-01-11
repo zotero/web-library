@@ -9,7 +9,6 @@ import Loader from './loader';
 import UserTypeDetector from './user-type-detector';
 import ViewPortDetector from './viewport-detector';
 import { routes, redirects } from '../routes';
-import { history } from '../store';
 
 
 export const MainEmbedded = () => {
@@ -22,28 +21,32 @@ export const MainEmbedded = () => {
 	)
 }
 
-export const MainZotero = () => (
-	<ConnectedRouter history={history}>
-		<BrowserRouter>
-			<Switch>
-				{redirects.map(redirect =>
-					<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
-				)}
-				{routes.map(route =>
-					<Route key={route} path={route} component={MainEmbedded} exact />
-				)}
-				<Redirect from="/*" to="/" />
-			</Switch>
-		</BrowserRouter>
-	</ConnectedRouter>
+export const MainZotero = (history) => (
+	<BrowserRouter>
+		<Switch>
+			{redirects.map(redirect =>
+				<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
+			)}
+			{routes.map(route =>
+				<Route key={route} path={route} component={MainEmbedded} exact />
+			)}
+			<Redirect from="/*" to="/" />
+		</Switch>
+	</BrowserRouter>
 );
 
-const Main = ({ store }) => {
+const Main = ({ store, history }) => {
 	const isEmbedded = store.getState().config.isEmbedded;
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				{ isEmbedded ? <MainEmbedded /> : <MainZotero /> }
+				{isEmbedded ?
+					<MainEmbedded /> :
+					(
+					<ConnectedRouter history={history}>
+						<MainZotero />
+					</ConnectedRouter>
+				)}
 			</Provider>
 		</ErrorBoundary>
 	);
