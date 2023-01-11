@@ -167,7 +167,9 @@ const ItemDetailsTabs = () => {
 				<h4 className="offscreen">
 					{ item.title }
 				</h4>
-				<Tabs compact activateOnFocus>
+				<Tabs compact activateOnFocus
+					aria-label={ shouldUseTabs ? 'Item Details' : null }
+				>
 					{
 						item.itemType === 'note' && (
 							<Tab

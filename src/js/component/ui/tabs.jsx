@@ -75,7 +75,7 @@ Tab.propTypes = {
 };
 
 
-const Tabs = memo(({ children, justified, compact, activateOnFocus }) => {
+const Tabs = memo(({ children, justified, compact, activateOnFocus, ...rest }) => {
 	const ref = useRef(null);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { focusNext, focusPrev, receiveFocus, receiveBlur, resetLastFocused } =
@@ -88,8 +88,9 @@ const Tabs = memo(({ children, justified, compact, activateOnFocus }) => {
 				onBlur={ isTouchOrSmall ? noop : receiveBlur }
 				onFocus={ isTouchOrSmall ? noop : receiveFocus }
 				ref={ ref }
-				role="tablist"
+				role={isTouchOrSmall ? null : "tablist"}
 				tabIndex={ isTouchOrSmall ? -1 : 0 }
+				{...pick(rest, p => p.startsWith('aria-') || p.startsWith('data-'))}
 			>
 				{
 					mapChildren(children, child =>

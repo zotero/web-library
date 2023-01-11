@@ -19,6 +19,9 @@ import collectionItems from './fixtures/response/zotero-user-collection-items.js
 import collectionTags from './fixtures/response/zotero-user-collection-tags.json';
 import tagResults from './fixtures/response/zotero-user-tag-results.json';
 import tagResultsTags from './fixtures/response/zotero-user-tag-results-tags.json';
+import itemTypeFieldsFilm from './fixtures/response/item-type-fields-film.json';
+import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-types-film.json';
+
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 
@@ -311,6 +314,59 @@ describe('Zotero User\'s read-only library', () => {
 		).toBeInTheDocument();
 
 		expect(screen.getByText('1 item in this view')).toBeInTheDocument();
+	});
 
+	test('Selecting item', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		server.use(
+			rest.get('https://api.zotero.org/itemTypes', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemTypes);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/itemFields', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemFields);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemFields);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/itemTypeCreatorTypes', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemTypeCreatorTypesFilm);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/itemTypeFields', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemTypeFieldsFilm);
+					return res;
+				});
+			}),
+		);
+
+		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+		expect(screen.queryByRole('tablist', { name: 'Item Details' })).not.toBeInTheDocument();
+
+		const item = screen.getByRole('row',
+			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' });
+
+		await actWithFakeTimers(user => user.click(item));
+		await waitForPosition();
+
+		expect(screen.getByRole('row',
+			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+		).toHaveAttribute('aria-selected', 'true');
+
+		expect(screen.queryByRole('164 items in this view')).not.toBeInTheDocument();
+		expect(screen.getByRole('tablist', { name: 'Item Details' })).toBeInTheDocument();
 	});
 });
