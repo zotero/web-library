@@ -81,7 +81,6 @@ const ColumnSelector = props => {
 			placement="bottom-end"
 		>
 			<DropdownToggle
-				aria-label="Column Selector"
 				className="btn-icon dropdown-toggle"
 				color={ null }
 				onKeyDown={ handleKeyDown }
@@ -90,7 +89,7 @@ const ColumnSelector = props => {
 			>
 				<Icon type={ '16/columns' } width="16" height="16" />
 			</DropdownToggle>
-			<DropdownMenu>
+			<DropdownMenu aria-label="Column Selector">
 				{ columns
 					.filter(c => c.field !== 'title')
 					.filter(c => !isMyLibrary || (isMyLibrary && !(c.field in columnProperties && columnProperties[c.field].excludeInMyLibrary)))
@@ -100,8 +99,10 @@ const ColumnSelector = props => {
 							data-field={ column.field }
 							key={ column.field }
 							onClick={ handleSelect }
+							role="menuitemcheckbox"
+							aria-checked={ column.isVisible }
 						>
-							<span className="tick">{ column.isVisible ? "✓" : "" }</span>
+							<span aria-hidden="true" role="presentation" className="tick">{ column.isVisible ? "✓" : "" }</span>
 							{ column.field in columnProperties ? columnProperties[column.field].name : column.field }
 						</DropdownItem>
 					))
@@ -112,9 +113,11 @@ const ColumnSelector = props => {
 						.filter(c => (c.field in columnProperties && columnProperties[c.field].isUnderMoreColumns) && !c.isVisible)
 						.map(column => (
 							<DropdownItem
-							data-field={ column.field }
-							key={ column.field }
-							onClick={ handleSelect }
+								data-field={ column.field }
+								key={ column.field }
+								onClick={ handleSelect }
+								role="menuitemcheckbox"
+								aria-checked={column.isVisible}
 						>
 							<span className="tick">{ column.isVisible ? "✓" : "" }</span>
 								{ column.field in columnProperties ? columnProperties[column.field].name : column.field }

@@ -218,7 +218,7 @@ export const DropdownMenu = memo(props => {
 			onFocus={handleReceiveFocus}
 			onBlur={receiveBlur}
 			onKeyDown={handleKeyDown}
-			{...pick(rest, p => p.startsWith('data-'))}
+			{...pick(rest, p => p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			{props.children}
 		</div>
@@ -238,7 +238,7 @@ DropdownMenu.propTypes = {
 
 export const DropdownItem = memo(props => {
 	const ref = useRef(null);
-	const { children, className, onClick, tag, divider, ...rest } = props;
+	const { children, className, onClick, role = 'menuitem', tag, divider, ...rest } = props;
 	const Tag = tag ?? (divider ? 'div' : 'button');
 
 	const { handleToggle } = useContext(DropdownContext);
@@ -279,7 +279,7 @@ export const DropdownItem = memo(props => {
 			onClick={ handleClick }
 			onKeyDown={ handleKeyDown }
 			tabIndex={divider ? null : -2}
-			role="menuitem"
+			role={ role }
 			ref={ ref }
 		>
 			{ children }
@@ -294,6 +294,7 @@ DropdownItem.propTypes = {
     className: PropTypes.string,
 	divider: PropTypes.bool,
     onClick: PropTypes.func,
+	role: PropTypes.string,
     tag: PropTypes.string,
 };
 

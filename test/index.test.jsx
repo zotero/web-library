@@ -2,7 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { act, getByRole, getAllByRole, screen, waitFor } from '@testing-library/react'
+import { act, getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -368,5 +368,80 @@ describe('Zotero User\'s read-only library', () => {
 
 		expect(screen.queryByRole('164 items in this view')).not.toBeInTheDocument();
 		expect(screen.getByRole('tablist', { name: 'Item Details' })).toBeInTheDocument();
+	});
+
+	test('Configuring columns', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		await waitForPosition();
+
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const columnSelectorBtn = screen.getByRole('button',
+			{ name: 'Column Selector', expanded: false }
+		);
+
+		expect(getByRole(grid, 'columnheader', { name: 'Creator' })).toBeInTheDocument();
+		expect(queryByRole(grid, 'columnheader', { name: 'Item Type' })).not.toBeInTheDocument();
+
+		await actWithFakeTimers(user => user.click(columnSelectorBtn));
+		await waitForPosition();
+
+		// dropdown should be open
+		expect(screen.getByRole('button',
+			{ name: 'Column Selector', expanded: true })
+		).toBeInTheDocument();
+
+		// creator column is ON by default so it should be checked
+		const columnSelector = screen.getByRole('menu', { name: 'Column Selector' });
+		expect(getByRole(columnSelector, 'menuitemcheckbox',
+			{ name: 'Creator', checked: true })
+		).toBeInTheDocument();
+
+		// item type column is OFF by default, click it to turn it ON
+		const itemTypeBtn = getByRole(columnSelector, 'menuitemcheckbox',
+			{ name: 'Item Type', checked: false }
+		);
+		await actWithFakeTimers(user => user.click(itemTypeBtn));
+		await waitForPosition();
+
+		// new column should be added, dropdown should be closed
+		expect(getByRole(grid, 'columnheader', { name: 'Creator' })).toBeInTheDocument();
+		expect(getByRole(grid, 'columnheader', { name: 'Item Type' })).toBeInTheDocument();
+		expect(screen.getByRole('button',
+			{ name: 'Column Selector', expanded: false })
+		).toBeInTheDocument();
+
+		// Open dropdown again, open "more"	menu
+		await actWithFakeTimers(user => user.click(columnSelectorBtn));
+		await waitForPosition();
+
+		// Option to enable "language" column is hidden behind "more" menu option
+		expect(queryByRole(columnSelector, 'menuitemcheckbox',
+			{ name: 'Language', checked: false })
+		).not.toBeInTheDocument();
+
+		const moreBtn = getByRole(columnSelector, 'menuitem',
+			{ name: 'More' }
+		);
+
+		await actWithFakeTimers(user => user.click(moreBtn));
+		await waitForPosition();
+
+		// dropdown should stay open, more options, including "language", should appear
+		expect(screen.getByRole('button',
+			{ name: 'Column Selector', expanded: true })
+		).toBeInTheDocument();
+		expect(getByRole(columnSelector, 'menuitemcheckbox',
+			{ name: 'Language', checked: false })
+		).toBeInTheDocument();
+
+		// disable "creator" column
+		const creatorBtn = getByRole(columnSelector, 'menuitemcheckbox',
+			{ name: 'Creator', checked: true }
+		);
+
+		await actWithFakeTimers(user => user.click(creatorBtn));
+		await waitForPosition();
+
+		expect(queryByRole(grid, 'columnheader', { name: 'Creator' })).not.toBeInTheDocument();
 	});
 });
