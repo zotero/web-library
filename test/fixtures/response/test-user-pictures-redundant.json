@@ -1,0 +1,198 @@
+[
+    {
+        "key": "LKHPM44D",
+        "version": 196,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/LKHPM44D",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/LKHPM44D",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "image/jpeg",
+                "href": "https://api.zotero.org/users/1/items/LKHPM44D/file/view",
+                "title": "image.jpg",
+                "length": 4897849
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "LKHPM44D",
+            "version": 196,
+            "parentItem": "Z6HA62VJ",
+            "itemType": "attachment",
+            "linkMode": "embedded_image",
+            "contentType": "image/jpeg",
+            "filename": "image.jpg",
+            "md5": "65c3c0b941a101e6f8f250143f9c54e0",
+            "mtime": 1673607382000,
+            "dateAdded": "2023-01-13T10:56:21Z",
+            "dateModified": "2023-01-13T10:56:21Z"
+        }
+    },
+    {
+        "key": "W3YSPZJI",
+        "version": 213,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/W3YSPZJI",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/W3YSPZJI",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "image/jpeg",
+                "href": "https://api.zotero.org/users/1/items/W3YSPZJI/file/view",
+                "title": "image.jpg",
+                "length": 1944212
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "W3YSPZJI",
+            "version": 213,
+            "parentItem": "Z6HA62VJ",
+            "itemType": "attachment",
+            "linkMode": "embedded_image",
+            "contentType": "image/jpeg",
+            "filename": "image.jpg",
+            "md5": "ea9492ff22c602d211997ea63ede9571",
+            "mtime": 1673607381000,
+            "dateAdded": "2023-01-13T10:56:20Z",
+            "dateModified": "2023-01-13T10:56:20Z"
+        }
+    },
+    {
+        "key": "P83K4HI5",
+        "version": 201,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/P83K4HI5",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/P83K4HI5",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "image/jpeg",
+                "href": "https://api.zotero.org/users/1/items/P83K4HI5/file/view",
+                "title": "image.jpg",
+                "length": 1258080
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "P83K4HI5",
+            "version": 201,
+            "parentItem": "Z6HA62VJ",
+            "itemType": "attachment",
+            "linkMode": "embedded_image",
+            "contentType": "image/jpeg",
+            "filename": "image.jpg",
+            "md5": "1b65c68d71a7b5a8b73c454285715a29",
+            "mtime": 1673607380000,
+            "dateAdded": "2023-01-13T10:56:20Z",
+            "dateModified": "2023-01-13T10:56:20Z"
+        }
+    },
+    {
+        "key": "ZZZZZZZZ",
+        "version": 214,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/ZZZZZZZZ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/ZZZZZZZZ",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "image/jpeg",
+                "href": "https://api.zotero.org/users/1/items/ZZZZZZZZ/file/view",
+                "title": "image.jpg",
+                "length": 1258080
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "ZZZZZZZZ",
+            "version": 214,
+            "parentItem": "Z6HA62VJ",
+            "itemType": "attachment",
+            "linkMode": "embedded_image",
+            "contentType": "image/jpeg",
+            "filename": "image.jpg",
+            "md5": "28fbc116b93503b89fd490acb7aa5b74",
+            "mtime": 1673608940000,
+            "dateAdded": "2023-01-13T11:22:20Z",
+            "dateModified": "2023-01-13T11:22:20Z"
+        }
+    }
+]
