@@ -12,6 +12,11 @@ import { noop } from '../../utils';
 const Tab = memo(props => {
 	const { activateOnFocus, children, isActive, isDisabled, onActivate, focusNext, focusPrev,
 	resetLastFocused, ...rest } = props;
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
+
+	if(!shouldUseTabs) {
+		delete rest['aria-controls'];
+	}
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -49,10 +54,11 @@ const Tab = memo(props => {
 			}) }
 		>
 			<a href=""
-				{ ... pick(rest, p => p.startsWith('data-')) }
+				{ ... pick(rest, p => p.startsWith('data-') || p.startsWith('aria-') ) }
 				onClick={ handleClick }
 				onKeyDown={ handleKeyDown }
-				role="tab"
+				role={ shouldUseTabs ? 'tab' : null }
+				aria-selected={ isActive }
 				tabIndex={ -2 }
 			>
 				{ children }
@@ -77,7 +83,7 @@ Tab.propTypes = {
 
 const Tabs = memo(({ children, justified, compact, activateOnFocus, ...rest }) => {
 	const ref = useRef(null);
-	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const { focusNext, focusPrev, receiveFocus, receiveBlur, resetLastFocused } =
 	useFocusManager(ref, '.tab.active > a');
 
@@ -85,11 +91,11 @@ const Tabs = memo(({ children, justified, compact, activateOnFocus, ...rest }) =
 		<nav>
 			<ul
 				className={ cx('nav', 'tabs', { justified, compact, 'activate-on-focus': activateOnFocus  }) }
-				onBlur={ isTouchOrSmall ? noop : receiveBlur }
-				onFocus={ isTouchOrSmall ? noop : receiveFocus }
+				onBlur={ shouldUseTabs ? receiveBlur : noop }
+				onFocus={ shouldUseTabs ? receiveFocus : noop  }
 				ref={ ref }
-				role={isTouchOrSmall ? null : "tablist"}
-				tabIndex={ isTouchOrSmall ? -1 : 0 }
+				role={shouldUseTabs ? "tablist" : null }
+				tabIndex={ shouldUseTabs ? 0 : -1 }
 				{...pick(rest, p => p.startsWith('aria-') || p.startsWith('data-'))}
 			>
 				{

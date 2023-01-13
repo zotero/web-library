@@ -368,6 +368,7 @@ describe('Zotero User\'s read-only library', () => {
 
 		expect(screen.queryByRole('164 items in this view')).not.toBeInTheDocument();
 		expect(screen.getByRole('tablist', { name: 'Item Details' })).toBeInTheDocument();
+		expect(screen.getByRole('tab', { name: 'Info', selected: true })).toBeInTheDocument();
 	});
 
 	test('Configuring columns', async () => {

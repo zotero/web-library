@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import Attachments from '../../component/item-details/attachments';
@@ -32,6 +32,7 @@ const pickDefaultActiveTab = (itemType, attachmentKey, noteKey) => {
 const PAGE_SIZE = 100;
 
 const ItemDetailsTabs = () => {
+	const id = useId();
 	const dispatch = useDispatch();
 	const isLibraryReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -167,12 +168,15 @@ const ItemDetailsTabs = () => {
 				<h4 className="offscreen">
 					{ item.title }
 				</h4>
-				<Tabs compact activateOnFocus
+				<Tabs
+					compact
+					activateOnFocus
 					aria-label={ shouldUseTabs ? 'Item Details' : null }
 				>
 					{
 						item.itemType === 'note' && (
 							<Tab
+								aria-controls={ `${id}-standalone-note` }
 								data-tab-name="standalone-note"
 								isActive={ activeTab === 'standalone-note' }
 								onActivate={ handleSelectTab }
@@ -184,6 +188,7 @@ const ItemDetailsTabs = () => {
 					{
 						item.itemType === 'attachment' && (
 							<Tab
+								aria-controls={`${id}-standalone-attachment`}
 								data-tab-name="standalone-attachment"
 								isActive={ activeTab === 'standalone-attachment' }
 								onActivate={ handleSelectTab }
@@ -196,6 +201,7 @@ const ItemDetailsTabs = () => {
 						!['attachment', 'note'].includes(item.itemType) && (
 							<React.Fragment>
 								<Tab
+									aria-controls={`${id}-info`}
 									data-tab-name="info"
 									isActive={ activeTab === 'info' }
 									onActivate={ handleSelectTab }
@@ -204,6 +210,7 @@ const ItemDetailsTabs = () => {
 								</Tab>
 								{ shouldShowNotesTab && (
 									<Tab
+										aria-controls={`${id}-notes`}
 										data-tab-name="notes"
 										isActive={ activeTab === 'notes' }
 										onActivate={ handleSelectTab }
@@ -217,9 +224,10 @@ const ItemDetailsTabs = () => {
 
 					{ shouldShowTagsTab && (
 							<Tab
-							data-tab-name="tags"
-							isActive={ activeTab === 'tags' }
-							onActivate={ handleSelectTab }
+								aria-controls={`${id}-tags`}
+								data-tab-name="tags"
+								isActive={ activeTab === 'tags' }
+								onActivate={ handleSelectTab }
 						>
 							Tags
 						</Tab>
@@ -227,9 +235,10 @@ const ItemDetailsTabs = () => {
 					{
 						shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 							<Tab
-							data-tab-name="attachments"
-							isActive={ activeTab === 'attachments' }
-							onActivate={ handleSelectTab }
+								aria-controls={`${id}-attachments`}
+								data-tab-name="attachments"
+								isActive={ activeTab === 'attachments' }
+								onActivate={ handleSelectTab }
 							>
 								Attachments
 							</Tab>
@@ -238,6 +247,7 @@ const ItemDetailsTabs = () => {
 
 					{ shouldShowRelatedTab && (
 						<Tab
+							aria-controls={`${id}-related`}
 							data-tab-name="related"
 							isActive={ activeTab === 'related' }
 							onActivate={ handleSelectTab }
@@ -263,12 +273,12 @@ const ItemDetailsTabs = () => {
 							!['attachment', 'note'].includes(item.itemType) && (
 								<React.Fragment>
 									<Info
-										key={ 'info-' + item.key }
+										id={ `${id}-info` }
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }
 									/>
 									{ shouldShowNotesTab && ( <Notes
-										key={ 'notes-' + item.key }
+										id={ `${id}-notes` }
 										isActive={ activeTab === 'notes' }
 										isReadOnly={ isReadOnly }
 									/>
@@ -280,7 +290,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'note' && (
 								<StandaloneNote
-									key={ 'standalone-note-' + item.key }
+									id={`${id}-standalone-note` }
 									isActive={ activeTab === 'standalone-note' }
 									isReadOnly={ isReadOnly }
 								/>
@@ -290,6 +300,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
+									id={`${id}-standalone-attachment` }
 									isActive={ activeTab === 'standalone-attachment' }
 									isReadOnly={ isReadOnly }
 								/>
@@ -298,7 +309,7 @@ const ItemDetailsTabs = () => {
 
 						{ shouldShowTagsTab && (
 							<Tags
-								key={ item.key }
+								id={ `${id}-tags` }
 								isActive={ activeTab === 'tags' }
 								isReadOnly={ isReadOnly }
 							/>
@@ -306,7 +317,7 @@ const ItemDetailsTabs = () => {
 						{
 							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 								<Attachments
-									key={ 'attachments-' + item.key }
+									id={ `${id}-attachments` }
 									isActive={ activeTab === 'attachments' }
 									isReadOnly={ isReadOnly }
 								/>
@@ -314,7 +325,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowRelatedTab && (
 							<Related
-								key={ 'related-' + item.key }
+								id={ `${id}-related` }
 								isActive={ activeTab === 'related' }
 							/>
 						) }

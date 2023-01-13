@@ -78,7 +78,7 @@ RelatedItem.propTypes = {
 	onKeyDown: PropTypes.func,
 }
 
-const Related = ({ isActive }) => {
+const Related = ({ id, isActive }) => {
 	const dispatch = useDispatch();
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -139,7 +139,11 @@ const Related = ({ isActive }) => {
 	}, [dispatch, isFetching, isFetched, itemKey]);
 
 	return (
-		<TabPane isActive={ isActive } isLoading={ shouldUseTabs && !isFetched }>
+		<TabPane
+			id={ id }
+			isActive={ isActive }
+			isLoading={ shouldUseTabs && !isFetched }
+		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div
 				className="scroll-container-mouse"
@@ -170,6 +174,7 @@ const Related = ({ isActive }) => {
 }
 
 Related.propTypes = {
+	id: PropTypes.string,
 	isActive: PropTypes.bool
 }
 

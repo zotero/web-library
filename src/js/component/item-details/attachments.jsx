@@ -369,7 +369,7 @@ AttachmentDetailsWrap.propTypes = {
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ isActive, isReadOnly }) => {
+const Attachments = ({ id, isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -500,6 +500,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 
 	return (
 		<TabPane
+			id={ id }
 			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
 			isActive={ isActive }
 			isLoading={ !isReady }
@@ -626,6 +627,7 @@ const Attachments = ({ isActive, isReadOnly }) => {
 };
 
 Attachments.propTypes = {
+	id: PropTypes.string,
 	isReadOnly: PropTypes.bool,
 	isActive: PropTypes.bool,
 };

@@ -146,7 +146,7 @@ Note.propTypes = {
 	onSelect: PropTypes.func,
 }
 
-const Notes = ({ isActive, isReadOnly }) => {
+const Notes = ({ id, isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const noteKey = useSelector(state => state.current.noteKey);
@@ -321,6 +321,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 
 	return (
 		<TabPane
+			id={ id }
 			className="notes"
 			isActive={ isActive }
 			isLoading={ !isReady }
@@ -409,6 +410,7 @@ const Notes = ({ isActive, isReadOnly }) => {
 }
 
 Notes.propTypes = {
+	id: PropTypes.string,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 }

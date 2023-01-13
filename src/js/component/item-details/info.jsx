@@ -11,7 +11,7 @@ import { fetchItemTypeCreatorTypes, fetchItemTypeFields } from '../../actions';
 import { get } from '../../utils';
 import { useMetaState } from '../../hooks';
 
-const Info = ({ isActive, isReadOnly }) => {
+const Info = ({ isActive, isReadOnly, id }) => {
 	const dispatch = useDispatch();
 	const isLibraryReadOnly = useSelector(
 		state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
@@ -46,6 +46,7 @@ const Info = ({ isActive, isReadOnly }) => {
 
 	return (
 		<TabPane
+			id={ id }
 			className="info"
 			isActive={ isActive }
 			isLoading={ !isMetaAvailable }
@@ -92,6 +93,7 @@ const Info = ({ isActive, isReadOnly }) => {
 }
 
 Info.propTypes = {
+	id: PropTypes.string,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 }

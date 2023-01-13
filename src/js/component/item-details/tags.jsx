@@ -17,8 +17,7 @@ import { isTriggerEvent } from '../../common/event';
 
 var nextId = 0;
 
-const Tags = props => {
-	const { isActive, isReadOnly } = props;
+const Tags = ({ id, isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemKey = useSelector(state => state.current.itemKey);
@@ -198,6 +197,7 @@ const Tags = props => {
 
 	return (
 		<TabPane
+			id={ id }
 			className="tags"
 			isActive={ isActive }
 		>
@@ -299,6 +299,7 @@ const Tags = props => {
 }
 
 Tags.propTypes = {
+	id: PropTypes.string.isRequired,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 }

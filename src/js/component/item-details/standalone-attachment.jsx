@@ -5,11 +5,12 @@ import { useSelector } from 'react-redux';
 import { TabPane } from '../ui/tabs';
 import AttachmentDetails from './attachment-details';
 
-const StandaloneAttachmentTabPane = ({ isActive, isReadOnly }) => {
+const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly }) => {
 	const itemKey = useSelector(state => state.current.itemKey);
 
 	return (
 		<TabPane
+			id={ id }
 			className="standalone-attachment"
 			isActive={ isActive }
 		>

@@ -8,7 +8,7 @@ import { deleteUnusedEmbeddedImages, updateItem } from 'actions';
 import { TabPane } from 'component/ui/tabs';
 import { usePrepForUnmount } from '../../hooks';
 
-const StandaloneNote = ({ isActive, isReadOnly }) => {
+const StandaloneNote = ({ id, isActive, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemKey = useSelector(state => state.current.itemKey);
@@ -25,6 +25,7 @@ const StandaloneNote = ({ isActive, isReadOnly }) => {
 
 	return (
 		<TabPane
+			id={ id }
 			className="notes"
 			isActive={ isActive }
 		>
