@@ -39,14 +39,16 @@ function stateProcessSymbolsReverse(state) {
 	}
 }
 
-// eslint-disable-next-line no-unused-vars
-export function stateToJSON(state) {
+function stateToJSON(state) {
 	return JSON.stringify(stateProcessSymbols(state));
 }
 
-export function JSONtoState(json) {
+function JSONtoState(json) {
 	if (typeof json === 'string') {
 		json = JSON.parse(json);
 	}
 	return stateProcessSymbolsReverse(json);
 }
+
+
+export { stateToJSON, JSONtoState };

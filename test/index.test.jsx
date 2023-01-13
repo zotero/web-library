@@ -2,12 +2,12 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { act, getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-library/react'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
+import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers, resizeWindow } from './utils/common';
 import minState from './fixtures/state/minimal.json';
 import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
 import itemTypes from './fixtures/response/item-types';
@@ -24,35 +24,15 @@ import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-type
 
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
+applyAdditionalJestTweaks();
 
-jest.setTimeout(10000);
-
-// disable streaming client
-jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
+// jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
 
 // mock auto-sizer (https://github.com/bvaughn/react-window/issues/454)
-jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 640 }));
+// jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 640 }));
 
+// https://github.com/jsdom/jsdom/issues/1695
 Element.prototype.scrollIntoView = jest.fn();
-
-// dropdowns and such update positions asynchronously trigger 'act' warning
-// this is a workaround to silence the warning (https://floating-ui.com/docs/react#testing)
-const waitForPosition = () => act(async () => { });
-
-
-const actWithFakeTimers = async actCallback => {
-	const user = userEvent.setup({ advanceTimers: () => jest.runAllTimers() });
-	jest.useFakeTimers();
-	await actCallback(user);
-	act(() => jest.runOnlyPendingTimers());
-	jest.useRealTimers();
-}
-
-const resizeWindow = (x, y) => {
-	window.innerWidth = x;
-	window.innerHeight = y;
-	window.dispatchEvent(new Event('resize'));
-}
 
 describe('Loading Screen', () => {
 	const handlers = [
@@ -112,7 +92,6 @@ describe('Loading Screen', () => {
 
 describe('Zotero User\'s read-only library', () => {
 	const handlers = [];
-
 	const server = setupServer(...handlers)
 
 	beforeAll(() => {

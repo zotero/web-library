@@ -91,6 +91,8 @@ export default {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '^web-worker:(?:..?/)+(.*)$': '<rootDir>/test/mocks/$1',
+    '^(?:.*?)/zotero-streaming-client$': '<rootDir>/test/mocks/noop.js',
+    '^react-virtualized-auto-sizer$': '<rootDir>/test/mocks/react-virtualized-auto-sizer.js',
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

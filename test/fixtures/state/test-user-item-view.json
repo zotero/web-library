@@ -1,0 +1,3933 @@
+{
+    "config": {
+        "apiConfig": {
+            "apiAuthorityPart": "api.zotero.org",
+            "retry": 2
+        },
+        "apiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+        "defaultLibraryKey": "u1",
+        "libraries": [
+            {
+                "id": 1,
+                "key": "u1",
+                "isMyLibrary": true,
+                "isReadOnly": false,
+                "isFileUploadAllowed": true,
+                "name": "My Library",
+                "isExternal": false,
+                "isPublic": false,
+                "slug": "testuser"
+            }
+        ],
+        "sortBy": "title",
+        "sortDirection": "asc",
+        "streamingApiUrl": "wss://stream.zotero.org",
+        "userId": 1,
+        "isEmbedded": false,
+        "containterClassName": "zotero-wl",
+        "websiteUrl": "https://www.zotero.org/",
+        "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
+        "translateUrl": "https://translate-server.zotero.org/Prod/",
+        "pdfReaderURL": "/static/pdf-reader/viewer.html",
+        "noteEditorURL": "/static/note-editor/editor.html",
+        "menus": {
+            "desktop": [
+                {
+                    "label": "My Library",
+                    "href": "/mylibrary",
+                    "active": true
+                },
+                {
+                    "label": "Groups",
+                    "href": "/groups"
+                },
+                {
+                    "label": "Documentation",
+                    "href": "/support"
+                },
+                {
+                    "label": "Forums",
+                    "href": "https://forums.zotero.org"
+                },
+                {
+                    "label": "Get Involved",
+                    "href": "/getinvolved"
+                },
+                {
+                    "label": "Zotero User",
+                    "truncate": true,
+                    "dropdown": true,
+                    "entries": [
+                        {
+                            "label": "My Profile",
+                            "href": "/testuser1"
+                        },
+                        {
+                            "separator": true
+                        },
+                        {
+                            "label": "Inbox (13)",
+                            "href": "https://forums.zotero.org/messages/inbox"
+                        },
+                        {
+                            "separator": true
+                        },
+                        {
+                            "label": "Settings",
+                            "href": "/settings"
+                        },
+                        {
+                            "label": "Use Old Web Library",
+                            "href": "/testuser1/items?usenewlibrary=0"
+                        },
+                        {
+                            "label": "Logout",
+                            "href": "/user/logout"
+                        }
+                    ]
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "offscreen"
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "btn btn-secondary hidden-md-down upgrade-storage",
+                    "position": "right",
+                    "aria-hidden": true
+                }
+            ],
+            "mobile": [
+                {
+                    "label": "My Library",
+                    "href": "/mylibrary",
+                    "active": true
+                },
+                {
+                    "label": "Groups",
+                    "href": "/groups"
+                },
+                {
+                    "label": "Documentation",
+                    "href": "/support"
+                },
+                {
+                    "label": "Forums",
+                    "href": "https://forums.zotero.org"
+                },
+                {
+                    "label": "Get Involved",
+                    "href": "/getinvolved"
+                },
+                {
+                    "label": "Test User",
+                    "href": "/testuser1",
+                    "className": "separated"
+                },
+                {
+                    "label": "Inbox (13)",
+                    "href": "https://forums.zotero.org/messages/inbox",
+                    "className": "separated"
+                },
+                {
+                    "label": "Settings",
+                    "href": "/settings"
+                },
+                {
+                    "label": "Use Old Web Library",
+                    "href": "/testuser1/items?usenewlibrary=0"
+                },
+                {
+                    "label": "Logout",
+                    "href": "/user/logout"
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "separated"
+                }
+            ]
+        },
+        "userSlug": "testuser",
+        "includeMyLibrary": true,
+        "includeUserGroups": false
+    },
+    "current": {
+        "collectionKey": "WTTJ2J56",
+        "editingItemKey": null,
+        "firstCollectionKey": "WTTJ2J56",
+        "firstIsTrash": false,
+        "highlightedCollections": [],
+        "isAdvancedSearch": false,
+        "isNavBarOpen": false,
+        "isSearchMode": false,
+        "isSelectMode": false,
+        "isTagSelectorOpen": true,
+        "isTouchTagSelectorOpen": false,
+        "itemKey": "VR82JUX8",
+        "itemKeys": [
+            "VR82JUX8"
+        ],
+        "itemsSource": "collection",
+        "isFirstRendering": false,
+        "libraryKey": "u1",
+        "qmode": "titleCreatorYear",
+        "search": "",
+        "searchState": {},
+        "tags": [],
+        "tagsHideAutomatic": false,
+        "tagsSearchString": "",
+        "userLibraryKey": "u1",
+        "useTransitions": true,
+        "view": "collection",
+        "attachmentKey": null,
+        "isMyPublications": false,
+        "isTrash": false,
+        "noteKey": null,
+        "isItemsTableFocused": false
+    },
+    "device": {
+        "isKeyboardUser": false,
+        "isMouseUser": true,
+        "isSingleColumn": false,
+        "isTouchOrSmall": false,
+        "isTouchUser": false,
+        "scrollbarWidth": 0,
+        "shouldUseEditMode": false,
+        "shouldUseModalCreatorField": false,
+        "shouldUseSidebar": false,
+        "shouldUseTabs": true,
+        "userType": "mouse",
+        "xxs": false,
+        "xs": false,
+        "sm": false,
+        "md": false,
+        "lg": true
+    },
+    "errors": [],
+    "fetching": {
+        "creatorTypes": [],
+        "itemTemplates": [],
+        "itemTypeCreatorTypes": [],
+        "itemTypeFields": [],
+        "tagsInLibrary": [],
+        "meta": false,
+        "allGroups": false
+    },
+    "groups": [],
+    "identifier": {
+        "isError": false,
+        "isSearching": false,
+        "session": null,
+        "result": null,
+        "item": null,
+        "items": null,
+        "identifier": null,
+        "identifierIsUrl": null,
+        "next": null
+    },
+    "itemsPublications": {},
+    "libraries": {
+        "u1": {
+            "attachmentsExportPDF": {},
+            "attachmentsUrl": {},
+            "collections": {
+                "data": {
+                    "SGQRGR2J": {
+                        "key": "SGQRGR2J",
+                        "version": 154,
+                        "name": "Board Games",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "I6WUED2Y": {
+                        "key": "I6WUED2Y",
+                        "version": 154,
+                        "name": "AI",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "WTTJ2J56": {
+                        "key": "WTTJ2J56",
+                        "version": 154,
+                        "name": "Dogs",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "4VM2BFHN": {
+                        "key": "4VM2BFHN",
+                        "version": 154,
+                        "name": "Music",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "CSB4KZUU": {
+                        "key": "CSB4KZUU",
+                        "version": 154,
+                        "name": "Algorithms",
+                        "parentCollection": false,
+                        "relations": {}
+                    }
+                },
+                "remoteChangesTracker": {},
+                "isFetchingAll": false,
+                "isFetching": false,
+                "totalResults": 5
+            },
+            "deleting": [],
+            "items": {
+                "HHVQTHFT": {
+                    "key": "HHVQTHFT",
+                    "version": 165,
+                    "itemType": "webpage",
+                    "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                    "creators": [],
+                    "abstractNote": "",
+                    "websiteTitle": "",
+                    "websiteType": "",
+                    "date": "",
+                    "shortTitle": "",
+                    "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                    "accessDate": "2023-01-13T11:38:38Z",
+                    "language": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T11:38:38Z",
+                    "dateModified": "2023-01-13T11:38:42Z",
+                    "@@meta@@": {
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/D532CISN",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 12:38:38",
+                        "dateModified": "13/01/2023, 12:38:42",
+                        "emojis": [],
+                        "extra": "",
+                        "iconName": "webpage",
+                        "itemType": "webpage",
+                        "itemTypeRaw": "webpage",
+                        "key": "HHVQTHFT",
+                        "publicationTitle": "",
+                        "publisher": null,
+                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "year": "",
+                        "language": "",
+                        "rights": ""
+                    }
+                },
+                "VR82JUX8": {
+                    "key": "VR82JUX8",
+                    "version": 155,
+                    "itemType": "journalArticle",
+                    "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Richard D.",
+                            "lastName": "Kealy"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Dennis F.",
+                            "lastName": "Lawler"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Joan M.",
+                            "lastName": "Ballam"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Sandra L.",
+                            "lastName": "Mantz"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Darryl N.",
+                            "lastName": "Biery"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Elizabeth H.",
+                            "lastName": "Greeley"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "George",
+                            "lastName": "Lust"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Mariangela",
+                            "lastName": "Segre"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Gail K.",
+                            "lastName": "Smith"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Howard D.",
+                            "lastName": "Stowe"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "publicationTitle": "Journal of the American Veterinary Medical Association",
+                    "volume": "220",
+                    "issue": "9",
+                    "pages": "1315–1320",
+                    "date": "2002",
+                    "series": "",
+                    "seriesTitle": "",
+                    "seriesText": "",
+                    "journalAbbreviation": "",
+                    "language": "",
+                    "DOI": "",
+                    "ISSN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "Publisher: Am Vet Med Assoc",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:52:40Z",
+                    "dateModified": "2023-01-13T10:52:40Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Kealy et al.",
+                        "parsedDate": "2002",
+                        "numChildren": 2
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/VR82JUX8",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                            "type": "application/json",
+                            "attachmentType": "application/pdf",
+                            "attachmentSize": 248058
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "pdf",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "Kealy et al.",
+                        "date": "2002",
+                        "dateAdded": "13/01/2023, 11:52:40",
+                        "dateModified": "13/01/2023, 11:52:40",
+                        "emojis": [],
+                        "extra": "Publisher: Am Vet Med Assoc",
+                        "iconName": "journal-article",
+                        "itemType": "journalArticle",
+                        "itemTypeRaw": "journalArticle",
+                        "key": "VR82JUX8",
+                        "publicationTitle": "Journal of the American Veterinary Medical Association",
+                        "publisher": null,
+                        "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                        "year": "2002",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                },
+                "J2NYHR6N": {
+                    "key": "J2NYHR6N",
+                    "version": 155,
+                    "itemType": "webpage",
+                    "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                    "creators": [],
+                    "abstractNote": "",
+                    "websiteTitle": "",
+                    "websiteType": "",
+                    "date": "",
+                    "shortTitle": "",
+                    "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                    "accessDate": "2023-01-13T10:54:08Z",
+                    "language": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:54:08Z",
+                    "dateModified": "2023-01-13T10:54:08Z",
+                    "@@meta@@": {
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 11:54:08",
+                        "dateModified": "13/01/2023, 11:54:08",
+                        "emojis": [],
+                        "extra": "",
+                        "iconName": "webpage",
+                        "itemType": "webpage",
+                        "itemTypeRaw": "webpage",
+                        "key": "J2NYHR6N",
+                        "publicationTitle": "",
+                        "publisher": null,
+                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                        "year": "",
+                        "language": "",
+                        "rights": ""
+                    }
+                },
+                "Z6HA62VJ": {
+                    "key": "Z6HA62VJ",
+                    "version": 156,
+                    "itemType": "note",
+                    "note": "<div data-schema-version=\"8\"><p>Puppies!</p><p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p></div>",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:54:44Z",
+                    "dateModified": "2023-01-13T10:56:31Z",
+                    "@@meta@@": {
+                        "numChildren": 3
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                            "type": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": null,
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 11:54:44",
+                        "dateModified": "13/01/2023, 11:56:31",
+                        "emojis": [],
+                        "iconName": "note",
+                        "itemType": "Note",
+                        "itemTypeRaw": "note",
+                        "key": "Z6HA62VJ",
+                        "publicationTitle": null,
+                        "publisher": null,
+                        "title": "Puppies!",
+                        "year": ""
+                    }
+                },
+                "66LW9WRP": {
+                    "key": "66LW9WRP",
+                    "version": 155,
+                    "itemType": "book",
+                    "title": "Understanding dogs",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Clinton",
+                            "lastName": "Sanders"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "series": "",
+                    "seriesNumber": "",
+                    "volume": "39",
+                    "numberOfVolumes": "",
+                    "edition": "",
+                    "place": "",
+                    "publisher": "Temple University Press",
+                    "date": "1999",
+                    "numPages": "",
+                    "language": "",
+                    "ISBN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:52:40Z",
+                    "dateModified": "2023-01-13T10:52:40Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Sanders",
+                        "parsedDate": "1999",
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "Sanders",
+                        "date": "1999",
+                        "dateAdded": "13/01/2023, 11:52:40",
+                        "dateModified": "13/01/2023, 11:52:40",
+                        "emojis": [],
+                        "extra": "",
+                        "iconName": "book",
+                        "itemType": "book",
+                        "itemTypeRaw": "book",
+                        "key": "66LW9WRP",
+                        "publicationTitle": null,
+                        "publisher": "Temple University Press",
+                        "title": "Understanding dogs",
+                        "year": "1999",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                },
+                "PEZF7SPI": {
+                    "key": "PEZF7SPI",
+                    "version": 155,
+                    "itemType": "journalArticle",
+                    "title": "Vision in dogs",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Paul E.",
+                            "lastName": "Miller"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Christopher J.",
+                            "lastName": "Murphy"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "publicationTitle": "Journal-American Veterinary Medical Association",
+                    "volume": "207",
+                    "issue": "",
+                    "pages": "1623–1634",
+                    "date": "1995",
+                    "series": "",
+                    "seriesTitle": "",
+                    "seriesText": "",
+                    "journalAbbreviation": "",
+                    "language": "",
+                    "DOI": "",
+                    "ISSN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:52:40Z",
+                    "dateModified": "2023-01-13T10:52:40Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Miller and Murphy",
+                        "parsedDate": "1995",
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                            "type": "application/json",
+                            "attachmentType": "application/pdf",
+                            "attachmentSize": 3221470
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "pdf",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "Miller and Murphy",
+                        "date": "1995",
+                        "dateAdded": "13/01/2023, 11:52:40",
+                        "dateModified": "13/01/2023, 11:52:40",
+                        "emojis": [],
+                        "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                        "iconName": "journal-article",
+                        "itemType": "journalArticle",
+                        "itemTypeRaw": "journalArticle",
+                        "key": "PEZF7SPI",
+                        "publicationTitle": "Journal-American Veterinary Medical Association",
+                        "publisher": null,
+                        "title": "Vision in dogs",
+                        "year": "1995",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                },
+                "WRCN45PC": {
+                    "key": "WRCN45PC",
+                    "version": 155,
+                    "itemType": "webpage",
+                    "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                    "creators": [],
+                    "abstractNote": "",
+                    "websiteTitle": "",
+                    "websiteType": "",
+                    "date": "",
+                    "shortTitle": "",
+                    "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                    "accessDate": "2023-01-13T10:53:25Z",
+                    "language": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:53:25Z",
+                    "dateModified": "2023-01-13T10:53:25Z",
+                    "@@meta@@": {
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 11:53:25",
+                        "dateModified": "13/01/2023, 11:53:25",
+                        "emojis": [],
+                        "extra": "",
+                        "iconName": "webpage",
+                        "itemType": "webpage",
+                        "itemTypeRaw": "webpage",
+                        "key": "WRCN45PC",
+                        "publicationTitle": "",
+                        "publisher": null,
+                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                        "year": "",
+                        "language": "",
+                        "rights": ""
+                    }
+                }
+            },
+            "itemsByCollection": {
+                "SGQRGR2J": {
+                    "totalResults": 14
+                },
+                "I6WUED2Y": {
+                    "totalResults": 12
+                },
+                "WTTJ2J56": {
+                    "totalResults": 7,
+                    "requests": [],
+                    "isFetching": false,
+                    "keys": [
+                        "HHVQTHFT",
+                        "VR82JUX8",
+                        "J2NYHR6N",
+                        "Z6HA62VJ",
+                        "66LW9WRP",
+                        "PEZF7SPI",
+                        "WRCN45PC"
+                    ],
+                    "sortBy": "title",
+                    "sortDirection": "asc",
+                    "isError": false,
+                    "pointer": 7
+                },
+                "4VM2BFHN": {
+                    "totalResults": 10
+                },
+                "CSB4KZUU": {
+                    "totalResults": 20
+                }
+            },
+            "itemsByParent": {},
+            "itemsRelated": {
+                "VR82JUX8": {
+                    "isFetching": false,
+                    "isFetched": true
+                }
+            },
+            "itemsTop": {},
+            "itemsTrash": {},
+            "settings": {},
+            "sync": {
+                "version": 217,
+                "isSynced": true,
+                "requestsPending": 0
+            },
+            "tagColors": {
+                "value": [],
+                "lookup": {}
+            },
+            "tagsByCollection": {
+                "WTTJ2J56": {
+                    "requests": [],
+                    "isFetching": false,
+                    "rawTags": [],
+                    "totalResults": 0,
+                    "sortBy": "title",
+                    "isError": false,
+                    "pointer": 100,
+                    "duplicatesCount": 0,
+                    "tags": [],
+                    "tagTypeLookup": {}
+                }
+            },
+            "tagsInPublicationsItems": {},
+            "tagsInTrashItems": {},
+            "tagsTop": {},
+            "tagsInLibrary": {
+                "coloredTags": []
+            },
+            "updating": {
+                "collections": {},
+                "items": {},
+                "uploads": []
+            }
+        }
+    },
+    "meta": {
+        "itemTypes": [
+            {
+                "itemType": "artwork",
+                "localized": "Artwork"
+            },
+            {
+                "itemType": "audioRecording",
+                "localized": "Audio Recording"
+            },
+            {
+                "itemType": "bill",
+                "localized": "Bill"
+            },
+            {
+                "itemType": "blogPost",
+                "localized": "Blog Post"
+            },
+            {
+                "itemType": "book",
+                "localized": "Book"
+            },
+            {
+                "itemType": "bookSection",
+                "localized": "Book Section"
+            },
+            {
+                "itemType": "case",
+                "localized": "Case"
+            },
+            {
+                "itemType": "conferencePaper",
+                "localized": "Conference Paper"
+            },
+            {
+                "itemType": "dictionaryEntry",
+                "localized": "Dictionary Entry"
+            },
+            {
+                "itemType": "document",
+                "localized": "Document"
+            },
+            {
+                "itemType": "email",
+                "localized": "E-mail"
+            },
+            {
+                "itemType": "encyclopediaArticle",
+                "localized": "Encyclopedia Article"
+            },
+            {
+                "itemType": "film",
+                "localized": "Film"
+            },
+            {
+                "itemType": "forumPost",
+                "localized": "Forum Post"
+            },
+            {
+                "itemType": "hearing",
+                "localized": "Hearing"
+            },
+            {
+                "itemType": "instantMessage",
+                "localized": "Instant Message"
+            },
+            {
+                "itemType": "interview",
+                "localized": "Interview"
+            },
+            {
+                "itemType": "journalArticle",
+                "localized": "Journal Article"
+            },
+            {
+                "itemType": "letter",
+                "localized": "Letter"
+            },
+            {
+                "itemType": "magazineArticle",
+                "localized": "Magazine Article"
+            },
+            {
+                "itemType": "manuscript",
+                "localized": "Manuscript"
+            },
+            {
+                "itemType": "map",
+                "localized": "Map"
+            },
+            {
+                "itemType": "newspaperArticle",
+                "localized": "Newspaper Article"
+            },
+            {
+                "itemType": "note",
+                "localized": "Note"
+            },
+            {
+                "itemType": "patent",
+                "localized": "Patent"
+            },
+            {
+                "itemType": "podcast",
+                "localized": "Podcast"
+            },
+            {
+                "itemType": "preprint",
+                "localized": "Preprint"
+            },
+            {
+                "itemType": "presentation",
+                "localized": "Presentation"
+            },
+            {
+                "itemType": "radioBroadcast",
+                "localized": "Radio Broadcast"
+            },
+            {
+                "itemType": "report",
+                "localized": "Report"
+            },
+            {
+                "itemType": "computerProgram",
+                "localized": "Software"
+            },
+            {
+                "itemType": "statute",
+                "localized": "Statute"
+            },
+            {
+                "itemType": "tvBroadcast",
+                "localized": "TV Broadcast"
+            },
+            {
+                "itemType": "thesis",
+                "localized": "Thesis"
+            },
+            {
+                "itemType": "videoRecording",
+                "localized": "Video Recording"
+            },
+            {
+                "itemType": "webpage",
+                "localized": "Web Page"
+            }
+        ],
+        "itemFields": [
+            {
+                "field": "numPages",
+                "localized": "# of Pages"
+            },
+            {
+                "field": "numberOfVolumes",
+                "localized": "# of Volumes"
+            },
+            {
+                "field": "abstractNote",
+                "localized": "Abstract"
+            },
+            {
+                "field": "accessDate",
+                "localized": "Accessed"
+            },
+            {
+                "field": "applicationNumber",
+                "localized": "Application Number"
+            },
+            {
+                "field": "archive",
+                "localized": "Archive"
+            },
+            {
+                "field": "archiveID",
+                "localized": "Archive ID"
+            },
+            {
+                "field": "artworkSize",
+                "localized": "Artwork Size"
+            },
+            {
+                "field": "assignee",
+                "localized": "Assignee"
+            },
+            {
+                "field": "billNumber",
+                "localized": "Bill Number"
+            },
+            {
+                "field": "blogTitle",
+                "localized": "Blog Title"
+            },
+            {
+                "field": "bookTitle",
+                "localized": "Book Title"
+            },
+            {
+                "field": "callNumber",
+                "localized": "Call Number"
+            },
+            {
+                "field": "caseName",
+                "localized": "Case Name"
+            },
+            {
+                "field": "citationKey",
+                "localized": "Citation Key"
+            },
+            {
+                "field": "code",
+                "localized": "Code"
+            },
+            {
+                "field": "codeNumber",
+                "localized": "Code Number"
+            },
+            {
+                "field": "codePages",
+                "localized": "Code Pages"
+            },
+            {
+                "field": "codeVolume",
+                "localized": "Code Volume"
+            },
+            {
+                "field": "committee",
+                "localized": "Committee"
+            },
+            {
+                "field": "company",
+                "localized": "Company"
+            },
+            {
+                "field": "conferenceName",
+                "localized": "Conference Name"
+            },
+            {
+                "field": "country",
+                "localized": "Country"
+            },
+            {
+                "field": "court",
+                "localized": "Court"
+            },
+            {
+                "field": "DOI",
+                "localized": "DOI"
+            },
+            {
+                "field": "date",
+                "localized": "Date"
+            },
+            {
+                "field": "dateDecided",
+                "localized": "Date Decided"
+            },
+            {
+                "field": "dateEnacted",
+                "localized": "Date Enacted"
+            },
+            {
+                "field": "dictionaryTitle",
+                "localized": "Dictionary Title"
+            },
+            {
+                "field": "distributor",
+                "localized": "Distributor"
+            },
+            {
+                "field": "docketNumber",
+                "localized": "Docket Number"
+            },
+            {
+                "field": "documentNumber",
+                "localized": "Document Number"
+            },
+            {
+                "field": "edition",
+                "localized": "Edition"
+            },
+            {
+                "field": "encyclopediaTitle",
+                "localized": "Encyclopedia Title"
+            },
+            {
+                "field": "episodeNumber",
+                "localized": "Episode Number"
+            },
+            {
+                "field": "extra",
+                "localized": "Extra"
+            },
+            {
+                "field": "audioFileType",
+                "localized": "File Type"
+            },
+            {
+                "field": "filingDate",
+                "localized": "Filing Date"
+            },
+            {
+                "field": "firstPage",
+                "localized": "First Page"
+            },
+            {
+                "field": "videoRecordingFormat",
+                "localized": "Format"
+            },
+            {
+                "field": "audioRecordingFormat",
+                "localized": "Format"
+            },
+            {
+                "field": "forumTitle",
+                "localized": "Forum/Listserv Title"
+            },
+            {
+                "field": "genre",
+                "localized": "Genre"
+            },
+            {
+                "field": "history",
+                "localized": "History"
+            },
+            {
+                "field": "ISBN",
+                "localized": "ISBN"
+            },
+            {
+                "field": "ISSN",
+                "localized": "ISSN"
+            },
+            {
+                "field": "institution",
+                "localized": "Institution"
+            },
+            {
+                "field": "issue",
+                "localized": "Issue"
+            },
+            {
+                "field": "issueDate",
+                "localized": "Issue Date"
+            },
+            {
+                "field": "issuingAuthority",
+                "localized": "Issuing Authority"
+            },
+            {
+                "field": "journalAbbreviation",
+                "localized": "Journal Abbr"
+            },
+            {
+                "field": "label",
+                "localized": "Label"
+            },
+            {
+                "field": "language",
+                "localized": "Language"
+            },
+            {
+                "field": "legalStatus",
+                "localized": "Legal Status"
+            },
+            {
+                "field": "legislativeBody",
+                "localized": "Legislative Body"
+            },
+            {
+                "field": "libraryCatalog",
+                "localized": "Library Catalog"
+            },
+            {
+                "field": "archiveLocation",
+                "localized": "Loc. in Archive"
+            },
+            {
+                "field": "artworkMedium",
+                "localized": "Medium"
+            },
+            {
+                "field": "interviewMedium",
+                "localized": "Medium"
+            },
+            {
+                "field": "meetingName",
+                "localized": "Meeting Name"
+            },
+            {
+                "field": "nameOfAct",
+                "localized": "Name of Act"
+            },
+            {
+                "field": "network",
+                "localized": "Network"
+            },
+            {
+                "field": "pages",
+                "localized": "Pages"
+            },
+            {
+                "field": "patentNumber",
+                "localized": "Patent Number"
+            },
+            {
+                "field": "place",
+                "localized": "Place"
+            },
+            {
+                "field": "postType",
+                "localized": "Post Type"
+            },
+            {
+                "field": "priorityNumbers",
+                "localized": "Priority Numbers"
+            },
+            {
+                "field": "proceedingsTitle",
+                "localized": "Proceedings Title"
+            },
+            {
+                "field": "programmingLanguage",
+                "localized": "Prog. Language"
+            },
+            {
+                "field": "programTitle",
+                "localized": "Program Title"
+            },
+            {
+                "field": "publicLawNumber",
+                "localized": "Public Law Number"
+            },
+            {
+                "field": "publicationTitle",
+                "localized": "Publication"
+            },
+            {
+                "field": "publisher",
+                "localized": "Publisher"
+            },
+            {
+                "field": "references",
+                "localized": "References"
+            },
+            {
+                "field": "reportNumber",
+                "localized": "Report Number"
+            },
+            {
+                "field": "reportType",
+                "localized": "Report Type"
+            },
+            {
+                "field": "reporter",
+                "localized": "Reporter"
+            },
+            {
+                "field": "reporterVolume",
+                "localized": "Reporter Volume"
+            },
+            {
+                "field": "repository",
+                "localized": "Repository"
+            },
+            {
+                "field": "rights",
+                "localized": "Rights"
+            },
+            {
+                "field": "runningTime",
+                "localized": "Running Time"
+            },
+            {
+                "field": "scale",
+                "localized": "Scale"
+            },
+            {
+                "field": "section",
+                "localized": "Section"
+            },
+            {
+                "field": "series",
+                "localized": "Series"
+            },
+            {
+                "field": "seriesNumber",
+                "localized": "Series Number"
+            },
+            {
+                "field": "seriesText",
+                "localized": "Series Text"
+            },
+            {
+                "field": "seriesTitle",
+                "localized": "Series Title"
+            },
+            {
+                "field": "session",
+                "localized": "Session"
+            },
+            {
+                "field": "shortTitle",
+                "localized": "Short Title"
+            },
+            {
+                "field": "studio",
+                "localized": "Studio"
+            },
+            {
+                "field": "subject",
+                "localized": "Subject"
+            },
+            {
+                "field": "system",
+                "localized": "System"
+            },
+            {
+                "field": "title",
+                "localized": "Title"
+            },
+            {
+                "field": "presentationType",
+                "localized": "Type"
+            },
+            {
+                "field": "thesisType",
+                "localized": "Type"
+            },
+            {
+                "field": "mapType",
+                "localized": "Type"
+            },
+            {
+                "field": "manuscriptType",
+                "localized": "Type"
+            },
+            {
+                "field": "letterType",
+                "localized": "Type"
+            },
+            {
+                "field": "url",
+                "localized": "URL"
+            },
+            {
+                "field": "university",
+                "localized": "University"
+            },
+            {
+                "field": "versionNumber",
+                "localized": "Version"
+            },
+            {
+                "field": "volume",
+                "localized": "Volume"
+            },
+            {
+                "field": "websiteTitle",
+                "localized": "Website Title"
+            },
+            {
+                "field": "websiteType",
+                "localized": "Website Type"
+            }
+        ],
+        "creatorFields": [
+            {
+                "field": "firstName",
+                "localized": "First"
+            },
+            {
+                "field": "lastName",
+                "localized": "Last"
+            },
+            {
+                "field": "name",
+                "localized": "Name"
+            }
+        ],
+        "itemTypeCreatorTypes": {
+            "journalArticle": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                }
+            ]
+        },
+        "itemTypeFields": {
+            "journalArticle": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "publicationTitle",
+                    "localized": "Publication"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "issue",
+                    "localized": "Issue"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "seriesText",
+                    "localized": "Series Text"
+                },
+                {
+                    "field": "journalAbbreviation",
+                    "localized": "Journal Abbr"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "DOI",
+                    "localized": "DOI"
+                },
+                {
+                    "field": "ISSN",
+                    "localized": "ISSN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ]
+        },
+        "itemTemplates": {},
+        "invalidated": true
+    },
+    "modal": {
+        "id": null
+    },
+    "ongoing": [],
+    "preferences": {
+        "citationStyle": "modern-language-association",
+        "citationLocale": "en-US",
+        "installedCitationStyles": [],
+        "columns": [
+            {
+                "field": "title",
+                "fraction": 0.45,
+                "isVisible": true,
+                "minFraction": 0.1,
+                "sort": "asc"
+            },
+            {
+                "field": "creator",
+                "fraction": 0.3,
+                "isVisible": true,
+                "minFraction": 0.05
+            },
+            {
+                "field": "date",
+                "fraction": 0.2,
+                "isVisible": true,
+                "minFraction": 0.05
+            },
+            {
+                "field": "itemType",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "year",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "publisher",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "publicationTitle",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "journalAbbreviation",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "language",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "libraryCatalog",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "callNumber",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "rights",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "dateAdded",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "dateModified",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "extra",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "createdByUser",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "attachment",
+                "fraction": 0.05,
+                "isVisible": true,
+                "minFraction": 0.05
+            }
+        ]
+    },
+    "query": {
+        "current": {
+            "collection": "WTTJ2J56",
+            "tag": [],
+            "q": "",
+            "qmode": "titleCreatorYear"
+        },
+        "isFetching": false,
+        "itemKeys": [],
+        "requests": [],
+        "tags": {},
+        "keys": []
+    },
+    "sources": {
+        "fetching": [],
+        "fetched": []
+    },
+    "styles": {
+        "isFetching": false,
+        "stylesData": null
+    },
+    "traffic": {
+        "LIBRARY_SETTINGS": {
+            "lastRequest": 1673612347292,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_LIBRARY_SETTINGS",
+                "libraryKey": "u1",
+                "settings": {},
+                "response": {
+                    "raw": {},
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "settings": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                }
+            },
+            "lastSuccess": 1673612347888,
+            "errorCount": 0
+        },
+        "COLLECTIONS_IN_LIBRARY": {
+            "lastRequest": 1673612347295,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
+                "libraryKey": "u1",
+                "start": 0,
+                "limit": 100,
+                "sort": "dateModified",
+                "direction": "desc",
+                "id": 1,
+                "collections": [
+                    {
+                        "key": "SGQRGR2J",
+                        "version": 154,
+                        "name": "Board Games",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "I6WUED2Y",
+                        "version": 154,
+                        "name": "AI",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "WTTJ2J56",
+                        "version": 154,
+                        "name": "Dogs",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "4VM2BFHN",
+                        "version": 154,
+                        "name": "Music",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "CSB4KZUU",
+                        "version": 154,
+                        "name": "Algorithms",
+                        "parentCollection": false,
+                        "relations": {}
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "key": "SGQRGR2J",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/SGQRGR2J",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/SGQRGR2J",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 14
+                            },
+                            "data": {
+                                "key": "SGQRGR2J",
+                                "version": 154,
+                                "name": "Board Games",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "I6WUED2Y",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/I6WUED2Y",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/I6WUED2Y",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 12
+                            },
+                            "data": {
+                                "key": "I6WUED2Y",
+                                "version": 154,
+                                "name": "AI",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "WTTJ2J56",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/WTTJ2J56",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/WTTJ2J56",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 7
+                            },
+                            "data": {
+                                "key": "WTTJ2J56",
+                                "version": 154,
+                                "name": "Dogs",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "4VM2BFHN",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/4VM2BFHN",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/4VM2BFHN",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 10
+                            },
+                            "data": {
+                                "key": "4VM2BFHN",
+                                "version": 154,
+                                "name": "Music",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "CSB4KZUU",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/CSB4KZUU",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/CSB4KZUU",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 20
+                            },
+                            "data": {
+                                "key": "CSB4KZUU",
+                                "version": 154,
+                                "name": "Algorithms",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "collections": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "start": 0,
+                        "limit": 100,
+                        "sort": "dateModified",
+                        "direction": "desc",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 5
+            },
+            "lastSuccess": 1673612347945,
+            "errorCount": 0
+        },
+        "TAGS_IN_COLLECTION": {
+            "lastRequest": 1673612348018,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_TAGS_IN_COLLECTION",
+                "libraryKey": "u1",
+                "collectionKey": "WTTJ2J56",
+                "queryOptions": {
+                    "sort": "title",
+                    "start": 0,
+                    "limit": 100
+                },
+                "tags": [],
+                "response": {
+                    "raw": [],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "collections": "WTTJ2J56",
+                            "items": null,
+                            "top": null,
+                            "tags": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "sort": "title",
+                        "start": 0,
+                        "limit": 100,
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 0
+            },
+            "lastSuccess": 1673612348284,
+            "errorCount": 0
+        },
+        "ITEMS_IN_COLLECTION": {
+            "lastRequest": 1673612348045,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_ITEMS_IN_COLLECTION",
+                "libraryKey": "u1",
+                "collectionKey": "WTTJ2J56",
+                "queryOptions": {
+                    "start": 0,
+                    "limit": 7,
+                    "sort": "title",
+                    "direction": "asc",
+                    "signal": {}
+                },
+                "id": 2,
+                "items": [
+                    {
+                        "key": "HHVQTHFT",
+                        "version": 165,
+                        "itemType": "webpage",
+                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "creators": [],
+                        "abstractNote": "",
+                        "websiteTitle": "",
+                        "websiteType": "",
+                        "date": "",
+                        "shortTitle": "",
+                        "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                        "accessDate": "2023-01-13T11:38:38Z",
+                        "language": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T11:38:38Z",
+                        "dateModified": "2023-01-13T11:38:42Z",
+                        "@@meta@@": {
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/D532CISN",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 12:38:38",
+                            "dateModified": "13/01/2023, 12:38:42",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "webpage",
+                            "itemType": "webpage",
+                            "itemTypeRaw": "webpage",
+                            "key": "HHVQTHFT",
+                            "publicationTitle": "",
+                            "publisher": null,
+                            "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                            "year": "",
+                            "language": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "VR82JUX8",
+                        "version": 155,
+                        "itemType": "journalArticle",
+                        "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Richard D.",
+                                "lastName": "Kealy"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Dennis F.",
+                                "lastName": "Lawler"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Joan M.",
+                                "lastName": "Ballam"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Sandra L.",
+                                "lastName": "Mantz"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Darryl N.",
+                                "lastName": "Biery"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Elizabeth H.",
+                                "lastName": "Greeley"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "George",
+                                "lastName": "Lust"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Mariangela",
+                                "lastName": "Segre"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Gail K.",
+                                "lastName": "Smith"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Howard D.",
+                                "lastName": "Stowe"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "publicationTitle": "Journal of the American Veterinary Medical Association",
+                        "volume": "220",
+                        "issue": "9",
+                        "pages": "1315–1320",
+                        "date": "2002",
+                        "series": "",
+                        "seriesTitle": "",
+                        "seriesText": "",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISSN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Publisher: Am Vet Med Assoc",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:52:40Z",
+                        "dateModified": "2023-01-13T10:52:40Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Kealy et al.",
+                            "parsedDate": "2002",
+                            "numChildren": 2
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/VR82JUX8",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 248058
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "Kealy et al.",
+                            "date": "2002",
+                            "dateAdded": "13/01/2023, 11:52:40",
+                            "dateModified": "13/01/2023, 11:52:40",
+                            "emojis": [],
+                            "extra": "Publisher: Am Vet Med Assoc",
+                            "iconName": "journal-article",
+                            "itemType": "journalArticle",
+                            "itemTypeRaw": "journalArticle",
+                            "key": "VR82JUX8",
+                            "publicationTitle": "Journal of the American Veterinary Medical Association",
+                            "publisher": null,
+                            "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                            "year": "2002",
+                            "journalAbbreviation": "",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "J2NYHR6N",
+                        "version": 155,
+                        "itemType": "webpage",
+                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                        "creators": [],
+                        "abstractNote": "",
+                        "websiteTitle": "",
+                        "websiteType": "",
+                        "date": "",
+                        "shortTitle": "",
+                        "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                        "accessDate": "2023-01-13T10:54:08Z",
+                        "language": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:54:08Z",
+                        "dateModified": "2023-01-13T10:54:08Z",
+                        "@@meta@@": {
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 11:54:08",
+                            "dateModified": "13/01/2023, 11:54:08",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "webpage",
+                            "itemType": "webpage",
+                            "itemTypeRaw": "webpage",
+                            "key": "J2NYHR6N",
+                            "publicationTitle": "",
+                            "publisher": null,
+                            "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                            "year": "",
+                            "language": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "Z6HA62VJ",
+                        "version": 156,
+                        "itemType": "note",
+                        "note": "<div data-schema-version=\"8\"><p>Puppies!</p><p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p></div>",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:54:44Z",
+                        "dateModified": "2023-01-13T10:56:31Z",
+                        "@@meta@@": {
+                            "numChildren": 3
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                                "type": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": null,
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 11:54:44",
+                            "dateModified": "13/01/2023, 11:56:31",
+                            "emojis": [],
+                            "iconName": "note",
+                            "itemType": "Note",
+                            "itemTypeRaw": "note",
+                            "key": "Z6HA62VJ",
+                            "publicationTitle": null,
+                            "publisher": null,
+                            "title": "Puppies!",
+                            "year": ""
+                        }
+                    },
+                    {
+                        "key": "66LW9WRP",
+                        "version": 155,
+                        "itemType": "book",
+                        "title": "Understanding dogs",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Clinton",
+                                "lastName": "Sanders"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "series": "",
+                        "seriesNumber": "",
+                        "volume": "39",
+                        "numberOfVolumes": "",
+                        "edition": "",
+                        "place": "",
+                        "publisher": "Temple University Press",
+                        "date": "1999",
+                        "numPages": "",
+                        "language": "",
+                        "ISBN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:52:40Z",
+                        "dateModified": "2023-01-13T10:52:40Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Sanders",
+                            "parsedDate": "1999",
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "Sanders",
+                            "date": "1999",
+                            "dateAdded": "13/01/2023, 11:52:40",
+                            "dateModified": "13/01/2023, 11:52:40",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "book",
+                            "itemType": "book",
+                            "itemTypeRaw": "book",
+                            "key": "66LW9WRP",
+                            "publicationTitle": null,
+                            "publisher": "Temple University Press",
+                            "title": "Understanding dogs",
+                            "year": "1999",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "PEZF7SPI",
+                        "version": 155,
+                        "itemType": "journalArticle",
+                        "title": "Vision in dogs",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Paul E.",
+                                "lastName": "Miller"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Christopher J.",
+                                "lastName": "Murphy"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "publicationTitle": "Journal-American Veterinary Medical Association",
+                        "volume": "207",
+                        "issue": "",
+                        "pages": "1623–1634",
+                        "date": "1995",
+                        "series": "",
+                        "seriesTitle": "",
+                        "seriesText": "",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISSN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:52:40Z",
+                        "dateModified": "2023-01-13T10:52:40Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Miller and Murphy",
+                            "parsedDate": "1995",
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 3221470
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "Miller and Murphy",
+                            "date": "1995",
+                            "dateAdded": "13/01/2023, 11:52:40",
+                            "dateModified": "13/01/2023, 11:52:40",
+                            "emojis": [],
+                            "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                            "iconName": "journal-article",
+                            "itemType": "journalArticle",
+                            "itemTypeRaw": "journalArticle",
+                            "key": "PEZF7SPI",
+                            "publicationTitle": "Journal-American Veterinary Medical Association",
+                            "publisher": null,
+                            "title": "Vision in dogs",
+                            "year": "1995",
+                            "journalAbbreviation": "",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "WRCN45PC",
+                        "version": 155,
+                        "itemType": "webpage",
+                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                        "creators": [],
+                        "abstractNote": "",
+                        "websiteTitle": "",
+                        "websiteType": "",
+                        "date": "",
+                        "shortTitle": "",
+                        "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                        "accessDate": "2023-01-13T10:53:25Z",
+                        "language": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:53:25Z",
+                        "dateModified": "2023-01-13T10:53:25Z",
+                        "@@meta@@": {
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 11:53:25",
+                            "dateModified": "13/01/2023, 11:53:25",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "webpage",
+                            "itemType": "webpage",
+                            "itemTypeRaw": "webpage",
+                            "key": "WRCN45PC",
+                            "publicationTitle": "",
+                            "publisher": null,
+                            "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                            "year": "",
+                            "language": "",
+                            "rights": ""
+                        }
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "key": "HHVQTHFT",
+                            "version": 165,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/D532CISN",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "HHVQTHFT",
+                                "version": 165,
+                                "itemType": "webpage",
+                                "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                                "creators": [],
+                                "abstractNote": "",
+                                "websiteTitle": "",
+                                "websiteType": "",
+                                "date": "",
+                                "shortTitle": "",
+                                "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                                "accessDate": "2023-01-13T11:38:38Z",
+                                "language": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T11:38:38Z",
+                                "dateModified": "2023-01-13T11:38:42Z"
+                            }
+                        },
+                        {
+                            "key": "VR82JUX8",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/VR82JUX8",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 248058
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Kealy et al.",
+                                "parsedDate": "2002",
+                                "numChildren": 2
+                            },
+                            "data": {
+                                "key": "VR82JUX8",
+                                "version": 155,
+                                "itemType": "journalArticle",
+                                "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Richard D.",
+                                        "lastName": "Kealy"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Dennis F.",
+                                        "lastName": "Lawler"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Joan M.",
+                                        "lastName": "Ballam"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Sandra L.",
+                                        "lastName": "Mantz"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Darryl N.",
+                                        "lastName": "Biery"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Elizabeth H.",
+                                        "lastName": "Greeley"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "George",
+                                        "lastName": "Lust"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Mariangela",
+                                        "lastName": "Segre"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Gail K.",
+                                        "lastName": "Smith"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Howard D.",
+                                        "lastName": "Stowe"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "publicationTitle": "Journal of the American Veterinary Medical Association",
+                                "volume": "220",
+                                "issue": "9",
+                                "pages": "1315–1320",
+                                "date": "2002",
+                                "series": "",
+                                "seriesTitle": "",
+                                "seriesText": "",
+                                "journalAbbreviation": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISSN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Publisher: Am Vet Med Assoc",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:52:40Z",
+                                "dateModified": "2023-01-13T10:52:40Z"
+                            }
+                        },
+                        {
+                            "key": "J2NYHR6N",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "J2NYHR6N",
+                                "version": 155,
+                                "itemType": "webpage",
+                                "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                                "creators": [],
+                                "abstractNote": "",
+                                "websiteTitle": "",
+                                "websiteType": "",
+                                "date": "",
+                                "shortTitle": "",
+                                "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                                "accessDate": "2023-01-13T10:54:08Z",
+                                "language": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:54:08Z",
+                                "dateModified": "2023-01-13T10:54:08Z"
+                            }
+                        },
+                        {
+                            "key": "Z6HA62VJ",
+                            "version": 156,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 3
+                            },
+                            "data": {
+                                "key": "Z6HA62VJ",
+                                "version": 156,
+                                "itemType": "note",
+                                "note": "<div data-schema-version=\"8\"><p>Puppies!</p><p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p></div>",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:54:44Z",
+                                "dateModified": "2023-01-13T10:56:31Z"
+                            }
+                        },
+                        {
+                            "key": "66LW9WRP",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Sanders",
+                                "parsedDate": "1999",
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "66LW9WRP",
+                                "version": 155,
+                                "itemType": "book",
+                                "title": "Understanding dogs",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Clinton",
+                                        "lastName": "Sanders"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "series": "",
+                                "seriesNumber": "",
+                                "volume": "39",
+                                "numberOfVolumes": "",
+                                "edition": "",
+                                "place": "",
+                                "publisher": "Temple University Press",
+                                "date": "1999",
+                                "numPages": "",
+                                "language": "",
+                                "ISBN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:52:40Z",
+                                "dateModified": "2023-01-13T10:52:40Z"
+                            }
+                        },
+                        {
+                            "key": "PEZF7SPI",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 3221470
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Miller and Murphy",
+                                "parsedDate": "1995",
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "PEZF7SPI",
+                                "version": 155,
+                                "itemType": "journalArticle",
+                                "title": "Vision in dogs",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Paul E.",
+                                        "lastName": "Miller"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Christopher J.",
+                                        "lastName": "Murphy"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "publicationTitle": "Journal-American Veterinary Medical Association",
+                                "volume": "207",
+                                "issue": "",
+                                "pages": "1623–1634",
+                                "date": "1995",
+                                "series": "",
+                                "seriesTitle": "",
+                                "seriesText": "",
+                                "journalAbbreviation": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISSN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:52:40Z",
+                                "dateModified": "2023-01-13T10:52:40Z"
+                            }
+                        },
+                        {
+                            "key": "WRCN45PC",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "WRCN45PC",
+                                "version": 155,
+                                "itemType": "webpage",
+                                "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                                "creators": [],
+                                "abstractNote": "",
+                                "websiteTitle": "",
+                                "websiteType": "",
+                                "date": "",
+                                "shortTitle": "",
+                                "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                                "accessDate": "2023-01-13T10:53:25Z",
+                                "language": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:53:25Z",
+                                "dateModified": "2023-01-13T10:53:25Z"
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "collections": "WTTJ2J56",
+                            "items": null,
+                            "top": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "start": 0,
+                        "limit": 7,
+                        "sort": "title",
+                        "direction": "asc",
+                        "signal": {},
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 7
+            },
+            "lastSuccess": 1673612348573,
+            "errorCount": 0
+        },
+        "META": {
+            "lastRequest": 1673615172526,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_META",
+                "itemTypes": [
+                    {
+                        "itemType": "artwork",
+                        "localized": "Artwork"
+                    },
+                    {
+                        "itemType": "audioRecording",
+                        "localized": "Audio Recording"
+                    },
+                    {
+                        "itemType": "bill",
+                        "localized": "Bill"
+                    },
+                    {
+                        "itemType": "blogPost",
+                        "localized": "Blog Post"
+                    },
+                    {
+                        "itemType": "book",
+                        "localized": "Book"
+                    },
+                    {
+                        "itemType": "bookSection",
+                        "localized": "Book Section"
+                    },
+                    {
+                        "itemType": "case",
+                        "localized": "Case"
+                    },
+                    {
+                        "itemType": "conferencePaper",
+                        "localized": "Conference Paper"
+                    },
+                    {
+                        "itemType": "dictionaryEntry",
+                        "localized": "Dictionary Entry"
+                    },
+                    {
+                        "itemType": "document",
+                        "localized": "Document"
+                    },
+                    {
+                        "itemType": "email",
+                        "localized": "E-mail"
+                    },
+                    {
+                        "itemType": "encyclopediaArticle",
+                        "localized": "Encyclopedia Article"
+                    },
+                    {
+                        "itemType": "film",
+                        "localized": "Film"
+                    },
+                    {
+                        "itemType": "forumPost",
+                        "localized": "Forum Post"
+                    },
+                    {
+                        "itemType": "hearing",
+                        "localized": "Hearing"
+                    },
+                    {
+                        "itemType": "instantMessage",
+                        "localized": "Instant Message"
+                    },
+                    {
+                        "itemType": "interview",
+                        "localized": "Interview"
+                    },
+                    {
+                        "itemType": "journalArticle",
+                        "localized": "Journal Article"
+                    },
+                    {
+                        "itemType": "letter",
+                        "localized": "Letter"
+                    },
+                    {
+                        "itemType": "magazineArticle",
+                        "localized": "Magazine Article"
+                    },
+                    {
+                        "itemType": "manuscript",
+                        "localized": "Manuscript"
+                    },
+                    {
+                        "itemType": "map",
+                        "localized": "Map"
+                    },
+                    {
+                        "itemType": "newspaperArticle",
+                        "localized": "Newspaper Article"
+                    },
+                    {
+                        "itemType": "note",
+                        "localized": "Note"
+                    },
+                    {
+                        "itemType": "patent",
+                        "localized": "Patent"
+                    },
+                    {
+                        "itemType": "podcast",
+                        "localized": "Podcast"
+                    },
+                    {
+                        "itemType": "preprint",
+                        "localized": "Preprint"
+                    },
+                    {
+                        "itemType": "presentation",
+                        "localized": "Presentation"
+                    },
+                    {
+                        "itemType": "radioBroadcast",
+                        "localized": "Radio Broadcast"
+                    },
+                    {
+                        "itemType": "report",
+                        "localized": "Report"
+                    },
+                    {
+                        "itemType": "computerProgram",
+                        "localized": "Software"
+                    },
+                    {
+                        "itemType": "statute",
+                        "localized": "Statute"
+                    },
+                    {
+                        "itemType": "tvBroadcast",
+                        "localized": "TV Broadcast"
+                    },
+                    {
+                        "itemType": "thesis",
+                        "localized": "Thesis"
+                    },
+                    {
+                        "itemType": "videoRecording",
+                        "localized": "Video Recording"
+                    },
+                    {
+                        "itemType": "webpage",
+                        "localized": "Web Page"
+                    }
+                ],
+                "itemFields": [
+                    {
+                        "field": "numPages",
+                        "localized": "# of Pages"
+                    },
+                    {
+                        "field": "numberOfVolumes",
+                        "localized": "# of Volumes"
+                    },
+                    {
+                        "field": "abstractNote",
+                        "localized": "Abstract"
+                    },
+                    {
+                        "field": "accessDate",
+                        "localized": "Accessed"
+                    },
+                    {
+                        "field": "applicationNumber",
+                        "localized": "Application Number"
+                    },
+                    {
+                        "field": "archive",
+                        "localized": "Archive"
+                    },
+                    {
+                        "field": "archiveID",
+                        "localized": "Archive ID"
+                    },
+                    {
+                        "field": "artworkSize",
+                        "localized": "Artwork Size"
+                    },
+                    {
+                        "field": "assignee",
+                        "localized": "Assignee"
+                    },
+                    {
+                        "field": "billNumber",
+                        "localized": "Bill Number"
+                    },
+                    {
+                        "field": "blogTitle",
+                        "localized": "Blog Title"
+                    },
+                    {
+                        "field": "bookTitle",
+                        "localized": "Book Title"
+                    },
+                    {
+                        "field": "callNumber",
+                        "localized": "Call Number"
+                    },
+                    {
+                        "field": "caseName",
+                        "localized": "Case Name"
+                    },
+                    {
+                        "field": "citationKey",
+                        "localized": "Citation Key"
+                    },
+                    {
+                        "field": "code",
+                        "localized": "Code"
+                    },
+                    {
+                        "field": "codeNumber",
+                        "localized": "Code Number"
+                    },
+                    {
+                        "field": "codePages",
+                        "localized": "Code Pages"
+                    },
+                    {
+                        "field": "codeVolume",
+                        "localized": "Code Volume"
+                    },
+                    {
+                        "field": "committee",
+                        "localized": "Committee"
+                    },
+                    {
+                        "field": "company",
+                        "localized": "Company"
+                    },
+                    {
+                        "field": "conferenceName",
+                        "localized": "Conference Name"
+                    },
+                    {
+                        "field": "country",
+                        "localized": "Country"
+                    },
+                    {
+                        "field": "court",
+                        "localized": "Court"
+                    },
+                    {
+                        "field": "DOI",
+                        "localized": "DOI"
+                    },
+                    {
+                        "field": "date",
+                        "localized": "Date"
+                    },
+                    {
+                        "field": "dateDecided",
+                        "localized": "Date Decided"
+                    },
+                    {
+                        "field": "dateEnacted",
+                        "localized": "Date Enacted"
+                    },
+                    {
+                        "field": "dictionaryTitle",
+                        "localized": "Dictionary Title"
+                    },
+                    {
+                        "field": "distributor",
+                        "localized": "Distributor"
+                    },
+                    {
+                        "field": "docketNumber",
+                        "localized": "Docket Number"
+                    },
+                    {
+                        "field": "documentNumber",
+                        "localized": "Document Number"
+                    },
+                    {
+                        "field": "edition",
+                        "localized": "Edition"
+                    },
+                    {
+                        "field": "encyclopediaTitle",
+                        "localized": "Encyclopedia Title"
+                    },
+                    {
+                        "field": "episodeNumber",
+                        "localized": "Episode Number"
+                    },
+                    {
+                        "field": "extra",
+                        "localized": "Extra"
+                    },
+                    {
+                        "field": "audioFileType",
+                        "localized": "File Type"
+                    },
+                    {
+                        "field": "filingDate",
+                        "localized": "Filing Date"
+                    },
+                    {
+                        "field": "firstPage",
+                        "localized": "First Page"
+                    },
+                    {
+                        "field": "videoRecordingFormat",
+                        "localized": "Format"
+                    },
+                    {
+                        "field": "audioRecordingFormat",
+                        "localized": "Format"
+                    },
+                    {
+                        "field": "forumTitle",
+                        "localized": "Forum/Listserv Title"
+                    },
+                    {
+                        "field": "genre",
+                        "localized": "Genre"
+                    },
+                    {
+                        "field": "history",
+                        "localized": "History"
+                    },
+                    {
+                        "field": "ISBN",
+                        "localized": "ISBN"
+                    },
+                    {
+                        "field": "ISSN",
+                        "localized": "ISSN"
+                    },
+                    {
+                        "field": "institution",
+                        "localized": "Institution"
+                    },
+                    {
+                        "field": "issue",
+                        "localized": "Issue"
+                    },
+                    {
+                        "field": "issueDate",
+                        "localized": "Issue Date"
+                    },
+                    {
+                        "field": "issuingAuthority",
+                        "localized": "Issuing Authority"
+                    },
+                    {
+                        "field": "journalAbbreviation",
+                        "localized": "Journal Abbr"
+                    },
+                    {
+                        "field": "label",
+                        "localized": "Label"
+                    },
+                    {
+                        "field": "language",
+                        "localized": "Language"
+                    },
+                    {
+                        "field": "legalStatus",
+                        "localized": "Legal Status"
+                    },
+                    {
+                        "field": "legislativeBody",
+                        "localized": "Legislative Body"
+                    },
+                    {
+                        "field": "libraryCatalog",
+                        "localized": "Library Catalog"
+                    },
+                    {
+                        "field": "archiveLocation",
+                        "localized": "Loc. in Archive"
+                    },
+                    {
+                        "field": "artworkMedium",
+                        "localized": "Medium"
+                    },
+                    {
+                        "field": "interviewMedium",
+                        "localized": "Medium"
+                    },
+                    {
+                        "field": "meetingName",
+                        "localized": "Meeting Name"
+                    },
+                    {
+                        "field": "nameOfAct",
+                        "localized": "Name of Act"
+                    },
+                    {
+                        "field": "network",
+                        "localized": "Network"
+                    },
+                    {
+                        "field": "pages",
+                        "localized": "Pages"
+                    },
+                    {
+                        "field": "patentNumber",
+                        "localized": "Patent Number"
+                    },
+                    {
+                        "field": "place",
+                        "localized": "Place"
+                    },
+                    {
+                        "field": "postType",
+                        "localized": "Post Type"
+                    },
+                    {
+                        "field": "priorityNumbers",
+                        "localized": "Priority Numbers"
+                    },
+                    {
+                        "field": "proceedingsTitle",
+                        "localized": "Proceedings Title"
+                    },
+                    {
+                        "field": "programmingLanguage",
+                        "localized": "Prog. Language"
+                    },
+                    {
+                        "field": "programTitle",
+                        "localized": "Program Title"
+                    },
+                    {
+                        "field": "publicLawNumber",
+                        "localized": "Public Law Number"
+                    },
+                    {
+                        "field": "publicationTitle",
+                        "localized": "Publication"
+                    },
+                    {
+                        "field": "publisher",
+                        "localized": "Publisher"
+                    },
+                    {
+                        "field": "references",
+                        "localized": "References"
+                    },
+                    {
+                        "field": "reportNumber",
+                        "localized": "Report Number"
+                    },
+                    {
+                        "field": "reportType",
+                        "localized": "Report Type"
+                    },
+                    {
+                        "field": "reporter",
+                        "localized": "Reporter"
+                    },
+                    {
+                        "field": "reporterVolume",
+                        "localized": "Reporter Volume"
+                    },
+                    {
+                        "field": "repository",
+                        "localized": "Repository"
+                    },
+                    {
+                        "field": "rights",
+                        "localized": "Rights"
+                    },
+                    {
+                        "field": "runningTime",
+                        "localized": "Running Time"
+                    },
+                    {
+                        "field": "scale",
+                        "localized": "Scale"
+                    },
+                    {
+                        "field": "section",
+                        "localized": "Section"
+                    },
+                    {
+                        "field": "series",
+                        "localized": "Series"
+                    },
+                    {
+                        "field": "seriesNumber",
+                        "localized": "Series Number"
+                    },
+                    {
+                        "field": "seriesText",
+                        "localized": "Series Text"
+                    },
+                    {
+                        "field": "seriesTitle",
+                        "localized": "Series Title"
+                    },
+                    {
+                        "field": "session",
+                        "localized": "Session"
+                    },
+                    {
+                        "field": "shortTitle",
+                        "localized": "Short Title"
+                    },
+                    {
+                        "field": "studio",
+                        "localized": "Studio"
+                    },
+                    {
+                        "field": "subject",
+                        "localized": "Subject"
+                    },
+                    {
+                        "field": "system",
+                        "localized": "System"
+                    },
+                    {
+                        "field": "title",
+                        "localized": "Title"
+                    },
+                    {
+                        "field": "presentationType",
+                        "localized": "Type"
+                    },
+                    {
+                        "field": "thesisType",
+                        "localized": "Type"
+                    },
+                    {
+                        "field": "mapType",
+                        "localized": "Type"
+                    },
+                    {
+                        "field": "manuscriptType",
+                        "localized": "Type"
+                    },
+                    {
+                        "field": "letterType",
+                        "localized": "Type"
+                    },
+                    {
+                        "field": "url",
+                        "localized": "URL"
+                    },
+                    {
+                        "field": "university",
+                        "localized": "University"
+                    },
+                    {
+                        "field": "versionNumber",
+                        "localized": "Version"
+                    },
+                    {
+                        "field": "volume",
+                        "localized": "Volume"
+                    },
+                    {
+                        "field": "websiteTitle",
+                        "localized": "Website Title"
+                    },
+                    {
+                        "field": "websiteType",
+                        "localized": "Website Type"
+                    }
+                ],
+                "creatorFields": [
+                    {
+                        "field": "firstName",
+                        "localized": "First"
+                    },
+                    {
+                        "field": "lastName",
+                        "localized": "Last"
+                    },
+                    {
+                        "field": "name",
+                        "localized": "Name"
+                    }
+                ]
+            },
+            "lastSuccess": 1673615173160,
+            "errorCount": 0
+        },
+        "ITEM_TYPE_CREATOR_TYPES": {
+            "lastRequest": 1673615172530,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_ITEM_TYPE_CREATOR_TYPES",
+                "itemType": "journalArticle",
+                "id": 3,
+                "creatorTypes": [
+                    {
+                        "creatorType": "author",
+                        "localized": "Author"
+                    },
+                    {
+                        "creatorType": "contributor",
+                        "localized": "Contributor"
+                    },
+                    {
+                        "creatorType": "editor",
+                        "localized": "Editor"
+                    },
+                    {
+                        "creatorType": "reviewedAuthor",
+                        "localized": "Reviewed Author"
+                    },
+                    {
+                        "creatorType": "translator",
+                        "localized": "Translator"
+                    }
+                ]
+            },
+            "lastSuccess": 1673615173110,
+            "errorCount": 0
+        },
+        "ITEM_TYPE_FIELDS": {
+            "lastRequest": 1673615172532,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_ITEM_TYPE_FIELDS",
+                "itemType": "journalArticle",
+                "id": 4,
+                "fields": [
+                    {
+                        "field": "title",
+                        "localized": "Title"
+                    },
+                    {
+                        "field": "abstractNote",
+                        "localized": "Abstract"
+                    },
+                    {
+                        "field": "publicationTitle",
+                        "localized": "Publication"
+                    },
+                    {
+                        "field": "volume",
+                        "localized": "Volume"
+                    },
+                    {
+                        "field": "issue",
+                        "localized": "Issue"
+                    },
+                    {
+                        "field": "pages",
+                        "localized": "Pages"
+                    },
+                    {
+                        "field": "date",
+                        "localized": "Date"
+                    },
+                    {
+                        "field": "series",
+                        "localized": "Series"
+                    },
+                    {
+                        "field": "seriesTitle",
+                        "localized": "Series Title"
+                    },
+                    {
+                        "field": "seriesText",
+                        "localized": "Series Text"
+                    },
+                    {
+                        "field": "journalAbbreviation",
+                        "localized": "Journal Abbr"
+                    },
+                    {
+                        "field": "language",
+                        "localized": "Language"
+                    },
+                    {
+                        "field": "DOI",
+                        "localized": "DOI"
+                    },
+                    {
+                        "field": "ISSN",
+                        "localized": "ISSN"
+                    },
+                    {
+                        "field": "shortTitle",
+                        "localized": "Short Title"
+                    },
+                    {
+                        "field": "url",
+                        "localized": "URL"
+                    },
+                    {
+                        "field": "accessDate",
+                        "localized": "Accessed"
+                    },
+                    {
+                        "field": "archive",
+                        "localized": "Archive"
+                    },
+                    {
+                        "field": "archiveLocation",
+                        "localized": "Loc. in Archive"
+                    },
+                    {
+                        "field": "libraryCatalog",
+                        "localized": "Library Catalog"
+                    },
+                    {
+                        "field": "callNumber",
+                        "localized": "Call Number"
+                    },
+                    {
+                        "field": "rights",
+                        "localized": "Rights"
+                    },
+                    {
+                        "field": "extra",
+                        "localized": "Extra"
+                    }
+                ]
+            },
+            "lastSuccess": 1673615173170,
+            "errorCount": 0
+        },
+        "RELATED_ITEMS": {
+            "lastRequest": 1673615172535,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_RELATED_ITEMS",
+                "itemKey": "VR82JUX8",
+                "libraryKey": "u1",
+                "items": []
+            },
+            "lastSuccess": 1673615172536,
+            "errorCount": 0
+        }
+    },
+    "router": {
+        "location": {
+            "pathname": "/testuser/collections/WTTJ2J56/items/VR82JUX8/collection",
+            "search": "",
+            "hash": "",
+            "key": "y8erlm",
+            "query": {}
+        },
+        "action": "PUSH"
+    }
+}
