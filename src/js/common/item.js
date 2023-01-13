@@ -49,7 +49,7 @@ const getAttachmentColumnIcon = item => {
 		if(attachmentType === 'application/pdf' ) {
 			return 'pdf';
 		} else if(attachmentType === 'text/html' && attachmentSize === null) {
-			return 'web-page-snapshot';
+			return 'webpage-snapshot';
 		} else {
 			return 'document';
 		}
