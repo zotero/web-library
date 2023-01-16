@@ -315,9 +315,11 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 		}
 	}, [dispatch, noteKey, notes, prevNoteKey, selectedNote]);
 
-	usePrepForUnmount(lastSeenNoteKey => {
-		dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
-	}, noteKey);
+	usePrepForUnmount(([lastSeenNoteKey, lastSeenIsReadOnly]) => {
+		if (!lastSeenIsReadOnly) {
+			dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
+		}
+	}, [itemKey, isReadOnly]);
 
 	return (
 		<TabPane

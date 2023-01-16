@@ -9,15 +9,17 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers, resizeWindow } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
-import userPicturesRedundant from './fixtures/response/test-user-pictures-redundant.json';
 import itemFields from './fixtures/response/item-fields';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-film.json';
 
+// Force My Library to be read-only
+stateRaw.config.libraries[0].isReadOnly = true;
+
 const state = JSONtoState(stateRaw);
 applyAdditionalJestTweaks();
 
-describe('Test User\'s library', () => {
+describe('Test User\'s read-only library', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
 
@@ -39,7 +41,7 @@ describe('Test User\'s library', () => {
 	afterEach(() => server.resetHandlers());
 	afterAll(() => server.close());
 
-	test('Should run redundant image cleanup', async () => {
+	test('Should not attempt to run redundant image cleanup', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
@@ -50,21 +52,6 @@ describe('Test User\'s library', () => {
 		expect(screen.getByRole('tab', { name: 'Note', selected: true })).toBeInTheDocument();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 4);
-					res.body = JSON.stringify(userPicturesRedundant);
-					return res;
-				});
-			}),
-			rest.delete('https://api.zotero.org/users/1/items', (req, res) => {
-				const itemKey = req.url.searchParams.get('itemKey');
-				expect(itemKey).toBe('ZZZZZZZZ');
-				return res(res => {
-					res.status = 204;
-					return res;
-				});
-			}),
 			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
 				return res(res => {
 					res.body = JSON.stringify(itemFields);

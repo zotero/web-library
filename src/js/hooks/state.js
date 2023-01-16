@@ -9,10 +9,15 @@ const usePrevious = value => {
 }
 
 // keep track of `value`. When unmounting call `callback` with the most recent value of `value`.
-const usePrepForUnmount = (callback, value) => {
+const usePrepForUnmount = (callback, values) => {
 	const ref = useRef();
+
+	if(!Array.isArray(values)) {
+		values = [values];
+	}
+
 	useEffect(() => {
-		ref.current = value;
+		ref.current = values;
 	});
 
 	useEffect(() => () => callback(ref.current), []); // eslint-disable-line react-hooks/exhaustive-deps

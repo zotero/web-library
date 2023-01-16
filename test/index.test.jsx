@@ -64,7 +64,10 @@ describe('Loading Screen', () => {
 
 	beforeAll(() => {
 		server.listen({
-			onUnhandledRequest: 'error',
+			onUnhandledRequest: (req) => {
+				// https://github.com/mswjs/msw/issues/946#issuecomment-1202959063
+				test(`${req.method} ${req.url} is not handled`, () => { });
+			},
 		});
 	});
 
@@ -96,7 +99,10 @@ describe('Zotero User\'s read-only library', () => {
 
 	beforeAll(() => {
 		server.listen({
-			onUnhandledRequest: 'error',
+			onUnhandledRequest: (req) => {
+				// https://github.com/mswjs/msw/issues/946#issuecomment-1202959063
+				test(`${req.method} ${req.url} is not handled`, () => { });
+			},
 		});
 		resizeWindow(1280, 720);
 	});

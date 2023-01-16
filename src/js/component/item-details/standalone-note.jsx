@@ -19,9 +19,11 @@ const StandaloneNote = ({ id, isActive, isReadOnly }) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
 
-	usePrepForUnmount(lastSeenNoteKey => {
-		dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
-	}, itemKey);
+	usePrepForUnmount(([lastSeenNoteKey, lastSeenIsReadOnly]) => {
+		if (!lastSeenIsReadOnly) {
+			dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
+		}
+	}, [itemKey, isReadOnly]);
 
 	return (
 		<TabPane
