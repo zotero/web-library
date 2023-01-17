@@ -193,6 +193,7 @@ const Node = props => {
 						onMouseDown={ handleTwistyMouseDown }
 						tabIndex={ -1 }
 						type="button"
+						title={ isOpen ? 'Collapse' : 'Expand' }
 					>
 						<Icon type={ '16/triangle' } width="16" height="16" />
 					</button>

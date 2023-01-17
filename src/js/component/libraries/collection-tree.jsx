@@ -89,7 +89,7 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 }
 
 const ItemsNode = memo(props => {
-	const { isPickerMode, parentCollectionKey, selectedCollectionKey, itemsSource,
+	const { isPickerMode, level, parentCollectionKey, selectedCollectionKey, itemsSource,
 		selectNode, shouldBeTabbable, ...rest } = props;
 	const id = useRef(getUniqueId());
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -115,6 +115,7 @@ const ItemsNode = memo(props => {
 		<Node
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
+			aria-level={ level }
 			className={ cx({ 'selected': isSelected })}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -134,19 +135,20 @@ const ItemsNode = memo(props => {
 });
 
 ItemsNode.propTypes = {
-	isPickerMode: PropTypes.bool,
-	itemsSource: PropTypes.string,
-	parentCollectionKey: PropTypes.string,
-	selectedCollectionKey: PropTypes.string,
-	selectNode: PropTypes.func,
-	shouldBeTabbable: PropTypes.bool,
+    isPickerMode: PropTypes.bool,
+    itemsSource: PropTypes.string,
+    level: PropTypes.number,
+    parentCollectionKey: PropTypes.string,
+    selectedCollectionKey: PropTypes.string,
+    selectNode: PropTypes.func,
+    shouldBeTabbable: PropTypes.bool
 }
 
 ItemsNode.displayName = 'ItemsNode';
 
 
 const VirtualCollectionNode = memo(props => {
-	const {  cancelAdd, commitAdd, focusBySelector, isPickerMode, parentCollectionKey,
+	const {  cancelAdd, commitAdd, focusBySelector, isPickerMode, level, parentCollectionKey,
 	parentLibraryKey, virtual, } = props;
 	const shouldIgnoreNextBlur = useRef(false);
 
@@ -175,7 +177,10 @@ const VirtualCollectionNode = memo(props => {
 	}
 
 	return (
-		<Node className={ cx({ 'new-collection': true })}>
+		<Node
+			aria-level={ level }
+			className={ cx({ 'new-collection': true })}
+		>
 			<Icon type="28/folder" className="touch" width="28" height="28" />
 			<Icon type="16/folder" className="mouse" width="16" height="16" />
 			<Editable
@@ -196,6 +201,7 @@ VirtualCollectionNode.propTypes = {
 	commitAdd: PropTypes.func,
 	focusBySelector: PropTypes.func,
 	isPickerMode: PropTypes.bool,
+	level: PropTypes.number,
 	parentCollectionKey: PropTypes.string,
 	parentLibraryKey: PropTypes.string,
 	virtual: PropTypes.object,
@@ -203,7 +209,7 @@ VirtualCollectionNode.propTypes = {
 
 VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 
-const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 
 	const handleSelect = useCallback(() => {
@@ -218,6 +224,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 		<Node
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
+			aria-level={ level }
 			className={ cx({
 				'publications': true,
 				'selected': isSelected
@@ -243,17 +250,18 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, shouldBe
 });
 
 PublicationsNode.propTypes = {
-	isMyLibrary: PropTypes.bool,
-	isPickerMode: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	parentLibraryKey: PropTypes.string,
-	selectNode: PropTypes.func,
-	shouldBeTabbable: PropTypes.bool,
+    isMyLibrary: PropTypes.bool,
+    isPickerMode: PropTypes.bool,
+    isSelected: PropTypes.bool,
+    level: PropTypes.number,
+    parentLibraryKey: PropTypes.string,
+    selectNode: PropTypes.func,
+    shouldBeTabbable: PropTypes.bool
 };
 
 PublicationsNode.displayName = 'PublicationsNode';
 
-const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 
 	const handleSelect = useCallback(() => {
@@ -268,6 +276,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 		<Node
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
+			aria-level={ level }
 			className={ cx({
 				'trash': true,
 				'selected': isSelected
@@ -287,12 +296,13 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, shouldBeTabbable
 });
 
 TrashNode.propTypes = {
-	isPickerMode: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	parentLibraryKey: PropTypes.string,
-	selectNode: PropTypes.func,
-	shouldBeTabbable: PropTypes.bool,
+    isPickerMode: PropTypes.bool,
+    isReadOnly: PropTypes.bool,
+    isSelected: PropTypes.bool,
+    level: PropTypes.number,
+    parentLibraryKey: PropTypes.string,
+    selectNode: PropTypes.func,
+    shouldBeTabbable: PropTypes.bool
 };
 
 TrashNode.displayName = 'TrashNode';
@@ -673,6 +683,7 @@ const CollectionNode = memo(props => {
 			})}
 			aria-labelledby={ id.current }
 			aria-selected={ !isPickerMode && derivedData[collection.key].isSelected }
+			aria-level={ level }
 			data-collection-key={ collection.key }
 			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents } }
 			isFileUploadAllowed={ isFileUploadAllowed }
@@ -794,7 +805,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 			<ItemsNode
 				parentCollectionKey={ parentCollectionKey }
 				{  ...pick(rest, ['isPickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
-				'parentCollectionKey', 'selectedCollectionKey', 'selectNode', 'shouldBeTabbable']) }
+				'level', 'parentCollectionKey', 'selectedCollectionKey', 'selectNode', 'shouldBeTabbable']) }
 			/>
 			{ sortedFilteredCollections.map(c =>
 				<CollectionNode
@@ -813,7 +824,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 			<VirtualCollectionNode
 				parentCollectionKey= { parentCollectionKey }
 				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'focusBySelector',
-				'parentLibraryKey', 'isPickerMode'] )}
+				'level', 'parentLibraryKey', 'isPickerMode'] )}
 			/>
 		</React.Fragment>
 	)
@@ -1014,6 +1025,7 @@ const CollectionTree = props => {
 				'pickerPick', 'pickerSkipCollections', 'virtual']) }
 			/>
 			<PublicationsNode
+				level={ 2 }
 				isMyLibrary = { isMyLibrary }
 				isPickerMode={ isPickerMode }
 				isSelected = { isCurrentLibrary && isMyPublications }
@@ -1024,6 +1036,7 @@ const CollectionTree = props => {
 				'onFocusNext', 'onFocusPrev']) }
 			/>
 			<TrashNode
+				level={ 2 }
 				isPickerMode={ isPickerMode }
 				isReadOnly = { isReadOnly }
 				isSelected = { isCurrentLibrary && isTrash }

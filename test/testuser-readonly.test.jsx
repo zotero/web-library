@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { screen } from '@testing-library/react';
+import { getByRole, screen, queryByRole } from '@testing-library/react';
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
@@ -75,5 +75,35 @@ describe('Test User\'s read-only library', () => {
 		const nextItem = screen.getByRole('row', { name: 'Understanding dogs' });
 		await actWithFakeTimers(user => user.click(nextItem));
 		await waitForPosition();
+	});
+
+	test('Should expand and collapse nodes in collections tree', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const tree = screen.getByRole('navigation', { name: 'collection tree' });
+		const myLibraryTreeItem = getByRole(tree, 'treeitem', { name: 'My Library' });
+		const dogsTreeItem = getByRole(tree, 'treeitem', { name: 'Dogs' });
+		const expandButton = getByRole(dogsTreeItem, 'button', { name: 'Expand' });
+
+		expect(myLibraryTreeItem).toHaveAttribute('aria-level', '1');
+		expect(dogsTreeItem).toHaveAttribute('aria-level', '2');
+		expect(queryByRole(tree, 'treeitem', { name: 'Goldens' })).not.toBeInTheDocument();
+
+		await actWithFakeTimers(user => user.click(expandButton));
+		await waitForPosition();
+
+		expect(getByRole(tree, 'treeitem', { name: 'Dogs', expanded: true })).toBeInTheDocument();
+		const goldensTreeItem = getByRole(tree, 'treeitem', { name: 'Goldens' });
+		expect(goldensTreeItem).toBeInTheDocument();
+		expect(goldensTreeItem).toHaveAttribute('aria-level', '3');
+
+		const collapseButton = getByRole(dogsTreeItem, 'button', { name: 'Collapse' });
+		await actWithFakeTimers(user => user.click(collapseButton));
+		await waitForPosition();
+
+		expect(getByRole(tree, 'treeitem', { name: 'Dogs', expanded: false })).toBeInTheDocument();
+		expect(queryByRole(tree, 'treeitem', { name: 'Goldens' })).not.toBeInTheDocument();
+
 	});
 });

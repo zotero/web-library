@@ -96,6 +96,7 @@ const LibraryNode = props => {
 			}) }
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected && !isPickerMode }
+			aria-level={ 1 }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ isOpen && !shouldShowSpinner }
