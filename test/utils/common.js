@@ -5,8 +5,9 @@ import userEvent from '@testing-library/user-event'
 // this is a workaround to silence the warning (https://floating-ui.com/docs/react#testing)
 export const waitForPosition = () => act(async () => { });
 
+const user = userEvent.setup({ advanceTimers: () => jest.runAllTimers() });
+
 export const actWithFakeTimers = async actCallback => {
-	const user = userEvent.setup({ advanceTimers: () => jest.runAllTimers() });
 	jest.useFakeTimers();
 	await actCallback(user);
 	act(() => jest.runOnlyPendingTimers());
@@ -19,9 +20,36 @@ export const resizeWindow = (x, y) => {
 	window.dispatchEvent(new Event('resize'));
 }
 
-export const applyAdditionalJestTweaks = () => {
-	jest.setTimeout(10000);
+export const applyAdditionalJestTweaks = ({ timeout = 10000, resolution = [1280, 720] } = {}) => {
+	jest.setTimeout(timeout);
+	resizeWindow(resolution[0], resolution[1]);
 
 	// https://github.com/jsdom/jsdom/issues/1695
 	Element.prototype.scrollIntoView = jest.fn();
+
+	Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+		get() {
+			let element = this;
+			let elementStyle = {};
+			let depth = 0;
+			while(element) {
+				elementStyle = window.getComputedStyle(element);
+				if(!element || elementStyle.display === 'none' || ['body', 'html'].includes(element.tagName.toLowerCase())) {
+					break;
+				}
+				element = element.parentElement;
+				depth++;
+			}
+
+			if (elementStyle.display === 'none') {
+				return null;
+			}
+
+			if (depth === 0) {
+				return null;
+			}
+
+			return element;
+		},
+	});
 }

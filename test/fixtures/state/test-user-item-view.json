@@ -181,7 +181,7 @@
         "tagsSearchString": "",
         "userLibraryKey": "u1",
         "useTransitions": true,
-        "view": "collection",
+        "view": "item-list",
         "attachmentKey": null,
         "isMyPublications": false,
         "isTrash": false,
@@ -423,43 +423,47 @@
                         "rights": ""
                     }
                 },
-                "WRCN45PC": {
-                    "key": "WRCN45PC",
-                    "version": 155,
+                "HHVQTHFT": {
+                    "key": "HHVQTHFT",
+                    "version": 239,
                     "itemType": "webpage",
-                    "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                    "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
                     "creators": [],
                     "abstractNote": "",
                     "websiteTitle": "",
                     "websiteType": "",
                     "date": "",
                     "shortTitle": "",
-                    "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
-                    "accessDate": "2023-01-13T10:53:25Z",
+                    "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                    "accessDate": "2023-01-13T11:38:38Z",
                     "language": "",
                     "rights": "",
                     "extra": "",
-                    "tags": [],
+                    "tags": [
+                        {
+                            "tag": "⭐️"
+                        }
+                    ],
                     "collections": [
                         "WTTJ2J56"
                     ],
                     "relations": {},
-                    "dateAdded": "2023-01-13T10:53:25Z",
-                    "dateModified": "2023-01-13T10:53:25Z",
+                    "dateAdded": "2023-01-13T11:38:38Z",
+                    "dateModified": "2023-01-13T11:38:42Z",
                     "@@meta@@": {
                         "numChildren": 1
                     },
                     "@@links@@": {
                         "self": {
-                            "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                            "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
                             "type": "application/json"
                         },
                         "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                            "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
                             "type": "text/html"
                         },
                         "attachment": {
-                            "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                            "href": "https://api.zotero.org/users/1/items/D532CISN",
                             "type": "application/json",
                             "attachmentType": "text/html"
                         }
@@ -470,19 +474,229 @@
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 11:53:25",
-                        "dateModified": "13/01/2023, 11:53:25",
+                        "dateAdded": "13/01/2023, 12:38:38",
+                        "dateModified": "13/01/2023, 12:38:42",
+                        "emojis": [
+                            "⭐️"
+                        ],
+                        "extra": "",
+                        "iconName": "webpage",
+                        "itemType": "webpage",
+                        "itemTypeRaw": "webpage",
+                        "key": "HHVQTHFT",
+                        "publicationTitle": "",
+                        "publisher": null,
+                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "year": "",
+                        "language": "",
+                        "rights": ""
+                    }
+                },
+                "J2NYHR6N": {
+                    "key": "J2NYHR6N",
+                    "version": 219,
+                    "itemType": "webpage",
+                    "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                    "creators": [],
+                    "abstractNote": "",
+                    "websiteTitle": "",
+                    "websiteType": "",
+                    "date": "",
+                    "shortTitle": "",
+                    "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                    "accessDate": "2023-01-13T10:54:08Z",
+                    "language": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [
+                        {
+                            "tag": "to read"
+                        }
+                    ],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:54:08Z",
+                    "dateModified": "2023-01-17T15:32:03Z",
+                    "@@meta@@": {
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [
+                            "#FF6666"
+                        ],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 11:54:08",
+                        "dateModified": "17/01/2023, 16:32:03",
                         "emojis": [],
                         "extra": "",
                         "iconName": "webpage",
                         "itemType": "webpage",
                         "itemTypeRaw": "webpage",
-                        "key": "WRCN45PC",
+                        "key": "J2NYHR6N",
                         "publicationTitle": "",
                         "publisher": null,
-                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
                         "year": "",
                         "language": "",
+                        "rights": ""
+                    }
+                },
+                "Z6HA62VJ": {
+                    "key": "Z6HA62VJ",
+                    "version": 219,
+                    "itemType": "note",
+                    "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
+                    "tags": [
+                        {
+                            "tag": "cute"
+                        },
+                        {
+                            "tag": "⭐️"
+                        }
+                    ],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:54:44Z",
+                    "dateModified": "2023-01-17T15:34:27Z",
+                    "@@meta@@": {
+                        "numChildren": 3
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                            "type": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": null,
+                        "colors": [
+                            "#A28AE5"
+                        ],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 11:54:44",
+                        "dateModified": "17/01/2023, 16:34:27",
+                        "emojis": [
+                            "⭐️"
+                        ],
+                        "iconName": "note",
+                        "itemType": "Note",
+                        "itemTypeRaw": "note",
+                        "key": "Z6HA62VJ",
+                        "publicationTitle": null,
+                        "publisher": null,
+                        "title": "Puppies!",
+                        "year": ""
+                    }
+                },
+                "66LW9WRP": {
+                    "key": "66LW9WRP",
+                    "version": 155,
+                    "itemType": "book",
+                    "title": "Understanding dogs",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Clinton",
+                            "lastName": "Sanders"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "series": "",
+                    "seriesNumber": "",
+                    "volume": "39",
+                    "numberOfVolumes": "",
+                    "edition": "",
+                    "place": "",
+                    "publisher": "Temple University Press",
+                    "date": "1999",
+                    "numPages": "",
+                    "language": "",
+                    "ISBN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:52:40Z",
+                    "dateModified": "2023-01-13T10:52:40Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Sanders",
+                        "parsedDate": "1999",
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "Sanders",
+                        "date": "1999",
+                        "dateAdded": "13/01/2023, 11:52:40",
+                        "dateModified": "13/01/2023, 11:52:40",
+                        "emojis": [],
+                        "extra": "",
+                        "iconName": "book",
+                        "itemType": "book",
+                        "itemTypeRaw": "book",
+                        "key": "66LW9WRP",
+                        "publicationTitle": null,
+                        "publisher": "Temple University Press",
+                        "title": "Understanding dogs",
+                        "year": "1999",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
                         "rights": ""
                     }
                 },
@@ -578,162 +792,26 @@
                         "rights": ""
                     }
                 },
-                "66LW9WRP": {
-                    "key": "66LW9WRP",
-                    "version": 155,
-                    "itemType": "book",
-                    "title": "Understanding dogs",
-                    "creators": [
-                        {
-                            "creatorType": "author",
-                            "firstName": "Clinton",
-                            "lastName": "Sanders"
-                        }
-                    ],
-                    "abstractNote": "",
-                    "series": "",
-                    "seriesNumber": "",
-                    "volume": "39",
-                    "numberOfVolumes": "",
-                    "edition": "",
-                    "place": "",
-                    "publisher": "Temple University Press",
-                    "date": "1999",
-                    "numPages": "",
-                    "language": "",
-                    "ISBN": "",
-                    "shortTitle": "",
-                    "url": "",
-                    "accessDate": "",
-                    "archive": "",
-                    "archiveLocation": "",
-                    "libraryCatalog": "Google Scholar",
-                    "callNumber": "",
-                    "rights": "",
-                    "extra": "",
-                    "tags": [],
-                    "collections": [
-                        "WTTJ2J56"
-                    ],
-                    "relations": {},
-                    "dateAdded": "2023-01-13T10:52:40Z",
-                    "dateModified": "2023-01-13T10:52:40Z",
-                    "@@meta@@": {
-                        "creatorSummary": "Sanders",
-                        "parsedDate": "1999",
-                        "numChildren": 1
-                    },
-                    "@@links@@": {
-                        "self": {
-                            "href": "https://api.zotero.org/users/1/items/66LW9WRP",
-                            "type": "application/json"
-                        },
-                        "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/66LW9WRP",
-                            "type": "text/html"
-                        },
-                        "attachment": {
-                            "href": "https://api.zotero.org/users/1/items/HX4R8R94",
-                            "type": "application/json",
-                            "attachmentType": "text/html"
-                        }
-                    },
-                    "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
-                        "colors": [],
-                        "createdByUser": "",
-                        "creator": "Sanders",
-                        "date": "1999",
-                        "dateAdded": "13/01/2023, 11:52:40",
-                        "dateModified": "13/01/2023, 11:52:40",
-                        "emojis": [],
-                        "extra": "",
-                        "iconName": "book",
-                        "itemType": "book",
-                        "itemTypeRaw": "book",
-                        "key": "66LW9WRP",
-                        "publicationTitle": null,
-                        "publisher": "Temple University Press",
-                        "title": "Understanding dogs",
-                        "year": "1999",
-                        "language": "",
-                        "libraryCatalog": "Google Scholar",
-                        "callNumber": "",
-                        "rights": ""
-                    }
-                },
-                "Z6HA62VJ": {
-                    "key": "Z6HA62VJ",
-                    "version": 219,
-                    "itemType": "note",
-                    "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
-                    "tags": [
-                        {
-                            "tag": "cute"
-                        },
-                        {
-                            "tag": "⭐️"
-                        }
-                    ],
-                    "collections": [
-                        "WTTJ2J56"
-                    ],
-                    "relations": {},
-                    "dateAdded": "2023-01-13T10:54:44Z",
-                    "dateModified": "2023-01-17T15:34:27Z",
-                    "@@meta@@": {
-                        "numChildren": 3
-                    },
-                    "@@links@@": {
-                        "self": {
-                            "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
-                            "type": "application/json"
-                        },
-                        "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
-                            "type": "text/html"
-                        }
-                    },
-                    "@@derived@@": {
-                        "attachmentIconName": null,
-                        "colors": [
-                            "#A28AE5"
-                        ],
-                        "createdByUser": "",
-                        "creator": "",
-                        "date": "",
-                        "dateAdded": "13/01/2023, 11:54:44",
-                        "dateModified": "17/01/2023, 16:34:27",
-                        "emojis": [
-                            "⭐️"
-                        ],
-                        "iconName": "note",
-                        "itemType": "Note",
-                        "itemTypeRaw": "note",
-                        "key": "Z6HA62VJ",
-                        "publicationTitle": null,
-                        "publisher": null,
-                        "title": "Puppies!",
-                        "year": ""
-                    }
-                },
-                "J2NYHR6N": {
-                    "key": "J2NYHR6N",
-                    "version": 219,
+                "WRCN45PC": {
+                    "key": "WRCN45PC",
+                    "version": 241,
                     "itemType": "webpage",
-                    "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                    "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
                     "creators": [],
                     "abstractNote": "",
                     "websiteTitle": "",
                     "websiteType": "",
                     "date": "",
                     "shortTitle": "",
-                    "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
-                    "accessDate": "2023-01-13T10:54:08Z",
+                    "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                    "accessDate": "2023-01-13T10:53:25Z",
                     "language": "",
                     "rights": "",
                     "extra": "",
                     "tags": [
+                        {
+                            "tag": "cute"
+                        },
                         {
                             "tag": "to read"
                         }
@@ -742,22 +820,22 @@
                         "WTTJ2J56"
                     ],
                     "relations": {},
-                    "dateAdded": "2023-01-13T10:54:08Z",
-                    "dateModified": "2023-01-17T15:32:03Z",
+                    "dateAdded": "2023-01-13T10:53:25Z",
+                    "dateModified": "2023-01-13T10:53:25Z",
                     "@@meta@@": {
                         "numChildren": 1
                     },
                     "@@links@@": {
                         "self": {
-                            "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                            "href": "https://api.zotero.org/users/1/items/WRCN45PC",
                             "type": "application/json"
                         },
                         "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                            "href": "https://www.zotero.org/testuser/items/WRCN45PC",
                             "type": "text/html"
                         },
                         "attachment": {
-                            "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                            "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
                             "type": "application/json",
                             "attachmentType": "text/html"
                         }
@@ -765,91 +843,23 @@
                     "@@derived@@": {
                         "attachmentIconName": "webpage-snapshot",
                         "colors": [
+                            "#A28AE5",
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 11:54:08",
-                        "dateModified": "17/01/2023, 16:32:03",
+                        "dateAdded": "13/01/2023, 11:53:25",
+                        "dateModified": "13/01/2023, 11:53:25",
                         "emojis": [],
                         "extra": "",
                         "iconName": "webpage",
                         "itemType": "webpage",
                         "itemTypeRaw": "webpage",
-                        "key": "J2NYHR6N",
+                        "key": "WRCN45PC",
                         "publicationTitle": "",
                         "publisher": null,
-                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
-                        "year": "",
-                        "language": "",
-                        "rights": ""
-                    }
-                },
-                "HHVQTHFT": {
-                    "key": "HHVQTHFT",
-                    "version": 239,
-                    "itemType": "webpage",
-                    "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
-                    "creators": [],
-                    "abstractNote": "",
-                    "websiteTitle": "",
-                    "websiteType": "",
-                    "date": "",
-                    "shortTitle": "",
-                    "url": "https://www.nature.com/articles/s41598-022-26991-5",
-                    "accessDate": "2023-01-13T11:38:38Z",
-                    "language": "",
-                    "rights": "",
-                    "extra": "",
-                    "tags": [
-                        {
-                            "tag": "⭐️"
-                        }
-                    ],
-                    "collections": [
-                        "WTTJ2J56"
-                    ],
-                    "relations": {},
-                    "dateAdded": "2023-01-13T11:38:38Z",
-                    "dateModified": "2023-01-13T11:38:42Z",
-                    "@@meta@@": {
-                        "numChildren": 1
-                    },
-                    "@@links@@": {
-                        "self": {
-                            "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
-                            "type": "application/json"
-                        },
-                        "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
-                            "type": "text/html"
-                        },
-                        "attachment": {
-                            "href": "https://api.zotero.org/users/1/items/D532CISN",
-                            "type": "application/json",
-                            "attachmentType": "text/html"
-                        }
-                    },
-                    "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
-                        "colors": [],
-                        "createdByUser": "",
-                        "creator": "",
-                        "date": "",
-                        "dateAdded": "13/01/2023, 12:38:38",
-                        "dateModified": "13/01/2023, 12:38:42",
-                        "emojis": [
-                            "⭐️"
-                        ],
-                        "extra": "",
-                        "iconName": "webpage",
-                        "itemType": "webpage",
-                        "itemTypeRaw": "webpage",
-                        "key": "HHVQTHFT",
-                        "publicationTitle": "",
-                        "publisher": null,
-                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
                         "year": "",
                         "language": "",
                         "rights": ""
@@ -874,16 +884,16 @@
                     "requests": [],
                     "isFetching": false,
                     "keys": [
-                        "WRCN45PC",
-                        "PEZF7SPI",
-                        "66LW9WRP",
-                        "Z6HA62VJ",
-                        "J2NYHR6N",
+                        "HHVQTHFT",
                         "VR82JUX8",
-                        "HHVQTHFT"
+                        "J2NYHR6N",
+                        "Z6HA62VJ",
+                        "66LW9WRP",
+                        "PEZF7SPI",
+                        "WRCN45PC"
                     ],
                     "sortBy": "title",
-                    "sortDirection": "desc",
+                    "sortDirection": "asc",
                     "isError": false,
                     "pointer": 7
                 },
@@ -931,7 +941,7 @@
                 }
             },
             "sync": {
-                "version": 239,
+                "version": 241,
                 "isSynced": true,
                 "requestsPending": 0
             },
@@ -966,11 +976,6 @@
                     "requests": [],
                     "isFetching": false,
                     "isFetchingColoredTags": false,
-                    "coloredTags": [
-                        "cute",
-                        "to read",
-                        "⭐️"
-                    ],
                     "rawTags": [
                         {
                             "tag": "cute",
@@ -999,7 +1004,12 @@
                         "cute": 0,
                         "to read": 0,
                         "⭐️": 0
-                    }
+                    },
+                    "coloredTags": [
+                        "cute",
+                        "to read",
+                        "⭐️"
+                    ]
                 }
             },
             "tagsInPublicationsItems": {},
@@ -1733,20 +1743,20 @@
         "columns": [
             {
                 "field": "title",
-                "fraction": 0.30000000000000004,
+                "fraction": 0.45,
                 "isVisible": true,
                 "minFraction": 0.1,
-                "sort": "desc"
+                "sort": "asc"
             },
             {
                 "field": "creator",
-                "fraction": 0.11111111111111105,
+                "fraction": 0.3,
                 "isVisible": true,
                 "minFraction": 0.05
             },
             {
                 "field": "date",
-                "fraction": 0.050000000000000086,
+                "fraction": 0.2,
                 "isVisible": true,
                 "minFraction": 0.05
             },
@@ -1758,14 +1768,14 @@
             },
             {
                 "field": "year",
-                "fraction": 0.09999999999999998,
-                "isVisible": true,
+                "fraction": 0.1,
+                "isVisible": false,
                 "minFraction": 0.05
             },
             {
                 "field": "publisher",
-                "fraction": 0.1888888888888889,
-                "isVisible": true,
+                "fraction": 0.2,
+                "isVisible": false,
                 "minFraction": 0.05
             },
             {
@@ -1776,7 +1786,7 @@
             },
             {
                 "field": "journalAbbreviation",
-                "fraction": 0.1999999999999998,
+                "fraction": 0.2,
                 "isVisible": false,
                 "minFraction": 0.05
             },
@@ -1789,7 +1799,7 @@
             {
                 "field": "libraryCatalog",
                 "fraction": 0.2,
-                "isVisible": true,
+                "isVisible": false,
                 "minFraction": 0.05
             },
             {
@@ -1806,7 +1816,7 @@
             },
             {
                 "field": "dateAdded",
-                "fraction": 0.09999999999999956,
+                "fraction": 0.1,
                 "isVisible": false,
                 "minFraction": 0.05
             },
@@ -1834,8 +1844,7 @@
                 "isVisible": true,
                 "minFraction": 0.05
             }
-        ],
-        "version": "1.3.2"
+        ]
     },
     "query": {
         "current": {
@@ -1860,7 +1869,7 @@
     },
     "traffic": {
         "LIBRARY_SETTINGS": {
-            "lastRequest": 1673970625902,
+            "lastRequest": 1674172935310,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_LIBRARY_SETTINGS",
@@ -1946,11 +1955,11 @@
                     "response": {}
                 }
             },
-            "lastSuccess": 1673970626165,
+            "lastSuccess": 1674172935912,
             "errorCount": 0
         },
         "COLLECTIONS_IN_LIBRARY": {
-            "lastRequest": 1673970625906,
+            "lastRequest": 1674172935313,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
@@ -2305,11 +2314,11 @@
                 },
                 "totalResults": 7
             },
-            "lastSuccess": 1673970626203,
+            "lastSuccess": 1674172935935,
             "errorCount": 0
         },
         "TAGS_IN_COLLECTION": {
-            "lastRequest": 1673970626294,
+            "lastRequest": 1674172936028,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_TAGS_IN_COLLECTION",
@@ -2350,7 +2359,7 @@
                             },
                             "meta": {
                                 "type": 0,
-                                "numItems": 4
+                                "numItems": 5
                             }
                         },
                         {
@@ -2367,7 +2376,7 @@
                             },
                             "meta": {
                                 "type": 0,
-                                "numItems": 6
+                                "numItems": 7
                             }
                         },
                         {
@@ -2421,11 +2430,11 @@
                 },
                 "totalResults": 3
             },
-            "lastSuccess": 1673970626526,
+            "lastSuccess": 1674172936413,
             "errorCount": 0
         },
         "COLORED_TAGS_IN_COLLECTION": {
-            "lastRequest": 1673970626296,
+            "lastRequest": 1674172936029,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLORED_TAGS_IN_COLLECTION",
@@ -2464,7 +2473,7 @@
                             },
                             "meta": {
                                 "type": 0,
-                                "numItems": 4
+                                "numItems": 5
                             }
                         },
                         {
@@ -2481,7 +2490,7 @@
                             },
                             "meta": {
                                 "type": 0,
-                                "numItems": 6
+                                "numItems": 7
                             }
                         },
                         {
@@ -2533,11 +2542,11 @@
                 },
                 "totalResults": 3
             },
-            "lastSuccess": 1673970626513,
+            "lastSuccess": 1674172936448,
             "errorCount": 0
         },
         "FETCH_ITEM_DETAILS": {
-            "lastRequest": 1673970626300,
+            "lastRequest": 1674172936034,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_FETCH_ITEM_DETAILS",
@@ -2836,11 +2845,11 @@
                 },
                 "totalResults": 1
             },
-            "lastSuccess": 1673970626786,
+            "lastSuccess": 1674172936707,
             "errorCount": 0
         },
         "ITEMS_IN_COLLECTION": {
-            "lastRequest": 1673970626338,
+            "lastRequest": 1674172936062,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEMS_IN_COLLECTION",
@@ -2850,259 +2859,28 @@
                     "start": 0,
                     "limit": 7,
                     "sort": "title",
-                    "direction": "desc",
+                    "direction": "asc",
                     "signal": {}
                 },
                 "id": 3,
                 "items": [
                     {
-                        "key": "WRCN45PC",
-                        "version": 155,
+                        "key": "HHVQTHFT",
+                        "version": 239,
                         "itemType": "webpage",
-                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
                         "creators": [],
                         "abstractNote": "",
                         "websiteTitle": "",
                         "websiteType": "",
                         "date": "",
                         "shortTitle": "",
-                        "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
-                        "accessDate": "2023-01-13T10:53:25Z",
+                        "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                        "accessDate": "2023-01-13T11:38:38Z",
                         "language": "",
                         "rights": "",
                         "extra": "",
-                        "tags": [],
-                        "collections": [
-                            "WTTJ2J56"
-                        ],
-                        "relations": {},
-                        "dateAdded": "2023-01-13T10:53:25Z",
-                        "dateModified": "2023-01-13T10:53:25Z",
-                        "@@meta@@": {
-                            "numChildren": 1
-                        },
-                        "@@links@@": {
-                            "self": {
-                                "href": "https://api.zotero.org/users/1/items/WRCN45PC",
-                                "type": "application/json"
-                            },
-                            "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/WRCN45PC",
-                                "type": "text/html"
-                            },
-                            "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
-                                "type": "application/json",
-                                "attachmentType": "text/html"
-                            }
-                        },
-                        "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
-                            "colors": [],
-                            "createdByUser": "",
-                            "creator": "",
-                            "date": "",
-                            "dateAdded": "13/01/2023, 11:53:25",
-                            "dateModified": "13/01/2023, 11:53:25",
-                            "emojis": [],
-                            "extra": "",
-                            "iconName": "webpage",
-                            "itemType": "webpage",
-                            "itemTypeRaw": "webpage",
-                            "key": "WRCN45PC",
-                            "publicationTitle": "",
-                            "publisher": null,
-                            "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
-                            "year": "",
-                            "language": "",
-                            "rights": ""
-                        }
-                    },
-                    {
-                        "key": "PEZF7SPI",
-                        "version": 155,
-                        "itemType": "journalArticle",
-                        "title": "Vision in dogs",
-                        "creators": [
-                            {
-                                "creatorType": "author",
-                                "firstName": "Paul E.",
-                                "lastName": "Miller"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Christopher J.",
-                                "lastName": "Murphy"
-                            }
-                        ],
-                        "abstractNote": "",
-                        "publicationTitle": "Journal-American Veterinary Medical Association",
-                        "volume": "207",
-                        "issue": "",
-                        "pages": "1623–1634",
-                        "date": "1995",
-                        "series": "",
-                        "seriesTitle": "",
-                        "seriesText": "",
-                        "journalAbbreviation": "",
-                        "language": "",
-                        "DOI": "",
-                        "ISSN": "",
-                        "shortTitle": "",
-                        "url": "",
-                        "accessDate": "",
-                        "archive": "",
-                        "archiveLocation": "",
-                        "libraryCatalog": "Google Scholar",
-                        "callNumber": "",
-                        "rights": "",
-                        "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
-                        "tags": [],
-                        "collections": [
-                            "WTTJ2J56"
-                        ],
-                        "relations": {},
-                        "dateAdded": "2023-01-13T10:52:40Z",
-                        "dateModified": "2023-01-13T10:52:40Z",
-                        "@@meta@@": {
-                            "creatorSummary": "Miller and Murphy",
-                            "parsedDate": "1995",
-                            "numChildren": 1
-                        },
-                        "@@links@@": {
-                            "self": {
-                                "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
-                                "type": "application/json"
-                            },
-                            "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
-                                "type": "text/html"
-                            },
-                            "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
-                                "type": "application/json",
-                                "attachmentType": "application/pdf",
-                                "attachmentSize": 3221470
-                            }
-                        },
-                        "@@derived@@": {
-                            "attachmentIconName": "pdf",
-                            "colors": [],
-                            "createdByUser": "",
-                            "creator": "Miller and Murphy",
-                            "date": "1995",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
-                            "emojis": [],
-                            "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
-                            "iconName": "journal-article",
-                            "itemType": "journalArticle",
-                            "itemTypeRaw": "journalArticle",
-                            "key": "PEZF7SPI",
-                            "publicationTitle": "Journal-American Veterinary Medical Association",
-                            "publisher": null,
-                            "title": "Vision in dogs",
-                            "year": "1995",
-                            "journalAbbreviation": "",
-                            "language": "",
-                            "libraryCatalog": "Google Scholar",
-                            "callNumber": "",
-                            "rights": ""
-                        }
-                    },
-                    {
-                        "key": "66LW9WRP",
-                        "version": 155,
-                        "itemType": "book",
-                        "title": "Understanding dogs",
-                        "creators": [
-                            {
-                                "creatorType": "author",
-                                "firstName": "Clinton",
-                                "lastName": "Sanders"
-                            }
-                        ],
-                        "abstractNote": "",
-                        "series": "",
-                        "seriesNumber": "",
-                        "volume": "39",
-                        "numberOfVolumes": "",
-                        "edition": "",
-                        "place": "",
-                        "publisher": "Temple University Press",
-                        "date": "1999",
-                        "numPages": "",
-                        "language": "",
-                        "ISBN": "",
-                        "shortTitle": "",
-                        "url": "",
-                        "accessDate": "",
-                        "archive": "",
-                        "archiveLocation": "",
-                        "libraryCatalog": "Google Scholar",
-                        "callNumber": "",
-                        "rights": "",
-                        "extra": "",
-                        "tags": [],
-                        "collections": [
-                            "WTTJ2J56"
-                        ],
-                        "relations": {},
-                        "dateAdded": "2023-01-13T10:52:40Z",
-                        "dateModified": "2023-01-13T10:52:40Z",
-                        "@@meta@@": {
-                            "creatorSummary": "Sanders",
-                            "parsedDate": "1999",
-                            "numChildren": 1
-                        },
-                        "@@links@@": {
-                            "self": {
-                                "href": "https://api.zotero.org/users/1/items/66LW9WRP",
-                                "type": "application/json"
-                            },
-                            "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/66LW9WRP",
-                                "type": "text/html"
-                            },
-                            "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/HX4R8R94",
-                                "type": "application/json",
-                                "attachmentType": "text/html"
-                            }
-                        },
-                        "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
-                            "colors": [],
-                            "createdByUser": "",
-                            "creator": "Sanders",
-                            "date": "1999",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
-                            "emojis": [],
-                            "extra": "",
-                            "iconName": "book",
-                            "itemType": "book",
-                            "itemTypeRaw": "book",
-                            "key": "66LW9WRP",
-                            "publicationTitle": null,
-                            "publisher": "Temple University Press",
-                            "title": "Understanding dogs",
-                            "year": "1999",
-                            "language": "",
-                            "libraryCatalog": "Google Scholar",
-                            "callNumber": "",
-                            "rights": ""
-                        }
-                    },
-                    {
-                        "key": "Z6HA62VJ",
-                        "version": 219,
-                        "itemType": "note",
-                        "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
                         "tags": [
-                            {
-                                "tag": "cute"
-                            },
                             {
                                 "tag": "⭐️"
                             }
@@ -3111,108 +2889,45 @@
                             "WTTJ2J56"
                         ],
                         "relations": {},
-                        "dateAdded": "2023-01-13T10:54:44Z",
-                        "dateModified": "2023-01-17T15:34:27Z",
-                        "@@meta@@": {
-                            "numChildren": 3
-                        },
-                        "@@links@@": {
-                            "self": {
-                                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
-                                "type": "application/json"
-                            },
-                            "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
-                                "type": "text/html"
-                            }
-                        },
-                        "@@derived@@": {
-                            "attachmentIconName": null,
-                            "colors": [
-                                "#A28AE5"
-                            ],
-                            "createdByUser": "",
-                            "creator": "",
-                            "date": "",
-                            "dateAdded": "13/01/2023, 11:54:44",
-                            "dateModified": "17/01/2023, 16:34:27",
-                            "emojis": [
-                                "⭐️"
-                            ],
-                            "iconName": "note",
-                            "itemType": "Note",
-                            "itemTypeRaw": "note",
-                            "key": "Z6HA62VJ",
-                            "publicationTitle": null,
-                            "publisher": null,
-                            "title": "Puppies!",
-                            "year": ""
-                        }
-                    },
-                    {
-                        "key": "J2NYHR6N",
-                        "version": 219,
-                        "itemType": "webpage",
-                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
-                        "creators": [],
-                        "abstractNote": "",
-                        "websiteTitle": "",
-                        "websiteType": "",
-                        "date": "",
-                        "shortTitle": "",
-                        "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
-                        "accessDate": "2023-01-13T10:54:08Z",
-                        "language": "",
-                        "rights": "",
-                        "extra": "",
-                        "tags": [
-                            {
-                                "tag": "to read"
-                            }
-                        ],
-                        "collections": [
-                            "WTTJ2J56"
-                        ],
-                        "relations": {},
-                        "dateAdded": "2023-01-13T10:54:08Z",
-                        "dateModified": "2023-01-17T15:32:03Z",
+                        "dateAdded": "2023-01-13T11:38:38Z",
+                        "dateModified": "2023-01-13T11:38:42Z",
                         "@@meta@@": {
                             "numChildren": 1
                         },
                         "@@links@@": {
                             "self": {
-                                "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                                "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
                                 "type": "application/json"
                             },
                             "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                                "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
                                 "type": "text/html"
                             },
                             "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                                "href": "https://api.zotero.org/users/1/items/D532CISN",
                                 "type": "application/json",
                                 "attachmentType": "text/html"
                             }
                         },
                         "@@derived@@": {
                             "attachmentIconName": "webpage-snapshot",
-                            "colors": [
-                                "#FF6666"
-                            ],
+                            "colors": [],
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 11:54:08",
-                            "dateModified": "17/01/2023, 16:32:03",
-                            "emojis": [],
+                            "dateAdded": "13/01/2023, 12:38:38",
+                            "dateModified": "13/01/2023, 12:38:42",
+                            "emojis": [
+                                "⭐️"
+                            ],
                             "extra": "",
                             "iconName": "webpage",
                             "itemType": "webpage",
                             "itemTypeRaw": "webpage",
-                            "key": "J2NYHR6N",
+                            "key": "HHVQTHFT",
                             "publicationTitle": "",
                             "publisher": null,
-                            "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                            "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
                             "year": "",
                             "language": "",
                             "rights": ""
@@ -3351,22 +3066,83 @@
                         }
                     },
                     {
-                        "key": "HHVQTHFT",
-                        "version": 239,
+                        "key": "J2NYHR6N",
+                        "version": 219,
                         "itemType": "webpage",
-                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
                         "creators": [],
                         "abstractNote": "",
                         "websiteTitle": "",
                         "websiteType": "",
                         "date": "",
                         "shortTitle": "",
-                        "url": "https://www.nature.com/articles/s41598-022-26991-5",
-                        "accessDate": "2023-01-13T11:38:38Z",
+                        "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                        "accessDate": "2023-01-13T10:54:08Z",
                         "language": "",
                         "rights": "",
                         "extra": "",
                         "tags": [
+                            {
+                                "tag": "to read"
+                            }
+                        ],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:54:08Z",
+                        "dateModified": "2023-01-17T15:32:03Z",
+                        "@@meta@@": {
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [
+                                "#FF6666"
+                            ],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 11:54:08",
+                            "dateModified": "17/01/2023, 16:32:03",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "webpage",
+                            "itemType": "webpage",
+                            "itemTypeRaw": "webpage",
+                            "key": "J2NYHR6N",
+                            "publicationTitle": "",
+                            "publisher": null,
+                            "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+                            "year": "",
+                            "language": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "Z6HA62VJ",
+                        "version": 219,
+                        "itemType": "note",
+                        "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
+                        "tags": [
+                            {
+                                "tag": "cute"
+                            },
                             {
                                 "tag": "⭐️"
                             }
@@ -3375,22 +3151,100 @@
                             "WTTJ2J56"
                         ],
                         "relations": {},
-                        "dateAdded": "2023-01-13T11:38:38Z",
-                        "dateModified": "2023-01-13T11:38:42Z",
+                        "dateAdded": "2023-01-13T10:54:44Z",
+                        "dateModified": "2023-01-17T15:34:27Z",
                         "@@meta@@": {
+                            "numChildren": 3
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                                "type": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": null,
+                            "colors": [
+                                "#A28AE5"
+                            ],
+                            "createdByUser": "",
+                            "creator": "",
+                            "date": "",
+                            "dateAdded": "13/01/2023, 11:54:44",
+                            "dateModified": "17/01/2023, 16:34:27",
+                            "emojis": [
+                                "⭐️"
+                            ],
+                            "iconName": "note",
+                            "itemType": "Note",
+                            "itemTypeRaw": "note",
+                            "key": "Z6HA62VJ",
+                            "publicationTitle": null,
+                            "publisher": null,
+                            "title": "Puppies!",
+                            "year": ""
+                        }
+                    },
+                    {
+                        "key": "66LW9WRP",
+                        "version": 155,
+                        "itemType": "book",
+                        "title": "Understanding dogs",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Clinton",
+                                "lastName": "Sanders"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "series": "",
+                        "seriesNumber": "",
+                        "volume": "39",
+                        "numberOfVolumes": "",
+                        "edition": "",
+                        "place": "",
+                        "publisher": "Temple University Press",
+                        "date": "1999",
+                        "numPages": "",
+                        "language": "",
+                        "ISBN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:52:40Z",
+                        "dateModified": "2023-01-13T10:52:40Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Sanders",
+                            "parsedDate": "1999",
                             "numChildren": 1
                         },
                         "@@links@@": {
                             "self": {
-                                "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                                "href": "https://api.zotero.org/users/1/items/66LW9WRP",
                                 "type": "application/json"
                             },
                             "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                                "href": "https://www.zotero.org/testuser/items/66LW9WRP",
                                 "type": "text/html"
                             },
                             "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/D532CISN",
+                                "href": "https://api.zotero.org/users/1/items/HX4R8R94",
                                 "type": "application/json",
                                 "attachmentType": "text/html"
                             }
@@ -3399,21 +3253,186 @@
                             "attachmentIconName": "webpage-snapshot",
                             "colors": [],
                             "createdByUser": "",
+                            "creator": "Sanders",
+                            "date": "1999",
+                            "dateAdded": "13/01/2023, 11:52:40",
+                            "dateModified": "13/01/2023, 11:52:40",
+                            "emojis": [],
+                            "extra": "",
+                            "iconName": "book",
+                            "itemType": "book",
+                            "itemTypeRaw": "book",
+                            "key": "66LW9WRP",
+                            "publicationTitle": null,
+                            "publisher": "Temple University Press",
+                            "title": "Understanding dogs",
+                            "year": "1999",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "PEZF7SPI",
+                        "version": 155,
+                        "itemType": "journalArticle",
+                        "title": "Vision in dogs",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Paul E.",
+                                "lastName": "Miller"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Christopher J.",
+                                "lastName": "Murphy"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "publicationTitle": "Journal-American Veterinary Medical Association",
+                        "volume": "207",
+                        "issue": "",
+                        "pages": "1623–1634",
+                        "date": "1995",
+                        "series": "",
+                        "seriesTitle": "",
+                        "seriesText": "",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISSN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                        "tags": [],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:52:40Z",
+                        "dateModified": "2023-01-13T10:52:40Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Miller and Murphy",
+                            "parsedDate": "1995",
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 3221470
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [],
+                            "createdByUser": "",
+                            "creator": "Miller and Murphy",
+                            "date": "1995",
+                            "dateAdded": "13/01/2023, 11:52:40",
+                            "dateModified": "13/01/2023, 11:52:40",
+                            "emojis": [],
+                            "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                            "iconName": "journal-article",
+                            "itemType": "journalArticle",
+                            "itemTypeRaw": "journalArticle",
+                            "key": "PEZF7SPI",
+                            "publicationTitle": "Journal-American Veterinary Medical Association",
+                            "publisher": null,
+                            "title": "Vision in dogs",
+                            "year": "1995",
+                            "journalAbbreviation": "",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "WRCN45PC",
+                        "version": 241,
+                        "itemType": "webpage",
+                        "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                        "creators": [],
+                        "abstractNote": "",
+                        "websiteTitle": "",
+                        "websiteType": "",
+                        "date": "",
+                        "shortTitle": "",
+                        "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                        "accessDate": "2023-01-13T10:53:25Z",
+                        "language": "",
+                        "rights": "",
+                        "extra": "",
+                        "tags": [
+                            {
+                                "tag": "cute"
+                            },
+                            {
+                                "tag": "to read"
+                            }
+                        ],
+                        "collections": [
+                            "WTTJ2J56"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:53:25Z",
+                        "dateModified": "2023-01-13T10:53:25Z",
+                        "@@meta@@": {
+                            "numChildren": 1
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                                "type": "application/json",
+                                "attachmentType": "text/html"
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "webpage-snapshot",
+                            "colors": [
+                                "#A28AE5",
+                                "#FF6666"
+                            ],
+                            "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 12:38:38",
-                            "dateModified": "13/01/2023, 12:38:42",
-                            "emojis": [
-                                "⭐️"
-                            ],
+                            "dateAdded": "13/01/2023, 11:53:25",
+                            "dateModified": "13/01/2023, 11:53:25",
+                            "emojis": [],
                             "extra": "",
                             "iconName": "webpage",
                             "itemType": "webpage",
                             "itemTypeRaw": "webpage",
-                            "key": "HHVQTHFT",
+                            "key": "WRCN45PC",
                             "publicationTitle": "",
                             "publisher": null,
-                            "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                            "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
                             "year": "",
                             "language": "",
                             "rights": ""
@@ -3423,8 +3442,8 @@
                 "response": {
                     "raw": [
                         {
-                            "key": "WRCN45PC",
-                            "version": 155,
+                            "key": "HHVQTHFT",
+                            "version": 239,
                             "library": {
                                 "type": "user",
                                 "id": 1,
@@ -3438,15 +3457,15 @@
                             },
                             "links": {
                                 "self": {
-                                    "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                                    "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
                                     "type": "application/json"
                                 },
                                 "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                                    "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
                                     "type": "text/html"
                                 },
                                 "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                                    "href": "https://api.zotero.org/users/1/items/D532CISN",
                                     "type": "application/json",
                                     "attachmentType": "text/html"
                                 }
@@ -3455,225 +3474,22 @@
                                 "numChildren": 1
                             },
                             "data": {
-                                "key": "WRCN45PC",
-                                "version": 155,
+                                "key": "HHVQTHFT",
+                                "version": 239,
                                 "itemType": "webpage",
-                                "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                                "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
                                 "creators": [],
                                 "abstractNote": "",
                                 "websiteTitle": "",
                                 "websiteType": "",
                                 "date": "",
                                 "shortTitle": "",
-                                "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
-                                "accessDate": "2023-01-13T10:53:25Z",
+                                "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                                "accessDate": "2023-01-13T11:38:38Z",
                                 "language": "",
                                 "rights": "",
                                 "extra": "",
-                                "tags": [],
-                                "collections": [
-                                    "WTTJ2J56"
-                                ],
-                                "relations": {},
-                                "dateAdded": "2023-01-13T10:53:25Z",
-                                "dateModified": "2023-01-13T10:53:25Z"
-                            }
-                        },
-                        {
-                            "key": "PEZF7SPI",
-                            "version": 155,
-                            "library": {
-                                "type": "user",
-                                "id": 1,
-                                "name": "testuser",
-                                "links": {
-                                    "alternate": {
-                                        "href": "https://www.zotero.org/testuser",
-                                        "type": "text/html"
-                                    }
-                                }
-                            },
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
-                                    "type": "text/html"
-                                },
-                                "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
-                                    "type": "application/json",
-                                    "attachmentType": "application/pdf",
-                                    "attachmentSize": 3221470
-                                }
-                            },
-                            "meta": {
-                                "creatorSummary": "Miller and Murphy",
-                                "parsedDate": "1995",
-                                "numChildren": 1
-                            },
-                            "data": {
-                                "key": "PEZF7SPI",
-                                "version": 155,
-                                "itemType": "journalArticle",
-                                "title": "Vision in dogs",
-                                "creators": [
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Paul E.",
-                                        "lastName": "Miller"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Christopher J.",
-                                        "lastName": "Murphy"
-                                    }
-                                ],
-                                "abstractNote": "",
-                                "publicationTitle": "Journal-American Veterinary Medical Association",
-                                "volume": "207",
-                                "issue": "",
-                                "pages": "1623–1634",
-                                "date": "1995",
-                                "series": "",
-                                "seriesTitle": "",
-                                "seriesText": "",
-                                "journalAbbreviation": "",
-                                "language": "",
-                                "DOI": "",
-                                "ISSN": "",
-                                "shortTitle": "",
-                                "url": "",
-                                "accessDate": "",
-                                "archive": "",
-                                "archiveLocation": "",
-                                "libraryCatalog": "Google Scholar",
-                                "callNumber": "",
-                                "rights": "",
-                                "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
-                                "tags": [],
-                                "collections": [
-                                    "WTTJ2J56"
-                                ],
-                                "relations": {},
-                                "dateAdded": "2023-01-13T10:52:40Z",
-                                "dateModified": "2023-01-13T10:52:40Z"
-                            }
-                        },
-                        {
-                            "key": "66LW9WRP",
-                            "version": 155,
-                            "library": {
-                                "type": "user",
-                                "id": 1,
-                                "name": "testuser",
-                                "links": {
-                                    "alternate": {
-                                        "href": "https://www.zotero.org/testuser",
-                                        "type": "text/html"
-                                    }
-                                }
-                            },
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/items/66LW9WRP",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/66LW9WRP",
-                                    "type": "text/html"
-                                },
-                                "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/HX4R8R94",
-                                    "type": "application/json",
-                                    "attachmentType": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "creatorSummary": "Sanders",
-                                "parsedDate": "1999",
-                                "numChildren": 1
-                            },
-                            "data": {
-                                "key": "66LW9WRP",
-                                "version": 155,
-                                "itemType": "book",
-                                "title": "Understanding dogs",
-                                "creators": [
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Clinton",
-                                        "lastName": "Sanders"
-                                    }
-                                ],
-                                "abstractNote": "",
-                                "series": "",
-                                "seriesNumber": "",
-                                "volume": "39",
-                                "numberOfVolumes": "",
-                                "edition": "",
-                                "place": "",
-                                "publisher": "Temple University Press",
-                                "date": "1999",
-                                "numPages": "",
-                                "language": "",
-                                "ISBN": "",
-                                "shortTitle": "",
-                                "url": "",
-                                "accessDate": "",
-                                "archive": "",
-                                "archiveLocation": "",
-                                "libraryCatalog": "Google Scholar",
-                                "callNumber": "",
-                                "rights": "",
-                                "extra": "",
-                                "tags": [],
-                                "collections": [
-                                    "WTTJ2J56"
-                                ],
-                                "relations": {},
-                                "dateAdded": "2023-01-13T10:52:40Z",
-                                "dateModified": "2023-01-13T10:52:40Z"
-                            }
-                        },
-                        {
-                            "key": "Z6HA62VJ",
-                            "version": 219,
-                            "library": {
-                                "type": "user",
-                                "id": 1,
-                                "name": "testuser",
-                                "links": {
-                                    "alternate": {
-                                        "href": "https://www.zotero.org/testuser",
-                                        "type": "text/html"
-                                    }
-                                }
-                            },
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "numChildren": 3
-                            },
-                            "data": {
-                                "key": "Z6HA62VJ",
-                                "version": 219,
-                                "itemType": "note",
-                                "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
                                 "tags": [
-                                    {
-                                        "tag": "cute"
-                                    },
                                     {
                                         "tag": "⭐️"
                                     }
@@ -3682,69 +3498,8 @@
                                     "WTTJ2J56"
                                 ],
                                 "relations": {},
-                                "dateAdded": "2023-01-13T10:54:44Z",
-                                "dateModified": "2023-01-17T15:34:27Z"
-                            }
-                        },
-                        {
-                            "key": "J2NYHR6N",
-                            "version": 219,
-                            "library": {
-                                "type": "user",
-                                "id": 1,
-                                "name": "testuser",
-                                "links": {
-                                    "alternate": {
-                                        "href": "https://www.zotero.org/testuser",
-                                        "type": "text/html"
-                                    }
-                                }
-                            },
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
-                                    "type": "text/html"
-                                },
-                                "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/EF42MTQM",
-                                    "type": "application/json",
-                                    "attachmentType": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "numChildren": 1
-                            },
-                            "data": {
-                                "key": "J2NYHR6N",
-                                "version": 219,
-                                "itemType": "webpage",
-                                "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
-                                "creators": [],
-                                "abstractNote": "",
-                                "websiteTitle": "",
-                                "websiteType": "",
-                                "date": "",
-                                "shortTitle": "",
-                                "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
-                                "accessDate": "2023-01-13T10:54:08Z",
-                                "language": "",
-                                "rights": "",
-                                "extra": "",
-                                "tags": [
-                                    {
-                                        "tag": "to read"
-                                    }
-                                ],
-                                "collections": [
-                                    "WTTJ2J56"
-                                ],
-                                "relations": {},
-                                "dateAdded": "2023-01-13T10:54:08Z",
-                                "dateModified": "2023-01-17T15:32:03Z"
+                                "dateAdded": "2023-01-13T11:38:38Z",
+                                "dateModified": "2023-01-13T11:38:42Z"
                             }
                         },
                         {
@@ -3871,8 +3626,8 @@
                             }
                         },
                         {
-                            "key": "HHVQTHFT",
-                            "version": 239,
+                            "key": "J2NYHR6N",
+                            "version": 219,
                             "library": {
                                 "type": "user",
                                 "id": 1,
@@ -3886,15 +3641,15 @@
                             },
                             "links": {
                                 "self": {
-                                    "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                                    "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
                                     "type": "application/json"
                                 },
                                 "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                                    "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
                                     "type": "text/html"
                                 },
                                 "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/D532CISN",
+                                    "href": "https://api.zotero.org/users/1/items/EF42MTQM",
                                     "type": "application/json",
                                     "attachmentType": "text/html"
                                 }
@@ -3903,22 +3658,70 @@
                                 "numChildren": 1
                             },
                             "data": {
-                                "key": "HHVQTHFT",
-                                "version": 239,
+                                "key": "J2NYHR6N",
+                                "version": 219,
                                 "itemType": "webpage",
-                                "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                                "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
                                 "creators": [],
                                 "abstractNote": "",
                                 "websiteTitle": "",
                                 "websiteType": "",
                                 "date": "",
                                 "shortTitle": "",
-                                "url": "https://www.nature.com/articles/s41598-022-26991-5",
-                                "accessDate": "2023-01-13T11:38:38Z",
+                                "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+                                "accessDate": "2023-01-13T10:54:08Z",
                                 "language": "",
                                 "rights": "",
                                 "extra": "",
                                 "tags": [
+                                    {
+                                        "tag": "to read"
+                                    }
+                                ],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:54:08Z",
+                                "dateModified": "2023-01-17T15:32:03Z"
+                            }
+                        },
+                        {
+                            "key": "Z6HA62VJ",
+                            "version": 219,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 3
+                            },
+                            "data": {
+                                "key": "Z6HA62VJ",
+                                "version": 219,
+                                "itemType": "note",
+                                "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\\n<p></p>\\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\\n</div>",
+                                "tags": [
+                                    {
+                                        "tag": "cute"
+                                    },
                                     {
                                         "tag": "⭐️"
                                     }
@@ -3927,8 +3730,231 @@
                                     "WTTJ2J56"
                                 ],
                                 "relations": {},
-                                "dateAdded": "2023-01-13T11:38:38Z",
-                                "dateModified": "2023-01-13T11:38:42Z"
+                                "dateAdded": "2023-01-13T10:54:44Z",
+                                "dateModified": "2023-01-17T15:34:27Z"
+                            }
+                        },
+                        {
+                            "key": "66LW9WRP",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Sanders",
+                                "parsedDate": "1999",
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "66LW9WRP",
+                                "version": 155,
+                                "itemType": "book",
+                                "title": "Understanding dogs",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Clinton",
+                                        "lastName": "Sanders"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "series": "",
+                                "seriesNumber": "",
+                                "volume": "39",
+                                "numberOfVolumes": "",
+                                "edition": "",
+                                "place": "",
+                                "publisher": "Temple University Press",
+                                "date": "1999",
+                                "numPages": "",
+                                "language": "",
+                                "ISBN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:52:40Z",
+                                "dateModified": "2023-01-13T10:52:40Z"
+                            }
+                        },
+                        {
+                            "key": "PEZF7SPI",
+                            "version": 155,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 3221470
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Miller and Murphy",
+                                "parsedDate": "1995",
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "PEZF7SPI",
+                                "version": 155,
+                                "itemType": "journalArticle",
+                                "title": "Vision in dogs",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Paul E.",
+                                        "lastName": "Miller"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Christopher J.",
+                                        "lastName": "Murphy"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "publicationTitle": "Journal-American Veterinary Medical Association",
+                                "volume": "207",
+                                "issue": "",
+                                "pages": "1623–1634",
+                                "date": "1995",
+                                "series": "",
+                                "seriesTitle": "",
+                                "seriesText": "",
+                                "journalAbbreviation": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISSN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                                "tags": [],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:52:40Z",
+                                "dateModified": "2023-01-13T10:52:40Z"
+                            }
+                        },
+                        {
+                            "key": "WRCN45PC",
+                            "version": 241,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                                    "type": "application/json",
+                                    "attachmentType": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numChildren": 1
+                            },
+                            "data": {
+                                "key": "WRCN45PC",
+                                "version": 241,
+                                "itemType": "webpage",
+                                "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+                                "creators": [],
+                                "abstractNote": "",
+                                "websiteTitle": "",
+                                "websiteType": "",
+                                "date": "",
+                                "shortTitle": "",
+                                "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+                                "accessDate": "2023-01-13T10:53:25Z",
+                                "language": "",
+                                "rights": "",
+                                "extra": "",
+                                "tags": [
+                                    {
+                                        "tag": "cute"
+                                    },
+                                    {
+                                        "tag": "to read"
+                                    }
+                                ],
+                                "collections": [
+                                    "WTTJ2J56"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:53:25Z",
+                                "dateModified": "2023-01-13T10:53:25Z"
                             }
                         }
                     ],
@@ -3958,7 +3984,7 @@
                         "start": 0,
                         "limit": 7,
                         "sort": "title",
-                        "direction": "desc",
+                        "direction": "asc",
                         "signal": {},
                         "retryCount": 0
                     },
@@ -3966,11 +3992,11 @@
                 },
                 "totalResults": 7
             },
-            "lastSuccess": 1673970627111,
+            "lastSuccess": 1674172936891,
             "errorCount": 0
         },
         "META": {
-            "lastRequest": 1673970626799,
+            "lastRequest": 1674172936723,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_META",
@@ -4553,11 +4579,11 @@
                     }
                 ]
             },
-            "lastSuccess": 1673970627167,
+            "lastSuccess": 1674172937096,
             "errorCount": 0
         },
         "ITEM_TYPE_CREATOR_TYPES": {
-            "lastRequest": 1673970626804,
+            "lastRequest": 1674172936727,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEM_TYPE_CREATOR_TYPES",
@@ -4586,11 +4612,11 @@
                     }
                 ]
             },
-            "lastSuccess": 1673970627182,
+            "lastSuccess": 1674172936958,
             "errorCount": 0
         },
         "ITEM_TYPE_FIELDS": {
-            "lastRequest": 1673970626806,
+            "lastRequest": 1674172936729,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEM_TYPE_FIELDS",
@@ -4691,11 +4717,11 @@
                     }
                 ]
             },
-            "lastSuccess": 1673970627240,
+            "lastSuccess": 1674172936973,
             "errorCount": 0
         },
         "RELATED_ITEMS": {
-            "lastRequest": 1673970626809,
+            "lastRequest": 1674172936732,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_RELATED_ITEMS",
@@ -4703,16 +4729,16 @@
                 "libraryKey": "u1",
                 "items": []
             },
-            "lastSuccess": 1673970626810,
+            "lastSuccess": 1674172936733,
             "errorCount": 0
         }
     },
     "router": {
         "location": {
-            "pathname": "/testuser/collections/WTTJ2J56/items/VR82JUX8/collection",
+            "pathname": "/testuser/collections/WTTJ2J56/items/VR82JUX8/item-list",
             "search": "",
             "hash": "",
-            "key": "w5kgr6",
+            "key": "i1n84t",
             "query": {}
         },
         "action": "POP"

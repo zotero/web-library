@@ -7,7 +7,7 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers, resizeWindow } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import userPicturesRedundant from './fixtures/response/test-user-pictures-redundant.json';
 import itemFields from './fixtures/response/item-fields';
@@ -15,11 +15,11 @@ import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-film.json';
 
 const state = JSONtoState(stateRaw);
-applyAdditionalJestTweaks();
 
 describe('Test User\'s library', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
+	applyAdditionalJestTweaks();
 
 	beforeAll(() => {
 		server.listen({
@@ -28,7 +28,6 @@ describe('Test User\'s library', () => {
 				test(`${req.method} ${req.url} is not handled`, () => { });
 			},
 		});
-		resizeWindow(1280, 720);
 	});
 
 	beforeEach(() => {

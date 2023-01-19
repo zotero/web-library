@@ -7,7 +7,7 @@ import { getByRole, screen, queryByRole } from '@testing-library/react';
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers, resizeWindow } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import itemFields from './fixtures/response/item-fields';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
@@ -30,7 +30,6 @@ describe('Test User\'s read-only library', () => {
 				test(`${req.method} ${req.url} is not handled`, () => { });
 			},
 		});
-		resizeWindow(1280, 720);
 	});
 
 	beforeEach(() => {

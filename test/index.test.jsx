@@ -7,7 +7,7 @@ import { getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers, resizeWindow } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
 import minState from './fixtures/state/minimal.json';
 import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
 import itemTypes from './fixtures/response/item-types';
@@ -26,10 +26,6 @@ import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-type
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 applyAdditionalJestTweaks();
 
-// jest.mock('../src/js/component/zotero-streaming-client', () => () => null);
-
-// mock auto-sizer (https://github.com/bvaughn/react-window/issues/454)
-// jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 640 }));
 
 // https://github.com/jsdom/jsdom/issues/1695
 Element.prototype.scrollIntoView = jest.fn();
@@ -104,7 +100,6 @@ describe('Zotero User\'s read-only library', () => {
 				test(`${req.method} ${req.url} is not handled`, () => { });
 			},
 		});
-		resizeWindow(1280, 720);
 	});
 
 	beforeEach(() => {
@@ -128,7 +123,7 @@ describe('Zotero User\'s read-only library', () => {
 		expect(screen.getByRole('button', { name: 'Search Mode', expanded: false })).toBeInTheDocument();
 
 		expect(screen.getByRole('navigation', { name: 'collection tree' })).toBeInTheDocument();
-		expect(screen.getByRole('button', { name: 'collapse tag selector' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Collapse Tag Selector' })).toBeInTheDocument();
 		expect(screen.getByRole('navigation', { name: 'tag selector' })).toBeInTheDocument();
 		expect(screen.getByRole('searchbox', { name: 'Filter Tags' })).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Tag Selector Options' })).toBeInTheDocument();
@@ -136,6 +131,7 @@ describe('Zotero User\'s read-only library', () => {
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
 		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
 	});
+
 
 	test('Entering text into search box runs search, clearing it clears search', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
@@ -251,7 +247,7 @@ describe('Zotero User\'s read-only library', () => {
 
 		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
 		const tagButtons = getAllByRole(tagSelector, 'button')
-			.filter(tb => tb.getAttribute('aria-label') !== 'collapse tag selector')
+			.filter(tb => tb.getAttribute('title') !== 'Collapse Tag Selector')
 			.filter(tb => tb.getAttribute('title') !== 'Tag Selector Options');
 
 		expect(tagButtons).toHaveLength(8);
