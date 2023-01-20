@@ -70,9 +70,9 @@ const TagSelector = () => {
 			<Button
 				aria-controls={ id.current }
 				aria-expanded={ isTagSelectorOpen }
-				aria-label={ `${isTagSelectorOpen ? 'collapse' : 'show'} tag selector` }
 				className="tag-selector-toggle"
 				onClick={ handleCollapseClick }
+				title={`${isTagSelectorOpen ? 'Collapse' : 'Show'} Tag Selector`}
 			>
 				<Icon type="16/grip" width="16" height="2" />
 			</Button>

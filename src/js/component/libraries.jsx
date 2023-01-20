@@ -135,12 +135,12 @@ const LibraryNode = props => {
 			{
 				!shouldShowSpinner && !isReadOnly && !isPickerMode && (
 					<Button
-						aria-label="add collection"
 						className="mouse btn-icon-plus"
 						icon
 						onMouseDown={ stopPropagation }
 						onClick={ handleAddVirtualClick }
 						tabIndex={ -3 }
+						title="Add Collection"
 					>
 						<Icon type={ '16/plus' } width="16" height="16" />
 					</Button>

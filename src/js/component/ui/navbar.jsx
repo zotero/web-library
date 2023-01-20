@@ -16,6 +16,7 @@ const Navbar = memo(({ entries = [] }) => {
 
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
 	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
 	const handleSearchButtonClick = useCallback(() => {
 		dispatch(currentTriggerSearchMode());
@@ -26,7 +27,6 @@ const Navbar = memo(({ entries = [] }) => {
 	}, [dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
-
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -38,6 +38,7 @@ const Navbar = memo(({ entries = [] }) => {
 		} else if(ev.key === 'ArrowRight') {
 			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
+			console.log('focusPrev');
 			focusPrev(ev);
 		}
 	}, [focusNext, focusPrev]);
@@ -81,7 +82,7 @@ const Navbar = memo(({ entries = [] }) => {
 				onFocusPrev={ focusPrev }
 				registerAutoFocus={ registerAutoFocus }
 			/>
-			{ !isLibrariesView && (
+			{ isSingleColumn && !isLibrariesView && (
 				<React.Fragment>
 					<Button
 						onClick={ handleSearchButtonClick }

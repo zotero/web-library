@@ -91,7 +91,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 				className="btn-icon dropdown-toggle"
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }
-				title="New Item"
+				title="More"
 			>
 				<Icon type={ '16/options' } width="16" height="16" />
 			</DropdownToggle>

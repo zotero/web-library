@@ -160,11 +160,19 @@ const useFocusManager = (ref, initialQuerySelector = null, isCarousel = true, is
 			if(typeof(initialQuerySelector) === 'object' && initialQuerySelector.current && 'focus' in initialQuerySelector.current) {
 				// pased as a ref
 				lastFocused.current = initialQuerySelector.current;
-			} else if(typeof(initialQuerySelector) === 'string') {
-				//passed as a string
-				const candidate = ref.current.querySelector(initialQuerySelector);
-				if(candidate) {
-					lastFocused.current = ref.current.querySelector(initialQuerySelector);
+			} else if (Array.isArray(initialQuerySelector) || typeof(initialQuerySelector) === 'string') {
+				//passed as a string or array of strings
+				if(!Array.isArray(initialQuerySelector)) {
+					// eslint-disable-next-line react-hooks/exhaustive-deps
+					initialQuerySelector = [initialQuerySelector];
+				}
+				while (initialQuerySelector.length) {
+					const nextSelector = initialQuerySelector.shift();
+					const candidate = ref.current.querySelector(nextSelector);
+					if(candidate) {
+						lastFocused.current = candidate;
+						break;
+					}
 				}
 			}
 

@@ -149,7 +149,7 @@ const Table = () => {
 	const prevSortDirection = usePrevious(sortDirection);
 
 	const { receiveFocus, receiveBlur, focusBySelector, focusDrillDownNext,
-		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, '[aria-selected="true"], [data-index="0"]');
+		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, ['[aria-selected="true"]', '[data-index="0"]']);
 
 	const dispatch = useDispatch();
 
