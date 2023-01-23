@@ -38,7 +38,7 @@ describe('Test User\'s library', () => {
 	afterEach(() => server.resetHandlers());
 	afterAll(() => server.close());
 
-	test('Should run redundant image cleanup', async () => {
+	test('Run redundant image cleanup', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
@@ -46,7 +46,11 @@ describe('Test User\'s library', () => {
 		await actWithFakeTimers(user => user.click(noteItem));
 		await waitForPosition();
 
-		expect(screen.getByRole('tab', { name: 'Note', selected: true })).toBeInTheDocument();
+		expect(screen.getByRole('tab',
+			{ name: 'Note', selected: true }
+		)).toBeInTheDocument();
+
+		let hasBeenDeleted = false;
 
 		server.use(
 			rest.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', (req, res) => {
@@ -59,6 +63,7 @@ describe('Test User\'s library', () => {
 			rest.delete('https://api.zotero.org/users/1/items', (req, res) => {
 				const itemKey = req.url.searchParams.get('itemKey');
 				expect(itemKey).toBe('ZZZZZZZZ');
+				hasBeenDeleted = true;
 				return res(res => {
 					res.status = 204;
 					return res;
@@ -87,5 +92,8 @@ describe('Test User\'s library', () => {
 		const nextItem = screen.getByRole('row', { name: 'Understanding dogs' });
 		await actWithFakeTimers(user => user.click(nextItem));
 		await waitForPosition();
+
+		expect(hasBeenDeleted).toBe(true);
+	});
 	});
 });

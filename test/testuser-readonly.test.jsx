@@ -40,7 +40,7 @@ describe('Test User\'s read-only library', () => {
 	afterEach(() => server.resetHandlers());
 	afterAll(() => server.close());
 
-	test('Should not attempt to run redundant image cleanup', async () => {
+	test('Not run redundant image cleanup in read-only library', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
@@ -76,7 +76,7 @@ describe('Test User\'s read-only library', () => {
 		await waitForPosition();
 	});
 
-	test('Should expand and collapse nodes in collections tree', async () => {
+	test('Expand and collapse nodes in collections tree', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
