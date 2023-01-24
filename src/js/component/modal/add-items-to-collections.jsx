@@ -114,6 +114,7 @@ const AddItemsToCollectionsModal = () => {
 							icon
 							className="close"
 							onClick={ handleCancel }
+							title="Close Dialog"
 						>
 							<Icon type={ '16/close' } width="16" height="16" />
 						</Button>

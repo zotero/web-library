@@ -1,5 +1,5 @@
 /*
-* @jest-environment ./test/utils/zotero-env.js
+* @jest-environment ./test/utils/zotero-css-env.js
 */
 import React from 'react';
 import '@testing-library/jest-dom';
