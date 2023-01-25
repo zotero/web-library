@@ -13,8 +13,9 @@ import { detectItemsChanged, filterTags, populateTags, updateFetchingState } fro
 const getResetTagCollections = (action, isCreateItems = false, items) => {
 	const newItems = 'item' in action ? [action.item] : action.items;
 	const itemsChanged = detectItemsChanged({ items: newItems, libraryKey: action.libraryKey }, items, (newItem, oldItem = {}) => {
-		if(isCreateItems && newItem.tags.length > 0) {
-			return true;
+
+		if(isCreateItems) {
+			return newItem.tags.length > 0;
 		}
 
 		if(newItem.deleted !== oldItem.deleted) {

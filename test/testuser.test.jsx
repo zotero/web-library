@@ -18,6 +18,8 @@ import itemFields from './fixtures/response/item-fields';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-film.json';
 import responseAddItemToCollections from './fixtures/response/test-user-add-item-to-collection.json';
+import newItemJournalArticle from './fixtures/response/new-item-journal-article.json';
+import testUserAddNewItem from './fixtures/response/test-user-add-new-item.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -99,6 +101,54 @@ describe('Test User\'s library', () => {
 		await waitForPosition();
 
 		expect(hasBeenDeleted).toBe(true);
+	});
+
+	test('Add new items using "plus" button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const plusBtn = screen.getByRole('button', { name: 'New Item' });
+		await actWithFakeTimers(user => user.click(plusBtn));
+		await waitForPosition();
+
+		// menu should be open
+		expect(screen.getByRole('button',
+			{ name: 'New Item', expanded: true })
+		).toBeInTheDocument();
+
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				const itemKey = req.url.searchParams.get('itemType');
+				expect(itemKey).toBe('journalArticle');
+				return res(res => {
+					res.body = JSON.stringify(newItemJournalArticle);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].itemType).toEqual('journalArticle');
+				expect(items[0].collections).toEqual(['WTTJ2J56']);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserAddNewItem);
+					return res;
+				});
+			}),
+		);
+
+		const itemTypeOpt = screen.getByRole('menuitem', { name: 'Journal Article' });
+		await actWithFakeTimers(user => user.click(itemTypeOpt));
+		await waitForPosition();
+
+		// menu should be closed
+		expect(screen.getByRole('button',
+			{ name: 'New Item', expanded: false })
+		).toBeInTheDocument();
+
+		expect(hasBeenPosted).toBe(true);
 	});
 
 	test('Add item to a collection using modal', async () => {
