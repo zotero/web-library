@@ -7,6 +7,7 @@ import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { getByRole, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
@@ -14,12 +15,14 @@ import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import userPicturesRedundant from './fixtures/response/test-user-pictures-redundant.json';
-import itemFields from './fixtures/response/item-fields';
-import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
-import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-film.json';
+import creatorFields from './fixtures/response/creator-fields';
+import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
+import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 import responseAddItemToCollections from './fixtures/response/test-user-add-item-to-collection.json';
 import newItemJournalArticle from './fixtures/response/new-item-journal-article.json';
 import testUserAddNewItem from './fixtures/response/test-user-add-new-item.json';
+import searchByIdentifier from './fixtures/response/search-by-identifier.json';
+import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -78,7 +81,7 @@ describe('Test User\'s library', () => {
 			}),
 			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
 				return res(res => {
-					res.body = JSON.stringify(itemFields);
+					res.body = JSON.stringify(creatorFields);
 					return res;
 				});
 			}),
@@ -149,6 +152,74 @@ describe('Test User\'s library', () => {
 		).toBeInTheDocument();
 
 		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('Add new item using "Add By Identifier" button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const addBtn = screen.getByRole('button', { name: 'Add By Identifier' });
+		await actWithFakeTimers(user => user.click(addBtn));
+		await waitForPosition();
+
+		expect(screen.getByRole('dialog',
+			{ name: 'Add By Identifier' })
+		).toBeInTheDocument();
+
+		let hasBeenSearched = false;
+		let hasBeenCreated = false;
+
+		server.use(
+			rest.post('https://translate-server.zotero.org/Prod/search', async (req, res) => {
+				const identifier = await req.text();
+				expect(identifier).toEqual('0312558066');
+				hasBeenSearched = true;
+				return res(res => {
+					res.body = JSON.stringify(searchByIdentifier);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('UHRGBS8D');
+				expect(items[0].ISBN).toBe('9780312558062');
+				expect(items[0].collections).toEqual(["WTTJ2J56"]);
+				hasBeenCreated = true;
+				return res(res => {
+					res.body = JSON.stringify(responseAddByIdentifier);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/itemTypeCreatorTypes', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemTypeCreatorTypesBook);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/itemTypeFields', (req, res) => {
+				return res(res => {
+					res.body = JSON.stringify(itemTypeFieldsBook);
+					return res;
+				});
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, or arXiv IDs' }
+		);
+
+		await userEvent.type(
+			input, '0312558066{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+		await screen.findByRole('row', { name: 'Hachiko waits' })
+
+		expect(screen.queryByRole('dialog',
+			{ name: 'Add By Identifier' }
+		)).not.toBeInTheDocument();
+
+		expect(hasBeenSearched).toBe(true);
+		expect(hasBeenCreated).toBe(true);
 	});
 
 	test('Add item to a collection using modal', async () => {

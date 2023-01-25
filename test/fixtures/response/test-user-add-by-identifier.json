@@ -1,0 +1,85 @@
+{
+    "successful": {
+        "0": {
+            "key": "UHRGBS8D",
+            "version": 157,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/UHRGBS8D",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/UHRGBS8D",
+                    "type": "text/html"
+                }
+            },
+            "meta": {
+                "creatorSummary": "Newman and Kodaira",
+                "parsedDate": "2009",
+                "numChildren": 0
+            },
+            "data": {
+                "key": "UHRGBS8D",
+                "version": 157,
+                "itemType": "book",
+                "title": "Hachiko waits",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Lesléa.",
+                        "lastName": "Newman"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Machiyo",
+                        "lastName": "Kodaira"
+                    }
+                ],
+                "abstractNote": "\"Professor Ueno speaks these words to his faithful dog before boarding the train to work every morning. And every afternoon, just before three o'clock, Hachi is at the train station to greet his beloved master. One day, the train arrives at the station without the professor. Hachi waits. For ten years, Hachi waits for his master to return. Not even Yasuo, the young boy who takes care of Hachi, can persuade him to leave his post\"--Page 4 of cover",
+                "series": "",
+                "seriesNumber": "",
+                "volume": "",
+                "numberOfVolumes": "",
+                "edition": "1st Square Fish ed",
+                "place": "New York",
+                "publisher": "Square Fish : Henry Holt",
+                "date": "2009",
+                "numPages": "",
+                "language": "eng",
+                "ISBN": "9780312558062",
+                "shortTitle": "",
+                "url": "",
+                "accessDate": "",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Open WorldCat",
+                "callNumber": "",
+                "rights": "",
+                "extra": "OCLC: 262430239",
+                "tags": [],
+                "collections": [
+                    "WTTJ2J56"
+                ],
+                "relations": {},
+                "dateAdded": "2023-01-25T17:38:16Z",
+                "dateModified": "2023-01-25T17:38:16Z"
+            }
+        }
+    },
+    "success": {
+        "0": "UHRGBS8D"
+    },
+    "unchanged": {},
+    "failed": {}
+}

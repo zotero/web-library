@@ -157,6 +157,7 @@ const AddByIdentifier = props => {
 	return (
 		<React.Fragment>
 			<Button
+				aria-controls={ `${id.current}-dialog` }
 				icon
 				id={ id.current }
 				onClick={ toggleOpen }
@@ -168,6 +169,10 @@ const AddByIdentifier = props => {
 				<Icon type="16/magic-wand" width="16" height="16" />
 			</Button>
 			<div
+				aria-label="Add By Identifier"
+				aria-hidden={ !isOpen }
+				id={ `${id.current}-dialog` }
+				role="dialog"
 				ref={r => { floating(r); popoverRef.current = r; } }
 				className={ cx('popover', 'popover-bottom', { show: isOpen })}
 				style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}

@@ -1,0 +1,30 @@
+[
+    {
+        "key": "UHRGBS8D",
+        "version": 0,
+        "itemType": "book",
+        "creators": [
+            {
+                "firstName": "Lesléa.",
+                "lastName": "Newman",
+                "creatorType": "author"
+            },
+            {
+                "firstName": "Machiyo",
+                "lastName": "Kodaira",
+                "creatorType": "author"
+            }
+        ],
+        "tags": [],
+        "extra": "OCLC: 262430239",
+        "title": "Hachiko waits",
+        "edition": "1st Square Fish ed",
+        "publisher": "Square Fish : Henry Holt",
+        "place": "New York",
+        "date": "2009",
+        "language": "eng",
+        "abstractNote": "\"Professor Ueno speaks these words to his faithful dog before boarding the train to work every morning. And every afternoon, just before three o'clock, Hachi is at the train station to greet his beloved master. One day, the train arrives at the station without the professor. Hachi waits. For ten years, Hachi waits for his master to return. Not even Yasuo, the young boy who takes care of Hachi, can persuade him to leave his post\"--Page 4 of cover",
+        "ISBN": "9780312558062",
+        "libraryCatalog": "Open WorldCat"
+    }
+]

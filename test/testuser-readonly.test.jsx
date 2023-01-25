@@ -10,8 +10,8 @@ import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import itemFields from './fixtures/response/item-fields';
-import itemTypeFieldsBook from './fixtures/response/item-type-fields-film.json';
-import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-film.json';
+import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
+import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 
 // Force My Library to be read-only
 stateRaw.config.libraries[0].isReadOnly = true;

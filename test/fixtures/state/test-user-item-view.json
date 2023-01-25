@@ -27,7 +27,7 @@
         "containterClassName": "zotero-wl",
         "websiteUrl": "https://www.zotero.org/",
         "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
-        "translateUrl": "https://translate-server.zotero.org/Prod/",
+        "translateUrl": "https://translate-server.zotero.org/Prod",
         "pdfReaderURL": "/static/pdf-reader/viewer.html",
         "noteEditorURL": "/static/note-editor/editor.html",
         "menus": {
