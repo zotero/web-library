@@ -198,7 +198,7 @@ const ItemActionsDesktop = memo(props => {
 								onClick={ handleRemoveFromCollection }
 								onKeyDown={ handleKeyDown }
 								tabIndex={ -2 }
-								title="Remove from Collection"
+								title="Remove From Collection"
 							>
 								<Icon type="20/remove-from-collection" width="20" height="20" />
 							</Button>

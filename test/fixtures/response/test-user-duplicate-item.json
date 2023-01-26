@@ -1,7 +1,7 @@
 {
     "successful": {
         "0": {
-            "key": "VR82JUX8",
+            "key": "DUPDUP00",
             "version": 157,
             "itemType": "journalArticle",
             "title": "Effects of diet restriction on life span and age-related changes in dogs",
@@ -80,17 +80,14 @@
             "rights": "",
             "extra": "Publisher: Am Vet Med Assoc",
             "tags": [],
-            "collections": [
-                "WTTJ2J56",
-                "4VM2BFHN"
-            ],
+            "collections": ["WTTJ2J56"],
             "relations": {},
             "dateAdded": "2023-01-13T10:52:40Z",
             "dateModified": "2023-01-13T10:52:40Z"
         }
     },
     "success": {
-        "0": "VR82JUX8"
+        "0": "DUPDUP00"
     },
     "unchanged": {},
     "failed": {}

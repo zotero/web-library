@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
@@ -210,7 +211,7 @@ describe('Zotero User\'s read-only library', () => {
 		).toBeInTheDocument();
 
 		const collectionItem = screen.getByRole('treeitem',{ name: 'Humanities', selected: false });
-		await actWithFakeTimers(user => user.click(collectionItem));
+		await userEvent.click(collectionItem);
 		await waitForPosition();
 
 		expect(screen.getByRole('treeitem',
@@ -279,7 +280,7 @@ describe('Zotero User\'s read-only library', () => {
 
 		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
 
-		await actWithFakeTimers(user => user.click(tagButton));
+		await userEvent.click(tagButton);
 		await waitForPosition();
 
 		expect(screen.getByRole('row',
@@ -340,7 +341,7 @@ describe('Zotero User\'s read-only library', () => {
 		const item = screen.getByRole('row',
 			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' });
 
-		await actWithFakeTimers(user => user.click(item));
+		await userEvent.click(item);
 		await waitForPosition();
 
 		expect(screen.getByRole('row',
@@ -364,7 +365,7 @@ describe('Zotero User\'s read-only library', () => {
 		expect(getByRole(grid, 'columnheader', { name: 'Creator' })).toBeInTheDocument();
 		expect(queryByRole(grid, 'columnheader', { name: 'Item Type' })).not.toBeInTheDocument();
 
-		await actWithFakeTimers(user => user.click(columnSelectorBtn));
+		await userEvent.click(columnSelectorBtn);
 		await waitForPosition();
 
 		// dropdown should be open
@@ -382,18 +383,18 @@ describe('Zotero User\'s read-only library', () => {
 		const itemTypeBtn = getByRole(columnSelector, 'menuitemcheckbox',
 			{ name: 'Item Type', checked: false }
 		);
-		await actWithFakeTimers(user => user.click(itemTypeBtn));
+		await userEvent.click(itemTypeBtn);
 		await waitForPosition();
 
 		// new column should be added, dropdown should be closed
 		expect(getByRole(grid, 'columnheader', { name: 'Creator' })).toBeInTheDocument();
 		expect(getByRole(grid, 'columnheader', { name: 'Item Type' })).toBeInTheDocument();
-		expect(screen.getByRole('button',
-			{ name: 'Column Selector', expanded: false })
-		).toBeInTheDocument();
+		await waitFor(
+			() => expect(screen.getByRole('button' ,{ name: 'Column Selector', expanded: false })).toBeInTheDocument()
+		);
 
 		// Open dropdown again, open "more"	menu
-		await actWithFakeTimers(user => user.click(columnSelectorBtn));
+		await userEvent.click(columnSelectorBtn);
 		await waitForPosition();
 
 		// Option to enable "language" column is hidden behind "more" menu option
@@ -405,7 +406,7 @@ describe('Zotero User\'s read-only library', () => {
 			{ name: 'More' }
 		);
 
-		await actWithFakeTimers(user => user.click(moreBtn));
+		await userEvent.click(moreBtn);
 		await waitForPosition();
 
 		// dropdown should stay open, more options, including "language", should appear
@@ -421,7 +422,7 @@ describe('Zotero User\'s read-only library', () => {
 			{ name: 'Creator', checked: true }
 		);
 
-		await actWithFakeTimers(user => user.click(creatorBtn));
+		await userEvent.click(creatorBtn);
 		await waitForPosition();
 
 		expect(queryByRole(grid, 'columnheader', { name: 'Creator' })).not.toBeInTheDocument();

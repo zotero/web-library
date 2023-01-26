@@ -6,13 +6,13 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { getByRole, screen } from '@testing-library/react';
+import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import userPicturesRedundant from './fixtures/response/test-user-pictures-redundant.json';
 import creatorFields from './fixtures/response/creator-fields';
@@ -20,9 +20,13 @@ import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 import responseAddItemToCollections from './fixtures/response/test-user-add-item-to-collection.json';
 import newItemJournalArticle from './fixtures/response/new-item-journal-article.json';
+import newItemNote from './fixtures/response/new-item-note.json';
 import testUserAddNewItem from './fixtures/response/test-user-add-new-item.json';
+import testUserRemoveItemFromCollection from './fixtures/response/test-user-remove-item-from-collection.json';
+import testUserTrashItem from './fixtures/response/test-user-trash-item.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier.json';
 import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier.json';
+import testUserDuplicateItem from './fixtures/response/test-user-duplicate-item.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -53,7 +57,7 @@ describe('Test User\'s library', () => {
 		await waitForPosition();
 
 		const noteItem = screen.getByRole('row', { name: 'Puppies!' });
-		await actWithFakeTimers(user => user.click(noteItem));
+		await userEvent.click(noteItem);
 		await waitForPosition();
 
 		expect(screen.getByRole('tab',
@@ -100,7 +104,7 @@ describe('Test User\'s library', () => {
 		);
 
 		const nextItem = screen.getByRole('row', { name: 'Understanding dogs' });
-		await actWithFakeTimers(user => user.click(nextItem));
+		await userEvent.click(nextItem);
 		await waitForPosition();
 
 		expect(hasBeenDeleted).toBe(true);
@@ -111,7 +115,7 @@ describe('Test User\'s library', () => {
 		await waitForPosition();
 
 		const plusBtn = screen.getByRole('button', { name: 'New Item' });
-		await actWithFakeTimers(user => user.click(plusBtn));
+		await userEvent.click(plusBtn);
 		await waitForPosition();
 
 		// menu should be open
@@ -143,7 +147,7 @@ describe('Test User\'s library', () => {
 		);
 
 		const itemTypeOpt = screen.getByRole('menuitem', { name: 'Journal Article' });
-		await actWithFakeTimers(user => user.click(itemTypeOpt));
+		await userEvent.click(itemTypeOpt);
 		await waitForPosition();
 
 		// menu should be closed
@@ -159,7 +163,7 @@ describe('Test User\'s library', () => {
 		await waitForPosition();
 
 		const addBtn = screen.getByRole('button', { name: 'Add By Identifier' });
-		await actWithFakeTimers(user => user.click(addBtn));
+		await userEvent.click(addBtn);
 		await waitForPosition();
 
 		expect(screen.getByRole('dialog',
@@ -222,6 +226,44 @@ describe('Test User\'s library', () => {
 		expect(hasBeenCreated).toBe(true);
 	});
 
+	test('Add a note using toolbar button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+
+		expect(getAllByRole(gridBody, 'row')).toHaveLength(7);
+
+		const addNoteBtn = screen.getByRole('button', { name: 'New Standalone Note' });
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				const itemKey = req.url.searchParams.get('itemType');
+				expect(itemKey).toBe('note');
+				return res(res => {
+					res.body = JSON.stringify(newItemNote);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].itemType).toEqual('note');
+				expect(items[0].collections).toEqual(['WTTJ2J56']);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserAddNewItem);
+					return res;
+				});
+			}),
+		);
+
+		await userEvent.click(addNoteBtn);
+		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(getAllByRole(gridBody, 'row')).toHaveLength(8));
+	});
+
 	test('Add item to a collection using modal', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
@@ -230,8 +272,7 @@ describe('Test User\'s library', () => {
 			{ name: 'Add To Collection' }
 		);
 
-		await actWithFakeTimers(user => user.click(addToCollectionBtn));
-		// await waitForPosition();
+		await userEvent.click(addToCollectionBtn);
 
 		const dialog = screen.getByRole('dialog', { name: 'Select Collection' });
 		expect(dialog).toBeInTheDocument();
@@ -239,9 +280,7 @@ describe('Test User\'s library', () => {
 		expect(getByRole(dialog, 'button', { name: 'Close Dialog' })).toBeInTheDocument();
 
 		const myLibraryNode = getByRole(dialog, 'treeitem', { name: 'My Library' });
-		await actWithFakeTimers(user => user.click(
-			getByRole(myLibraryNode, 'button', { name: 'Expand' })
-		));
+		await userEvent.click(getByRole(myLibraryNode, 'button', { name: 'Expand' }));
 
 		// "Dogs" collection is disabled because current item is already in it
 		expect(getByRole(dialog, 'treeitem',
@@ -254,7 +293,7 @@ describe('Test User\'s library', () => {
 		)).toBeDisabled();
 
 		const musicNode = getByRole(dialog, 'treeitem', { name: 'Music' });
-		await actWithFakeTimers(user => user.click(musicNode));
+		await userEvent.click(musicNode);
 
 		const addBtn = getByRole(dialog, 'button',{ name: 'Add' });
 		expect(addBtn).toBeEnabled();
@@ -275,7 +314,131 @@ describe('Test User\'s library', () => {
 			})
 		);
 
-		await actWithFakeTimers(user => user.click(addBtn));
+		await userEvent.click(addBtn);
 		expect(hasBeenUpdated).toBe(true);
 	});
+
+	test('Remove item from a colection using toolbar button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+
+		expect(getAllByRole(gridBody, 'row')).toHaveLength(7);
+
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				const itemKey = req.url.searchParams.get('itemType');
+				expect(itemKey).toBe('note');
+				return res(res => {
+					res.body = JSON.stringify(newItemNote);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toEqual('VR82JUX8');
+				expect(items[0].collections).toEqual([]);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserRemoveItemFromCollection);
+					return res;
+				});
+			}),
+		);
+
+		const removeFromCollectionBtn = screen.getByRole('button',
+			{ name: 'Remove From Collection' }
+		);
+
+		await userEvent.click(removeFromCollectionBtn);
+		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(getAllByRole(gridBody, 'row')).toHaveLength(6));
+	});
+
+	test('Trash item using toolbar button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+
+		expect(getAllByRole(gridBody, 'row')).toHaveLength(7);
+
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				const itemKey = req.url.searchParams.get('itemType');
+				expect(itemKey).toBe('note');
+				return res(res => {
+					res.body = JSON.stringify(newItemNote);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toEqual('VR82JUX8');
+				expect(items[0].deleted).toEqual(1);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserTrashItem);
+					return res;
+				});
+			}),
+		);
+
+		const trashBtn = screen.getByRole('button',
+			{ name: 'Move to Trash' }
+		);
+
+		await userEvent.click(trashBtn);
+		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(getAllByRole(gridBody, 'row')).toHaveLength(6));
+	});
+
+	test('Duplicate item using toolbar button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		expect(screen.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' })).toBeInTheDocument();
+
+		const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
+
+		const moreBtn = getByRole(toolbar, 'button', { name: 'More' });
+		await userEvent.click(moreBtn);
+		await waitForPosition();
+
+		// menu should be open
+		expect(getByRole(toolbar, 'button',
+			{ name: 'More', expanded: true })
+		).toBeInTheDocument();
+
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].title).toEqual('Effects of diet restriction on life span and age-related changes in dogs');
+				expect(items[0].collections).toEqual(['WTTJ2J56']);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserDuplicateItem);
+					return res;
+				});
+			})
+		);
+
+		const duplicateOpt = screen.getByRole('menuitem', { name: 'Duplicate Item' });
+
+		await userEvent.click(duplicateOpt);
+		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(screen.getAllByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' })).toHaveLength(2));
+	});
+
+
+
 });

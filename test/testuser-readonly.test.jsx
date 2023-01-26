@@ -3,11 +3,13 @@ import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { getByRole, screen, queryByRole } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
+import fileSaver from 'file-saver';
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import itemFields from './fixtures/response/item-fields';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
@@ -18,6 +20,7 @@ stateRaw.config.libraries[0].isReadOnly = true;
 
 const state = JSONtoState(stateRaw);
 applyAdditionalJestTweaks();
+jest.mock('file-saver');
 
 describe('Test User\'s read-only library', () => {
 	const handlers = [];
@@ -45,7 +48,7 @@ describe('Test User\'s read-only library', () => {
 		await waitForPosition();
 
 		const noteItem = screen.getByRole('row', { name: 'Puppies!' });
-		await actWithFakeTimers(user => user.click(noteItem));
+		await userEvent.click(noteItem);
 		await waitForPosition();
 
 		expect(screen.getByRole('tab', { name: 'Note', selected: true })).toBeInTheDocument();
@@ -72,7 +75,7 @@ describe('Test User\'s read-only library', () => {
 		);
 
 		const nextItem = screen.getByRole('row', { name: 'Understanding dogs' });
-		await actWithFakeTimers(user => user.click(nextItem));
+		await userEvent.click(nextItem);
 		await waitForPosition();
 	});
 
@@ -89,7 +92,7 @@ describe('Test User\'s read-only library', () => {
 		expect(dogsTreeItem).toHaveAttribute('aria-level', '2');
 		expect(queryByRole(tree, 'treeitem', { name: 'Goldens' })).not.toBeInTheDocument();
 
-		await actWithFakeTimers(user => user.click(expandButton));
+		await userEvent.click(expandButton);
 		await waitForPosition();
 
 		expect(getByRole(tree, 'treeitem', { name: 'Dogs', expanded: true })).toBeInTheDocument();
@@ -98,11 +101,48 @@ describe('Test User\'s read-only library', () => {
 		expect(goldensTreeItem).toHaveAttribute('aria-level', '3');
 
 		const collapseButton = getByRole(dogsTreeItem, 'button', { name: 'Collapse' });
-		await actWithFakeTimers(user => user.click(collapseButton));
+		await userEvent.click(collapseButton);
 		await waitForPosition();
 
 		expect(getByRole(tree, 'treeitem', { name: 'Dogs', expanded: false })).toBeInTheDocument();
 		expect(queryByRole(tree, 'treeitem', { name: 'Goldens' })).not.toBeInTheDocument();
-
 	});
+
+	test('Export item using toolbar button', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const exportBtn = screen.getByRole('button', { name: 'Export' });
+		await userEvent.click(exportBtn);
+		await waitForPosition();
+
+		// menu should be open
+		expect(screen.getByRole('button',
+			{ name: 'Export', expanded: true })
+		).toBeInTheDocument();
+
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/users/1/items', async (req, res) => {
+				expect(req.url.searchParams.get('format')).toEqual('bibtex');
+				expect(req.url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(req.url.searchParams.get('itemKey')).toEqual('VR82JUX8');
+
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = '';
+					return res;
+				});
+			}),
+		);
+
+		const bibtexOpt = screen.getByRole('menuitem', { name: 'BibTeX' });
+		await userEvent.click(bibtexOpt);
+		await waitForPosition();
+
+		expect(hasBeenPosted).toBe(true);
+		expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+	});
+
 });
