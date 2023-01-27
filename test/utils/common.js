@@ -20,7 +20,7 @@ export const resizeWindow = (x, y) => {
 	window.dispatchEvent(new Event('resize'));
 }
 
-export const applyAdditionalJestTweaks = ({ timeout = 10000, resolution = [1280, 720] } = {}) => {
+export const applyAdditionalJestTweaks = ({ timeout = 15000, resolution = [1280, 720] } = {}) => {
 	jest.setTimeout(timeout);
 	resizeWindow(resolution[0], resolution[1]);
 

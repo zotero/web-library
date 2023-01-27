@@ -224,7 +224,7 @@ const currentGoToSubscribeUrl = () => {
 			return;
 		}
 
-		const apiKeyBase = websiteUrl + '/settings/keys/new';
+		const apiKeyBase = websiteUrl + 'settings/keys/new';
 		const qparams = { 'name': 'Private Feed' };
 		if(isGroupLibrary){
 			qparams['library_access'] = 0;

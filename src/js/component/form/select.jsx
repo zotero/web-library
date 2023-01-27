@@ -87,7 +87,7 @@ const SelectInput = forwardRef((props, ref) => {
 						onKeyDown={ handleKeyDown }
 						onChange={ handleNativeChange }
 						ref={ input }
-						{ ... pick(rest, p => p.startsWith('data-')) }
+						{ ... pick(rest, p => p.startsWith('data-') || p.startsWith('aria-')) }
 					>
 						{ options.map(({ value, label }) => (
 							<option key={ value } value={ value }>{ label }</option>)
@@ -104,7 +104,6 @@ const SelectInput = forwardRef((props, ref) => {
 					onInputKeyDown={ handleKeyDown }
 					onChange={ handleChange }
 					ref={ input }
-					{ ... pick(rest, p => p.startsWith('data-')) }
 				/>
 			) }
 			{ isBusy ? <Spinner className="small" /> : null }

@@ -105,7 +105,7 @@ const ItemActionsTouch = memo(() => {
 						<React.Fragment>
 							<DropdownItem divider />
 							<DropdownItem onClick={ handleSubscribeClick }>
-								Subscribe to Feed
+								Subscribe To Feed
 							</DropdownItem>
 						</React.Fragment>
 					) }
@@ -209,7 +209,7 @@ const ItemActionsDesktop = memo(props => {
 							onClick={ handleTrash }
 							onKeyDown={ handleKeyDown }
 							tabIndex={ -2 }
-							title="Move to Trash"
+							title="Move To Trash"
 						>
 							<Icon type={ '16/trash' } width="16" height="16" />
 						</Button>

@@ -1,0 +1,2255 @@
+{
+    "config": {
+        "apiConfig": {
+            "apiAuthorityPart": "api.zotero.org",
+            "retry": 2
+        },
+        "apiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+        "defaultLibraryKey": "u1",
+        "libraries": [
+            {
+                "id": 1,
+                "key": "u1",
+                "isMyLibrary": true,
+                "isReadOnly": false,
+                "isFileUploadAllowed": true,
+                "name": "My Library",
+                "isExternal": false,
+                "isPublic": false,
+                "slug": "testuser"
+            }
+        ],
+        "sortBy": "title",
+        "sortDirection": "asc",
+        "streamingApiUrl": "wss://stream.zotero.org",
+        "userId": 1,
+        "isEmbedded": false,
+        "containterClassName": "zotero-wl",
+        "websiteUrl": "https://www.zotero.org/",
+        "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
+        "translateUrl": "https://translate-server.zotero.org/Prod",
+        "pdfReaderURL": "/static/pdf-reader/viewer.html",
+        "noteEditorURL": "/static/note-editor/editor.html",
+        "menus": {
+            "desktop": [
+                {
+                    "label": "My Library",
+                    "href": "/mylibrary",
+                    "active": true
+                },
+                {
+                    "label": "Groups",
+                    "href": "/groups"
+                },
+                {
+                    "label": "Documentation",
+                    "href": "/support"
+                },
+                {
+                    "label": "Forums",
+                    "href": "https://forums.zotero.org"
+                },
+                {
+                    "label": "Get Involved",
+                    "href": "/getinvolved"
+                },
+                {
+                    "label": "Zotero User",
+                    "truncate": true,
+                    "dropdown": true,
+                    "entries": [
+                        {
+                            "label": "My Profile",
+                            "href": "/testuser1"
+                        },
+                        {
+                            "separator": true
+                        },
+                        {
+                            "label": "Inbox (13)",
+                            "href": "https://forums.zotero.org/messages/inbox"
+                        },
+                        {
+                            "separator": true
+                        },
+                        {
+                            "label": "Settings",
+                            "href": "/settings"
+                        },
+                        {
+                            "label": "Use Old Web Library",
+                            "href": "/testuser1/items?usenewlibrary=0"
+                        },
+                        {
+                            "label": "Logout",
+                            "href": "/user/logout"
+                        }
+                    ]
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "offscreen"
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "btn btn-secondary hidden-md-down upgrade-storage",
+                    "position": "right",
+                    "aria-hidden": true
+                }
+            ],
+            "mobile": [
+                {
+                    "label": "My Library",
+                    "href": "/mylibrary",
+                    "active": true
+                },
+                {
+                    "label": "Groups",
+                    "href": "/groups"
+                },
+                {
+                    "label": "Documentation",
+                    "href": "/support"
+                },
+                {
+                    "label": "Forums",
+                    "href": "https://forums.zotero.org"
+                },
+                {
+                    "label": "Get Involved",
+                    "href": "/getinvolved"
+                },
+                {
+                    "label": "Test User",
+                    "href": "/testuser1",
+                    "className": "separated"
+                },
+                {
+                    "label": "Inbox (13)",
+                    "href": "https://forums.zotero.org/messages/inbox",
+                    "className": "separated"
+                },
+                {
+                    "label": "Settings",
+                    "href": "/settings"
+                },
+                {
+                    "label": "Use Old Web Library",
+                    "href": "/testuser1/items?usenewlibrary=0"
+                },
+                {
+                    "label": "Logout",
+                    "href": "/user/logout"
+                },
+                {
+                    "label": "Upgrade Storage",
+                    "href": "/settings/storage?ref=usb",
+                    "className": "separated"
+                }
+            ]
+        },
+        "userSlug": "testuser",
+        "includeMyLibrary": true,
+        "includeUserGroups": false
+    },
+    "current": {
+        "collectionKey": null,
+        "editingItemKey": null,
+        "firstCollectionKey": null,
+        "firstIsTrash": false,
+        "highlightedCollections": [],
+        "isAdvancedSearch": false,
+        "isNavBarOpen": false,
+        "isSearchMode": true,
+        "isSelectMode": true,
+        "isTagSelectorOpen": true,
+        "isTouchTagSelectorOpen": false,
+        "itemKey": null,
+        "itemKeys": [
+            "J489T6X3",
+            "3JCLFUG4"
+        ],
+        "itemsSource": "query",
+        "isFirstRendering": true,
+        "libraryKey": "u1",
+        "qmode": "titleCreatorYear",
+        "search": "pathfinding",
+        "searchState": {
+            "hasViewedResult": false,
+            "triggerItem": null,
+            "triggerView": "library"
+        },
+        "tags": [
+            "to read"
+        ],
+        "tagsHideAutomatic": false,
+        "tagsSearchString": "",
+        "userLibraryKey": "u1",
+        "useTransitions": true,
+        "view": "item-list",
+        "attachmentKey": null,
+        "isMyPublications": false,
+        "isTrash": false,
+        "noteKey": null,
+        "isItemsTableFocused": false
+    },
+    "device": {
+        "isKeyboardUser": false,
+        "isMouseUser": true,
+        "isSingleColumn": false,
+        "isTouchOrSmall": false,
+        "isTouchUser": false,
+        "scrollbarWidth": 15,
+        "shouldUseEditMode": false,
+        "shouldUseModalCreatorField": false,
+        "shouldUseSidebar": false,
+        "shouldUseTabs": true,
+        "userType": "mouse",
+        "xxs": false,
+        "xs": false,
+        "sm": false,
+        "md": false,
+        "lg": true
+    },
+    "errors": [],
+    "fetching": {
+        "creatorTypes": [],
+        "itemTemplates": [],
+        "itemTypeCreatorTypes": [],
+        "itemTypeFields": [],
+        "tagsInLibrary": [],
+        "meta": false,
+        "allGroups": false
+    },
+    "groups": [],
+    "identifier": {
+        "isError": false,
+        "isSearching": false,
+        "session": null,
+        "result": null,
+        "item": null,
+        "items": null,
+        "identifier": null,
+        "identifierIsUrl": null,
+        "next": null
+    },
+    "itemsPublications": {},
+    "libraries": {
+        "u1": {
+            "attachmentsExportPDF": {},
+            "attachmentsUrl": {},
+            "collections": {
+                "data": {
+                    "HNLXYCXS": {
+                        "key": "HNLXYCXS",
+                        "version": 232,
+                        "name": "Border Collie",
+                        "parentCollection": "WTTJ2J56",
+                        "relations": {}
+                    },
+                    "9WZDZ7YA": {
+                        "key": "9WZDZ7YA",
+                        "version": 225,
+                        "name": "Goldens",
+                        "parentCollection": "WTTJ2J56",
+                        "relations": {}
+                    },
+                    "SGQRGR2J": {
+                        "key": "SGQRGR2J",
+                        "version": 154,
+                        "name": "Board Games",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "I6WUED2Y": {
+                        "key": "I6WUED2Y",
+                        "version": 154,
+                        "name": "AI",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "WTTJ2J56": {
+                        "key": "WTTJ2J56",
+                        "version": 154,
+                        "name": "Dogs",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "4VM2BFHN": {
+                        "key": "4VM2BFHN",
+                        "version": 154,
+                        "name": "Music",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    "CSB4KZUU": {
+                        "key": "CSB4KZUU",
+                        "version": 154,
+                        "name": "Algorithms",
+                        "parentCollection": false,
+                        "relations": {}
+                    }
+                },
+                "remoteChangesTracker": {},
+                "isFetchingAll": false,
+                "isFetching": false,
+                "totalResults": 7
+            },
+            "deleting": [],
+            "items": {
+                "J489T6X3": {
+                    "key": "J489T6X3",
+                    "version": 219,
+                    "itemType": "journalArticle",
+                    "title": "A systematic literature review of A* pathfinding",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Daniel",
+                            "lastName": "Foead"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Alifio",
+                            "lastName": "Ghifari"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Marchel Budi",
+                            "lastName": "Kusuma"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Novita",
+                            "lastName": "Hanafiah"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Eric",
+                            "lastName": "Gunawan"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "publicationTitle": "Procedia Computer Science",
+                    "volume": "179",
+                    "issue": "",
+                    "pages": "507–514",
+                    "date": "2021",
+                    "series": "",
+                    "seriesTitle": "",
+                    "seriesText": "",
+                    "journalAbbreviation": "",
+                    "language": "",
+                    "DOI": "",
+                    "ISSN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "Publisher: Elsevier",
+                    "tags": [
+                        {
+                            "tag": "pathfinding"
+                        },
+                        {
+                            "tag": "to read"
+                        }
+                    ],
+                    "collections": [
+                        "CSB4KZUU"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:58:57Z",
+                    "dateModified": "2023-01-17T15:29:50Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Foead et al.",
+                        "parsedDate": "2021",
+                        "numChildren": 2
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                            "type": "application/json",
+                            "attachmentType": "application/pdf",
+                            "attachmentSize": 536523
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "pdf",
+                        "colors": [
+                            "#FF6666"
+                        ],
+                        "createdByUser": "",
+                        "creator": "Foead et al.",
+                        "date": "2021",
+                        "dateAdded": "13/01/2023, 11:58:57",
+                        "dateModified": "17/01/2023, 16:29:50",
+                        "emojis": [],
+                        "extra": "Publisher: Elsevier",
+                        "iconName": "journal-article",
+                        "itemType": "journalArticle",
+                        "itemTypeRaw": "journalArticle",
+                        "key": "J489T6X3",
+                        "publicationTitle": "Procedia Computer Science",
+                        "publisher": null,
+                        "title": "A systematic literature review of A* pathfinding",
+                        "year": "2021",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                },
+                "3JCLFUG4": {
+                    "key": "3JCLFUG4",
+                    "version": 219,
+                    "itemType": "conferencePaper",
+                    "title": "Cooperative pathfinding",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "David",
+                            "lastName": "Silver"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "date": "2005",
+                    "proceedingsTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+                    "conferenceName": "",
+                    "place": "",
+                    "publisher": "",
+                    "volume": "1",
+                    "pages": "117–122",
+                    "series": "",
+                    "language": "",
+                    "DOI": "",
+                    "ISBN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "Issue: 1",
+                    "tags": [
+                        {
+                            "tag": "pathfinding"
+                        },
+                        {
+                            "tag": "to read"
+                        }
+                    ],
+                    "collections": [
+                        "CSB4KZUU"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:58:57Z",
+                    "dateModified": "2023-01-17T15:30:17Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Silver",
+                        "parsedDate": "2005",
+                        "numChildren": 2
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                            "type": "application/json",
+                            "attachmentType": "application/pdf",
+                            "attachmentSize": 848371
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "pdf",
+                        "colors": [
+                            "#FF6666"
+                        ],
+                        "createdByUser": "",
+                        "creator": "Silver",
+                        "date": "2005",
+                        "dateAdded": "13/01/2023, 11:58:57",
+                        "dateModified": "17/01/2023, 16:30:17",
+                        "emojis": [],
+                        "extra": "Issue: 1",
+                        "iconName": "conference-paper",
+                        "itemType": "conferencePaper",
+                        "itemTypeRaw": "conferencePaper",
+                        "key": "3JCLFUG4",
+                        "publicationTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+                        "publisher": "",
+                        "title": "Cooperative pathfinding",
+                        "year": "2005",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                },
+                "2MNVWQBP": {
+                    "key": "2MNVWQBP",
+                    "version": 219,
+                    "itemType": "conferencePaper",
+                    "title": "Pathfinding Algorithms in game development",
+                    "creators": [
+                        {
+                            "creatorType": "author",
+                            "firstName": "Abdul",
+                            "lastName": "Rafiq"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Tuty Asmawaty Abdul",
+                            "lastName": "Kadir"
+                        },
+                        {
+                            "creatorType": "author",
+                            "firstName": "Siti Normaziah",
+                            "lastName": "Ihsan"
+                        }
+                    ],
+                    "abstractNote": "",
+                    "date": "2020",
+                    "proceedingsTitle": "IOP Conference Series: Materials Science and Engineering",
+                    "conferenceName": "",
+                    "place": "",
+                    "publisher": "IOP Publishing",
+                    "volume": "769",
+                    "pages": "012021",
+                    "series": "",
+                    "language": "",
+                    "DOI": "",
+                    "ISBN": "",
+                    "shortTitle": "",
+                    "url": "",
+                    "accessDate": "",
+                    "archive": "",
+                    "archiveLocation": "",
+                    "libraryCatalog": "Google Scholar",
+                    "callNumber": "",
+                    "rights": "",
+                    "extra": "Issue: 1",
+                    "tags": [
+                        {
+                            "tag": "coding"
+                        },
+                        {
+                            "tag": "pathfinding"
+                        },
+                        {
+                            "tag": "to read"
+                        }
+                    ],
+                    "collections": [
+                        "CSB4KZUU"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T10:58:57Z",
+                    "dateModified": "2023-01-17T15:38:33Z",
+                    "@@meta@@": {
+                        "creatorSummary": "Rafiq et al.",
+                        "parsedDate": "2020",
+                        "numChildren": 2
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/2MNVWQBP",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/2MNVWQBP",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/LZ35XNZF",
+                            "type": "application/json",
+                            "attachmentType": "application/pdf",
+                            "attachmentSize": 1497781
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "pdf",
+                        "colors": [
+                            "#FF6666"
+                        ],
+                        "createdByUser": "",
+                        "creator": "Rafiq et al.",
+                        "date": "2020",
+                        "dateAdded": "13/01/2023, 11:58:57",
+                        "dateModified": "17/01/2023, 16:38:33",
+                        "emojis": [],
+                        "extra": "Issue: 1",
+                        "iconName": "conference-paper",
+                        "itemType": "conferencePaper",
+                        "itemTypeRaw": "conferencePaper",
+                        "key": "2MNVWQBP",
+                        "publicationTitle": "IOP Conference Series: Materials Science and Engineering",
+                        "publisher": "IOP Publishing",
+                        "title": "Pathfinding Algorithms in game development",
+                        "year": "2020",
+                        "language": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": ""
+                    }
+                }
+            },
+            "itemsByCollection": {
+                "HNLXYCXS": {
+                    "totalResults": 4
+                },
+                "9WZDZ7YA": {
+                    "totalResults": 5
+                },
+                "SGQRGR2J": {
+                    "totalResults": 14
+                },
+                "I6WUED2Y": {
+                    "totalResults": 12
+                },
+                "WTTJ2J56": {
+                    "totalResults": 7
+                },
+                "4VM2BFHN": {
+                    "totalResults": 10
+                },
+                "CSB4KZUU": {
+                    "totalResults": 20
+                }
+            },
+            "itemsByParent": {},
+            "itemsRelated": {},
+            "itemsTop": {},
+            "itemsTrash": {},
+            "settings": {
+                "lastPageIndex_u_F85DFW3Q": {
+                    "value": 9,
+                    "version": 218
+                },
+                "tagColors": {
+                    "value": [
+                        {
+                            "name": "cute",
+                            "color": "#A28AE5"
+                        },
+                        {
+                            "name": "annotated",
+                            "color": "#5FB236"
+                        },
+                        {
+                            "name": "to read",
+                            "color": "#FF6666"
+                        },
+                        {
+                            "name": "⭐️",
+                            "color": "#FF8C19"
+                        }
+                    ],
+                    "version": 218
+                }
+            },
+            "sync": {
+                "version": 243,
+                "isSynced": true,
+                "requestsPending": 0
+            },
+            "tagColors": {
+                "value": [
+                    {
+                        "name": "cute",
+                        "color": "#A28AE5"
+                    },
+                    {
+                        "name": "annotated",
+                        "color": "#5FB236"
+                    },
+                    {
+                        "name": "to read",
+                        "color": "#FF6666"
+                    },
+                    {
+                        "name": "⭐️",
+                        "color": "#FF8C19"
+                    }
+                ],
+                "lookup": {
+                    "cute": "#A28AE5",
+                    "annotated": "#5FB236",
+                    "to read": "#FF6666",
+                    "⭐️": "#FF8C19"
+                }
+            },
+            "tagsByCollection": {},
+            "tagsInPublicationsItems": {},
+            "tagsInTrashItems": {},
+            "tagsTop": {},
+            "tagsInLibrary": {
+                "coloredTags": [
+                    "cute",
+                    "annotated",
+                    "to read",
+                    "⭐️"
+                ]
+            },
+            "updating": {
+                "collections": {},
+                "items": {},
+                "uploads": []
+            }
+        }
+    },
+    "meta": {
+        "itemTypes": [],
+        "itemFields": [],
+        "creatorFields": [],
+        "itemTypeCreatorTypes": {},
+        "itemTypeFields": {},
+        "itemTemplates": {},
+        "invalidated": false
+    },
+    "modal": {
+        "id": null
+    },
+    "ongoing": [],
+    "preferences": {
+        "citationStyle": "modern-language-association",
+        "citationLocale": "en-US",
+        "installedCitationStyles": [],
+        "columns": [
+            {
+                "field": "title",
+                "fraction": 0.45,
+                "isVisible": true,
+                "minFraction": 0.1,
+                "sort": "asc"
+            },
+            {
+                "field": "creator",
+                "fraction": 0.3,
+                "isVisible": true,
+                "minFraction": 0.05
+            },
+            {
+                "field": "date",
+                "fraction": 0.2,
+                "isVisible": true,
+                "minFraction": 0.05
+            },
+            {
+                "field": "itemType",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "year",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "publisher",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "publicationTitle",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "journalAbbreviation",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "language",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "libraryCatalog",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "callNumber",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "rights",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "dateAdded",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "dateModified",
+                "fraction": 0.1,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "extra",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "createdByUser",
+                "fraction": 0.2,
+                "isVisible": false,
+                "minFraction": 0.05
+            },
+            {
+                "field": "attachment",
+                "fraction": 0.05,
+                "isVisible": true,
+                "minFraction": 0.05
+            }
+        ],
+        "version": "1.3.2"
+    },
+    "query": {
+        "current": {
+            "tag": [
+                "to read"
+            ],
+            "q": "pathfinding",
+            "qmode": "titleCreatorYear"
+        },
+        "isFetching": false,
+        "itemKeys": [],
+        "requests": [],
+        "tags": {
+            "requests": [],
+            "isFetching": false,
+            "isFetchingColoredTags": false,
+            "coloredTags": [
+                "to read"
+            ],
+            "rawTags": [
+                {
+                    "tag": "coding",
+                    "type": 0
+                },
+                {
+                    "tag": "pathfinding",
+                    "type": 0
+                },
+                {
+                    "tag": "to read",
+                    "type": 0
+                }
+            ],
+            "totalResults": 3,
+            "sortBy": "title",
+            "isError": false,
+            "pointer": 100,
+            "duplicatesCount": 0,
+            "tags": [
+                "coding",
+                "pathfinding",
+                "to read"
+            ],
+            "tagTypeLookup": {
+                "coding": 0,
+                "pathfinding": 0,
+                "to read": 0
+            }
+        },
+        "totalResults": 3,
+        "keys": [
+            "J489T6X3",
+            "3JCLFUG4",
+            "2MNVWQBP"
+        ],
+        "sortBy": "title",
+        "sortDirection": "asc",
+        "isError": false,
+        "pointer": 51
+    },
+    "sources": {
+        "fetching": [],
+        "fetched": []
+    },
+    "styles": {
+        "isFetching": false,
+        "stylesData": null
+    },
+    "traffic": {
+        "LIBRARY_SETTINGS": {
+            "lastRequest": 1674819594413,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_LIBRARY_SETTINGS",
+                "libraryKey": "u1",
+                "settings": {
+                    "lastPageIndex_u_F85DFW3Q": {
+                        "value": 9,
+                        "version": 218
+                    },
+                    "tagColors": {
+                        "value": [
+                            {
+                                "name": "cute",
+                                "color": "#A28AE5"
+                            },
+                            {
+                                "name": "annotated",
+                                "color": "#5FB236"
+                            },
+                            {
+                                "name": "to read",
+                                "color": "#FF6666"
+                            },
+                            {
+                                "name": "⭐️",
+                                "color": "#FF8C19"
+                            }
+                        ],
+                        "version": 218
+                    }
+                },
+                "response": {
+                    "raw": {
+                        "lastPageIndex_u_F85DFW3Q": {
+                            "value": 9,
+                            "version": 218
+                        },
+                        "tagColors": {
+                            "value": [
+                                {
+                                    "name": "cute",
+                                    "color": "#A28AE5"
+                                },
+                                {
+                                    "name": "annotated",
+                                    "color": "#5FB236"
+                                },
+                                {
+                                    "name": "to read",
+                                    "color": "#FF6666"
+                                },
+                                {
+                                    "name": "⭐️",
+                                    "color": "#FF8C19"
+                                }
+                            ],
+                            "version": 218
+                        }
+                    },
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "settings": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                }
+            },
+            "lastSuccess": 1674819594988,
+            "errorCount": 0
+        },
+        "COLLECTIONS_IN_LIBRARY": {
+            "lastRequest": 1674819594416,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
+                "libraryKey": "u1",
+                "start": 0,
+                "limit": 100,
+                "sort": "dateModified",
+                "direction": "desc",
+                "id": 1,
+                "collections": [
+                    {
+                        "key": "HNLXYCXS",
+                        "version": 232,
+                        "name": "Border Collie",
+                        "parentCollection": "WTTJ2J56",
+                        "relations": {}
+                    },
+                    {
+                        "key": "9WZDZ7YA",
+                        "version": 225,
+                        "name": "Goldens",
+                        "parentCollection": "WTTJ2J56",
+                        "relations": {}
+                    },
+                    {
+                        "key": "SGQRGR2J",
+                        "version": 154,
+                        "name": "Board Games",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "I6WUED2Y",
+                        "version": 154,
+                        "name": "AI",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "WTTJ2J56",
+                        "version": 154,
+                        "name": "Dogs",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "4VM2BFHN",
+                        "version": 154,
+                        "name": "Music",
+                        "parentCollection": false,
+                        "relations": {}
+                    },
+                    {
+                        "key": "CSB4KZUU",
+                        "version": 154,
+                        "name": "Algorithms",
+                        "parentCollection": false,
+                        "relations": {}
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "key": "HNLXYCXS",
+                            "version": 232,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/HNLXYCXS",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/HNLXYCXS",
+                                    "type": "text/html"
+                                },
+                                "up": {
+                                    "href": "https://api.zotero.org/users/1/collections/WTTJ2J56",
+                                    "type": "application/json"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 4
+                            },
+                            "data": {
+                                "key": "HNLXYCXS",
+                                "version": 232,
+                                "name": "Border Collie",
+                                "parentCollection": "WTTJ2J56",
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "9WZDZ7YA",
+                            "version": 225,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/9WZDZ7YA",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/9WZDZ7YA",
+                                    "type": "text/html"
+                                },
+                                "up": {
+                                    "href": "https://api.zotero.org/users/1/collections/WTTJ2J56",
+                                    "type": "application/json"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 5
+                            },
+                            "data": {
+                                "key": "9WZDZ7YA",
+                                "version": 225,
+                                "name": "Goldens",
+                                "parentCollection": "WTTJ2J56",
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "SGQRGR2J",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/SGQRGR2J",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/SGQRGR2J",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 14
+                            },
+                            "data": {
+                                "key": "SGQRGR2J",
+                                "version": 154,
+                                "name": "Board Games",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "I6WUED2Y",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/I6WUED2Y",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/I6WUED2Y",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 12
+                            },
+                            "data": {
+                                "key": "I6WUED2Y",
+                                "version": 154,
+                                "name": "AI",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "WTTJ2J56",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/WTTJ2J56",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/WTTJ2J56",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 2,
+                                "numItems": 7
+                            },
+                            "data": {
+                                "key": "WTTJ2J56",
+                                "version": 154,
+                                "name": "Dogs",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "4VM2BFHN",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/4VM2BFHN",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/4VM2BFHN",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 10
+                            },
+                            "data": {
+                                "key": "4VM2BFHN",
+                                "version": 154,
+                                "name": "Music",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        },
+                        {
+                            "key": "CSB4KZUU",
+                            "version": 154,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/collections/CSB4KZUU",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/collections/CSB4KZUU",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "numCollections": 0,
+                                "numItems": 20
+                            },
+                            "data": {
+                                "key": "CSB4KZUU",
+                                "version": 154,
+                                "name": "Algorithms",
+                                "parentCollection": false,
+                                "relations": {}
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "collections": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "start": 0,
+                        "limit": 100,
+                        "sort": "dateModified",
+                        "direction": "desc",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 7
+            },
+            "lastSuccess": 1674819595017,
+            "errorCount": 0
+        },
+        "TAGS_IN_ITEMS_BY_QUERY": {
+            "lastRequest": 1674819595099,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_TAGS_IN_ITEMS_BY_QUERY",
+                "libraryKey": "u1",
+                "collectionKey": null,
+                "isTrash": false,
+                "isMyPublications": false,
+                "queryOptions": {
+                    "sort": "title",
+                    "start": 0,
+                    "limit": 100,
+                    "itemTag": [
+                        "to read"
+                    ],
+                    "itemQ": "pathfinding",
+                    "itemQMode": "titleCreatorYear"
+                },
+                "tags": [
+                    {
+                        "tag": "coding",
+                        "type": 0
+                    },
+                    {
+                        "tag": "pathfinding",
+                        "type": 0
+                    },
+                    {
+                        "tag": "to read",
+                        "type": 0
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "tag": "coding",
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/tags/coding",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "http://zotero.org/users/1/tags/coding",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "type": 0,
+                                "numItems": 7
+                            }
+                        },
+                        {
+                            "tag": "pathfinding",
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/tags/pathfinding",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "http://zotero.org/users/1/tags/pathfinding",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "type": 0,
+                                "numItems": 8
+                            }
+                        },
+                        {
+                            "tag": "to read",
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/tags/to+read",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "http://zotero.org/users/1/tags/to+read",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "type": 0,
+                                "numItems": 7
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "items": null,
+                            "top": null,
+                            "tags": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "sort": "title",
+                        "start": 0,
+                        "limit": 100,
+                        "itemTag": [
+                            "to read"
+                        ],
+                        "itemQ": "pathfinding",
+                        "itemQMode": "titleCreatorYear",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 3
+            },
+            "lastSuccess": 1674819595478,
+            "errorCount": 0
+        },
+        "COLORED_TAGS_IN_ITEMS_BY_QUERY": {
+            "lastRequest": 1674819595101,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY",
+                "libraryKey": "u1",
+                "collectionKey": null,
+                "isTrash": false,
+                "isMyPublications": false,
+                "queryOptions": {
+                    "tag": "cute || annotated || to read || ⭐️",
+                    "itemTag": [
+                        "to read"
+                    ],
+                    "itemQ": "pathfinding",
+                    "itemQMode": "titleCreatorYear"
+                },
+                "tags": [
+                    {
+                        "tag": "to read",
+                        "type": 0
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "tag": "to read",
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/tags/to+read",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "http://zotero.org/users/1/tags/to+read",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "type": 0,
+                                "numItems": 7
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "items": null,
+                            "top": null,
+                            "tags": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "tag": "cute || annotated || to read || ⭐️",
+                        "itemTag": [
+                            "to read"
+                        ],
+                        "itemQ": "pathfinding",
+                        "itemQMode": "titleCreatorYear",
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 1
+            },
+            "lastSuccess": 1674819595351,
+            "errorCount": 0
+        },
+        "ITEMS_BY_QUERY": {
+            "lastRequest": 1674819595105,
+            "ongoing": [],
+            "last": {
+                "type": "RECEIVE_ITEMS_BY_QUERY",
+                "libraryKey": "u1",
+                "collectionKey": null,
+                "isTrash": false,
+                "isMyPublications": false,
+                "queryOptions": {
+                    "start": 0,
+                    "limit": 51,
+                    "sort": "title",
+                    "direction": "asc",
+                    "tag": [
+                        "to read"
+                    ],
+                    "q": "pathfinding",
+                    "qmode": "titleCreatorYear",
+                    "signal": {}
+                },
+                "id": 2,
+                "items": [
+                    {
+                        "key": "J489T6X3",
+                        "version": 219,
+                        "itemType": "journalArticle",
+                        "title": "A systematic literature review of A* pathfinding",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Daniel",
+                                "lastName": "Foead"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Alifio",
+                                "lastName": "Ghifari"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Marchel Budi",
+                                "lastName": "Kusuma"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Novita",
+                                "lastName": "Hanafiah"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Eric",
+                                "lastName": "Gunawan"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "publicationTitle": "Procedia Computer Science",
+                        "volume": "179",
+                        "issue": "",
+                        "pages": "507–514",
+                        "date": "2021",
+                        "series": "",
+                        "seriesTitle": "",
+                        "seriesText": "",
+                        "journalAbbreviation": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISSN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Publisher: Elsevier",
+                        "tags": [
+                            {
+                                "tag": "pathfinding"
+                            },
+                            {
+                                "tag": "to read"
+                            }
+                        ],
+                        "collections": [
+                            "CSB4KZUU"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:58:57Z",
+                        "dateModified": "2023-01-17T15:29:50Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Foead et al.",
+                            "parsedDate": "2021",
+                            "numChildren": 2
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 536523
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [
+                                "#FF6666"
+                            ],
+                            "createdByUser": "",
+                            "creator": "Foead et al.",
+                            "date": "2021",
+                            "dateAdded": "13/01/2023, 11:58:57",
+                            "dateModified": "17/01/2023, 16:29:50",
+                            "emojis": [],
+                            "extra": "Publisher: Elsevier",
+                            "iconName": "journal-article",
+                            "itemType": "journalArticle",
+                            "itemTypeRaw": "journalArticle",
+                            "key": "J489T6X3",
+                            "publicationTitle": "Procedia Computer Science",
+                            "publisher": null,
+                            "title": "A systematic literature review of A* pathfinding",
+                            "year": "2021",
+                            "journalAbbreviation": "",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "3JCLFUG4",
+                        "version": 219,
+                        "itemType": "conferencePaper",
+                        "title": "Cooperative pathfinding",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "David",
+                                "lastName": "Silver"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "date": "2005",
+                        "proceedingsTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+                        "conferenceName": "",
+                        "place": "",
+                        "publisher": "",
+                        "volume": "1",
+                        "pages": "117–122",
+                        "series": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISBN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Issue: 1",
+                        "tags": [
+                            {
+                                "tag": "pathfinding"
+                            },
+                            {
+                                "tag": "to read"
+                            }
+                        ],
+                        "collections": [
+                            "CSB4KZUU"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:58:57Z",
+                        "dateModified": "2023-01-17T15:30:17Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Silver",
+                            "parsedDate": "2005",
+                            "numChildren": 2
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 848371
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [
+                                "#FF6666"
+                            ],
+                            "createdByUser": "",
+                            "creator": "Silver",
+                            "date": "2005",
+                            "dateAdded": "13/01/2023, 11:58:57",
+                            "dateModified": "17/01/2023, 16:30:17",
+                            "emojis": [],
+                            "extra": "Issue: 1",
+                            "iconName": "conference-paper",
+                            "itemType": "conferencePaper",
+                            "itemTypeRaw": "conferencePaper",
+                            "key": "3JCLFUG4",
+                            "publicationTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+                            "publisher": "",
+                            "title": "Cooperative pathfinding",
+                            "year": "2005",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    },
+                    {
+                        "key": "2MNVWQBP",
+                        "version": 219,
+                        "itemType": "conferencePaper",
+                        "title": "Pathfinding Algorithms in game development",
+                        "creators": [
+                            {
+                                "creatorType": "author",
+                                "firstName": "Abdul",
+                                "lastName": "Rafiq"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Tuty Asmawaty Abdul",
+                                "lastName": "Kadir"
+                            },
+                            {
+                                "creatorType": "author",
+                                "firstName": "Siti Normaziah",
+                                "lastName": "Ihsan"
+                            }
+                        ],
+                        "abstractNote": "",
+                        "date": "2020",
+                        "proceedingsTitle": "IOP Conference Series: Materials Science and Engineering",
+                        "conferenceName": "",
+                        "place": "",
+                        "publisher": "IOP Publishing",
+                        "volume": "769",
+                        "pages": "012021",
+                        "series": "",
+                        "language": "",
+                        "DOI": "",
+                        "ISBN": "",
+                        "shortTitle": "",
+                        "url": "",
+                        "accessDate": "",
+                        "archive": "",
+                        "archiveLocation": "",
+                        "libraryCatalog": "Google Scholar",
+                        "callNumber": "",
+                        "rights": "",
+                        "extra": "Issue: 1",
+                        "tags": [
+                            {
+                                "tag": "coding"
+                            },
+                            {
+                                "tag": "pathfinding"
+                            },
+                            {
+                                "tag": "to read"
+                            }
+                        ],
+                        "collections": [
+                            "CSB4KZUU"
+                        ],
+                        "relations": {},
+                        "dateAdded": "2023-01-13T10:58:57Z",
+                        "dateModified": "2023-01-17T15:38:33Z",
+                        "@@meta@@": {
+                            "creatorSummary": "Rafiq et al.",
+                            "parsedDate": "2020",
+                            "numChildren": 2
+                        },
+                        "@@links@@": {
+                            "self": {
+                                "href": "https://api.zotero.org/users/1/items/2MNVWQBP",
+                                "type": "application/json"
+                            },
+                            "alternate": {
+                                "href": "https://www.zotero.org/testuser/items/2MNVWQBP",
+                                "type": "text/html"
+                            },
+                            "attachment": {
+                                "href": "https://api.zotero.org/users/1/items/LZ35XNZF",
+                                "type": "application/json",
+                                "attachmentType": "application/pdf",
+                                "attachmentSize": 1497781
+                            }
+                        },
+                        "@@derived@@": {
+                            "attachmentIconName": "pdf",
+                            "colors": [
+                                "#FF6666"
+                            ],
+                            "createdByUser": "",
+                            "creator": "Rafiq et al.",
+                            "date": "2020",
+                            "dateAdded": "13/01/2023, 11:58:57",
+                            "dateModified": "17/01/2023, 16:38:33",
+                            "emojis": [],
+                            "extra": "Issue: 1",
+                            "iconName": "conference-paper",
+                            "itemType": "conferencePaper",
+                            "itemTypeRaw": "conferencePaper",
+                            "key": "2MNVWQBP",
+                            "publicationTitle": "IOP Conference Series: Materials Science and Engineering",
+                            "publisher": "IOP Publishing",
+                            "title": "Pathfinding Algorithms in game development",
+                            "year": "2020",
+                            "language": "",
+                            "libraryCatalog": "Google Scholar",
+                            "callNumber": "",
+                            "rights": ""
+                        }
+                    }
+                ],
+                "response": {
+                    "raw": [
+                        {
+                            "key": "J489T6X3",
+                            "version": 219,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 536523
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Foead et al.",
+                                "parsedDate": "2021",
+                                "numChildren": 2
+                            },
+                            "data": {
+                                "key": "J489T6X3",
+                                "version": 219,
+                                "itemType": "journalArticle",
+                                "title": "A systematic literature review of A* pathfinding",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Daniel",
+                                        "lastName": "Foead"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Alifio",
+                                        "lastName": "Ghifari"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Marchel Budi",
+                                        "lastName": "Kusuma"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Novita",
+                                        "lastName": "Hanafiah"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Eric",
+                                        "lastName": "Gunawan"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "publicationTitle": "Procedia Computer Science",
+                                "volume": "179",
+                                "issue": "",
+                                "pages": "507–514",
+                                "date": "2021",
+                                "series": "",
+                                "seriesTitle": "",
+                                "seriesText": "",
+                                "journalAbbreviation": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISSN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Publisher: Elsevier",
+                                "tags": [
+                                    {
+                                        "tag": "pathfinding"
+                                    },
+                                    {
+                                        "tag": "to read"
+                                    }
+                                ],
+                                "collections": [
+                                    "CSB4KZUU"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:58:57Z",
+                                "dateModified": "2023-01-17T15:29:50Z"
+                            }
+                        },
+                        {
+                            "key": "3JCLFUG4",
+                            "version": 219,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 848371
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Silver",
+                                "parsedDate": "2005",
+                                "numChildren": 2
+                            },
+                            "data": {
+                                "key": "3JCLFUG4",
+                                "version": 219,
+                                "itemType": "conferencePaper",
+                                "title": "Cooperative pathfinding",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "David",
+                                        "lastName": "Silver"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "date": "2005",
+                                "proceedingsTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+                                "conferenceName": "",
+                                "place": "",
+                                "publisher": "",
+                                "volume": "1",
+                                "pages": "117–122",
+                                "series": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISBN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Issue: 1",
+                                "tags": [
+                                    {
+                                        "tag": "pathfinding"
+                                    },
+                                    {
+                                        "tag": "to read"
+                                    }
+                                ],
+                                "collections": [
+                                    "CSB4KZUU"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:58:57Z",
+                                "dateModified": "2023-01-17T15:30:17Z"
+                            }
+                        },
+                        {
+                            "key": "2MNVWQBP",
+                            "version": 219,
+                            "library": {
+                                "type": "user",
+                                "id": 1,
+                                "name": "testuser",
+                                "links": {
+                                    "alternate": {
+                                        "href": "https://www.zotero.org/testuser",
+                                        "type": "text/html"
+                                    }
+                                }
+                            },
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/items/2MNVWQBP",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "https://www.zotero.org/testuser/items/2MNVWQBP",
+                                    "type": "text/html"
+                                },
+                                "attachment": {
+                                    "href": "https://api.zotero.org/users/1/items/LZ35XNZF",
+                                    "type": "application/json",
+                                    "attachmentType": "application/pdf",
+                                    "attachmentSize": 1497781
+                                }
+                            },
+                            "meta": {
+                                "creatorSummary": "Rafiq et al.",
+                                "parsedDate": "2020",
+                                "numChildren": 2
+                            },
+                            "data": {
+                                "key": "2MNVWQBP",
+                                "version": 219,
+                                "itemType": "conferencePaper",
+                                "title": "Pathfinding Algorithms in game development",
+                                "creators": [
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Abdul",
+                                        "lastName": "Rafiq"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Tuty Asmawaty Abdul",
+                                        "lastName": "Kadir"
+                                    },
+                                    {
+                                        "creatorType": "author",
+                                        "firstName": "Siti Normaziah",
+                                        "lastName": "Ihsan"
+                                    }
+                                ],
+                                "abstractNote": "",
+                                "date": "2020",
+                                "proceedingsTitle": "IOP Conference Series: Materials Science and Engineering",
+                                "conferenceName": "",
+                                "place": "",
+                                "publisher": "IOP Publishing",
+                                "volume": "769",
+                                "pages": "012021",
+                                "series": "",
+                                "language": "",
+                                "DOI": "",
+                                "ISBN": "",
+                                "shortTitle": "",
+                                "url": "",
+                                "accessDate": "",
+                                "archive": "",
+                                "archiveLocation": "",
+                                "libraryCatalog": "Google Scholar",
+                                "callNumber": "",
+                                "rights": "",
+                                "extra": "Issue: 1",
+                                "tags": [
+                                    {
+                                        "tag": "coding"
+                                    },
+                                    {
+                                        "tag": "pathfinding"
+                                    },
+                                    {
+                                        "tag": "to read"
+                                    }
+                                ],
+                                "collections": [
+                                    "CSB4KZUU"
+                                ],
+                                "relations": {},
+                                "dateAdded": "2023-01-13T10:58:57Z",
+                                "dateModified": "2023-01-17T15:38:33Z"
+                            }
+                        }
+                    ],
+                    "options": {
+                        "apiAuthorityPart": "api.zotero.org",
+                        "cache": "default",
+                        "contentType": "application/json",
+                        "credentials": "omit",
+                        "format": "json",
+                        "method": "get",
+                        "mode": "cors",
+                        "pretend": false,
+                        "redirect": "follow",
+                        "resource": {
+                            "library": "u1",
+                            "items": null,
+                            "top": null
+                        },
+                        "retry": 2,
+                        "retryDelay": null,
+                        "uploadRegisterOnly": null,
+                        "executors": [
+                            null
+                        ],
+                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
+                        "start": 0,
+                        "limit": 51,
+                        "sort": "title",
+                        "direction": "asc",
+                        "tag": [
+                            "to read"
+                        ],
+                        "q": "pathfinding",
+                        "qmode": "titleCreatorYear",
+                        "signal": {},
+                        "retryCount": 0
+                    },
+                    "response": {}
+                },
+                "totalResults": 3
+            },
+            "lastSuccess": 1674819595609,
+            "errorCount": 0
+        }
+    },
+    "router": {
+        "location": {
+            "pathname": "/testuser/tags/to read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list",
+            "search": "",
+            "hash": "",
+            "key": "327b3p",
+            "query": {}
+        },
+        "action": "POP"
+    }
+}

@@ -392,7 +392,7 @@ describe('Test User\'s library', () => {
 		);
 
 		const trashBtn = screen.getByRole('button',
-			{ name: 'Move to Trash' }
+			{ name: 'Move To Trash' }
 		);
 
 		await userEvent.click(trashBtn);

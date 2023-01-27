@@ -180,7 +180,7 @@ const BibliographyModal = () => {
 	return (
 		<Modal
 			className={ className }
-			contentLabel="Bibliography"
+			contentLabel={ outputMode === 'cite' ? 'Citations' : 'Bibliography' }
 			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName={ cx({ 'modal-centered modal-slide': isTouchOrSmall, 'modal-full-height': !isTouchOrSmall }) }
@@ -241,13 +241,15 @@ const BibliographyModal = () => {
 							<div className="col-9">
 								<div className="form-group form-row style-selector-container">
 									<label
-										htmlFor={ styleSelectorId.current }
+										id={ `${styleSelectorId.current}-label` }
+										htmlFor={ isTouchOrSmall ? styleSelectorId.current : null }
 										className="col-form-label"
 									>
 										Citation Style
 									</label>
 									<div className="col">
 										<StyleSelector
+											aria-labelledby={ isTouchOrSmall ? null : `${styleSelectorId.current}-label` }
 											id={ styleSelectorId.current }
 											onStyleChange={ handleStyleChange }
 											citationStyle={ citationStyle }
@@ -259,13 +261,15 @@ const BibliographyModal = () => {
 							<div className="col-3">
 								<div className="form-group form-row locale-selector-container">
 									<label
-										htmlFor={ localeSelectorId.current }
+										id={`${localeSelectorId.current}-label`}
+										htmlFor={ isTouchOrSmall ? localeSelectorId.current : null }
 										className="col-form-label"
 									>
 										Language
 									</label>
 									<div className="col">
 										<LocaleSelector
+											aria-labelledby={ isTouchOrSmall ? null : `${localeSelectorId.current}-label` }
 											id={ localeSelectorId.current }
 											onLocaleChange={ handleLocaleChange }
 											citationLocale={ citationLocale }

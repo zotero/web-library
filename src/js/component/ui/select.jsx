@@ -232,6 +232,7 @@ const Select = forwardRef((props, ref) => {
 
 	return (
 		<div
+			{...pick(rest, p => p.startsWith('data-') || p.startsWith('aria-'))}
 			className={ cx('select-component', className, 'single', {
 				'is-searchable': searchable, 'is-focused': isFocused, 'has-value': !!value,
 				'is-keyboard': keyboard, 'is-mouse': !keyboard, 'is-disabled': disabled, 'is-readonly': readOnly
@@ -246,7 +247,8 @@ const Select = forwardRef((props, ref) => {
 			tabIndex={ disabled ? null : tabIndex }
 			aria-disabled={ disabled }
 			aria-readonly={ readOnly }
-			{ ... pick(rest, p => p.startsWith('data-')) }
+			aria-expanded={ isOpen }
+			role="combobox"
 		>
 			<div className="select-control">
 				<div className="select-multi-value-wrapper">
@@ -274,7 +276,7 @@ const Select = forwardRef((props, ref) => {
 			</div>
 			{ (isFocused && isOpen) && (
 				<div className="select-menu-outer">
-					<div className="select-menu" role="list" ref={ selectMenuRef }>
+					<div className="select-menu" role="listbox" ref={ selectMenuRef }>
 						{ filteredOptions.map(option =>
 							<SelectOption
 								key={ option.value }

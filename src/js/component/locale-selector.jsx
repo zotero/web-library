@@ -5,10 +5,11 @@ import Select from './form/select';
 import localeData from '../../../data/locale-data.json';
 
 const LocaleSelector = props => {
-	const { className, citationLocale, onLocaleChange, id } = props;
+	const { className, citationLocale, onLocaleChange, id, ...rest } = props;
 
 	return (
 		<Select
+			{...rest}
 			clearable={ false }
 			id={ id }
 			inputGroupClassName={ cx('locale-selector', className ) }

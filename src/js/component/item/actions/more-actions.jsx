@@ -103,7 +103,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 					<DropdownMenu>
 						<MoreActionsItems divider />
 						<DropdownItem onClick={ handleSubscribeClick }>
-							Subscribe to Feed
+							Subscribe To Feed
 						</DropdownItem>
 					</DropdownMenu>
 				)

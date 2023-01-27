@@ -5,7 +5,7 @@ import Select from './form/select';
 import { citationStylesCount } from '../../../data/citation-styles-data.json';
 
 const StyleSelector = props => {
-	const { className, citationStyle, citationStyles, onStyleChange, id } = props;
+	const { className, citationStyle, citationStyles, onStyleChange, id, ...rest } = props;
 
 	const options = useMemo(() => ([
 		...citationStyles.map(cs => ({
@@ -20,6 +20,7 @@ const StyleSelector = props => {
 
 	return (
 		<Select
+			{ ...rest }
 			id={ id }
 			inputGroupClassName={ cx('style-selector', className ) }
 			clearable={ false }

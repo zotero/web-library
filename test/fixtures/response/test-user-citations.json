@@ -1,0 +1,76 @@
+[
+    {
+        "key": "3JCLFUG4",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 848371
+            }
+        },
+        "meta": {
+            "creatorSummary": "Silver",
+            "parsedDate": "2005",
+            "numChildren": 2
+        },
+        "citation": "<span>(Silver)</span>"
+    },
+    {
+        "key": "J489T6X3",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 536523
+            }
+        },
+        "meta": {
+            "creatorSummary": "Foead et al.",
+            "parsedDate": "2021",
+            "numChildren": 2
+        },
+        "citation": "<span>(Foead et al.)</span>"
+    }
+]
