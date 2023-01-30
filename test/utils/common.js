@@ -20,12 +20,28 @@ export const resizeWindow = (x, y) => {
 	window.dispatchEvent(new Event('resize'));
 }
 
+class Worker {
+	constructor(stringUrl) {
+		this.url = stringUrl;
+		this.onmessage = () => { };
+	}
+
+	addEventListener() {}
+
+	postMessage(msg) {
+		this.onmessage(msg);
+	}
+}
+
+
 export const applyAdditionalJestTweaks = ({ timeout = 15000, resolution = [1280, 720] } = {}) => {
 	jest.setTimeout(timeout);
 	resizeWindow(resolution[0], resolution[1]);
 
 	// https://github.com/jsdom/jsdom/issues/1695
 	Element.prototype.scrollIntoView = jest.fn();
+
+	window.Worker = Worker;
 
 	Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
 		get() {

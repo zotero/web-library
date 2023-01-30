@@ -38,7 +38,6 @@ const Navbar = memo(({ entries = [] }) => {
 		} else if(ev.key === 'ArrowRight') {
 			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
-			console.log('focusPrev');
 			focusPrev(ev);
 		}
 	}, [focusNext, focusPrev]);

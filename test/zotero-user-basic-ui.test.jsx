@@ -27,10 +27,6 @@ import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-type
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 applyAdditionalJestTweaks();
 
-
-// https://github.com/jsdom/jsdom/issues/1695
-Element.prototype.scrollIntoView = jest.fn();
-
 describe('Loading Screen', () => {
 	const handlers = [
 		rest.get('https://api.zotero.org/itemTypes', (req, res, ctx) => {

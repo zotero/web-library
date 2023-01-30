@@ -227,6 +227,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 							className="btn-default btn-icon dropdown-toggle"
 							tabIndex={ isTouchOrSmall ? null : -2 }
 							onKeyDown={handleKeyDown}
+							title="More Download Options"
 						>
 							<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 							<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
@@ -236,9 +237,9 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								className="btn"
 								href={ url }
 								rel="noreferrer"
-								role="button"
+								role="listitem"
 								target="_blank"
-								title="Download attachment"
+								title="Download (no annotations)"
 								tag="a"
 							>
 								Download (no annotations)

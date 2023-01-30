@@ -276,13 +276,13 @@ const Attachment = memo(props => {
 	return drag(
 		<li
 			aria-labelledby={ id.current }
+			aria-current={ isSelected }
 			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
 			data-key={ attachment.key }
 			onBlur={ handleBlur }
 			onClick={ handleAttachmentSelect }
 			onFocus={ handleFocus }
 			onKeyDown={ handleKeyDown }
-			role="listitem"
 			tabIndex={ -2 }
 		>
 			{ (isTouchOrSmall && !isReadOnly) && (
@@ -528,6 +528,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 						<ToolGroup tabIndex>
 							<div className="btn-file">
 								<input
+									aria-labelledby={ `${id}-add-file` }
 									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
 									className="add-attachment toolbar-focusable"
 									onChange={ handleFileInputChange }
@@ -537,6 +538,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 									type="file"
 								/>
 								<Button
+									id={ `${id}-add-file` }
 									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
 									className="btn-default"
 									tabIndex={ -1 }
@@ -559,18 +561,16 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 					</div>
 				</Toolbar>
 			) }
-			<div
-				aria-label="attachments list"
-				className="scroll-container-mouse"
-				onBlur={ isTouchOrSmall ? noop : receiveBlur }
-				onFocus={ isTouchOrSmall ? noop : receiveFocus }
-				ref={ scrollContainerRef }
-				role="list"
-				tabIndex={ 0 }
-			>
+			<div className="scroll-container-mouse">
 				{ attachments.length > 0 && (
 					<nav>
-						<ul className="details-list attachment-list">
+						<ul
+							aria-label="Attachments"
+							onBlur={isTouchOrSmall ? noop : receiveBlur}
+							onFocus={isTouchOrSmall ? noop : receiveFocus}
+							ref={scrollContainerRef}
+							tabIndex={0}
+							className="details-list attachment-list">
 							{
 								attachments.map(attachment => {
 									const isUploading = uploads.includes(attachment.key);
@@ -594,10 +594,12 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 						{ isFileUploadAllowed && (
 						<div className="btn-file">
 							<input
+								aria-labelledby={`${id}-add-file`}
 								onChange={ handleFileInputChange }
 								type="file"
 							/>
 							<Button
+								id={ `${id}-add-file` }
 								className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
 								tabIndex={ -1 }
 							>

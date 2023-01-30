@@ -1,0 +1,114 @@
+[
+    {
+        "key": "MWVZPK6B",
+        "version": 199,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/MWVZPK6B",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/MWVZPK6B",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "text/html",
+                "href": "https://api.zotero.org/users/1/items/MWVZPK6B/file/view"
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "MWVZPK6B",
+            "version": 199,
+            "parentItem": "VR82JUX8",
+            "itemType": "attachment",
+            "linkMode": "imported_url",
+            "title": "Snapshot",
+            "accessDate": "2023-01-13T10:53:00Z",
+            "url": "https://avmajournals.avma.org/view/journals/javma/220/9/javma.2002.220.1315.xml",
+            "note": "",
+            "contentType": "text/html",
+            "charset": "utf-8",
+            "filename": "javma.2002.220.1315.html",
+            "md5": "fc48064c89bf77edf82843b923b07936",
+            "mtime": 1673607180000,
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:53:00Z",
+            "dateModified": "2023-01-13T10:53:00Z"
+        }
+    },
+    {
+        "key": "VG79HDDM",
+        "version": 211,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/VG79HDDM",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                "type": "application/json"
+            },
+            "enclosure": {
+                "type": "application/pdf",
+                "href": "https://api.zotero.org/users/1/items/VG79HDDM/file/view",
+                "title": "Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf",
+                "length": 248058
+            }
+        },
+        "meta": {
+            "numChildren": 0
+        },
+        "data": {
+            "key": "VG79HDDM",
+            "version": 211,
+            "parentItem": "VR82JUX8",
+            "itemType": "attachment",
+            "linkMode": "imported_url",
+            "title": "Full Text",
+            "accessDate": "2023-01-13T10:52:46Z",
+            "url": "https://www.barkingbunch.nl/gezondheid/health%20research%202002.pdf",
+            "note": "",
+            "contentType": "application/pdf",
+            "charset": "",
+            "filename": "Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf",
+            "md5": "39bf1f4635fb0a4b2b9de876ed865f89",
+            "mtime": 1673607166000,
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:46Z",
+            "dateModified": "2023-01-13T10:52:46Z"
+        }
+    }
+]
