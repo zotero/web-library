@@ -11,6 +11,10 @@
 		line-height: $line-height-base;
 		min-height: 0;
 
+		.scroll-container {
+			overflow-y: auto;
+		}
+
 		&.collapsed {
 			flex: 0 0 $tag-selector-collapsed-height;
 		}
