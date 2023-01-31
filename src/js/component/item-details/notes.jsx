@@ -84,6 +84,7 @@ const Note = memo(forwardRef((props, ref) => {
 
 	return (
 		<li
+			aria-labelledby={`note-${note.key}` }
 			className={ cx('note', { 'selected': isSelected }) }
 			onClick={ handleSelect }
 			onKeyDown={ handleKeyDown }
@@ -94,7 +95,10 @@ const Note = memo(forwardRef((props, ref) => {
 			onMouseDown={ handleMouseDown }
 		>
 			<Icon type={ '28/item-types/light/note'} width="28" height="28" className="hidden-mouse" />
-			<div className="multiline-truncate">
+			<div
+				id={`note-${note.key}`}
+				className="multiline-truncate"
+			>
 				{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
 			</div>
 			{ !isReadOnly && (

@@ -1,0 +1,52 @@
+{
+    "successful": {
+        "0": {
+            "key": "BBCCDDEE",
+            "version": 157,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/BBCCDDEE",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/BBCCDDEE",
+                    "type": "text/html"
+                },
+                "up": {
+                    "href": "https://api.zotero.org/users/1/items/TDG4SB3V",
+                    "type": "application/json"
+                }
+            },
+            "meta": {
+                "numChildren": 0
+            },
+            "data": {
+                "key": "BBCCDDEE",
+                "version": 157,
+                "parentItem": "VR82JUX8",
+                "itemType": "note",
+                "note": "",
+                "tags": [],
+                "relations": {},
+                "dateAdded": "2023-01-31T14:54:01Z",
+                "dateModified": "2023-01-31T14:54:01Z"
+            }
+        }
+    },
+    "success": {
+        "0": "BBCCDDEE"
+    },
+    "unchanged": {},
+    "failed": {}
+}

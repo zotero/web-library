@@ -22,6 +22,7 @@ import responseAddItemToCollections from './fixtures/response/test-user-add-item
 import newItemJournalArticle from './fixtures/response/new-item-journal-article.json';
 import newItemNote from './fixtures/response/new-item-note.json';
 import testUserAddNewItem from './fixtures/response/test-user-add-new-item.json';
+import testUserAddNewItemNote from './fixtures/response/test-user-add-new-item-note.json';
 import testUserRemoveItemFromCollection from './fixtures/response/test-user-remove-item-from-collection.json';
 import testUserTrashItem from './fixtures/response/test-user-trash-item.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier.json';
@@ -439,6 +440,50 @@ describe('Test User\'s library', () => {
 		await waitFor(() => expect(screen.getAllByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' })).toHaveLength(2));
 	});
 
+	test('Add Note using side panel', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
 
+		expect(screen.queryByRole('listitem', { name: 'Untitled Note' })).not.toBeInTheDocument();
+		let hasBeenPosted = false;
+		server.use(
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 0);
+					res.body = JSON.stringify([]);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				const itemKey = req.url.searchParams.get('itemType');
+				expect(itemKey).toBe('note');
+				return res(res => {
+					res.body = JSON.stringify(newItemNote);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items).toHaveLength(1);
+				expect(items[0].itemType).toEqual('note');
+				expect(items[0].parentItem).toEqual('VR82JUX8');
+				expect(items[0].collections).toEqual([]);
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserAddNewItemNote);
+					return res;
+				});
+			})
+		);
+
+		await userEvent.click(screen.getByRole('tab', { name: 'Notes' }));
+		await screen.findByRole('button', { name: 'Add Note' });
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add Note' }));
+		expect(hasBeenPosted).toBe(true);
+		expect(await screen.findByRole('listitem',
+			{ name: 'Untitled Note' })
+		).toBeInTheDocument();
+	});
 
 });
