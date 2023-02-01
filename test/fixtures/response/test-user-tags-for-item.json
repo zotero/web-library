@@ -1,0 +1,19 @@
+[
+    {
+        "tag": "to read",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/to+read",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/to+read",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 8
+        }
+    }
+]

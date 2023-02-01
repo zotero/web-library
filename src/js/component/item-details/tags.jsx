@@ -234,11 +234,12 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 			>
 				{ tags.length > 0 && (
 					<nav>
-						<ul className="details-list tag-list">
+						<ul aria-label="Tags" className="details-list tag-list">
 							{
 								tags.map(tag => {
 									return (
 										<li
+											aria-labelledby={ tag.tag === tagRedacted ? null : `${id}-${tag.id}-label` }
 											className="tag"
 											data-key={ tag.id }
 											data-tag={ tag.tag }
@@ -246,6 +247,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 											onKeyDown={ handleKeyDown }
 											tabIndex={ -2 }
 										>
+
 											<Icon
 												color={ tag.tag in tagColors ? tagColors[tag.tag] : null }
 												height="12"
@@ -255,6 +257,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 											/>
 											<Editable
 												autoFocus
+												contentId={ `${id}-${tag.id}-label` }
 												isActive={ tag.tag === tagRedacted }
 												onCancel={ handleCancel }
 												onChange={ handleChange }
@@ -264,7 +267,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 												selectOnFocus
 												suggestions={ suggestions }
 												value={ tag.tag }
-												aria-label="tag name"
+												aria-label="Tag Name"
 												tabIndex={ -1 }
 											/>
 											{ !(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (

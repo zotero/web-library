@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 
 import AutoResizer from './auto-resizer';
 import Spinner from '../ui/spinner';
@@ -41,6 +41,7 @@ const Input = memo(forwardRef((props, ref) => {
 	const suggestionsRef = useRef(null);
 	const prevInitialValue = usePrevious(initialValue);
 	const prevValidationError = usePrevious(validationError);
+	const id = useId();
 
 	const hasBeenCancelled = useRef(false);
 	const hasBeenCommitted = useRef(false);
@@ -77,7 +78,7 @@ const Input = memo(forwardRef((props, ref) => {
 	}, [onChange]);
 
 	const handleBlur = useCallback(ev => {
-		if (ev.relatedTarget && (ev.relatedTarget.dataset.suggestion)) {
+		if (ev.relatedTarget && (ev.relatedTarget?.dataset?.suggestion)) {
 			return;
 		}
 		if (hasBeenCancelled.current || hasBeenCommitted.current) {
@@ -141,6 +142,13 @@ const Input = memo(forwardRef((props, ref) => {
 		onKeyDown(ev);
 	}, [hasCancelledSuggestions, highlighted, initialValue, onCancel, onCommit, onKeyDown, suggestions, value])
 
+	const handleSuggestionMouseDown = useCallback(ev => {
+		const newValue = ev.currentTarget.dataset.suggestion;
+		setValue(newValue);
+		onCommit(newValue, newValue !== initialValue, ev);
+		ev.preventDefault();
+	}, [initialValue, onCommit]);
+
 	useEffect(() => {
 		if(initialValue !== prevInitialValue) {
 			setValue(initialValue);
@@ -169,9 +177,14 @@ const Input = memo(forwardRef((props, ref) => {
 				value={ value }
 				{ ...pick(rest, NATIVE_INPUT_PROPS) }
 				{ ...pick(rest, key => key.match(/^(aria-|data-|on[A-Z]).*/)) }
+				aria-autocomplete={suggestions ? 'list' : null}
+				aria-controls={ `${id}-suggestions}` }
 			/>
 			{ suggestions && (
 				<div
+					aria-label='Suggestions'
+					role="listbox"
+					id={ `${id}-suggestions` }
 					style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
 					ref={r => { floating(r); suggestionsRef.current = r; } }
 					className={ cx("dropdown-menu suggestions", {
@@ -179,11 +192,14 @@ const Input = memo(forwardRef((props, ref) => {
 				})}>
 					{ suggestions.map((s, index) =>
 						<div
+							aria-label={s}
+							role="listitem"
 							className={ cx("dropdown-item", {
 								'active': index === highlighted,
 							})}
 							data-suggestion={s}
 							key={s}
+							onMouseDown={ handleSuggestionMouseDown }
 						>
 							{s}
 						</div>

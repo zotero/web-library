@@ -5,7 +5,7 @@ import cx from 'classnames';
 import Select from '../form/select';
 
 const EditableContent = props => {
-	const {  display, input, inputComponent, options, title } = props;
+	const { contentId, display, input, inputComponent, options, title } = props;
 	const value = props.value || (input && input.props.value);
 	const placeholder = props.placeholder || (input && input.props.placeholder);
 	const hasValue = !!(value || input && input.props.value);
@@ -20,13 +20,18 @@ const EditableContent = props => {
 			(isSelect && options) ? options.find(e => e.value == value)?.label ?? value : value;
 
 	return (
-		<div title={ title } className={ cx(className) }>
+		<div
+			id={ contentId }
+			title={ title }
+			className={ cx(className) }
+		>
 			{ displayValue }
 		</div>
 	);
 }
 
 EditableContent.propTypes = {
+	contentId: PropTypes.string,
 	title: PropTypes.string,
 	display: PropTypes.string,
 	input: PropTypes.element,

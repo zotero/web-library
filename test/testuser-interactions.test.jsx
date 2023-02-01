@@ -6,7 +6,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
+import { findByRole, getAllByRole, getByRole, screen, waitFor, queryByRole, queryAllByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -28,6 +28,8 @@ import testUserTrashItem from './fixtures/response/test-user-trash-item.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier.json';
 import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier.json';
 import testUserDuplicateItem from './fixtures/response/test-user-duplicate-item.json';
+import testUserTagsSuggestions from './fixtures/response/test-user-tags-suggestions.json';
+import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -440,7 +442,7 @@ describe('Test User\'s library', () => {
 		await waitFor(() => expect(screen.getAllByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' })).toHaveLength(2));
 	});
 
-	test('Add Note using side panel', async () => {
+	test('Add a note using side panel', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
@@ -484,6 +486,92 @@ describe('Test User\'s library', () => {
 		expect(await screen.findByRole('listitem',
 			{ name: 'Untitled Note' })
 		).toBeInTheDocument();
+	});
+
+	test('Add a tag by picking a suggestion in side panel', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		let postCounter = 0;
+		server.use(
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 0);
+					res.body = JSON.stringify([]);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
+				return res(res => {
+					expect(req.url.searchParams.get('qmode')).toEqual('startswith');
+					expect(req.url.searchParams.get('q')).toEqual('t');
+					expect(req.url.searchParams.get('direction')).toEqual('asc');
+
+					res.headers.set('Total-Results', 2);
+					res.body = JSON.stringify(testUserTagsSuggestions);
+					return res;
+				});
+			}),
+			rest.patch('https://api.zotero.org/users/1/items/VR82JUX8', async (req, res) => {
+				const patch = await req.json();
+				postCounter++;
+				if(postCounter === 1) {
+					expect(patch.tags).toEqual([{ tag: 'to read' }]);
+				} else {
+					expect(patch.tags).toContainEqual({ tag: 'to read' });
+					expect(patch.tags).toContainEqual({ tag: 'today' });
+				}
+				return res(res => {
+					res.status = 204;
+					return res;
+				})
+			}),
+			rest.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 1);
+					res.body = JSON.stringify(testUserTagsForItem);
+					return res;
+				})
+			})
+		);
+
+
+
+		await user.click(screen.getByRole('tab', { name: 'Tags' }));
+		await screen.findByRole('button', { name: 'Add Tag' });
+
+		// item has no tags yet
+		expect(screen.queryByRole('list', { name: 'Tags' })).not.toBeInTheDocument();
+
+		await user.click(screen.getByRole('button', { name: 'Add Tag' }));
+		await screen.findByRole('textbox', { name: 'Tag Name' });
+		await user.type(screen.getByRole('textbox', { name: 'Tag Name' }), 't');
+		const suggestions1 = await screen.findByRole('listbox', { name: 'Suggestions' });
+		await findByRole(suggestions1, 'listitem', { name: 'to read' });
+		expect(queryAllByRole(suggestions1, 'listitem')).toHaveLength(2);
+
+		await user.click(getByRole(suggestions1, 'listitem', { name: 'to read' }));
+		expect(postCounter).toBe(1);
+
+		// item has one tag now
+		const list1 = await screen.findByRole('list', { name: 'Tags' });
+		expect(await findByRole(list1, 'listitem', { name: 'to read' })).toBeInTheDocument();
+
+		const tagInput = await screen.findByRole('textbox', { name: 'Tag Name' });
+		expect(tagInput).toHaveFocus();
+		await user.type(tagInput, 't');
+		const suggestions2 = await screen.findByRole('listbox', { name: 'Suggestions' });
+		await findByRole(suggestions2, 'listitem', { name: 'today' });
+
+		// only one suggestion left (the other one is already added)
+		expect(queryAllByRole(suggestions2, 'listitem')).toHaveLength(1); // eslint-disable-line jest-dom/prefer-in-document
+		await user.keyboard('{arrowdown}{enter}');
+		expect(postCounter).toBe(2);
+
+		const list2 = await screen.findByRole('list', { name: 'Tags' });
+		expect(await findByRole(list2, 'listitem', { name: 'to read' })).toBeInTheDocument();
+		expect(await findByRole(list2, 'listitem', { name: 'today' })).toBeInTheDocument();
 	});
 
 });
