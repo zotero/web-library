@@ -121,8 +121,7 @@ const AttachmentActions = memo(props => {
 							role="button"
 							tabIndex={ -3 }
 							target="_blank"
-							title="Open in Reader"
-							aria-label="Open in Reader"
+							title="Open In Reader"
 						>
 							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 						</a>
@@ -137,8 +136,7 @@ const AttachmentActions = memo(props => {
 										role="button"
 										tabIndex={ -3 }
 										download={ preppedPDFFileName }
-										title="Export attachment with annotations"
-										aria-label="Export attachment with annotations"
+										title="Export Attachment With Annotations"
 									>
 										<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
 									</a>
@@ -148,8 +146,7 @@ const AttachmentActions = memo(props => {
 										onClick={ handleExportClick }
 										role="button"
 										tabIndex={ -3 }
-										title="Export attachment with annotations"
-										aria-label="Export attachment with annotations"
+										title="Export Attachment With Annotations"
 									>
 										<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 									</a>
@@ -164,8 +161,7 @@ const AttachmentActions = memo(props => {
 					role="button"
 					tabIndex={ -3 }
 					target="_blank"
-					title="Download attachment"
-					aria-label="Download attachment"
+					title="Download Attachment"
 				>
 					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 				</a>
@@ -175,8 +171,7 @@ const AttachmentActions = memo(props => {
 					onClick={ handleClick }
 					role="button"
 					tabIndex={ -3 }
-					title="Download attachment"
-					aria-label="Download attachment"
+					title="Download Attachment"
 				>
 					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
 				</a>
@@ -184,8 +179,7 @@ const AttachmentActions = memo(props => {
 			</React.Fragment>
 		) : attachment.linkMode === 'linked_url' ? (
 			<a
-				title="Download attachment"
-				aria-label="Download attachment"
+				title="Open Linked Attachment"
 				className="btn btn-icon"
 				href={ attachment.url }
 				onClick={ stopPropagation }
@@ -287,8 +281,7 @@ const Attachment = memo(props => {
 		>
 			{ (isTouchOrSmall && !isReadOnly) && (
 				<Button
-					title="Delete attachment"
-					aria-label="Delete attachment"
+					title="Delete Attachment"
 					className="btn-circle btn-primary"
 					onClick={ handleDelete }
 					tabIndex={ -1 }
@@ -316,8 +309,7 @@ const Attachment = memo(props => {
 
 			{ (!isTouchOrSmall && !isReadOnly) && (
 				<Button
-					title="Delete attachment"
-					aria-label="Delete attachment"
+					title="Delete Attachment"
 					icon
 					onClick={ handleDelete }
 					tabIndex={ -3 }

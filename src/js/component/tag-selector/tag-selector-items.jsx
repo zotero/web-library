@@ -81,9 +81,9 @@ const TagSelectorItems = () => {
 	const prevErrorCount = usePrevious(errorCount);
 
 	const maybeLoadMore = useCallback(() => {
-		const containerHeight = containerRef.current.getBoundingClientRect().height;
-		const totalHeight = listRef.current.getBoundingClientRect().height;
-		const scrollProgress = (containerRef.current.scrollTop + containerHeight) / totalHeight;
+		const containerHeight = containerRef.current?.getBoundingClientRect?.().height ?? 0;
+		const totalHeight = listRef.current?.getBoundingClientRect?.().height ?? 0;
+		const scrollProgress = (containerRef.current?.scrollTop + containerHeight) / totalHeight;
 
 		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
 			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));

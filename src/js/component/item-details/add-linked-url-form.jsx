@@ -39,7 +39,7 @@ const AddLinkedUrlFormToolbar = props => {
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }
 			ref={ toolbarRef }
-			tabIndex="0"
+			tabIndex={ 0 }
 		>
 			{ isBusy && <div className="toolbar-right"><Spinner className="small" /></div> }
 			<div className={ cx('toolbar-right', { 'hidden': isBusy }) }>
@@ -108,11 +108,13 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
 				<div className="col">
 					<Input
+						aria-invalid={ !isValid }
 						autoFocus
 						className={ cx('form-control') }
 						id="linked-url-form-url"
 						onChange={ handleUrlChange }
 						placeholder="Enter or paste URL"
+						required={ true }
 						tabIndex={ 0 }
 						validationError={ isValid ? null : 'Invalid URL' }
 						value={ url }

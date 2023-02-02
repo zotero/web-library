@@ -1,0 +1,59 @@
+{
+    "successful": {
+        "0": {
+            "key": "FFIILLEE",
+            "version": 158,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/FFIILLEE",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/FFIILLEE",
+                    "type": "text/html"
+                },
+                "up": {
+                    "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                    "type": "application/json"
+                }
+            },
+            "meta": {},
+            "data": {
+                "key": "FFIILLEE",
+                "version": 158,
+                "parentItem": "VR82JUX8",
+                "itemType": "attachment",
+                "linkMode": "imported_file",
+                "title": "hello.pdf",
+                "accessDate": "",
+                "url": "",
+                "note": "",
+                "contentType": "application/pdf",
+                "charset": "",
+                "filename": "hello.pdf",
+                "md5": null,
+                "mtime": null,
+                "tags": [],
+                "relations": {},
+                "dateAdded": "2023-02-02T00:41:54Z",
+                "dateModified": "2023-02-02T00:41:54Z"
+            }
+        }
+    },
+    "success": {
+        "0": "FFIILLEE"
+    },
+    "unchanged": {},
+    "failed": {}
+}

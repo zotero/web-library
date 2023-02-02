@@ -1,0 +1,123 @@
+[
+    {
+        "key": "VR82JUX8",
+        "version": 158,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/VR82JUX8",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 248058
+            }
+        },
+        "meta": {
+            "creatorSummary": "Kealy et al.",
+            "parsedDate": "2002",
+            "numChildren": 3
+        },
+        "data": {
+            "key": "VR82JUX8",
+            "version": 157,
+            "itemType": "journalArticle",
+            "title": "Effects of diet restriction on life span and age-related changes in dogs",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Richard D.",
+                    "lastName": "Kealy"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Dennis F.",
+                    "lastName": "Lawler"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Joan M.",
+                    "lastName": "Ballam"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sandra L.",
+                    "lastName": "Mantz"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Darryl N.",
+                    "lastName": "Biery"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Elizabeth H.",
+                    "lastName": "Greeley"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "George",
+                    "lastName": "Lust"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mariangela",
+                    "lastName": "Segre"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Gail K.",
+                    "lastName": "Smith"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Howard D.",
+                    "lastName": "Stowe"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Journal of the American Veterinary Medical Association",
+            "volume": "220",
+            "issue": "9",
+            "pages": "1315–1320",
+            "date": "2002",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Am Vet Med Assoc",
+            "tags": [],
+            "collections": ["WTTJ2J56"],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:40Z",
+            "dateModified": "2023-01-13T10:52:40Z"
+        }
+    }
+]

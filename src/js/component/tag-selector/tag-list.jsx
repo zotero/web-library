@@ -167,7 +167,7 @@ const TagListItem = memo(props => {
 				</Button>
 			) : (
 				<Button
-					aria-label="delete attachment"
+					title="Delete Attachment"
 					icon
 					onClick={ handleUnselect }
 					onKeyDown={ handleUnselect }

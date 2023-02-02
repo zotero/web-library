@@ -10,7 +10,7 @@ import { usePrevious } from '../../hooks';
 import { useFloating, shift } from '@floating-ui/react-dom';
 
 const NATIVE_INPUT_PROPS = ['autoFocus', 'form', 'id', 'inputMode', 'max', 'maxLength',
-'min', 'minLength', 'name', 'placeholder', 'type', 'spellCheck', 'step', 'tabIndex'];
+'min', 'minLength', 'name', 'placeholder', 'required', 'type', 'spellCheck', 'step', 'tabIndex'];
 
 const AutoResizerInput = memo(forwardRef((props, ref) => props.resize ? (
 	<AutoResizer
