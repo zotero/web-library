@@ -542,6 +542,7 @@ describe('Test User\'s library', () => {
 		await screen.findByRole('button', { name: 'Add Tag' });
 
 		// item has no tags yet
+		expect(screen.getByText('0 tags')).toBeInTheDocument();
 		expect(screen.queryByRole('list', { name: 'Tags' })).not.toBeInTheDocument();
 
 		await user.click(screen.getByRole('button', { name: 'Add Tag' }));
@@ -557,6 +558,7 @@ describe('Test User\'s library', () => {
 		// item has one tag now
 		const list1 = await screen.findByRole('list', { name: 'Tags' });
 		expect(await findByRole(list1, 'listitem', { name: 'to read' })).toBeInTheDocument();
+		expect(screen.getByText('1 tag')).toBeInTheDocument();
 
 		const tagInput = await screen.findByRole('textbox', { name: 'Tag Name' });
 		expect(tagInput).toHaveFocus();
@@ -572,6 +574,7 @@ describe('Test User\'s library', () => {
 		const list2 = await screen.findByRole('list', { name: 'Tags' });
 		expect(await findByRole(list2, 'listitem', { name: 'to read' })).toBeInTheDocument();
 		expect(await findByRole(list2, 'listitem', { name: 'today' })).toBeInTheDocument();
+		expect(screen.getByText('2 tags')).toBeInTheDocument();
 	});
 
 });

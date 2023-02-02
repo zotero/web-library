@@ -43,6 +43,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 		focusBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, null,
 		false);
 	const prevInitialTags = usePrevious(initialTags);
+	const realTagCount = tags.filter(t => t.tag !== '').length;
 
 
 	const handleCommit = useCallback(async (newTagValue, hasChanged, ev) => {
@@ -206,7 +207,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 					<Toolbar>
 						<div className="toolbar-left">
 							<div className="counter">
-								{ `${tags.length} ${pluralize('tag', tags.length)}` }
+								{ `${realTagCount} ${pluralize('tag', realTagCount)}` }
 							</div>
 							{ !isReadOnly && (
 							<ToolGroup>
