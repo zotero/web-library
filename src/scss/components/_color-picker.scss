@@ -2,8 +2,12 @@
 // Color picker
 // --------------------------------------------------
 
-.dropdown {
-	.color-picker {
+.color-picker {
+	input {
+		display: none;
+	}
+
+	.color-picker-grid {
 		grid-gap: $space-min;
 
 		@include touch-or-bp-down(sm) {
@@ -32,7 +36,7 @@
 			}
 		}
 
-		@include state(".dropdown.show") {
+		@include state(".color-picker.show") {
 			display: grid;
 		}
 	}

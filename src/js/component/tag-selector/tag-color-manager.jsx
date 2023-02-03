@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -20,6 +20,7 @@ const pickAvailableTagColor = ((colors, tagColorsData) => {
 const TagColorManager = ({ onToggleTagManager, tag }) => {
 	const dispatch = useDispatch();
 	const ref = useRef(null);
+	const id = useId();
 	const { value: tagColors } = useSelector(state => state.libraries[state.current.libraryKey].tagColors)
 	const { receiveFocus, receiveBlur } = useFocusManager(ref);
 
@@ -94,15 +95,16 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		>
 			<div className="form">
 				<div className="form-group form-row">
-					<label className="col-form-label">Color:</label>
+					<label id={ id } className="col-form-label">Color</label>
 					<div className="col">
 						<ColorPicker
+							aria-labelledby={ id }
 							selectedColor={tagColor}
 							colors={colors}
 							onColorPicked={handleColorPicked}
 						/>
 					</div>
-					<label className="col-form-label">Position:</label>
+					<label className="col-form-label">Position</label>
 					<div className="col">
 						<Select
 							inputGroupClassName={ cx('position-selector') }

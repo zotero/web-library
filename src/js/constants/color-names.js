@@ -4,7 +4,7 @@ export default {
 	'#999999': 'gray',
 	'#5FB236': 'green',
 	'#009980': 'cyan',
-	'#2EA8E5': 'brigth blue',
+	'#2EA8E5': 'bright blue',
 	'#576DD9': 'dark blue',
 	'#A28AE5': 'violet',
 	'#A6507B': 'dark pink'

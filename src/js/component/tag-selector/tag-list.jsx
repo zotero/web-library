@@ -2,7 +2,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, memo } from 'react';
+import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState, memo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
@@ -102,6 +102,7 @@ const TagListItem = memo(props => {
 	const { className, dotMenuFor, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev,
 	isManager, isSelected = false, onDotMenuToggle = noop, style, tag, toggleTag, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const id = useId();
 
 	const handleClick = useCallback(ev => {
 		if(ev.type === 'click' && !isSelected) { // selected tags can only be removed by clicking on a 'minus' icon
@@ -138,6 +139,7 @@ const TagListItem = memo(props => {
 
 	return (
 		<li
+			aria-labelledby={ id }
 			tabIndex={ tag ? -2 : null }
 			data-tag={ tag ? tag.tag : null }
 			style={ style }
@@ -149,7 +151,12 @@ const TagListItem = memo(props => {
 			onKeyDown={ handleKeyDown }
 		>
 			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
-			<div className="truncate">{ tag && tag.tag }</div>
+			<div
+				id={ id }
+				className="truncate"
+			>
+				{ tag && tag.tag }
+			</div>
 			{ isManager && tag && <TagDotMenu
 				hasColor={ !!tag.color }
 				isDotMenuOpen={ tag.tag === dotMenuFor }
@@ -316,7 +323,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 								role="list"
 								aria-multiselectable="true"
 								aria-readonly="true"
-								aria-label="tags"
+								aria-label="Tags"
 								aria-rowcount={ totalResults }
 							>
 								<List

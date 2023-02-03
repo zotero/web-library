@@ -4,6 +4,10 @@
 	flex-direction: column;
 	background-color: $panel-bg;
 
+	.col-form-label::after {
+		content: ':';
+	}
+
 	@include touch-or-bp-down(sm) {
 		padding: 0;
 

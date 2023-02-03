@@ -35,6 +35,7 @@ import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.jso
 import testUserAddNewAttachmentFile from './fixtures/response/test-user-add-new-attachment-file.json';
 import testUserAddAttachamentFileRefetchParent from './fixtures/response/test-user-add-attachment-file-refetch-parent.json';
 import testUserAddNewLinkedURLAttachment from './fixtures/response/test-user-add-new-linked-url-attachment.json';
+import testUserManageTags from './fixtures/response/test-user-manage-tags.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -724,6 +725,88 @@ describe('Test User\'s library', () => {
 		expect(hasBeenPosted).toBe(true);
 	});
 
+	test('Add a color to a tag', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasBeenPosted = false;
+		server.use(
+			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 8);
+					res.body = JSON.stringify(testUserManageTags);
+					return res;
+				});
+			}),
+			rest.put('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
+				const tagColors = await req.json();
+				expect(tagColors.value).toHaveLength(5);
+				expect(tagColors.value).toContainEqual({
+					'name': 'pathfinding',
+					'color': '#A28AE5'
+				});
+				hasBeenPosted = true;
+				return res(res => {
+					res.status = 204;
+					return res;
+				});
+			})
+		);
 
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		const tagItem = await findByRole(list, 'listitem', { name: 'pathfinding' });
+		const moreButton = getByRole(tagItem, 'button', { name: 'More' });
+		await user.click(moreButton);
+		const assignColorOpt = await screen.findByRole('menuitem', { name: 'Assign Color' });
+		await user.click(assignColorOpt);
+		const colorComboBox = screen.getByRole('combobox', { name: 'Color' });
+		await user.click(getByRole(colorComboBox, 'option', { name: 'violet' }));
+		await userEvent.click(screen.getByRole('button', { name: 'Set Color' }));
+		expect(hasBeenPosted).toBe(true);
+	});
 
+	test('Remove a color from a tag', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasBeenPosted = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 8);
+					res.body = JSON.stringify(testUserManageTags);
+					return res;
+				});
+			}),
+			rest.put('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
+				const tagColors = await req.json();
+				expect(tagColors.value).toHaveLength(3);
+				expect(tagColors.value).not.toContainEqual({
+					'name': 'to read',
+					'color': '#FF6666'
+				});
+				hasBeenPosted = true;
+				return res(res => {
+					res.status = 204;
+					return res;
+				});
+			})
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		const tagItem = await findByRole(list, 'listitem', { name: 'to read' });
+		const moreButton = getByRole(tagItem, 'button', { name: 'More' });
+		await user.click(moreButton);
+		await user.click(await screen.findByRole('menuitem', { name: 'Remove Color' }));
+		expect(hasBeenPosted).toBe(true);
+	});
 });

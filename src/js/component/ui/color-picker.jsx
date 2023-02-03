@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useId, useRef, useState } from 'react';
 import { useFloating, shift } from '@floating-ui/react-dom';
 
 import Button from './button';
@@ -8,15 +8,18 @@ import Icon from './icon';
 import { useEffect } from 'react';
 import { useFocusManager, usePrevious } from '../../hooks';
 import { isTriggerEvent } from '../../common/event';
+import { pick } from '../../common/immutable';
+import colorNames from '../../constants/color-names';
 
 const gridCols = 3;
 
 const ColorPicker = props => {
-	const { colors, onKeyDown, onColorPicked, selectedColor, tabIndex = 0 } = props;
+	const { colors, onKeyDown, onColorPicked, selectedColor, tabIndex = 0, ...rest } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const wasOpen = usePrevious(isOpen);
 	const ref = useRef(null);
 	const menuRef = useRef(null);
+	const id = useId();
 
 	const { x, y, reference, floating, strategy, update } = useFloating({
 		placement: 'bottom', middleware: [shift()]
@@ -36,10 +39,12 @@ const ColorPicker = props => {
 	const handleClick = useCallback(ev => {
 		const color = ev.currentTarget.dataset.color;
 		onColorPicked?.(color);
-		if(ev.type === 'keydown') {
-			ref.current.querySelector('.dropdown-toggle').focus();
-		}
 		setIsOpen(false);
+		ev.preventDefault();
+		ev.stopPropagation();
+		if(ev.type === 'keydown') {
+			ref.current.focus();
+		}
 	}, [onColorPicked]);
 
 	const handleKeyDown = useCallback(ev => {
@@ -56,12 +61,11 @@ const ColorPicker = props => {
 			focusPrev(ev, { offset: gridCols });
 			ev.stopPropagation();
 		} else if(ev.key === 'Escape') {
-			ref.current.querySelector('.dropdown-toggle').focus();
+			ref.current.focus();
 			setIsOpen(false);
 			ev.stopPropagation();
 		} else if(ev.key === 'Enter' || ev.key === ' ') {
 			handleClick(ev);
-			ev.preventDefault();
 		}
 	}, [focusNext, focusPrev, handleClick]);
 
@@ -73,44 +77,56 @@ const ColorPicker = props => {
 	}, [isOpen, wasOpen, update]);
 
 	return (
-		<div ref={ ref } className={ cx('dropdown', { show: isOpen }) }>
+		<div
+			onKeyDown={handleToggle}
+			onClick={handleToggle}
+			tabIndex={ tabIndex }
+			role="combobox"
+			ref={ ref }
+			className={ cx('dropdown color-picker', { show: isOpen }) }
+			{...pick(rest, p => p.startsWith('data-') || p.startsWith('aria-'))}
+			aria-controls={`${id}-menu`}
+			aria-expanded={isOpen}
+			aria-orientation="horizontal"
+		>
+			<input type="color" readOnly value={ selectedColor } />
 			<Button
-				onKeyDown={handleToggle }
-				onClick={ handleToggle }
+				title={ colorNames[selectedColor] || selectedColor }
+				tabIndex={ -1 }
 				className="color-swatch"
 				style={{ backgroundColor: selectedColor } }
-				tabIndex={ -1 }
 			>
 			</Button>
 			<Button
+				tabIndex={ -1 }
 				className="btn-icon dropdown-toggle"
-				onKeyDown={ handleToggle }
-				onClick={ handleToggle }
-				tabIndex={ tabIndex }
 				ref={ reference }
 			>
 				<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 				<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 			</Button>
 			<div ref={ r => { floating(r); menuRef.current = r; } }
+				id={ `${id}-menu` }
 				style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
-				className="dropdown-menu color-picker"
+				className="dropdown-menu color-picker-grid"
 				tabIndex={ -1 }
 				onFocus={ receiveFocus }
 				onBlur={ receiveBlur }
+				role="listbox"
 			>
 			{ colors.map((color, index) => (
 				<button
+					aria-selected={ selectedColor === color }
 					className={cx('color-picker-option', { clear: color === null })}
 					data-color={color}
 					data-index={index}
 					key={color ? color : 'clear'}
 					onClick={ handleClick }
 					onKeyDown={ handleKeyDown }
-					role="menuitem"
+					role="option"
 					style={{ backgroundColor: color }}
 					tabIndex={-2}
-					type="button"
+					title={ colorNames[color] || color }
 				/>
 			)) }
 		</div>
