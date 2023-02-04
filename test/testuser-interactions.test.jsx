@@ -6,7 +6,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { findByRole, getAllByRole, getByRole, screen, waitFor, queryByRole, queryAllByRole, prettyDOM } from '@testing-library/react';
+import { findAllByRole, findByRole, getAllByRole, getByRole, screen, waitFor, queryByRole, queryAllByRole, prettyDOM } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -808,5 +808,31 @@ describe('Test User\'s library', () => {
 		await user.click(moreButton);
 		await user.click(await screen.findByRole('menuitem', { name: 'Remove Color' }));
 		expect(hasBeenPosted).toBe(true);
+	});
+
+
+	test('Filter tags in tag manager', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		server.use(
+			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 8);
+					res.body = JSON.stringify(testUserManageTags);
+					return res;
+				});
+			}),
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		expect(await findAllByRole(list, 'listitem')).toHaveLength(8);
+
+		await user.type(screen.getByRole('searchbox', { name: 'Filter Tags' }), 'read');
+		expect(await findAllByRole(list, 'listitem')).toHaveLength(1); // eslint-disable-line jest-dom/prefer-in-document
 	});
 });

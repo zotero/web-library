@@ -133,6 +133,7 @@ const ManageTagsModal = () => {
 					<div className="filter-container">
 						<div className="search input-group">
 							<input
+								aria-label="Filter Tags"
 								className="form-control tag-selector-filter"
 								onChange={ handleSearchChange }
 								placeholder="Filter Tags"
