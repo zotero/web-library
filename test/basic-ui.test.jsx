@@ -2,13 +2,13 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { getByRole, getAllByRole, screen, queryByRole, waitFor } from '@testing-library/react'
+import { findAllByRole, getByRole, screen, queryByRole, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition, actWithFakeTimers } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import minState from './fixtures/state/minimal.json';
 import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
 import itemTypes from './fixtures/response/item-types';
@@ -131,6 +131,7 @@ describe('Zotero User\'s read-only library', () => {
 
 
 	test('Entering text into search box runs search, clearing it clears search', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
 		await waitForPosition();
 
@@ -154,31 +155,23 @@ describe('Zotero User\'s read-only library', () => {
 		expect(screen.queryByRole('button', { name: 'Clear Search' })).not.toBeInTheDocument();
 		const searchBox = screen.getByRole('searchbox', { name: 'Title, Creator, Year' });
 
-		await actWithFakeTimers(user => user.type(searchBox, 'Zotero'));
-		await waitForPosition();
+		await user.type(searchBox, 'Zotero');
 
-		const clearSearchButton = screen.getByRole('button', { name: 'Clear Search' });
-		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
+		await waitFor(() => expect(searchBox).toHaveValue('Zotero'));
+		await waitFor(() => expect(screen.getByText('15 items in this view')).toBeInTheDocument());
+		expect(await screen.findByRole('row', { name: 'Zotero | Home' })).toBeInTheDocument();
 
-		expect(searchBox).toHaveValue('Zotero');
+
+		const clearSearchButton = await screen.findByRole('button', { name: 'Clear Search' });
 		expect(clearSearchButton).toBeInTheDocument();
+		await user.click(clearSearchButton);
 
-		expect(screen.getByText('15 items in this view')).toBeInTheDocument();
-		expect(getByRole(tagSelector, 'button', { name: 'Zotero API' })).toBeInTheDocument();
-		expect(screen.getByRole('row', { name: 'Zotero | Home' })).toBeInTheDocument();
-
-		await actWithFakeTimers(user => user.click(clearSearchButton));
-		await waitForPosition();
-
-		expect(searchBox).toHaveValue('');
-
-		expect(screen.getByRole('row',
+		await waitFor(() => expect(searchBox).toHaveValue(''));
+		await waitFor(() => expect(screen.getByText('164 items in this view')).toBeInTheDocument());
+		expect(await screen.findByRole('row',
 			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
 		).toBeInTheDocument();
-
-		expect(screen.queryByRole('row',
-			{ name: 'Zotero | Home' })
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole('row', { name: 'Zotero | Home' })).not.toBeInTheDocument();
 	});
 
 	test('Navigating to a collection', async () => {
@@ -234,16 +227,16 @@ describe('Zotero User\'s read-only library', () => {
 	});
 
 	test('Filtering tags', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
 		await waitForPosition();
 
 		const filterTagsInput = screen.getByRole('searchbox', { name: 'Filter Tags' });
 
-		await actWithFakeTimers(user => user.type(filterTagsInput, 'Film'));
-		await waitForPosition();
+		await user.type(filterTagsInput, 'Film');
 
-		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
-		const tagButtons = getAllByRole(tagSelector, 'button')
+		const tagSelector = await screen.findByRole('navigation', { name: 'tag selector' });
+		const tagButtons = (await findAllByRole(tagSelector, 'button'))
 			.filter(tb => tb.getAttribute('title') !== 'Collapse Tag Selector')
 			.filter(tb => tb.getAttribute('title') !== 'Tag Selector Options');
 

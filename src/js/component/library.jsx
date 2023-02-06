@@ -72,7 +72,7 @@ const Library = () => {
 	const isSearchQuery = search && search.length > 0;
 
 	useEffect(() => {
-		if(userType !== prevUserType) {
+		if(userType !== prevUserType && typeof(prevUserType) !== 'undefined') {
 			setHasUserTypeChanged(true);
 			setTimeout(() => setHasUserTypeChanged(false), 0);
 		}

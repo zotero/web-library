@@ -12,7 +12,7 @@ import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { actWithFakeTimers, applyAdditionalJestTweaks, waitForPosition } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import testuserAddCollection from './fixtures/response/test-user-add-collection.json';
 
@@ -41,9 +41,10 @@ describe('Test User: Collections', () => {
 	afterAll(() => server.close());
 
 	test('Add a subcollection using "More" menu', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-		const user = userEvent.setup();
+
 		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs', expanded: false });
 		await user.click(getByRole(dogsTreeItem, 'button', { name: 'More' }));
 		const newSubCollectionOpt = await screen.findByRole('menuitem', { name: 'New Subcollection' });
@@ -52,6 +53,7 @@ describe('Test User: Collections', () => {
 		await screen.findByRole('treeitem', { name: 'Dogs', expanded: true });
 		const newCollectionTextBox = await screen.findByRole('textbox', { name: 'New Collection' });
 		expect(newCollectionTextBox).toHaveFocus();
+		expect(newCollectionTextBox).toHaveValue('');
 
 		let hasBeenPosted = false;
 		server.use(
@@ -73,6 +75,7 @@ describe('Test User: Collections', () => {
 	});
 
 	test('Rename a collection using "More" menu', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
@@ -81,9 +84,12 @@ describe('Test User: Collections', () => {
 		const renameOpt = await findByRole(dogsTreeItem, 'menuitem', { name: 'Rename' });
 
 		// there is a 100ms delay between clicking "Rename" and actually opening the rename box
-		await actWithFakeTimers(user => user.click(renameOpt, 'Zotero'));
-		const renameCollectionBox = await findByRole(dogsTreeItem, 'textbox', { name: 'Rename Collection' });
+		await user.click(renameOpt, 'Zotero');
+		const renameCollectionBox = await findByRole(dogsTreeItem, 'textbox', { name: 'Rename Collection' }, { timeout: 3000 });
 		await waitFor(() => expect(renameCollectionBox).toHaveFocus());
+		expect(renameCollectionBox).toHaveValue('Dogs');
+		expect(renameCollectionBox.selectionStart).toBe(0);
+		expect(renameCollectionBox.selectionEnd).toBe(4);
 
 		let hasBeenPatched = false;
 		server.use(
@@ -98,15 +104,15 @@ describe('Test User: Collections', () => {
 			}),
 		);
 
-		await userEvent.type(renameCollectionBox, 'Cats{enter}', { skipClick: true });
+		await user.type(renameCollectionBox, 'Cats{enter}', { skipClick: true });
 		expect(await screen.findByRole('treeitem', { name: 'Cats' })).toBeInTheDocument();
 		expect(hasBeenPatched).toBe(true);
 	});
 
 	test('Rename a collection using double click', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-		const user = userEvent.setup();
 
 		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
 		await user.dblClick(dogsTreeItem);
@@ -132,9 +138,9 @@ describe('Test User: Collections', () => {
 	});
 
 	test('Delete a collection using "More" menu', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-		const user = userEvent.setup();
 
 		const collectionTreeItem = screen.getByRole('treeitem', { name: 'Algorithms' });
 		await user.click(getByRole(collectionTreeItem, 'button', { name: 'More' }));
@@ -157,9 +163,10 @@ describe('Test User: Collections', () => {
 	});
 
 	test('Move a collection using "More" menu', async () => {
+		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-		const user = userEvent.setup();
+
 		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs', expanded: false });
 		await user.click(getByRole(dogsTreeItem, 'button', { name: 'More' }));
 		const moveColOpt = await screen.findByRole('menuitem', { name: 'Move Collection' });
