@@ -183,7 +183,7 @@ export default {
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: [
-    "/node_modules/(?!react-dnd|dnd-core|@react-dnd)",
+    "/node_modules/(?!react-dnd|dnd-core|@react-dnd|dnd-multi-backend|rdndmb-html5-to-touch)",
     "\\.pnp\\.[^\\/]+$"
   ],
 
