@@ -1,3 +1,5 @@
+[![CI](https://github.com/zotero/web-library/actions/workflows/ci.yml/badge.svg)](https://github.com/zotero/web-library/actions/workflows/ci.yml)
+
 Web Library
 ===========
 
