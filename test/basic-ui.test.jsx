@@ -28,17 +28,24 @@ const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 applyAdditionalJestTweaks();
 
 describe('Loading Screen', () => {
+	let metaRequestCounter = 0;
+	let settingsRequested = false;
+	let collectionsRequestCounter = 0;
 	const handlers = [
 		rest.get('https://api.zotero.org/itemTypes', (req, res, ctx) => {
+			metaRequestCounter++;
 			return res(ctx.json(itemTypes));
 		}),
 		rest.get('https://api.zotero.org/itemFields', (req, res, ctx) => {
+			metaRequestCounter++;
 			return res(ctx.json(itemFields));
 		}),
 		rest.get('https://api.zotero.org/creatorFields', (req, res, ctx) => {
+			metaRequestCounter++;
 			return res(ctx.json(creatorFields));
 		}),
 		rest.get('https://api.zotero.org/users/475425/settings', (req, res, ctx) => {
+			settingsRequested = true;
 			return res(ctx.json({}));
 		}),
 		rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {
@@ -48,6 +55,21 @@ describe('Loading Screen', () => {
 				// first request (`start` is null or 0) is immediate,
 				// subsequent requests are delayed so we get a spinner
 				res.delay = req.url.searchParams.get('start') ? 100 : 0;
+				collectionsRequestCounter++;
+				return res;
+			});
+		}),
+		rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
+			return res(res => {
+				res.headers.set('Total-Results', 0);
+				res.body = JSON.stringify([]);
+				return res;
+			});
+		}),
+		rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
+			return res(res => {
+				res.headers.set('Total-Results', 0);
+				res.body = JSON.stringify([]);
 				return res;
 			});
 		}),
@@ -67,6 +89,9 @@ describe('Loading Screen', () => {
 	beforeEach(() => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
+		metaRequestCounter = 0;
+		settingsRequested = false;
+		collectionsRequestCounter = 0;
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -76,6 +101,8 @@ describe('Loading Screen', () => {
 	test('Shows Z while fetching data', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: minState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
+		await waitFor(() => expect(metaRequestCounter).toBe(3));
+		await waitFor(() => expect(settingsRequested).toBe(true));
 	});
 
 	test('Shows spinner if large number of collections is detected', async () => {
@@ -83,6 +110,8 @@ describe('Loading Screen', () => {
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
 		await waitFor(() => expect(screen.getByRole('progressbar')).toBeInTheDocument());
 		expect(screen.getByRole('progressbar')).toBeInTheDocument();
+		// we report 5142 collections, that's 52 requests, 100 items per request
+		await waitFor(() => expect(collectionsRequestCounter).toBe(52));
 	});
 });
 
@@ -199,7 +228,7 @@ describe('Zotero User\'s read-only library', () => {
 			{ name: 'My Library', selected: true })
 		).toBeInTheDocument();
 
-		const collectionItem = screen.getByRole('treeitem',{ name: 'Humanities', selected: false });
+		const collectionItem = screen.getByRole('treeitem', { name: 'Humanities', selected: false });
 		await userEvent.click(collectionItem);
 		await waitForPosition();
 
@@ -379,7 +408,7 @@ describe('Zotero User\'s read-only library', () => {
 		expect(getByRole(grid, 'columnheader', { name: 'Creator' })).toBeInTheDocument();
 		expect(getByRole(grid, 'columnheader', { name: 'Item Type' })).toBeInTheDocument();
 		await waitFor(
-			() => expect(screen.getByRole('button' ,{ name: 'Column Selector', expanded: false })).toBeInTheDocument()
+			() => expect(screen.getByRole('button', { name: 'Column Selector', expanded: false })).toBeInTheDocument()
 		);
 
 		// Open dropdown again, open "more"	menu

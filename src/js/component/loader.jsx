@@ -73,7 +73,7 @@ const Loader = () => {
 	useEffect(() => {
 		if (isReader && tagColors && !isFetchingGroups) {
 			setIsReady(true);
-		} else if(itemTypes && itemFields && creatorFields && tagColors && !isWaitingForCollections && !isFetchingGroups) {
+		} else if (itemTypes?.length && itemFields?.length && creatorFields?.length && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			setIsReady(true);
 		}
 	}, [itemTypes, itemFields, creatorFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader]);
@@ -81,7 +81,7 @@ const Loader = () => {
 	useEffect(() => {
 		dispatch(preferencesLoad());
 
-		if (!itemTypes || !itemFields || !creatorFields) {
+		if (!(itemTypes?.length && itemFields?.length && creatorFields?.length)) {
 			dispatch(initialize());
 		}
 		if (!tagColors) {
