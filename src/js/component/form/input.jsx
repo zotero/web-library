@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 
 import AutoResizer from './auto-resizer';
 import Spinner from '../ui/spinner';
@@ -42,11 +42,12 @@ const Input = memo(forwardRef((props, ref) => {
 	const prevInitialValue = usePrevious(initialValue);
 	const prevValidationError = usePrevious(validationError);
 	const id = useId();
-
 	const hasBeenCancelled = useRef(false);
 	const hasBeenCommitted = useRef(false);
+	const show = suggestions && suggestions.length && !hasCancelledSuggestions;
+	const prevShow = usePrevious(show);
 
-	const { x, y, reference, floating, strategy } = useFloating({
+	const { x, y, reference, floating, strategy, update } = useFloating({
 		placement: 'bottom', middleware: [shift()]
 	});
 
@@ -59,7 +60,7 @@ const Input = memo(forwardRef((props, ref) => {
 		'input': true,
 		'busy': isBusy,
 		'dropdown': suggestions,
-		'show': suggestions && suggestions.length && !hasCancelledSuggestions,
+		'show': show,
 	}, inputGroupClassName);
 
 	useImperativeHandle(ref, () => ({
@@ -161,6 +162,12 @@ const Input = memo(forwardRef((props, ref) => {
 		}
 	}, [validationError, prevValidationError]);
 
+	useLayoutEffect(() => {
+		if (show && !prevShow) {
+			update();
+		}
+	}, [show, prevShow, update]);
+
 	return (
 		<div className={ groupClassName }>
 			<AutoResizerInput
@@ -188,7 +195,7 @@ const Input = memo(forwardRef((props, ref) => {
 					style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
 					ref={r => { floating(r); suggestionsRef.current = r; } }
 					className={ cx("dropdown-menu suggestions", {
-						'show': suggestions.length > 0 && !hasCancelledSuggestions,
+						'show': show,
 				})}>
 					{ suggestions.map((s, index) =>
 						<div
