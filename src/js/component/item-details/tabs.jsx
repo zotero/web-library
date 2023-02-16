@@ -273,11 +273,13 @@ const ItemDetailsTabs = () => {
 							!['attachment', 'note'].includes(item.itemType) && (
 								<React.Fragment>
 									<Info
+										key={ 'info-' + item.key }
 										id={ `${id}-info` }
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }
 									/>
 									{ shouldShowNotesTab && ( <Notes
+										key={ 'notes-' + item.key }
 										id={ `${id}-notes` }
 										isActive={ activeTab === 'notes' }
 										isReadOnly={ isReadOnly }
@@ -290,6 +292,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'note' && (
 								<StandaloneNote
+									key={ 'standalone-note-' + item.key }
 									id={`${id}-standalone-note` }
 									isActive={ activeTab === 'standalone-note' }
 									isReadOnly={ isReadOnly }
@@ -300,6 +303,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
+									key={ 'standalone-attachment-' + item.key }
 									id={`${id}-standalone-attachment` }
 									isActive={ activeTab === 'standalone-attachment' }
 									isReadOnly={ isReadOnly }
@@ -309,6 +313,7 @@ const ItemDetailsTabs = () => {
 
 						{ shouldShowTagsTab && (
 							<Tags
+								key={ 'tags-' + item.key }
 								id={ `${id}-tags` }
 								isActive={ activeTab === 'tags' }
 								isReadOnly={ isReadOnly }
@@ -317,6 +322,7 @@ const ItemDetailsTabs = () => {
 						{
 							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 								<Attachments
+									key={ 'attachments-' + item.key }
 									id={ `${id}-attachments` }
 									isActive={ activeTab === 'attachments' }
 									isReadOnly={ isReadOnly }
@@ -325,6 +331,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowRelatedTab && (
 							<Related
+								key={ 'related-' + item.key }
 								id={ `${id}-related` }
 								isActive={ activeTab === 'related' }
 							/>
