@@ -18,6 +18,7 @@ const ItemActionsTouch = memo(() => {
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const columns = useSelector(state => state.preferences.columns);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
+	const isFileUploadAllowed = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isFileUploadAllowed);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
@@ -93,9 +94,11 @@ const ItemActionsTouch = memo(() => {
 							<DropdownItem onClick={ handleNewStandaloneNote } >
 								New Standalone Note
 							</DropdownItem>
-							<DropdownItem onClick={ handleNewFileModalOpen } >
-								Upload File
-							</DropdownItem>
+							{ isFileUploadAllowed && (
+								<DropdownItem onClick={ handleNewFileModalOpen } >
+									Upload File
+								</DropdownItem>
+							)}
 							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
 								Add By Identifier
 							</DropdownItem>

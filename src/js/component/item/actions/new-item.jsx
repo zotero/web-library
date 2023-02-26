@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -32,7 +32,9 @@ const NewItemSelector = props => {
 	const fileInputRef = useRef(null);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const collectionKey = useSelector(state => state.current.collectionKey);
+	const isFileUploadAllowed = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isFileUploadAllowed);
 	const dispatch = useDispatch();
+	const uploadFileId = useId();
 
 	const primaryItemTypesDesc = useMemo(() => itemTypes.filter(
 		it => primaryItemTypes.includes(it.itemType)
@@ -111,26 +113,39 @@ const NewItemSelector = props => {
 					onNewItemCreate={ onNewItemCreate }
 				/>
 			)) }
-			<DropdownItem divider />
-			<DropdownItem data-no-toggle onClick={ handleClick } tag="div" className="btn-file">
-				<Button
-					className="btn-link upload-file icon-left"
-					tabIndex={ -1 }
-				>
-				<span className="flex-row align-items-center">
-					Upload File
-				</span>
-				</Button>
-				<input
+			{ isFileUploadAllowed && (
+			<React.Fragment>
+				<DropdownItem divider />
+				<DropdownItem
 					data-no-toggle
-					multiple={ true }
-					onChange={ handleFileInputChange }
-					ref={ fileInputRef }
-					tabIndex={ -1 }
-					type="file"
-				/>
-			</DropdownItem>
-			<DropdownItem divider />
+					onClick={ handleClick }
+					tag="div"
+					className="btn-file"
+					aria-labelledby={uploadFileId }
+				>
+					<Button
+						className="btn-link upload-file icon-left"
+						tabIndex={ -1 }
+					>
+							<span
+								id={ uploadFileId }
+								className="flex-row align-items-center"
+							>
+						Upload File
+					</span>
+					</Button>
+					<input
+						aria-labelledby={ uploadFileId }
+						data-no-toggle
+						multiple={ true }
+						onChange={ handleFileInputChange }
+						ref={ fileInputRef }
+						tabIndex={ -1 }
+						type="file"
+					/>
+				</DropdownItem>
+			</React.Fragment>
+			)}
 			{ isSecondaryVisible ?
 				secondaryItemTypesDesc.map(itemTypeSpec => (
 					<DropdownItemType
@@ -138,11 +153,14 @@ const NewItemSelector = props => {
 						key={ itemTypeSpec.itemType }
 						onNewItemCreate={ onNewItemCreate }
 					/>
-				)) :
-				<DropdownItem onClick={ handleToggleMore }>
-					More
-				</DropdownItem>
-			}
+				)) : (
+				<React.Fragment>
+					<DropdownItem divider />
+					<DropdownItem onClick={ handleToggleMore }>
+						More
+					</DropdownItem>
+				</React.Fragment>
+			)}
 			</DropdownMenu>
 		</Dropdown>
 	);

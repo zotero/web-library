@@ -22,7 +22,7 @@ import testUserAddNewLinkedURLAttachment from './fixtures/response/test-user-add
 
 const state = JSONtoState(stateRaw);
 
-describe('Test User\'s library', () => {
+describe('Attachments', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();
@@ -184,5 +184,82 @@ describe('Test User\'s library', () => {
 		expect(getByRole(listitem, 'button', { name: 'Open Linked Attachment' })).toHaveAttribute('href', 'http://example.com/');
 		expect(getByRole(listitem, 'button', { name: 'Delete Attachment' })).toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('Add a standalone attachment using "Upload File" option in the "plus" button menu', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const plusBtn = screen.getByRole('button', { name: 'New Item' });
+		await userEvent.click(plusBtn);
+		await waitForPosition();
+
+		// menu should be open
+		expect(screen.getByRole('button',
+			{ name: 'New Item', expanded: true })
+		).toBeInTheDocument();
+
+		let hasBeenPosted = false;
+		let hasBeenUploaded = false;
+
+		server.use(
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 0);
+					res.body = JSON.stringify([]);
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/items/new', (req, res) => {
+				expect(req.url.searchParams.get('itemType')).toBe('attachment');
+				expect(req.url.searchParams.get('linkMode')).toBe('imported_file');
+				return res(res => {
+					res.body = JSON.stringify(newItemFileAttachment);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].itemType).toBe('attachment');
+				expect(items[0].linkMode).toBe('imported_file');
+				expect(items[0].parentItem).toBeFalsy();
+				expect(items[0].filename).toBe('hello.pdf');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserAddNewAttachmentFile);
+					return res;
+				});
+			}),
+			rest.post('https://api.zotero.org/users/1/items/FFIILLEE/file', async (req, res) => {
+				const body = await req.text();
+				expect(body).toMatch(/filename=hello.pdf/);
+				hasBeenUploaded = true;
+				return res(res => {
+					res.delay = 100; // ensure "ongoing" state is shown
+					res.body = JSON.stringify({ exists: 1 });
+					return res;
+				});
+			}),
+			rest.get('https://api.zotero.org/users/1/items', (req, res) => {
+				expect(req.url.searchParams.get('itemKey')).toBe('VR82JUX8');
+				return res(res => {
+					res.headers.set('Total-Results', 1);
+					res.body = JSON.stringify(testUserAddAttachamentFileRefetchParent);
+					return res;
+				});
+			})
+		);
+		expect(screen.getByRole('menuitem', { name: 'Upload File' })).toBeInTheDocument();
+
+		const input = screen.getByLabelText('Upload File', { selector: 'input' });
+		const file = new File([1, 1, 1, 1], 'hello.pdf', { type: 'application/pdf' })
+		await userEvent.upload(input, file);
+
+		expect(await screen.findByText('Uploading 1 file')).toBeInTheDocument();
+		expect(await screen.findByRole('row', { name: 'hello.pdf' })).toBeInTheDocument();
+		await waitFor(() => expect(screen.queryByText('Uploading 1 file')).not.toBeInTheDocument());
+
+		expect(hasBeenPosted).toBe(true);
+		expect(hasBeenUploaded).toBe(true);
 	});
 });
