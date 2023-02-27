@@ -1,5 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
+import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -53,6 +54,28 @@ describe('No file uploads allowed', () => {
 		).toBeInTheDocument();
 
 		expect(screen.queryByRole('menuitem', { name: 'Upload File' })).not.toBeInTheDocument();
+	});
+
+	test('Hide "Add File" button in the attachments pane', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		server.use(
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
+				return res(res => {
+					res.headers.set('Total-Results', 0);
+					res.body = JSON.stringify([]);
+					return res;
+				});
+			})
+		);
+
+		await userEvent.click(screen.getByRole('tab', { name: 'Attachments', selected: false }));
+
+		expect(await screen.findByText('0 attachments')).toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: 'Add File' })).not.toBeInTheDocument();
+		// "Add Linked URL" button should still be there
+		expect(screen.queryByRole('button', { name: 'Add Linked URL' })).toBeInTheDocument();
 	});
 
 });

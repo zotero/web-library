@@ -517,33 +517,35 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 							{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
 						</div>
 						{ !isReadOnly && (
-						<ToolGroup tabIndex>
-							<div className="btn-file">
-								<input
-									aria-labelledby={ `${id}-add-file` }
-									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
-									className="add-attachment toolbar-focusable"
-									onChange={ handleFileInputChange }
-									onKeyDown={ handleFileInputKeyDown }
-									ref={ fileInput }
-									tabIndex={ 0 }
-									type="file"
-								/>
-								<Button
-									id={ `${id}-add-file` }
-									disabled={ isReadOnly || isAddingLinkedUrl || !isFileUploadAllowed }
-									className="btn-default"
-									tabIndex={ -1 }
-								>
-									Add File
-								</Button>
-							</div>
+						<ToolGroup>
+							{ isFileUploadAllowed && (
+								<div className="btn-file">
+									<input
+										aria-labelledby={ `${id}-add-file` }
+										disabled={ isAddingLinkedUrl }
+										className="add-attachment toolbar-focusable"
+										onChange={ handleFileInputChange }
+										onKeyDown={ handleFileInputKeyDown }
+										ref={ fileInput }
+										tabIndex={ 0 }
+										type="file"
+									/>
+									<Button
+										id={ `${id}-add-file` }
+										disabled={ isAddingLinkedUrl }
+										className="btn-default"
+										tabIndex={ -1 }
+									>
+										Add File
+									</Button>
+								</div>
+							) }
 							<Button
 								className="btn-default toolbar-focusable"
 								disabled={ isReadOnly }
 								onClick={ handleLinkedFileClick }
 								onKeyDown={ handleFileInputKeyDown }
-								tabIndex={ -3 }
+								tabIndex={isFileUploadAllowed ? -3 : 0 }
 								ref={ addLinkedUrlButtonRef }
 							>
 								Add Linked URL
