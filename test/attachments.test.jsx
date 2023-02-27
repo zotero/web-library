@@ -105,7 +105,7 @@ describe('Attachments', () => {
 
 		const input = screen.getByLabelText('Add File');
 		const file = new File([1,1,1,1], 'hello.pdf', { type: 'application/pdf' })
-		await userEvent.upload(input, file);
+		userEvent.upload(input, file);
 
 		expect(await screen.findByText('Uploading 1 file')).toBeInTheDocument();
 
@@ -249,11 +249,12 @@ describe('Attachments', () => {
 				});
 			})
 		);
-		expect(screen.getByRole('menuitem', { name: 'Upload File' })).toBeInTheDocument();
+
+		await waitFor(() => expect(screen.queryByText('Uploading 1 file')).not.toBeInTheDocument());
 
 		const input = screen.getByLabelText('Upload File', { selector: 'input' });
 		const file = new File([1, 1, 1, 1], 'hello.pdf', { type: 'application/pdf' })
-		await userEvent.upload(input, file);
+		userEvent.upload(input, file);
 
 		expect(await screen.findByText('Uploading 1 file')).toBeInTheDocument();
 		expect(await screen.findByRole('row', { name: 'hello.pdf' })).toBeInTheDocument();
