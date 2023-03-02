@@ -240,7 +240,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 								tags.map(tag => {
 									return (
 										<li
-											aria-labelledby={ tag.tag === tagRedacted ? null : `${id}-${tag.id}-label` }
+											aria-label={ tag.tag === tagRedacted ? null : tag.tag }
 											className="tag"
 											data-key={ tag.id }
 											data-tag={ tag.tag }

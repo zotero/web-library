@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import Select from '../form/select';
+import { pick } from '../../common/immutable';
 
 const EditableContent = props => {
-	const { contentId, display, input, inputComponent, options, title } = props;
+	const { display, id, input, inputComponent, labelId, options, title } = props;
 	const value = props.value || (input && input.props.value);
 	const placeholder = props.placeholder || (input && input.props.placeholder);
 	const hasValue = !!(value || input && input.props.value);
@@ -21,7 +22,11 @@ const EditableContent = props => {
 
 	return (
 		<div
-			id={ contentId }
+			{ ...pick(props, p => p.startsWith('aria-')) }
+			role="textbox"
+			aria-readonly="true"
+			aria-labelledby={ labelId }
+			id={ id }
 			title={ title }
 			className={ cx(className) }
 		>

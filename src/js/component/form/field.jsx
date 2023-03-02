@@ -19,7 +19,7 @@ const SimpleField = memo(forwardRef((props, ref) => {
 			onKeyDown={ onKeyDown }
 			className={ cx('metadata', className) }
 			ref={ ref }
-			{ ...pick(props, p => p.startsWith('data-')) }
+			{ ...pick(props, p => p.startsWith('data-') || p.startsWith('aria-')) }
 		>
 			<div className="key">
 				{ label }

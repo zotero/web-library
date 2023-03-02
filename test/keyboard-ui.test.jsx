@@ -3,7 +3,7 @@
 */
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { getByRole, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -47,6 +47,15 @@ test('Tabulate through the UI', async () => {
 	await user.keyboard('{tab}');
 	expect(screen.getByRole('tab', { name: 'Info' })).toHaveFocus();
 
+	await user.keyboard('{tab}');
+	const inputTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
+	expect(getByRole(inputTypeCombo, 'textbox')).toHaveFocus();
+
+	await user.keyboard('{tab}');
+	expect(screen.getByRole('textbox', { name: 'Title' })).toHaveFocus();
+
+	await user.keyboard('{tab}');
+	expect(screen.getAllByRole('combobox', { name: 'Creator Type' }).shift()).toHaveFocus();
 });
 
 

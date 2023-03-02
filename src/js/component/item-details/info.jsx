@@ -77,11 +77,14 @@ const Info = ({ isActive, isReadOnly, id }) => {
 								abstract: true,
 								editing: isEditing,
 							}) }>
-								<h6 className="h2 abstract-heading">
+								<h6 id="label-abstract" className="h2 abstract-heading">
 									Abstract
 								</h6>
 								<div className="abstract-body">
-									<Abstract isReadOnly={ isReadOnly } />
+									<Abstract
+										aria-labelledby="label-abstract"
+										isReadOnly={ isReadOnly }
+									/>
 								</div>
 							</section>
 						</div>

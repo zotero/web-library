@@ -260,7 +260,7 @@ const ItemDetailsTabs = () => {
 						activeTab === 'info' && (
 							<EditToggleButton
 								isReadOnly={ isLibraryReadOnly }
-								className="hidden-mouse-lg-up btn-link btn-edit"
+								className="btn-link btn-edit"
 							/>
 						)
 					}

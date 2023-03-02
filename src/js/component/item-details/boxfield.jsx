@@ -20,7 +20,8 @@ const pickInputComponent = field => {
 };
 
 const BoxFieldLabel = memo(({ field }) => {
-	var label = field.label;
+	const id = `label-${ field.key }`;
+	let label = field.label;
 
 	if(field.key === 'url' && field.value) {
 		const url = cleanURL(field.value, true);
@@ -49,7 +50,13 @@ const BoxFieldLabel = memo(({ field }) => {
 	}
 
 	return (
-		<label htmlFor={ field.key}>{ label }</label>
+		<label
+			aria-label={ field.label }
+			id={ id }
+			htmlFor={ field.key }
+		>
+			{ label }
+		</label>
 	);
 });
 
@@ -67,9 +74,10 @@ const BoxFieldInputEditable = memo(props => {
 	const isPseudoEditable = !isForm && isSelect;
 	const isDisabled = (shouldUseEditMode && !isEditing) || isPseudoEditable || field.isReadOnly;
 	const input = <BoxFieldInput { ...props } field={ field } />;
-	const editableProps = { display: field.display, isActive, isSelect, isTextArea, input, isBusy:
-		field.processing || false, isDisabled, onBlur, onClick, onFocus, title: field.title, value:
-		field.value };
+	const editableProps = { display: field.display, id: field.key, isActive,
+		isSelect, isTextArea, input, isBusy: field.processing || false, isDisabled,
+		labelId: `label-${field.key}`, onBlur, onClick, onFocus, title: field.title,
+		value: field.value };
 
 	var url = null;
 
@@ -161,6 +169,7 @@ const BoxFieldInput = memo(props => {
 	}
 
 	if(InputComponent === SelectInput) {
+		inputProps['aria-label'] = field.label;
 		inputProps['onChange'] = () => true; //commit on change
 		// select inputs render without Editable and need to be tabbable
 		inputProps['tabIndex'] = 0;
@@ -205,7 +214,11 @@ const BoxField = props => {
 	};
 
 	return (
-		<Field data-key={ field.key } className={ cx(className) }>
+		<Field
+			aria-labelledby={ `label-${field.key}` }
+			data-key={ field.key }
+			className={ cx(className) }
+		>
 			<BoxFieldLabel field={ props.field } />
 			{ shouldUseEditable ?
 				<BoxFieldInputEditable { ...props } /> :

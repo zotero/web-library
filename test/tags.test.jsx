@@ -6,7 +6,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { findAllByRole, findByRole, getByRole, screen, queryAllByRole } from '@testing-library/react';
+import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -20,7 +20,7 @@ import testUserManageTags from './fixtures/response/test-user-manage-tags.json';
 
 const state = JSONtoState(stateRaw);
 
-describe('Test User\'s library', () => {
+describe('Tags', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();
@@ -114,8 +114,18 @@ describe('Test User\'s library', () => {
 		expect(await findByRole(list1, 'listitem', { name: 'to read' })).toBeInTheDocument();
 		expect(screen.getByText('1 tag')).toBeInTheDocument();
 
-		const tagInput = await screen.findByRole('textbox', { name: 'Tag Name' });
+		// item has one tag (read-only textbox) + input field for another
+		await waitFor(() => expect(screen.getAllByRole('textbox',
+			{ name: 'Tag Name' })
+		).toHaveLength(2));
+
+		const tagInput = screen.getAllByRole('textbox',
+			{ name: 'Tag Name' }
+		).find(el => !el.getAttribute('aria-readonly'));
+
+		expect(tagInput).toBeInTheDocument();
 		expect(tagInput).toHaveFocus();
+
 		await user.type(tagInput, 't');
 		const suggestions2 = await screen.findByRole('listbox', { name: 'Suggestions' });
 		await findByRole(suggestions2, 'listitem', { name: 'today' });

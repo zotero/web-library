@@ -46,6 +46,7 @@ const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 
 	return (
 		<SelectInput
+			aria-label="Creator Type"
 			className="form-control form-control-sm"
 			isActive={ isActive }
 			onCancel={ onCancel }
@@ -276,6 +277,7 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 
 	return shouldUseEditable ?
 		<Editable
+			aria-label={ label }
 			data-field-name={ name }
 			input={ formField }
 			isActive={ active === name }
@@ -429,6 +431,7 @@ const CreatorField = forwardRef((props, ref) => {
 			isForm={ isForm }
 		/> }
 		<Field
+			aria-label={ creatorLabel }
 			className={ fieldClassName }
 			index={ index }
 			isSortable={ !isSingle && !isVirtual && !isReadOnly }
@@ -501,6 +504,7 @@ const CreatorField = forwardRef((props, ref) => {
 								icon
 								className="btn-single-dual"
 								onClick={ handleCreatorTypeSwitch }
+								title="Switch creator type"
 							>
 								<Icon type={ icon } width="20" height="20" />
 							</Button>
@@ -510,11 +514,17 @@ const CreatorField = forwardRef((props, ref) => {
 										icon
 										className="btn-minus"
 										onClick={ handleCreatorRemove }
+										title="Remove creator"
 									>
 										<Icon type={ '16/minus' } width="16" height="16" />
 									</Button>
 								) : (
-									<Button icon className="btn-minus" disabled={ true }>
+									<Button
+										icon
+										className="btn-minus"
+										disabled={ true }
+										title="Remove creator"
+									>
 										<Icon type={ '16/minus' } width="16" height="16" />
 									</Button>
 								)
@@ -525,11 +535,17 @@ const CreatorField = forwardRef((props, ref) => {
 										icon
 										className="btn-plus"
 										onClick={ handleCreatorAdd }
+										title="Add creator"
 									>
 										<Icon type={ '16/plus' } width="16" height="16" />
 									</Button>
 								) : (
-									<Button icon className="btn-plus" disabled={ true }>
+									<Button
+										icon
+										className="btn-plus"
+										disabled={ true }
+										title="Add creator"
+									>
 										<Icon type={ '16/plus' } width="16" height="16" />
 									</Button>
 								)

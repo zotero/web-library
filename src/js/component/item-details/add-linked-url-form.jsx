@@ -103,7 +103,12 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 	}, [onClose]);
 
 	return (
-		<div className="add-linked-url form" onKeyDown={ handleKeyDown }>
+		<div
+			aria-label="Add Linked URL"
+			role="dialog"
+			className="add-linked-url form"
+			onKeyDown={ handleKeyDown }
+		>
 			<div className="form-group form-row">
 				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
 				<div className="col">

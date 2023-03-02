@@ -6,9 +6,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import Editable from '../editable';
 import TextAreaInput from '../form/text-area';
 import { get } from '../../utils';
+import { pick } from '../../common/immutable';
 import { updateItemWithMapping } from '../../actions';
 
-const Abstract = ({ isReadOnly }) => {
+const Abstract = ({ isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const isEditing = useSelector(
@@ -53,6 +54,7 @@ const Abstract = ({ isReadOnly }) => {
 
 	const input = (
 		<TextAreaInput
+			{ ...pick(rest, p => p.startsWith('aria-')) }
 			autoFocus={ !(shouldUseEditMode && isEditing) }
 			isBusy={ isBusy }
 			isReadOnly={ isReadOnly }
@@ -73,10 +75,12 @@ const Abstract = ({ isReadOnly }) => {
 
 	return (shouldUseEditMode && isEditing) ? input : (
 		<Editable
+			id={ 'abstract' }
 			input={ input }
 			isActive={ isActive }
 			isBusy={ isBusy }
 			isDisabled={ isReadOnly }
+			labelId={ 'label-abstract' }
 			onClick={ handleMakeActive }
 			onFocus={ handleMakeActive }
 		/>

@@ -163,8 +163,9 @@ describe('Attachments', () => {
 		expect(await screen.findByText('0 attachments')).toBeInTheDocument();
 		await user.click(screen.getByRole('button', { name: 'Add Linked URL' }));
 
-		const linkInput = await screen.findByRole('textbox', { name: 'Link' });
-		const titleInput = await screen.findByRole('textbox', { name: 'Title' });
+		const dialog = await screen.findByRole('dialog', { name: 'Add Linked URL' });
+		const linkInput = getByRole(dialog, 'textbox', { name: 'Link' });
+		const titleInput = getByRole(dialog, 'textbox', { name: 'Title' });
 
 		expect(linkInput).toHaveAttribute('aria-invalid', 'false');
 
