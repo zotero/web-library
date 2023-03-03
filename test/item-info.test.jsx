@@ -4,8 +4,9 @@
 
 import React from 'react';
 import '@testing-library/jest-dom';
+import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -13,6 +14,8 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
+import testUserUpdateDateDMY from './fixtures/response/test-user-update-date-dmy.json';
+import testUserUpdateDateMDY from './fixtures/response/test-user-update-date-mdy.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -57,6 +60,148 @@ describe('Item info', () => {
 		).toHaveTextContent('Journal of the American Veterinary Medical Association');
 		expect(screen.getByRole('textbox', { name: 'Series' })).toBeInTheDocument();
 		expect(screen.getByRole('textbox', { name: 'Abstract' })).toBeInTheDocument();
+	});
+
+	test('It parses date as dmy in the UK', async () => {
+		jest.spyOn(window.navigator, 'language', 'get').mockReturnValue('en-GB');
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		await user.click(screen.getByRole('textbox', { name: 'Date' }));
+		expect(await screen.findByRole('textbox', { name: 'Date' })).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].date).toBe('2021-10-04');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserUpdateDateDMY);
+					return res;
+				});
+			}),
+		);
+
+		await user.type(
+			screen.getByRole('textbox', { name: 'Date' }),
+			'04/10/21{enter}', { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date' })
+		).toHaveTextContent('2021-10-04'));
+
+		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('It parses date as mdy in the US', async () => {
+		expect(window.navigator.language).toBe('en-US');
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		await user.click(screen.getByRole('textbox', { name: 'Date' }));
+		expect(await screen.findByRole('textbox', { name: 'Date' })).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].date).toBe('2021-04-10');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserUpdateDateMDY);
+					return res;
+				});
+			}),
+		);
+
+		await user.type(
+			screen.getByRole('textbox', { name: 'Date' }),
+			'04/10/21{enter}', { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date' })
+		).toHaveTextContent('2021-04-10'));
+
+		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('It understands month names in the date field', async () => {
+		expect(window.navigator.language).toBe('en-US');
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		await user.click(screen.getByRole('textbox', { name: 'Date' }));
+		expect(await screen.findByRole('textbox', { name: 'Date' })).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].date).toBe('2021-04-10');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserUpdateDateMDY);
+					return res;
+				});
+			}),
+		);
+
+		//@TODO: day suiffixes, e.g. April 10th, 2021 should also work
+		await user.type(
+			screen.getByRole('textbox', { name: 'Date' }),
+			'April 10, 2021{enter}', { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date' })
+		).toHaveTextContent('2021-04-10'));
+
+		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('It understands month names in polish in the date field', async () => {
+		jest.spyOn(window.navigator, 'language', 'get').mockReturnValue('pl-PL');
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		await user.click(screen.getByRole('textbox', { name: 'Date' }));
+		expect(await screen.findByRole('textbox', { name: 'Date' })).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].date).toBe('2021-10-04');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserUpdateDateDMY);
+					return res;
+				});
+			}),
+		);
+
+		//@TODO: day suiffixes, e.g. "4ty Październik 2021" should also work
+		await user.type(
+			screen.getByRole('textbox', { name: 'Date' }),
+			'4 Październik 2021{enter}', { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date' })
+		).toHaveTextContent('2021-10-04'));
+
+		expect(hasBeenPosted).toBe(true);
 	});
 
 });

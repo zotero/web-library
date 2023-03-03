@@ -2,43 +2,46 @@
  * But without dependencies that would substantially add to the bundle size.
 */
 
-import mapObject from '../common/immutable';
+import { mapObject } from '../common/immutable';
 import dateFormatsJSON from '../../../data/date-formats.json';
+import memoize from 'memoize-one';
 
-const _slashRe = /^(.*?)\b([0-9]{1,4})(?:([-/.\u5e74])([0-9]{1,2}))?(?:([-/.\u6708])([0-9]{1,4}))?((?:\b|[^0-9]).*?)$/
-const _yearRe = /^(.*?)\b((?:circa |around |about |c\.? ?)?[0-9]{1,4}(?: ?B\.? ?C\.?(?: ?E\.?)?| ?C\.? ?E\.?| ?A\.? ?D\.?)|[0-9]{3,4})\b(.*?)$/i;
-const _monthRe = null;
-const daySuffixes = ""; // @TODO: localised like Zotero.getString("date.daySuffixes").replace(/, ?/g, "|")
-const _dayRe = new RegExp("\\b([0-9]{1,2})(?:" + daySuffixes + ")?\\b(.*)", "i");
+const compileRegexes = memoize((locale) => {
+	let english = locale.startsWith('en');
 
-let locale = window?.navigator?.language ?? 'en-US';
-let english = locale.startsWith('en');
-
-// If no exact match, try first two characters ('de')
-if (!dateFormatsJSON[locale]) {
-	locale = locale.substring(0, 2);
-}
-// Try first two characters repeated ('de-DE')
-if (!dateFormatsJSON[locale]) {
-	locale = locale + "-" + locale.toUpperCase();
-}
-// Look for another locale with same first two characters
-if (!dateFormatsJSON[locale]) {
-	let sameLang = Object.keys(dateFormatsJSON).filter(l => l.startsWith(locale.substring(0, 2)));
-	if (sameLang.length) {
-		locale = sameLang[0];
+	// If no exact match, try first two characters ('de')
+	if (!dateFormatsJSON[locale]) {
+		locale = locale.substring(0, 2);
 	}
-}
-// If all else fails, use English
-if (!dateFormatsJSON[locale]) {
-	locale = 'en-US';
-	english = true;
-}
-const months = dateFormatsJSON[locale];
-const monthsWithEnglish = english ? months
-	: mapObject(months, (key, value) => value.concat(dateFormatsJSON['en-US'][key]));
+	// Try first two characters repeated ('de-DE')
+	if (!dateFormatsJSON[locale]) {
+		locale = locale + "-" + locale.toUpperCase();
+	}
+	// Look for another locale with same first two characters
+	if (!dateFormatsJSON[locale]) {
+		let sameLang = Object.keys(dateFormatsJSON).filter(l => l.startsWith(locale.substring(0, 2)));
+		if (sameLang.length) {
+			locale = sameLang[0];
+		}
+	}
+	// If all else fails, use English
+	if (!dateFormatsJSON[locale]) {
+		locale = 'en-US';
+		english = true;
+	}
+	const months = dateFormatsJSON[locale];
+	const monthsWithEnglish = english ? months
+		: mapObject(months, (key, value) => [key, value.concat(dateFormatsJSON['en-US'][key])]);
 
-console.log({ months, monthsWithEnglish });
+	let regexMonths = monthsWithEnglish.short.map(m => m.toLowerCase()).concat(monthsWithEnglish.long.map(m => m.toLowerCase()));
+	const slashRe = /^(.*?)\b([0-9]{1,4})(?:([-/.\u5e74])([0-9]{1,2}))?(?:([-/.\u6708])([0-9]{1,4}))?((?:\b|[^0-9]).*?)$/
+	const yearRe = /^(.*?)\b((?:circa |around |about |c\.? ?)?[0-9]{1,4}(?: ?B\.? ?C\.?(?: ?E\.?)?| ?C\.? ?E\.?| ?A\.? ?D\.?)|[0-9]{3,4})\b(.*?)$/i;
+	const monthRe = new RegExp("(.*)(?:^|[^\\p{L}])(" + regexMonths.join("|") + ")[^ ]*(?: (.*)$|$)", "iu");
+	const daySuffixes = ""; // @TODO: localised like Zotero.getString("date.daySuffixes").replace(/, ?/g, "|")
+	const dayRe = new RegExp("\\b([0-9]{1,2})(?:" + daySuffixes + ")?\\b(.*)", "i");
+
+	return { months, monthsWithEnglish, slashRe, yearRe, monthRe, dayRe };
+});
 
 /**
  * Removes leading and trailing whitespace from a string
@@ -56,6 +59,22 @@ function trim(/**String*/ s) {
 function trimInternal(/**String*/ s) {
 	s = s.replace(/[\xA0\r\n\s]+/g, " ");
 	return trim(s);
+}
+
+/**
+ * Pads a number or other string with a given string on the left
+ *
+ * @param {String} string String to pad
+ * @param {String} pad String to use as padding
+ * @length {Integer} length Length of new padded string
+ * @type String
+ */
+function lpad(string, pad, length) {
+	string = string ? string + '' : '';
+	while (string.length < length) {
+		string = pad + string;
+	}
+	return string;
 }
 
 function _insertDateOrderPart(dateOrder, part, partOrder) {
@@ -96,10 +115,12 @@ function _insertDateOrderPart(dateOrder, part, partOrder) {
 *
 * Note: the returned object is *not* a JS Date object
 */
-function strToDate(string) {
+function strToDate(string, { locale } = {}) {
 	var date = {
 		order: ''
 	};
+
+	const { monthsWithEnglish, slashRe, yearRe, monthRe, dayRe } = compileRegexes(locale ?? window?.navigator?.language ?? 'en-US');
 
 	if (typeof string == 'string' || typeof string == 'number') {
 		string = trimInternal(string.toString());
@@ -113,7 +134,7 @@ function strToDate(string) {
 	var parts = [];
 
 	// first, directly inspect the string
-	var m = _slashRe.exec(string);
+	var m = slashRe.exec(string);
 	if (m &&
 		((!m[5] || !m[3]) || m[3] == m[5] || (m[3] == "\u5e74" && m[5] == "\u6708")) &&	// require sane separators
 		((m[2] && m[4] && m[6]) || (!m[1] && !m[7]))) {						// require that either all parts are found,
@@ -214,7 +235,7 @@ function strToDate(string) {
 	// YEAR
 	if (!date.year) {
 		for (var i in parts) {
-			m = _yearRe.exec(parts[i].part);
+			m = yearRe.exec(parts[i].part);
 			if (m) {
 				date.year = m[2];
 				date.order = _insertDateOrderPart(date.order, 'y', parts[i]);
@@ -236,7 +257,7 @@ function strToDate(string) {
 		months = months.short.map(m => m.toLowerCase())
 			.concat(months.long.map(m => m.toLowerCase()));
 		for (let i in parts) {
-			m = _monthRe.exec(parts[i].part);
+			m = monthRe.exec(parts[i].part);
 			if (m) {
 				// Modulo 12 in case we have multiple languages
 				date.month = months.indexOf(m[2].toLowerCase()) % 12;
@@ -255,7 +276,7 @@ function strToDate(string) {
 	// DAY
 	if (!date.day) {
 		for (let i in parts) {
-			m = _dayRe.exec(parts[i].part);
+			m = dayRe.exec(parts[i].part);
 			if (m) {
 				var day = parseInt(m[1], 10);
 				// Sanity check
@@ -300,4 +321,24 @@ function strToDate(string) {
 	return date;
 }
 
-export { strToDate };
+/**
+ * Attempts to convert string date (e.g. 04/10/2021) into ISO 8601 string
+ * Uses strToDate, which parses according to browser's locale
+ */
+function strToISO(str) {
+	const date = strToDate(str);
+
+	if (date.year) {
+		var dateString = lpad(date.year, "0", 4);
+		if (parseInt(date.month) == date.month) {
+			dateString += "-" + lpad(date.month + 1, "0", 2);
+			if (date.day) {
+				dateString += "-" + lpad(date.day, "0", 2);
+			}
+		}
+		return dateString;
+	}
+	return false;
+}
+
+export { strToDate, strToISO };

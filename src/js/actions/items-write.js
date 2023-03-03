@@ -9,6 +9,7 @@ import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
 import { omit, pick } from '../common/immutable';
 import { parseDescriptiveString } from '../common/format';
+import { strToISO } from '../common/str-to-date';
 import { sniffForMIMEType } from '../common/mime';
 import baseMappings from '../../../data/mappings';
 
@@ -1318,7 +1319,15 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 		else if(fieldKey === 'accessDate' || fieldKey === 'date'||
 			(item.itemType in baseMappings && 'date' in baseMappings[item.itemType] && fieldKey === baseMappings[item.itemType]['date'])
 		) {
-			patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+			// attempt to parse date into iso format using Zotero strToDate
+			const isoDate = strToISO(patch[fieldKey]);
+			if (isoDate) {
+				patch[fieldKey] = isoDate;
+			} else {
+				// if parsing fails, try check for descriptive string e.g. "today"
+				patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+			}
+
 			if(fieldKey === 'accessDate' && patch[fieldKey].match(/^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9])$/)) {
 				// If date follows ISO format but seconds are missing we silently append 00. See #464
 				patch[fieldKey] += ':00';

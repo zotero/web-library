@@ -3,6 +3,10 @@
         "0": {
             "key": "VR82JUX8",
             "version": 157,
+            "meta": {
+                "parsedDate": "2021-04-10",
+                "numChildren": 0
+            },
             "data": {
                 "key": "VR82JUX8",
                 "version": 157,
@@ -65,7 +69,7 @@
                 "volume": "220",
                 "issue": "9",
                 "pages": "1315–1320",
-                "date": "2002",
+                "date": "2021-04-10",
                 "series": "",
                 "seriesTitle": "",
                 "seriesText": "",
@@ -83,7 +87,9 @@
                 "rights": "",
                 "extra": "Publisher: Am Vet Med Assoc",
                 "tags": [],
-                "collections": [],
+                "collections": [
+                    "WTTJ2J56"
+                ],
                 "relations": {},
                 "dateAdded": "2023-01-13T10:52:40Z",
                 "dateModified": "2023-01-13T10:52:40Z"
