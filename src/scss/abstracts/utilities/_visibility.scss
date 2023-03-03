@@ -19,7 +19,6 @@
   }
 }
 
-
 // Responsive visibility for 'mouse devices' only
 
 @each $bp in map-keys($grid-breakpoints) {
@@ -37,7 +36,7 @@
 }
 
 #{$scope} .hidden-mouse,
-.touch {
+#{$scope} .touch {
 	@include mouse-and-bp-up(md) {
 		display: none !important;
 	}
@@ -61,7 +60,7 @@
 }
 
 #{$scope} .hidden-touch,
-.mouse {
+#{$scope} .mouse {
 	@include touch-or-bp-down(sm) {
 		display: none !important;
 	}
