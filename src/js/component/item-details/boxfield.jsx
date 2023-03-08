@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Editable from '../editable';
@@ -10,6 +10,7 @@ import Input from '../form/input';
 import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';
 import { cleanDOI, cleanURL, getDOIURL } from '../../utils';
+import { strToDate } from '../../common/date';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -124,7 +125,7 @@ BoxFieldInputEditable.propTypes = {
 };
 
 const BoxFieldInput = memo(props => {
-	const { field, isForm, onCancel, onCommit, onClick, onFocus, onBlur } = props;
+	const { field, isForm, onCancel, onCommit, onClick, onFocus, onBlur, onKeyDown, onKeyUp } = props;
 	const display = field.key === 'itemType' ?
 		field.options.find(o => o.value === field.value) :
 		null;
@@ -140,6 +141,8 @@ const BoxFieldInput = memo(props => {
 		isBusy: field.processing || false,
 		onCancel,
 		onCommit,
+		onKeyDown,
+		onKeyUp,
 		options: field.options || null,
 		placeholder: field.placeholder || null,
 		selectOnFocus: !isForm,
@@ -194,6 +197,8 @@ BoxFieldInput.propTypes = {
 	onClick: PropTypes.func,
 	onCommit: PropTypes.func,
 	onFocus: PropTypes.func,
+	onKeyDown: PropTypes.func,
+	onKeyUp: PropTypes.func,
 };
 
 const BoxField = props => {
@@ -202,6 +207,16 @@ const BoxField = props => {
 	const isSelect = InputComponent === SelectInput;
 	const isPseudoEditable = !isForm && isSelect;
 	const shouldUseEditable = !isForm &&!isPseudoEditable;
+	const boxFieldProps = { ...props };
+	const [dateFormatHint, setDateFormatHint] = useState(() => field.key === 'date' ? strToDate(field.value)?.order : null)
+
+	const handleDateKeyUp = useCallback((ev) => {
+		setDateFormatHint(strToDate(ev.target.value)?.order);
+	}, []);
+
+	if(field.key === 'date') {
+		boxFieldProps['onKeyUp'] = handleDateKeyUp;
+	}
 
 	const className = {
 		'abstract': field.key === 'abstractNote',
@@ -219,11 +234,16 @@ const BoxField = props => {
 			data-key={ field.key }
 			className={ cx(className) }
 		>
-			<BoxFieldLabel field={ props.field } />
+			<BoxFieldLabel field={ field } />
 			{ shouldUseEditable ?
-				<BoxFieldInputEditable { ...props } /> :
-				<BoxFieldInput { ...props } />
+				<BoxFieldInputEditable { ...boxFieldProps } /> :
+				<BoxFieldInput { ...boxFieldProps } />
 			}
+			{ (field.key === 'date' && isActive) && (
+				<div className="date-hint">
+					{ dateFormatHint }
+				</div>
+			) }
 		</Field>
 	);
 }

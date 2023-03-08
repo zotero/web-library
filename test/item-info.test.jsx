@@ -158,8 +158,12 @@ describe('Item info', () => {
 		//@TODO: day suiffixes, e.g. April 10th, 2021 should also work
 		await user.type(
 			screen.getByRole('textbox', { name: 'Date' }),
-			'April 10, 2021{enter}', { skipClick: true }
+			'April 10, 2021', { skipClick: true }
 		);
+
+		expect(await screen.findByText('mdy')).toBeInTheDocument();
+		await user.type(screen.getByRole('textbox', { name: 'Date' }) , '{enter}');
+		await waitFor(() => expect(screen.queryByText('mdy')).not.toBeInTheDocument());
 
 		await waitFor(() => expect(screen.getByRole('textbox',
 			{ name: 'Date' })
@@ -194,14 +198,16 @@ describe('Item info', () => {
 		//@TODO: day suiffixes, e.g. "4ty Październik 2021" should also work
 		await user.type(
 			screen.getByRole('textbox', { name: 'Date' }),
-			'4 Październik 2021{enter}', { skipClick: true }
+			'4 Październik 2021', { skipClick: true }
 		);
 
+		expect(await screen.findByText('dmy')).toBeInTheDocument();
+		await user.type(screen.getByRole('textbox', { name: 'Date' }), '{enter}');
+		await waitFor(() => expect(screen.queryByText('dmy')).not.toBeInTheDocument());
 		await waitFor(() => expect(screen.getByRole('textbox',
 			{ name: 'Date' })
 		).toHaveTextContent('2021-10-04'));
 
 		expect(hasBeenPosted).toBe(true);
 	});
-
 });

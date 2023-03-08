@@ -2,7 +2,7 @@
  * But without dependencies that would substantially add to the bundle size.
 */
 
-import { mapObject } from '../common/immutable';
+import { mapObject } from './immutable';
 import dateFormatsJSON from '../../../data/date-formats.json';
 import memoize from 'memoize-one';
 
@@ -324,11 +324,13 @@ function strToDate(string, { locale } = {}) {
 /**
  * Attempts to convert string date (e.g. 04/10/2021) into ISO 8601 string
  * Uses strToDate, which parses according to browser's locale
+ * Stricter version than in Zotero as it will only return ISO date if all components:
+ * day, month and year are present.
  */
 function strToISO(str) {
 	const date = strToDate(str);
 
-	if (date.year) {
+	if (date.year && date.month && date.day) {
 		var dateString = lpad(date.year, "0", 4);
 		if (parseInt(date.month) == date.month) {
 			dateString += "-" + lpad(date.month + 1, "0", 2);

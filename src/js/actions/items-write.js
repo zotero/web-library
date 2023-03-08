@@ -9,7 +9,7 @@ import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
 import { omit, pick } from '../common/immutable';
 import { parseDescriptiveString } from '../common/format';
-import { strToISO } from '../common/str-to-date';
+import { strToISO } from '../common/date';
 import { sniffForMIMEType } from '../common/mime';
 import baseMappings from '../../../data/mappings';
 

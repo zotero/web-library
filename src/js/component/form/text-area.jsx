@@ -13,8 +13,9 @@ const NATIVE_INPUT_PROPS = ['autoComplete', 'autoFocus', 'cols', 'disabled', 'fo
 'tabIndex', 'wrap'];
 
 const TextAreaInput = memo(forwardRef((props, ref) => {
-	const { className, inputGroupClassName, isBusy, value: initialValue, isSingleLine, onBlur = noop, onFocus =
-	noop, onCancel = noop, onChange = noop, onCommit = noop, selectOnFocus, resize, ...rest } = props;
+	const { className, inputGroupClassName, isBusy, value: initialValue, isSingleLine, onBlur = noop,
+		onFocus = noop, onCancel = noop, onChange = noop, onCommit = noop, onKeyDown = noop,
+		onKeyUp = noop, selectOnFocus, resize, ...rest } = props;
 	const [value, setValue] = useState(initialValue);
 	const prevInitialValue = usePrevious(initialValue);
 
@@ -81,9 +82,10 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 				}
 			break;
 		default:
+			onKeyDown(ev);
 			return;
 		}
-	}, [initialValue, isSingleLine, onCancel, onCommit, value]);
+	}, [initialValue, isSingleLine, onCancel, onCommit, onKeyDown, value]);
 
 	useEffect(() => {
 		if(initialValue !== prevInitialValue && initialValue !== value) {
@@ -97,6 +99,7 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 			onBlur={ handleBlur }
 			onChange={ handleChange }
 			onFocus={ handleFocus }
+			onKeyUp={ onKeyUp }
 			onKeyDown={ handleKeyDown }
 			ref={ input }
 			value={ value }
@@ -135,6 +138,8 @@ TextAreaInput.propTypes = {
 		onChange: PropTypes.func,
 		onCommit: PropTypes.func,
 		onFocus: PropTypes.func,
+		onKeyDown: PropTypes.func,
+		onKeyUp: PropTypes.func,
 		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 		selectOnFocus: PropTypes.bool,
 		value: PropTypes.string,

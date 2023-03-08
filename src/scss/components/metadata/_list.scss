@@ -494,6 +494,18 @@
 		}
 	}
 
+	.date-hint {
+		color: $shade-5;
+		margin-left: $space-xs;
+		width: 40px;
+		letter-spacing: 4px;
+		text-align: right;
+
+		@include touch-or-bp-down(sm) {
+			margin-top: 9px;
+		}
+	}
+
 	@include mouse-and-bp-up(md) {
 		.editable {
 			&.textarea {

@@ -10,7 +10,7 @@ import { useDrag, useDrop } from 'react-dnd';
 
 const SimpleField = memo(forwardRef((props, ref) => {
 	const { children, className, dragHandle=null, onClick = noop, onKeyDown = noop, tabIndex } = props;
-	const [label, value] = React.Children.toArray(children);
+	const [label, value, ...otherChildren] = React.Children.toArray(children);
 
 	return (
 		<li
@@ -27,6 +27,7 @@ const SimpleField = memo(forwardRef((props, ref) => {
 			<div className="value">
 				{ value }
 			</div>
+			{ otherChildren }
 			{ dragHandle }
 		</li>
 	);
