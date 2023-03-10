@@ -98,8 +98,8 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		const tags = [];
 
 		for(let [tag, color] of Object.entries(tagColors || {})) {
-			const isDisabled = !coloredTags.includes(tag);
 			const isSelected = selectedTagNames.includes(tag);
+			const isDisabled = !isSelected && !coloredTags.includes(tag);
 
 			if(shouldSkipDisabledAndSelected && (isDisabled || isSelected)) {
 				continue;

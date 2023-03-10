@@ -59,11 +59,13 @@ const TagSelectorItems = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
+	const prevSelectedTagsLength = usePrevious(selectedTags.length);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(tagContainerRef, null, false);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector } = useFocusManager(tagContainerRef, null, false);
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
+	const tagFocusNext = useRef({ tag: null, isQueryChanged: false });
 	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
@@ -107,6 +109,7 @@ const TagSelectorItems = () => {
 		// result of toggleTag(). Need to trigger blur() so that container can accept focus again.
 		// See #372
 		ev.currentTarget.blur();
+		tagFocusNext.current = { tag: ev.currentTarget.dataset.tag, isQueryChanged: false };
 		toggleTag(tag);
 	}, [toggleTag]);
 
@@ -155,6 +158,24 @@ const TagSelectorItems = () => {
 			dispatch(connectionIssues(true));
 		}
 	}, [dispatch, errorCount, prevErrorCount]);
+
+	useEffect(() => {
+		if (selectedTags.length !== prevSelectedTagsLength && tagFocusNext.current) {
+			tagFocusNext.current.isQueryChanged = true;
+		}
+	}, [selectedTags.length, prevSelectedTagsLength]);
+
+	// on every render try to re-focus the tag that was focused before tag query changed
+	// See #372 and #507
+	useEffect(() => {
+		if (tagFocusNext.current.tag !== null && tagFocusNext.current.isQueryChanged) {
+			const selector = `[data-tag="${tagFocusNext.current.tag}"]`;
+			if (tagContainerRef.current?.querySelector(selector)) {
+				focusBySelector(selector);
+				tagFocusNext.current = { tag: null, isQueryChanged: false };
+			}
+		}
+	});
 
 	return (
 		<div
