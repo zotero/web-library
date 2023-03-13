@@ -24,9 +24,11 @@ const NewFileModal = () => {
 	const [filesData, setFilesData] = useState([]);
 
 	const closeModal = useCallback(() => {
-		dispatch(toggleModal(NEW_FILE, false));
-		setFilesData([]);
-	}, [dispatch]);
+		if(!isBusy) {
+			dispatch(toggleModal(NEW_FILE, false));
+			setFilesData([]);
+		}
+	}, [dispatch, isBusy]);
 
 	const handleCreateFileClick = useCallback(async () => {
 		setBusy(true);
@@ -77,6 +79,7 @@ const NewFileModal = () => {
 			isBusy={ isBusy }
 			isOpen={ isOpen }
 			onRequestClose={ closeModal }
+			shouldCloseOnEsc={ !isBusy }
 			overlayClassName="modal-centered modal-slide"
 		>
 			<div className="modal-header">
