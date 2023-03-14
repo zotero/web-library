@@ -95,7 +95,7 @@ const Reader = () => {
 				iframeRef.current.contentWindow.postMessage({
 					action: 'setAnnotations',
 					annotations: allAnnotations
-				});
+				}, "*");
 				setDataState({ ...dataState, importedAnnotations });
 				return;
 			}
@@ -127,7 +127,7 @@ const Reader = () => {
 			sidebarWidth: 240, // Save sidebar width?
 			sidebarOpen: true, // Save sidebar open/close state?
 			rtl: false // TODO: ?
-		});
+		}, "*");
 	}, [currentUserSlug, dataState, isGroup, handleIframeMessage, url])
 
 	useEffect(() => {
@@ -166,7 +166,7 @@ const Reader = () => {
 			iframeRef.current.contentWindow.postMessage({
 				action: 'setAnnotations',
 				annotations: allAnnotations
-			});
+			}, "*");
 			setDataState({ ...dataState, processedAnnotations });
 		}
 	}, [annotations, dataState, isAllFetched, getProcessedAnnotations, prevAnnotations, wasAllFetched])

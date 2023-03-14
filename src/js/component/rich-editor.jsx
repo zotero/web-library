@@ -25,7 +25,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 
 	const focusEditor = useCallback(() => {
 		iframeRef.current.focus();
-		iframeRef.current.contentWindow.postMessage({ action: 'focus' });
+		iframeRef.current.contentWindow.postMessage({ action: 'focus' }, "*");
 	}, []);
 
 	// ensure content has actually changed before sending to the API
@@ -41,7 +41,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 		if (subscription && subscription.type === 'image' && subscription.data?.attachmentKey) {
 			const { id, data: { attachmentKey } } = subscription;
 			const url = await dispatch(getAttachmentUrl(attachmentKey));
-			iframeRef.current.contentWindow.postMessage({action: 'notifySubscription', id, data: { src: url }});
+			iframeRef.current.contentWindow.postMessage({ action: 'notifySubscription', id, data: { src: url } }, "*");
 		}
 	}, [dispatch])
 
@@ -66,7 +66,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 			const attachmentKey = createdItems?.[index]?.key;
 
 			if(attachmentKey) {
-				iframeRef.current.contentWindow.postMessage({ action: 'attachImportedImage', nodeID, attachmentKey });
+				iframeRef.current.contentWindow.postMessage({ action: 'attachImportedImage', nodeID, attachmentKey }, "*");
 			}
 		}, []);
 	}, [dispatch]);
@@ -123,7 +123,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 			disableDrag: isTouchOrSmall,
 			localizedStrings: [],
 			value
-		});
+		}, "*");
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useImperativeHandle(ref, () => ({
@@ -169,7 +169,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 				disableDrag: isTouchOrSmall,
 				localizedStrings: [],
 				value: lastSeenValue.current
-			});
+			}, "*");
 		}
 	}, [id, isReadOnly, changeIfDifferent, previousID, value, wasReadOnly, wasTouchOrSmall, isTouchOrSmall]);
 
