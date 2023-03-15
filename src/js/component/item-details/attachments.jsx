@@ -427,7 +427,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 		} else if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
-			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: fileInput.current });
+			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: fileInput.current || addLinkedUrlButtonRef.current });
 		} else if(ev.key === 'Home') {
 			fileInput.current.focus();
 			ev.preventDefault();
@@ -460,12 +460,16 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
 			ev.currentTarget === fileInput.current ?
 				addLinkedUrlButtonRef.current.focus() :
-				fileInput.current.focus();
+				fileInput.current?.focus();
 		} else if(ev.key === 'ArrowDown') {
 			scrollContainerRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
 			focusBySelector('.attachment:last-child');
+			ev.preventDefault();
+		} else if(ev.key === 'Tab' && ev.getModifierState('Shift')) {
+			//@TODO: do this in a more elegant way
+			document.querySelector('[aria-label="Item Details"]').focus();
 			ev.preventDefault();
 		}
 	}, [focusBySelector]);
