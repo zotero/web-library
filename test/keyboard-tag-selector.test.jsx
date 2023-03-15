@@ -17,11 +17,11 @@ const state = JSONtoState(stateRaw);
 // these tests include styles which makes them very slow
 applyAdditionalJestTweaks({ timeout: 240000 });
 
-test('Navigate through collections tree using keyboard', async () => {
+test('Navigate through tag selector using keyboard', async () => {
 	delete window.location;
 	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 	const user = userEvent.setup()
-	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
+	renderWithProviders(<MainZotero />, { preloadedState: state });
 	await waitForPosition();
 
 	screen.getByRole('button', { name: 'cute' }).focus();

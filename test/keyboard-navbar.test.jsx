@@ -21,7 +21,7 @@ test('Navigate through navbar using keyboard', async () => {
 	delete window.location;
 	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 	const user = userEvent.setup()
-	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
+	renderWithProviders(<MainZotero />, { preloadedState: state });
 	await waitForPosition();
 
 	await user.keyboard('{arrowleft}');

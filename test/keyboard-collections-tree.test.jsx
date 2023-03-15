@@ -3,7 +3,7 @@
 */
 import React from 'react';
 import '@testing-library/jest-dom';
-import { act, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -21,15 +21,20 @@ test('Navigate through collections tree using keyboard', async () => {
 	delete window.location;
 	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 	const user = userEvent.setup()
-	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
+	renderWithProviders(<MainZotero />, { preloadedState: state });
 	await waitForPosition();
 
-	act(() => screen.getByRole('treeitem', { name: 'My Library' }).focus());
-	await user.keyboard('{arrowright}');
+	await user.keyboard('{tab}');
+	await waitFor(() => expect(document.querySelector('html')).toHaveClass('keyboard'));
+	await waitFor(() => expect(screen.getByRole('treeitem', { name: 'My Library' })).toHaveFocus());
 
-	expect(screen.getByRole('button', { name: 'Add Collection' })).toHaveFocus();
+	// @NOTE: JSDOM/NWSAPI doesn't seem to support :focus-within?
+	// 		  https://github.com/dperini/nwsapi/issues/47
+	//		  https://github.com/jsdom/jsdom/issues/3055
+	// await user.keyboard('{arrowright}');
+	// await waitFor(() => expect(screen.getByRole('button', { name: 'Add Collection' })).toHaveFocus());
+	// await user.keyboard('{arrowleft}{arrowdown}');
 
-	await user.keyboard('{arrowleft}{arrowdown}');
-
+	await user.keyboard('{arrowdown}');
 	expect(screen.getByRole('treeitem', { name: 'AI' })).toHaveFocus();
 });

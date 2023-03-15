@@ -21,7 +21,7 @@ test('Navigate through the toolbar and items table using keyboard', async () => 
 	delete window.location;
 	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 	const user = userEvent.setup()
-	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
+	renderWithProviders(<MainZotero />, { preloadedState: state });
 	await waitForPosition();
 
 	const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
