@@ -1,4 +1,4 @@
-import { sortItemsByKey, compareItem, sortByKey } from '../utils';
+import { sortItemsByKey, compareItem } from '../utils';
 import { omit } from '../common/immutable';
 import { getFieldNameFromSortKey } from '../utils';
 
@@ -19,7 +19,7 @@ const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	return entries;
 }
 
-const injectExtraItemKeys = (state, newKeys, items) => {
+const injectExtraItemKeys = (mappings, state, newKeys, items) => {
 	if(!Array.isArray(newKeys)) { newKeys = [newKeys]; }
 	if(!('totalResults' in state && 'keys' in state)) {
 		// we don't know enough about target collection to make changes
@@ -60,7 +60,10 @@ const injectExtraItemKeys = (state, newKeys, items) => {
 				}
 
 				var comparisionResult = compareItem(
-					items[keys[i]] || {}, items[newKey] || {}, sortBy
+					mappings,
+					items[keys[i]] || {},
+					items[newKey] || {},
+					sortBy
 				);
 
 				if(sortDirection === 'desc') {
@@ -213,7 +216,7 @@ const updateFetchingState = ({ requests: prevRequests = [] } = {}, action) => {
 	};
 }
 
-const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
+const sortItemKeysOrClear = (mappings, state, items, sortBy, sortDirection) => {
 	var isCompleteSet = 'totalResults' in state &&
 		'keys' in state &&
 		state.totalResults === state.keys.length;
@@ -231,6 +234,7 @@ const sortItemKeysOrClear = (state, items, sortBy, sortDirection) => {
 	if(isCompleteSet) {
 		keys = [...state.keys];
 		sortItemsByKey(
+			mappings,
 			keys,
 			sortBy,
 			sortDirection,

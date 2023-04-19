@@ -5,14 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import BoxField from './boxfield';
 import Creators from '../form/creators';
-import baseMappings from '../../../../data/mappings';
 import { get } from '../../utils';
 import { getFieldDisplayValue } from '../../common/item';
 import { hideFields, hideIfEmptyFields, noEditFields, extraFields } from '../../constants/item';
 import { updateItemWithMapping } from '../../actions';
 
-const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, isReadOnly) => {
-	const titleField = (item || {}).itemType in baseMappings && baseMappings[item.itemType]['title'] || 'title';
+const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, mappings, isReadOnly) => {
+	const titleField = (item || {}).itemType in mappings && mappings[item.itemType]['title'] || 'title';
 	const aggregatedPatch = (pendingChanges || []).reduce(
 		(aggr, { patch }) => ({...aggr, ...patch}), {}
 	);
@@ -49,6 +48,7 @@ const ItemBox = ({ isReadOnly }) => {
 	const creatorTypes = useSelector(state=> state.meta.itemTypeCreatorTypes[item.itemType]);
 	const itemTypeFields = useSelector(state=> state.meta.itemTypeFields);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const mappings = useSelector(state => state.meta.mappings);
 	const pendingChanges = useSelector(state =>
 		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey])
 	);
@@ -67,8 +67,8 @@ const ItemBox = ({ isReadOnly }) => {
 	})).filter(it => it.value !== 'note'), [itemTypes]);
 
 	const fields = useMemo(
-		() => makeFields(item, pendingChanges, itemTypeOptions, itemTypeFields, isReadOnly),
-		[item, pendingChanges, itemTypeOptions, itemTypeFields, isReadOnly]
+		() => makeFields(item, pendingChanges, itemTypeOptions, itemTypeFields, mappings, isReadOnly),
+		[item, pendingChanges, itemTypeOptions, itemTypeFields, mappings, isReadOnly]
 	);
 
 	const [activeEntry, setActiveEntry] = useState(null);

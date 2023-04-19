@@ -7,7 +7,7 @@ import {
     RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_TRASH_ITEMS, REQUEST_TRASH_ITEMS, SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const detectChangesInTrash = (state, action, items) => {
+const detectChangesInTrash = (mappings, state, action, items) => {
 	if(!('keys' in state)) {
 		return state;
 	}
@@ -26,7 +26,7 @@ const detectChangesInTrash = (state, action, items) => {
 
 	if(keysToInject.length > 0) {
 		const allItems = { ...items, ...indexByKey(action.items) };
-		newState = injectExtraItemKeys(newState, keysToInject, allItems);
+		newState = injectExtraItemKeys(mappings, newState, keysToInject, allItems);
 	}
 
 	if(keysToRemove.length > 0) {
@@ -36,7 +36,7 @@ const detectChangesInTrash = (state, action, items) => {
 	return newState;
 }
 
-const itemsTrash = (state = {}, action, { items }) => {
+const itemsTrash = (state = {}, action, { items, meta }) => {
 	switch(action.type) {
 		case RECEIVE_DELETE_ITEM:
 			return filterItemKeys(state, action.item.key);
@@ -45,6 +45,7 @@ const itemsTrash = (state = {}, action, { items }) => {
 			return filterItemKeys(state, action.itemKeys);
 		case RECEIVE_MOVE_ITEMS_TRASH:
 			return injectExtraItemKeys(
+				meta.mappings,
 				state,
 				action.itemKeys,
 				{ ...action.otherItems, ...indexByKey(action.items) }
@@ -70,10 +71,10 @@ const itemsTrash = (state = {}, action, { items }) => {
 			}
 		case SORT_ITEMS:
 			return sortItemKeysOrClear(
-				state, action.items, action.sortBy, action.sortDirection
+				meta.mappings, state, action.items, action.sortBy, action.sortDirection
 			);
 		case RECEIVE_FETCH_ITEMS:
-			return detectChangesInTrash(state, action, items);
+			return detectChangesInTrash(meta.mappings, state, action, items);
 		default:
 			return state;
 	}

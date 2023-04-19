@@ -10,13 +10,13 @@ import {
 	REQUEST_CHILD_ITEMS,
 } from '../../constants/actions.js';
 
-const detectChangesInParent = (state, action, items) => {
+const detectChangesInParent = (mappings, state, action, items) => {
 	const newState = { ...state };
 	const allItems = { ...items, ...indexByKey(action.items) };
 
 	action.items.forEach(item => {
 		if(item.parentItem && item.parentItem in newState && !get(newState, [item.parentItem, 'keys'], []).includes(item.key) && !item.deleted) {
-			newState[item.parentItem] = injectExtraItemKeys(newState[item.parentItem], item.key, allItems);
+			newState[item.parentItem] = injectExtraItemKeys(mappings, newState[item.parentItem], item.key, allItems);
 		}
 
 		Object.entries(newState).forEach(([parentKey, itemKeysData]) => {
@@ -29,7 +29,7 @@ const detectChangesInParent = (state, action, items) => {
 	return newState;
 }
 
-const itemsByParent = (state = {}, action, { items }) => {
+const itemsByParent = (state = {}, action, { items, meta }) => {
 	var parentKey;
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
@@ -38,6 +38,7 @@ const itemsByParent = (state = {}, action, { items }) => {
 				return {
 					...state,
 					[parentKey]: injectExtraItemKeys(
+						meta.mappings,
 						state[parentKey],
 						action.item.key,
 						{ ...action.otherItems, [action.item.key]: action.item }
@@ -56,11 +57,11 @@ const itemsByParent = (state = {}, action, { items }) => {
 						// @TODO: Optimise (inject loops over all items of the first argument)
 						if(parentKey in aggr) {
 							aggr[parentKey] = injectExtraItemKeys(
-								aggr[parentKey], item.key, otherItems
+								meta.mappings, aggr[parentKey], item.key, otherItems
 							);
 						} else if(parentKey in state) {
 							aggr[parentKey] = injectExtraItemKeys(
-								state[parentKey], item.key, otherItems
+								meta.mappings, state[parentKey], item.key, otherItems
 							);
 						}
 					}
@@ -121,6 +122,7 @@ const itemsByParent = (state = {}, action, { items }) => {
 			return mapObject(state, (pk, childKeys) => {
 				if(pk === parentKey) {
 					return [pk, injectExtraItemKeys(
+						meta.mappings,
 						childKeys,
 						action.item.key,
 						{ ...action.otherItems, [action.item.key]: action.item }
@@ -132,7 +134,7 @@ const itemsByParent = (state = {}, action, { items }) => {
 		case RECEIVE_FETCH_ITEMS:
 			return {
 				...state,
-				...detectChangesInParent(state, action, items)
+				...detectChangesInParent(meta.mappings, state, action, items)
 			}
 		default:
 			return state;

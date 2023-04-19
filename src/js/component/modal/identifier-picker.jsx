@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import Button from '../ui/button';
@@ -12,13 +13,13 @@ import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
 import Spinner from '../ui/spinner';
 
-const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
-	const { key, description, source } = item;
+const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
+	const { description } = item;
 	const inputId = useRef(getUniqueId());
 
 	let badge = null, title = '';
 	if('itemType' in item) {
-		title = getBaseMappedValue(item, 'title');
+		title = getBaseMappedValue(mappings, item, 'title');
 		badge = item.itemType;
 	} else if(identifierIsUrl) {
 		let badges = [];
@@ -78,6 +79,14 @@ const Item = memo(({ onChange, identifierIsUrl, isPicked, item }) => {
 
 Item.displayName = 'Item';
 
+Item.propTypes = {
+	onChange: PropTypes.func.isRequired,
+	identifierIsUrl: PropTypes.bool.isRequired,
+	isPicked: PropTypes.bool.isRequired,
+	item: PropTypes.object.isRequired,
+	mappings: PropTypes.object.isRequired
+};
+
 const IdentifierPicker = () => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.modal.id === IDENTIFIER_PICKER);
@@ -86,6 +95,7 @@ const IdentifierPicker = () => {
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
+	const mappings = useSelector(state => state.meta.mappings);
 	const isSearching = useSelector(state => state.identifier.isSearching);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
@@ -161,6 +171,7 @@ const IdentifierPicker = () => {
 							identifierIsUrl={ identifierIsUrl }
 							key={ item.key }
 							item={ item }
+							mappings={ mappings }
 							isPicked={ selectedKeys.includes(item.key) }
 							onChange={ handleItemChange }
 						/>)

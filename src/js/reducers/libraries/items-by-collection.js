@@ -11,7 +11,7 @@ import {
 	RECEIVE_UPDATE_ITEM, REQUEST_ITEMS_IN_COLLECTION, SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const detectChangesInMembership = (state, action, items) => {
+const detectChangesInMembership = (mappings, state, action, items) => {
 	const newState = { ...state };
 	const allItems = { ...items, ...indexByKey(action.items) };
 
@@ -22,7 +22,7 @@ const detectChangesInMembership = (state, action, items) => {
 		item.collections.forEach(collectionKey => {
 			if(collectionKey in newState && (!('keys' in newState[collectionKey]) || !newState[collectionKey].keys.includes(item.key)) && !item.deleted) {
 				// updated item now belongs to collectionKey (or has been recovered from trash)
-				newState[collectionKey] = injectExtraItemKeys(newState[collectionKey], item.key, allItems);
+				newState[collectionKey] = injectExtraItemKeys(mappings, newState[collectionKey], item.key, allItems);
 			}
 		});
 
@@ -37,7 +37,7 @@ const detectChangesInMembership = (state, action, items) => {
 	return newState;
 }
 
-const itemsByCollection = (state = {}, action, { items }) => {
+const itemsByCollection = (state = {}, action, { items, meta }) => {
 	//@TODO: action.otherItems is deprecated, use items
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
@@ -47,6 +47,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 				...(action.item.collections.reduce(
 					(aggr, collectionKey) => {
 						aggr[collectionKey] = injectExtraItemKeys(
+							meta.mappings,
 							state[collectionKey] || {},
 							[action.item.key],
 							{ ...action.otherItems, [action.item.key]: action.item }
@@ -64,11 +65,11 @@ const itemsByCollection = (state = {}, action, { items }) => {
 							//@TODO: Optimise (inject loops over all items of the first argument)
 							if(collectionKey in aggr) {
 								aggr[collectionKey] = injectExtraItemKeys(
-									aggr[collectionKey], item.key, otherItems
+									meta.mappings, aggr[collectionKey], item.key, otherItems
 								);
 							} else if(collectionKey in state) {
 								aggr[collectionKey] = injectExtraItemKeys(
-									state[collectionKey], item.key, otherItems
+									meta.mappings, state[collectionKey], item.key, otherItems
 								);
 							}
 					});
@@ -90,6 +91,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = injectExtraItemKeys(
+					meta.mappings,
 					itemKeys,
 					action.itemKeysByCollection[collectionKey] || [],
 					{ ...action.otherItems, ...indexByKey(action.items) }
@@ -100,6 +102,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 			return {
 				...state,
 				[action.collectionKey]: injectExtraItemKeys(
+					meta.mappings,
 					state[action.collectionKey] || {},
 					action.itemKeysChanged.filter(iKey =>
 						action.items.find(item => item.key === iKey && !item.deleted)
@@ -162,6 +165,7 @@ const itemsByCollection = (state = {}, action, { items }) => {
 			return mapObject(state, (colKey, itemKeys) => {
 				if(action.item.collections.includes(colKey)) {
 					return [colKey, injectExtraItemKeys(
+						meta.mappings,
 						itemKeys,
 						action.item.key,
 						{ ...action.otherItems, [action.item.key]: action.item }
@@ -173,12 +177,12 @@ const itemsByCollection = (state = {}, action, { items }) => {
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = sortItemKeysOrClear(
-					itemKeys, action.items, action.sortBy, action.sortDirection
+					meta.mappings, itemKeys, action.items, action.sortBy, action.sortDirection
 				);
 				return aggr
 			}, {});
 		case RECEIVE_FETCH_ITEMS:
-			return detectChangesInMembership(state, action, items);
+			return detectChangesInMembership(meta.mappings, state, action, items);
 		default:
 			return state;
 	}

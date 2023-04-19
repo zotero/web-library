@@ -1,5 +1,4 @@
 import { noteAsTitle } from './common/format';
-import baseMappings from '../../data/mappings';
 import columnProperties from './constants/column-properties';
 
 const splice = (array, at, count = 0, ...items) => {
@@ -14,6 +13,7 @@ const splice = (array, at, count = 0, ...items) => {
 	];
 };
 
+//@TODO: deprecate this in favor of ?. syntax
 const get = (src, path, fallback) => {
 	if(typeof(src) === 'undefined' || src === null) {
 		return fallback;
@@ -28,6 +28,7 @@ const get = (src, path, fallback) => {
 	var i, ii;
 
 	for(i = 0, ii = parts.length; i < ii; i++) {
+		// eslint-disable-next-line no-prototype-builtins
 		if(!obj.propertyIsEnumerable(parts[i])) {
 			return fallback;
 		}
@@ -116,12 +117,12 @@ const removeRelationByItemKey = (itemKey, relations, libraryKey, relationType='d
 const isUndefinedOrNull = value =>
 	typeof value === 'undefined' || value === null;
 
-const getSortKeyForItemType = (sortKey, itemType) => {
-	return itemType in baseMappings && sortKey in baseMappings[itemType] ?
-		baseMappings[itemType][sortKey] : sortKey;
+const getSortKeyForItemType = (mappings, sortKey, itemType) => {
+	return itemType in mappings && sortKey in mappings[itemType] ?
+		mappings[itemType][sortKey] : sortKey;
 }
 
-const getSortKeyValue = (item, sortBy = 'title') => {
+const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 	sortBy = columnProperties[sortBy].sortKey;
 	if(item.itemType === 'note' && sortBy === 'title') {
 		return noteAsTitle(item.note || '');
@@ -134,15 +135,15 @@ const getSortKeyValue = (item, sortBy = 'title') => {
 		return (item[Symbol.for('meta')] || {})['parsedDate'];
 	}
 
-	const sortKey = getSortKeyForItemType(sortBy, item.itemType);
+	const sortKey = getSortKeyForItemType(mappings, sortBy, item.itemType);
 	return item[sortKey];
 }
 
 
 
-const compareItem = (itemA, itemB, sortBy) => {
-	var a = getSortKeyValue(itemA, sortBy);
-	var b = getSortKeyValue(itemB, sortBy);
+const compareItem = (mappings, itemA, itemB, sortBy) => {
+	var a = getSortKeyValue(mappings, itemA, sortBy);
+	var b = getSortKeyValue(mappings, itemB, sortBy);
 
 	// normalize nulls and empty values, if title, empty value is treated
 	// as an empty string ("") and sorted first in ascending order
@@ -206,10 +207,10 @@ const sortByKey = (items, key, direction = 'asc') => {
 	});
 };
 
-const sortItemsByKey = (items, key, direction = 'asc', getItem = item => item) => {
+const sortItemsByKey = (mappings, items, key, direction = 'asc', getItem = item => item) => {
 	items.sort((a, b) => direction === 'asc' ?
-			compareItem(getItem(a), getItem(b), key) :
-			compareItem(getItem(a), getItem(b), key) * -1
+			compareItem(mappings, getItem(a), getItem(b), key) :
+			compareItem(mappings, getItem(a), getItem(b), key) * -1
 		);
 }
 
@@ -328,7 +329,9 @@ const cleanURL = (url, shouldTryHttp = false) => {
 		if (shouldTryHttp && /\w\.\w/.test(url)) {
 			try {
 				return (new URL('http://' + url)).href;
-			} catch(e) {}
+			} catch(e) {
+				// unable to cleanURL, fall through and return false
+			}
 		}
 	}
 
@@ -371,7 +374,7 @@ const cleanDOI = doi => {
 		throw new Error("cleanDOI: argument must be a string");
 	}
 
-	const doiMatches = doi.match(/10(?:\.[0-9]{4,})?\/[^\s]*[^\s\.,]/);
+	const doiMatches = doi.match(/10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,]/);
 	return doiMatches ? doiMatches[0] : null;
 }
 
@@ -388,7 +391,7 @@ const getLibraryKeyFromTopic = topic => {
 
 const getFieldNameFromSortKey = sortKey => {
 	const matchingKeyValuePair = Object.entries(columnProperties)
-		.find(([_, properties]) => properties.sortKey === sortKey);
+		.find(([_, properties]) => properties.sortKey === sortKey); // eslint-disable-line no-unused-vars
 
 	if(matchingKeyValuePair) {
 		return matchingKeyValuePair[0];

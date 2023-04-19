@@ -2,7 +2,6 @@ import { paramCase } from 'param-case';
 
 import { cleanDOI, cleanURL, get } from '../utils';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
-import baseMappings from '../../../data/mappings';
 
 // https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
 const isOnlyEmoji = str => {
@@ -11,14 +10,14 @@ const isOnlyEmoji = str => {
 	return !str.replace(re, '');
 }
 
-const getBaseMappedValue = (item, property) => {
+const getBaseMappedValue = (mappings, item, property) => {
 	const { itemType } = item;
-	return itemType in baseMappings && property in baseMappings[itemType] ?
-		item[baseMappings[itemType][property]] : property in item ? item[property] : null;
+	return itemType in mappings && property in mappings[itemType] ?
+		item[mappings[itemType][property]] : property in item ? item[property] : null;
 }
 
-const getItemTitle = item => item.itemType === 'note' ?
-	noteAsTitle(item.note) : getBaseMappedValue(item, 'title') || '';
+const getItemTitle = (mappings, item) => item.itemType === 'note' ?
+	noteAsTitle(item.note) : getBaseMappedValue(mappings, item, 'title') || '';
 
 // logic based on:
 // https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
@@ -76,11 +75,11 @@ const getAttachmentColumnIcon = item => {
 	return null;
 }
 
-const getDerivedData = (item, itemTypes, tagColors) => {
+const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	const { itemType, dateAdded, dateModified, extra, journalAbbreviation, language, libraryCatalog,
 	callNumber, rights } = item;
 
-	const title = getItemTitle(item);
+	const title = getItemTitle(mappings, item);
 	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
 		item[Symbol.for('meta')].creatorSummary :
 		'';
@@ -124,8 +123,8 @@ const getDerivedData = (item, itemTypes, tagColors) => {
 		itemType: itemTypeName,
 		itemTypeRaw: itemType,
 		key: item.key,
-		publicationTitle: getBaseMappedValue(item, 'publicationTitle'),
-		publisher: getBaseMappedValue(item, 'publisher'),
+		publicationTitle: getBaseMappedValue(mappings, item, 'publicationTitle'),
+		publisher: getBaseMappedValue(mappings, item, 'publisher'),
 		title,
 		year,
 		journalAbbreviation,

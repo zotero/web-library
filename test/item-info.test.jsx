@@ -6,7 +6,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, getByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -16,6 +16,7 @@ import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 import testUserUpdateDateDMY from './fixtures/response/test-user-update-date-dmy.json';
 import testUserUpdateDateMDY from './fixtures/response/test-user-update-date-mdy.json';
+import testUserUpdateItemType from './fixtures/response/test-user-update-item-type.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -208,6 +209,41 @@ describe('Item info', () => {
 			{ name: 'Date' })
 		).toHaveTextContent('2021-10-04'));
 
+		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('It should use base-type-mappings when changing item types', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasBeenPosted = false
+
+		expect(await screen.findByRole('textbox',
+			{ name: 'Publication' })
+		).toHaveTextContent('Journal of the American Veterinary Medical Association');
+
+		server.use(
+			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
+				const items = await req.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].itemType).toBe('radioBroadcast');
+				expect(items[0].programTitle).toBe('Journal of the American Veterinary Medical Association');
+				hasBeenPosted = true;
+				return res(res => {
+					res.body = JSON.stringify(testUserUpdateItemType);
+					return res;
+				});
+			}),
+		);
+
+		const inputTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
+		await user.click(inputTypeCombo);
+		await user.selectOptions(getByRole(inputTypeCombo, 'listbox'), 'Radio Broadcast');
+
+		expect(await screen.findByRole('textbox',
+			{ name: 'Program Title' })
+		).toHaveTextContent('Journal of the American Veterinary Medical Association');
+		expect(screen.queryByRole('textbox', { name: 'Publication' })).not.toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
 	});
 });

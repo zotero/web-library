@@ -167,17 +167,6 @@ const apiResetCache = key => {
 	}
 }
 
-const apiResetAllCacheOnce = () => {
-	return async (dispatch, getState) => {
-		const { invalidated } = getState().meta;
-		if(!invalidated) {
-			localStorageWrapper.removeItem(CACHE_TIMES_KEY);
-			dispatch({ type: INVALIDATE_META_CACHE });
-			dispatch(initialize());
-		}
-	}
-}
-
 const runRequestSimple = async (dispatch, request, { id, type, payload }, requestOpts = {}) => {
 	const outcome = await request(requestOpts);
 	dispatch({
@@ -221,6 +210,5 @@ const requestWithCache = async (dispatch, request, { id, type, payload }) => {
 	return runRequest(request, { id, type, payload });
 }
 
-export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, apiResetAllCacheOnce,
-	connectionIssues, requestTracker, requestWithBackoff, requestWithCacheAndBackoff,
-	requestWithCache };
+export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, connectionIssues,
+	requestTracker, requestWithBackoff, requestWithCache, requestWithCacheAndBackoff };

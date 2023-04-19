@@ -8,28 +8,18 @@ import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks } from './utils/common';
 import minState from './fixtures/state/minimal.json';
-import itemTypes from './fixtures/response/item-types';
-import itemFields from './fixtures/response/item-fields';
-import creatorFields from './fixtures/response/creator-fields';
+import schema from './fixtures/response/schema';
 
 applyAdditionalJestTweaks();
 
 describe('Loading Screen', () => {
-	let metaRequestCounter = 0;
+	let schemaRequested = false;
 	let settingsRequested = false;
 	let collectionsRequestCounter = 0;
 	const handlers = [
-		rest.get('https://api.zotero.org/itemTypes', (req, res, ctx) => {
-			metaRequestCounter++;
-			return res(ctx.json(itemTypes));
-		}),
-		rest.get('https://api.zotero.org/itemFields', (req, res, ctx) => {
-			metaRequestCounter++;
-			return res(ctx.json(itemFields));
-		}),
-		rest.get('https://api.zotero.org/creatorFields', (req, res, ctx) => {
-			metaRequestCounter++;
-			return res(ctx.json(creatorFields));
+		rest.get('https://api.zotero.org/schema', (req, res, ctx) => {
+			schemaRequested = true;
+			return res(ctx.json(schema));
 		}),
 		rest.get('https://api.zotero.org/users/475425/settings', (req, res, ctx) => {
 			settingsRequested = true;
@@ -76,7 +66,7 @@ describe('Loading Screen', () => {
 	beforeEach(() => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
-		metaRequestCounter = 0;
+		schemaRequested = false;
 		settingsRequested = false;
 		collectionsRequestCounter = 0;
 	});
@@ -88,7 +78,7 @@ describe('Loading Screen', () => {
 	test('Shows Z while fetching data', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: minState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
-		await waitFor(() => expect(metaRequestCounter).toBe(3));
+		await waitFor(() => expect(schemaRequested).toBe(true));
 		await waitFor(() => expect(settingsRequested).toBe(true));
 	});
 

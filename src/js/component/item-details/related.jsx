@@ -18,6 +18,7 @@ const RelatedItem = memo(props => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const mappings = useSelector(state => state.meta.mappings);
 	const iconSize = isTouchOrSmall ? '28' : '16';
 	const id = useRef(getUniqueId());
 
@@ -57,7 +58,7 @@ const RelatedItem = memo(props => {
 					height={ iconSize }
 				/>
 				<a id={ id.current } onClick={ handleSelect }>
-					{ getItemTitle(relatedItem) }
+					{ getItemTitle(mappings, relatedItem) }
 				</a>
 				<Button icon
 					aria-label="remove related"
@@ -90,12 +91,13 @@ const Related = ({ id, isActive }) => {
 	const isFetched = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey, 'isFetched'], false));
 	const allItems = useSelector(state => state.libraries[libraryKey].items);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const mappings = useSelector(state => state.meta.mappings);
 	const relatedItems = (relatedKeys || [])
 		.map(relatedKey => allItems[relatedKey])
 		.filter(Boolean);
 
 	const sortedRelatedItems = [...relatedItems];
-	sortItemsByKey(sortedRelatedItems, 'title');
+	sortItemsByKey(mappings, sortedRelatedItems, 'title');
 
 	const scrollContainerRef = useRef(null);
 	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext,

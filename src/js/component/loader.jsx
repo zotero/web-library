@@ -55,7 +55,6 @@ const Loader = () => {
 	const config = useSelector(state => state.config);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const itemFields = useSelector(state => state.meta.itemFields);
-	const creatorFields = useSelector(state => state.meta.creatorFields);
 
 	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors', 'lookup'], null));
 	const isFetchingGroups = useSelector(state => state.fetching.allGroups);
@@ -73,15 +72,15 @@ const Loader = () => {
 	useEffect(() => {
 		if (isReader && tagColors && !isFetchingGroups) {
 			setIsReady(true);
-		} else if (itemTypes?.length && itemFields?.length && creatorFields?.length && tagColors && !isWaitingForCollections && !isFetchingGroups) {
+		} else if (itemTypes?.length && itemFields?.length && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			setIsReady(true);
 		}
-	}, [itemTypes, itemFields, creatorFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader]);
+	}, [itemTypes, itemFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());
 
-		if (!(itemTypes?.length && itemFields?.length && creatorFields?.length)) {
+		if (!(itemTypes?.length && itemFields?.length)) {
 			dispatch(initialize());
 		}
 		if (!tagColors) {

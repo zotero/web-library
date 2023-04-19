@@ -5290,8 +5290,16 @@
                 "localized": "Case"
             },
             {
+                "itemType": "computerProgram",
+                "localized": "Software"
+            },
+            {
                 "itemType": "conferencePaper",
                 "localized": "Conference Paper"
+            },
+            {
+                "itemType": "dataset",
+                "localized": "Dataset"
             },
             {
                 "itemType": "dictionaryEntry",
@@ -5354,10 +5362,6 @@
                 "localized": "Newspaper Article"
             },
             {
-                "itemType": "note",
-                "localized": "Note"
-            },
-            {
                 "itemType": "patent",
                 "localized": "Patent"
             },
@@ -5382,20 +5386,20 @@
                 "localized": "Report"
             },
             {
-                "itemType": "computerProgram",
-                "localized": "Software"
+                "itemType": "standard",
+                "localized": "Standard"
             },
             {
                 "itemType": "statute",
                 "localized": "Statute"
             },
             {
-                "itemType": "tvBroadcast",
-                "localized": "TV Broadcast"
-            },
-            {
                 "itemType": "thesis",
                 "localized": "Thesis"
+            },
+            {
+                "itemType": "tvBroadcast",
+                "localized": "TV Broadcast"
             },
             {
                 "itemType": "videoRecording",
@@ -5407,14 +5411,6 @@
             }
         ],
         "itemFields": [
-            {
-                "field": "numPages",
-                "localized": "# of Pages"
-            },
-            {
-                "field": "numberOfVolumes",
-                "localized": "# of Volumes"
-            },
             {
                 "field": "abstractNote",
                 "localized": "Abstract"
@@ -5436,12 +5432,32 @@
                 "localized": "Archive ID"
             },
             {
+                "field": "archiveLocation",
+                "localized": "Loc. in Archive"
+            },
+            {
+                "field": "artworkMedium",
+                "localized": "Medium"
+            },
+            {
                 "field": "artworkSize",
                 "localized": "Artwork Size"
             },
             {
                 "field": "assignee",
                 "localized": "Assignee"
+            },
+            {
+                "field": "audioFileType",
+                "localized": "File Type"
+            },
+            {
+                "field": "audioRecordingFormat",
+                "localized": "Format"
+            },
+            {
+                "field": "authority",
+                "localized": "Authority"
             },
             {
                 "field": "billNumber",
@@ -5504,12 +5520,12 @@
                 "localized": "Court"
             },
             {
-                "field": "DOI",
-                "localized": "DOI"
-            },
-            {
                 "field": "date",
                 "localized": "Date"
+            },
+            {
+                "field": "dateAdded",
+                "localized": "Date Added"
             },
             {
                 "field": "dateDecided",
@@ -5518,6 +5534,10 @@
             {
                 "field": "dateEnacted",
                 "localized": "Date Enacted"
+            },
+            {
+                "field": "dateModified",
+                "localized": "Modified"
             },
             {
                 "field": "dictionaryTitle",
@@ -5536,6 +5556,10 @@
                 "localized": "Document Number"
             },
             {
+                "field": "DOI",
+                "localized": "DOI"
+            },
+            {
                 "field": "edition",
                 "localized": "Edition"
             },
@@ -5552,10 +5576,6 @@
                 "localized": "Extra"
             },
             {
-                "field": "audioFileType",
-                "localized": "File Type"
-            },
-            {
                 "field": "filingDate",
                 "localized": "Filing Date"
             },
@@ -5564,11 +5584,7 @@
                 "localized": "First Page"
             },
             {
-                "field": "videoRecordingFormat",
-                "localized": "Format"
-            },
-            {
-                "field": "audioRecordingFormat",
+                "field": "format",
                 "localized": "Format"
             },
             {
@@ -5584,16 +5600,24 @@
                 "localized": "History"
             },
             {
+                "field": "identifier",
+                "localized": "Identifier"
+            },
+            {
+                "field": "institution",
+                "localized": "Institution"
+            },
+            {
+                "field": "interviewMedium",
+                "localized": "Medium"
+            },
+            {
                 "field": "ISBN",
                 "localized": "ISBN"
             },
             {
                 "field": "ISSN",
                 "localized": "ISSN"
-            },
-            {
-                "field": "institution",
-                "localized": "Institution"
             },
             {
                 "field": "issue",
@@ -5606,6 +5630,10 @@
             {
                 "field": "issuingAuthority",
                 "localized": "Issuing Authority"
+            },
+            {
+                "field": "itemType",
+                "localized": "Item Type"
             },
             {
                 "field": "journalAbbreviation",
@@ -5628,19 +5656,23 @@
                 "localized": "Legislative Body"
             },
             {
+                "field": "letterType",
+                "localized": "Type"
+            },
+            {
                 "field": "libraryCatalog",
                 "localized": "Library Catalog"
             },
             {
-                "field": "archiveLocation",
-                "localized": "Loc. in Archive"
+                "field": "manuscriptType",
+                "localized": "Type"
             },
             {
-                "field": "artworkMedium",
-                "localized": "Medium"
+                "field": "mapType",
+                "localized": "Type"
             },
             {
-                "field": "interviewMedium",
+                "field": "medium",
                 "localized": "Medium"
             },
             {
@@ -5654,6 +5686,22 @@
             {
                 "field": "network",
                 "localized": "Network"
+            },
+            {
+                "field": "number",
+                "localized": "Number"
+            },
+            {
+                "field": "numberOfVolumes",
+                "localized": "# of Volumes"
+            },
+            {
+                "field": "numPages",
+                "localized": "# of Pages"
+            },
+            {
+                "field": "organization",
+                "localized": "Organization"
             },
             {
                 "field": "pages",
@@ -5672,6 +5720,10 @@
                 "localized": "Post Type"
             },
             {
+                "field": "presentationType",
+                "localized": "Type"
+            },
+            {
                 "field": "priorityNumbers",
                 "localized": "Priority Numbers"
             },
@@ -5688,12 +5740,12 @@
                 "localized": "Program Title"
             },
             {
-                "field": "publicLawNumber",
-                "localized": "Public Law Number"
-            },
-            {
                 "field": "publicationTitle",
                 "localized": "Publication"
+            },
+            {
+                "field": "publicLawNumber",
+                "localized": "Public Law Number"
             },
             {
                 "field": "publisher",
@@ -5704,14 +5756,6 @@
                 "localized": "References"
             },
             {
-                "field": "reportNumber",
-                "localized": "Report Number"
-            },
-            {
-                "field": "reportType",
-                "localized": "Report Type"
-            },
-            {
                 "field": "reporter",
                 "localized": "Reporter"
             },
@@ -5720,8 +5764,20 @@
                 "localized": "Reporter Volume"
             },
             {
+                "field": "reportNumber",
+                "localized": "Report Number"
+            },
+            {
+                "field": "reportType",
+                "localized": "Report Type"
+            },
+            {
                 "field": "repository",
                 "localized": "Repository"
+            },
+            {
+                "field": "repositoryLocation",
+                "localized": "Repo. Location"
             },
             {
                 "field": "rights",
@@ -5764,6 +5820,10 @@
                 "localized": "Short Title"
             },
             {
+                "field": "status",
+                "localized": "Status"
+            },
+            {
                 "field": "studio",
                 "localized": "Studio"
             },
@@ -5776,40 +5836,32 @@
                 "localized": "System"
             },
             {
-                "field": "title",
-                "localized": "Title"
-            },
-            {
-                "field": "letterType",
-                "localized": "Type"
-            },
-            {
-                "field": "manuscriptType",
-                "localized": "Type"
-            },
-            {
-                "field": "mapType",
-                "localized": "Type"
-            },
-            {
                 "field": "thesisType",
                 "localized": "Type"
             },
             {
-                "field": "presentationType",
-                "localized": "Type"
+                "field": "title",
+                "localized": "Title"
             },
             {
-                "field": "url",
-                "localized": "URL"
+                "field": "type",
+                "localized": "Type"
             },
             {
                 "field": "university",
                 "localized": "University"
             },
             {
+                "field": "url",
+                "localized": "URL"
+            },
+            {
                 "field": "versionNumber",
                 "localized": "Version"
+            },
+            {
+                "field": "videoRecordingFormat",
+                "localized": "Format"
             },
             {
                 "field": "volume",
@@ -5824,25 +5876,74 @@
                 "localized": "Website Type"
             }
         ],
-        "creatorFields": [
-            {
-                "field": "firstName",
-                "localized": "First"
-            },
-            {
-                "field": "lastName",
-                "localized": "Last"
-            },
-            {
-                "field": "name",
-                "localized": "Name"
-            }
-        ],
         "itemTypeCreatorTypes": {
-            "conferencePaper": [
+            "annotation": [],
+            "artwork": [
+                {
+                    "creatorType": "artist",
+                    "localized": "Artist",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "attachment": [],
+            "audioRecording": [
+                {
+                    "creatorType": "performer",
+                    "localized": "Performer",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "composer",
+                    "localized": "Composer"
+                },
+                {
+                    "creatorType": "wordsBy",
+                    "localized": "Words By"
+                }
+            ],
+            "bill": [
+                {
+                    "creatorType": "sponsor",
+                    "localized": "Sponsor",
+                    "primary": true
+                },
+                {
+                    "creatorType": "cosponsor",
+                    "localized": "Cosponsor"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "blogPost": [
                 {
                     "creatorType": "author",
-                    "localized": "Author"
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "commenter",
+                    "localized": "Commenter"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "book": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
                 },
                 {
                     "creatorType": "contributor",
@@ -5853,8 +5954,565 @@
                     "localized": "Editor"
                 },
                 {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
                     "creatorType": "seriesEditor",
                     "localized": "Series Editor"
+                }
+            ],
+            "bookSection": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "bookAuthor",
+                    "localized": "Book Author"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "case": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "counsel",
+                    "localized": "Counsel"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "computerProgram": [
+                {
+                    "creatorType": "programmer",
+                    "localized": "Programmer",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "conferencePaper": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "dataset": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "dictionaryEntry": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "document": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                }
+            ],
+            "email": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "recipient",
+                    "localized": "Recipient"
+                }
+            ],
+            "encyclopediaArticle": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "film": [
+                {
+                    "creatorType": "director",
+                    "localized": "Director",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "scriptwriter",
+                    "localized": "Scriptwriter"
+                },
+                {
+                    "creatorType": "producer",
+                    "localized": "Producer"
+                }
+            ],
+            "forumPost": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "hearing": [
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor",
+                    "primary": true
+                }
+            ],
+            "instantMessage": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "recipient",
+                    "localized": "Recipient"
+                }
+            ],
+            "interview": [
+                {
+                    "creatorType": "interviewee",
+                    "localized": "Interview With",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "interviewer",
+                    "localized": "Interviewer"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                }
+            ],
+            "journalArticle": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                }
+            ],
+            "letter": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "recipient",
+                    "localized": "Recipient"
+                }
+            ],
+            "magazineArticle": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                }
+            ],
+            "manuscript": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                }
+            ],
+            "map": [
+                {
+                    "creatorType": "cartographer",
+                    "localized": "Cartographer",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "newspaperArticle": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                }
+            ],
+            "note": [],
+            "patent": [
+                {
+                    "creatorType": "inventor",
+                    "localized": "Inventor",
+                    "primary": true
+                },
+                {
+                    "creatorType": "attorneyAgent",
+                    "localized": "Attorney/Agent"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "podcast": [
+                {
+                    "creatorType": "podcaster",
+                    "localized": "Podcaster",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "guest",
+                    "localized": "Guest"
+                }
+            ],
+            "preprint": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "editor",
+                    "localized": "Editor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "reviewedAuthor",
+                    "localized": "Reviewed Author"
+                }
+            ],
+            "presentation": [
+                {
+                    "creatorType": "presenter",
+                    "localized": "Presenter",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "radioBroadcast": [
+                {
+                    "creatorType": "director",
+                    "localized": "Director",
+                    "primary": true
+                },
+                {
+                    "creatorType": "scriptwriter",
+                    "localized": "Scriptwriter"
+                },
+                {
+                    "creatorType": "producer",
+                    "localized": "Producer"
+                },
+                {
+                    "creatorType": "castMember",
+                    "localized": "Cast Member"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "guest",
+                    "localized": "Guest"
+                }
+            ],
+            "report": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "translator",
+                    "localized": "Translator"
+                },
+                {
+                    "creatorType": "seriesEditor",
+                    "localized": "Series Editor"
+                }
+            ],
+            "standard": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "statute": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "thesis": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "tvBroadcast": [
+                {
+                    "creatorType": "director",
+                    "localized": "Director",
+                    "primary": true
+                },
+                {
+                    "creatorType": "scriptwriter",
+                    "localized": "Scriptwriter"
+                },
+                {
+                    "creatorType": "producer",
+                    "localized": "Producer"
+                },
+                {
+                    "creatorType": "castMember",
+                    "localized": "Cast Member"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                },
+                {
+                    "creatorType": "guest",
+                    "localized": "Guest"
+                }
+            ],
+            "videoRecording": [
+                {
+                    "creatorType": "director",
+                    "localized": "Director",
+                    "primary": true
+                },
+                {
+                    "creatorType": "scriptwriter",
+                    "localized": "Scriptwriter"
+                },
+                {
+                    "creatorType": "producer",
+                    "localized": "Producer"
+                },
+                {
+                    "creatorType": "castMember",
+                    "localized": "Cast Member"
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
+                }
+            ],
+            "webpage": [
+                {
+                    "creatorType": "author",
+                    "localized": "Author",
+                    "primary": true
+                },
+                {
+                    "creatorType": "contributor",
+                    "localized": "Contributor"
                 },
                 {
                     "creatorType": "translator",
@@ -5863,6 +6521,609 @@
             ]
         },
         "itemTypeFields": {
+            "annotation": [],
+            "artwork": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "artworkMedium",
+                    "localized": "Medium"
+                },
+                {
+                    "field": "artworkSize",
+                    "localized": "Artwork Size"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "attachment": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                }
+            ],
+            "audioRecording": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "audioRecordingFormat",
+                    "localized": "Format"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "label",
+                    "localized": "Label"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "bill": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "billNumber",
+                    "localized": "Bill Number"
+                },
+                {
+                    "field": "code",
+                    "localized": "Code"
+                },
+                {
+                    "field": "codeVolume",
+                    "localized": "Code Volume"
+                },
+                {
+                    "field": "section",
+                    "localized": "Section"
+                },
+                {
+                    "field": "codePages",
+                    "localized": "Code Pages"
+                },
+                {
+                    "field": "legislativeBody",
+                    "localized": "Legislative Body"
+                },
+                {
+                    "field": "session",
+                    "localized": "Session"
+                },
+                {
+                    "field": "history",
+                    "localized": "History"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "blogPost": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "blogTitle",
+                    "localized": "Blog Title"
+                },
+                {
+                    "field": "websiteType",
+                    "localized": "Website Type"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "book": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesNumber",
+                    "localized": "Series Number"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "numPages",
+                    "localized": "# of Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "bookSection": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "bookTitle",
+                    "localized": "Book Title"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesNumber",
+                    "localized": "Series Number"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "case": [
+                {
+                    "field": "caseName",
+                    "localized": "Case Name"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "court",
+                    "localized": "Court"
+                },
+                {
+                    "field": "dateDecided",
+                    "localized": "Date Decided"
+                },
+                {
+                    "field": "docketNumber",
+                    "localized": "Docket Number"
+                },
+                {
+                    "field": "reporter",
+                    "localized": "Reporter"
+                },
+                {
+                    "field": "reporterVolume",
+                    "localized": "Reporter Volume"
+                },
+                {
+                    "field": "firstPage",
+                    "localized": "First Page"
+                },
+                {
+                    "field": "history",
+                    "localized": "History"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "computerProgram": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "versionNumber",
+                    "localized": "Version"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "system",
+                    "localized": "System"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "company",
+                    "localized": "Company"
+                },
+                {
+                    "field": "programmingLanguage",
+                    "localized": "Prog. Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
             "conferencePaper": [
                 {
                     "field": "title",
@@ -5952,10 +7213,2118 @@
                     "field": "extra",
                     "localized": "Extra"
                 }
+            ],
+            "dataset": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "identifier",
+                    "localized": "Identifier"
+                },
+                {
+                    "field": "type",
+                    "localized": "Type"
+                },
+                {
+                    "field": "versionNumber",
+                    "localized": "Version"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "repository",
+                    "localized": "Repository"
+                },
+                {
+                    "field": "repositoryLocation",
+                    "localized": "Repo. Location"
+                },
+                {
+                    "field": "format",
+                    "localized": "Format"
+                },
+                {
+                    "field": "DOI",
+                    "localized": "DOI"
+                },
+                {
+                    "field": "citationKey",
+                    "localized": "Citation Key"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "dictionaryEntry": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "dictionaryTitle",
+                    "localized": "Dictionary Title"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesNumber",
+                    "localized": "Series Number"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "document": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "email": [
+                {
+                    "field": "subject",
+                    "localized": "Subject"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "encyclopediaArticle": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "encyclopediaTitle",
+                    "localized": "Encyclopedia Title"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesNumber",
+                    "localized": "Series Number"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "film": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "distributor",
+                    "localized": "Distributor"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "genre",
+                    "localized": "Genre"
+                },
+                {
+                    "field": "videoRecordingFormat",
+                    "localized": "Format"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "forumPost": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "forumTitle",
+                    "localized": "Forum/Listserv Title"
+                },
+                {
+                    "field": "postType",
+                    "localized": "Post Type"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "hearing": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "committee",
+                    "localized": "Committee"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "documentNumber",
+                    "localized": "Document Number"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "legislativeBody",
+                    "localized": "Legislative Body"
+                },
+                {
+                    "field": "session",
+                    "localized": "Session"
+                },
+                {
+                    "field": "history",
+                    "localized": "History"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "instantMessage": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "interview": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "interviewMedium",
+                    "localized": "Medium"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "journalArticle": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "publicationTitle",
+                    "localized": "Publication"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "issue",
+                    "localized": "Issue"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "seriesText",
+                    "localized": "Series Text"
+                },
+                {
+                    "field": "journalAbbreviation",
+                    "localized": "Journal Abbr"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "DOI",
+                    "localized": "DOI"
+                },
+                {
+                    "field": "ISSN",
+                    "localized": "ISSN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "letter": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "letterType",
+                    "localized": "Type"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "magazineArticle": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "publicationTitle",
+                    "localized": "Publication"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "issue",
+                    "localized": "Issue"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISSN",
+                    "localized": "ISSN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "manuscript": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "manuscriptType",
+                    "localized": "Type"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "numPages",
+                    "localized": "# of Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "map": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "mapType",
+                    "localized": "Type"
+                },
+                {
+                    "field": "scale",
+                    "localized": "Scale"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "newspaperArticle": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "publicationTitle",
+                    "localized": "Publication"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "edition",
+                    "localized": "Edition"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "section",
+                    "localized": "Section"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "ISSN",
+                    "localized": "ISSN"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "note": [],
+            "patent": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "country",
+                    "localized": "Country"
+                },
+                {
+                    "field": "assignee",
+                    "localized": "Assignee"
+                },
+                {
+                    "field": "issuingAuthority",
+                    "localized": "Issuing Authority"
+                },
+                {
+                    "field": "patentNumber",
+                    "localized": "Patent Number"
+                },
+                {
+                    "field": "filingDate",
+                    "localized": "Filing Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "applicationNumber",
+                    "localized": "Application Number"
+                },
+                {
+                    "field": "priorityNumbers",
+                    "localized": "Priority Numbers"
+                },
+                {
+                    "field": "issueDate",
+                    "localized": "Issue Date"
+                },
+                {
+                    "field": "references",
+                    "localized": "References"
+                },
+                {
+                    "field": "legalStatus",
+                    "localized": "Legal Status"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "podcast": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "episodeNumber",
+                    "localized": "Episode Number"
+                },
+                {
+                    "field": "audioFileType",
+                    "localized": "File Type"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "preprint": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "genre",
+                    "localized": "Genre"
+                },
+                {
+                    "field": "repository",
+                    "localized": "Repository"
+                },
+                {
+                    "field": "archiveID",
+                    "localized": "Archive ID"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "series",
+                    "localized": "Series"
+                },
+                {
+                    "field": "seriesNumber",
+                    "localized": "Series Number"
+                },
+                {
+                    "field": "DOI",
+                    "localized": "DOI"
+                },
+                {
+                    "field": "citationKey",
+                    "localized": "Citation Key"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "presentation": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "presentationType",
+                    "localized": "Type"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "meetingName",
+                    "localized": "Meeting Name"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "radioBroadcast": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "programTitle",
+                    "localized": "Program Title"
+                },
+                {
+                    "field": "episodeNumber",
+                    "localized": "Episode Number"
+                },
+                {
+                    "field": "audioRecordingFormat",
+                    "localized": "Format"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "network",
+                    "localized": "Network"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "report": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "reportNumber",
+                    "localized": "Report Number"
+                },
+                {
+                    "field": "reportType",
+                    "localized": "Report Type"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "institution",
+                    "localized": "Institution"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "standard": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "organization",
+                    "localized": "Organization"
+                },
+                {
+                    "field": "committee",
+                    "localized": "Committee"
+                },
+                {
+                    "field": "type",
+                    "localized": "Type"
+                },
+                {
+                    "field": "number",
+                    "localized": "Number"
+                },
+                {
+                    "field": "versionNumber",
+                    "localized": "Version"
+                },
+                {
+                    "field": "status",
+                    "localized": "Status"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "publisher",
+                    "localized": "Publisher"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "DOI",
+                    "localized": "DOI"
+                },
+                {
+                    "field": "citationKey",
+                    "localized": "Citation Key"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "numPages",
+                    "localized": "# of Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "statute": [
+                {
+                    "field": "nameOfAct",
+                    "localized": "Name of Act"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "code",
+                    "localized": "Code"
+                },
+                {
+                    "field": "codeNumber",
+                    "localized": "Code Number"
+                },
+                {
+                    "field": "publicLawNumber",
+                    "localized": "Public Law Number"
+                },
+                {
+                    "field": "dateEnacted",
+                    "localized": "Date Enacted"
+                },
+                {
+                    "field": "pages",
+                    "localized": "Pages"
+                },
+                {
+                    "field": "section",
+                    "localized": "Section"
+                },
+                {
+                    "field": "session",
+                    "localized": "Session"
+                },
+                {
+                    "field": "history",
+                    "localized": "History"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "thesis": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "thesisType",
+                    "localized": "Type"
+                },
+                {
+                    "field": "university",
+                    "localized": "University"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "numPages",
+                    "localized": "# of Pages"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "tvBroadcast": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "programTitle",
+                    "localized": "Program Title"
+                },
+                {
+                    "field": "episodeNumber",
+                    "localized": "Episode Number"
+                },
+                {
+                    "field": "videoRecordingFormat",
+                    "localized": "Format"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "network",
+                    "localized": "Network"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "videoRecording": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "videoRecordingFormat",
+                    "localized": "Format"
+                },
+                {
+                    "field": "seriesTitle",
+                    "localized": "Series Title"
+                },
+                {
+                    "field": "volume",
+                    "localized": "Volume"
+                },
+                {
+                    "field": "numberOfVolumes",
+                    "localized": "# of Volumes"
+                },
+                {
+                    "field": "place",
+                    "localized": "Place"
+                },
+                {
+                    "field": "studio",
+                    "localized": "Studio"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "runningTime",
+                    "localized": "Running Time"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "ISBN",
+                    "localized": "ISBN"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "archive",
+                    "localized": "Archive"
+                },
+                {
+                    "field": "archiveLocation",
+                    "localized": "Loc. in Archive"
+                },
+                {
+                    "field": "libraryCatalog",
+                    "localized": "Library Catalog"
+                },
+                {
+                    "field": "callNumber",
+                    "localized": "Call Number"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
+            ],
+            "webpage": [
+                {
+                    "field": "title",
+                    "localized": "Title"
+                },
+                {
+                    "field": "abstractNote",
+                    "localized": "Abstract"
+                },
+                {
+                    "field": "websiteTitle",
+                    "localized": "Website Title"
+                },
+                {
+                    "field": "websiteType",
+                    "localized": "Website Type"
+                },
+                {
+                    "field": "date",
+                    "localized": "Date"
+                },
+                {
+                    "field": "shortTitle",
+                    "localized": "Short Title"
+                },
+                {
+                    "field": "url",
+                    "localized": "URL"
+                },
+                {
+                    "field": "accessDate",
+                    "localized": "Accessed"
+                },
+                {
+                    "field": "language",
+                    "localized": "Language"
+                },
+                {
+                    "field": "rights",
+                    "localized": "Rights"
+                },
+                {
+                    "field": "extra",
+                    "localized": "Extra"
+                }
             ]
         },
         "itemTemplates": {},
-        "invalidated": false
+        "invalidated": false,
+        "mappings": {
+            "artwork": {
+                "medium": "artworkMedium"
+            },
+            "audioRecording": {
+                "medium": "audioRecordingFormat",
+                "publisher": "label"
+            },
+            "bill": {
+                "number": "billNumber",
+                "volume": "codeVolume",
+                "pages": "codePages",
+                "authority": "legislativeBody"
+            },
+            "blogPost": {
+                "publicationTitle": "blogTitle",
+                "type": "websiteType"
+            },
+            "bookSection": {
+                "publicationTitle": "bookTitle"
+            },
+            "case": {
+                "title": "caseName",
+                "authority": "court",
+                "date": "dateDecided",
+                "number": "docketNumber",
+                "volume": "reporterVolume",
+                "pages": "firstPage"
+            },
+            "computerProgram": {
+                "publisher": "company"
+            },
+            "conferencePaper": {
+                "publicationTitle": "proceedingsTitle"
+            },
+            "dataset": {
+                "number": "identifier",
+                "publisher": "repository",
+                "place": "repositoryLocation",
+                "medium": "format"
+            },
+            "dictionaryEntry": {
+                "publicationTitle": "dictionaryTitle"
+            },
+            "email": {
+                "title": "subject"
+            },
+            "encyclopediaArticle": {
+                "publicationTitle": "encyclopediaTitle"
+            },
+            "film": {
+                "publisher": "distributor",
+                "type": "genre",
+                "medium": "videoRecordingFormat"
+            },
+            "forumPost": {
+                "publicationTitle": "forumTitle",
+                "type": "postType"
+            },
+            "hearing": {
+                "number": "documentNumber",
+                "authority": "legislativeBody"
+            },
+            "interview": {
+                "medium": "interviewMedium"
+            },
+            "letter": {
+                "type": "letterType"
+            },
+            "manuscript": {
+                "type": "manuscriptType"
+            },
+            "map": {
+                "type": "mapType"
+            },
+            "patent": {
+                "authority": "issuingAuthority",
+                "number": "patentNumber",
+                "date": "issueDate",
+                "status": "legalStatus"
+            },
+            "podcast": {
+                "number": "episodeNumber",
+                "medium": "audioFileType"
+            },
+            "preprint": {
+                "type": "genre",
+                "publisher": "repository",
+                "number": "archiveID"
+            },
+            "presentation": {
+                "type": "presentationType"
+            },
+            "radioBroadcast": {
+                "publicationTitle": "programTitle",
+                "number": "episodeNumber",
+                "medium": "audioRecordingFormat",
+                "publisher": "network"
+            },
+            "report": {
+                "number": "reportNumber",
+                "type": "reportType",
+                "publisher": "institution"
+            },
+            "standard": {
+                "authority": "organization"
+            },
+            "statute": {
+                "title": "nameOfAct",
+                "number": "publicLawNumber",
+                "date": "dateEnacted"
+            },
+            "thesis": {
+                "type": "thesisType",
+                "publisher": "university"
+            },
+            "tvBroadcast": {
+                "publicationTitle": "programTitle",
+                "number": "episodeNumber",
+                "medium": "videoRecordingFormat",
+                "publisher": "network"
+            },
+            "videoRecording": {
+                "medium": "videoRecordingFormat",
+                "publisher": "studio"
+            },
+            "webpage": {
+                "publicationTitle": "websiteTitle",
+                "type": "websiteType"
+            }
+        }
     },
     "modal": {
         "id": null

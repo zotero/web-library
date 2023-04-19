@@ -15,7 +15,6 @@ import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 import { omit } from '../common/immutable';
-import { get } from '../utils';
 
 const isMatchingQuery = (action, state) => {
 	const { q = '', qmode, tag = [] } = action.queryOptions;
@@ -34,9 +33,10 @@ const defaultState = {
 	totalResults: null,
 };
 
-const query = (state = defaultState, action, otherState) => {
-	const isTrash = get(otherState, 'current.isTrash');
-	const collectionKey = get(otherState, 'current.collectionKey');
+const query = (state = defaultState, action, entireState) => {
+	const isTrash = entireState?.current?.isTrash;
+	const collectionKey = entireState?.current?.collectionKey;
+	const meta = entireState?.meta;
 	switch(action.type) {
 		case LOCATION_CHANGE:
 			var params = getParamsFromRoute({ router: { ...action.payload } });
@@ -69,7 +69,7 @@ const query = (state = defaultState, action, otherState) => {
 			}
 		case SORT_ITEMS:
 			return sortItemKeysOrClear(
-				state, action.items, action.sortBy, action.sortDirection
+				meta.mappings, state, action.items, action.sortBy, action.sortDirection
 			);
 		case REQUEST_TAGS_IN_ITEMS_BY_QUERY:
 			return {

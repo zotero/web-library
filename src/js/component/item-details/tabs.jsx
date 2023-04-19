@@ -14,9 +14,9 @@ import StandaloneAttachmentTabPane from '../../component/item-details/standalone
 import StandaloneNote from '../../component/item-details/standalone-note';
 import Tags from '../../component/item-details/tags';
 import { Tab, Tabs } from '../ui/tabs';
-import { useEditMode, useFetchingState, useMetaState } from '../../hooks';
+import { useEditMode, useFetchingState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
-import { fetchChildItems, fetchItemTypeCreatorTypes, fetchItemTypeFields, fetchRelatedItems, } from '../../actions';
+import { fetchChildItems, fetchRelatedItems, } from '../../actions';
 
 const pickDefaultActiveTab = (itemType, attachmentKey, noteKey) => {
 	switch(itemType) {
@@ -46,8 +46,6 @@ const ItemDetailsTabs = () => {
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const shouldFetchChildItems = !['attachment', 'note'].includes(item.itemType);
-	const { isItemTypeCreatorTypesAvailable, isFetchingItemTypeCreatorTypes,
-		isItemTypeFieldsAvailable, isFetchingItemTypeFields, isMetaAvailable } = useMetaState();
 
 	const { attachments, notes } = useMemo(() => {
 		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
@@ -68,7 +66,7 @@ const ItemDetailsTabs = () => {
 
 	const isReady = shouldUseTabs || (
 		!shouldUseTabs && (!shouldFetchChildItems || (childItemsState.hasChecked && !childItemsState.hasMoreItems))
-		&& relatedItemsState.isFetched && isMetaAvailable
+		&& relatedItemsState.isFetched
 	);
 	const [activeTab, setActiveTab] = useState(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 
@@ -102,24 +100,6 @@ const ItemDetailsTabs = () => {
 		}
 	}, [relatedItemsState])
 
-	useEffect(() => {
-		if(shouldUseTabs || !item.itemType) {
-			return;
-		}
-		if(!isItemTypeCreatorTypesAvailable && !isFetchingItemTypeCreatorTypes) {
-			dispatch(fetchItemTypeCreatorTypes(item.itemType))
-		}
-	}, [dispatch, isFetchingItemTypeCreatorTypes, isItemTypeCreatorTypesAvailable, item.itemType, shouldUseTabs]);
-
-	useEffect(() => {
-		if(shouldUseTabs || !item.itemType) {
-			return;
-		}
-		if(!isItemTypeFieldsAvailable && !isFetchingItemTypeFields) {
-			dispatch(fetchItemTypeFields(item.itemType))
-		}
-	}, [dispatch, isItemTypeFieldsAvailable, isFetchingItemTypeFields, item.itemType, shouldUseTabs]);
-
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
 			//move focus to tabPane itself (if focusable) or first focusable element within
@@ -133,7 +113,7 @@ const ItemDetailsTabs = () => {
 			//@TODO: do this in a more elegant way
 			document.querySelector('.items-table[tabIndex="0"]').focus();
 		}
-	});
+	}, []);
 
 	const handleSelectTab = element => {
 		setActiveTab(element.dataset.tabName);

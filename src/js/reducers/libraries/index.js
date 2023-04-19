@@ -35,17 +35,17 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 					tagColors: state[action.libraryKey]?.tagColors?.lookup, meta
 				} ),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action, {
-					items: (state[action.libraryKey] || {}).items
+					items: (state[action.libraryKey] || {}).items, meta
 				}),
 				itemsByParent: itemsByParent(get(state, [action.libraryKey, 'itemsByParent']), action, {
-					items: (state[action.libraryKey] || {}).items
+					items: (state[action.libraryKey] || {}).items, meta
 				}),
 				itemsRelated: itemsRelated(get(state, [action.libraryKey, 'itemsRelated']), action),
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action, {
-					items: (state[action.libraryKey] || {}).items
+					items: (state[action.libraryKey] || {}).items, meta
 				}),
 				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {
-					items: (state[action.libraryKey] || {}).items
+					items: (state[action.libraryKey] || {}).items, meta
 				}),
 				settings: settings(get(state, [action.libraryKey, 'settings']), action),
 				sync: sync(get(state, [action.libraryKey, 'sync']), action),

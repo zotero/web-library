@@ -8,7 +8,7 @@ import {
 	RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_TOP_ITEMS, REQUEST_TOP_ITEMS, SORT_ITEMS,
 } from '../../constants/actions.js';
 
-const detectChangesInTop = (state, action, items) => {
+const detectChangesInTop = (mappings, state, action, items) => {
 	if(!('keys' in state)) {
 		return state;
 	}
@@ -27,7 +27,7 @@ const detectChangesInTop = (state, action, items) => {
 
 	if(keysToInject.length > 0) {
 		const allItems = { ...items, ...indexByKey(action.items) };
-		newState = injectExtraItemKeys(newState, keysToInject, allItems);
+		newState = injectExtraItemKeys(mappings, newState, keysToInject, allItems);
 	}
 
 	if(keysToRemove.length > 0) {
@@ -37,11 +37,12 @@ const detectChangesInTop = (state, action, items) => {
 	return newState;
 }
 
-const itemsTop = (state = {}, action, { items }) => {
+const itemsTop = (state = {}, action, { items, meta }) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			if(!action.item.parentItem) {
 				return injectExtraItemKeys(
+					meta.mappings,
 					state,
 					action.item.key,
 					{ ...action.otherItems, [action.item.key]: action.item }
@@ -51,6 +52,7 @@ const itemsTop = (state = {}, action, { items }) => {
 			}
 		case RECEIVE_CREATE_ITEMS:
 			return injectExtraItemKeys(
+				meta.mappings,
 				state,
 				action.items.filter(i => !i.parentItem).map(i => i.key),
 				{ ...action.otherItems, ...indexByKey(action.items) }
@@ -63,6 +65,7 @@ const itemsTop = (state = {}, action, { items }) => {
 			return filterItemKeys(state, action.itemKeys);
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return injectExtraItemKeys(
+				meta.mappings,
 				state,
 				action.itemKeys,
 				{ ...action.otherItems, ...indexByKey(action.items) }
@@ -85,9 +88,9 @@ const itemsTop = (state = {}, action, { items }) => {
 				isError: true
 			}
 		case RECEIVE_FETCH_ITEMS:
-			return detectChangesInTop(state, action, items);
+			return detectChangesInTop(meta.mappings, state, action, items);
 		case SORT_ITEMS:
-			return sortItemKeysOrClear(state, action.items, action.sortBy, action.sortDirection);
+			return sortItemKeysOrClear(meta.mappings, state, action.items, action.sortBy, action.sortDirection);
 		default:
 			return state;
 	}

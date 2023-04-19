@@ -1,17 +1,15 @@
 import api from 'zotero-api-client';
 
 import { extractItems } from '../common/actions';
-import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate, fetchItemTypeCreatorTypes } from '.';
-import { fetchItemTypeFields } from './meta';
+import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
-import { getToggledTags, TOGGLE_ADD, TOGGLE_REMOVE, TOGGLE_TOGGLE } from '../common/tags';
+import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
 import { omit, pick } from '../common/immutable';
 import { parseDescriptiveString } from '../common/format';
 import { strToISO } from '../common/date';
 import { sniffForMIMEType } from '../common/mime';
-import baseMappings from '../../../data/mappings';
 
 import {
 	BEGIN_ONGOING,
@@ -641,12 +639,6 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 	};
 }
 
-
-const addTagsOnItems = (itemKeys, libraryKey, tagsToToggle) =>
-	toggleTagsOnItems(itemKeys, libraryKey, tagsToToggle, TOGGLE_ADD)
-const removeTagsOnItems = (itemKeys, libraryKey, tagsToToggle) =>
-	toggleTagsOnItems(itemKeys, libraryKey, tagsToToggle, TOGGLE_REMOVE)
-
 const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction = TOGGLE_TOGGLE) => {
 	return async dispatch => {
 		const id = requestTracker.id++;
@@ -1257,22 +1249,15 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 	};
 
 	return async (dispatch, getState) => {
+		const { itemTypeFields, itemTypeCreatorTypes, mappings } = getState().meta;
 		// when changing itemType, map fields from old type-specific to base types and then back to new item-specific types
 		if(fieldKey === 'itemType') {
-			//@TODO: maybe check state if this data is already fetched, then skip
-			await Promise.all([
-				dispatch(fetchItemTypeFields(newValue)),
-				dispatch(fetchItemTypeCreatorTypes(newValue))
-			]);
-
-			const { itemTypeFields, itemTypeCreatorTypes } = getState().meta;
-
 			const targetTypeFields = itemTypeFields[newValue];
 			const targetTypeCreatorTypes = itemTypeCreatorTypes[newValue];
 
 			const baseValues = {};
-			if(item.itemType in baseMappings) {
-				const namedToBaseMap = reverseMap(baseMappings[item.itemType]);
+			if (item.itemType in mappings) {
+				const namedToBaseMap = reverseMap(mappings[item.itemType]);
 				Object.keys(item).forEach(fieldName => {
 					if(fieldName in namedToBaseMap) {
 						if(item[fieldName].toString().length > 0) {
@@ -1284,8 +1269,8 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 
 			patch = { ...patch, ...baseValues };
 
-			if(newValue in baseMappings) {
-				const namedToBaseMap = baseMappings[newValue];
+			if (newValue in mappings) {
+				const namedToBaseMap = mappings[newValue];
 				const itemWithBaseValues = { ...item, ...baseValues };
 				Object.keys(itemWithBaseValues).forEach(fieldName => {
 					if(fieldName in namedToBaseMap) {
@@ -1317,7 +1302,7 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 		}
 
 		else if(fieldKey === 'accessDate' || fieldKey === 'date'||
-			(item.itemType in baseMappings && 'date' in baseMappings[item.itemType] && fieldKey === baseMappings[item.itemType]['date'])
+			(item.itemType in mappings && 'date' in mappings[item.itemType] && fieldKey === mappings[item.itemType]['date'])
 		) {
 			// attempt to parse date into iso format using Zotero strToDate
 			const isoDate = strToISO(patch[fieldKey]);

@@ -16,7 +16,7 @@ const calculateDerivedData = (item, { meta, tagColors }) => {
 		return item.map(i => calculateDerivedData(i, { meta, tagColors }));
 	}
 
-	item[Symbol.for('derived')] = getDerivedData(item, meta.itemTypes, tagColors);
+	item[Symbol.for('derived')] = getDerivedData(meta.mappings, item, meta.itemTypes, tagColors);
 	return item;
 }
 

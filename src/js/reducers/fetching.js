@@ -1,13 +1,4 @@
 import {
-	REQUEST_META,
-	RECEIVE_META,
-	ERROR_META,
-	REQUEST_ITEM_TYPE_CREATOR_TYPES,
-	RECEIVE_ITEM_TYPE_CREATOR_TYPES,
-	ERROR_ITEM_TYPE_CREATOR_TYPES,
-	REQUEST_ITEM_TYPE_FIELDS,
-	RECEIVE_ITEM_TYPE_FIELDS,
-	ERROR_ITEM_TYPE_FIELDS,
 	REQUEST_ITEM_TEMPLATE,
 	RECEIVE_ITEM_TEMPLATE,
 	ERROR_ITEM_TEMPLATE,
@@ -29,17 +20,6 @@ const fetching = (state = {
 	allGroups: false,
 }, action) => {
 	switch(action.type) {
-		case REQUEST_META:
-			return {
-				...state,
-				meta: true
-			};
-		case RECEIVE_META:
-		case ERROR_META:
-			return {
-				...state,
-				meta: false
-			};
 		case REQUEST_TAGS_IN_LIBRARY:
 			return {
 				...state,
@@ -54,34 +34,6 @@ const fetching = (state = {
 				...state,
 				tagsInLibrary: (state.tagsInLibrary || [])
 					.filter(key => key !== action.libraryKey)
-			};
-		case REQUEST_ITEM_TYPE_CREATOR_TYPES:
-			return {
-				...state,
-				itemTypeCreatorTypes: [
-					...(state.itemTypeCreatorTypes || []),
-					action.itemType
-				]
-			};
-		case RECEIVE_ITEM_TYPE_CREATOR_TYPES:
-		case ERROR_ITEM_TYPE_CREATOR_TYPES:
-			return {
-				...state,
-				itemTypeCreatorTypes: state.itemTypeCreatorTypes
-					.filter(it => it !== action.itemType)
-			};
-
-		case REQUEST_ITEM_TYPE_FIELDS:
-			return {
-				...state,
-				itemTypeFields: [...(state.itemTypeFields || []), action.itemType]
-			};
-		case RECEIVE_ITEM_TYPE_FIELDS:
-		case ERROR_ITEM_TYPE_FIELDS:
-			return {
-				...state,
-				itemTypeFields: state.itemTypeFields
-					.filter(it => it !== action.itemType)
 			};
 		case REQUEST_ITEM_TEMPLATE:
 			return {

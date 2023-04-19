@@ -13,7 +13,7 @@ import {
 	SORT_ITEMS,
 } from '../constants/actions.js';
 
-const itemsPublications = (state = {}, action) => {
+const itemsPublications = (state = {}, action, { meta } = {}) => {
 	switch(action.type) {
 		case REQUEST_PUBLICATIONS_ITEMS:
 			return {
@@ -36,12 +36,13 @@ const itemsPublications = (state = {}, action) => {
 			return filterItemKeys(state, action.itemKeys);
 		case RECEIVE_RECOVER_ITEMS_TRASH:
 			return injectExtraItemKeys(
+				meta.mappings,
 				state,
 				action.itemKeys,
 				{ ...action.otherItems, ...indexByKey(action.items) }
 			);
 		case SORT_ITEMS:
-			return sortItemKeysOrClear(state, action.items, action.sortBy, action.sortDirection);
+			return sortItemKeysOrClear(meta.mappings, state, action.items, action.sortBy, action.sortDirection);
 		default:
 			return state;
 	}

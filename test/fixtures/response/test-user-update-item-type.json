@@ -1,0 +1,94 @@
+{
+    "successful": {
+        "0": {
+            "key": "VR82JUX8",
+            "version": 157,
+            "data": {
+                "key": "VR82JUX8",
+                "version": 157,
+                "itemType": "radioBroadcast",
+                "title": "Effects of diet restriction on life span and age-related changes in dogs",
+                "creators": [
+                    {
+                        "creatorType": "director",
+                        "firstName": "Richard D.",
+                        "lastName": "Kealy"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Dennis F.",
+                        "lastName": "Lawler"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Joan M.",
+                        "lastName": "Ballam"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Sandra L.",
+                        "lastName": "Mantz"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Darryl N.",
+                        "lastName": "Biery"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Elizabeth H.",
+                        "lastName": "Greeley"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "George",
+                        "lastName": "Lust"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Mariangela",
+                        "lastName": "Segre"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Gail K.",
+                        "lastName": "Smith"
+                    },
+                    {
+                        "creatorType": "director",
+                        "firstName": "Howard D.",
+                        "lastName": "Stowe"
+                    }
+                ],
+                "episodeNumber": "",
+                "audioRecordingFormat": "",
+                "place": "",
+                "network": "Am Vet Med Assoc",
+                "date": "2002",
+                "runningTime": "",
+                "language": "",
+                "shortTitle": "",
+                "url": "",
+                "accessDate": "",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Google Scholar",
+                "callNumber": "",
+                "rights": "",
+                "extra": "",
+                "tags": [],
+                "collections": [
+                    "WTTJ2J56"
+                ],
+                "relations": {},
+                "dateAdded": "2023-01-13T10:52:40Z",
+                "dateModified": "2023-01-13T10:52:40Z"
+            }
+        }
+    },
+    "success": {
+        "0": "VR82JUX8"
+    },
+    "unchanged": {},
+    "failed": {}
+}
