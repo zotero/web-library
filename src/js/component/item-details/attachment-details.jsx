@@ -267,6 +267,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		<RichEditor
 			autoresize={ shouldUseTabs ? false : true }
 			id={ attachment.key }
+			isAttachmentNote={ true }
 			isReadOnly={ isReadOnly }
 			value={ attachment.note }
 			onChange={ handleChangeNote }

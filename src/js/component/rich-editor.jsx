@@ -10,7 +10,7 @@ import { getItemFromCanonicalUrl, noop, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
 const RichEditor = React.memo(React.forwardRef((props, ref) => {
-	const { autoresize, id, isReadOnly, onChange, onEdit = noop, value } = props;
+	const { autoresize, isAttachmentNote = false, id, isReadOnly, onChange, onEdit = noop, value } = props;
 	const wantsFocus = useRef(false);
 	const editorReady = useRef(false);
 	const lastSeenValue = useRef(value);
@@ -116,13 +116,14 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 
 	// handles iframe loaded once, installed on mount, never updated, doesn't need useCallback deps
 	const handleIframeLoaded = useCallback(() => {
+		console.log('iframe loaded', { id, isReadOnly, isTouchOrSmall, value, isAttachmentNote });
 		iframeRef.current.contentWindow.postMessage({
 			action: 'init',
 			instanceID: id,
 			readOnly: isReadOnly,
 			disableDrag: isTouchOrSmall,
 			localizedStrings: [],
-			value
+			value, isAttachmentNote
 		}, "*");
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -168,10 +169,11 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 				readOnly: isReadOnly,
 				disableDrag: isTouchOrSmall,
 				localizedStrings: [],
-				value: lastSeenValue.current
+				value: lastSeenValue.current,
+				isAttachmentNote
 			}, "*");
 		}
-	}, [id, isReadOnly, changeIfDifferent, previousID, value, wasReadOnly, wasTouchOrSmall, isTouchOrSmall]);
+	}, [id, isAttachmentNote, isReadOnly, changeIfDifferent, previousID, value, wasReadOnly, wasTouchOrSmall, isTouchOrSmall]);
 
 	useLayoutEffect(() => {
 		const storedRef = iframeRef.current;
@@ -194,6 +196,7 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 
 RichEditor.propTypes = {
 	autoresize: PropTypes.bool,
+	isAttachmentNote: PropTypes.bool,
 	id: PropTypes.string,
 	isReadOnly: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
