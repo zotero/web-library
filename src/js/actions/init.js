@@ -3,7 +3,7 @@ import { REQUEST_SCHEMA, RECEIVE_SCHEMA, ERROR_SCHEMA, CONFIGURE } from '../cons
 
 const initialize = () => {
 	return async (dispatch, getState) => {
-		const { config: apiConfig } = getState();
+		const { config: { apiConfig } } = getState();
 		dispatch({
 			type: REQUEST_SCHEMA
 		});
