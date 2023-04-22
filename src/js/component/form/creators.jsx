@@ -18,7 +18,7 @@ const Creators = props => {
 
 	const virtualCreators = useMemo(() => [{
 		id: 0,
-		creatorType: creatorTypes[0].value,
+		creatorType: creatorTypes?.[0]?.value ?? '',
 		firstName: '',
 		lastName: '',
 		[Symbol.for('isVirtual')]: true
@@ -186,6 +186,10 @@ const Creators = props => {
 	if(animateAppearOnNextRender.current !== null) {
 		animateThisRender = [...animateAppearOnNextRender.current];
 		animateAppearOnNextRender.current = null;
+	}
+
+	if (!creatorTypes || !creatorTypes.length) {
+		return null;
 	}
 
 	return (

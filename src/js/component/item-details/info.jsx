@@ -18,7 +18,8 @@ const Info = ({ isActive, isReadOnly, id }) => {
 	);
 	const title = useSelector(state =>
 		getBaseMappedValue(state?.meta?.mappings, get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey], {}), 'title')
-	);
+	) ?? '';
+
 	const isEditing = useSelector(
 		state => state.current.itemKey && state.current.editingItemKey === state.current.itemKey
 	);

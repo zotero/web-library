@@ -11,17 +11,18 @@ import { hideFields, hideIfEmptyFields, noEditFields, extraFields } from '../../
 import { updateItemWithMapping } from '../../actions';
 
 const makeFields = (item, pendingChanges, itemTypes, itemTypeFields, mappings, isReadOnly) => {
-	const titleField = (item || {}).itemType in mappings && mappings[item.itemType]['title'] || 'title';
+	const titleFieldName = (item || {}).itemType in mappings && mappings[item.itemType]['title'] || 'title';
 	const aggregatedPatch = (pendingChanges || []).reduce(
 		(aggr, { patch }) => ({...aggr, ...patch}), {}
 	);
 	const itemWithPendingChanges = { ...(item || {}), ...aggregatedPatch };
+	const titleField = (itemTypeFields[item.itemType] || []).find(itf => itf.field === titleFieldName);
 
 	return [
 		{ field: 'itemType', localized: 'Item Type' },
-		itemTypeFields[(item || {}).itemType].find(itf => itf.field === titleField),
+		...(titleField ? [titleField] : []),
 		{ field: 'creators', localized: 'Creators' },
-		...itemTypeFields[(item || {}).itemType].filter(itf => itf.field !== titleField && !hideFields.includes(itf.field)),
+		...(itemTypeFields[item.itemType] || []).filter(itf => itf.field !== titleFieldName && !hideFields.includes(itf.field)),
 		...extraFields
 	].map(f => ({
 		options: f.field === 'itemType' ? itemTypes : null,
@@ -57,7 +58,7 @@ const ItemBox = ({ isReadOnly }) => {
 
 	//@TODO: mapping should be handled by <Creators />
 	//@TODO: even better, we should store this mapped already
-	const creatorTypeOptions = useMemo(() => creatorTypes.map(ct => ({
+	const creatorTypeOptions = useMemo(() => (creatorTypes || []).map(ct => ({
 		value: ct.creatorType,
 		label: ct.localized
 	})), [creatorTypes]);

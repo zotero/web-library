@@ -1,0 +1,25 @@
+[
+    {
+        "key": "X8KS2CJ6",
+        "version": 159,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+            }
+        },
+        "links": {},
+        "meta": {},
+        "data": {
+            "key": "X8KS2CJ6",
+            "version": 159,
+            "itemType": "annotation",
+            "tags": [],
+            "collections": [],
+            "relations": {},
+            "dateAdded": "2023-01-25T17:04:11Z",
+            "dateModified": "2023-04-20T09:58:03Z"
+        }
+    }
+]

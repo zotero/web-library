@@ -21,6 +21,7 @@ const Abstract = ({ isReadOnly, ...rest }) => {
 	const pendingChanges = useSelector(state =>
 		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey])
 	);
+	const itemTypeFields = useSelector(state => state.meta.itemTypeFields);
 	const [isActive, setIsActive] = useState(false);
 
 	const placeholder = !shouldUseEditMode || (shouldUseEditMode && isEditing) ?
@@ -72,6 +73,10 @@ const Abstract = ({ isReadOnly, ...rest }) => {
 			}) }
 		/>
 	);
+
+	if (!(itemTypeFields[item.itemType].find(f => f.field === 'abstractNote'))) {
+		return null;
+	}
 
 	return (shouldUseEditMode && isEditing) ? input : (
 		<Editable
