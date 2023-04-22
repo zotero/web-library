@@ -1,7 +1,6 @@
-import { paramCase } from 'param-case';
-
 import { cleanDOI, cleanURL, get } from '../utils';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
+import { itemTypesWithIcons } from '../../../data/item-types-with-icons.json';
 
 // https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
 const isOnlyEmoji = str => {
@@ -38,6 +37,8 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 			return 'document';
 	}
 }
+
+const getItemTypeIcon = itemType => itemTypesWithIcons.includes(itemType) ? itemType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase() : 'document';
 
 // "attachment" column may be different from attachment icon, depending on context
 const getAttachmentColumnIcon = item => {
@@ -103,7 +104,7 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 		item[Symbol.for('meta')].createdByUser.username :
 		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
-	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : paramCase(item.itemType);
+	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : getItemTypeIcon(item.itemType);
 
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062

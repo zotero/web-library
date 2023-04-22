@@ -2,7 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { findByRole, screen, waitFor } from '@testing-library/react'
+import { findByRole, getByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -80,6 +80,8 @@ describe('Unexpected Item Types', () => {
 	});
 
 	// this should never happen, but if it does, we should handle it gracefully
+	// also need an item type for which we're guaranteed not to have an icon to
+	// test fallback
 	test(`Handle unexpected top level item type`, async () => {
 		let itemsRequested = false;
 		server.use(
@@ -101,8 +103,12 @@ describe('Unexpected Item Types', () => {
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
 		await waitFor(() => expect(itemsRequested).toBe(true));
 		const grid = await screen.findByRole('grid', { name: 'items' });
-		await userEvent.click(await findByRole(grid, 'row', { name: '' }));
+		const row = await findByRole(grid, 'row', { name: '' });
+		const icon = getByRole(row, 'img');
 
+		expect(icon).toHaveClass('icon icon-document');
+
+		await userEvent.click(row);
 		expect(await screen.findByRole('combobox', { name: 'Item Type' }))
 			.toHaveTextContent('badItemType');
 	});
