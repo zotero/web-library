@@ -35,7 +35,7 @@ const TouchTagselectorActions = memo(() => {
 	return (
 		<Dropdown
 			isOpen={ isOpen }
-			toggle={ handleToggleDropdown }
+			onToggle={ handleToggleDropdown }
 			className="new-item-selector"
 		>
 			<DropdownToggle
