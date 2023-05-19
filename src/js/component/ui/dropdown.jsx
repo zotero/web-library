@@ -183,7 +183,8 @@ export const DropdownMenu = memo(props => {
 	const ref = useRef(null);
 
 	const { isOpen, x, y, isReady, strategy, floating, handleToggle } = useContext(DropdownContext);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(ref, '[role="menuitem"]');
+	const { focusNext, focusPrev, receiveBlur, receiveFocus, resetLastFocused } = useFocusManager(ref, '[role="menuitem"]');
+	const wasOpen = usePrevious(isOpen);
 
 	const handleKeyDown = useCallback(ev => {
 		if (ev.key === 'ArrowDown') {
@@ -204,6 +205,12 @@ export const DropdownMenu = memo(props => {
 		}
 		receiveFocus(ev);
 	}, [receiveFocus]);
+
+	useEffect(() => {
+		if (wasOpen && !isOpen) {
+			resetLastFocused();
+		}
+	}, [isOpen, resetLastFocused, wasOpen]);
 
 	return (
 		<div
