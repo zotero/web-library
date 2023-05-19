@@ -153,7 +153,8 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		const styleComboBox = screen.getByRole('combobox', { name: 'Citation Style' });
 		await userEvent.click(styleComboBox);
-		await userEvent.selectOptions(getByRole(styleComboBox, 'listbox'), 'Turabian 8th edition (full note)');
+		const option = getByRole(getByRole(styleComboBox, 'listbox'), 'option', { name: /Turabian/ });
+		await userEvent.click(option);
 
 		await findByText(dialog, /Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, and Eric Gunawan/);
 		expect(requestsCounter).toBe(2);
