@@ -120,7 +120,16 @@ function strToDate(string, { locale } = {}) {
 		order: ''
 	};
 
-	const { monthsWithEnglish, slashRe, yearRe, monthRe, dayRe } = compileRegexes(locale ?? window?.navigator?.language ?? 'en-US');
+	let compiledRegexes;
+
+	try {
+		compiledRegexes = compileRegexes(locale ?? window?.navigator?.language ?? 'en-US');
+	} catch (err) {
+		// old browser (like Safari 10) can't handle our regexes so this will work like with unparsable dates on these browsers
+		return date;
+	}
+
+	let { monthsWithEnglish, slashRe, yearRe, monthRe, dayRe } = compiledRegexes;
 
 	if (typeof string == 'string' || typeof string == 'number') {
 		string = trimInternal(string.toString());

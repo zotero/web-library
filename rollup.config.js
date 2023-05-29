@@ -65,8 +65,15 @@ const config = {
 			'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default'),
 		}),
 		babel({
-			include: ['src/js/**'],
-			extensions: ['.js', '.jsx'],
+			babelrc: false,
+			include: [
+				'src/js/**',
+				// modules below need re-transpiled for compatibility with Safari 10
+				'node_modules/@floating-ui/**',
+				'node_modules/react-dnd*/**',
+				'node_modules/dnd-multi-backend/**',
+				'node_modules/react-virtualized-auto-sizer/**'
+			],
 			babelHelpers: 'bundled'
 		}),
 		filesize({ showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG }),
