@@ -465,27 +465,28 @@ const DotMenu = memo(props => {
 				<DropdownItem
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
-					onClick={ handleDeleteClick }
-					onKeyDown={ handleDeleteClick }
-				>
-					Delete
-				</DropdownItem>
-				<DropdownItem
-					onBlur={ stopPropagation }
-					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
 					onKeyDown={ handleSubcollectionClick }
 				>
 					New Subcollection
 				</DropdownItem>
-					<DropdownItem
-						onBlur={ stopPropagation }
-						onMouseDown={ stopPropagation }
-						onClick={ handleMoveCollectionClick }
-						onKeyDown={ handleMoveCollectionClick }
-					>
-						Move Collection
-					</DropdownItem>
+				<DropdownItem
+					onBlur={ stopPropagation }
+					onMouseDown={ stopPropagation }
+					onClick={ handleMoveCollectionClick }
+					onKeyDown={ handleMoveCollectionClick }
+				>
+					Move Collection
+				</DropdownItem>
+				<DropdownItem divider />
+				<DropdownItem
+					onBlur={stopPropagation}
+					onMouseDown={stopPropagation}
+					onClick={handleDeleteClick}
+					onKeyDown={handleDeleteClick}
+				>
+					Delete
+				</DropdownItem>
 				</React.Fragment>
 			</DropdownMenu>
 		</Dropdown>
