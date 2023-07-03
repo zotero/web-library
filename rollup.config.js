@@ -11,6 +11,7 @@ import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import alias from '@rollup/plugin-alias';
 import { terser } from 'rollup-plugin-terser';
 import virtual from '@rollup/plugin-virtual';
+import { visualizer } from "rollup-plugin-visualizer";
 
 // Embedded doesn't need drag and drop so implementation below is used instead to reduce few KBs
 // while re-using the same code for both targets.
@@ -102,6 +103,7 @@ const embeddedAliases = [
 
 if(process.env.DEBUG) {
 	config.plugins.splice(-1, 0, sizes());
+	config.plugins.splice(-1, 0, visualizer({ filename: `visualizer/${new Date().toJSON().slice(0, 10)}.html` }));
 }
 
 if(isProduction) {
