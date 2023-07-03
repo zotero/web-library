@@ -1,7 +1,7 @@
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
-import React, { useCallback, useRef, memo } from 'react';
+import { Fragment, useCallback, useRef, memo } from 'react';
 import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
 import { useFocusManager  } from 'web-common/hooks';
 
@@ -60,7 +60,7 @@ const TagSelector = () => {
 	}, [dispatch]);
 
 	return (
-		<nav
+        <nav
 			aria-label="tag selector"
 			id={ id.current }
 			className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }
@@ -115,18 +115,18 @@ const TagSelector = () => {
 								Show Automatic
 							</DropdownItem>
 							{ !isLibraryReadOnly && (
-								<React.Fragment>
+								<Fragment>
 									<DropdownItem divider />
 									<DropdownItem  onClick={ handleManageTagsClick } >
 										Manage Tags
 									</DropdownItem>
-								</React.Fragment>
+								</Fragment>
 							) }
 						</DropdownMenu>
 				</UncontrolledDropdown>
 			</div>
 		</nav>
-	);
+    );
 };
 
 export default memo(TagSelector);

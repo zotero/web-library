@@ -1,4 +1,4 @@
-import React, { useCallback, useId, memo } from 'react';
+import { useCallback, useId, memo } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'web-common/utils';
 

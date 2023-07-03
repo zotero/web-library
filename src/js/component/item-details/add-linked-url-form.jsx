@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { Fragment, forwardRef, memo, useCallback, useImperativeHandle, useRef, useState, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Spinner } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
@@ -34,7 +34,7 @@ const AddLinkedUrlFormToolbar = props => {
 	}, [onClose, onSubmit]);
 
 	return (
-		<Toolbar
+        <Toolbar
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }
 			ref={ toolbarRef }
@@ -42,7 +42,7 @@ const AddLinkedUrlFormToolbar = props => {
 		>
 			{ isBusy && <div className="toolbar-right"><Spinner className="small" /></div> }
 			<div className={ cx('toolbar-right', { 'hidden': isBusy }) }>
-				<React.Fragment>
+				<Fragment>
 					<Button
 						className="btn-default"
 						onClick={ onClose }
@@ -59,10 +59,10 @@ const AddLinkedUrlFormToolbar = props => {
 					>
 						Add
 					</Button>
-				</React.Fragment>
+				</Fragment>
 			</div>
 		</Toolbar>
-	);
+    );
 }
 
 const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {

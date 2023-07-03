@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useId, useRef, useState } from 'react';
+import { memo, useCallback, useId, useRef, useState } from 'react';
 import { useFloating, shift } from '@floating-ui/react-dom';
 import { Button, Icon } from 'web-common/components';
 import { useFocusManager, usePrevious } from 'web-common/hooks';

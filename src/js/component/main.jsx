@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
@@ -13,12 +13,12 @@ import { routes, redirects } from '../routes';
 
 export const MainEmbedded = () => {
 	return (
-		<React.Fragment>
+        <Fragment>
 			<UserTypeDetector />
 			<ViewPortDetector />
 			<Loader />
-		</React.Fragment>
-	)
+		</Fragment>
+    );
 }
 
 export const MainZotero = (history) => (

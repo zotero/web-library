@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd'
 import { useDebouncedCallback } from 'use-debounce';

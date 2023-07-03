@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useImperativeHandle, useRef } from 'react';
+import { Fragment, forwardRef, memo, useImperativeHandle, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { noop, pick } from 'web-common/utils';
@@ -40,7 +40,7 @@ const Editable = memo(forwardRef((props, ref) => {
 	});
 
 	return (
-		<div
+        <div
 			tabIndex={ isDisabled ? null : isActive ? null : tabIndex }
 			onClick={ onClick }
 			onFocus={ onFocus }
@@ -55,16 +55,16 @@ const Editable = memo(forwardRef((props, ref) => {
 					{ ...props }
 				/>
 			) : (
-				<React.Fragment>
+				<Fragment>
 					{
 					hasChildren ?
 						children :
 						<EditableContent { ...props } />
 					}
-				</React.Fragment>
+				</Fragment>
 			) }
 		</div>
-	);
+    );
 }));
 
 Editable.displayName = 'Editable';

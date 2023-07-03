@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
+import { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { isTriggerEvent } from 'web-common/utils';
 import { Icon } from 'web-common/components';

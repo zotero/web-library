@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useRef } from 'react';
+import { cloneElement, forwardRef, memo, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -85,7 +85,7 @@ const Tabs = memo(({ children, justified, compact, activateOnFocus, ...rest }) =
 	useFocusManager(ref, '.tab.active > a');
 
 	return (
-		<nav>
+        <nav>
 			<ul
 				className={ cx('nav', 'tabs', { justified, compact, 'activate-on-focus': activateOnFocus  }) }
 				onBlur={ shouldUseTabs ? receiveBlur : noop }
@@ -98,13 +98,13 @@ const Tabs = memo(({ children, justified, compact, activateOnFocus, ...rest }) =
 				{
 					mapChildren(children, child =>
 						child && child.type === Tab ?
-							React.cloneElement(child, { activateOnFocus, focusNext, focusPrev, resetLastFocused }) :
+							cloneElement(child, { activateOnFocus, focusNext, focusPrev, resetLastFocused }) :
 							child
 					)
 				}
 			</ul>
 		</nav>
-	);
+    );
 });
 
 Tabs.displayName = 'Tabs';

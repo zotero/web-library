@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import TouchHeader from '../component/touch-header';

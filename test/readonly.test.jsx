@@ -1,4 +1,3 @@
-import React from 'react';
 import '@testing-library/jest-dom';
 import fileSaver from 'file-saver';
 import { pdfWorker } from '../src/js/common/pdf-worker.js';

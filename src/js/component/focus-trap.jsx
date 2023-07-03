@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, memo } from 'react';
+import { Fragment, useCallback, memo } from 'react';
 
 const focusables = 'button:not([disabled]),[href]:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]):not([disabled])';
 
@@ -30,12 +30,12 @@ const FocusTrap = ({ children, disabled = false }) => {
 	}, []);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-before onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 			{ children }
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-after onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 FocusTrap.propTypes = {

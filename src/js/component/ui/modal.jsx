@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import ReactModal from 'react-modal';
 import { useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';

@@ -1,4 +1,5 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { Fragment, forwardRef, memo, useCallback, useState, useEffect, useImperativeHandle,
+	useMemo, useRef, } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Icon, Spinner } from 'web-common/components';
@@ -84,7 +85,7 @@ const LibraryNode = props => {
 	}
 
 	return (
-		<Node
+        <Node
 			className={ cx({
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected && !isPickerMode,
@@ -109,15 +110,15 @@ const LibraryNode = props => {
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
 		>
 			{ isReadOnly ? (
-				<React.Fragment>
+				<Fragment>
 					<Icon type="32/library-read-only" className="touch" width="32" height="32" />
 					<Icon type="20/library-read-only" className="mouse" width="20" height="20" />
-				</React.Fragment>
+				</Fragment>
 			) : (
-				<React.Fragment>
+				<Fragment>
 					<Icon type="28/library" className="touch" width="28" height="28" />
 					<Icon type="16/library" className="mouse" width="16" height="16" />
-				</React.Fragment>
+				</Fragment>
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
@@ -145,7 +146,7 @@ const LibraryNode = props => {
 				)
 			}
 		</Node>
-	);
+    );
 }
 
 LibraryNode.propTypes = {
@@ -308,7 +309,7 @@ const Libraries = forwardRef((props, ref) => {
 	}
 
 	return (
-		<nav
+        <nav
 			aria-label="collection tree"
 			className={ cx('collection-tree', { 'picker-mode': isPickerMode }) }
 			onFocus={ isTouchOrSmall ? noop : receiveFocus }
@@ -329,7 +330,7 @@ const Libraries = forwardRef((props, ref) => {
 							</div>
 						)}
 						{ myGroupLibraries.length > 0 && (
-							<React.Fragment>
+							<Fragment>
 								<h4>{ otherGroupLibraries.length > 0 ? 'My ' : '' }Group Libraries</h4>
 								<div className={ cx('level', 'level-0') }>
 									<ul className="nav" role="group">
@@ -338,10 +339,10 @@ const Libraries = forwardRef((props, ref) => {
 										) }
 									</ul>
 								</div>
-							</React.Fragment>
+							</Fragment>
 						)}
 						{ otherGroupLibraries.length > 0 && (
-							<React.Fragment>
+							<Fragment>
 								<h4>Other Group Libraries</h4>
 								<div className={cx('level', 'level-0')}>
 									<ul className="nav" role="group">
@@ -350,10 +351,10 @@ const Libraries = forwardRef((props, ref) => {
 										)}
 									</ul>
 								</div>
-							</React.Fragment>
+							</Fragment>
 						)}
 						{ otherLibraries.length > 0 && (
-							<React.Fragment>
+							<Fragment>
 								<h4>Other Libraries</h4>
 								<div className={ cx('level', 'level-0') }>
 									<ul className="nav" role="group">
@@ -362,13 +363,13 @@ const Libraries = forwardRef((props, ref) => {
 										) }
 									</ul>
 								</div>
-							</React.Fragment>
+							</Fragment>
 						)}
 					</section>
 				</div>
 			</div>
 		</nav>
-	);
+    );
 });
 
 Libraries.displayName = 'Libraries';

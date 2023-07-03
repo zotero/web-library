@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useRef } from 'react';
+import { Children, forwardRef, memo, useRef } from 'react';
 import { noop, pick } from 'web-common/utils';
 import { Icon } from 'web-common/components';
 
@@ -9,7 +9,7 @@ import { useDrag, useDrop } from 'react-dnd';
 
 const SimpleField = memo(forwardRef((props, ref) => {
 	const { children, className, dragHandle=null, onClick = noop, onKeyDown = noop, tabIndex } = props;
-	const [label, value, ...otherChildren] = React.Children.toArray(children);
+	const [label, value, ...otherChildren] = Children.toArray(children);
 
 	return (
 		<li

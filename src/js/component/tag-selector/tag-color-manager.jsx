@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useCallback, useEffect, useId, useRef, useState, memo } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'web-common/components';

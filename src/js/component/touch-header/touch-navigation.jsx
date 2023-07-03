@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';

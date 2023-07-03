@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useRef } from 'react';
+import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
@@ -46,7 +46,7 @@ const Navbar = memo(({ entries = [] }) => {
 	}, [dispatch]);
 
 	return (
-		<header
+        <header
 			className="navbar"
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }
@@ -81,7 +81,7 @@ const Navbar = memo(({ entries = [] }) => {
 				registerAutoFocus={ registerAutoFocus }
 			/>
 			{ isSingleColumn && !isLibrariesView && (
-				<React.Fragment>
+				<Fragment>
 					<Button
 						onClick={ handleSearchButtonClick }
 						icon
@@ -98,7 +98,7 @@ const Navbar = memo(({ entries = [] }) => {
 					>
 						<Icon type="24/tag-strong" width="24" height="24" />
 					</Button>
-				</React.Fragment>
+				</Fragment>
 			) }
 			<Button
 				icon
@@ -121,7 +121,7 @@ const Navbar = memo(({ entries = [] }) => {
 				/>
 			)) }
 		</header>
-	);
+    );
 });
 
 Navbar.displayName = 'Navbar';

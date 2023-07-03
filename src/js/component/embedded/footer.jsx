@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import { Fragment, useCallback, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 
@@ -78,15 +78,15 @@ const EmbeddedFooter = () => {
 	const view = useSelector(state => state.current.view);
 
 	return (
-		<div className="embedded-footer">
+        <div className="embedded-footer">
 		{ ['libraries', 'library', 'collection', 'item-list'].includes(view) && (
-			<React.Fragment>
+			<Fragment>
 				<EmbeddedTagSelector />
-			</React.Fragment>
+			</Fragment>
 		)}
 			<EmbeddedSeeOnZotero />
 		</div>
-	);
+    );
 }
 
 export default memo(EmbeddedFooter);

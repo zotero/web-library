@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useId, useMemo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { noop } from 'web-common/utils';
@@ -88,7 +88,7 @@ const NewItemSelector = props => {
 	}, []);
 
 	return (
-		<Dropdown
+        <Dropdown
 			className="new-item-selector"
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
@@ -113,7 +113,7 @@ const NewItemSelector = props => {
 				/>
 			)) }
 			{ isFileUploadAllowed && (
-			<React.Fragment>
+			<Fragment>
 				<DropdownItem divider />
 				<DropdownItem
 					data-no-toggle
@@ -143,7 +143,7 @@ const NewItemSelector = props => {
 						type="file"
 					/>
 				</DropdownItem>
-			</React.Fragment>
+			</Fragment>
 			)}
 			{ isSecondaryVisible ?
 				secondaryItemTypesDesc.map(itemTypeSpec => (
@@ -153,16 +153,16 @@ const NewItemSelector = props => {
 						onNewItemCreate={ onNewItemCreate }
 					/>
 				)) : (
-				<React.Fragment>
+				<Fragment>
 					<DropdownItem divider />
 					<DropdownItem onClick={ handleToggleMore }>
 						More
 					</DropdownItem>
-				</React.Fragment>
+				</Fragment>
 			)}
 			</DropdownMenu>
 		</Dropdown>
-	);
+    );
 }
 
 DropdownItemType.propTypes = {

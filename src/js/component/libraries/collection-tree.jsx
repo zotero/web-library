@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { Fragment, memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect, } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -434,7 +434,7 @@ const DotMenu = memo(props => {
 	// });
 
 	return (
-		<Dropdown
+        <Dropdown
 			isOpen={ isOpen }
 			onToggle={ handleToggle }
 			placement="bottom-end"
@@ -450,7 +450,7 @@ const DotMenu = memo(props => {
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
 			<DropdownMenu>
-				<React.Fragment>
+				<Fragment>
 				<DropdownItem
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
@@ -484,10 +484,10 @@ const DotMenu = memo(props => {
 				>
 					Delete
 				</DropdownItem>
-				</React.Fragment>
+				</Fragment>
 			</DropdownMenu>
 		</Dropdown>
-	);
+    );
 });
 
 DotMenu.propTypes = {
@@ -671,7 +671,7 @@ const CollectionNode = memo(props => {
 	}, [collection.key, renaming, prevRenaming]);
 
 	return (
-		<Node
+        <Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
 				'selected': !isPickerMode && derivedData[collection.key].isSelected,
@@ -733,7 +733,7 @@ const CollectionNode = memo(props => {
 					selectOnFocus
 					value={ collectionName }
 				/> ) : (
-					<React.Fragment>
+					<Fragment>
 						<div
 							className="truncate"
 							id={ id.current }
@@ -758,11 +758,11 @@ const CollectionNode = memo(props => {
 								'setDotMenuFor', 'setOpened']) }
 							/>
 						) : null }
-					</React.Fragment>
+					</Fragment>
 				)
 			}
 		</Node>
-	);
+    );
 });
 
 CollectionNode.propTypes = {
@@ -802,7 +802,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 	}, [collections]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			<ItemsNode
 				parentCollectionKey={ parentCollectionKey }
 				{  ...pick(rest, ['isPickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
@@ -827,8 +827,8 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'focusBySelector',
 				'level', 'parentLibraryKey', 'isPickerMode'] )}
 			/>
-		</React.Fragment>
-	)
+		</Fragment>
+    );
 });
 
 CollectionsNodeList.propTypes = {

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef } from 'react';
+import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -109,7 +109,7 @@ const ListRow = memo(props => {
 	}, []);
 
 	return (
-		<div
+        <div
 			data-index={ index }
 			data-key={ itemKey }
 			className={ className }
@@ -160,13 +160,13 @@ const ListRow = memo(props => {
 					<div className="icons">
 						{
 							attachmentIconName && (
-								<React.Fragment>
+								<Fragment>
 								<Icon
 									type={ `16/item-types/light/2x/${attachmentIconName}` }
 									symbol={ isActive && !isSelectMode ? `${attachmentIconName}-white` : itemData.attachmentIconName }
 									width="16"
 									height="16"
-								/>  </React.Fragment>) // eslint-disable-line no-irregular-whitespace
+								/>  </Fragment>) // eslint-disable-line no-irregular-whitespace
 						}
 						{ emojis.join(' ') }
 						<span className="tag-circles">
@@ -189,7 +189,7 @@ const ListRow = memo(props => {
 			</div>
 			<Icon type={ '16/chevron-13' } width="16" height="16" />
 		</div>
-	);
+    );
 });
 
 ListRow.displayName = 'ListRow';

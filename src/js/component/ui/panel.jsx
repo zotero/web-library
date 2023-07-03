@@ -1,4 +1,4 @@
-import React from 'react';
+import { cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
@@ -7,15 +7,15 @@ const PanelHeader = props => {
 	const { className, children: header } = props;
 
 	if(header.type === 'header') {
-		return React.cloneElement(header, {
+		return cloneElement(header, {
 			className: cx('panel-header', className)
 		});
 	} else {
 		return (
-			<header className={ cx('panel-header', className) }>
-				{ React.cloneElement(header) }
+            <header className={ cx('panel-header', className) }>
+				{ cloneElement(header) }
 			</header>
-		);
+        );
 	}
 }
 

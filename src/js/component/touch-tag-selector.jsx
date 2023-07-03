@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
@@ -32,7 +32,7 @@ const TouchTagselectorActions = memo(() => {
 	}, [dispatch]);
 
 	return (
-		<Dropdown
+        <Dropdown
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
 			className="new-item-selector"
@@ -54,16 +54,16 @@ const TouchTagselectorActions = memo(() => {
 					Show Automatic
 				</DropdownItem>
 				{ !isLibraryReadOnly && (
-					<React.Fragment>
+					<Fragment>
 						<DropdownItem divider />
 						<DropdownItem  onClick={ handleManageTagsClick } >
 							Manage Tags
 						</DropdownItem>
-					</React.Fragment>
+					</Fragment>
 				) }
 			</DropdownMenu>
 		</Dropdown>
-	);
+    );
 });
 
 TouchTagselectorActions.displayName = 'TouchTagselectorActions';
@@ -172,7 +172,7 @@ const TouchTagSelector = () => {
 	}, [tags.length, prevTagsCount])
 
 	return (
-		<FocusTrap disabled={ !isOpen }>
+        <FocusTrap disabled={ !isOpen }>
 		<CSSTransition
 			in={ isOpen }
 			timeout={ 600 }
@@ -234,7 +234,7 @@ const TouchTagSelector = () => {
 						) }
 					</div>
 					{ !isManaging && (
-							<React.Fragment>
+							<Fragment>
 								{selectedTags.length > 0 && (
 									<ul
 										ref={ selectedListRef }
@@ -261,7 +261,7 @@ const TouchTagSelector = () => {
 									</ul>
 								)}
 								<TagList ref={ tagsListRef } toggleTag={ toggleTag } />
-							</React.Fragment>
+							</Fragment>
 					) }
 					<footer className="touch-footer">
 						<Toolbar>
@@ -280,7 +280,7 @@ const TouchTagSelector = () => {
 				</div>
 		</CSSTransition>
 		</FocusTrap>
-	);
+    );
 }
 
 export default memo(TouchTagSelector);

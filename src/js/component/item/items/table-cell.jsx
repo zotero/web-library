@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import React from 'react';
 import PropTypes from 'prop-types';
 import { pick } from 'web-common/utils';
 

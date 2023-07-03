@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { Fragment, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 
@@ -18,12 +18,12 @@ const TouchFooter = () => {
 	handleExportModalOpen } = useItemActionHandlers();
 
 	return (
-		<footer className="touch-footer">
+        <footer className="touch-footer">
 			<Toolbar>
 				<div className="toolbar-justified">
 					<ToolGroup>
 						{ !isReadOnly && (
-							<React.Fragment>
+							<Fragment>
 								{
 									!isTrash && (
 									<Button icon onClick={ handleAddToCollectionModalOpen } disabled={ selectedItemsCount === 0 }>
@@ -54,7 +54,7 @@ const TouchFooter = () => {
 											<Icon type={ '24/empty-trash' } width="24" height="24" />
 										</Button>
 								)}
-							</React.Fragment>
+							</Fragment>
 						) }
 						<Button icon onClick={ handleExportModalOpen } disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }>
 							<Icon type={ '24/export' } width="24" height="24" />
@@ -70,7 +70,7 @@ const TouchFooter = () => {
 				</div>
 			</Toolbar>
 		</footer>
-	);
+    );
 }
 
 export default memo(TouchFooter);

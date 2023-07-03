@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import PropTypes from 'prop-types';
-import React, { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
+import { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop, scrollIntoViewIfNeeded } from 'web-common/utils';

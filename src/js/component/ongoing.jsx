@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { pluralize } from '../common/format';
 import { Spinner } from 'web-common/components';

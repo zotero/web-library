@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxAsyncQueue from 'redux-async-queue';

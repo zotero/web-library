@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Spinner } from 'web-common/components';
 
@@ -137,7 +137,7 @@ const ItemDetailsTabs = () => {
 
 
 	return (
-		<Panel
+        <Panel
 			// isBackdrop={ !shouldUseTabs && (!!noteKey || !!attachmentKey) } // we don't have slide-in view for attachments yet
 			isBackdrop={ !shouldUseTabs && !!noteKey }
 			className={ cx({ 'editing': isEditing })}
@@ -179,7 +179,7 @@ const ItemDetailsTabs = () => {
 					}
 					{
 						!['attachment', 'note'].includes(item.itemType) && (
-							<React.Fragment>
+							<Fragment>
 								<Tab
 									aria-controls={`${id}-info`}
 									data-tab-name="info"
@@ -198,7 +198,7 @@ const ItemDetailsTabs = () => {
 											Notes
 									</Tab>
 								) }
-							</React.Fragment>
+							</Fragment>
 						)
 					}
 
@@ -248,10 +248,10 @@ const ItemDetailsTabs = () => {
 			{
 				// on small devices, where tabs are not used, we display single spinner
 				!isReady ? <Spinner className="large" /> : (
-					<React.Fragment>
+					<Fragment>
 						{
 							!['attachment', 'note'].includes(item.itemType) && (
-								<React.Fragment>
+								<Fragment>
 									<Info
 										key={ 'info-' + item.key }
 										id={ `${id}-info` }
@@ -265,7 +265,7 @@ const ItemDetailsTabs = () => {
 										isReadOnly={ isReadOnly }
 									/>
 									) }
-								</React.Fragment>
+								</Fragment>
 							)
 						}
 
@@ -316,12 +316,12 @@ const ItemDetailsTabs = () => {
 								isActive={ activeTab === 'related' }
 							/>
 						) }
-					</React.Fragment>
+					</Fragment>
 				)
 			}
 
 		</Panel>
-	)
+    );
 };
 
 ItemDetailsTabs.propTypes = {

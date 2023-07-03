@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import { Fragment, memo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
@@ -52,7 +52,7 @@ const ItemActionsTouch = memo(() => {
 	}, [dispatch]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			<Dropdown
 				isOpen={ isOpen }
 				onToggle={ handleDropdownToggle }
@@ -71,12 +71,12 @@ const ItemActionsTouch = memo(() => {
 				</DropdownToggle>
 				<DropdownMenu>
 					{ (isSingleColumn && !isEmbedded) && (
-						<React.Fragment>
+						<Fragment>
 							<DropdownItem onClick={ handleSelectModeToggle } >
 								{ isSelectMode ? 'Cancel' : 'Select Items' }
 							</DropdownItem>
 							<DropdownItem divider />
-						</React.Fragment>
+						</Fragment>
 					) }
 					<DropdownItem onClick={ handleSortModalOpen } >
 						Sort By: { sortColumnLabel }
@@ -85,7 +85,7 @@ const ItemActionsTouch = memo(() => {
 						Sort Order: { sortColumnOrder }
 					</DropdownItem>
 					{ isNewItemAllowed && (
-						<React.Fragment>
+						<Fragment>
 							<DropdownItem divider />
 							<DropdownItem onClick={ handleNewItemModalOpen } >
 								New Item
@@ -101,15 +101,15 @@ const ItemActionsTouch = memo(() => {
 							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
 								Add By Identifier
 							</DropdownItem>
-						</React.Fragment>
+						</Fragment>
 					)}
 					{ !isEmbedded && (
-						<React.Fragment>
+						<Fragment>
 							<DropdownItem divider />
 							<DropdownItem onClick={ handleSubscribeClick }>
 								Subscribe To Feed
 							</DropdownItem>
-						</React.Fragment>
+						</Fragment>
 					) }
 				</DropdownMenu>
 			</Dropdown>
@@ -118,8 +118,8 @@ const ItemActionsTouch = memo(() => {
 					{ isSelectMode ? 'Cancel' : 'Select' }
 				</Button>
 			)}
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 });
 
 ItemActionsTouch.displayName = 'ItemActionsTouch';
@@ -149,9 +149,9 @@ const ItemActionsDesktop = memo(props => {
 	}, [onFocusNext, onFocusPrev]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			{ !isReadOnly && (
-				<React.Fragment>
+				<Fragment>
 				<ToolGroup>
 					<NewItemSelector
 						disabled={ !['top', 'collection'].includes(itemsSource) }
@@ -182,7 +182,7 @@ const ItemActionsDesktop = memo(props => {
 				</ToolGroup>
 				<ToolGroup>
 				{ !isTrash && (
-					<React.Fragment>
+					<Fragment>
 						<Button
 							disabled={ selectedItemsCount === 0 }
 							icon
@@ -215,10 +215,10 @@ const ItemActionsDesktop = memo(props => {
 						>
 							<Icon type={ '16/trash' } width="16" height="16" />
 						</Button>
-					</React.Fragment>
+					</Fragment>
 				)}
 				{ isTrash && (
-					<React.Fragment>
+					<Fragment>
 						<Button
 							disabled={ selectedItemsCount === 0 }
 							icon
@@ -239,10 +239,10 @@ const ItemActionsDesktop = memo(props => {
 						>
 							<Icon type="16/restore" width="16" height="16" />
 						</Button>
-					</React.Fragment>
+					</Fragment>
 				)}
 				</ToolGroup>
-				</React.Fragment>
+				</Fragment>
 			) }
 			<ToolGroup>
 				<ExportActions tabIndex={ -2 } onFocusNext={ onFocusNext } onFocusPrev={ onFocusPrev } />
@@ -274,8 +274,8 @@ const ItemActionsDesktop = memo(props => {
 					tabIndex={ -2 }
 				/>
 			</ToolGroup>
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 });
 
 ItemActionsDesktop.displayName = 'ItemActionsDesktop';

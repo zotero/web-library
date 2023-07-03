@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback } from 'react';
+import { Fragment, memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
 
@@ -35,7 +35,7 @@ const TouchHeader = props => {
 	}, [onSelectModeToggle]);
 
 	return (
-		<header className={ cx('touch-header', { 'select-mode': isSelectMode }, className) }>
+        <header className={ cx('touch-header', { 'select-mode': isSelectMode }, className) }>
 			<Toolbar>
 				{ isSingleColumn && !isModal && !isSelectMode && (
 					<Searchbar />
@@ -82,7 +82,7 @@ const TouchHeader = props => {
 				}
 			{
 				shouldHandleSelectMode && isSelectMode && (
-					<React.Fragment>
+					<Fragment>
 						<div className="toolbar-left" />
 						<div className="toolbar-center">
 							<ToolGroup>
@@ -99,12 +99,12 @@ const TouchHeader = props => {
 								Cancel
 							</Button>
 						</div>
-					</React.Fragment>
+					</Fragment>
 				)
 			}
 			</Toolbar>
 		</header>
-	);
+    );
 }
 
 TouchHeader.propTypes = {

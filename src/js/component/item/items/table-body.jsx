@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from 'react';
+import { forwardRef, memo } from 'react';
 
 const TableBody = memo(forwardRef((props, ref) => {
 	return (

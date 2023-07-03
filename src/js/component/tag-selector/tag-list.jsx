@@ -2,7 +2,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
-import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState, memo } from 'react';
+import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState, memo, } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';

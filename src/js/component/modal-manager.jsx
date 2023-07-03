@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import { Fragment, memo, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 
@@ -72,13 +72,13 @@ const ModalManager = () => {
 	}, [modalId, prevModalId, forceUpdate]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			{ mountedModals.current.map(mId => {
 				const ModalComponent = lookup[mId];
 				return <ModalComponent key={ mId } />
 			}) }
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 export default memo(ModalManager);

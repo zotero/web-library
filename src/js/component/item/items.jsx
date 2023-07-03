@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { Fragment, memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { useSelector } from 'react-redux';
@@ -17,26 +17,26 @@ const Items = ({ isSearchModeTransitioning }) => {
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
 
 	return (
-		<div className={
+        <div className={
 			cx('items-container', { loading: isFetching && !hasChecked })
 		}>
 			{ isTouchOrSmall ? (
-				<React.Fragment>
+				<Fragment>
 						{ (isLarge && !isEmbedded) && <TouchHeaderWrap
 							className="hidden-mouse hidden-md-down"
 							variant={ TouchHeaderWrap.variants.SOURCE }
 						/> }
 						<ItemsList isSearchModeTransitioning={ isSearchModeTransitioning } />
 						<TouchFooter />
-				</React.Fragment>
+				</Fragment>
 			) : (
-				<React.Fragment>
+				<Fragment>
 					{ !isEmbedded && <ItemsTableToolbar /> }
 					<ItemsTable />
-				</React.Fragment>
+				</Fragment>
 			)}
 		</div>
-	);
+    );
 };
 
 Items.propTypes = {

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { forwardRef, memo, useImperativeHandle, useMemo, useCallback, useRef, useState } from 'react';
+import { Fragment, forwardRef, memo, useImperativeHandle, useMemo, useCallback, useRef, useState, } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Icon, SelectDivider, SelectOption } from 'web-common/components';
 import { isTriggerEvent, omit, pick } from 'web-common/utils';
@@ -42,7 +42,7 @@ const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 	}, [index, onReorder]);
 
 	return (
-		<SelectInput
+        <SelectInput
 			aria-label="Creator Type"
 			className="form-control form-control-sm"
 			isActive={ isActive }
@@ -58,7 +58,7 @@ const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 			{ ... pick(rest, p => p.startsWith('data-')) }
 		>
 			{ creatorsCount > 1 && (
-				<React.Fragment>
+				<Fragment>
 					<SelectDivider />
 					{ (index > 1) && (
 						<SelectOption
@@ -75,10 +75,10 @@ const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 						onTrigger={ handleMoveDown }
 						option={ { label: 'Move Down', value: '_down' } }
 					/> ) }
-				</React.Fragment>
+				</Fragment>
 			) }
 		</SelectInput>
-	);
+    );
 }));
 
 CreatorTypeSelector.displayName = 'CreatorTypeSelector';
@@ -106,7 +106,7 @@ const CreatorFieldModal = memo(props => {
 	onFieldFocus, onCancel, onEditableCommit };
 
 	return (
-		<Modal
+        <Modal
 			isOpen={ isModalVisible }
 			contentLabel="Edit Creator"
 			className="modal-touch modal-form"
@@ -154,7 +154,7 @@ const CreatorFieldModal = memo(props => {
 					</Field>
 					{
 						isDual ? (
-							<React.Fragment>
+							<Fragment>
 								<Field>
 									<label>
 										Last Name
@@ -167,7 +167,7 @@ const CreatorFieldModal = memo(props => {
 									</label>
 									<CreatorFieldInputWrap { ...inputProps } name="firstName" label="first name" inModal />
 								</Field>
-							</React.Fragment>
+							</Fragment>
 						) : (
 							<Field>
 								<label>
@@ -193,7 +193,7 @@ const CreatorFieldModal = memo(props => {
 				</ol>
 			</div>
 		</Modal>
-	);
+    );
 });
 
 CreatorFieldModal.displayName = 'CreatorFieldModal';
@@ -406,7 +406,7 @@ const CreatorField = forwardRef((props, ref) => {
 	onFieldFocus: handleFieldFocus, onAddMany };
 
 	return (
-		<React.Fragment>
+        <Fragment>
 		{ isEditing && <CreatorFieldModal
 			creatorLabel={ creatorLabel }
 			isModalVisible={ isModalVisible }
@@ -462,7 +462,7 @@ const CreatorField = forwardRef((props, ref) => {
 					creatorsCount = { creatorsCount }
 				/>
 			}
-			<React.Fragment>
+			<Fragment>
 				{
 					shouldUseModalCreatorField ? (
 						<div className="truncate">
@@ -472,7 +472,7 @@ const CreatorField = forwardRef((props, ref) => {
 						</div>
 					) : (
 						isDual ? (
-							<React.Fragment>
+							<Fragment>
 								<CreatorFieldInputWrap
 									{ ...inputProps }
 									name="lastName"
@@ -485,7 +485,7 @@ const CreatorField = forwardRef((props, ref) => {
 									label="first name"
 									ref={ component => fieldComponents.current['firstName'] = component }
 								/>
-							</React.Fragment> ) :
+							</Fragment> ) :
 							<CreatorFieldInputWrap
 								{ ...inputProps }
 								name="name"
@@ -496,7 +496,7 @@ const CreatorField = forwardRef((props, ref) => {
 				}
 				{
 					!isReadOnly && (
-						<React.Fragment>
+						<Fragment>
 							<Button
 								icon
 								className="btn-single-dual"
@@ -547,12 +547,12 @@ const CreatorField = forwardRef((props, ref) => {
 									</Button>
 								)
 							}
-					</React.Fragment>
+					</Fragment>
 				)}
-		</React.Fragment>
+		</Fragment>
 		</Field>
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 });
 
 CreatorField.displayName = 'CreatorField';

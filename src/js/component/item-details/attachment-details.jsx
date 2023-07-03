@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { memo, Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
@@ -105,7 +105,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	}, [attachmentKey, isFetchingUrl, urlIsFresh, dispatch, hasURL]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 		<ol className="metadata-list">
 			{ attachment.url && (
 				<li className="metadata">
@@ -126,7 +126,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				</li>
 			) }
 			{ attachment.filename && attachment.linkMode.startsWith('imported') && (
-				<React.Fragment>
+				<Fragment>
 				<li className="metadata interactable">
 					<div className="key">
 						<label>
@@ -139,7 +139,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						</span>
 					</div>
 				</li>
-				</React.Fragment>
+				</Fragment>
 			) }
 			{ attachment.accessDate && (
 				<li className="metadata">
@@ -177,7 +177,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				ref={ downloadOptionsRef }
 			>
 				{ isPDF ? (
-					<React.Fragment>
+					<Fragment>
 					<a
 						className="btn btn-default"
 						href={ openInReaderPath }
@@ -216,7 +216,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 								tabIndex={ isTouchOrSmall ? null : -2 }
 								onKeyDown={handleKeyDown}
 							>
-								{isPreppingPDF ? <React.Fragment>&nbsp;<Spinner className="small" /></React.Fragment> : "Download" }
+								{isPreppingPDF ? <Fragment>&nbsp;<Spinner className="small" /></Fragment> : "Download" }
 							</Button>
 						) }
 						<DropdownToggle
@@ -242,7 +242,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
-					</React.Fragment>
+					</Fragment>
 					) : (
 					<a
 						className="btn btn-default"
@@ -268,8 +268,8 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			value={ attachment.note }
 			onChange={ handleChangeNote }
 		/>
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 AttachmentDetails.propTypes = {
@@ -277,4 +277,4 @@ AttachmentDetails.propTypes = {
 	isReadOnly: PropTypes.bool,
 }
 
-export default React.memo(AttachmentDetails);
+export default memo(AttachmentDetails);

@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 
@@ -86,7 +86,7 @@ const AddItemsToCollectionsModal = () => {
 	}, [dispatch]);
 
 	return (
-		<Modal
+        <Modal
 			className="modal-touch collection-select-modal"
 			contentLabel="Select Collection"
 			isBusy={ isBusy }
@@ -95,7 +95,7 @@ const AddItemsToCollectionsModal = () => {
 			overlayClassName="modal-slide modal-full-height modal-centered"
 		>
 			<div className="modal-body">
-				<React.Fragment>
+				<Fragment>
 				{ isTouchOrSmall ? (
 					<TouchHeader
 						isModal={ true }
@@ -104,7 +104,7 @@ const AddItemsToCollectionsModal = () => {
 						onNavigate={ handleNavigation }
 					/>
 				) : (
-					<React.Fragment>
+					<Fragment>
 						<div className="modal-header">
 						<h4 className="modal-title truncate">
 							Select target library or collection
@@ -118,7 +118,7 @@ const AddItemsToCollectionsModal = () => {
 							<Icon type={ '16/close' } width="16" height="16" />
 						</Button>
 					</div>
-					</React.Fragment>
+					</Fragment>
 				) }
 				<Libraries
 					isPickerMode={ true }
@@ -129,10 +129,10 @@ const AddItemsToCollectionsModal = () => {
 					pickerSkipCollections={ pickerSkipCollections }
 					pickerState= { { ...navState, picked } }
 				/>
-				</React.Fragment>
+				</Fragment>
 			</div>
 			{ isTouchOrSmall ? (
-				<React.Fragment>
+				<Fragment>
 					<div className="modal-footer">
 						<div className="modal-footer-left">
 							<Button
@@ -161,9 +161,9 @@ const AddItemsToCollectionsModal = () => {
 							</Button>
 						</div>
 					</div>
-				</React.Fragment>
+				</Fragment>
 			) : (
-				<React.Fragment>
+				<Fragment>
 					<div className="modal-footer justify-content-end">
 						<Button
 							disabled={ picked.length === 0}
@@ -173,10 +173,10 @@ const AddItemsToCollectionsModal = () => {
 							Add
 						</Button>
 					</div>
-				</React.Fragment>
+				</Fragment>
 			) }
 		</Modal>
-	);
+    );
 }
 
 AddItemsToCollectionsModal.propTypes = {

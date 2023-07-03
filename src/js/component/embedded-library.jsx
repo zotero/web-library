@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { memo, useEffect, useState } from 'react';
+import { Fragment, memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 
@@ -102,7 +102,7 @@ const Library = () => {
 	}
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			<div className={ cx('library-container', 'library-embedded', {
 					'navbar-nav-opened': isNavBarOpen,
 					'no-transitions': !useTransitions || hasUserTypeChanged,
@@ -117,7 +117,7 @@ const Library = () => {
 				}) }>
 				<div className="site-wrapper">
 					{ isTouchOrSmall ? (
-						<React.Fragment>
+						<Fragment>
 							<TouchHeaderWrap
 								className="darker"
 								variant={ TouchHeaderWrap.variants.MOBILE }
@@ -139,9 +139,9 @@ const Library = () => {
 								</section>
 							</main>
 							<EmbeddedFooter />
-						</React.Fragment>
+						</Fragment>
 					) : (
-					<React.Fragment>
+					<Fragment>
 						<EmbeddedHeader />
 							<main>
 								<section className={ cx('items', {
@@ -152,7 +152,7 @@ const Library = () => {
 								</section>
 							</main>
 						<EmbeddedFooter />
-					</React.Fragment>
+					</Fragment>
 					)}
 					<TouchTagSelector />
 					<EmbeddedLibrariesTreeModal />
@@ -160,8 +160,8 @@ const Library = () => {
 			</div>
 			<ItemsSortModal />
 			<ZoteroStreamingClient />
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 export default memo(Library);

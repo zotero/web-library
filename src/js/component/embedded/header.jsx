@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, memo } from 'react';
+import { Fragment, useCallback, useRef, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
@@ -40,7 +40,7 @@ const EmbeddedCollectionPicker = props => {
 	}, [dispatch, onFocusNext, onFocusPrev]);
 
 	return (
-		<div className="embedded-collection-picker">
+        <div className="embedded-collection-picker">
 			<Button
 				className="item-container"
 				onClick={ handleClick }
@@ -48,22 +48,22 @@ const EmbeddedCollectionPicker = props => {
 				tabIndex={ tabIndex }
 			>
 				{ collectionKey ? (
-					<React.Fragment>
+					<Fragment>
 						<Icon type="28/folder" className="touch" width="28" height="28" />
 						<Icon type="16/folder" symbol="folder" className="mouse" width="16" height="16" />
 						<div className="truncate" title={ collectionName } >{ collectionName }</div>
-					</React.Fragment>
+					</Fragment>
 				) : (
-				<React.Fragment>
+				<Fragment>
 					<Icon type="32/library-read-only" className="touch" width="32" height="32" />
 					<Icon type="20/library-read-only" className="mouse" width="20" height="20" />
 					<div className="truncate" title={ libraryName }>{ libraryName }</div>
-				</React.Fragment>
+				</Fragment>
 				)}
 				<Icon type="16/chevron-9" width="16" height="16" />
 			</Button>
 		</div>
-	);
+    );
 }
 
 const EmbeddedInfoView = () => {
@@ -96,7 +96,7 @@ const EmbeddedHeader = () => {
 	}, [dispatch]);
 
 	return (
-		<div
+        <div
 			className="embedded-header"
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }
@@ -104,23 +104,23 @@ const EmbeddedHeader = () => {
 			tabIndex={ 0 }
 		>
 			{ view !== 'item-details' && (
-				<React.Fragment>
+				<Fragment>
 					<EmbeddedCollectionPicker tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 					<EmbeddedInfoView />
 					<Search onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 					<ColumnSelector tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
-				</React.Fragment>
+				</Fragment>
 			)}
 			{ view === 'item-details' && (
-				<React.Fragment>
+				<Fragment>
 					<a className="btn btn-default back" onKeyDown={ handleBackClick } onClick={ handleBackClick } tabIndex={ -2 }>
 						<Icon type="16/chevron-13" width="16" height="16" />
 						{ backLabel }
 					</a>
-				</React.Fragment>
+				</Fragment>
 			)}
 		</div>
-	);
+    );
 }
 
 export default memo(EmbeddedHeader);

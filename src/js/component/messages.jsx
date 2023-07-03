@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 
@@ -11,22 +11,22 @@ const Message = ({ type, id, message, cta }) => {
 	const handleClick = useCallback(() => dispatch(dismissError(id)), [dispatch, id]);
 
 	return (
-		<li className={ cx('message', { [type]: true }) }>
+        <li className={ cx('message', { [type]: true }) }>
 			<header>
 				{ type.charAt(0).toUpperCase() + type.slice(1) }
 			</header>
 			{ message }
 
 			{ cta && (
-				<React.Fragment>
+				<Fragment>
 				&nbsp;<a href={ cta.href }>{ cta.label }</a>
-				</React.Fragment>
+				</Fragment>
 			)}
 			<Button icon onClick={ handleClick }>
 				<Icon type={ '16/close' } width="16" height="16" />
 			</Button>
 		</li>
-	)
+    );
 }
 
 const Messages = () => {

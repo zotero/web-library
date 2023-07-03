@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import deepEqual from 'deep-equal';
 import { Button, Icon } from 'web-common/components';

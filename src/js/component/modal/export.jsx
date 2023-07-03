@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { saveAs } from 'file-saver';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -61,7 +61,7 @@ const ExportModal = () => {
 	});
 
 	return (
-		<Modal
+        <Modal
 			className={ className }
 			contentLabel="Export Items"
 			isBusy={ isBusy }
@@ -72,7 +72,7 @@ const ExportModal = () => {
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
-						<React.Fragment>
+						<Fragment>
 						<div className="modal-header-left">
 							<Button
 								className="btn-link"
@@ -94,9 +94,9 @@ const ExportModal = () => {
 								Export
 							</Button>
 						</div>
-						</React.Fragment>
+						</Fragment>
 				) : (
-				<React.Fragment>
+				<Fragment>
 					<h4 className="modal-title truncate">
 						Export
 					</h4>
@@ -107,7 +107,7 @@ const ExportModal = () => {
 					>
 						<Icon type={ '16/close' } width="16" height="16" />
 					</Button>
-				</React.Fragment>
+				</Fragment>
 			)}
 			</div>
 			<div className="modal-body">
@@ -142,7 +142,7 @@ const ExportModal = () => {
 				</div>
 			)}
 		</Modal>
-	);
+    );
 }
 
 export default memo(ExportModal);

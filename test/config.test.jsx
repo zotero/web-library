@@ -1,4 +1,3 @@
-import React from 'react'
 import '@testing-library/jest-dom'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'

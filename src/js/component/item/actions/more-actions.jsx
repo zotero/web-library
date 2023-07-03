@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useState } from 'react';
+import { Fragment, memo, useCallback, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -34,7 +34,7 @@ const MoreActionsItems = ({ divider = false }) => {
 	}, [doi, url]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			{ isViewFile && (
 				<DropdownItem onClick={ handleViewFileClick }>
 					View { attachment.attachmentType === 'application/pdf' ? 'PDF' : 'File' }
@@ -51,8 +51,8 @@ const MoreActionsItems = ({ divider = false }) => {
 			</DropdownItem>
 			) }
 			{ divider && (canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider/> }
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 const MoreActionsDropdownDesktop = memo(props => {

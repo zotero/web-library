@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import { useSelector, useDispatch } from 'react-redux';
 import deepEqual from 'deep-equal';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePrevious } from 'web-common/hooks';
 import { Spinner } from 'web-common/components';
 

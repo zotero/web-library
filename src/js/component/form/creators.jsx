@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -192,7 +192,7 @@ const Creators = props => {
 	}
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			{ creators.map((creator, index) => (
 				<CSSTransition
 					key={ creator.id }
@@ -242,8 +242,8 @@ const Creators = props => {
 					</Button>
 				</li>
 			) }
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 Creators.propTypes = {

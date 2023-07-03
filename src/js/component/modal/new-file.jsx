@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 

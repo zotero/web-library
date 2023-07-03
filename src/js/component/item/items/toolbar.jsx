@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import { useFocusManager } from 'web-common/hooks';
 
 import ColumnSelector from './column-selector';

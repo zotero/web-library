@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, memo } from 'react';
+import { useCallback, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
 

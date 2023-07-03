@@ -1,4 +1,3 @@
-import React from 'react';
 import cx from 'classnames';
 
 import { bool, element, number, oneOfType, string } from 'prop-types';

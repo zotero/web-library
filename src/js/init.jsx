@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { LOCATION_CHANGE } from 'connected-react-router';
 

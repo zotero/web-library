@@ -1,9 +1,9 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { pick } from 'web-common/utils';
 
-const Toolbar = React.forwardRef(({ children, className, tabIndex, onFocus, onBlur, ...rest }, ref) => (
+const Toolbar = forwardRef(({ children, className, tabIndex, onFocus, onBlur, ...rest }, ref) => (
 	<div
 		className={cx('toolbar', className)}
 		onBlur={ onBlur }

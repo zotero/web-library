@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -121,7 +121,7 @@ const Library = () => {
 	}
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			<DndProvider options={ HTML5toTouch }>
 			<CustomDragLayer />
 			<div className={ cx('library-container', {
@@ -141,7 +141,7 @@ const Library = () => {
 					{ view === 'reader' ? (
 						<Reader />
 					) : (
-						<React.Fragment>
+						<Fragment>
 						<Navbar entries={ menus.desktop } />
 						<main>
 							<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
@@ -161,10 +161,10 @@ const Library = () => {
 									) }
 									<Libraries />
 									{ isTouchOrSmall ? (
-										<React.Fragment>
+										<Fragment>
 											<TouchTagSelector />
 											<TouchSideFooter />
-										</React.Fragment>
+										</Fragment>
 										) : <TagSelector /> }
 									<Ongoing />
 								</header>
@@ -206,7 +206,7 @@ const Library = () => {
 							className="nav-cover"
 							onClick={ handleNavbarToggle }
 						/>
-						</React.Fragment>
+						</Fragment>
 					)}
 				</div>
 				<ModalManager />
@@ -216,8 +216,8 @@ const Library = () => {
 			<ZoteroConnectorNotifier />
 			<TitleUpdater />
 			<ZoteroStreamingClient />
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 export default memo(Library);

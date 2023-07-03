@@ -1,6 +1,6 @@
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
-import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -175,7 +175,7 @@ const BibliographyModal = () => {
 	});
 
 	return (
-		<Modal
+        <Modal
 			className={ className }
 			contentLabel={ outputMode === 'cite' ? 'Citations' : 'Bibliography' }
 			isOpen={ isOpen }
@@ -185,7 +185,7 @@ const BibliographyModal = () => {
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
-						<React.Fragment>
+						<Fragment>
 							<div className="modal-header-left">
 								<Button
 									className="btn-link"
@@ -208,9 +208,9 @@ const BibliographyModal = () => {
 									Create
 								</Button>
 							</div>
-						</React.Fragment>
+						</Fragment>
 					) : (
-						<React.Fragment>
+						<Fragment>
 							<h4 className="modal-title truncate">
 								{ outputMode === 'cite' ? 'Citations' : 'Bibliography'}
 							</h4>
@@ -221,7 +221,7 @@ const BibliographyModal = () => {
 							>
 								<Icon type={ '16/close' } width="16" height="16" />
 							</Button>
-						</React.Fragment>
+						</Fragment>
 					)
 				}
 			</div>
@@ -348,7 +348,7 @@ const BibliographyModal = () => {
 				</div>
 			)}
 		</Modal>
-	);
+    );
 }
 
 export default memo(BibliographyModal);

@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useCallback, useRef, useImperativeHandle } from 'react';
-import { useEffect, useLayoutEffect } from 'react';
+import { memo, forwardRef, useCallback, useRef, useImperativeHandle, useEffect, useLayoutEffect, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
@@ -10,7 +9,7 @@ import { createAttachments, getAttachmentUrl, navigate } from '../actions';
 import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
-const RichEditor = React.memo(React.forwardRef((props, ref) => {
+const RichEditor = memo(forwardRef((props, ref) => {
 	const { autoresize, isAttachmentNote = false, id, isReadOnly, onChange, onEdit = noop, value } = props;
 	const wantsFocus = useRef(false);
 	const editorReady = useRef(false);

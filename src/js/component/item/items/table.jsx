@@ -1,7 +1,7 @@
 import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import InfiniteLoader from "react-window-infinite-loader";
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';

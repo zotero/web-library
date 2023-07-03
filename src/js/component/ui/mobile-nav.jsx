@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager } from 'web-common/hooks';
 

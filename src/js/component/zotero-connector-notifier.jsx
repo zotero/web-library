@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from 'react';
+import { Fragment, memo, useEffect, useMemo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSelector, shallowEqual } from 'react-redux';
 
@@ -41,7 +41,7 @@ const ZoteroConnectorNotifier = () => {
 	useEffect(() => { debouncedNotify(); }, [collectionKey, debouncedNotify, itemTitles, libraryKey, tags]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 		<script id="translator-items-list" type="application/vnd.zotero.data+json">
 			{ JSON.stringify(itemTitles) }
 		</script>
@@ -50,8 +50,8 @@ const ZoteroConnectorNotifier = () => {
 				{ JSON.stringify(item) }
 			</script>
 		) }
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 export default memo(ZoteroConnectorNotifier);

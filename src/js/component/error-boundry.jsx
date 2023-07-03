@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 const forumsUrl = 'https://forums.zotero.org/';
@@ -22,7 +22,7 @@ const CrashHandler = ({ error = {}, info = {} }) => (
 	</div>
 );
 
-class ErrorBoundary extends React.PureComponent {
+class ErrorBoundary extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = { hasError: false };

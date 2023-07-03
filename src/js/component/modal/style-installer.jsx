@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useCallback, useEffect, useState, memo } from 'react';
+import { Fragment, useCallback, useEffect, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -189,7 +189,7 @@ const StyleInstallerModal = () => {
 	});
 
 	return (
-		<Modal
+        <Modal
 			className={ className }
 			contentLabel="Citation Style Installer"
 			isBusy={ !isReady }
@@ -199,7 +199,7 @@ const StyleInstallerModal = () => {
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
-						<React.Fragment>
+						<Fragment>
 							<div className="modal-header-left" />
 							<div className="modal-header-center">
 								<h4 className="modal-title truncate">
@@ -214,9 +214,9 @@ const StyleInstallerModal = () => {
 									Close
 								</Button>
 							</div>
-						</React.Fragment>
+						</Fragment>
 					) : (
-						<React.Fragment>
+						<Fragment>
 							<h4 className="modal-title truncate">
 								Citation Styles
 							</h4>
@@ -227,7 +227,7 @@ const StyleInstallerModal = () => {
 							>
 								<Icon type={ '16/close' } width="16" height="16" />
 							</Button>
-						</React.Fragment>
+						</Fragment>
 					)
 				}
 			</div>
@@ -270,7 +270,7 @@ const StyleInstallerModal = () => {
 				</ul>
 			</div>
 		</Modal>
-	);
+    );
 }
 
 export default memo(StyleInstallerModal);

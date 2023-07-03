@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';

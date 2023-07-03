@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFloating, arrow } from '@floating-ui/react-dom';
@@ -154,7 +154,7 @@ const AddByIdentifier = props => {
 	}, [isOpen, handleDocumentEvent]);
 
 	return (
-		<React.Fragment>
+        <Fragment>
 			<Button
 				aria-controls={ `${id.current}-dialog` }
 				icon
@@ -202,8 +202,8 @@ const AddByIdentifier = props => {
 				</div>
 				<span className="popover-arrow" ref={arrowRef} style={ { left: middlewareData?.arrow?.x } }></span>
 			</div>
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 AddByIdentifier.propTypes = {
