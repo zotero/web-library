@@ -221,5 +221,18 @@ const navigateExitSearch = () => {
 	}
 }
 
+const redirectIfCollectionNotFound = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const libraryKey = state.current.libraryKey;
+		const collectionKey = state.current.collectionKey;
+		const collections = state.libraries[libraryKey]?.collections?.data;
 
-export { navigate, navigateExitSearch, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };
+		if (collectionKey !== null && collections !== null && !(collectionKey in collections)) {
+			process.env.NODE_ENV === 'development' && console.warn(`Collection ${collectionKey} not found in library ${libraryKey}`);
+			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
+		}
+	}
+}
+
+export { navigate, navigateExitSearch, redirectIfCollectionNotFound, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };

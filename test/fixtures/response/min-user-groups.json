@@ -1,0 +1,36 @@
+[
+    {
+        "id": 42,
+        "version": 2,
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/1234567890",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/test-user-public",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "created": "2020-05-09T10:05:49Z",
+            "lastModified": "2022-11-10T12:25:18Z",
+            "numItems": 26
+        },
+        "data": {
+            "id": 42,
+            "version": 2,
+            "name": "test user public",
+            "owner": 475425,
+            "type": "PublicClosed",
+            "description": "",
+            "url": "",
+            "libraryEditing": "members",
+            "libraryReading": "all",
+            "fileEditing": "members",
+            "members": [
+                475425
+            ]
+        }
+    }
+]

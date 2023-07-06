@@ -4,8 +4,9 @@ import { Icon } from 'web-common/components';
 
 import EmbedLibrary from 'component/embedded-library';
 import Library from 'component/library';
-import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchAllGroups,
-toggleTransitions, triggerResizeViewport } from 'actions';
+import { fetchLibrarySettings, fetchAllCollections, fetchAllGroups, initialize,
+	redirectIfCollectionNotFound, preferencesLoad, toggleTransitions,
+	triggerResizeViewport } from 'actions';
 import { get } from 'utils';
 
 const LoadingCover = () => {
@@ -73,9 +74,10 @@ const Loader = () => {
 		if (isReader && tagColors && !isFetchingGroups) {
 			setIsReady(true);
 		} else if (itemTypes?.length && itemFields?.length && tagColors && !isWaitingForCollections && !isFetchingGroups) {
+			dispatch(redirectIfCollectionNotFound());
 			setIsReady(true);
 		}
-	}, [itemTypes, itemFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader]);
+	}, [itemTypes, itemFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader, dispatch]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());

@@ -1,0 +1,34 @@
+[
+    {
+        "key": "HFJ6Z4ZT",
+        "version": 32345,
+        "library": {
+            "type": "group",
+            "id": 42,
+            "name": "test user public",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/42",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/42/collections/HFJ6Z4ZT",
+                "type": "application/json"
+            }
+        },
+        "meta": {
+            "numCollections": 0,
+            "numItems": 0
+        },
+        "data": {
+            "key": "HFJ6Z4ZT",
+            "version": 1,
+            "name": "group library collection",
+            "parentCollection": false,
+            "relations": {}
+        }
+    }
+]

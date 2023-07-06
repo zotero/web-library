@@ -1,0 +1,34 @@
+[
+    {
+        "key": "KCUHMRNZ",
+        "version": 32345,
+        "library": {
+            "type": "user",
+            "id": 475425,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/collections/KCUHMRNZ",
+                "type": "application/json"
+            }
+        },
+        "meta": {
+            "numCollections": 0,
+            "numItems": 0
+        },
+        "data": {
+            "key": "KCUHMRNZ",
+            "version": 32345,
+            "name": "test collection",
+            "parentCollection": false,
+            "relations": {}
+        }
+    }
+]

@@ -16,7 +16,7 @@
                 "name": "My Library",
                 "isExternal": false,
                 "isPublic": false,
-                "slug": "zotero-user"
+                "slug": "testuser"
             },
             {
                 "isReadOnly": true,
@@ -161,7 +161,7 @@
                 }
             ]
         },
-        "userSlug": "zotero-user",
+        "userSlug": "testuser",
         "includeMyLibrary": true,
         "includeUserGroups": false
     },
@@ -21339,7 +21339,7 @@
     },
     "router": {
         "location": {
-            "pathname": "/zotero-user/library",
+            "pathname": "/testuser/library",
             "search": "",
             "hash": "",
             "key": "sn6f5z",

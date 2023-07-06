@@ -16,7 +16,7 @@
                 "name": "My Library",
                 "isExternal": false,
                 "isPublic": false,
-                "slug": "zotero-user"
+                "slug": "testuser"
             },
             {
                 "isReadOnly": true,
@@ -44,7 +44,7 @@
         "pdfReaderURL": "/static/pdf-reader/viewer.html",
         "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
         "translateUrl": "http://localhost",
-        "userSlug": "zotero-user",
+        "userSlug": "testuser",
         "websiteUrl": "https://www.zotero.org/",
         "includeMyLibrary": true,
         "includeUserGroups": false
