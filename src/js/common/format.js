@@ -1,5 +1,3 @@
-'use strict';
-
 const entityToChar = str => {
 	const textarea = document.createElement('textarea');
 	textarea.innerHTML = str;
@@ -19,6 +17,7 @@ const noteAsTitle = note => {
 
 const creator = creator => 'lastName' in creator ?
 	[creator.lastName, creator.firstName].filter(s => s.trim().length).join(', ') : creator.name;
+
 const itemTypeLocalized = (item, itemTypes) => {
 	const { itemType } = item;
 	if(itemType === 'note') { return "Note" }
@@ -55,10 +54,6 @@ const stripTagsUsingDOM = html => {
    return tmp.textContent || tmp.innerText || "";
 }
 
-const formatCreator = creator => {
-	return creator.name || (creator.firstName + ' ' + creator.lastName).trim();
-}
-
 const lpad = (string, pad, length) => {
 	string = string ? string + '' : '';
 	while(string.length < length) {
@@ -92,6 +87,98 @@ const parseDescriptiveString = str => {
 	return str;
 }
 
+// Adapted from:
+// https://github.com/zotero/zotero/blob/04496fadcd73ad7db85d7a9c662fcbffac80d72e/chrome/content/zotero/itemTree.jsx#L2570-L2658
+const titleMarkup = new Map([
+	['<i>', {
+		beginsTag: 'i',
+		inverseStyle: { fontStyle: 'normal' }
+	}],
+	['</i>', {
+		endsTag: 'i'
+	}],
+	['<b>', {
+		beginsTag: 'b',
+		inverseStyle: { fontWeight: 'normal' }
+	}],
+	['</b>', {
+		endsTag: 'b'
+	}],
+	['<sub>', {
+		beginsTag: 'sub'
+	}],
+	['</sub>', {
+		endsTag: 'sub'
+	}],
+	['<sup>', {
+		beginsTag: 'sup'
+	}],
+	['</sup>', {
+		endsTag: 'sup'
+	}],
+	['<span style="font-variant:small-caps;">', {
+		beginsTag: 'span',
+		style: { fontVariant: 'small-caps' }
+	}],
+	['<span class="nocase">', {
+		// No effect in item tree
+		beginsTag: 'span'
+	}],
+	['</span>', {
+		endsTag: 'span'
+	}]
+]);
+
+const renderItemTitle = (title, targetNode) => {
+	let markupStack = [];
+	let nodeStack = [targetNode];
+	let textContent = '';
+
+	for (let token of title.split(/(<[^>]+>)/)) {
+		if (titleMarkup.has(token)) {
+			let markup = titleMarkup.get(token);
+			if (markup.beginsTag) {
+				let node = document.createElement(markup.beginsTag);
+				if (markup.style) {
+					Object.assign(node.style, markup.style);
+				}
+				if (markup.inverseStyle && markupStack.some(otherMarkup => otherMarkup.beginsTag === markup.beginsTag)) {
+					Object.assign(node.style, markup.inverseStyle);
+				}
+				markupStack.push({ ...markup, token });
+				nodeStack.push(node);
+				continue;
+			}
+			else if (markup.endsTag && markupStack.some(otherMarkup => otherMarkup.beginsTag === markup.endsTag)) {
+				while (markupStack.length) {
+					let discardedMarkup = markupStack.pop();
+					let discardedNode = nodeStack.pop();
+					if (discardedMarkup.beginsTag === markup.endsTag) {
+						nodeStack[nodeStack.length - 1].append(discardedNode);
+						break;
+					}
+					else {
+						nodeStack[nodeStack.length - 1].append(discardedMarkup.token, ...discardedNode.childNodes);
+					}
+				}
+
+				continue;
+			}
+		}
+
+		nodeStack[nodeStack.length - 1].append(token);
+		textContent += token;
+	}
+
+	while (markupStack.length) {
+		let discardedMarkup = markupStack.pop();
+		let discardedNode = nodeStack.pop();
+		nodeStack[0].append(discardedMarkup.token, ...discardedNode.childNodes);
+	}
+
+	return textContent;
+}
+
 export {
 	creator,
 	dateLocalized,
@@ -102,5 +189,6 @@ export {
 	noteAsTitle,
 	parseDescriptiveString,
 	pluralize,
+	renderItemTitle,
 	stripTagsUsingDOM,
 };

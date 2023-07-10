@@ -13,6 +13,7 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
+import zoteroFormattingCollectionStateRaw from './fixtures/state/test-user-formatting-collection.json';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 import responseAddItemToCollections from './fixtures/response/test-user-add-item-to-collection.json';
@@ -26,6 +27,7 @@ import responseAddByIdentifier from './fixtures/response/test-user-add-by-identi
 import testUserDuplicateItem from './fixtures/response/test-user-duplicate-item.json';
 
 const state = JSONtoState(stateRaw);
+const formattingState = JSONtoState(zoteroFormattingCollectionStateRaw);
 
 describe('Test User\'s library', () => {
 	const handlers = [];
@@ -338,5 +340,43 @@ describe('Test User\'s library', () => {
 		await userEvent.click(duplicateOpt);
 		expect(hasBeenPosted).toBe(true);
 		await waitFor(() => expect(screen.getAllByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' })).toHaveLength(2));
+	});
+
+	test('Renders formatted titles in the items list', async () => {
+		delete window.location;
+		window.location = new URL('http://localhost/testuser/collections/5PB9WKTC/items/MNRM7HER/collection');
+		renderWithProviders(<MainZotero />, { preloadedState: formattingState });
+		await waitForPosition();
+		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+		expect(getAllByRole(gridBody, 'row')).toHaveLength(9);
+
+		const row1 = getByRole(gridBody, 'row', { name: 'has subscript and superscript' });
+		expect(row1.innerHTML).toEqual(expect.stringContaining('has <sub>subscript</sub> and <sup>superscript</sup>'));
+
+		const row2 = getByRole(gridBody, 'row', { name: 'has small-caps' });
+		expect(row2.innerHTML).toEqual(expect.stringContaining('has <span style="font-variant: small-caps;">small-caps</span>'));
+
+		const row3 = getByRole(gridBody, 'row', { name: 'has nocase span' });
+		expect(row3.innerHTML).toEqual(expect.stringContaining('has <span>nocase</span> span'));
+
+		const row4 = getByRole(gridBody, 'row', { name: 'has nested not bold' });
+		expect(row4.innerHTML).toEqual(expect.stringContaining('<span>has <b>nested <b style="font-weight: normal;">not</b> bold</b></span>'));
+
+		const row5 = getByRole(gridBody, 'row', { name: 'everything nested' });
+		expect(row5.innerHTML).toEqual(expect.stringContaining('everything <i><b><sub><sup><span style="font-variant: small-caps;">nested</span></sup></sub></b></i>'));
+
+		const row6 = getByRole(gridBody, 'row', { name: '<span class="test">random</span> class names not allowed' });
+		expect(row6.innerHTML).toEqual(expect.stringContaining('&lt;span class="test"&gt;random&lt;/span&gt; class names not allowed'));
+
+		const row7 = getByRole(gridBody, 'row', { name: '<button onclick="javascript:alert(\'hello\')">js</button> not allowed' });
+		expect(row7.innerHTML).toEqual(expect.stringContaining('&lt;button onclick="javascript:alert(\'hello\')"&gt;js&lt;/button&gt; not allowed'));
+
+		const row8 = getByRole(gridBody, 'row', { name: 'bold and italic' });
+		expect(row8.innerHTML).toEqual(expect.stringContaining('<b>bold</b> and <i>italic</i>'));
+
+		const row9 = getByRole(gridBody, 'row', { name: '<a href="http://zotero.org">links</a> not allowed' });
+		expect(row9.innerHTML).toEqual(expect.stringContaining('&lt;a href="http://zotero.org"&gt;links&lt;/a&gt; <b>not</b> allowed'));
 	});
 });

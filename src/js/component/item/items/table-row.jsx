@@ -12,6 +12,7 @@ import colorNames from '../../../constants/color-names';
 import { currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
 pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse } from '../../../actions';
 import { useSourceKeys } from '../../../hooks';
+import { renderItemTitle } from '../../../common/format';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -24,6 +25,9 @@ const selectItem = (itemKey, ev, dispatch) => {
 const TitleCell = memo(props => {
 	const { columnName, colIndex, width, isFocused, isSelected, labelledById, itemData } = props;
 	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+
+	const formattedSpan = document.createElement('span');
+	renderItemTitle(itemData[columnName], formattedSpan);
 
 	return (
 		<Cell
@@ -38,9 +42,7 @@ const TitleCell = memo(props => {
 				width="16"
 				height="16"
 			/>
-			<div className="truncate" id={ labelledById }>
-				{ itemData[columnName] }
-			</div>
+			<div className="truncate" id={labelledById} dangerouslySetInnerHTML={ { __html: formattedSpan.outerHTML } } />
 			<div className="tag-colors">
 				{ itemData.emojis.join(' ') }
 				<span className="tag-circles">
