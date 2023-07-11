@@ -1,12 +1,12 @@
 import React, { forwardRef, memo, useImperativeHandle, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { noop, pick } from 'web-common/utils';
+
 import EditableContent from './editable/content';
 import Input from './form/input';
 import TextAreaInput from './form/text-area';
 import SelectInput from './form/select';
-import { noop } from '../utils';
-import { pick } from '../common/immutable';
 
 const Editable = memo(forwardRef((props, ref) => {
 	const { className, children, input, inputComponent: InputComponent = Input, isBusy, isDisabled, isSelect, isTextArea, onClick = noop,

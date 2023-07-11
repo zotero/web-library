@@ -1,3 +1,5 @@
+import { mapObject, omit } from 'web-common/utils';
+
 import { RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHILD_ITEMS,
     RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
     RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEM_DETAILS, RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_BY_QUERY,
@@ -8,7 +10,6 @@ import { RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHI
     RECEIVE_DELETE_LIBRARY_SETTINGS, } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
-import { mapObject, removeKeys } from '../../common/immutable';
 import { getDerivedData } from '../../common/item';
 
 const calculateDerivedData = (item, { meta, tagColors }) => {
@@ -28,9 +29,9 @@ const items = (state = {}, action, metaAndTags) => {
 				[action.item.key]: calculateDerivedData(action.item, metaAndTags)
 			};
 		case RECEIVE_DELETE_ITEM:
-			return removeKeys(state, action.item.key);
+			return omit(state, action.item.key);
 		case RECEIVE_DELETE_ITEMS:
-			return removeKeys(state, action.itemKeys);
+			return omit(state, action.itemKeys);
 		case RECEIVE_UPDATE_ITEM:
 			return {
 				...state,

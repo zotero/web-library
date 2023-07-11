@@ -1,6 +1,5 @@
 import { TRIGGER_USER_TYPE_CHANGE, TRIGGER_RESIZE_VIEWPORT } from '../constants/actions.js';
-import { getScrollbarWidth } from '../utils';
-import { pick } from '../common/immutable';
+import { getScrollbarWidth, pick } from 'web-common/utils';
 
 const isInitiallyMouse = typeof(matchMedia) === 'function' ? matchMedia('(pointer:fine)').matches : null;
 const isInitiallyTouch = typeof(matchMedia) === 'function' ? matchMedia('(pointer:coarse)').matches : null;

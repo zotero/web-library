@@ -2,9 +2,8 @@ import cx from 'classnames';
 import React, { useCallback, useEffect, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import SearchWorker from 'web-worker:../../style-search.worker.js';

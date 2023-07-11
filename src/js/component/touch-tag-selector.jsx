@@ -1,18 +1,17 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
 
-import Button from './ui/button';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from './ui/dropdown';
 import FocusTrap from './focus-trap';
-import Icon from './ui/icon';
 import TagList, { TagListItem } from './tag-selector/tag-list';
 import { filterTags, navigate, toggleHideAutomaticTags, toggleModal, toggleTouchTagSelector } from '../actions';
 import { MANAGE_TAGS } from '../constants/modals';
 import { pluralize } from '../common/format';
 import { Toolbar } from './ui/toolbars';
-import { useFocusManager, usePrevious, useTags } from '../hooks';
-import { isTriggerEvent } from '../common/event';
+import { useTags } from '../hooks';
 
 const TouchTagselectorActions = memo(() => {
 	const dispatch = useDispatch();

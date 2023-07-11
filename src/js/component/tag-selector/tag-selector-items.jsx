@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
 
 import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
 import { get } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
 import { ITEM } from '../../constants/dnd';
-import { useFocusManager, useSourceSignature, usePrevious, useTags } from '../../hooks';
+import { useSourceSignature, useTags } from '../../hooks';
 
 const PAGE_SIZE = 100;
 

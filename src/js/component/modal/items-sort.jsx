@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
 
-import Button from '../ui/button';
 import columnProperties from '../../constants/column-properties';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';

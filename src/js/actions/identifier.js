@@ -1,10 +1,11 @@
+import { omit, pick } from 'web-common/utils';
+
 import { isLikeURL } from '../utils';
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
 	ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
 	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE,
 	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
-import { omit, pick } from '../common/immutable';
 import { extractIdentifiers } from '../common/identifiers';
 import { EMPTY, SINGLE, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
 

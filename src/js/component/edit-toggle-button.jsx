@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, memo } from 'react';
 import { useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
 
-import Button from './ui/button';
 import { useEditMode } from '../hooks';
 
 const EditToggleButton = props => {

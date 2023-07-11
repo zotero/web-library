@@ -2,18 +2,16 @@ import PropTypes from 'prop-types';
 import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import deepEqual from 'deep-equal';
+import { Button, Icon } from 'web-common/components';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent, noop, pick } from 'web-common/utils';
 
-import Button from '../ui/button';
 import Editable from '../editable';
-import Icon from '../ui/icon';
-import { deduplicateByKey, get, getScrollContainerPageCount, noop, sortByKey } from '../../utils';
+import { deduplicateByKey, get, getScrollContainerPageCount, sortByKey } from '../../utils';
 import { fetchTagSuggestions, updateItem } from '../../actions';
-import { pick } from '../../common/immutable';
 import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { pluralize } from '../../common/format';
-import { useFocusManager, usePrevious } from '../../hooks';
-import { isTriggerEvent } from '../../common/event';
 
 var nextId = 0;
 
@@ -113,7 +111,7 @@ const Tags = ({ id, isActive, isReadOnly }) => {
 		dispatch(updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) }));
 	}, [dispatch, itemKey, tags]);
 
-	const handleAddTag = useCallback(ev => {
+	const handleAddTag = useCallback(() => {
 		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
 		setTagRedacted('');
 	}, [tags]);

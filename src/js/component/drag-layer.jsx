@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
+import { Icon } from 'web-common/components';
 
-import Icon from './ui/icon';
 import { ITEM, CREATOR } from '../constants/dnd';
 import { useDragLayer } from 'react-dnd';
 

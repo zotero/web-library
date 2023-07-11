@@ -1,8 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import deepEqual from 'deep-equal';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';

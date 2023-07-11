@@ -2,13 +2,14 @@ import { saveAs } from 'file-saver';
 import { useSelector, useDispatch } from 'react-redux';
 import deepEqual from 'deep-equal';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { usePrevious } from 'web-common/hooks';
+import { Spinner } from 'web-common/components';
 
 import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import { fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL } from '../actions';
 import { pdfWorker } from '../common/pdf-worker.js';
-import { useFetchingState, usePrevious } from '../hooks';
-import Spinner from './ui/spinner';
+import { useFetchingState } from '../hooks';
 
 const PAGE_SIZE = 100;
 

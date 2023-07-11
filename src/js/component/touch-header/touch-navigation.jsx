@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
+import { usePrevious } from 'web-common/hooks';
+import { noop } from 'web-common/utils';
+import { Icon } from 'web-common/components';
 
-import Icon from '../ui/icon';
-import { noop } from '../../utils';
-import { usePrevious } from '../../hooks';
 
 const slots = ['next', 'current', 'previous', 'before-last'];
 const EMPTY = {

@@ -4,7 +4,7 @@ const presets = [
 		"corejs": { version: 3 },
 		"useBuiltIns": "usage",
 	}],
-	"@babel/preset-react"
+	['@babel/preset-react', { 'runtime': 'automatic' }],
 ];
 
 module.exports = { presets };

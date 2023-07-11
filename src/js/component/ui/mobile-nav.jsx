@@ -1,9 +1,9 @@
 import React, { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFocusManager } from 'web-common/hooks';
 
 import MobileMenuEntry from './menu-entry-mobile';
 import { toggleNavbar } from '../../actions';
-import { useFocusManager } from '../../hooks';
 
 const MobileNav = () => {
 	const dispatch = useDispatch();

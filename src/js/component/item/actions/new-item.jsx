@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useId, useMemo, useRef, useState } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
+import { noop } from 'web-common/utils';
 
-import Button from '../../ui/button';
-import Icon from '../../ui/icon';
 import primaryItemTypes from '../../../constants/primary-item-types';
 import { createAttachments } from '../../../actions';
 import { getFilesData } from '../../../common/event';
-import { getPrevSibling, noop } from '../../../utils';
+import { getPrevSibling } from '../../../utils';
 
 const DropdownItemType = props => {
 	const { itemTypeSpec, onNewItemCreate } = props;

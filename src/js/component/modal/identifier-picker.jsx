@@ -2,16 +2,16 @@ import React, { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { Button, Spinner } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
 
-import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
 import { currentAddMultipleTranslatedItems, searchIdentifierMore, toggleModal } from '../../actions';
-import { useBufferGate, usePrevious } from '../../hooks';
+import { useBufferGate } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
-import Spinner from '../ui/spinner';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
 	const { description } = item;

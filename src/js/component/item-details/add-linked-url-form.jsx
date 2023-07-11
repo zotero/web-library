@@ -2,14 +2,13 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import React, { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Spinner } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
 
-import Button from '../ui/button';
-import Spinner from '../ui/spinner';
 import { Toolbar } from '../ui/toolbars';
 import { createLinkedUrlAttachments } from '../../actions';
 import Input from '../form/input';
 import { cleanURL } from '../../utils';
-import { useFocusManager } from '../../hooks';
 
 const AddLinkedUrlFormToolbar = props => {
 	const toolbarRef = useRef(null);

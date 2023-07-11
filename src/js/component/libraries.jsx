@@ -1,17 +1,15 @@
 import React, { forwardRef, memo, useCallback, useState, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Button, Icon, Spinner } from 'web-common/components';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { noop, pick } from 'web-common/utils';
 
-import Button from './ui/button';
 import CollectionTree from '../component/libraries/collection-tree';
 import cx from 'classnames';
-import Icon from './ui/icon';
 import Node from './libraries/node';
-import Spinner from './ui/spinner';
 import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
-import { get, stopPropagation, getUniqueId, noop } from '../utils';
-import { pick } from '../common/immutable';
-import { useFocusManager, usePrevious } from '../hooks/';
+import { get, stopPropagation, getUniqueId } from '../utils';
 
 const LibraryNode = props => {
 	const { addVirtual, isOpen, isFileUploadAllowed, isPickerMode, isReadOnly, isSelected, libraryKey, name,

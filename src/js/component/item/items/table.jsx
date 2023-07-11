@@ -7,10 +7,12 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import { useThrottledCallback } from 'use-debounce';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
+import { Spinner } from 'web-common/components';
 
 import columnProperties from '../../../constants/column-properties';
 import HeaderRow from './table-header-row';
-import Spinner from '../../ui/spinner';
 import TableBody from './table-body';
 import TableRow from './table-row';
 import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource, resizeVisibleColumns } from '../../../utils';
@@ -18,8 +20,8 @@ import { ATTACHMENT } from '../../../constants/dnd';
 import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
-import { useFocusManager, usePrevious, useSourceData } from '../../../hooks';
-import { isDelKeyDown, isHighlightKeyDown, isTriggerEvent } from '../../../common/event';
+import { useSourceData } from '../../../hooks';
+import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 
 const ROWHEIGHT = 26;
 

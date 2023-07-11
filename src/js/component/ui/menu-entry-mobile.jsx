@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import cx from 'classnames';
-
-import { pick } from '../../common/immutable';
+import { pick } from 'web-common/utils';
 
 const MobileMenuEntry = ({ className, label, ...rest }) => {
 	return (

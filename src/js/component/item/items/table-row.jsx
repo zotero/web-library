@@ -4,9 +4,9 @@ import React, { memo, useCallback, useEffect, useId, useMemo, useRef, useState }
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
+import { Icon } from 'web-common/components';
 
 import Cell from './table-cell';
-import Icon from '../../ui/icon';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import colorNames from '../../../constants/color-names';
 import { currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,

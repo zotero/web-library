@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { pick } from '../../../common/immutable';
+import { pick } from 'web-common/utils';
 
 const Cell = props => {
 	const { children, className, columnName, index, width, style = {} } = props;

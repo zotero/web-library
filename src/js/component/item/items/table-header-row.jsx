@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { isTriggerEvent } from 'web-common/utils';
+import { Icon } from 'web-common/components';
 
 import Cell from './table-cell';
 import columnProperties from '../../../constants/column-properties';
-import Icon from '../../ui/icon';
-import { isTriggerEvent } from '../../../common/event';
 import { updateItemsSorting } from '../../../actions';
 
 const ROWHEIGHT = 26;

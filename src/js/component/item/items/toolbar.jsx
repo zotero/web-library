@@ -1,9 +1,9 @@
 import React, { memo, useRef } from 'react';
+import { useFocusManager } from 'web-common/hooks';
 
 import ColumnSelector from './column-selector';
 import ItemsActions from './../actions';
 import { Toolbar } from '../../ui/toolbars';
-import { useFocusManager } from '../../../hooks';
 
 const ItemsTableToolbar = () => {
 	const ref = useRef();

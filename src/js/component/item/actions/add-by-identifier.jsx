@@ -4,15 +4,14 @@ import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState 
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFloating, arrow } from '@floating-ui/react-dom';
+import { Button, Icon } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
 
-import Button from '../../ui/button';
-import Icon from '../../ui/icon';
 import Input from '../../form/input';
 import { IDENTIFIER_PICKER } from '../../../constants/modals';
 import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
 import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../../constants/identifier-result-types';
 import { getUniqueId } from '../../../utils';
-import { usePrevious } from '../../../hooks';
 
 const AddByIdentifier = props => {
 	const { onKeyDown } = props;

@@ -2,9 +2,8 @@ import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';

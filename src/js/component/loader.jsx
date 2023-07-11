@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Icon } from 'web-common/components';
 
-import Icon from 'component/ui/icon';
 import EmbedLibrary from 'component/embedded-library';
 import Library from 'component/library';
 import { preferencesLoad, initialize, fetchLibrarySettings, fetchAllCollections, fetchAllGroups,

@@ -2,11 +2,11 @@ import cx from 'classnames';
 import React, { useCallback, useEffect, useId, useRef, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
 
-import { useFocusManager } from '../../hooks';
 import { updateTagColors } from '../../actions';
 import ColorPicker from '../ui/color-picker';
-import Button from '../ui/button';
 import Select from '../form/select';
 import { maxColoredTags } from '../../constants/defaults';
 

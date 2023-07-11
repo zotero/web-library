@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
 
 import AddLinkedUrlForm from '../item-details/add-linked-url-form';
-import Button from '../ui/button';
 import Modal from '../ui/modal';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { toggleModal } from '../../actions';

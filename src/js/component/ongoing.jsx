@@ -1,10 +1,7 @@
-import cx from 'classnames';
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef, memo } from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { pluralize } from '../common/format';
-
-import Spinner from './ui/spinner';
+import { Spinner } from 'web-common/components';
 
 const getMessage = ongoing => {
 	switch(ongoing.kind) {

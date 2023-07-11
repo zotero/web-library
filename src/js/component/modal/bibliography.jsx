@@ -1,22 +1,19 @@
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import LocaleSelector from '../locale-selector';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
-import Spinner from '../ui/spinner';
 import StyleSelector from '../style-selector';
 import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
 import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { getUniqueId } from '../../utils';
 import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, bibliographyFromCollection, bibliographyFromItems, citeItems, preferenceChange, triggerSelectMode } from '../../actions';
-import { usePrevious } from '../../hooks';
 
 
 const BibliographyModal = () => {

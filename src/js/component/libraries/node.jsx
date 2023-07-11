@@ -4,12 +4,11 @@ import React, { memo, useCallback, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd'
 import { useDebouncedCallback } from 'use-debounce';
+import { isTriggerEvent, noop, pick } from 'web-common/utils';
+import { Icon } from 'web-common/components';
 
-import Icon from '../ui/icon';
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
-import { isTriggerEvent } from '../../common/event';
-import { stopPropagation, noop } from '../../utils';
-import { pick } from '../../common/immutable';
+import { stopPropagation } from '../../utils';
 
 const Node = props => {
 	const { className, children, dndData, isOpen, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, onOpen = noop, onRename =

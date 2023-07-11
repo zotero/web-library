@@ -4,14 +4,13 @@ import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
+import { omit } from 'web-common/utils';
 
-import Button from '../ui/button';
 import CreatorField from './creator-field';
-import Icon from '../ui/icon';
-import { enumerateObjects } from '../../utils';
-import { removeKeys } from '../../common/immutable';
-import { splice } from '../../utils';
-import { useEditMode, usePrevious } from '../../hooks';
+import { enumerateObjects, splice } from '../../utils';
+import { useEditMode } from '../../hooks';
 
 const Creators = props => {
 	const { creatorTypes, onSave, name, value = [], isForm, onDragStatusChange, isReadOnly } = props;
@@ -43,7 +42,7 @@ const Creators = props => {
 		const newValue = creators
 			.filter(creator => !creator[Symbol.for('isVirtual')]
 				&& (creator.lastName || creator.firstName || creator.name)
-			).map(creator => removeKeys(creator, 'id'));
+			).map(creator => omit(creator, 'id'));
 
 		const hasChanged = !deepEqual(newValue, value);
 		setCreators(enumerateObjects(creators));

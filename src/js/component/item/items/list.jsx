@@ -2,15 +2,15 @@ import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-
+import { usePrevious } from 'web-common/hooks';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList as List } from 'react-window';
+import { Spinner } from 'web-common/components';
 
 import ListRow from './list-row';
-import Spinner from '../../ui/spinner';
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
-import { usePrevious, useSourceData } from '../../../hooks';
+import { useSourceData } from '../../../hooks';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
 
 const ROWHEIGHT = 61;

@@ -1,7 +1,3 @@
-
-const isTriggerEvent = ev => ev.type === 'click' ||
-	(ev.type === 'keydown' && (ev.key === 'Enter' || ev.key === ' '));
-
 const isHighlightKeyDown = ev => {
 	const isWindows = navigator.appVersion.indexOf("Win") >= 0;
 	return (isWindows && ev.getModifierState('Control')) ||
@@ -34,7 +30,6 @@ const getFileData = fileObj => {
 export {
 	isDelKeyDown,
 	isHighlightKeyDown,
-	isTriggerEvent,
 	getFileData,
 	getFilesData
 };

@@ -1,13 +1,13 @@
 import cx from 'classnames';
 import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
 
 import Items from './item/items';
 import ItemDetails from './item/details';
 import ZoteroStreamingClient from './zotero-streaming-client';
 import { getSerializedQuery } from '../common/state';
 import { get } from '../utils';
-import { usePrevious } from '../hooks/';
 import EmbeddedHeader from './embedded/header';
 import EmbeddedFooter from './embedded/footer';
 import EmbeddedLibrariesTreeModal from './embedded/libraries-tree'

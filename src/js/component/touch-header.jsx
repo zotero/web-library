@@ -2,8 +2,8 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
 
-import Button from './ui/button';
 import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
 import ItemsActions from './item/actions';

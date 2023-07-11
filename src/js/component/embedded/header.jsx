@@ -1,14 +1,14 @@
-import React, { useCallback, useState, useRef, memo } from 'react';
+import React, { useCallback, useRef, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
 
 import { pluralize } from '../../common/format';
-import { useItemsCount, useFocusManager } from '../../hooks';
+import { useItemsCount } from '../../hooks';
 import ColumnSelector from '../item/items/column-selector';
 import Search from '../search';
 import { navigate, toggleModal } from '../../actions';
-import Icon from '../ui/icon';
-import Button from '../ui/button';
-import { isTriggerEvent } from '../../common/event';
 import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 
 const EmbeddedCollectionPicker = props => {

@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
 
 import AddByIdentifierModal from './modal/add-by-identifier';
 import AddItemsToCollectionsModal from './modal/add-items-to-collections';
@@ -15,7 +16,7 @@ import RenameCollectionModal from './modal/rename-collection';
 import StyleInstallerModal from './modal/style-installer';
 import IdentifierPicker from './modal/identifier-picker';
 import ManageTagsModal from './modal/manage-tags';
-import { useForceUpdate, usePrevious } from '../hooks';
+import { useForceUpdate } from '../hooks';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
 EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, MOVE_COLLECTION, NEW_ITEM, SORT_ITEMS, STYLE_INSTALLER,

@@ -1,6 +1,6 @@
 import React, { useCallback, useId, memo } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from '../../utils';
+import { noop } from 'web-common/utils';
 
 const RadioSet = props => {
 	const { options = [], value, onChange = noop } = props;

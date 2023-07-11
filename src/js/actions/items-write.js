@@ -1,4 +1,5 @@
 import api from 'zotero-api-client';
+import { omit, pick } from 'web-common/utils';
 
 import { extractItems } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate } from '.';
@@ -6,7 +7,6 @@ import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
-import { omit, pick } from '../common/immutable';
 import { parseDescriptiveString } from '../common/format';
 import { strToISO } from '../common/date';
 import { sniffForMIMEType } from '../common/mime';

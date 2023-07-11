@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useRef, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Libraries from '../libraries';
 import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 import { toggleModal } from '../../actions';
-import { usePrevious } from '../../hooks';
-import { isTriggerEvent } from '../../common/event';
 import FocusTrap from '../focus-trap';
 
 const EmbeddedLibrariesTreeModal = () => {

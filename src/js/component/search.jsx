@@ -1,14 +1,12 @@
+import PropTypes from 'prop-types';
 import React, { memo, useEffect, useCallback, useRef, useState } from 'react';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './ui/dropdown';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
+import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
+import { noop } from 'web-common/utils';
 
-import Button from './ui/button';
-import Icon from './ui/icon';
 import { navigate, resetQuery, toggleAdvancedSearch } from '../actions';
-import { noop } from '../utils';
-import { usePrevious } from '../hooks';
 
 const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {

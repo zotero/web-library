@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import ReactModal from 'react-modal';
 import { useSelector } from 'react-redux';
-
-import Spinner from '../ui/spinner';
-import { getScrollbarWidth } from '../../utils';
-import { pick } from '../../common/immutable'
-import { usePrevious } from '../../hooks';
+import { usePrevious } from 'web-common/hooks';
+import { getScrollbarWidth, pick } from 'web-common/utils';
+import { Spinner } from 'web-common/components';
 
 var initialPadding;
 

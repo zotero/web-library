@@ -1,4 +1,5 @@
-import { omit } from '../common/immutable';
+import { omit } from 'web-common/utils';
+
 import { getApiForItems } from '../common/actions';
 import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
 chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,

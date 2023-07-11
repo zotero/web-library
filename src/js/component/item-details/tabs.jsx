@@ -2,6 +2,7 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Spinner } from 'web-common/components';
 
 import Attachments from '../../component/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
@@ -9,7 +10,6 @@ import Info from '../../component/item-details/info';
 import Notes from '../../component/item-details/notes';
 import Panel from '../ui/panel';
 import Related from '../../component/item-details/related';
-import Spinner from '../ui/spinner';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNote from '../../component/item-details/standalone-note';
 import Tags from '../../component/item-details/tags';

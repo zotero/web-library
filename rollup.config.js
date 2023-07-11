@@ -52,7 +52,7 @@ const config = {
 			skipPlugins: ['resolve', 'json', 'commonjs', 'replace', 'babel', 'sizes', 'filesize']
 		}),
 		resolve({
-			modulePaths: [path.join(process.cwd(), 'src', 'js')],
+			modulePaths: [path.join(process.cwd(), 'src', 'js'), path.join(process.cwd(), 'modules')],
 			preferBuiltins: false,
 			mainFields: ['browser', 'main'],
 			extensions: ['.js', '.jsx'],
@@ -68,6 +68,7 @@ const config = {
 			babelrc: false,
 			include: [
 				'src/js/**',
+				'modules/web-common/**',
 				// modules below need re-transpiled for compatibility with Safari 10
 				'node_modules/@floating-ui/**',
 				'node_modules/react-dnd*/**',

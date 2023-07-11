@@ -1,7 +1,7 @@
+import { mapObject } from 'web-common/utils';
 import { populateItemKeys, filterItemKeys, injectExtraItemKeys, updateFetchingState } from
 '../../common/reducers';
 import { indexByKey, get } from '../../utils';
-import { mapObject } from '../../common/immutable';
 
 import {
 	RECEIVE_RECOVER_ITEMS_TRASH, DROP_CHILD_ITEMS, ERROR_CHILD_ITEMS, RECEIVE_CHILD_ITEMS,

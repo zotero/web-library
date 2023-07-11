@@ -2,9 +2,8 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from './ui/button';
-import Icon from './ui/icon';
 import { dismissError } from '../actions';
 
 const Message = ({ type, id, message, cta }) => {

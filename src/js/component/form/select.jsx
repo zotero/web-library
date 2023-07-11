@@ -2,11 +2,9 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-
-import Select from '../ui/select';
-import Spinner from '../ui/spinner';
-import { usePrevious } from '../../hooks';
-import { pick } from '../../common/immutable';
+import { Select, Spinner } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
+import { pick } from 'web-common/utils';
 
 const SelectInput = forwardRef((props, ref) => {
 	const { autoFocus, className, clearable, isDisabled, isReadOnly, isRequired, id, placeholder, tabIndex,

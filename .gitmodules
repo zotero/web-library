@@ -8,3 +8,6 @@
 [submodule "modules/note-editor"]
 	path = modules/note-editor
 	url = https://github.com/zotero/note-editor.git
+[submodule "modules/web-common"]
+	path = modules/web-common
+	url = https://github.com/tnajdek/web-common.git

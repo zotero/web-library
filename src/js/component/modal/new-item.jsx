@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button } from 'web-common/components';
 
-import Button from '../ui/button';
 import Modal from '../ui/modal';
 import Select from '../form/select';
 import { get } from '../../utils';

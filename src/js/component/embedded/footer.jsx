@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
+import React, { useCallback, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import { toggleTouchTagSelector } from '../../actions';
 import { pluralize } from '../../common/format';
 import { makePath } from '../../common/navigation';

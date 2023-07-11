@@ -1,7 +1,6 @@
-'use strict';
+import { omit } from 'web-common/utils';
 
 import { TOGGLE_MODAL } from '../constants/actions';
-import { omit } from '../common/immutable';
 
 
 const modal = (state = { id: null }, action) => {

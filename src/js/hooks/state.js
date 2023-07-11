@@ -1,13 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-const usePrevious = value => {
-	const ref = useRef();
-	useEffect(() => {
-		ref.current = value;
-	});
-	return ref.current;
-}
-
 // keep track of `value`. When unmounting call `callback` with the most recent value of `value`.
 const usePrepForUnmount = (callback, values) => {
 	const ref = useRef();
@@ -54,4 +46,4 @@ const useBufferGate = (newValue, delay = 250) => {
 	return bufValue;
 }
 
-export { useBufferGate, usePrevious, usePrepForUnmount };
+export { useBufferGate, usePrepForUnmount };

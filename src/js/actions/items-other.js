@@ -1,5 +1,6 @@
+import { omit } from 'web-common/utils';
+
 import { preferenceChange, sortItems } from '.';
-import { omit } from '../common/immutable.js';
 
 const updateItemsSorting = (sortBy, sortDirection) => {
 	return (dispatch, getState) => {

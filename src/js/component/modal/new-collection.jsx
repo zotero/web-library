@@ -1,8 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { COLLECTION_ADD } from '../../constants/modals';

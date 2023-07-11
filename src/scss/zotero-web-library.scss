@@ -53,10 +53,11 @@ $scope: ".zotero-wl";
 	@import "components/button";
 	@import "components/bibliography";
 	@import "components/collection-tree";
-	@import "components/dropdown";
-	@import "components/select";
+	@import "components/dropdown"; // switch to "../../modules/web-common/scss/dropdown" but with scopedVariant
+	@import "../../modules/web-common/scss/select";
 	@import "components/editable";
-	@import "components/icon";
+	@import "../../modules/web-common/scss/icon";
+	@import "components/icon-extra";
 	@import "components/panel";
 	@import "components/tabs";
 	@import "components/toolbar";

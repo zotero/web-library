@@ -2,10 +2,9 @@ import cx from 'classnames';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { saveAs } from 'file-saver';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
 import exportFormats from '../../constants/export-formats';
-import Icon from '../ui/icon';
 import Modal from '../ui/modal';
 import Select from '../form/select';
 import { EXPORT } from '../../constants/modals';

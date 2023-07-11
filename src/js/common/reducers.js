@@ -1,5 +1,6 @@
+import { omit } from 'web-common/utils';
+
 import { sortItemsByKey, compareItem } from '../utils';
-import { omit } from '../common/immutable';
 import { getFieldNameFromSortKey } from '../utils';
 
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {

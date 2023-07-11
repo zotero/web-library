@@ -1,6 +1,6 @@
 import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
 import { sortByKey } from '../utils';
-import { pick } from '../common/immutable';
+import { pick } from 'web-common/utils';
 
 const defaultState = {
 	apiConfig: {},

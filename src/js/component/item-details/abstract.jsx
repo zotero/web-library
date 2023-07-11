@@ -2,11 +2,11 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { pick } from 'web-common/utils';
 
 import Editable from '../editable';
 import TextAreaInput from '../form/text-area';
 import { get } from '../../utils';
-import { pick } from '../../common/immutable';
 import { updateItemWithMapping } from '../../actions';
 
 const Abstract = ({ isReadOnly, ...rest }) => {

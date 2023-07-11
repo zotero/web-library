@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { pick } from '../../common/immutable';
+import { pick } from 'web-common/utils';
 
 const Toolbar = React.forwardRef(({ children, className, tabIndex, onFocus, onBlur, ...rest }, ref) => (
 	<div

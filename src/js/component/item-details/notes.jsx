@@ -1,20 +1,19 @@
 import cx from 'classnames';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from '../ui/dropdown';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent, noop, scrollIntoViewIfNeeded } from 'web-common/utils';
 
-import Button from 'component/ui/button';
-import Icon from 'component/ui/icon';
+
 import RichEditor from 'component/rich-editor';
-
-import { get, scrollIntoViewIfNeeded } from 'utils';
-import { isTriggerEvent } from 'common/event';
+import { get } from 'utils';
 import { noteAsTitle, pluralize } from 'common/format';
-import { getScrollContainerPageCount, noop, sortByKey, stopPropagation } from 'utils';
+import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
 import { TabPane } from 'component/ui/tabs';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
-import { useFetchingState, useFocusManager, usePrepForUnmount, usePrevious } from 'hooks';
+import { useFetchingState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
 	fetchItemTemplate, moveToTrash, navigate } from 'actions';
 

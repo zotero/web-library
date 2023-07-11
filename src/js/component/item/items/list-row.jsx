@@ -2,8 +2,8 @@ import React, { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { Icon } from 'web-common/components';
 
-import Icon from '../../ui/icon';
 import { triggerSelectMode, navigate } from '../../../actions';
 import { vec2dist } from '../../../utils';
 

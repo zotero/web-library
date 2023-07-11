@@ -1,7 +1,8 @@
+import { omit } from 'web-common/utils';
+
 import {
 	RECEIVE_LIBRARY_SETTINGS, RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS,
 } from '../../constants/actions';
-import { omit } from '../../common/immutable';
 
 const settings = (state = {}, action) => {
 	switch(action.type) {

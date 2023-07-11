@@ -1,5 +1,6 @@
+import { mapObject } from 'web-common/utils';
+
 import { indexByKey } from '../../utils';
-import { mapObject } from '../../common/immutable';
 import { populateItemKeys, filterItemKeys, sortItemKeysOrClear, injectExtraItemKeys,
 updateFetchingState } from '../../common/reducers';
 

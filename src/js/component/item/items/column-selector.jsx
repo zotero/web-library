@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
 import columnProperties from '../../../constants/column-properties';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle }  from '../../ui/dropdown';
-import Icon from '../../ui/icon';
 import { applyChangesToVisibleColumns, getPrevSibling, resizeVisibleColumns } from '../../../utils';
 import { preferenceChange, restoreColumnsOrder } from '../../../actions';
 
@@ -40,7 +39,7 @@ const ColumnSelector = props => {
 		return dispatch(preferenceChange('columns', applyChangesToVisibleColumns(visibleColumns, newColumns)));
 	}, [dispatch, columns]);
 
-	const handleToggleDropdown = useCallback(ev => {
+	const handleToggleDropdown = useCallback(() => {
 		// if(ev.target && ev.target.dataset.noToggle) {
 		// 	return;
 		// }

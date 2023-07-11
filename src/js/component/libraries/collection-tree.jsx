@@ -1,19 +1,16 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
+import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 
 import Editable from '../editable';
-import Icon from '../ui/icon';
 import Node from './node';
-import Spinner from '../../component/ui/spinner';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
-import { omit, pick } from '../../common/immutable';
-import { isTriggerEvent } from '../../common/event';
-import { stopPropagation, getUniqueId, noop } from '../../utils.js';
-import { usePrevious } from '../../hooks/';
+import { stopPropagation, getUniqueId } from '../../utils.js';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];

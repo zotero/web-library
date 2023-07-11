@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useRef, useImperativeHandle } from 'react';
 import { useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePrevious } from '../hooks';
+import { usePrevious } from 'web-common/hooks';
+import { noop } from 'web-common/utils';
 
 import { createAttachments, getAttachmentUrl, navigate } from '../actions';
-import { getItemFromCanonicalUrl, noop, parseBase64File } from '../utils';
+import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
 const RichEditor = React.memo(React.forwardRef((props, ref) => {
@@ -116,7 +117,6 @@ const RichEditor = React.memo(React.forwardRef((props, ref) => {
 
 	// handles iframe loaded once, installed on mount, never updated, doesn't need useCallback deps
 	const handleIframeLoaded = useCallback(() => {
-		console.log('iframe loaded', { id, isReadOnly, isTouchOrSmall, value, isAttachmentNote });
 		iframeRef.current.contentWindow.postMessage({
 			action: 'init',
 			instanceID: id,

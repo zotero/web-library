@@ -2,13 +2,11 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useId, useRef, useState } from 'react';
 import { useFloating, shift } from '@floating-ui/react-dom';
+import { Button, Icon } from 'web-common/components';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent, pick } from 'web-common/utils';
 
-import Button from './button';
-import Icon from './icon';
 import { useEffect } from 'react';
-import { useFocusManager, usePrevious } from '../../hooks';
-import { isTriggerEvent } from '../../common/event';
-import { pick } from '../../common/immutable';
 import colorNames from '../../constants/color-names';
 
 const gridCols = 3;

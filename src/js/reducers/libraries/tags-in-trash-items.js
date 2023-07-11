@@ -1,4 +1,7 @@
 import deepEqual from 'deep-equal';
+import { omit } from 'web-common/utils';
+
+
 import { DROP_COLORED_TAGS_IN_TRASH_ITEMS, DROP_TAGS_IN_TRASH_ITEMS,
 	ERROR_COLORED_TAGS_IN_TRASH_ITEMS, ERROR_TAGS_IN_TRASH_ITEMS, RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_COLORED_TAGS_IN_TRASH_ITEMS, RECEIVE_DELETE_ITEMS, RECEIVE_DELETE_TAGS,
@@ -7,7 +10,6 @@ import { DROP_COLORED_TAGS_IN_TRASH_ITEMS, DROP_TAGS_IN_TRASH_ITEMS,
 	RECEIVE_UPDATE_LIBRARY_SETTINGS, REQUEST_COLORED_TAGS_IN_TRASH_ITEMS,
 	REQUEST_TAGS_IN_TRASH_ITEMS, RECEIVE_DELETE_LIBRARY_SETTINGS } from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
-import { omit } from '../../common/immutable';
 
 const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 	switch(action.type) {

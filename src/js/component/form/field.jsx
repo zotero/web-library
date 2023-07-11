@@ -1,11 +1,10 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useRef } from 'react';
+import { noop, pick } from 'web-common/utils';
+import { Icon } from 'web-common/components';
 
-import Icon from '../ui/icon';
 import { CREATOR } from '../../constants/dnd';
-import { noop } from '../../utils';
-import { pick } from '../../common/immutable';
 import { useDrag, useDrop } from 'react-dnd';
 
 const SimpleField = memo(forwardRef((props, ref) => {

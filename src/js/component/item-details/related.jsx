@@ -1,16 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
+import { isTriggerEvent, noop } from 'web-common/utils';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
 import { getItemTitle } from '../../common/item';
-import { get, getScrollContainerPageCount, getUniqueId, mapRelationsToItemKeys, noop,
-sortItemsByKey, } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
+import { get, getScrollContainerPageCount, getUniqueId, mapRelationsToItemKeys, sortItemsByKey, } from '../../utils';
 import { TabPane } from '../ui/tabs';
-import { useFocusManager } from '../../hooks';
 
 
 const RelatedItem = memo(props => {

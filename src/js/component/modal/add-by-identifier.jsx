@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
 
-import Button from '../ui/button';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
 import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../constants/identifier-result-types';
 import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
-import { usePrevious } from '../../hooks';
 
 const AddByIdentifierModal = () => {
 	const dispatch = useDispatch();

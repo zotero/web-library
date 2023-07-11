@@ -2,15 +2,14 @@ import PropTypes from 'prop-types';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
+import { Button, Icon } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Modal from '../ui/modal';
 import TagList from '../tag-selector/tag-list';
 import TagColorManager from '../tag-selector/tag-color-manager';
 import { MANAGE_TAGS } from '../../constants/modals';
 import { filterTags, toggleModal } from '../../actions';
-import { usePrevious } from '../../hooks';
 
 
 const ManageTagsModal = () => {

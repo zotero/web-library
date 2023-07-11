@@ -1,9 +1,9 @@
 import React, { memo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
+import { Button } from 'web-common/components';
 
 import Search from '../../component/search';
-import Button from '../ui/button';
 import { ItemActionsTouch } from '../item/actions'
 import { navigateExitSearch, triggerSearchMode, } from '../../actions';
 

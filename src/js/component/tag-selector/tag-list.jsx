@@ -6,22 +6,17 @@ import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, 
 import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 
-import Icon from '../ui/icon';
-import Spinner from '../ui/spinner';
-import Button from '../ui/button';
 import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
-import { get, noop } from '../../utils';
-import { isTriggerEvent } from '../../common/event';
 import { maxColoredTags } from '../../constants/defaults';
-import { omit, pick } from '../../common/immutable';
-import { useFocusManager } from '../../hooks';
-import { usePrevious, useTags } from '../../hooks';
+import { useTags } from '../../hooks';
 
 const PAGESIZE = 100;
 
-const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen, focusNext, focusPrev }) => {
+const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen }) => {
 	const dispatch = useDispatch()
 	const tagColorsLength = useSelector(state => state.libraries?.[state.current.libraryKey]?.tagColors?.value?.length ?? 0);
 	const currentlySelectedTags = useSelector(state => state.current.tags);

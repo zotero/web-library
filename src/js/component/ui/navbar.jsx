@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
+import { isTriggerEvent } from 'web-common/utils';
 
-import Button from './button';
-import Icon from './icon';
 import MenuEntry from './menu-entry';
 import Search from './../../component/search';
 import { currentTriggerSearchMode, toggleNavbar, toggleTouchTagSelector } from '../../actions';
-import { isTriggerEvent } from '../../common/event';
-import { useFocusManager } from '../../hooks';
 
 const Navbar = memo(({ entries = [] }) => {
 	const ref = useRef(null);

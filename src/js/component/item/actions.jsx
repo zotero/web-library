@@ -1,9 +1,8 @@
 import React, { memo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../ui/dropdown';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
+
 import { ToolGroup } from '../ui/toolbars';
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import NewItemSelector from 'component/item/actions/new-item';
 import ExportActions from 'component/item/actions/export';
 import columnProperties from '../../constants/column-properties';

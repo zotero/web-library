@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { pick } from 'web-common/utils';
 
 import Select from '../form/select';
-import { pick } from '../../common/immutable';
 
 const EditableContent = props => {
 	const { display, id, input, inputComponent, labelId, options, title } = props;

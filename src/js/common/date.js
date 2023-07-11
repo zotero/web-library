@@ -2,9 +2,9 @@
  * But without dependencies that would substantially add to the bundle size.
 */
 
-import { mapObject } from './immutable';
-import dateFormatsJSON from '../../../data/date-formats.json';
+import { mapObject } from 'web-common/utils';
 import memoize from 'memoize-one';
+import dateFormatsJSON from '../../../data/date-formats.json';
 
 const compileRegexes = memoize((locale) => {
 	let english = locale.startsWith('en');

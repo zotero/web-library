@@ -2,10 +2,10 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Icon } from 'web-common/components';
 
 import Editable from '../editable';
 import Field from '../form/field';
-import Icon from '../ui/icon';
 import Input from '../form/input';
 import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';

@@ -2,12 +2,9 @@ import React, { forwardRef, memo, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-
-import Spinner from '../ui/spinner';
-import { pick } from '../../common/immutable';
-import { mapChildren } from '../../common/react';
-import { useFocusManager } from '../../hooks';
-import { noop } from '../../utils';
+import { useFocusManager } from 'web-common/hooks';
+import { mapChildren, noop, pick } from 'web-common/utils';
+import { Spinner } from 'web-common/components';
 
 const Tab = memo(props => {
 	const { activateOnFocus, children, isActive, isDisabled, onActivate, focusNext, focusPrev,

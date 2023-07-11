@@ -1,12 +1,11 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import { usePrevious } from 'web-common/hooks';
+import { mod, noop, omit, pick } from 'web-common/utils';
+import { Spinner } from 'web-common/components';
 
 import AutoResizer from './auto-resizer';
-import Spinner from '../ui/spinner';
-import { mod, noop } from '../../utils';
-import { omit, pick } from '../../common/immutable';
-import { usePrevious } from '../../hooks';
 import { useFloating, shift } from '@floating-ui/react-dom';
 
 const NATIVE_INPUT_PROPS = ['autoFocus', 'form', 'id', 'inputMode', 'max', 'maxLength',

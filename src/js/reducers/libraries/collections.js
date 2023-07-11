@@ -1,3 +1,5 @@
+import { omit } from 'web-common/utils';
+
 import {
 	BEGIN_FETCH_ALL_COLLECTIONS, BEGIN_FETCH_COLLECTIONS_SINCE, COMPLETE_FETCH_ALL_COLLECTIONS,
 	COMPLETE_FETCH_COLLECTIONS_SINCE, ERROR_COLLECTIONS_IN_LIBRARY, RECEIVE_COLLECTIONS_IN_LIBRARY,
@@ -6,7 +8,6 @@ import {
 } from '../../constants/actions.js';
 
 import { indexByKey } from '../../utils';
-import { omit } from '../../common/immutable';
 
 const defaultState = {
 	data: {},

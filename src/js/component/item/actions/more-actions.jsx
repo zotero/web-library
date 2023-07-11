@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo, useCallback, useState } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../ui/dropdown';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Icon from '../../ui/icon';
 import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
 import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
 import { useItemActionHandlers } from '../../../hooks';

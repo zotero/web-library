@@ -1,4 +1,6 @@
 import deepEqual from 'deep-equal';
+import { omit } from 'web-common/utils';
+
 import { DROP_COLORED_TAGS_IN_TOP_ITEMS, DROP_TAGS_IN_TOP_ITEMS, ERROR_COLORED_TAGS_IN_TOP_ITEMS,
 	ERROR_TAGS_IN_TOP_ITEMS, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_COLORED_TAGS_IN_TOP_ITEMS,
 	RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEMS,
@@ -7,7 +9,6 @@ import { DROP_COLORED_TAGS_IN_TOP_ITEMS, DROP_TAGS_IN_TOP_ITEMS, ERROR_COLORED_T
 	RECEIVE_LIBRARY_SETTINGS, RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, }
 	from '../../constants/actions';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
-import { omit } from '../../common/immutable';
 
 const tagsTop = (state = {}, action, { items } = {}) => {
 	switch(action.type) {

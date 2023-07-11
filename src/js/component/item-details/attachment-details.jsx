@@ -1,20 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from '../ui/dropdown';
-import { stopPropagation, noop } from '../../utils';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
+import { noop } from 'web-common/utils';
+import { useFocusManager } from 'web-common/hooks';
 
-import Icon from 'component/ui/icon';
 import RichEditor from 'component/rich-editor';
 import { dateLocalized } from 'common/format';
 import { get } from 'utils';
 import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { useForceUpdate } from 'hooks';
 import { makePath } from '../../common/navigation';
-import Button from '../../component/ui/button';
-import Spinner from '../ui/spinner';
-import { isTriggerEvent } from '../../common/event';
-import { useFocusManager } from '../../hooks';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -58,7 +54,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const forceRerender = useForceUpdate();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-	const { focusBySelector, focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(downloadOptionsRef);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(downloadOptionsRef);
 
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));

@@ -1,16 +1,14 @@
+import { useDebounce } from "use-debounce";
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
 import React, { useCallback, useRef, memo } from 'react';
+import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
+import { useFocusManager  } from 'web-common/hooks';
 
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './ui/dropdown';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useDebounce } from "use-debounce";
-
-import Button from './ui/button';
-import Icon from './ui/icon';
 import Input from './form/input';
 import TagSelectorItems from './tag-selector/tag-selector-items';
 import { filterTags, navigate, toggleModal, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
-import { useTags, useFocusManager } from '../hooks';
+import { useTags } from '../hooks';
 import { getUniqueId } from '../utils';
 import { MANAGE_TAGS } from '../constants/modals';
 

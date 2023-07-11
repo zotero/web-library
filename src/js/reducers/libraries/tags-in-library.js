@@ -1,10 +1,11 @@
 import deepEqual from 'deep-equal';
+import { omit } from 'web-common/utils';
+
 import { DROP_TAGS_IN_LIBRARY, ERROR_TAGS_IN_LIBRARY, RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_CREATE_ITEM, RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEMS, RECEIVE_LIBRARY_SETTINGS,
 	RECEIVE_TAGS_IN_LIBRARY, RECEIVE_UPDATE_ITEM, REQUEST_TAGS_IN_LIBRARY,
 	RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS } from
 	'../../constants/actions';
-import { omit } from '../../common/immutable';
 import { detectIfItemsChanged, filterTags, populateTags, updateFetchingState } from '../../common/reducers';
 
 const tagsInLibrary = (state = {}, action, { items } = {}) => {

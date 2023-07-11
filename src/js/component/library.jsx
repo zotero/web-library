@@ -4,6 +4,7 @@ import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
 
 import CustomDragLayer from '../component/drag-layer';
 import ItemDetails from '../component/item/details';
@@ -26,7 +27,6 @@ import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import ZoteroStreamingClient from './zotero-streaming-client';
 import { getSerializedQuery } from '../common/state';
 import { get } from '../utils';
-import { usePrevious } from '../hooks/';
 import{ toggleNavbar, resetLibrary, fetchLibrarySettings } from '../actions';
 
 

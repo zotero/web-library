@@ -1,6 +1,7 @@
 import deepEqual from 'deep-equal';
 import { shallowEqual } from 'react-redux';
 import { LOCATION_CHANGE } from 'connected-react-router'
+import { omit } from 'web-common/utils';
 
 import { ERROR_ITEMS_BY_QUERY, ERROR_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_ADD_TAGS_TO_ITEMS,
 RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
@@ -14,7 +15,6 @@ RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS } from '../cons
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
-import { omit } from '../common/immutable';
 
 const isMatchingQuery = (action, state) => {
 	const { q = '', qmode, tag = [] } = action.queryOptions;

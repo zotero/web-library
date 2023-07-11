@@ -1,5 +1,5 @@
 import { BEGIN_ONGOING, COMPLETE_ONGOING } from '../constants/actions';
-import { pick } from '../common/immutable';
+import { pick } from 'web-common/utils';
 
 
 const ongoing = (state = [], action) => {

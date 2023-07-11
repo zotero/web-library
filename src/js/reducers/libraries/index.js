@@ -1,3 +1,5 @@
+import { omit } from 'web-common/utils';
+
 import attachmentsExportPDF from './attachments-export-pdf';
 import attachmentsUrl from './attachments-url';
 import collections from './collections';
@@ -18,7 +20,6 @@ import tagsInTrashItems from './tags-in-trash-items';
 import tagsTop from './tags-top';
 import updating from './updating';
 import { get } from '../../utils';
-import { omit } from '../../common/immutable';
 
 const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 	if(action.type === 'RESET_LIBRARY') {

@@ -1,0 +1,32 @@
+//
+// Icon
+// --------------------------------------------------
+
+.icon-remove-from-collection,
+.icon-library-read-only {
+	&[width="20"] {
+		margin: -2px;
+	}
+}
+
+.icon-add-to-collection,
+.icon-remove-from-collection {
+	&[width="32"] {
+		margin: -4px;
+	}
+}
+
+.icon-library-read-only {
+	&[width="32"] {
+		margin: -2px;
+	}
+}
+
+.icon-crescent-circle,
+.icon-crescent-circle-active {
+	margin-left: -2px;
+}
+
+.icon-circle {
+	color: $icon-circle-color;
+}

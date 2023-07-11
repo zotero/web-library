@@ -2,18 +2,15 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import React, { forwardRef, memo, useImperativeHandle, useMemo, useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Button, Icon, SelectDivider, SelectOption } from 'web-common/components';
+import { isTriggerEvent, omit, pick } from 'web-common/utils';
 
-import Button from '../ui/button';
 import Editable from '../editable';
 import Field from './field';
-import Icon from '../ui/icon';
 import Input from './input';
 import Modal from '../ui/modal';
 import SelectInput from './select';
 import { creator as formatCreator } from '../../common/format';
-import { isTriggerEvent } from '../../common/event';
-import { omit, pick } from '../../common/immutable';
-import { SelectDivider, SelectOption } from '../ui/select';
 import { useEditMode } from '../../hooks';
 
 const CreatorTypeSelector = memo(forwardRef((props, ref) => {

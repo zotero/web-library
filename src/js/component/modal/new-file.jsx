@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Button, Icon } from 'web-common/components';
 
-import Button from '../ui/button';
-import Icon from '../ui/icon';
 import Modal from '../ui/modal';
 import { get, getUniqueId } from '../../utils';
 import { getFilesData } from '../../common/event';

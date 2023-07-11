@@ -1,10 +1,8 @@
 import React, { memo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './dropdown';
-
-import Icon from './icon';
-import { pick } from '../../common/immutable'
+import { DropdownToggle, DropdownMenu, DropdownItem, UncontrolledDropdown, Icon } from 'web-common/components';
+import { pick } from 'web-common/utils';
 
 const MenuEntry = props => {
 	const { label, onKeyDown, dropdown, entries, active, position, truncate } = props;
