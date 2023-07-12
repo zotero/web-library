@@ -1,0 +1,50 @@
+{
+    "successful": {
+        "0": {
+            "key": "A8ZZ8PF7",
+            "version": 199,
+            "parentItem": "TBBKEM8I",
+            "itemType": "attachment",
+            "linkMode": "imported_url",
+            "title": "Snapshot",
+            "accessDate": "2023-01-13T10:53:00Z",
+            "url": "https://avmajournals.avma.org/view/journals/javma/220/9/javma.2002.220.1315.xml",
+            "note": "",
+            "contentType": "text/html",
+            "charset": "utf-8",
+            "filename": "javma.2002.220.1315.html",
+            "md5": "fc48064c89bf77edf82843b923b07936",
+            "mtime": 1673607180000,
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:53:00Z",
+            "dateModified": "2023-01-13T10:53:00Z"
+        },
+        "1": {
+            "key": "ERER8Z7M",
+            "version": 211,
+            "parentItem": "TBBKEM8I",
+            "itemType": "attachment",
+            "linkMode": "imported_url",
+            "title": "Full Text",
+            "accessDate": "2023-01-13T10:52:46Z",
+            "url": "https://www.barkingbunch.nl/gezondheid/health%20research%202002.pdf",
+            "note": "",
+            "contentType": "application/pdf",
+            "charset": "",
+            "filename": "Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf",
+            "md5": "39bf1f4635fb0a4b2b9de876ed865f89",
+            "mtime": 1673607166000,
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:46Z",
+            "dateModified": "2023-01-13T10:52:46Z"
+        }
+    },
+    "success": {
+        "0": "A8ZZ8PF7",
+        "1": "ERER8Z7M"
+    },
+    "unchanged": {},
+    "failed": {}
+}

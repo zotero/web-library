@@ -870,7 +870,9 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 
 		if(shouldStoreRelationInSource) {
 			const targetItemKeys = newItems.filter(i => !['attachment', 'annotation'].includes(i.itemType)).map(i => i.key);
-			dispatch(storeRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
+			if (targetItemKeys.length) {
+				dispatch(storeRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
+			}
 		}
 
 		const oldItems = newItems.map(
@@ -935,8 +937,11 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
 				const newItem = newItems[index];
-				const canHaveChildItems = !(newItem.itemType === 'annotation' || newItem.linkMode === 'embedded_image');
-				if(!canHaveChildItems) {
+				const skipChildItems = newItem.itemType === 'annotation'
+					|| newItem.linkMode === 'embedded_image'
+					|| (newItem.itemType === 'attachment' && newItem.contentType !== 'application/pdf');
+
+				if (skipChildItems) {
 					return;
 				}
 				await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
@@ -978,7 +983,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 	};
 }
 
-const storeRelationInSoruce = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey) => {
+const storeRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey) => {
 	return async dispatch => {
 		const id = requestTracker.id++;
 
@@ -991,12 +996,12 @@ const storeRelationInSoruce = (itemKeys, targetItemKeys, sourceLibraryKey, targe
 		});
 
 		dispatch(
-			queueStoreRelationInSoruce(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id)
+			queueStoreRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id)
 		);
 	}
 }
 
-const queueStoreRelationInSoruce = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id) => {
+const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id) => {
 	return {
 		queue: sourceLibraryKey,
 		callback: async (next, dispatch, getState) => {

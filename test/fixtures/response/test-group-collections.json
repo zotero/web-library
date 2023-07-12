@@ -1,0 +1,110 @@
+[
+    {
+        "key": "XUVCW7LF",
+        "version": 2,
+        "library": {
+            "type": "group",
+            "id": 5119976,
+            "name": "Animals",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/5119976",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/5119976/collections/XUVCW7LF",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/5119976/collections/XUVCW7LF",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numCollections": 0,
+            "numItems": 0
+        },
+        "data": {
+            "key": "XUVCW7LF",
+            "version": 2,
+            "name": "Llamas",
+            "parentCollection": false,
+            "relations": {}
+        }
+    },
+    {
+        "key": "CDQ9T4PW",
+        "version": 2,
+        "library": {
+            "type": "group",
+            "id": 5119976,
+            "name": "Animals",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/5119976",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/5119976/collections/CDQ9T4PW",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/5119976/collections/CDQ9T4PW",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numCollections": 0,
+            "numItems": 2
+        },
+        "data": {
+            "key": "CDQ9T4PW",
+            "version": 2,
+            "name": "Cats",
+            "parentCollection": false,
+            "relations": {}
+        }
+    },
+    {
+        "key": "P8Z3PQN7",
+        "version": 2,
+        "library": {
+            "type": "group",
+            "id": 5119976,
+            "name": "Animals",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/5119976",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/5119976/collections/P8Z3PQN7",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/5119976/collections/P8Z3PQN7",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numCollections": 0,
+            "numItems": 1
+        },
+        "data": {
+            "key": "P8Z3PQN7",
+            "version": 2,
+            "name": "Dogs",
+            "parentCollection": false,
+            "relations": {}
+        }
+    }
+]

@@ -1,0 +1,86 @@
+{
+    "successful": {
+        "0": {
+            "key": "GSFZ8Z1M",
+            "version": 278,
+            "parentItem": "ERER8Z7M",
+            "itemType": "annotation",
+            "annotationType": "highlight",
+            "annotationText": "48 Labrador Retrievers",
+            "annotationComment": "That's a lot of doggos",
+            "annotationColor": "#e56eee",
+            "annotationPageLabel": "1315",
+            "annotationSortIndex": "00000|003482|00240",
+            "annotationPosition": "{\"pageIndex\":0,\"rects\":[[120.243,542.839,211.749,551.083]]}",
+            "tags": [
+                {
+                    "tag": "cute"
+                }
+            ],
+            "relations": {},
+            "dateAdded": "2023-07-12T12:59:16Z",
+            "dateModified": "2023-07-12T12:59:30Z"
+        },
+        "1": {
+            "key": "JFAE8Z2M",
+            "version": 278,
+            "parentItem": "ERER8Z7M",
+            "itemType": "annotation",
+            "annotationType": "note",
+            "annotationComment": "Comment on page 1320",
+            "annotationColor": "#a28ae5",
+            "annotationPageLabel": "1320",
+            "annotationSortIndex": "00005|002470|00029",
+            "annotationPosition": "{\"pageIndex\":5,\"rects\":[[513.0096566523605,740.9431330472103,535.0096566523605,762.9431330472103]]}",
+            "tags": [
+                {
+                    "tag": "to read"
+                }
+            ],
+            "relations": {},
+            "dateAdded": "2023-07-12T12:58:22Z",
+            "dateModified": "2023-07-12T12:58:52Z"
+        },
+        "2": {
+            "key": "8FSZ8Z3M",
+            "version": 278,
+            "parentItem": "ERER8Z7M",
+            "itemType": "annotation",
+            "annotationType": "highlight",
+            "annotationText": "Results of this study indicate that diet restriction significantly increased median life span in this group of dogs. To our knowledge, this is the first study to document that diet restriction increases survival time in mammals larger than rodents. In studies of rodents, diet restriction consistently increased median and maximum life span. In the present study, median life span was increased by diet restriction, but maximum life span was not significantly different between groups.1 The smaller number of subjects in the present study, compared with the numbers in previous rodent studies, may explain the lack of statistical significance between groups in regard to maximum life span, since the 90th percentile estimates from our study involve outcome of just 3 dogs/group. In the present study, diet restriction also was associated with a longer median time to first treatment of osteoarthritis (the most common chronic disease among dogs in this study) and a longer median time to first treatment of any chronic condition.",
+            "annotationComment": "",
+            "annotationColor": "#2ea8e5",
+            "annotationPageLabel": "1319",
+            "annotationSortIndex": "00004|002473|00285",
+            "annotationPosition": "{\"pageIndex\":4,\"rects\":[[332.501,496.472,541.516,506.102],[314.501,485.972,541.518,495.602],[314.501,475.472,541.517,485.102],[314.501,464.972,541.517,474.602],[314.501,454.472,541.515,464.102],[314.501,443.972,541.544,453.602],[314.501,433.472,541.519,443.102],[314.501,422.972,541.515,432.602],[314.501,412.472,541.645,422.102],[314.501,401.972,541.517,412.077],[314.5,391.472,541.513,401.102],[314.5,380.972,541.516,390.602],[314.5,370.472,541.521,380.102],[314.5,359.972,541.516,369.602],[314.5,349.472,541.526,359.102],[314.5,338.972,541.52,348.602],[314.5,328.472,541.512,338.102],[314.5,317.972,541.517,327.602],[314.5,307.472,541.52,317.102],[314.5,296.972,357.09,306.602]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-07-12T12:58:15Z",
+            "dateModified": "2023-07-12T12:58:15Z"
+        },
+        "3": {
+            "key": "JFZZ8Z2M",
+            "version": 278,
+            "parentItem": "ERER8Z7M",
+            "itemType": "annotation",
+            "annotationType": "image",
+            "annotationComment": "",
+            "annotationColor": "#2ea8e5",
+            "annotationPageLabel": "1316",
+            "annotationSortIndex": "00001|004494|00065",
+            "annotationPosition": "{\"pageIndex\":1,\"rects\":[[315.193,435.438,541.082,726.335]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-07-12T12:57:59Z",
+            "dateModified": "2023-07-12T12:57:59Z"
+        }
+    },
+    "success": {
+        "0": "GSFZ8Z1M",
+        "1": "JFAE8Z2M",
+        "2": "8FSZ8Z3M",
+        "3": "JFZZ8Z2M"
+    },
+    "unchanged": {},
+    "failed": {}
+}

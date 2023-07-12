@@ -1,0 +1,96 @@
+{
+    "successful": {
+        "0": {
+            "key": "TBBKEM8I",
+            "version": 157,
+            "itemType": "journalArticle",
+            "title": "Effects of diet restriction on life span and age-related changes in dogs",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Richard D.",
+                    "lastName": "Kealy"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Dennis F.",
+                    "lastName": "Lawler"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Joan M.",
+                    "lastName": "Ballam"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sandra L.",
+                    "lastName": "Mantz"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Darryl N.",
+                    "lastName": "Biery"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Elizabeth H.",
+                    "lastName": "Greeley"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "George",
+                    "lastName": "Lust"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mariangela",
+                    "lastName": "Segre"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Gail K.",
+                    "lastName": "Smith"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Howard D.",
+                    "lastName": "Stowe"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Journal of the American Veterinary Medical Association",
+            "volume": "220",
+            "issue": "9",
+            "pages": "1315–1320",
+            "date": "2002",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Am Vet Med Assoc",
+            "tags": [],
+            "collections": [
+                "P8Z3PQN7"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:40Z",
+            "dateModified": "2023-01-13T10:52:40Z"
+        }
+    },
+    "success": {
+        "0": "TBBKEM8I"
+    },
+    "unchanged": {},
+    "failed": {}
+}
