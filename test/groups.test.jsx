@@ -13,6 +13,7 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
+import stateGroupRaw from './fixtures/state/test-group-item-view.json';
 import testGroupCollections from './fixtures/response/test-group-collections.json';
 import testGroupAddItemToCollection from './fixtures/response/test-group-add-item-to-collection.json';
 import testUserUpdateRelationAfterCopy from './fixtures/response/test-user-update-relation-after-copy.json';
@@ -22,6 +23,7 @@ import testUserAttachmentAnnotations from './fixtures/response/test-user-attachm
 import testGroupCopyAnnotations from './fixtures/response/test-group-copy-annotations.json';
 
 const state = JSONtoState(stateRaw);
+const stateGroup = JSONtoState(stateGroupRaw);
 
 describe('Group libraries', () => {
 	const handlers = [];
@@ -39,13 +41,13 @@ describe('Group libraries', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 	});
 
 	afterEach(() => server.resetHandlers());
 	afterAll(() => server.close());
 
 	test('should copy an item to a group library', async () => {
+		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
@@ -157,5 +159,31 @@ describe('Group libraries', () => {
 		await waitFor(() => expect(groupItemsPostCount).toBe(3));
 		await waitFor(() => expect(userItemsPostCount).toBe(1));
 		await waitFor(() => expect(fileUploadRequests).toBe(1));
+	});
+
+	test('should sort locally by addedBy', async () => {
+		window.location = new URL('http://localhost/groups/5119976/animals/items/X9WEHDAN/item-list');
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: stateGroup });
+
+		await user.click(await screen.findByRole('button', { name: 'Column Selector' }));
+		await user.click(screen.getByRole('menuitemcheckbox', { name: 'Added By' }));
+		await user.click(await screen.findByRole('columnheader', { name: 'Added By' }));
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+		let rows = getAllByRole(gridBody, 'row');
+
+		expect(getByRole(rows[0], 'gridcell', { name: 'foobar' })).toHaveTextContent('foobar');
+		expect(getByRole(rows[1], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
+		expect(getByRole(rows[2], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
+		expect(getByRole(rows[3], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
+
+		await user.click(await screen.findByRole('columnheader', { name: 'Added By' }));
+		rows = getAllByRole(gridBody, 'row');
+
+		expect(getByRole(rows[0], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
+		expect(getByRole(rows[1], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
+		expect(getByRole(rows[2], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
+		expect(getByRole(rows[3], 'gridcell', { name: 'foobar' })).toHaveTextContent('foobar');
 	});
 });

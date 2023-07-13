@@ -134,6 +134,9 @@ const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 	if(sortBy === 'date') {
 		return (item[Symbol.for('meta')] || {})['parsedDate'];
 	}
+	if(sortBy === 'addedBy') {
+		return item[Symbol.for('meta')]?.['createdByUser']?.['username'];
+	}
 
 	const sortKey = getSortKeyForItemType(mappings, sortBy, item.itemType);
 	return item[sortKey];
