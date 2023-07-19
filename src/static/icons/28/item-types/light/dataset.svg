@@ -1,0 +1,35 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="dataset" viewBox="0 0 28 28">
+		<rect fill="#fff" opacity="0.5" y="2" width="28" height="24"/>
+		<rect x="4" y="11" width="6" height="3"/>
+		<rect fill="#fff" x="1" y="3" width="26" height="22"/>
+		<rect opacity="0.04" x="11" y="11" width="6" height="3"/>
+		<rect opacity="0.04" x="4" y="11" width="6" height="3"/>
+		<rect opacity="0.04" x="18" y="11" width="6" height="3"/>
+		<rect opacity="0.04" x="18" y="15" width="6" height="3"/>
+		<rect opacity="0.04" x="11" y="15" width="6" height="3"/>
+		<rect opacity="0.04" x="4" y="15" width="6" height="3"/>
+		<rect opacity="0.04" x="4" y="19" width="6" height="3"/>
+		<rect opacity="0.04" x="11" y="19" width="6" height="3"/>
+		<rect opacity="0.04" x="18" y="19" width="6" height="3"/>
+		<path opacity="0.2" d="m27,3v22H1V3h26m1-1H0v24h28V2h0Z"/>
+		<rect fill="#39bf68" x="3" y="6" width="22" height="1"/>
+		<path opacity="0.2" d="m3,10v13h22v-13H3Zm8,1h6v3h-6v-3Zm0,4h6v3h-6v-3Zm-7-4h6v3h-6v-3Zm0,4h6v3h-6v-3Zm0,7v-3h6v3h-6Zm7,0v-3h6v3h-6Zm13,0h-6v-3h6v3Zm0-4h-6v-3h6v3Zm0-4h-6v-3h6v3Z"/>
+	</symbol>
+	<symbol id="dataset-active" viewBox="0 0 28 28">
+		<rect opacity="0" x="11" y="11" width="6" height="3"/>
+		<rect opacity="0" x="4" y="11" width="6" height="3"/>
+		<rect opacity="0" x="18" y="11" width="6" height="3"/>
+		<rect opacity="0" x="18" y="15" width="6" height="3"/>
+		<rect opacity="0" x="11" y="15" width="6" height="3"/>
+		<rect opacity="0" x="4" y="15" width="6" height="3"/>
+		<rect opacity="0" x="4" y="19" width="6" height="3"/>
+		<rect opacity="0" x="11" y="19" width="6" height="3"/>
+		<rect opacity="0" x="18" y="19" width="6" height="3"/>
+		<path fill="#fff" d="m27,3v22H1V3h26m1-1H0v24h28V2h0Z"/>
+		<rect fill="#fff" x="3" y="6" width="22" height="1"/>
+		<path fill="#fff" d="m3,10v13h22v-13H3Zm8,1h6v3h-6v-3Zm0,4h6v3h-6v-3Zm-7-4h6v3h-6v-3Zm0,4h6v3h-6v-3Zm0,7v-3h6v3h-6Zm7,0v-3h6v3h-6Zm13,0h-6v-3h6v3Zm0-4h-6v-3h6v3Zm0-4h-6v-3h6v3Z"/>
+	</symbol>
+	<use xlink:href="#dataset" viewBox="0 0 28 28"/>
+</svg>
