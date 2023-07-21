@@ -46,7 +46,7 @@ const Input = memo(forwardRef((props, ref) => {
 	const show = suggestions && suggestions.length && !hasCancelledSuggestions;
 	const prevShow = usePrevious(show);
 
-	const { x, y, reference, floating, strategy, update } = useFloating({
+	const { x, y, refs, strategy, update } = useFloating({
 		placement: 'bottom', middleware: [shift()]
 	});
 
@@ -178,7 +178,7 @@ const Input = memo(forwardRef((props, ref) => {
 				onKeyDown={ handleKeyDown }
 				readOnly={ isReadOnly }
 				resize={ resize }
-				ref={(r) => { reference(r); inputRef.current = r; }}
+				ref={(r) => { refs.setReference(r); inputRef.current = r; }}
 				required={ isRequired }
 				value={ value }
 				{ ...pick(rest, NATIVE_INPUT_PROPS) }
@@ -192,7 +192,7 @@ const Input = memo(forwardRef((props, ref) => {
 					role="listbox"
 					id={ `${id}-suggestions` }
 					style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
-					ref={r => { floating(r); suggestionsRef.current = r; } }
+					ref={r => { refs.setFloating(r); suggestionsRef.current = r; } }
 					className={ cx("dropdown-menu suggestions", {
 						'show': show,
 				})}>

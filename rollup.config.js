@@ -9,7 +9,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import sizes from 'rollup-plugin-sizes';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import alias from '@rollup/plugin-alias';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import virtual from '@rollup/plugin-virtual';
 import { visualizer } from "rollup-plugin-visualizer";
 
@@ -74,7 +74,8 @@ const config = {
 				'node_modules/@floating-ui/**',
 				'node_modules/react-dnd*/**',
 				'node_modules/dnd-multi-backend/**',
-				'node_modules/react-virtualized-auto-sizer/**'
+				'node_modules/react-virtualized-auto-sizer/**',
+				'node_modules/react-redux/**',
 			],
 			babelHelpers: 'bundled'
 		}),
@@ -107,7 +108,7 @@ if(process.env.DEBUG) {
 }
 
 if(isProduction) {
-	config.plugins.push(terser());
+	config.plugins.push(terser({ safari10: true }));
 	config.external.push('./wdyr'); //exclude why-did-you-render from production
 }
 

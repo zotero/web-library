@@ -37,7 +37,7 @@ const AddByIdentifier = props => {
 	const popoverRef = useRef(null);
 	const arrowRef = useRef(null);
 
-	const { x, y, reference, floating, strategy, update, middlewareData } = useFloating({
+	const { x, y, refs, strategy, update, middlewareData } = useFloating({
 		placement: 'bottom', middleware: [arrow({ element: arrowRef })]
 	});
 
@@ -163,7 +163,7 @@ const AddByIdentifier = props => {
 				onKeyDown={ onKeyDown }
 				tabIndex={ -2 }
 				title="Add By Identifier"
-				ref={ r => { reference(r); ref.current = r; } }
+				ref={ r => { refs.setReference(r); ref.current = r; } }
 			>
 				<Icon type="16/magic-wand" width="16" height="16" />
 			</Button>
@@ -172,7 +172,7 @@ const AddByIdentifier = props => {
 				aria-hidden={ !isOpen }
 				id={ `${id.current}-dialog` }
 				role="dialog"
-				ref={r => { floating(r); popoverRef.current = r; } }
+				ref={r => { refs.setFloating(r); popoverRef.current = r; } }
 				className={ cx('popover', 'popover-bottom', { show: isOpen })}
 				style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
 			>

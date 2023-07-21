@@ -19,7 +19,7 @@ const ColorPicker = props => {
 	const menuRef = useRef(null);
 	const id = useId();
 
-	const { x, y, reference, floating, strategy, update } = useFloating({
+	const { x, y, refs, strategy, update } = useFloating({
 		placement: 'bottom', middleware: [shift()]
 	});
 
@@ -98,12 +98,12 @@ const ColorPicker = props => {
 			<Button
 				tabIndex={ -1 }
 				className="btn-icon dropdown-toggle"
-				ref={ reference }
+				ref={ refs.setReference }
 			>
 				<Icon type="16/chevron-9" className="touch" width="16" height="16" />
 				<Icon type="16/chevron-7" className="mouse" width="16" height="16" />
 			</Button>
-			<div ref={ r => { floating(r); menuRef.current = r; } }
+			<div ref={ r => { refs.setFloating(r); menuRef.current = r; } }
 				id={ `${id}-menu` }
 				style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
 				className="dropdown-menu color-picker-grid"
