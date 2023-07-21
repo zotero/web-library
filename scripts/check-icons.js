@@ -38,7 +38,9 @@ for(let [name, iconDir] of Object.entries(iconsPaths)) {
 	}
 
 	const missingItemTypeIcons = knownItemTypes.filter(it => !ignoredItemTypes.includes(it) && !foundItemTypes.includes(it));
-	console.log(`WARNING: ${missingItemTypeIcons.length} missing item type icons for "${name}": ${missingItemTypeIcons.join(', ')}`);
+	if(missingItemTypeIcons.length > 0) {
+		console.log(`WARNING: ${missingItemTypeIcons.length} missing item type icons for "${name}": ${missingItemTypeIcons.join(', ')}`);
+	}
 }
 
 
