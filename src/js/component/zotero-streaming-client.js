@@ -13,7 +13,7 @@ const ZoteroStreamingClient = () => {
 	const dispatch = useDispatch();
 	const apiKey = useSelector(state => state.config.apiKey);
 	const streamingApiUrl = useSelector(state => state.config.streamingApiUrl);
-	const externalLibraries = useSelector(state => state.config.libraries.filter(l => l.isExternal));
+	const externalLibraries = useSelector(state => state.config.libraries).filter(l => l.isExternal);
 	const ws = useRef(null);
 	const isTearDown = useRef(false);
 

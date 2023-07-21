@@ -10,7 +10,6 @@ import TouchHeader from '../touch-header.jsx';
 import { chunkedCopyToLibrary, chunkedAddToCollection, toggleModal, triggerSelectMode } from '../../actions';
 import { COLLECTION_SELECT } from '../../constants/modals';
 import { useNavigationState } from '../../hooks';
-import { get } from '../../utils.js';
 
 const AddItemsToCollectionsModal = () => {
 	const dispatch = useDispatch();
@@ -18,9 +17,10 @@ const AddItemsToCollectionsModal = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_SELECT);
 	const sourceItemKeys = useSelector(state => state.modal.items);
-	const sourceItemCollections = useSelector(state => (state.modal.items || []).map(ik =>
-		get(state, ['libraries', libraryKey, 'items', ik, 'collections'], [])
-	));
+	const modalItems = useSelector(state => state.modal.items);
+	const items = useSelector(state => state.libraries?.[libraryKey]?.items);
+	const sourceItemCollections = (modalItems || []).map(ik => items?.[ik]?.collections || []);
+
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
 
