@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, TabPane } from 'web-common/components';
 import PropTypes from 'prop-types';
 import { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,6 @@ import RichEditor from 'component/rich-editor';
 import { get } from 'utils';
 import { noteAsTitle, pluralize } from 'common/format';
 import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
-import { TabPane } from 'component/ui/tabs';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { useFetchingState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,

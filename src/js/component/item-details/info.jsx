@@ -2,11 +2,11 @@ import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { TabPane } from 'web-common/components';
 
 import ItemBox from './box';
 import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
-import { TabPane } from '../ui/tabs';
 import { get } from '../../utils';
 
 const Info = ({ isActive, isReadOnly, id }) => {

@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TabPane } from 'web-common/components';
 
 import RichEditor from 'component/rich-editor';
 import { get } from 'utils';
 import { deleteUnusedEmbeddedImages, updateItem } from 'actions';
-import { TabPane } from 'component/ui/tabs';
 import { usePrepForUnmount } from '../../hooks';
 
 const StandaloneNote = ({ id, isActive, isReadOnly }) => {

@@ -2,7 +2,7 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { Fragment, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { Spinner } from 'web-common/components';
+import { Spinner, Tab, Tabs } from 'web-common/components';
 
 import Attachments from '../../component/item-details/attachments';
 import EditToggleButton from '../edit-toggle-button';
@@ -13,7 +13,6 @@ import Related from '../../component/item-details/related';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNote from '../../component/item-details/standalone-note';
 import Tags from '../../component/item-details/tags';
-import { Tab, Tabs } from '../ui/tabs';
 import { useEditMode, useFetchingState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
 import { fetchChildItems, fetchRelatedItems, } from '../../actions';
@@ -151,6 +150,7 @@ const ItemDetailsTabs = () => {
 				<Tabs
 					compact
 					activateOnFocus
+					as-sections={ !shouldUseTabs }
 					aria-label={ shouldUseTabs ? 'Item Details' : null }
 				>
 					{

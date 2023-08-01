@@ -5,7 +5,7 @@ import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
-import { Button, Icon, Spinner } from 'web-common/components';
+import { Button, Icon, Spinner, TabPane } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 import { noop, isTriggerEvent } from 'web-common/utils';
 
@@ -18,7 +18,6 @@ tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
 import { getFileData } from '../../common/event';
 import { pluralize } from '../../common/format';
-import { TabPane } from '../ui/tabs';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { makePath } from '../../common/navigation';
 import { useForceUpdate, useFetchingState } from '../../hooks';

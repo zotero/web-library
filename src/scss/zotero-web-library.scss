@@ -59,7 +59,7 @@ $scope: ".zotero-wl";
 	@import "../../modules/web-common/scss/icon";
 	@import "components/icon-extra";
 	@import "components/panel";
-	@import "components/tabs";
+	@import "components/tabs"; // "../../modules/web-common/scss/tabs" does not support scopedVariant and touch-specific shenanigans
 	@import "components/toolbar";
 	@import "components/touch-header";
 	@import "components/touch-footer";

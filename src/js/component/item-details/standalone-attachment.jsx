@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import { TabPane } from 'web-common/components';
 
-import { TabPane } from '../ui/tabs';
 import AttachmentDetails from './attachment-details';
 
 const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly }) => {
