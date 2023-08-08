@@ -61,7 +61,7 @@ const itemsByCollection = (state = {}, action, { items, meta }) => {
 			return {
 				...state,
 				...(action.items.reduce((aggr, item) => {
-					item.collections.forEach(
+					(item?.collections ?? []).forEach(
 						collectionKey => {
 							//@TODO: Optimise (inject loops over all items of the first argument)
 							if(collectionKey in aggr) {

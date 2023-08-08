@@ -4,6 +4,7 @@ import { makePath } from '../common/navigation';
 import { pdfWorker } from '../common/pdf-worker.js';
 import { REQUEST_EXPORT_PDF, RECEIVE_EXPORT_PDF, ERROR_EXPORT_PDF  } from '../constants/actions';
 import { saveAs } from 'file-saver';
+import { READER_CONTENT_TYPES } from '../constants/reader';
 
 const extractItemKey = url => {
 	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
@@ -83,7 +84,7 @@ const pickBestItemAction = itemKey => {
 		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 		if(attachment) {
 			const attachmentItemKey = extractItemKey(attachment.href);
-			if(attachment.attachmentType === 'application/pdf') {
+			if (Object.keys(READER_CONTENT_TYPES).includes(attachment.attachmentType)) {
 				// "best" attachment is PDF, open in reader
 				const readerPath = makePath(state.config, {
 					attachmentKey: attachmentItemKey,

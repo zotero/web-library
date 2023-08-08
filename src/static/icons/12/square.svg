@@ -1,0 +1,8 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
+<svg xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="square" viewBox="0 0 12 12">
+		<rect shape-rendering="geometricPrecision" fill="currentColor" stroke-width="1" stroke="rgba(0, 0, 0, 0.08)" width="12" height="12" rx="3"></rect>
+	</symbol>
+	<use xlink:href="#square" viewBox="0 0 12 12"/>
+</svg>

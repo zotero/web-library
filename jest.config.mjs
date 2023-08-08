@@ -93,6 +93,7 @@ export default {
   moduleNameMapper: {
     '^web-worker:(?:..?/)+(.*)$': '<rootDir>/test/mocks/$1',
     '^(?:.*?)/zotero-streaming-client$': '<rootDir>/test/mocks/noop.js',
+    '^(?:.*?)/pdf-worker.js$': '<rootDir>/test/mocks/pdf-worker.js',
     '^react-virtualized-auto-sizer$': '<rootDir>/test/mocks/react-virtualized-auto-sizer.js',
   },
 

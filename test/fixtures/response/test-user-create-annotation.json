@@ -1,0 +1,37 @@
+{
+    "successful": {
+        "0": {
+            "key": "Z1Z2Z3Z4",
+            "version": 33202,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {}
+            },
+            "links": {},
+            "meta": {},
+            "data": {
+                "key": "Z1Z2Z3Z4",
+                "version": 33202,
+                "parentItem": "N2PJUHD6",
+                "itemType": "annotation",
+                "annotationType": "note",
+                "annotationComment": "hello note annotation",
+                "annotationColor": "#a28ae5",
+                "annotationPageLabel": "1",
+                "annotationSortIndex": "00000|000000|00024",
+                "annotationPosition": "{\"pageIndex\":0,\"rects\":[[77.00547368421056,745.9468947368422,99.00547368421056,767.9468947368422]]}",
+                "tags": [],
+                "relations": {},
+                "dateAdded": "2023-08-22T13:29:19Z",
+                "dateModified": "2023-08-22T13:29:19Z"
+            }
+        }
+    },
+    "success": {
+        "0": "6RCAZFI9"
+    },
+    "unchanged": {},
+    "failed": {}
+}

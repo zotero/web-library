@@ -10,6 +10,36 @@
 		justify-content: center;
 	}
 
+	.portal {
+		position: absolute;
+		inset: 0;
+	}
+
+	.popup {
+		background-color: $popover-bg;
+		border-radius: $reader-popup-border-radius;
+		box-shadow: $reader-popup-shadow;
+		padding: $reader-popup-padding;
+		min-width: 214px;
+		min-height: 60px;
+
+		.toolbar {
+			.counter {
+				margin-right: $space-xs;
+			}
+		}
+	}
+
+	.dropdown {
+		.dropdown-item {
+			.icon {
+				vertical-align: baseline;
+				margin-right: $space-min;
+
+			}
+		}
+	}
+
 	> iframe {
 		border: none;
 		flex: 1 1 100%;

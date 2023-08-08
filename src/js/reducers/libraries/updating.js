@@ -1,8 +1,10 @@
 import {
 	ERROR_UPLOAD_ATTACHMENT, RECEIVE_UPLOAD_ATTACHMENT, ERROR_UPDATE_COLLECTION, ERROR_UPDATE_ITEM,
 	PRE_UPDATE_COLLECTION, PRE_UPDATE_ITEM, RECEIVE_UPDATE_COLLECTION, RECEIVE_UPDATE_ITEM,
-	REQUEST_UPDATE_COLLECTION, REQUEST_UPDATE_ITEM, REQUEST_UPLOAD_ATTACHMENT,
+	REQUEST_UPDATE_COLLECTION, REQUEST_UPDATE_ITEM, REQUEST_UPLOAD_ATTACHMENT, PRE_UPDATE_MULTIPLE_ITEMS,
+	REQUEST_UPDATE_MULTIPLE_ITEMS, RECEIVE_UPDATE_MULTIPLE_ITEMS, ERROR_UPDATE_MULTIPLE_ITEMS
 } from '../../constants/actions';
+import { mapObject } from 'web-common/utils';
 
 const stateDefault = {
 	collections: {},
@@ -27,6 +29,24 @@ const updating = (state = stateDefault, action) => {
 					]
 				}
 			};
+		case PRE_UPDATE_MULTIPLE_ITEMS:
+			return {
+				...state,
+				items: {
+					...state.items,
+					...action.multiPatch.reduce((acc, patch) => {
+						acc[patch.key] = [
+							...(patch.key in state.items ? state.items[patch.key] : []),
+							{
+								patch: patch,
+								id: action.id,
+								isRequested: false
+							}
+						];
+						return acc;
+					}, {})
+				}
+			}
 		case PRE_UPDATE_COLLECTION:
 			return {
 				...state,
@@ -56,6 +76,18 @@ const updating = (state = stateDefault, action) => {
 					})
 				}
 			};
+		case REQUEST_UPDATE_MULTIPLE_ITEMS:
+			return {
+				...state,
+				items: {
+					...mapObject(state.items, (key, queueItems) => [key, queueItems.map(queueItem => {
+						if(queueItem.id === action.id) {
+							queueItem.isRequested = true;
+						}
+						return queueItem;
+					})])
+				}
+			};
 		case REQUEST_UPDATE_COLLECTION:
 			return {
 				...state,
@@ -70,8 +102,8 @@ const updating = (state = stateDefault, action) => {
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:
-		case ERROR_UPDATE_ITEM:
-			var newState = {
+		case ERROR_UPDATE_ITEM: {
+			let newState = {
 				...state,
 				items: {
 					...state.items,
@@ -83,6 +115,25 @@ const updating = (state = stateDefault, action) => {
 				delete newState.items[action.itemKey];
 			}
 			return newState;
+		}
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS:
+		case ERROR_UPDATE_MULTIPLE_ITEMS: {
+			let newState = {
+				...state,
+				items: {
+					...state.items,
+					...mapObject(state.items, (key, queueItems) => [key, queueItems.filter(
+						queueItem => queueItem.id !== action.id)
+					])
+				}
+			};
+			Object.keys(newState.items).forEach(key => {
+				if(Object.keys(newState.items[key]).length === 0) {
+					delete newState.items[key];
+				}
+			});
+			return newState;
+		}
 		case RECEIVE_UPDATE_COLLECTION:
 		case ERROR_UPDATE_COLLECTION:
 			var newState = { // eslint-disable-line no-redeclare

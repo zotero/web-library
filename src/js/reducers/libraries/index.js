@@ -5,6 +5,7 @@ import attachmentsUrl from './attachments-url';
 import collections from './collections';
 import deleting from './deleting';
 import items from './items';
+import creating from './creating';
 import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
 import itemsRelated from './items-related';
@@ -31,6 +32,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				attachmentsExportPDF: attachmentsExportPDF(state[action.libraryKey]?.attachmentsExportPDF, action),
 				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
 				collections: collections(get(state, [action.libraryKey, 'collections']), action),
+				creating: creating(state[action.libraryKey]?.creating, action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action, {
 					tagColors: state[action.libraryKey]?.tagColors?.lookup, meta

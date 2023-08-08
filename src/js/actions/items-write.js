@@ -26,14 +26,18 @@ import {
 	ERROR_REMOVE_ITEMS_FROM_COLLECTION,
 	ERROR_STORE_RELATIONS_IN_SOURCE,
 	ERROR_UPDATE_ITEM,
+	ERROR_UPDATE_MULTIPLE_ITEMS,
 	ERROR_UPLOAD_ATTACHMENT,
 	PRE_ADD_ITEMS_TO_COLLECTION,
 	PRE_ADD_TAGS_TO_ITEMS,
+	PRE_CREATE_ITEMS,
+	PRE_DELETE_ITEMS,
 	PRE_MOVE_ITEMS_TRASH,
 	PRE_RECOVER_ITEMS_TRASH,
 	PRE_REMOVE_ITEMS_FROM_COLLECTION,
 	PRE_STORE_RELATIONS_IN_SOURCE,
 	PRE_UPDATE_ITEM,
+	PRE_UPDATE_MULTIPLE_ITEMS,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_CREATE_ITEM,
@@ -46,6 +50,7 @@ import {
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 	RECEIVE_STORE_RELATIONS_IN_SOURCE,
 	RECEIVE_UPDATE_ITEM,
+	RECEIVE_UPDATE_MULTIPLE_ITEMS,
 	RECEIVE_UPLOAD_ATTACHMENT,
 	REQUEST_ADD_ITEMS_TO_COLLECTION,
 	REQUEST_ADD_TAGS_TO_ITEMS,
@@ -59,11 +64,8 @@ import {
 	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
 	REQUEST_STORE_RELATIONS_IN_SOURCE,
 	REQUEST_UPDATE_ITEM,
-	REQUEST_UPLOAD_ATTACHMENT,
-	PRE_UPDATE_MULTIPLE_ITEMS,
 	REQUEST_UPDATE_MULTIPLE_ITEMS,
-	RECEIVE_UPDATE_MULTIPLE_ITEMS,
-	ERROR_UPDATE_MULTIPLE_ITEMS,
+	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
 
 
@@ -113,53 +115,86 @@ const postItemsMultiPatch = async (state, multiPatch, libraryKey = null) => {
 	};
 }
 
-const createItems = (items, libraryKey) => {
+const createItems = (items, libraryKey = null) => {
 	return async (dispatch, getState) => {
-		const state = getState();
-		const config = state.config;
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
 
 		dispatch({
-			type: REQUEST_CREATE_ITEMS,
+			type: PRE_CREATE_ITEMS,
 			libraryKey,
-			items
+			items,
+			id
 		});
 
-		try {
-			let response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-				.post(items);
-
-			if(!response.isSuccess()) {
-				throw response.getErrors();
-			}
-
-			const createdItems = extractItems(response, state);
-
-			//@TODO: refactor
-			const otherItems = state.libraries[libraryKey] ? state.libraries[libraryKey].items : [];
-
-			dispatch({
-				type: RECEIVE_CREATE_ITEMS,
-				libraryKey,
-				items: createdItems,
-				otherItems,
-				response
-			});
-
-			return response.getData();
-		} catch(error) {
-			dispatch({
-					type: ERROR_CREATE_ITEMS,
-					error,
-					libraryKey,
-					items,
-				});
-			throw error;
-		}
+		const promise = new Promise((resolve, reject) => {
+			dispatch(
+				queueCreateItems(items, libraryKey, id, resolve, reject)
+			);
+		});
+		return promise;
 	};
 }
 
+const queueCreateItems = (items, libraryKey, id, resolve, reject) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const config = state.config;
+			const version = state.libraries[libraryKey].sync.version;
+
+			dispatch({
+				type: REQUEST_CREATE_ITEMS,
+				libraryKey,
+				items,
+				id
+			});
+
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.version(version)
+					.library(libraryKey)
+					.items()
+					.post(items);
+
+				if(!response.isSuccess()) {
+					throw response.getErrors();
+				}
+
+				const createdItems = extractItems(response, state);
+
+				//@TODO: refactor
+				const otherItems = state.libraries[libraryKey] ? state.libraries[libraryKey].items : {};
+
+				dispatch({
+					type: RECEIVE_CREATE_ITEMS,
+					libraryKey,
+					items: createdItems,
+					otherItems,
+					response,
+					id
+				});
+
+				resolve(response.getData());
+			} catch(error) {
+				dispatch({
+						type: ERROR_CREATE_ITEMS,
+						error,
+						libraryKey,
+						items,
+						id
+					});
+				reject(error);
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	}
+}
+
+// TODO: migrate to use per-library queue, but refactor code that depends on result of the action
 const createItem = (properties, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -245,42 +280,72 @@ const deleteItem = item => {
 	};
 }
 
-const deleteItems = itemKeys => {
+const deleteItems = (itemKeys, libraryKey = null) => {
 	return async (dispatch, getState) => {
-		const state = getState();
-		const { libraryKey } = state.current;
-		const { config } = state;
-		const items = itemKeys.map(ik => state.libraries[libraryKey].items[ik]);
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
 
 		dispatch({
-			type: REQUEST_DELETE_ITEMS,
+			type: PRE_DELETE_ITEMS,
 			libraryKey,
 			itemKeys,
-			items
+			id
 		});
 
-		try {
-			const response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items()
-				.delete(itemKeys);
+		const promise = new Promise((resolve, reject) => {
+			dispatch(
+				queueDeleteItems(itemKeys, libraryKey, id, resolve, reject)
+			);
+		});
+		return promise;
+	};
+}
+
+const queueDeleteItems = (itemKeys, libraryKey, id, resolve, reject) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const { config } = state;
+			const items = itemKeys.map(ik => state.libraries[libraryKey].items[ik]);
 
 			dispatch({
+				type: REQUEST_DELETE_ITEMS,
+				libraryKey,
 				itemKeys,
 				items,
-				libraryKey,
-				otherItems: state.libraries[libraryKey].items,
-				response,
-				type: RECEIVE_DELETE_ITEMS,
+				id
 			});
-		} catch(error) {
-			dispatch({
-					type: ERROR_DELETE_ITEMS,
-					error,
-					libraryKey,
+
+			try {
+				const response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.items()
+					.delete(itemKeys);
+
+				dispatch({
+					type: RECEIVE_DELETE_ITEMS,
 					itemKeys,
+					items,
+					libraryKey,
+					otherItems: state.libraries[libraryKey].items,
+					response,
+					id
 				});
-			throw error;
+				resolve(response.items);
+			} catch(error) {
+				dispatch({
+						type: ERROR_DELETE_ITEMS,
+						error,
+						libraryKey,
+						itemKeys,
+						id
+					});
+				reject(error);
+				throw error;
+			} finally {
+				next();
+			}
 		}
 	};
 }
@@ -397,13 +462,17 @@ const updateMultipleItems = (multiPatch, libraryKey = null) => {
 			id
 		});
 
-		dispatch(
-			queueUpdateMultipleItems(multiPatch, libraryKey, id)
-		);
+		const promise = new Promise((resolve, reject) => {
+			dispatch(
+				queueUpdateMultipleItems(multiPatch, libraryKey, id, resolve, reject)
+			);
+		});
+
+		return promise;
 	};
 }
 
-const queueUpdateMultipleItems = (multiPatch, libraryKey, id) => {
+const queueUpdateMultipleItems = (multiPatch, libraryKey, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -424,6 +493,7 @@ const queueUpdateMultipleItems = (multiPatch, libraryKey, id) => {
 					multiPatch,
 					id
 				});
+				resolve(result);
 			} catch (error) {
 				dispatch({
 					type: ERROR_UPDATE_MULTIPLE_ITEMS,
@@ -432,6 +502,7 @@ const queueUpdateMultipleItems = (multiPatch, libraryKey, id) => {
 					multiPatch,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -1347,7 +1418,7 @@ const createAttachments = (filesData, { linkMode = 'imported_file', collection =
 
 		try {
 			const attachmentTemplate = await dispatch(
-				fetchItemTemplate('attachment', { linkMode })
+				fetchItemTemplate('attachment', linkMode)
 			);
 			const attachmentItems = filesData.map(fd => ({
 				...attachmentTemplate,
@@ -1404,7 +1475,7 @@ const createLinkedUrlAttachments = (linkedUrlItems, { collection = null, parentI
 		}
 
 		const attachmentTemplate = await dispatch(
-			fetchItemTemplate('attachment', { linkMode: 'linked_url' })
+			fetchItemTemplate('attachment', 'linked_url')
 		);
 		const attachmentItems = linkedUrlItems.map(({ url, title = '' }) => ({
 			...attachmentTemplate,
@@ -1460,5 +1531,6 @@ export {
 	toggleTagsOnItems,
 	updateItem,
 	updateItemWithMapping,
+	updateMultipleItems,
 	uploadAttachment,
 };

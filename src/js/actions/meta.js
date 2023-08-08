@@ -9,20 +9,19 @@ const api = apiBase().api;
 
 
 // must return template, cannot use backoff
-const fetchItemTemplate = (itemType, opts = {}) => {
-	return async (dispatch, getState) => {
+const fetchItemTemplate = (itemType, subType = null, opts = {}) => {
+	return async (dispatch) => {
 		dispatch({
 			type: REQUEST_ITEM_TEMPLATE,
 			itemType
 		});
-		let config = getState().config;
 		const cacheKey = `ITEM_TEMPLATE-${JSON.stringify({itemType, opts})}`;
 		try {
 			var template;
 			if(apiCheckCache(cacheKey)) {
 				try {
-					template = (await api(config.apiKey, config.apiConfig)
-						.template(itemType)
+					template = (await api()
+						.template(itemType, subType)
 						.get({ ...opts, cache: 'force-cache' }))
 					.getData();
 				} catch(e) {
@@ -30,7 +29,7 @@ const fetchItemTemplate = (itemType, opts = {}) => {
 				}
 			}
 			if(!template) {
-				template = (await api(config.apiKey, config.apiConfig).template(itemType).get(opts)).getData();
+				template = (await api().template(itemType, subType).get(opts)).getData();
 			}
 			dispatch({
 				type: RECEIVE_ITEM_TEMPLATE,

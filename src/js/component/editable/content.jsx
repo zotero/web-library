@@ -36,7 +36,6 @@ const EditableContent = props => {
 }
 
 EditableContent.propTypes = {
-	contentId: PropTypes.string,
 	title: PropTypes.string,
 	display: PropTypes.string,
 	input: PropTypes.element,
