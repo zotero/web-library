@@ -1,26 +1,33 @@
+import deepEqual from 'deep-equal';
+
 import { createItems, fetchItemTemplate, updateMultipleItems } from '.';
+import { annotationItemFromJSON } from '../common/annotations';
+
 
 const excludeKeys = ['dateModified', 'dateCreated'];
 const mapAnnotationFromReader = (annotationFromReader, annotationItem, isNewItem = false) => {
 	const annotationPatch = isNewItem ? { ...annotationItem } : { };
-	annotationPatch.key = annotationFromReader.id;
+	annotationFromReader = annotationItemFromJSON(annotationFromReader);
+	annotationPatch.key = annotationFromReader.key;
 
 	Object.keys(annotationItem).forEach(key => {
 		if (excludeKeys.includes(key)) {
 			return;
 		}
-		const shortKey = key.startsWith('annotation') ?
-			key.slice(10, 11).toLowerCase() + key.slice(11) :
-			null;
-		const targetKey = (shortKey !== null && shortKey in annotationFromReader) ? shortKey : key;
-		const targetValue = key === 'annotationPosition' ?
-			JSON.stringify(annotationFromReader[targetKey]) :
-			annotationFromReader[targetKey];
 
-		if (targetKey in annotationFromReader && annotationItem[key] !== targetValue) {
-			annotationPatch[key] = targetValue;
+		const value = annotationFromReader[key];
+
+		if (key in annotationFromReader && !deepEqual(annotationItem[key], value)) {
+			annotationPatch[key] = value;
 		}
 	});
+
+
+
+	if(Object.keys(annotationPatch).length === 1) {
+		// only key is present, no changes
+		return null;
+	}
 
 	return annotationPatch;
 }
@@ -68,6 +75,8 @@ export const postAnnotationsFromReader = (annotationsFromReader, parentItemKey, 
 				itemsToCreate.push(annotationFromReader);
 			}
 		});
+
+		itemsToUpdate = itemsToUpdate.filter(item => item !== null);
 
 		if(itemsToUpdate.length > 0) {
 			dispatch(updateMultipleItems(itemsToUpdate));

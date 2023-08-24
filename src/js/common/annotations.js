@@ -27,7 +27,7 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 		}
 	}
 	o.readOnly = isReadOnly || o.isExternal || !isAuthor;
-	if (o.type == 'highlight') {
+	if (o.type === 'highlight' || o.type === 'underline') {
 		o.text = item.annotationText;
 	}
 
@@ -84,7 +84,7 @@ const annotationItemFromJSON = function (json) {
 	item.key = json.id;
 	item.annotationType = json.type;
 	item.annotationAuthorName = json.authorName || '';
-	if (json.type == 'highlight') {
+	if (json.type === 'highlight' || json.type === 'underline') {
 		item.annotationText = json.text;
 	}
 	item.annotationIsExternal = !!json.isExternal;
