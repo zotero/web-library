@@ -46,6 +46,7 @@ describe('Tags', () => {
 		await waitForPosition();
 		const user = userEvent.setup();
 
+		let libVersion = state.libraries.u1.sync.version;
 		let postCounter = 0;
 		server.use(
 			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
@@ -76,6 +77,7 @@ describe('Tags', () => {
 					expect(patch.tags).toContainEqual({ tag: 'today' });
 				}
 				return res(res => {
+					res.headers.set('Last-Modified-Version', ++libVersion);
 					res.status = 204;
 					return res;
 				})

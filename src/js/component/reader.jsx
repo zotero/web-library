@@ -10,7 +10,7 @@ import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
 	deleteItems, fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL,
-	postAnnotationsFromReader
+	patchAttachment, postAnnotationsFromReader, uploadAttachment
 } from '../actions';
 import { pdfWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
@@ -23,6 +23,35 @@ const PAGE_SIZE = 100;
 const UNFETCHED = 0, NOT_IMPORTED = 0;
 const FETCHING = 1, IMPORTING = 1;
 const FETCHED = 2, IMPORTED = 2;
+
+import DiffWorker from 'web-worker:../diff.worker';
+
+const cloneData = (data) => typeof structuredClone === 'function' ? structuredClone(data) : data.slice(0);
+
+const computeDiffUsingWorker = (oldFile, newFile) => {
+	return new Promise((resolve, reject) => {
+		const dataWorker = new DiffWorker();
+		dataWorker.postMessage(['LOAD', { oldFile: cloneData(oldFile), newFile: cloneData(newFile) }]);
+		dataWorker.addEventListener('message', function (ev) {
+			const [command, payload] = ev.data;
+			switch (command) {
+				case 'READY':
+					dataWorker.postMessage(['DIFF']);
+					break;
+				case 'DIFF_COMPLETE':
+					resolve(payload);
+					break;
+				case 'DIFF_ERROR':
+					reject(payload);
+					break;
+				case 'LOG':
+					console.warn(payload);
+					break;
+			}
+		});
+	});
+};
+
 
 const Portal = ({ onClose, children }) => {
 	const ref = useRef(null);
@@ -109,17 +138,24 @@ const readerReducer = (state, action) => {
 			return { ...state, dataState: FETCHED, data: action.data };
 		case 'ERROR_FETCH_DATA':
 			return { ...state, dataState: UNFETCHED, error: action.error };
-		default:
 		case 'BEGIN_IMPORT_ANNOTATIONS':
 			return { ...state, annotationsState: IMPORTING };
 		case 'COMPLETE_IMPORT_ANNOTATIONS':
 			return { ...state, annotationsState: IMPORTED, importedAnnotations: action.importedAnnotations };
 		case 'ERROR_IMPORT_ANNOTATIONS':
-			return { ...state, annotationsState: NOT_IMPORTED, error: action.error };
+			return { ...state, annotationsState: IMPORTED, error: action.error };
 		case 'SKIP_IMPORT_ANNOTATIONS':
 			return { ...state, annotationsState: IMPORTED };
 		case 'READY':
 			return { ...state, isReady: true };
+		case 'ROTATE_PAGES':
+			return { ...state, action };
+		case 'ROTATING_PAGES':
+			return { ...state, action: null };
+		case 'ROTATED_PAGES':
+			return { ...state, action: null, data: action.data };
+		default:
+			return state;
 	}
 }
 
@@ -159,6 +195,7 @@ const Reader = () => {
 	});
 
 	const [state, dispatchState] = useReducer(readerReducer, {
+		action: null,
 		isReady: false,
 		data: null,
 		dataState: UNFETCHED,
@@ -209,11 +246,27 @@ const Reader = () => {
 		}
 	}, [attachmentItem, currentUser, dispatch, isGroup, isReadOnly, libraryKey, tagColors]);
 
+	const rotatePages = useCallback(async (oldBuf, pageIndexes, degrees) => {
+		reader.current.freeze();
+		const modifiedBuf = await pdfWorker.rotatePages(cloneData(oldBuf), pageIndexes, degrees, true);
+		reader.current.reload({ buf: cloneData(modifiedBuf), baseURI: url });
+		reader.current.unfreeze();
+		dispatchState({ type: 'ROTATED_PAGES', data: cloneData(modifiedBuf) });
+		try {
+			const diff = await computeDiffUsingWorker(oldBuf, modifiedBuf);
+			dispatch(patchAttachment(attachmentItem.key, modifiedBuf, diff));
+		} catch(e) {
+			dispatch(uploadAttachment(
+				attachmentItem.key, { fileName: attachmentItem.filename, file: cloneData(modifiedBuf) })
+			);
+		}
+	}, [attachmentItem, dispatch, url]);
+
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
 		reader.current = iframeRef.current.contentWindow.createReader({
 			type: READER_CONTENT_TYPES[attachmentItem.contentType],
-			data: { buf: state.data, baseURI: url },
+			data: { buf: cloneData(state.data), baseURI: url },
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
 			state: null,  // Do we want to save PDF reader view state?
 			secondaryViewState: null,
@@ -271,8 +324,8 @@ const Reader = () => {
 			onSaveImageAs: (...args) => {
 				console.log('onSaveImageAs', args);
 			},
-			onRotatePages: (...args) => {
-				console.log('onRotatePages', args);
+			onRotatePages: async (pageIndexes, degrees) => {
+				dispatchState({ type: 'ROTATE_PAGES', pageIndexes, degrees });
 			},
 			onDeletePages: (...args) => {
 				console.log('onDeletePages', args);
@@ -329,7 +382,7 @@ const Reader = () => {
 				}
 				try {
 					// need to clone data before sending to worker, otherwise it will become detached
-					const clonedData = typeof structuredClone === 'function' ? structuredClone(state.data) : state.data.slice(0);
+					const clonedData = cloneData(state.data);
 					const importedAnnotations = (await pdfWorker.import(clonedData)).map(
 						ia => annotationItemToJSON(ia, { attachmentItem })
 					);
@@ -372,6 +425,13 @@ const Reader = () => {
 			reader.current.setAnnotations(getProcessedAnnotations(changedAnnotations));
 		}
 	}, [annotations, getProcessedAnnotations, isBusy, prevAnnotations, state.importedAnnotations, state.isReady, wasBusy]);
+
+	useEffect(() => {
+		if (state.isReady && state.action?.type === 'ROTATE_PAGES') {
+			dispatchState({ type: 'ROTATING_PAGES' });
+			rotatePages(state.data, state.action.pageIndexes, state.action.degrees);
+		}
+	}, [rotatePages, state.action, state.data, state.isReady]);
 
 	return (
 		<section className="reader-wrapper">

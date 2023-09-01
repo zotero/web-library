@@ -52,6 +52,8 @@ describe('Group libraries', () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
+		let myLibVersion = state.libraries.u1.sync.version;
+		let groupLibVersion = stateGroup.libraries.g5119976.sync.version;
 		let groupItemsPostCount = 0;
 		let userItemsPostCount = 0;
 		let fileUploadRequests = false;
@@ -77,6 +79,7 @@ describe('Group libraries', () => {
 					expect(items[0].key).toBeUndefined();
 					expect(items[0].title).toEqual('Effects of diet restriction on life span and age-related changes in dogs');
 					return res(res => {
+						res.headers.set('Last-Modified-Version', ++groupLibVersion);
 						res.body = JSON.stringify(testGroupAddItemToCollection);
 						return res;
 					});
@@ -84,6 +87,7 @@ describe('Group libraries', () => {
 				if (groupItemsPostCount === 2) {
 					expect(items.map(i => i.title)).toEqual(expect.arrayContaining(['Snapshot', 'Full Text']));
 					return res(res => {
+						res.headers.set('Last-Modified-Version', ++groupLibVersion);
 						res.body = JSON.stringify(testGroupCopyChildItems);
 						return res;
 					});
@@ -91,6 +95,7 @@ describe('Group libraries', () => {
 				if (groupItemsPostCount === 3) {
 					expect(items.map(i => i.annotationType)).toEqual(expect.arrayContaining(['highlight', 'note', 'highlight', 'image']));
 					return res(res => {
+						res.headers.set('Last-Modified-Version', ++groupLibVersion);
 						res.body = JSON.stringify(testGroupCopyAnnotations);
 						return res;
 					});
@@ -103,6 +108,7 @@ describe('Group libraries', () => {
 					expect(items[0].key).toBe('VR82JUX8');
 					expect(items[0].relations).toEqual({ 'owl:sameAs': "http://zotero.org/groups/5119976/items/TBBKEM8I" })
 					return res(res => {
+						res.headers.set('Last-Modified-Version', ++myLibVersion);
 						res.body = JSON.stringify(testUserUpdateRelationAfterCopy);
 						return res;
 					});
@@ -120,6 +126,7 @@ describe('Group libraries', () => {
 				fileUploadRequests++;
 				expect(await req.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf&filesize=248058&mtime=1673607166000');
 				return res(res => {
+					res.headers.set('Last-Modified-Version', ++groupLibVersion);
 					res.body = JSON.stringify({ exists: 1 });
 					return res;
 				});

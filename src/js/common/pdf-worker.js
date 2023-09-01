@@ -171,6 +171,38 @@ class PDFWorker {
 			return annotations;
 		}, isPriority);
 	}
+
+	/**
+	 * Rotate pages in PDF attachment
+	 *
+	 * @param {ArrayBuffer} buf
+	 * @param {Array} pageIndexes
+	 * @param {Integer} degrees 90, 180, 270
+	 * @param {Boolean} [isPriority]
+	 * @param {String} [password]
+	 * @returns {Promise}
+	 */
+	async rotatePages(buf, pageIndexes, degrees, isPriority, password) {
+		return this._enqueue(async () => {
+			try {
+				var { buf: modifiedBuf } = await this._query('rotatePages', {
+					buf, pageIndexes, degrees, password
+				}, [buf]);
+			}
+			catch (e) {
+				let error = new Error(`Worker 'rotatePages' failed: ${JSON.stringify({ error: e.message })}`);
+				try {
+					error.name = JSON.parse(e.message).name;
+				}
+				catch (e) {
+					//
+				}
+				throw error;
+			}
+
+			return modifiedBuf;
+		}, isPriority);
+	}
 }
 
 export const pdfWorker = new PDFWorker();

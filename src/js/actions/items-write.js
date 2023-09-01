@@ -21,6 +21,7 @@ import {
 	ERROR_DELETE_ITEM,
 	ERROR_DELETE_ITEMS,
 	ERROR_MOVE_ITEMS_TRASH,
+	ERROR_PATCH_ATTACHMENT,
 	ERROR_RECOVER_ITEMS_TRASH,
 	ERROR_REGISTER_FILE_ATTACHMENTS,
 	ERROR_REMOVE_ITEMS_FROM_COLLECTION,
@@ -33,11 +34,13 @@ import {
 	PRE_CREATE_ITEMS,
 	PRE_DELETE_ITEMS,
 	PRE_MOVE_ITEMS_TRASH,
+	PRE_PATCH_ATTACHMENT,
 	PRE_RECOVER_ITEMS_TRASH,
 	PRE_REMOVE_ITEMS_FROM_COLLECTION,
 	PRE_STORE_RELATIONS_IN_SOURCE,
 	PRE_UPDATE_ITEM,
 	PRE_UPDATE_MULTIPLE_ITEMS,
+	PRE_UPLOAD_ATTACHMENT,
 	RECEIVE_ADD_ITEMS_TO_COLLECTION,
 	RECEIVE_ADD_TAGS_TO_ITEMS,
 	RECEIVE_CREATE_ITEM,
@@ -45,6 +48,7 @@ import {
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
 	RECEIVE_MOVE_ITEMS_TRASH,
+	RECEIVE_PATCH_ATTACHMENT,
 	RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_REGISTER_FILE_ATTACHMENTS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
@@ -59,6 +63,7 @@ import {
 	REQUEST_DELETE_ITEM,
 	REQUEST_DELETE_ITEMS,
 	REQUEST_MOVE_ITEMS_TRASH,
+	REQUEST_PATCH_ATTACHMENT,
 	REQUEST_RECOVER_ITEMS_TRASH,
 	REQUEST_REGISTER_FILE_ATTACHMENTS,
 	REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
@@ -511,42 +516,142 @@ const queueUpdateMultipleItems = (multiPatch, libraryKey, id, resolve, reject) =
 	};
 }
 
-
-const uploadAttachment = (itemKey, fileData, libraryKey) => {
+const uploadAttachment = (itemKey, fileData, libraryKey = null) => {
 	return async (dispatch, getState) => {
-		const state = getState();
-		const config = state.config;
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
+
+		return new Promise((resolve, reject) => {
+			dispatch({
+				type: PRE_UPLOAD_ATTACHMENT,
+				itemKey,
+				fileData,
+				libraryKey
+			});
+
+			dispatch(
+				queueUploadAttachment(itemKey, fileData, libraryKey, { resolve, reject, id })
+			);
+		});
+	};
+}
+
+const queueUploadAttachment = (itemKey, fileData, libraryKey, { resolve, reject, id }) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const { md5, filename: fileName } = state.libraries[libraryKey]?.items[itemKey] ?? {};
+			const config = state.config;
+			dispatch({
+				type: REQUEST_UPLOAD_ATTACHMENT,
+				libraryKey,
+				itemKey,
+				fileData,
+				id
+			});
+
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.items(itemKey)
+					.attachment(fileData.fileName ?? fileName, fileData.file, null, md5)
+					.post();
+
+
+				dispatch({
+					type: RECEIVE_UPLOAD_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					fileData,
+					response,
+				});
+				resolve();
+			} catch(error) {
+				dispatch({
+					type: ERROR_UPLOAD_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					fileData,
+					error,
+				});
+				reject(error);
+			} finally {
+				next();
+			}
+		}
+	}
+}
+
+const patchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey = null) => {
+	return async (dispatch, getState) => {
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
+
 		dispatch({
-			type: REQUEST_UPLOAD_ATTACHMENT,
-			libraryKey,
+			type: PRE_PATCH_ATTACHMENT,
 			itemKey,
-			fileData,
+			newFileBuf,
+			patchBuf,
+			libraryKey
 		});
 
-		try {
-			let response = await api(config.apiKey, config.apiConfig)
-				.library(libraryKey)
-				.items(itemKey)
-				.attachment(fileData.fileName, fileData.file)
-				.post();
+		dispatch(
+			queuePatchAttachment(itemKey, newFileBuf, patchBuf, libraryKey, id)
+		);
+	};
+}
 
-
+const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const { md5, filename: fileName } = state.libraries[libraryKey]?.items[itemKey] ?? {};
+			const config = state.config;
 			dispatch({
-				type: RECEIVE_UPLOAD_ATTACHMENT,
+				type: REQUEST_PATCH_ATTACHMENT,
 				libraryKey,
 				itemKey,
-				fileData,
-				response,
+				md5,
+				fileName,
+				patchBuf,
+				id
 			});
-		} catch(error) {
-			dispatch({
-				type: ERROR_UPLOAD_ATTACHMENT,
-				libraryKey,
-				itemKey,
-				fileData,
-				error,
-			});
-			throw error;
+
+			console.log({ fileName, md5 });
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.items(itemKey)
+					.attachment(fileName, newFileBuf, null, md5, patchBuf, 'xdelta')
+					.patch();
+
+				dispatch({
+					type: RECEIVE_PATCH_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					response,
+					md5,
+					fileName,
+					patchBuf,
+					id
+				});
+			} catch (error) {
+				dispatch({
+					type: ERROR_PATCH_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					error,
+					md5,
+					fileName,
+					patchBuf,
+					id
+				});
+				throw error;
+			} finally {
+				next();
+			}
 		}
 	};
 }
@@ -1525,6 +1630,7 @@ export {
 	deleteItem,
 	deleteItems,
 	moveToTrash,
+	patchAttachment,
 	recoverFromTrash,
 	removeFromCollection,
 	removeRelatedItem,

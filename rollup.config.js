@@ -50,7 +50,7 @@ const config = {
 	plugins: [
 		webWorkerLoader({
 			targetPlatform: 'browser',
-			skipPlugins: ['resolve', 'json', 'commonjs', 'replace', 'babel', 'sizes', 'filesize']
+			skipPlugins: ['resolve', 'json', 'commonjs', 'babel', 'sizes', 'filesize']
 		}),
 		resolve({
 			modulePaths: [path.join(process.cwd(), 'src', 'js'), path.join(process.cwd(), 'modules')],
@@ -63,7 +63,7 @@ const config = {
 		replace({
 			preventAssignment: true,
 			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
-			'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default'),
+			'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default')
 		}),
 		babel({
 			babelrc: false,

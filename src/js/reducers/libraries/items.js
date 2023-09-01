@@ -7,7 +7,7 @@ import { RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHI
     RECEIVE_PUBLICATIONS_ITEMS, RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_RELATED_ITEMS,
     RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TOP_ITEMS, RECEIVE_TRASH_ITEMS,
     RECEIVE_UPDATE_ITEM, RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_UPLOAD_ATTACHMENT,
-    RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS, } from '../../constants/actions.js';
+	RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS, RECEIVE_PATCH_ATTACHMENT } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
 import { getDerivedData } from '../../common/item';
@@ -73,12 +73,22 @@ const items = (state = {}, action, metaAndTags) => {
 				[action.itemKey]: {
 					...(state[action.itemKey] || {}),
 					version: action.response.getVersion() || state[action.itemKey].version,
+					md5: action.response.getData().md5sum,
 					[Symbol.for('links')]: {
 						...(state[action.itemKey][Symbol.for('links')] || {}),
 						//@TODO: could copy actual value from action.response.registerResponse for responses with register step
 						//		 (i.e. where file did not exist before)
 						enclosure: true
 					}
+				}
+			}
+		case RECEIVE_PATCH_ATTACHMENT:
+			return {
+				...state,
+				[action.itemKey]: {
+					...(state[action.itemKey] || {}),
+					version: action.response.getVersion() || state[action.itemKey].version,
+					md5: action.response.getData().md5sum
 				}
 			}
 		case RECEIVE_LIBRARY_SETTINGS:
