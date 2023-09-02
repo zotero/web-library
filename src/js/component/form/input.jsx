@@ -123,6 +123,7 @@ const Input = memo(forwardRef((props, ref) => {
 					setValue(newValue);
 					onCommit(newValue, newValue !== initialValue, ev);
 				} else {
+					hasBeenCommitted.current = true;
 					onCommit(value, value !== initialValue, ev);
 				}
 			break;
