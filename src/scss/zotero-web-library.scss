@@ -54,9 +54,7 @@ $scope: ".zotero-wl";
 	@import "components/bibliography";
 	@import "components/collection-tree";
 	@import "components/dropdown"; // switch to "../../modules/web-common/scss/dropdown" but with scopedVariant
-	@import "../../modules/web-common/scss/select";
 	@import "components/editable";
-	@import "../../modules/web-common/scss/icon";
 	@import "components/icon-extra";
 	@import "components/panel";
 	@import "components/tabs"; // "../../modules/web-common/scss/tabs" does not support scopedVariant and touch-specific shenanigans
@@ -106,4 +104,11 @@ $scope: ".zotero-wl";
 	@import "components/new-item-selector";
 	@import "components/crash-handler";
 	@import "components/reader";
+}
+
+#{$scope} {
+	// stylesheets from web-common should be included last because some mixins are overridden and
+	// use default variable values, instead of web-library-specific
+	@import "../../modules/web-common/scss/select";
+	@import "../../modules/web-common/scss/icon";
 }
