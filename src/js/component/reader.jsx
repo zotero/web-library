@@ -12,7 +12,8 @@ import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
 	deleteItems, fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL,
-	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings
+	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings,
+	preferenceChange
 } from '../actions';
 import { pdfWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
@@ -205,6 +206,11 @@ const Reader = () => {
 		return totalResults === 0 && requestLK === libraryKey && queryOptions.itemKey === attachmentKey;
 	});
 
+	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
+	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
+
+	console.log({ isReaderSidebarOpen, readerSidebarWidth });
+
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
 		isReady: false,
@@ -294,8 +300,8 @@ const Reader = () => {
 			readOnly: isReadOnly,
 			authorName: isGroup ? currentUserSlug : '',
 			showItemPaneToggle: false, //  ???
-			sidebarWidth: 240,
-			sidebarOpen: true, // Save sidebar open/close state?
+			sidebarWidth: readerSidebarWidth,
+			sidebarOpen: isReaderSidebarOpen ?? true, // Save sidebar open/close state?
 			bottomPlaceholderHeight: 0, /// ???
 			rtl: false, // TODO: ?
 			localizedStrings: strings,
@@ -326,13 +332,11 @@ const Reader = () => {
 				window.open(url);
 				console.log('onOpenLink', url);
 			},
-			onToggleSidebar: (...args) => {
-				// TODO: store in local storage prefs
-				console.log('onToggleSidebar', args);
+			onToggleSidebar: (isOpen) => {
+				dispatch(preferenceChange('isReaderSidebarOpen', isOpen));
 			},
-			onChangeSidebarWidth: (...args) => {
-				// TODO: store in local storage prefs
-				console.log('onChangeSidebarWidth', args);
+			onChangeSidebarWidth: (newWidth) => {
+				dispatch(preferenceChange('readerSidebarWidth', newWidth));
 			},
 			onConfirm: (title, text, confirmationButtonTitle) => {
 				console.log('onConfirm', { title, text, confirmationButtonTitle });
@@ -346,7 +350,7 @@ const Reader = () => {
 				console.log('onDeletePages', args);
 			},
 		});
-	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, isGroup, isReadOnly, libraryKey, locationValue, pageIndexSettingKey, state.data, state.importedAnnotations])
+	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, isGroup, isReadOnly, isReaderSidebarOpen, libraryKey, locationValue, pageIndexSettingKey, readerSidebarWidth, state.data, state.importedAnnotations])
 
 	// On first render, fetch attachment item details
 	useEffect(() => {
