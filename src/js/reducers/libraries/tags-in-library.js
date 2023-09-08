@@ -33,12 +33,12 @@ const tagsInLibrary = (state = {}, action, { items } = {}) => {
 				coloredTags: (action.settings?.tagColors?.value ?? []).map(t => t.name),
 			}
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
-			return {
+			return action.settingsKey === 'coloredTags' ? {
 				...state,
 				coloredTags: (action.settingsValue?.value ?? []).map(t => t.name),
-			}
+			} : state;
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
-			return omit(state, 'coloredTags');
+			return action.settingsKey === 'coloredTags' ? omit(state, 'coloredTags') : state;
 		case RECEIVE_CREATE_ITEM:
 			return 'tags' in action.item && action.item.tags.length > 0 ?
 				{} : state;

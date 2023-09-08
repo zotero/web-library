@@ -147,4 +147,10 @@ const getFieldDisplayValue = (item, field) => {
 	}
 }
 
-export { getDerivedData, getFieldDisplayValue, getBaseMappedValue, getItemTitle };
+// https://github.com/zotero/zotero/blob/8d93fd4c8cfd0e75f88d99eab88307fba5e10380/chrome/content/zotero/xpcom/data/item.js#L3458
+const getLastPageIndexSettingKey = (itemKey, libraryKey) =>
+	`lastPageIndex_${libraryKey[0] === 'u' ? 'u' : libraryKey}_${itemKey}`;
+
+export { getBaseMappedValue, getDerivedData, getFieldDisplayValue,
+	getItemTitle, getLastPageIndexSettingKey
+};

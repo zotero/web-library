@@ -97,15 +97,15 @@ const items = (state = {}, action, metaAndTags) => {
 					tagColors: indexByKey(get(action, 'settings.tagColors.value', []), 'name', ({ color }) => color)
 			})])
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
-			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
+			return action.settingsKey === 'coloredTags' ? mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
 					meta: metaAndTags.meta,
 					tagColors: indexByKey(action.settingsValue.value, 'name', ({ color }) => color)
-			})])
+			})]) : state;
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
-			return mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
+			return action.settingsKey === 'coloredTags' ? mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
 					meta: metaAndTags.meta,
 					tagColors: {}
-			})])
+			})]) : state;
 		case RECEIVE_DELETE_TAGS:
 			return mapObject(state, (itemKey, item) => [
 				itemKey,

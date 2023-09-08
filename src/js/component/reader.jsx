@@ -3,14 +3,16 @@ import deepEqual from 'deep-equal';
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { usePrevious } from 'web-common/hooks';
 import { pick } from 'web-common/utils';
+import { getLastPageIndexSettingKey } from '../common/item';
 import { DropdownContext, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/react-dom';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
 	deleteItems, fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL,
-	patchAttachment, postAnnotationsFromReader, uploadAttachment
+	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings
 } from '../actions';
 import { pdfWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
@@ -23,6 +25,12 @@ const PAGE_SIZE = 100;
 const UNFETCHED = 0, NOT_IMPORTED = 0;
 const FETCHING = 1, IMPORTING = 1;
 const FETCHED = 2, IMPORTED = 2;
+
+const PAGE_INDEX_KEY_LOOKUP = {
+	'application/pdf': 'pageIndex',
+	'application/epub+zip': 'cfi',
+	'text/html': 'scrollYPercent'
+};
 
 import DiffWorker from 'web-worker:../diff.worker';
 
@@ -174,6 +182,9 @@ const Reader = () => {
 			return null
 		}
 	});
+	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
+	// @TODO: fix for group libraries
+	const locationValue = useSelector(state => state.libraries[libraryKey]?.settings?.[pageIndexSettingKey]?.value ?? null);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -264,16 +275,25 @@ const Reader = () => {
 
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
+		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
+		const readerState = {
+			fileName: attachmentItem.filename,
+			[pageIndexKey]: locationValue
+		};
+
 		reader.current = iframeRef.current.contentWindow.createReader({
 			type: READER_CONTENT_TYPES[attachmentItem.contentType],
-			data: { buf: cloneData(state.data), baseURI: url },
+			data: {
+				buf: cloneData(state.data),
+				baseURI: new URL('/', window.location).toString()
+			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
-			state: null,  // Do we want to save PDF reader view state?
+			primaryViewState: readerState,  // Do we want to save PDF reader view state?
 			secondaryViewState: null,
 			location: null, // Navigate to specific PDF part when opening it
 			readOnly: isReadOnly,
 			authorName: isGroup ? currentUserSlug : '',
-			showItemPaneToggle: true, //  ???
+			showItemPaneToggle: false, //  ???
 			sidebarWidth: 240,
 			sidebarOpen: true, // Save sidebar open/close state?
 			bottomPlaceholderHeight: 0, /// ???
@@ -287,8 +307,10 @@ const Reader = () => {
 			onDeleteAnnotations: (annotationIds) => {
 				dispatch(deleteItems(annotationIds));
 			},
-			onChangeViewState: (...args) => {
-				console.log('onChangeViewState', args);
+			onChangeViewState: (newViewState, isPrimary) => {
+				if(isPrimary) {
+					dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, libraryKey));
+				}
 			},
 			onOpenTagsPopup: (key, x, y) => {
 				setTagPicker({ key, x, y});
@@ -305,24 +327,17 @@ const Reader = () => {
 				console.log('onOpenLink', url);
 			},
 			onToggleSidebar: (...args) => {
+				// TODO: store in local storage prefs
 				console.log('onToggleSidebar', args);
 			},
 			onChangeSidebarWidth: (...args) => {
+				// TODO: store in local storage prefs
 				console.log('onChangeSidebarWidth', args);
-			},
-			onSetDataTransferAnnotations: (...args) => {
-				console.log('onSetDataTransferAnnotations', args);
 			},
 			onConfirm: (title, text, confirmationButtonTitle) => {
 				console.log('onConfirm', { title, text, confirmationButtonTitle });
 				// todo: consider an async-capable api in reader and a nicer confirmation dialog
 				return window.confirm(strings[text] ?? text);
-			},
-			onCopyImage: (...args) => {
-				console.log('onCopyImage', args);
-			},
-			onSaveImageAs: (...args) => {
-				console.log('onSaveImageAs', args);
 			},
 			onRotatePages: async (pageIndexes, degrees) => {
 				dispatchState({ type: 'ROTATE_PAGES', pageIndexes, degrees });
@@ -331,10 +346,11 @@ const Reader = () => {
 				console.log('onDeletePages', args);
 			},
 		});
-	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, isGroup, isReadOnly, state.data, state.importedAnnotations, url])
+	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, isGroup, isReadOnly, libraryKey, locationValue, pageIndexSettingKey, state.data, state.importedAnnotations])
 
 	// On first render, fetch attachment item details
 	useEffect(() => {
+		localStorage.removeItem('pdfjs.history');
 		if (attachmentKey && !attachmentItem) {
 			dispatch(fetchItemDetails(attachmentKey));
 		}

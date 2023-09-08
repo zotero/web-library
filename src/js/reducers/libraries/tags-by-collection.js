@@ -145,7 +145,9 @@ const tags = (state = {}, action, { items } = {}) => {
 		case RECEIVE_LIBRARY_SETTINGS:
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
-			return mapObject(state, (colKey, tagsData) => [colKey, omit(tagsData, 'coloredTags')]);
+			return action.settingsKey === 'coloredTags' ?
+				mapObject(state, (colKey, tagsData) => [colKey, omit(tagsData, 'coloredTags')]) :
+				state;
 		default:
 			return state;
 	}

@@ -67,7 +67,7 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 		case RECEIVE_LIBRARY_SETTINGS:
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
-			return omit(state, 'coloredTags');
+			return action.settingsKey === 'coloredTags' ? omit(state, 'coloredTags') : state;
 		default:
 			return state;
 	}
