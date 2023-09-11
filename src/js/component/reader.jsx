@@ -259,7 +259,7 @@ const Reader = () => {
 		reader.current = iframeRef.current.contentWindow.createReader({
 			type: READER_CONTENT_TYPES[attachmentItem.contentType],
 			data: {
-				buf: cloneData(state.data),
+				buf: new Uint8Array(cloneData(state.data)),
 				baseURI: new URL('/', window.location).toString()
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
