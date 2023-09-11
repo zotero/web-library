@@ -1,0 +1,95 @@
+@mixin dropdown-menu {
+	background-color: $menu-bg;
+	box-shadow: $menu-box-shadow;
+	border-radius: $menu-border-radius;
+	z-index: $z-index-menu;
+	margin: $space-min 0;
+	display: none;
+	will-change: transform;
+	transform: translate3d(0, 0, 0);
+	top: 0;
+	left: 0; // required for correct popper js rendering
+
+	&:focus {
+		outline: none;
+	}
+
+	@include touch-or-bp-down(sm) {
+		padding: $space-xs 0;
+	}
+
+	@include mouse-and-bp-up(md) {
+		padding: $space-min 0;
+	}
+}
+
+
+@mixin dropdown-item {
+	display: block;
+	width: 100%;
+	border: none;
+	text-align: left;
+	background-color: transparent;
+	margin: 0;
+	white-space: nowrap; // Prevent line break due to positioned dropdown-wrapper
+	color: $menu-color;
+	cursor: pointer;
+
+	@include touch-or-bp-down(sm) {
+		line-height: $line-height-base-mobile; // Prevent inheritance
+		padding: $dropdown-item-padding-y-touch $dropdown-item-padding-x-touch;
+	}
+
+	@include mouse-and-bp-up(md) {
+		line-height: $line-height-base; // Prevent inheritance
+		padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
+	}
+
+	&.disabled {
+		color: $menu-color-disabled;
+
+		&:hover,
+		&:focus {
+			background-color: transparent;
+		}
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:hover,
+	&.active {
+		background-color: $menu-item-hover-bg;
+	}
+
+	&.selected {
+		background-color: $menu-item-selected-bg;
+
+		&:hover,
+		&:focus,
+		&.active {
+			background-color: $menu-item-selected-hover-bg;
+		}
+	}
+
+	.icon {
+		vertical-align: top;
+
+		@include touch-or-bp-down(sm) {
+			margin-right: $space-xs;
+		}
+	}
+}
+
+@mixin dropdown-divider {
+	border-top: $input-border-width solid $menu-devider;
+
+	@include touch-or-bp-down(sm) {
+		margin: $space-xs 0;
+	}
+
+	@include mouse-and-bp-up(md) {
+		margin: $space-min 0;
+	}
+}

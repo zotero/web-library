@@ -4,9 +4,9 @@ import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, use
 import { usePrevious } from 'web-common/hooks';
 import { pick } from 'web-common/utils';
 import { getLastPageIndexSettingKey } from '../common/item';
-import { DropdownContext, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
-import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/react-dom';
-import { useDebouncedCallback } from 'use-debounce';
+import { Spinner } from 'web-common/components';
+import { useFloating, flip, shift } from '@floating-ui/react-dom';
+import PropTypes from 'prop-types';
 
 import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
@@ -20,6 +20,7 @@ import { useFetchingState } from '../hooks';
 import { strings } from '../constants/strings.js';
 import TagPicker from './item-details/tag-picker.jsx';
 import { READER_CONTENT_TYPES } from '../constants/reader.js';
+import Portal from './portal';
 
 const PAGE_SIZE = 100;
 
@@ -62,60 +63,11 @@ const computeDiffUsingWorker = (oldFile, newFile) => {
 };
 
 
-const Portal = ({ onClose, children }) => {
-	const ref = useRef(null);
-	const handleClick = useCallback(ev => {
-		if (ev.target === ref.current) {
-			onClose();
-		}
-	}, [onClose]);
-
-	return <div
-		ref={ref}
-		className="portal"
-		onClick={handleClick}
-	>
-		{children}
-	</div>;
-};
-
-const Overlay = ({ children }) => {
-	return <div className="overlay">{children}</div>;
-};
-
-
-const PopupPortal = ({ anchor, children, onClose }) => {
+const PopupPortal = memo(({ anchor, children, onClose }) => {
 	const { x, y, refs, strategy, update } = useFloating({
-		placement: 'bottom-start', middleware: [shift()]
+		placement: 'bottom-start', middleware: [shift(), flip()]
 	});
 	const isOpen = children !== null;
-
-	// const options = useMemo(() =>
-	// 	(context?.itemGroups ?? [])
-	// 		.map((group, i) => ([
-	// 			...group.map(item => (
-	// 				<DropdownItem
-	// 					onClick={item.onCommand}
-	// 					key={item.label}
-	// 				>
-	// 					{item.color && (
-	// 						<Icon
-	// 							aria-role="presentation"
-	// 							type="12/square"
-	// 							symbol="square"
-	// 							width={10}
-	// 							height={10}
-	// 							style={{ color: item.color }}
-	// 						/>
-	// 					)}
-	// 					{item.label}
-	// 				</DropdownItem>
-	// 			)),
-	// 			...(i < context.itemGroups.length - 1 ? [<DropdownItem key={`group-${i}`} divider />] : [])
-	// 		]))
-	// 		.flat()
-	// 	, [context]);
-
 
 	useLayoutEffect(() => {
 		if (children !== null) {
@@ -126,17 +78,26 @@ const PopupPortal = ({ anchor, children, onClose }) => {
 	return (
 		<Portal onClose={ onClose }>
 			{isOpen && (
-				<Overlay>
+				<>
 					<div className="anchor" ref={refs.setReference} style={{ position: 'absolute', left: anchor.x, top: anchor.y }} />
 					<div className="popup" ref={refs.setFloating} style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}>
 						{ children }
 					</div>
-				</Overlay>
+				</>
 			)}
 		</Portal>
 	);
-}
+});
 
+PopupPortal.displayName = 'PopupPortal';
+PopupPortal.propTypes = {
+	anchor: PropTypes.shape({
+		x: PropTypes.number.isRequired,
+		y: PropTypes.number.isRequired,
+	}),
+	children: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
+};
 
 const readerReducer = (state, action) => {
 	console.log(action);
@@ -239,6 +200,7 @@ const Reader = () => {
 
 	const handleClose = useCallback(() => {
 		setTagPicker(null);
+		iframeRef.current.focus();
 	}, []);
 
 	const getProcessedAnnotations = useCallback((annotations) => {
@@ -279,6 +241,13 @@ const Reader = () => {
 		}
 	}, [attachmentItem, dispatch, url]);
 
+	const handleKeyDown = useCallback((ev) => {
+		if (ev.key === 'Escape') {
+			setTagPicker(null);
+			iframeRef.current.focus();
+		}
+	}, []);
+
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
@@ -294,16 +263,16 @@ const Reader = () => {
 				baseURI: new URL('/', window.location).toString()
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
-			primaryViewState: readerState,  // Do we want to save PDF reader view state?
+			primaryViewState: readerState,
 			secondaryViewState: null,
-			location: null, // Navigate to specific PDF part when opening it
+			location: null,
 			readOnly: isReadOnly,
 			authorName: isGroup ? currentUserSlug : '',
-			showItemPaneToggle: false, //  ???
+			showItemPaneToggle: false,
 			sidebarWidth: readerSidebarWidth,
-			sidebarOpen: isReaderSidebarOpen ?? true, // Save sidebar open/close state?
-			bottomPlaceholderHeight: 0, /// ???
-			rtl: false, // TODO: ?
+			sidebarOpen: isReaderSidebarOpen ?? true,
+			bottomPlaceholderHeight: 0,
+			rtl: false,
 			localizedStrings: strings,
 			showAnnotations: true,
 			onSaveAnnotations: (annotations) => {
@@ -320,6 +289,9 @@ const Reader = () => {
 			},
 			onOpenTagsPopup: (key, x, y) => {
 				setTagPicker({ key, x, y});
+				setTimeout(() => {
+					document.querySelector('.add-tag').focus();
+				}, 0);
 				console.log('onOpenTagsPopup', { key, x, y });
 			},
 			onClosePopup: (...args) => {
@@ -454,7 +426,7 @@ const Reader = () => {
 	}, [rotatePages, state.action, state.data, state.isReady]);
 
 	return (
-		<section className="reader-wrapper">
+		<section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">
 			{state.isReady ? (
 				<>
 					<iframe onLoad={handleIframeLoaded} ref={iframeRef} src={pdfReaderURL} />

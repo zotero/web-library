@@ -481,3 +481,25 @@ input[type="radio"] {
 input:invalid {
 	outline: $outline-width solid $error;
 }
+
+.suggestions {
+	@include dropdown-menu;
+
+	&.show {
+		display: block;
+	}
+}
+
+.suggestion {
+	@include dropdown-item;
+
+	@include scopedVariant(".keyboard") {
+		&:focus {
+			background-color: $menu-item-hover-bg;
+		}
+	}
+}
+
+.suggestion-divider {
+	@include dropdown-divider;
+}

@@ -219,7 +219,6 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 				onFocus={handleFocusOnContainer}
 				ref={scrollContainerRef}
 				tabIndex={0}
-				style={{ overflowY: suggestions && suggestions.length ? 'visible' : null }}
 			>
 				{tags.length > 0 && (
 					<nav>

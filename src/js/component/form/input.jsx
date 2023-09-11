@@ -1,12 +1,14 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, } from 'react';
+import { forwardRef, memo, useCallback, useContext, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, } from 'react';
 import { usePrevious } from 'web-common/hooks';
 import { mod, noop, omit, pick } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
+import { createPortal } from 'react-dom';
 
 import AutoResizer from './auto-resizer';
-import { useFloating, shift } from '@floating-ui/react-dom';
+import { PortalContext } from '../portal';
+import { useFloating, shift, flip, size } from '@floating-ui/react-dom';
 
 const NATIVE_INPUT_PROPS = ['autoFocus', 'form', 'id', 'inputMode', 'max', 'maxLength',
 'min', 'minLength', 'name', 'placeholder', 'required', 'type', 'spellCheck', 'step', 'tabIndex'];
@@ -28,11 +30,54 @@ AutoResizerInput.propTypes = {
 	value: PropTypes.string
 };
 
+const Suggestions = memo(props => {
+	const { highlighted, id, onMousedown, refs, show, strategy, suggestions, suggestionsRef, x, y } = props;
+	return (
+		<div
+			aria-label='Suggestions'
+			role="listbox"
+			id={`${id}-suggestions`}
+			style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
+			ref={r => { refs.setFloating(r); suggestionsRef.current = r; }}
+			className={cx("suggestions", {
+				'show': show,
+			})}>
+			{suggestions.map((s, index) =>
+				<div
+					aria-label={s}
+					role="listitem"
+					className={cx("suggestion", {
+						'active': index === highlighted,
+					})}
+					data-suggestion={s}
+					key={s}
+					onMouseDown={onMousedown}
+				>
+					{s}
+				</div>
+			)}
+		</div>
+	);
+});
+
+Suggestions.displayName = 'Suggestions';
+Suggestions.propTypes = {
+	highlighted: PropTypes.number.isRequired,
+	id: PropTypes.string.isRequired,
+	onMousedown: PropTypes.func.isRequired,
+	refs: PropTypes.object.isRequired,
+	show: PropTypes.bool.isRequired,
+	strategy: PropTypes.string.isRequired,
+	suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
+	suggestionsRef: PropTypes.object.isRequired,
+	x: PropTypes.number.isRequired,
+	y: PropTypes.number.isRequired,
+};
 
 const Input = memo(forwardRef((props, ref) => {
-	const { className = 'form-control', inputGroupClassName, isBusy, isDisabled, isReadOnly, isRequired, onBlur = noop, onCancel
-	= noop, onCommit = noop, onChange = noop, onFocus = noop, onKeyDown = noop, selectOnFocus,
-	suggestions, validationError, value: initialValue, resize, ...rest } = props;
+	const { className = 'form-control', inputGroupClassName, isBusy, isDisabled, isReadOnly, isRequired, onBlur = noop,
+		onCancel = noop, onCommit = noop, onChange = noop, onFocus = noop, onKeyDown = noop, selectOnFocus, suggestions,
+		validationError, value: initialValue, resize, ...rest } = props;
 	const [hasCancelledSuggestions, setHasCancelledSuggestions] = useState(false);
 	const [value, setValue] = useState(initialValue);
 	const [highlighted, setHighlighted] = useState(0);
@@ -43,11 +88,18 @@ const Input = memo(forwardRef((props, ref) => {
 	const id = useId();
 	const hasBeenCancelled = useRef(false);
 	const hasBeenCommitted = useRef(false);
-	const show = suggestions && suggestions.length && !hasCancelledSuggestions;
+	const show = !!(suggestions && suggestions.length && !hasCancelledSuggestions);
 	const prevShow = usePrevious(show);
+	const prevSuggestions = usePrevious(suggestions);
+	const { ref: portalRef } = useContext(PortalContext);
 
 	const { x, y, refs, strategy, update } = useFloating({
-		placement: 'bottom', middleware: [shift()]
+		placement: 'bottom', middleware: [shift(), flip(), size({
+			apply({ rects }) {
+				Object.assign(refs.floating.current.style, {
+					width: `${rects.reference.width}px`,
+				});
+			}})]
 	});
 
 	//reset on every render
@@ -163,10 +215,18 @@ const Input = memo(forwardRef((props, ref) => {
 	}, [validationError, prevValidationError]);
 
 	useLayoutEffect(() => {
+		if (show && prevSuggestions?.length && suggestions.length !== prevSuggestions?.length) {
+			update();
+		}
+	}, [show, prevSuggestions, update, suggestions]);
+
+	useLayoutEffect(() => {
 		if (show && !prevShow) {
 			update();
 		}
 	}, [show, prevShow, update]);
+
+	const suggestionsEl = suggestions ? <Suggestions {...{ x, y, strategy, suggestions, highlighted, onMousedown: handleSuggestionMouseDown, id, refs, show, suggestionsRef }} /> : null;
 
 	return (
 		<div className={ groupClassName }>
@@ -187,32 +247,7 @@ const Input = memo(forwardRef((props, ref) => {
 				aria-autocomplete={suggestions ? 'list' : null}
 				aria-controls={ `${id}-suggestions}` }
 			/>
-			{ suggestions && (
-				<div
-					aria-label='Suggestions'
-					role="listbox"
-					id={ `${id}-suggestions` }
-					style={{ position: strategy, transform: `translate3d(${x}px, ${y}px, 0px)` }}
-					ref={r => { refs.setFloating(r); suggestionsRef.current = r; } }
-					className={ cx("dropdown-menu suggestions", {
-						'show': show,
-				})}>
-					{ suggestions.map((s, index) =>
-						<div
-							aria-label={s}
-							role="listitem"
-							className={ cx("dropdown-item", {
-								'active': index === highlighted,
-							})}
-							data-suggestion={s}
-							key={s}
-							onMouseDown={ handleSuggestionMouseDown }
-						>
-							{s}
-						</div>
-					) }
-				</div>
-			)}
+			{suggestions && (portalRef?.current ? createPortal(suggestionsEl, portalRef.current) : suggestionsEl) }
 			{ isBusy ? <Spinner /> : null }
 		</div>
 	);

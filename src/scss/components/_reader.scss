@@ -13,6 +13,7 @@
 	.portal {
 		position: absolute;
 		inset: 0;
+		overflow: hidden;
 	}
 
 	.popup {
@@ -27,6 +28,12 @@
 			.counter {
 				margin-right: $space-xs;
 			}
+		}
+
+		.scroll-container-mouse {
+			// limit tags popup height to 12 items (then it will scroll)
+			overflow-y: auto;
+			max-height: 12 * 26px;
 		}
 	}
 
