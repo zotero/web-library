@@ -70,11 +70,10 @@ const config = {
 			include: [
 				'src/js/**',
 				'modules/web-common/**',
-				// modules below need re-transpiled for compatibility with Safari 10
+				// modules below need re-transpiled for compatibility with Safari 11
 				'node_modules/@floating-ui/**',
 				'node_modules/react-dnd*/**',
 				'node_modules/dnd-multi-backend/**',
-				'node_modules/react-virtualized-auto-sizer/**',
 				'node_modules/react-redux/**',
 			],
 			babelHelpers: 'bundled'
