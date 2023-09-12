@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import deepEqual from 'deep-equal';
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { usePrevious } from 'web-common/hooks';
-import { pick } from 'web-common/utils';
+import { pick, noop } from 'web-common/utils';
 import { getLastPageIndexSettingKey } from '../common/item';
 import { Spinner } from 'web-common/components';
 import { useFloating, flip, shift } from '@floating-ui/react-dom';
@@ -100,7 +101,6 @@ PopupPortal.propTypes = {
 };
 
 const readerReducer = (state, action) => {
-	console.log(action);
 	switch (action.type) {
 		case 'BEGIN_FETCH_DATA':
 			return { ...state, dataState: FETCHING };
@@ -169,8 +169,6 @@ const Reader = () => {
 
 	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
-
-	console.log({ isReaderSidebarOpen, readerSidebarWidth });
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
@@ -248,6 +246,24 @@ const Reader = () => {
 		}
 	}, []);
 
+	// NOTE: handler can't be updated once it has been passed to Reader
+	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
+		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
+		if (isPrimary && userLibraryKey) {
+			dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, userLibraryKey));
+		}
+	}, [attachmentItem, dispatch, pageIndexSettingKey, userLibraryKey]), 1000);
+
+	// NOTE: handler can't be updated once it has been passed to Reader
+	const handleToggleSidebar = useDebouncedCallback(useCallback((isOpen) => {
+		dispatch(preferenceChange('isReaderSidebarOpen', isOpen));
+	}, [dispatch]), 1000);
+
+	// NOTE: handler can't be updated once it has been passed to Reader
+	const handleResizeSidebar = useDebouncedCallback(useCallback((newWidth) => {
+		dispatch(preferenceChange('readerSidebarWidth', newWidth));
+	}, [dispatch]), 1000);
+
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
@@ -276,53 +292,38 @@ const Reader = () => {
 			localizedStrings: strings,
 			showAnnotations: true,
 			onSaveAnnotations: (annotations) => {
-				console.log('onSaveAnnotations', annotations);
 				dispatch(postAnnotationsFromReader(annotations, attachmentKey));
 			},
 			onDeleteAnnotations: (annotationIds) => {
 				dispatch(deleteItems(annotationIds));
 			},
-			onChangeViewState: (newViewState, isPrimary) => {
-				if (isPrimary && userLibraryKey) {
-					dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, userLibraryKey));
-				}
-			},
+			onChangeViewState: handleChangeViewState,
 			onOpenTagsPopup: (key, x, y) => {
 				setTagPicker({ key, x, y});
 				setTimeout(() => {
 					document.querySelector('.add-tag').focus();
 				}, 0);
-				console.log('onOpenTagsPopup', { key, x, y });
 			},
-			onClosePopup: (...args) => {
+			onClosePopup: () => {
 				// Note: This currently only closes tags popup when annotations are disappearing from pdf-reader sidebar.
 				// Normal popup closing is handled by PopupPortal.
 				setTagPicker(null);
-				console.log('onClosePopup', args);
 			},
 			onOpenLink: (url) => {
 				window.open(url);
-				console.log('onOpenLink', url);
 			},
-			onToggleSidebar: (isOpen) => {
-				dispatch(preferenceChange('isReaderSidebarOpen', isOpen));
-			},
-			onChangeSidebarWidth: (newWidth) => {
-				dispatch(preferenceChange('readerSidebarWidth', newWidth));
-			},
-			onConfirm: (title, text, confirmationButtonTitle) => {
-				console.log('onConfirm', { title, text, confirmationButtonTitle });
-				// todo: consider an async-capable api in reader and a nicer confirmation dialog
+			onToggleSidebar: handleToggleSidebar,
+			onChangeSidebarWidth: handleResizeSidebar,
+			onConfirm: (_title, text, _confirmationButtonTitle) => { // eslint-disable-line no-unused-vars
 				return window.confirm(strings[text] ?? text);
 			},
 			onRotatePages: async (pageIndexes, degrees) => {
 				dispatchState({ type: 'ROTATE_PAGES', pageIndexes, degrees });
 			},
-			onDeletePages: (...args) => {
-				console.log('onDeletePages', args);
-			},
+			onSetDataTransferAnnotations: noop, // n/a in web library, noop prevents errors printed on console from reader
+			// onDeletePages: handleDeletePages
 		});
-	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, isGroup, isReadOnly, isReaderSidebarOpen, libraryKey, locationValue, pageIndexSettingKey, readerSidebarWidth, state.data, state.importedAnnotations])
+	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, locationValue, readerSidebarWidth, state.data, state.importedAnnotations])
 
 	// On first render, fetch attachment item details
 	useEffect(() => {

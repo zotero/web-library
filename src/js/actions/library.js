@@ -72,8 +72,6 @@ const queueUpdateLibrarySettings = (settingsKey, settingsValue, libraryKey, { re
 			const oldValue = state.libraries?.[libraryKey].settings?.entries?.[settingsKey];
 			const version = oldValue?.version ?? 0;
 
-			console.log({ old: oldValue?.value, new: settingsValue.value });
-
 			if(oldValue?.value === settingsValue?.value) {
 				dispatch({
 					type: CANCEL_UPDATE_LIBRARY_SETTINGS,
