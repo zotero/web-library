@@ -65,19 +65,20 @@ const Loader = () => {
 	const hasCheckedCollections = useSelector(
 		state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null) !== null
 	);
+	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const isReader = view === 'reader';
 	const isWaitingForCollections = !isReader && (!hasCheckedCollections || isFetchingAllCollections);
 
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		if (isReader && tagColors && !isFetchingGroups) {
+		if (isReader && tagColors && !isFetchingGroups && !isFetchingUserLibrarySettings) {
 			setIsReady(true);
 		} else if (itemTypes?.length && itemFields?.length && tagColors && !isWaitingForCollections && !isFetchingGroups) {
 			dispatch(redirectIfCollectionNotFound());
 			setIsReady(true);
 		}
-	}, [itemTypes, itemFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader, dispatch]);
+	}, [itemTypes, itemFields, tagColors, isWaitingForCollections, isFetchingGroups, isReader, dispatch, isFetchingUserLibrarySettings]);
 
 	useEffect(() => {
 		dispatch(preferencesLoad());
@@ -92,15 +93,17 @@ const Loader = () => {
 		dispatch(triggerResizeViewport(window.innerWidth, window.innerHeight));
 		dispatch(toggleTransitions(true));
 
-		if(isReader && config.includeUserGroups && libraryKey !== userLibraryKey) {
+		if (isReader && config.includeUserGroups && userLibraryKey && libraryKey !== userLibraryKey) {
 			// we're in reader mode, but in a group so we still need to fetch groups data
 			dispatch(fetchAllGroups(userLibraryKey));
+			// we also need user library settings for last page read syncing
+			dispatch(fetchLibrarySettings(userLibraryKey));
 		}
 
 		if(!isReader) {
 			dispatch(fetchAllCollections(libraryKey));
 
-			if(config.includeUserGroups) {
+			if (userLibraryKey && config.includeUserGroups) {
 				dispatch(fetchAllGroups(userLibraryKey));
 			}
 		}

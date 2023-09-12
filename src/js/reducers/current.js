@@ -61,7 +61,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 		case CONFIGURE:
 			return {
 				...state,
-				userLibraryKey: `u${action.userId}`,
+				userLibraryKey: action.userId ? `u${action.userId}` : null,
 			}
 		case LOCATION_CHANGE:
 			if(!config) { return state; }

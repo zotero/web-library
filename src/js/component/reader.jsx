@@ -134,6 +134,7 @@ const Reader = () => {
 	const dispatch = useDispatch();
 	const iframeRef = useRef(null);
 	const reader = useRef(null);
+	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const attachmentKey = useSelector(state => {
 		if (state.current.attachmentKey) {
@@ -145,8 +146,7 @@ const Reader = () => {
 		}
 	});
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
-	// @TODO: fix for group libraries
-	const locationValue = useSelector(state => state.libraries[libraryKey]?.settings?.[pageIndexSettingKey]?.value ?? null);
+	const locationValue = useSelector(state => state.libraries[userLibraryKey]?.settings?.entries?.[pageIndexSettingKey]?.value ?? null);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -283,8 +283,8 @@ const Reader = () => {
 				dispatch(deleteItems(annotationIds));
 			},
 			onChangeViewState: (newViewState, isPrimary) => {
-				if(isPrimary) {
-					dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, libraryKey));
+				if (isPrimary && userLibraryKey) {
+					dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, userLibraryKey));
 				}
 			},
 			onOpenTagsPopup: (key, x, y) => {

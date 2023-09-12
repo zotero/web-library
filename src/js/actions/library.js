@@ -69,7 +69,7 @@ const queueUpdateLibrarySettings = (settingsKey, settingsValue, libraryKey, { re
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const oldValue = state.libraries?.[libraryKey].settings?.[settingsKey];
+			const oldValue = state.libraries?.[libraryKey].settings?.entries?.[settingsKey];
 			const version = oldValue?.version ?? 0;
 
 			console.log({ old: oldValue?.value, new: settingsValue.value });
