@@ -151,15 +151,15 @@ const Reader = () => {
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
 	const timestamp = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.timestamp ?? 0);
-	const allItems = useSelector(state => state.libraries[libraryKey].items);
+	const allItems = useSelector(state => state.libraries[libraryKey]?.items);
 	const prevAttachmentItem = usePrevious(attachmentItem);
 	const currentUserID = useSelector(state => state.config.userId);
 	const currentUserSlug = useSelector(state => state.config.userSlug);
-	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? {});
+	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? []);
 	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
-	const isCreating = Object.keys(useSelector(state => state.libraries[libraryKey]?.creating?.items)).length > 0;
-	const isUpdating = Object.keys(useSelector(state => state.libraries[libraryKey]?.updating?.items)).length > 0;
+	const isCreating = Object.keys(useSelector(state => state.libraries[libraryKey]?.creating?.items) ?? {}).length > 0;
+	const isUpdating = Object.keys(useSelector(state => state.libraries[libraryKey]?.updating?.items) ?? {}).length > 0;
 	const isBusy = isCreating || isUpdating;
 	const wasBusy = usePrevious(isBusy);
 	const lastFetchItemDetailsNoResults = useSelector(state => {
