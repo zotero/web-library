@@ -13,6 +13,7 @@ import AddLinkedUrlForm from './add-linked-url-form';
 import AttachmentDetails from './attachment-details';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
+import { READER_CONTENT_TYPES } from '../../constants/reader.js';
 import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveToTrash, fetchChildItems, navigate,
 tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
@@ -63,6 +64,7 @@ const AttachmentActions = memo(props => {
 	const search = useSelector(state => state.current.search);
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
+	const isReaderCompatible = Object.keys(READER_CONTENT_TYPES).includes(attachment.contentType);
 	const isPDF = attachment.contentType === 'application/pdf';
 
 	const openInReaderPath = makePath(config, {
@@ -107,47 +109,46 @@ const AttachmentActions = memo(props => {
 
 	return attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
         <Fragment>
-            { isPDF ? (
-                <Fragment>
-                    <a
-                        className="btn btn-icon"
-                        href={ openInReaderPath }
-                        onClick={ stopPropagation }
-                        rel="noreferrer"
-                        role="button"
-                        tabIndex={ -3 }
-                        target="_blank"
-                        title="Open In Reader"
-                    >
-                        <Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
-                    </a>
-                    {
-                        isPreppingPDF ? <Spinner className="small" /> :
-                            preppedPDFURL ? (
-                                <a
-                                    className="btn btn-icon"
-                                    onClick={ stopPropagation }
-                                    href={ preppedPDFURL }
-                                    rel="noreferrer"
-                                    role="button"
-                                    tabIndex={ -3 }
-                                    download={ preppedPDFFileName }
-                                    title="Export Attachment With Annotations"
-                                >
-                                    <Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
-                                </a>
-                            ) : (
-                                <a
-                                    className="btn btn-icon"
-                                    onClick={ handleExportClick }
-                                    role="button"
-                                    tabIndex={ -3 }
-                                    title="Export Attachment With Annotations"
-                                >
-                                    <Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-                                </a>
-                    ) }
-                </Fragment>
+            { isReaderCompatible && (
+				<a
+					className="btn btn-icon"
+					href={ openInReaderPath }
+					onClick={ stopPropagation }
+					rel="noreferrer"
+					role="button"
+					tabIndex={ -3 }
+					target="_blank"
+					title="Open In Reader"
+				>
+					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
+				</a>
+			) }
+			{ isPDF ? (
+				isPreppingPDF ? <Spinner className="small" /> :
+					preppedPDFURL ? (
+						<a
+							className="btn btn-icon"
+							onClick={ stopPropagation }
+							href={ preppedPDFURL }
+							rel="noreferrer"
+							role="button"
+							tabIndex={ -3 }
+							download={ preppedPDFFileName }
+							title="Export Attachment With Annotations"
+						>
+							<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+						</a>
+					) : (
+						<a
+							className="btn btn-icon"
+							onClick={ handleExportClick }
+							role="button"
+							tabIndex={ -3 }
+							title="Export Attachment With Annotations"
+						>
+							<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+						</a>
+					)
             ) : urlIsFresh ? (
             <a
                 className="btn btn-icon"
@@ -157,7 +158,7 @@ const AttachmentActions = memo(props => {
                 role="button"
                 tabIndex={ -3 }
                 target="_blank"
-                title="Download Attachment"
+                title={ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
             >
                 <Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
             </a>
@@ -167,7 +168,7 @@ const AttachmentActions = memo(props => {
                 onClick={ handleClick }
                 role="button"
                 tabIndex={ -3 }
-                title="Download Attachment"
+				title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
             >
                 <Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
             </a>

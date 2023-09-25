@@ -11,6 +11,8 @@ import { get } from 'utils';
 import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { useForceUpdate } from 'hooks';
 import { makePath } from '../../common/navigation';
+import { READER_CONTENT_TYPES } from '../../constants/reader';
+
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -47,6 +49,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 		tags: tags,
 	});
 
+	const isReaderCompatible = Object.keys(READER_CONTENT_TYPES).includes(attachment.contentType);
 	const isPDF = attachment.contentType === 'application/pdf';
 	const hasURL = !!attachment[Symbol.for('links')]?.enclosure;
 	const urlIsFresh = url && Date.now() - timestamp < 60000;
@@ -74,15 +77,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			setIsDropdownOpen(false);
 		}
 	}, [focusNext, focusPrev]);
-
-	// const handleClick = useCallback(ev => {
-	// 	if (isTriggerEvent(ev) && !ev.currentTarget?.classList.contains('dropdown-toggle')) {
-	// 		// simulate click() on button or link, except for droppdown toggle which handles its own events
-	// 		ev.currentTarget.click();
-	// 		ev.preventDefault();
-	// 		ev.stopPropagation();
-	// 	}
-	// }, [focusBySelector, focusNext, focusPrev]);
 
 	const handleToggleDropdown = useCallback(() => {
 		setIsDropdownOpen(state => !state);
@@ -176,8 +170,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				className="download-options"
 				ref={ downloadOptionsRef }
 			>
-				{ isPDF ? (
-					<Fragment>
+				{ isReaderCompatible && (
 					<a
 						className="btn btn-default"
 						href={ openInReaderPath }
@@ -190,6 +183,8 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 					>
 						Open
 					</a>
+				) }
+				{ isPDF ? (
 					<Dropdown
 						isOpen={ isDropdownOpen }
 						onToggle={ handleToggleDropdown }
@@ -242,20 +237,19 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
-					</Fragment>
-					) : (
+				) : (
 					<a
 						className="btn btn-default"
-						disabled={ !url }
-						href={ url }
+						disabled={!url}
+						href={url}
 						rel="noreferrer"
 						role="button"
-						tabIndex={ isTouchOrSmall ? null : -2 }
+						tabIndex={isTouchOrSmall ? null : -2}
 						target="_blank"
-						title="Download attachment"
+						title={ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
 						onKeyDown={handleKeyDown}
 					>
-						Download
+						{ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
 					</a>
 				) }
 			</div>
