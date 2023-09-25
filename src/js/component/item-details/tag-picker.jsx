@@ -41,8 +41,8 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 	const realTagCount = tags.filter(t => t.tag !== '').length;
 
 
-	const handleCommit = useCallback(async (newTagValue, hasChanged, ev) => {
-		const tag = (ev.currentTarget || ev.target).closest('[data-tag]').dataset.tag;
+	const handleCommit = useCallback(async (newTagValue, hasChanged, _ev, input) => {
+		const tag = input.closest('[data-tag]').dataset.tag;
 		setTagRedacted(null);
 		setSuggestions([]);
 		requestId.current += 1;

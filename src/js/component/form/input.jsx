@@ -146,7 +146,7 @@ const Input = memo(forwardRef((props, ref) => {
 				inputRef.current.blur();
 			}
 		} else {
-			onCommit(value, value !== initialValue, ev);
+			onCommit(value, value !== initialValue, ev, inputRef.current);
 		}
 	}, [initialValue, onBlur, onCancel, onCommit, value]);
 
@@ -173,10 +173,10 @@ const Input = memo(forwardRef((props, ref) => {
 				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					const newValue = suggestions[highlighted] || value;
 					setValue(newValue);
-					onCommit(newValue, newValue !== initialValue, ev);
+					onCommit(newValue, newValue !== initialValue, ev, inputRef.current);
 				} else {
 					hasBeenCommitted.current = true;
-					onCommit(value, value !== initialValue, ev);
+					onCommit(value, value !== initialValue, ev, inputRef.current);
 				}
 			break;
 			case 'ArrowDown':
@@ -198,7 +198,7 @@ const Input = memo(forwardRef((props, ref) => {
 	const handleSuggestionMouseDown = useCallback(ev => {
 		const newValue = ev.currentTarget.dataset.suggestion;
 		setValue(newValue);
-		onCommit(newValue, newValue !== initialValue, ev);
+		onCommit(newValue, newValue !== initialValue, ev, inputRef.current);
 		ev.preventDefault();
 	}, [initialValue, onCommit]);
 
