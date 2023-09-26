@@ -1,7 +1,7 @@
 import api from 'zotero-api-client';
 import { REQUEST_DELETE_TAGS, RECEIVE_DELETE_TAGS,  ERROR_DELETE_TAGS, FILTER_TAGS } from '../constants/actions';
 import { MANAGE_TAGS } from '../constants/modals';
-import { maxColoredTags } from '../constants/defaults';
+import { maxColoredTags } from '../constants/constants';
 import { escapeBooleanSearches } from '../common/actions';
 import { deleteLibrarySettings, requestWithBackoff, updateLibrarySettings } from '.';
 

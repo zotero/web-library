@@ -1,6 +1,7 @@
 import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
 import { sortByKey } from '../utils';
 import { pick } from 'web-common/utils';
+import * as defaults from '../constants/defaults';
 
 const defaultState = {
 	apiConfig: {},
@@ -68,9 +69,7 @@ const config = (state = defaultState, action) => {
 			action.libraries = action.libraries || {};
 			return {
 				...state,
-				...pick(action, ['apiConfig', 'apiKey', 'containterClassName', 'isEmbedded',
-					'menus', 'stylesSourceUrl', 'streamingApiUrl', 'translateUrl', 'userId',
-					'userSlug', 'websiteUrl', 'pdfReaderURL', 'noteEditorURL']),
+				...pick(action, Object.keys(defaults)),
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,

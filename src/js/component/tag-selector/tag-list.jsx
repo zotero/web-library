@@ -11,7 +11,7 @@ import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 
 import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
-import { maxColoredTags } from '../../constants/defaults';
+import { maxColoredTags } from '../../constants/constants';
 import { useTags } from '../../hooks';
 
 const PAGESIZE = 100;

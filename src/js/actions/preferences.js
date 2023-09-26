@@ -1,6 +1,7 @@
 import { JSONTryParse, localStorageWrapper, resizeVisibleColumns } from '../utils';
 import { PREFERENCES_LOAD, PREFERENCE_CHANGE } from '../constants/actions';
-import { preferences as defaultPreferences, version } from '../constants/defaults';
+import { preferences as defaultPreferences } from '../constants/defaults';
+import { version } from '../../../data/version.json';
 
 const getRestoredColumns = (userColumns, defaultColumns) => defaultColumns.map(defaultColumn => ({
 	...defaultColumn,

@@ -16,7 +16,7 @@ import {
 	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings,
 	preferenceChange
 } from '../actions';
-import { pdfWorker } from '../common/pdf-worker.js';
+import { PDFWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
 import { strings } from '../constants/strings.js';
 import TagPicker from './item-details/tag-picker.jsx';
@@ -155,6 +155,8 @@ const Reader = () => {
 	const prevAttachmentItem = usePrevious(attachmentItem);
 	const currentUserID = useSelector(state => state.config.userId);
 	const currentUserSlug = useSelector(state => state.config.userSlug);
+	const pdfWorkerURL = useSelector(state => state.config.pdfWorkerURL);
+	const pdfReaderCMapsRoot = useSelector(state => state.config.pdfReaderCMapsRoot);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? []);
 	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
@@ -166,9 +168,9 @@ const Reader = () => {
 		const { libraryKey: requestLK, totalResults, queryOptions = {} } = state.traffic?.['FETCH_ITEM_DETAILS']?.last ?? {};
 		return totalResults === 0 && requestLK === libraryKey && queryOptions.itemKey === attachmentKey;
 	});
-
 	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
+	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,

@@ -8,7 +8,7 @@ import { useFocusManager } from 'web-common/hooks';
 import { updateTagColors } from '../../actions';
 import ColorPicker from '../ui/color-picker';
 import Select from '../form/select';
-import { maxColoredTags } from '../../constants/defaults';
+import { maxColoredTags } from '../../constants/constants';
 
 const colors = ['#FF6666', '#FF8C19', '#999999', '#5FB236', '#009980', '#2EA8E5', '#576DD9', '#A28AE5', '#A6507B' ];
 

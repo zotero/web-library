@@ -1,7 +1,7 @@
 import { fetchAllChildItems, fetchChildItems, getAttachmentUrl } from '.';
 import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
 import { makePath } from '../common/navigation';
-import { pdfWorker } from '../common/pdf-worker.js';
+import { PDFWorker } from '../common/pdf-worker.js';
 import { REQUEST_EXPORT_PDF, RECEIVE_EXPORT_PDF, ERROR_EXPORT_PDF  } from '../constants/actions';
 import { saveAs } from 'file-saver';
 import { READER_CONTENT_TYPES } from '../constants/reader';
@@ -159,6 +159,7 @@ const exportAttachmentWithAnnotations = itemKey => {
 			const attachmentURL = await dispatch(getAttachmentUrl(itemKey));
 			await dispatch(fetchAllChildItems(itemKey));
 			const state = getState();
+			const { pdfWorkerURL, pdfReaderCMapsRoot } = state.config;
 			const childItems = state.libraries[state.current.libraryKey]?.itemsByParent[itemKey]?.keys ?? [];
 			const allItems = state.libraries[state.current.libraryKey]?.items;
 			const attachmentItem = allItems[itemKey];
@@ -169,6 +170,7 @@ const exportAttachmentWithAnnotations = itemKey => {
 				.map(childItemKey => allItems[childItemKey])
 				.filter(item => !item.deleted && item.itemType === 'annotation');
 
+			const pdfWorker = new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot });
 			const data = await (await fetch(attachmentURL)).arrayBuffer();
 			const buf = await pdfWorker.export(data, annotations);
 			const blob = new Blob([buf], { type: 'application/pdf' });

@@ -1,10 +1,13 @@
+// NOTE: Do not use these values directly, instead use state.config which will fallback to these
+// 		 defaults if no value is configured.
 import { coreCitationStyles } from '../../../data/citation-styles-data.json';
-export { version } from '../../../data/version.json';
 
+export const apiKey = '';
 export const apiConfig = {
 	apiAuthorityPart: 'api.zotero.org',
 	retry: 2,
 };
+
 export const websiteUrl = 'https://www.zotero.org/';
 export const buyStorageUrl = websiteUrl + 'storage?ref=usb';
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
@@ -14,7 +17,7 @@ export const pdfReaderURL = '/static/pdf-reader/reader.html';
 export const pdfReaderCMapsRoot = '/static/pdf-reader/pdf/web/cmaps/';
 export const pdfWorkerURL = '/static/pdf-worker/worker.js';
 export const noteEditorURL = '/static/note-editor/editor.html';
-export const maxColoredTags = 9;
+
 export const libraries = {
 	includeMyLibrary: true,
 	includeUserGroups: true,
@@ -24,6 +27,7 @@ export const menus = { desktop: [], mobile: [] };
 export const userId = 0;
 export const userSlug = '';
 export const containterClassName = process.env.TARGET === 'embedded' ? 'zotero-wle' : 'zotero-wl';
+export const isEmbedded = process.env.TARGET === 'embedded';
 
 export const preferences = {
 	citationStyle: coreCitationStyles.find(cs => cs.isDefault).name,

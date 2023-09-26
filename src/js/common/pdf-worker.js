@@ -1,8 +1,8 @@
-import { pdfReaderCMapsRoot, pdfWorkerURL } from '../constants/defaults.js';
 import { annotationItemFromJSON } from './annotations.js';
 
-class PDFWorker {
-	constructor() {
+export class PDFWorker {
+	constructor(config) {
+		this.config = config;
 		this._worker = null;
 		this._lastPromiseID = 0;
 		this._waitingPromises = {};
@@ -53,7 +53,7 @@ class PDFWorker {
 
 	_init() {
 		if (this._worker) return;
-		this._worker = new Worker(pdfWorkerURL);
+		this._worker = new Worker(this.config.pdfWorkerURL);
 		this._worker.addEventListener('message', async (event) => {
 			let message = event.data;
 			if (message.responseID) {
@@ -71,7 +71,7 @@ class PDFWorker {
 				let respData = null;
 				try {
 					if (message.action === 'FetchBuiltInCMap') {
-						let response = await fetch(pdfReaderCMapsRoot + message.data + '.bcmap');
+						let response = await fetch(this.config.pdfReaderCMapsRoot + message.data + '.bcmap');
 						let arrayBuffer = await response.arrayBuffer();
 						respData = {
 							compressionType: 1,
@@ -204,5 +204,3 @@ class PDFWorker {
 		}, isPriority);
 	}
 }
-
-export const pdfWorker = new PDFWorker();
