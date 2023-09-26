@@ -14,6 +14,8 @@ import stateRaw from './fixtures/state/test-user-reader-view.json';
 import newItemAnnotationNote from "./fixtures/response/new-item-annotation-note.json";
 import testUserCreateAnnotation from "./fixtures/response/test-user-create-annotation.json";
 
+jest.mock('../src/js/common/pdf-worker.js');
+
 const state = JSONtoState(stateRaw);
 const noteAnnotation = {
 	"libraryID": "",

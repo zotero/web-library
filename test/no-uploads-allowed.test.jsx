@@ -11,7 +11,6 @@ import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
 
 jest.mock('file-saver');
-jest.mock('../src/js/common/pdf-worker.js');//, () => {
 
 // Force My Library not to allow file uploads
 stateRaw.config.libraries[0].isFileUploadAllowed = false;

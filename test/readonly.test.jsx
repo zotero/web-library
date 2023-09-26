@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import fileSaver from 'file-saver';
-import { pdfWorker } from '../src/js/common/pdf-worker.js';
+import { PDFWorker } from '../src/js/common/pdf-worker.js';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { getByRole, screen, queryByRole, waitFor, findByRole, findAllByRole } from '@testing-library/react';
@@ -17,7 +17,7 @@ import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-type
 import testUserChildren from './fixtures/response/test-user-children.json';
 
 jest.mock('file-saver');
-jest.mock('../src/js/common/pdf-worker.js');//, () => {
+jest.mock('../src/js/common/pdf-worker.js');
 
 // Force My Library to be read-only
 stateRaw.config.libraries[0].isReadOnly = true;
@@ -214,7 +214,7 @@ describe('Test User\'s read-only library', () => {
 
 		await userEvent.click(screen.getByRole('button', { name: 'Download' }));
 
-		await waitFor(() => expect(pdfWorker.export).toHaveBeenCalledTimes(1));
+		await waitFor(() => expect(PDFWorker.mock.instances[0].export).toHaveBeenCalledTimes(1));
 		await waitFor(() => expect(fileSaver.saveAs).toHaveBeenCalledTimes(1));
 
 		await userEvent.click(screen.getByRole('button', { name: 'More Download Options' }));
