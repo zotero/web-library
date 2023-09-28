@@ -54,7 +54,7 @@ describe('config', () => {
 				schemaRequested = true;
 				return res(ctx.json(schema));
 			}),
-			rest.get('https://bazinga.zotero.org/users/475425/settings', (req, res, ctx) => {
+			rest.get('https://bazinga.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
 				settingsRequested = true;
 				return res(ctx.json({}));
 			}),

@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
-	deleteItems, fetchChildItems, fetchItemDetails, navigate, tryGetAttachmentURL,
+	deleteItems, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, tryGetAttachmentURL,
 	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings,
 	preferenceChange
 } from '../actions';
@@ -142,7 +142,7 @@ const Reader = () => {
 		} else if (state.current.itemKey) {
 			return state.current.itemKey;
 		} else {
-			return null
+			return null;
 		}
 	});
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
@@ -170,6 +170,7 @@ const Reader = () => {
 	});
 	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
+	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
@@ -239,7 +240,7 @@ const Reader = () => {
 				attachmentItem.key, { fileName: attachmentItem.filename, file: cloneData(modifiedBuf) })
 			);
 		}
-	}, [attachmentItem, dispatch, url]);
+	}, [attachmentItem, dispatch, pdfWorker, url]);
 
 	const handleKeyDown = useCallback((ev) => {
 		if (ev.key === 'Escape') {
@@ -252,7 +253,7 @@ const Reader = () => {
 	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
 		if (isPrimary && userLibraryKey) {
-			dispatch(updateLibrarySettings(pageIndexSettingKey, { value: newViewState[pageIndexKey] }, userLibraryKey));
+			dispatch(updateLibrarySettings(pageIndexSettingKey, newViewState[pageIndexKey], userLibraryKey));
 		}
 	}, [attachmentItem, dispatch, pageIndexSettingKey, userLibraryKey]), 1000);
 
@@ -327,12 +328,18 @@ const Reader = () => {
 		});
 	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, locationValue, readerSidebarWidth, state.data, state.importedAnnotations])
 
-	// On first render, fetch attachment item details
+	// On first render, fetch attachment item details or redirect if invalid URL
 	useEffect(() => {
-		localStorage.removeItem('pdfjs.history');
+		if(!attachmentKey) {
+			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }));
+		}
 		if (attachmentKey && !attachmentItem) {
 			dispatch(fetchItemDetails(attachmentKey));
 		}
+		// pdf js stores last page in localStorage but we want to use one from user library settings instead
+		localStorage.removeItem('pdfjs.history');
+		// we also need user library settings for last page read syncing
+		dispatch(fetchLibrarySettings(userLibraryKey, pageIndexSettingKey));
 	}, []);// eslint-disable-line react-hooks/exhaustive-deps
 
 	// Fetch all child items (annotations). This effect will execute multiple times for each page of annotations
@@ -387,13 +394,13 @@ const Reader = () => {
 				}
 			})();
 		}
-	}, [attachmentItem, state.annotationsState, state.data, state.dataState]);
+	}, [attachmentItem, pdfWorker, state.annotationsState, state.data, state.dataState]);
 
 	useEffect(() => {
-		if (!state.isReady && isFetched && state.data && state.annotationsState == IMPORTED) {
+		if (!state.isReady && isFetched && state.data && state.annotationsState == IMPORTED && !isFetchingUserLibrarySettings) {
 			dispatchState({ type: 'READY' });
 		}
-	}, [isFetched, state.annotationsState, state.data, state.isReady]);
+	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady]);
 
 	useEffect(() => {
 		if (attachmentItem && !prevAttachmentItem

@@ -66,7 +66,7 @@ describe('Group libraries', () => {
 					return res;
 				});
 			}),
-			rest.get('https://api.zotero.org/groups/5119976/settings', async (req, res) => {
+			rest.get('https://api.zotero.org/groups/5119976/settings/tagColors', async (req, res) => {
 				return res(res => {
 					res.body = JSON.stringify({ });
 					return res;

@@ -1021,7 +1021,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 
 		// ensure we have config of the target library. See #441
 		if(get(state, ['libraries', targetLibraryKey, 'tagColors', 'lookup'], null) === null) {
-			await dispatch(fetchLibrarySettings(targetLibraryKey));
+			await dispatch(fetchLibrarySettings(targetLibraryKey, 'tagColors'));
 		}
 
 		const newItems = await dispatch(

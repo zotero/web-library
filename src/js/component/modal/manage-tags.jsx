@@ -151,7 +151,7 @@ const ManageTagsModal = () => {
 							)}
 						</div>
 					</div>
-					<TagList isManager={ true } onToggleTagManager={ handleToggleTagManager } />
+					{ isOpen && <TagList isManager={ true } onToggleTagManager={ handleToggleTagManager } /> }
 				</div>
 			</div>
 		</Modal>

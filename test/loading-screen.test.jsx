@@ -20,7 +20,7 @@ describe('Loading Screen', () => {
 			schemaRequested = true;
 			return res(ctx.json(schema));
 		}),
-		rest.get('https://api.zotero.org/users/475425/settings', (req, res, ctx) => {
+		rest.get('https://api.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
 			settingsRequested = true;
 			return res(ctx.json({}));
 		}),

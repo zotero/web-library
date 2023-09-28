@@ -33,7 +33,7 @@ describe('Unexpected Item Types', () => {
 			rest.get('https://api.zotero.org/schema', (req, res, ctx) => {
 				return res(ctx.json(schema));
 			}),
-			rest.get('https://api.zotero.org/users/475425/settings', (req, res, ctx) => {
+			rest.get('https://api.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
 				return res(ctx.json({}));
 			}),
 			rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {

@@ -143,15 +143,11 @@ const query = (state = defaultState, action, entireState) => {
 		case RESET_QUERY:
 			return defaultState;
 		case RECEIVE_LIBRARY_SETTINGS:
-			return {
-				...state,
-				tags: omit(state.tags, 'coloredTags')
-			}
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
 			return {
 				...state,
-				tags: action.settingsKey === 'coloredTags' ? omit(state.tags, 'coloredTags') : state.tags
+				tags: action.settingsKey === 'tagColors' ? omit(state.tags, 'coloredTags') : state.tags
 			}
 		default:
 			return state;

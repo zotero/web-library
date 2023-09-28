@@ -776,7 +776,12 @@
                 "pointer": 51
             },
             "itemsTrash": {},
-            "settings": {},
+            "settings": {
+                "tagColors": {
+                    "value": [],
+                    "lookup": {}
+                }
+            },
             "sync": {
                 "version": 10,
                 "isSynced": true,

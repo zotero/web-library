@@ -61,7 +61,7 @@ const tagsInPublicationsItems = (state = {}, action, { items, itemsPublications 
 		case RECEIVE_LIBRARY_SETTINGS:
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
-			return action.settingsKey === 'coloredTags' ? omit(state, 'coloredTags') : state;
+			return action.settingsKey === 'tagColors' ? omit(state, 'coloredTags') : state;
 		default:
 			return state;
 	}

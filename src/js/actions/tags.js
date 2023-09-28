@@ -259,7 +259,7 @@ const updateTagColors = newTagColors => {
 			newTagColors.length = Math.min(newTagColors.length, maxColoredTags);
 
 			if(newTagColors.length > 0) {
-				return await dispatch(updateLibrarySettings('tagColors', { value: newTagColors }, libraryKey));
+				return await dispatch(updateLibrarySettings('tagColors', newTagColors, libraryKey));
 			}
 		}
 

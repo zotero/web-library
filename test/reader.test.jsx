@@ -55,7 +55,19 @@ describe('Reader', () => {
 				res.body = '';
 				return res;
 			});
-		})
+		}),
+		rest.get('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
+			return res(res => {
+				res.body = JSON.stringify({ value: [], version: 0 });
+				return res;
+			});
+		}),
+		rest.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async (req, res) => {
+			return res(res => {
+				res.body = JSON.stringify({ value: 0, version: 0 });
+				return res;
+			});
+		}),
 	];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();

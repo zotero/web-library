@@ -271,7 +271,7 @@ const Libraries = forwardRef((props, ref) => {
 			toggleOpen(selectedLibraryKey, true);
 			if(typeof(prevSelectedLibraryKey) !== 'undefined') {
 				//@TODO: Minor opitimisation: only fetch library settings if needed
-				dispatch(fetchLibrarySettings(selectedLibraryKey));
+				dispatch(fetchLibrarySettings(selectedLibraryKey, 'tagColors'));
 			}
 		}
 	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);

@@ -83,7 +83,7 @@ const Library = () => {
 		if(!isSynced && wasSynced) {
 			setTimeout(() => {
 				dispatch(resetLibrary(libraryKey));
-				setTimeout(() => dispatch(fetchLibrarySettings(libraryKey), 0));
+				setTimeout(() => dispatch(fetchLibrarySettings(libraryKey, 'tagColors'), 0));
 			}, 0);
 		}
 	}, [dispatch, libraryKey, isSynced, wasSynced])
