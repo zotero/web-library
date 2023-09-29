@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
+import { rest, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -59,83 +59,64 @@ describe('Group libraries', () => {
 		let fileUploadRequests = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/groups/5119976/collections', async (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 3);
-					res.body = JSON.stringify(testGroupCollections);
-					return res;
+			rest.get('https://api.zotero.org/groups/5119976/collections', async () => {
+				return HttpResponse.json(testGroupCollections, {
+					headers: { 'Total-Results': 3 },
 				});
 			}),
-			rest.get('https://api.zotero.org/groups/5119976/settings/tagColors', async (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify({ });
-					return res;
-				});
+			rest.get('https://api.zotero.org/groups/5119976/settings/tagColors', async () => {
+				return HttpResponse.json({});
 			}),
-			rest.post('https://api.zotero.org/groups/5119976/items', async (req, res) => {
-				const items = await req.json();
+			rest.post('https://api.zotero.org/groups/5119976/items', async ({request}) => {
+				const items = await request.json();
 				groupItemsPostCount++;
 				if(groupItemsPostCount === 1) {
 					expect(items[0].key).toBeUndefined();
 					expect(items[0].title).toEqual('Effects of diet restriction on life span and age-related changes in dogs');
-					return res(res => {
-						res.headers.set('Last-Modified-Version', ++groupLibVersion);
-						res.body = JSON.stringify(testGroupAddItemToCollection);
-						return res;
+					return HttpResponse.json(testGroupAddItemToCollection, {
+						headers: { 'Last-Modified-Version': ++groupLibVersion },
 					});
 				}
 				if (groupItemsPostCount === 2) {
 					expect(items.map(i => i.title)).toEqual(expect.arrayContaining(['Snapshot', 'Full Text']));
-					return res(res => {
-						res.headers.set('Last-Modified-Version', ++groupLibVersion);
-						res.body = JSON.stringify(testGroupCopyChildItems);
-						return res;
+					return HttpResponse.json(testGroupCopyChildItems, {
+						headers: { 'Last-Modified-Version': ++groupLibVersion },
 					});
 				}
 				if (groupItemsPostCount === 3) {
 					expect(items.map(i => i.annotationType)).toEqual(expect.arrayContaining(['highlight', 'note', 'highlight', 'image']));
-					return res(res => {
-						res.headers.set('Last-Modified-Version', ++groupLibVersion);
-						res.body = JSON.stringify(testGroupCopyAnnotations);
-						return res;
+					return HttpResponse.json(testGroupCopyAnnotations, {
+						headers: { 'Last-Modified-Version': ++groupLibVersion },
 					});
 				}
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
-				const items = await req.json();
+			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+				const items = await request.json();
 				userItemsPostCount++;
 				if(userItemsPostCount === 1) {
 					expect(items[0].key).toBe('VR82JUX8');
 					expect(items[0].relations).toEqual({ 'owl:sameAs': "http://zotero.org/groups/5119976/items/TBBKEM8I" })
-					return res(res => {
-						res.headers.set('Last-Modified-Version', ++myLibVersion);
-						res.body = JSON.stringify(testUserUpdateRelationAfterCopy);
-						return res;
+					return HttpResponse.json(testUserUpdateRelationAfterCopy, {
+						headers: { 'Last-Modified-Version': ++myLibVersion },
 					});
 				}
 				throw new Error('Unexpected request');
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', async (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 2);
-					res.body = JSON.stringify(testUserChildren);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', async () => {
+				return HttpResponse.json(testUserChildren, {
+					headers: { 'Total-Results': '2' },
 				});
 			}),
-			rest.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async (req, res) => {
+			rest.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async ({request}) => {
 				fileUploadRequests++;
-				expect(await req.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf&filesize=248058&mtime=1673607166000');
-				return res(res => {
-					res.headers.set('Last-Modified-Version', ++groupLibVersion);
-					res.body = JSON.stringify({ exists: 1 });
-					return res;
+				expect(await request.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf&filesize=248058&mtime=1673607166000');
+				return HttpResponse.json({ exists: 1 }, {
+					headers: { 'Last-Modified-Version': ++groupLibVersion },
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', async (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 4);
-					res.body = JSON.stringify(testUserAttachmentAnnotations);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', async () => {
+				return HttpResponse.json(testUserAttachmentAnnotations, {
+					headers: { 'Total-Results': 4 },
 				});
 			}),
 		);

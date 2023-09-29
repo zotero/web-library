@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
+import { rest, HttpResponse, delay } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, waitFor } from '@testing-library/react'
 
@@ -15,45 +15,45 @@ describe('Loading Screen', () => {
 	let schemaRequested = false;
 	let settingsRequested = false;
 	let collectionsRequestCounter = 0;
-	const handlers = [
-		rest.get('https://api.zotero.org/schema', (req, res, ctx) => {
-			schemaRequested = true;
-			return res(ctx.json(schema));
-		}),
-		rest.get('https://api.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
-			settingsRequested = true;
-			return res(ctx.json({}));
-		}),
-		rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {
-			return res((res) => {
-				res.headers.set('Total-Results', 5142);
-				res.body = JSON.stringify([]);
-				// first request (`start` is null or 0) is immediate,
-				// subsequent requests are delayed so we get a spinner
-				res.delay = req.url.searchParams.get('start') ? 100 : 0;
-				collectionsRequestCounter++;
-				return res;
-			});
-		}),
-		rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
-			});
-		}),
-		rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
-			});
-		}),
-	];
-
-	const server = setupServer(...handlers)
+	let server;
 
 	beforeAll(() => {
+		const handlers = [
+			rest.get('https://api.zotero.org/schema', () => {
+				schemaRequested = true;
+				return HttpResponse.json(schema);
+			}),
+			rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+				settingsRequested = true;
+				return HttpResponse.json({});
+			}),
+			rest.get('https://api.zotero.org/users/475425/collections', async ({ request }) => {
+				// first request (`start` is null or 0) is immediate,
+				// subsequent requests are delayed so we get a spinner
+				await delay(new URL(request.url).searchParams.get('start') ? 100 : 0);
+				collectionsRequestCounter++;
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '5142' },
+				});
+			}),
+			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+				return HttpResponse.json([], {
+					headers: {
+						'Total-Results': '0',
+					},
+				});
+			}),
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json([], {
+					headers: {
+						'Total-Results': '0',
+					},
+				});
+			})
+		];
+
+		server = setupServer(...handlers);
+
 		server.listen({
 			onUnhandledRequest: (req) => {
 				// https://github.com/mswjs/msw/issues/946#issuecomment-1202959063

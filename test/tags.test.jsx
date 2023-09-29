@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
+import { rest, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -49,26 +49,23 @@ describe('Tags', () => {
 		let libVersion = state.libraries.u1.sync.version;
 		let postCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 0);
-					res.body = JSON.stringify([]);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
-				return res(res => {
-					expect(req.url.searchParams.get('qmode')).toEqual('startswith');
-					expect(req.url.searchParams.get('q')).toEqual('t');
-					expect(req.url.searchParams.get('direction')).toEqual('asc');
+			rest.get('https://api.zotero.org/users/1/tags', ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('qmode')).toEqual('startswith');
+				expect(url.searchParams.get('q')).toEqual('t');
+				expect(url.searchParams.get('direction')).toEqual('asc');
 
-					res.headers.set('Total-Results', 2);
-					res.body = JSON.stringify(testUserTagsSuggestions);
-					return res;
+				return HttpResponse.json(testUserTagsSuggestions, {
+					headers: { 'Total-Results': '2' }
 				});
 			}),
-			rest.patch('https://api.zotero.org/users/1/items/VR82JUX8', async (req, res) => {
-				const patch = await req.json();
+			rest.patch('https://api.zotero.org/users/1/items/VR82JUX8', async ({request}) => {
+				const patch = await request.json();
 				postCounter++;
 				if(postCounter === 1) {
 					expect(patch.tags).toEqual([{ tag: 'to read' }]);
@@ -76,18 +73,15 @@ describe('Tags', () => {
 					expect(patch.tags).toContainEqual({ tag: 'to read' });
 					expect(patch.tags).toContainEqual({ tag: 'today' });
 				}
-				return res(res => {
-					res.headers.set('Last-Modified-Version', ++libVersion);
-					res.status = 204;
-					return res;
-				})
+				return HttpResponse.text('', {
+					status: 204,
+					headers: { 'Last-Modified-Version': ++libVersion }
+				});
 			}),
-			rest.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 1);
-					res.body = JSON.stringify(testUserTagsForItem);
-					return res;
-				})
+			rest.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', () => {
+				return HttpResponse.json(testUserTagsForItem, {
+					headers: { 'Total-Results': '1' }
+				});
 			})
 		);
 
@@ -148,25 +142,20 @@ describe('Tags', () => {
 		const user = userEvent.setup();
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 8);
-					res.body = JSON.stringify(testUserManageTags);
-					return res;
+			rest.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(testUserManageTags, {
+					headers: { 'Total-Results': '8' }
 				});
 			}),
-			rest.put('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
-				const tagColors = await req.json();
+			rest.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
+				const tagColors = await request.json();
 				expect(tagColors.value).toHaveLength(5);
 				expect(tagColors.value).toContainEqual({
 					'name': 'pathfinding',
 					'color': '#A28AE5'
 				});
 				hasBeenPosted = true;
-				return res(res => {
-					res.status = 204;
-					return res;
-				});
+				return HttpResponse.text('', { status: 204 });
 			})
 		);
 
@@ -193,25 +182,20 @@ describe('Tags', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 8);
-					res.body = JSON.stringify(testUserManageTags);
-					return res;
+			rest.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(testUserManageTags, {
+					headers: { 'Total-Results': '8' }
 				});
 			}),
-			rest.put('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
-				const tagColors = await req.json();
+			rest.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
+				const tagColors = await request.json();
 				expect(tagColors.value).toHaveLength(3);
 				expect(tagColors.value).not.toContainEqual({
 					'name': 'to read',
 					'color': '#FF6666'
 				});
 				hasBeenPosted = true;
-				return res(res => {
-					res.status = 204;
-					return res;
-				});
+				return HttpResponse.text('', { status: 204 });
 			})
 		);
 
@@ -233,11 +217,9 @@ describe('Tags', () => {
 		await waitForPosition();
 		const user = userEvent.setup();
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 8);
-					res.body = JSON.stringify(testUserManageTags);
-					return res;
+			rest.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(testUserManageTags, {
+					headers: { 'Total-Results': '8' }
 				});
 			}),
 		);

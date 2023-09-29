@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
+import { rest, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { findAllByRole, getByRole, screen, queryByRole, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -74,18 +74,14 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 1);
-					res.body = JSON.stringify(searchResultsTags);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json(searchResultsTags, {
+					headers: { 'Total-Results': '1' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 15);
-					res.body = JSON.stringify(searchResults);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+				return HttpResponse.json(searchResults, {
+					headers: { 'Total-Results': '15' }
 				});
 			})
 		);
@@ -117,18 +113,14 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 12);
-					res.body = JSON.stringify(collectionItems);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', () => {
+				return HttpResponse.json(collectionItems, {
+					headers: { 'Total-Results': '12' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 6);
-					res.body = JSON.stringify(collectionTags);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', () => {
+				return HttpResponse.json(collectionTags, {
+					headers: { 'Total-Results': '6' }
 				});
 			}),
 		);
@@ -186,18 +178,14 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 1);
-					res.body = JSON.stringify(tagResults);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+				return HttpResponse.json(tagResults, {
+					headers: { 'Total-Results': '1' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 7);
-					res.body = JSON.stringify(tagResultsTags);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json(tagResultsTags, {
+					headers: { 'Total-Results': '7' }
 				});
 			})
 		);
@@ -230,35 +218,20 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/itemTypes', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypes);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypes', () => {
+				return HttpResponse.json(itemTypes);
 			}),
-			rest.get('https://api.zotero.org/itemFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemFields);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemFields', () => {
+				return HttpResponse.json(itemFields);
 			}),
-			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemFields);
-					return res;
-				});
+			rest.get('https://api.zotero.org/creatorFields', () => {
+				return HttpResponse.json(itemFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeCreatorTypesFilm);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesFilm);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeFieldsFilm);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsFilm);
 			}),
 		);
 

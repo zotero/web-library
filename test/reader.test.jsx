@@ -2,7 +2,7 @@
 * @jest-environment ./test/utils/zotero-env.js
 */
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
+import { rest, HttpResponse, delay } from 'msw';
 import { setupServer } from 'msw/node';
 import { act, waitFor, fireEvent } from '@testing-library/react';
 
@@ -44,29 +44,17 @@ const noteAnnotation = {
 
 describe('Reader', () => {
 	const handlers = [
-		rest.get('https://api.zotero.org/users/1/items/N2PJUHD6/file/view/url', (req, res) => {
-			return res(res => {
-				res.body = 'https://files.zotero.net/some-file-attachment.pdf';
-				return res;
-			});
+		rest.get('https://api.zotero.org/users/1/items/N2PJUHD6/file/view/url', () => {
+			return HttpResponse.text('https://files.zotero.net/some-file-attachment.pdf');
 		}),
-		rest.get('https://files.zotero.net/some-file-attachment.pdf', (req, res) => {
-			return res(res => {
-				res.body = '';
-				return res;
-			});
+		rest.get('https://files.zotero.net/some-file-attachment.pdf', () => {
+			return HttpResponse.text('');
 		}),
-		rest.get('https://api.zotero.org/users/1/settings/tagColors', async (req, res) => {
-			return res(res => {
-				res.body = JSON.stringify({ value: [], version: 0 });
-				return res;
-			});
+		rest.get('https://api.zotero.org/users/1/settings/tagColors', async () => {
+			return HttpResponse.json({ value: [], version: 0 });
 		}),
-		rest.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async (req, res) => {
-			return res(res => {
-				res.body = JSON.stringify({ value: 0, version: 0 });
-				return res;
-			});
+		rest.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async () => {
+			return HttpResponse.json({ value: 0, version: 0 });
 		}),
 	];
 	const server = setupServer(...handlers)
@@ -102,35 +90,31 @@ describe('Reader', () => {
 		let hasRequestedTpl = false;
 		let postCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/items/new', (req, res) => {
-				expect(req.url.searchParams.get('itemType')).toBe('annotation');
-				expect(req.url.searchParams.get('annotationType')).toBe('note');
+			rest.get('https://api.zotero.org/items/new', ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('itemType')).toBe('annotation');
+				expect(url.searchParams.get('annotationType')).toBe('note');
 				hasRequestedTpl = true;
-				return res(res => {
-					res.body = JSON.stringify(newItemAnnotationNote);
-					return res;
-				});
+				return HttpResponse.json(newItemAnnotationNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
-				const items = await req.json();
+			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+				const items = await request.json();
 				expect(items[0].key).toBe('Z1Z2Z3Z4');
 
 				if(postCounter == 0) {
-					expect(req.headers.get('If-Unmodified-Since-Version')).toBe('292');
+					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('292');
 					expect(items[0].itemType).toBe('annotation');
 					expect(items[0].parentItem).toBe('N2PJUHD6');
 					expect(items[0].annotationType).toBe('note');
 					expect(items[0].annotationComment).toBe('hello note annotation');
 				} else {
-					expect(req.headers.get('If-Unmodified-Since-Version')).toBe('12345');
+					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('12345');
 					expect(items[0].annotationComment).toBe('updated note annotation');
 				}
 
-				return res(res => {
-					res.delay = 100;
-					res.headers.set('Last-Modified-Version', 12345 + postCounter++);
-					res.body = JSON.stringify(testUserCreateAnnotation);
-					return res;
+				await delay(100);
+				return HttpResponse.json(testUserCreateAnnotation, {
+					headers: { 'Last-Modified-Version': 12345 + postCounter++ }
 				});
 			})
 		)
@@ -139,8 +123,13 @@ describe('Reader', () => {
 		const iframe = container.querySelector('iframe');
 		let readerConfig;
 
+		const mockReader = {
+			setAnnotations: jest.fn()
+		};
+
 		iframe.contentWindow.createReader = (_rc) => {
 			readerConfig = _rc;
+			return mockReader;
 		}
 		fireEvent(iframe, new Event('load', { bubbles: false, cancelable: false }));
 		await act(() => readerConfig.onSaveAnnotations([noteAnnotation]));

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import fileSaver from 'file-saver';
 import { PDFWorker } from '../src/js/common/pdf-worker.js';
-import { rest } from 'msw';
+import { rest, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getByRole, screen, queryByRole, waitFor, findByRole, findAllByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -11,7 +11,7 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/test-user-item-view.json';
-import itemFields from './fixtures/response/item-fields';
+import creatorFields from './fixtures/response/creator-fields';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 import testUserChildren from './fixtures/response/test-user-children.json';
@@ -57,23 +57,14 @@ describe('Test User\'s read-only library', () => {
 		expect(screen.getByRole('tab', { name: 'Note', selected: true })).toBeInTheDocument();
 
 		server.use(
-			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemFields);
-					return res;
-				});
+			rest.get('https://api.zotero.org/creatorFields', () => {
+				return HttpResponse.json(creatorFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeCreatorTypesBook);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesBook);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeFieldsBook);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsBook);
 			}),
 		);
 
@@ -162,18 +153,13 @@ describe('Test User\'s read-only library', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 2);
-					res.body = JSON.stringify(testUserChildren);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+				return HttpResponse.json(testUserChildren, {
+					headers: { 'Total-Results': 2 }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/file/view/url', (req, res) => {
-				return res(res => {
-					res.body = 'https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf';
-					return res;
-				});
+			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/file/view/url', () => {
+				return HttpResponse.text('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf');
 			})
 		);
 
@@ -198,17 +184,11 @@ describe('Test User\'s read-only library', () => {
 		expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('href', '/testuser/collections/WTTJ2J56/items/VR82JUX8/attachment/VG79HDDM/reader');
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify([]);
-					return res;
-				});
+			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', () => {
+				return HttpResponse.json([]);
 			}),
-			rest.get('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf', (req, res) => {
-				return res(res => {
-					res.body = '';
-					return res;
-				});
+			rest.get('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf', () => {
+				return HttpResponse.text('');
 			})
 		);
 

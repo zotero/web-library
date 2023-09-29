@@ -2,7 +2,7 @@
 * @jest-environment ./test/utils/zotero-env.js
 */
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
+import { rest, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { getByRole, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -22,71 +22,51 @@ applyAdditionalJestTweaks();
 
 describe('Unexpected URL', () => {
 	const handlers = [
-		rest.get('https://api.zotero.org/schema', (req, res, ctx) => {
-			return res(ctx.json(schema));
+		rest.get('https://api.zotero.org/schema', () => {
+			return HttpResponse.json(schema);
 		}),
-		rest.get('https://api.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
-			return res(ctx.json({}));
+		rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+			return HttpResponse.json({});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {
-			return res((res) => {
-				res.headers.set('Total-Results', 1);
-				res.body = JSON.stringify(collections);
-				return res;
+		rest.get('https://api.zotero.org/users/475425/collections', () => {
+			return HttpResponse.json(collections, {
+				headers: { 'Total-Results': '1' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
+		rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			return HttpResponse.json([], {
+				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
+		rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			return HttpResponse.json([], {
+				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
+		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top', () => {
+			return HttpResponse.json([], {
+				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top/tags', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 0);
-				res.body = JSON.stringify([]);
-				return res;
+		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top/tags', () => {
+			return HttpResponse.json([], {
+				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top', (req, res) => {
-			return res(res => {
-				res.status = 404;
-				return res;
+		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top', () => {
+			return HttpResponse.text('', { status: 404 });
+		}),
+		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top/tags', () => {
+			return HttpResponse.text('', { status: 404 });
+		}),
+		rest.get('https://api.zotero.org/users/475425/groups', () => {
+			return HttpResponse.json(groups, {
+				headers: { 'Total-Results': '1' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top/tags', (req, res) => {
-			return res(res => {
-				res.status = 404;
-				return res;
-			});
-		}),
-		rest.get('https://api.zotero.org/users/475425/groups', (req, res) => {
-			return res(res => {
-				res.headers.set('Total-Results', 1);
-				res.body = JSON.stringify(groups);
-				return res;
-			});
-		}),
-		rest.get('https://api.zotero.org/groups/42/collections', (req, res) => {
-			return res((res) => {
-				res.headers.set('Total-Results', 1);
-				res.body = JSON.stringify(groupCollections);
-				return res;
+		rest.get('https://api.zotero.org/groups/42/collections', () => {
+			return HttpResponse.json(groupCollections, {
+				headers: { 'Total-Results': '1' }
 			});
 		}),
 	];

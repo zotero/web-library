@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
+import { rest, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { findByText, getByRole, screen, getByText, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -59,19 +59,17 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 			{ name: 'Export', expanded: true })
 		).toBeInTheDocument();
 
-		let hasBeenPosted = false;
+		let hasBeenRequested = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async (req, res) => {
-				expect(req.url.searchParams.get('format')).toEqual('bibtex');
-				expect(req.url.searchParams.get('includeTrashed')).toEqual('true');
-				expect(req.url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
+			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('format')).toEqual('bibtex');
+				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
 
-				hasBeenPosted = true;
-				return res(res => {
-					res.body = '';
-					return res;
-				});
+				hasBeenRequested = true;
+				return HttpResponse.text('');
 			}),
 		);
 
@@ -79,7 +77,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 		await userEvent.click(bibtexOpt);
 		await waitForPosition();
 
-		expect(hasBeenPosted).toBe(true);
+		expect(hasBeenRequested).toBe(true);
 		expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
 	});
 
@@ -89,18 +87,16 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async (req, res) => {
-				expect(req.url.searchParams.get('include')).toEqual('citation');
-				expect(req.url.searchParams.get('includeTrashed')).toEqual('true');
-				expect(req.url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
-				expect(req.url.searchParams.get('style')).toEqual('modern-language-association');
-				expect(req.url.searchParams.get('locale')).toEqual('en-US');
+			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('include')).toEqual('citation');
+				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
+				expect(url.searchParams.get('style')).toEqual('modern-language-association');
+				expect(url.searchParams.get('locale')).toEqual('en-US');
 
 				hasBeenPosted = true;
-				return res(res => {
-					res.body = JSON.stringify(testUserCitations);
-					return res;
-				});
+				return HttpResponse.json(testUserCitations);
 			}),
 		);
 
@@ -121,22 +117,20 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		let requestsCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async (req, res) => {
-				expect(req.url.searchParams.get('format')).toEqual('bib');
-				expect(req.url.searchParams.get('includeTrashed')).toEqual('true');
-				expect(req.url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
+			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('format')).toEqual('bib');
+				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
 
-				const style = req.url.searchParams.get('style');
-				const locale = req.url.searchParams.get('locale');
+				const style = url.searchParams.get('style');
+				const locale = url.searchParams.get('locale');
 				requestsCounter++;
 
 				expect(style).toBe(requestsCounter === 1 ? 'modern-language-association' : 'turabian-fullnote-bibliography');
 				expect(locale).toBe(requestsCounter <= 2 ? 'en-US' : 'pl-PL');
 
-				return res(res => {
-					res.body = style === 'modern-language-association' ? testUserBibliographyMLA : testUserBibliographyTurabian;
-					return res;
-				});
+				return HttpResponse.xml(style === 'modern-language-association' ? testUserBibliographyMLA : testUserBibliographyTurabian);
 			}),
 		);
 

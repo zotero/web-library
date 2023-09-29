@@ -11,7 +11,7 @@ class ZoteroCssEnvironment extends TestEnvironment {
 			...config,
 			projectConfig: {
 				...config.projectConfig,
-				testEnvironmentOptions: { html }
+				testEnvironmentOptions: { html, customExportConditions: [''] },
 			}
 		};
 		super(config, context);

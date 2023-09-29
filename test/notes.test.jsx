@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
+import { rest, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -60,39 +60,26 @@ describe('Test User\'s library', () => {
 		let hasBeenDeleted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 4);
-					res.body = JSON.stringify(userPicturesRedundant);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', () => {
+				return HttpResponse.json(userPicturesRedundant, {
+					headers: { 'Total-Results': 4 }
 				});
 			}),
-			rest.delete('https://api.zotero.org/users/1/items', (req, res) => {
-				const itemKey = req.url.searchParams.get('itemKey');
+			rest.delete('https://api.zotero.org/users/1/items', ({request}) => {
+				const url = new URL(request.url);
+				const itemKey = url.searchParams.get('itemKey');
 				expect(itemKey).toBe('ZZZZZZZZ');
 				hasBeenDeleted = true;
-				return res(res => {
-					res.status = 204;
-					return res;
-				});
+				return HttpResponse.text('', { status: 204 });
 			}),
-			rest.get('https://api.zotero.org/creatorFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(creatorFields);
-					return res;
-				});
+			rest.get('https://api.zotero.org/creatorFields', () => {
+				return HttpResponse.json(creatorFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeCreatorTypesBook);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesBook);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', (req, res) => {
-				return res(res => {
-					res.body = JSON.stringify(itemTypeFieldsBook);
-					return res;
-				});
+			rest.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsBook);
 			}),
 		);
 
@@ -116,23 +103,18 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/items/new', (req, res) => {
-				const itemKey = req.url.searchParams.get('itemType');
+			rest.get('https://api.zotero.org/items/new', ({request}) => {
+				const url = new URL(request.url);
+				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
-				return res(res => {
-					res.body = JSON.stringify(newItemNote);
-					return res;
-				});
+				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
-				const items = await req.json();
+			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+				const items = await request.json();
 				expect(items[0].itemType).toEqual('note');
 				expect(items[0].collections).toEqual(['WTTJ2J56']);
 				hasBeenPosted = true;
-				return res(res => {
-					res.body = JSON.stringify(testUserAddNewItem);
-					return res;
-				});
+				return HttpResponse.json(testUserAddNewItem);
 			}),
 		);
 
@@ -148,32 +130,25 @@ describe('Test User\'s library', () => {
 		expect(screen.queryByRole('listitem', { name: 'Untitled Note' })).not.toBeInTheDocument();
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 0);
-					res.body = JSON.stringify([]);
-					return res;
+			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': 0 }
 				});
 			}),
-			rest.get('https://api.zotero.org/items/new', (req, res) => {
-				const itemKey = req.url.searchParams.get('itemType');
+			rest.get('https://api.zotero.org/items/new', ({request}) => {
+				const url = new URL(request.url);
+				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
-				return res(res => {
-					res.body = JSON.stringify(newItemNote);
-					return res;
-				});
+				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async (req, res) => {
-				const items = await req.json();
+			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+				const items = await request.json();
 				expect(items).toHaveLength(1);
 				expect(items[0].itemType).toEqual('note');
 				expect(items[0].parentItem).toEqual('VR82JUX8');
 				expect(items[0].collections).toEqual([]);
 				hasBeenPosted = true;
-				return res(res => {
-					res.body = JSON.stringify(testUserAddNewItemNote);
-					return res;
-				});
+				return HttpResponse.json(testUserAddNewItemNote);
 			})
 		);
 

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
+import { rest, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { findByRole, getByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -30,24 +30,20 @@ describe('Unexpected Item Types', () => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
 		server.use(
-			rest.get('https://api.zotero.org/schema', (req, res, ctx) => {
-				return res(ctx.json(schema));
+			rest.get('https://api.zotero.org/schema', () => {
+				return HttpResponse.json(schema);
 			}),
-			rest.get('https://api.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
-				return res(ctx.json({}));
+			rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+				return HttpResponse.json({});
 			}),
-			rest.get('https://api.zotero.org/users/475425/collections', (req, res) => {
-				return res((res) => {
-					res.headers.set('Total-Results', 42);
-					res.body = JSON.stringify([]);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/collections', () => {
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '42' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 0);
-					res.body = JSON.stringify([]);
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' }
 				});
 			}),
 		);
@@ -59,12 +55,10 @@ describe('Unexpected Item Types', () => {
 	test(`Handle unexpected top level annotation`, async () => {
 		let itemsRequested = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 1);
-					res.body = JSON.stringify(annotationItems);
-					itemsRequested = true;
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+				itemsRequested = true;
+				return HttpResponse.json(annotationItems, {
+					headers: { 'Total-Results': '1' }
 				});
 			})
 		);
@@ -84,17 +78,17 @@ describe('Unexpected Item Types', () => {
 	test(`Handle unexpected top level item type`, async () => {
 		let itemsRequested = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 1);
-					res.body = JSON.stringify([
-						{ ...annotationItems[0],
-							data: {
-								...annotationItems[0].data,
-								itemType: 'badItemType'
-						}}]);
-					itemsRequested = true;
-					return res;
+			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+				itemsRequested = true;
+				return HttpResponse.json([
+					{
+						...annotationItems[0],
+						data: {
+							...annotationItems[0].data,
+							itemType: 'badItemType'
+						}
+					}], {
+					headers: { 'Total-Results': '1' }
 				});
 			})
 		);

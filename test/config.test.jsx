@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest } from 'msw'
+import { rest, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, waitFor } from '@testing-library/react'
 
@@ -50,36 +50,30 @@ describe('config', () => {
 		let itemsRequested = false;
 		let tagsRequested = false;
 		server.use(
-			rest.get('https://bazinga.zotero.org/schema', (req, res, ctx) => {
+			rest.get('https://bazinga.zotero.org/schema', () => {
 				schemaRequested = true;
-				return res(ctx.json(schema));
+				return HttpResponse.json(schema);
 			}),
-			rest.get('https://bazinga.zotero.org/users/475425/settings/tagColors', (req, res, ctx) => {
+			rest.get('https://bazinga.zotero.org/users/475425/settings/tagColors', () => {
 				settingsRequested = true;
-				return res(ctx.json({}));
+				return HttpResponse.json({});
 			}),
-			rest.get('https://bazinga.zotero.org/users/475425/collections', (req, res) => {
-				return res((res) => {
-					res.headers.set('Total-Results', 42);
-					res.body = JSON.stringify([]);
-					collectionsRequested = true;
-					return res;
+			rest.get('https://bazinga.zotero.org/users/475425/collections', () => {
+				collectionsRequested = true;
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '42' }
 				});
 			}),
-			rest.get('https://bazinga.zotero.org/users/475425/items/top', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 0);
-					res.body = JSON.stringify([]);
-					itemsRequested = true;
-					return res;
+			rest.get('https://bazinga.zotero.org/users/475425/items/top', () => {
+				itemsRequested = true;
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://bazinga.zotero.org/users/475425/items/top/tags', (req, res) => {
-				return res(res => {
-					res.headers.set('Total-Results', 0);
-					res.body = JSON.stringify([]);
-					tagsRequested = true;
-					return res;
+			rest.get('https://bazinga.zotero.org/users/475425/items/top/tags', () => {
+				tagsRequested = true;
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' }
 				});
 			}),
 		);
