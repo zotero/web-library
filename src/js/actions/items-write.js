@@ -619,7 +619,6 @@ const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => 
 				id
 			});
 
-			console.log({ fileName, md5 });
 			try {
 				let response = await api(config.apiKey, config.apiConfig)
 					.library(libraryKey)
