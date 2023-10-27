@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef, useState } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button } from 'web-common/components';
 
@@ -36,6 +36,14 @@ const NewItemModal = () => {
 		dispatch(triggerEditingItem(item.key, true));
 		setIsBusy(false);
 	}, [collection, dispatch, itemsSource, itemType, libraryKey]);
+
+	const itemTypeOptions = useMemo(() => {
+		const options = itemTypes.map(({ itemType, localized }) => (
+			{ value: itemType, label: localized }
+		));
+		options.sort((a, b) => a.label.localeCompare(b.label));
+		return options;
+	}, [itemTypes]);
 
 	const handleChange = useCallback(() => true, []);
 	const handleCancel = useCallback(() => dispatch(toggleModal(NEW_ITEM, false)), [dispatch]);
@@ -93,9 +101,7 @@ const NewItemModal = () => {
 							className="form-control form-control-sm"
 							onChange={ handleChange }
 							onCommit={ handleSelect }
-							options={ itemTypes.map(({ itemType, localized }) => (
-								{ value: itemType, label: localized }
-							)) }
+							options={ itemTypeOptions }
 							value={ itemType }
 							searchable={ true }
 						/>
