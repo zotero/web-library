@@ -35,12 +35,21 @@ const NewItemSelector = props => {
 	const dispatch = useDispatch();
 	const uploadFileId = useId();
 
-	const primaryItemTypesDesc = useMemo(() => itemTypes.filter(
-		it => primaryItemTypes.includes(it.itemType)
-	), [itemTypes]);
-	const secondaryItemTypesDesc = useMemo(() => itemTypes.filter(
-		it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
-	), [itemTypes]);
+	const primaryItemTypesDesc = useMemo(() => {
+		const primaryTypes = itemTypes.filter(
+			it => primaryItemTypes.includes(it.itemType)
+		);
+		primaryTypes.sort((a, b) => a.localized.localeCompare(b.localized));
+		return primaryTypes;
+
+	}, [itemTypes]);
+	const secondaryItemTypesDesc = useMemo(() => {
+		const secondaryTypes = itemTypes.filter(
+			it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
+		);
+		secondaryTypes.sort((a, b) => a.localized.localeCompare(b.localized));
+		return secondaryTypes;
+	}, [itemTypes]);
 
 	const handleToggleDropdown = useCallback(() => {
 		if(disabled) {
