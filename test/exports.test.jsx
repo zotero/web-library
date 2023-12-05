@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { findByText, getByRole, screen, getByText, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -62,7 +62,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 		let hasBeenRequested = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('format')).toEqual('bibtex');
 				expect(url.searchParams.get('includeTrashed')).toEqual('true');
@@ -87,7 +87,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('include')).toEqual('citation');
 				expect(url.searchParams.get('includeTrashed')).toEqual('true');
@@ -117,7 +117,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		let requestsCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('format')).toEqual('bib');
 				expect(url.searchParams.get('includeTrashed')).toEqual('true');

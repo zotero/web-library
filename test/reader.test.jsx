@@ -2,7 +2,7 @@
 * @jest-environment ./test/utils/zotero-env.js
 */
 import '@testing-library/jest-dom';
-import { rest, HttpResponse, delay } from 'msw';
+import { http, HttpResponse, delay } from 'msw';
 import { setupServer } from 'msw/node';
 import { act, waitFor, fireEvent } from '@testing-library/react';
 
@@ -44,16 +44,16 @@ const noteAnnotation = {
 
 describe('Reader', () => {
 	const handlers = [
-		rest.get('https://api.zotero.org/users/1/items/N2PJUHD6/file/view/url', () => {
+		http.get('https://api.zotero.org/users/1/items/N2PJUHD6/file/view/url', () => {
 			return HttpResponse.text('https://files.zotero.net/some-file-attachment.pdf');
 		}),
-		rest.get('https://files.zotero.net/some-file-attachment.pdf', () => {
+		http.get('https://files.zotero.net/some-file-attachment.pdf', () => {
 			return HttpResponse.text('');
 		}),
-		rest.get('https://api.zotero.org/users/1/settings/tagColors', async () => {
+		http.get('https://api.zotero.org/users/1/settings/tagColors', async () => {
 			return HttpResponse.json({ value: [], version: 0 });
 		}),
-		rest.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async () => {
+		http.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async () => {
 			return HttpResponse.json({ value: 0, version: 0 });
 		}),
 	];
@@ -90,14 +90,14 @@ describe('Reader', () => {
 		let hasRequestedTpl = false;
 		let postCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemType')).toBe('annotation');
 				expect(url.searchParams.get('annotationType')).toBe('note');
 				hasRequestedTpl = true;
 				return HttpResponse.json(newItemAnnotationNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('Z1Z2Z3Z4');
 

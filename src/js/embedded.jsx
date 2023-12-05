@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxAsyncQueue from 'redux-async-queue';
-import ReduxThunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { Provider } from 'react-redux';
 
 import { LOCATION_CHANGE } from 'connected-react-router';
@@ -42,7 +42,7 @@ const init = (element, config = {}) => {
 		createReducers(),
 		composeEnhancers(
 			applyMiddleware(
-				ReduxThunk,
+				thunk,
 				ReduxAsyncQueue
 			)
 		)

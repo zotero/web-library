@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -60,25 +60,25 @@ describe('Test User\'s library', () => {
 		let hasBeenDeleted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', () => {
+			http.get('https://api.zotero.org/users/1/items/Z6HA62VJ/children', () => {
 				return HttpResponse.json(userPicturesRedundant, {
 					headers: { 'Total-Results': 4 }
 				});
 			}),
-			rest.delete('https://api.zotero.org/users/1/items', ({request}) => {
+			http.delete('https://api.zotero.org/users/1/items', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemKey');
 				expect(itemKey).toBe('ZZZZZZZZ');
 				hasBeenDeleted = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			}),
-			rest.get('https://api.zotero.org/creatorFields', () => {
+			http.get('https://api.zotero.org/creatorFields', () => {
 				return HttpResponse.json(creatorFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
 				return HttpResponse.json(itemTypeCreatorTypesBook);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', () => {
+			http.get('https://api.zotero.org/itemTypeFields', () => {
 				return HttpResponse.json(itemTypeFieldsBook);
 			}),
 		);
@@ -103,13 +103,13 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
 				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].itemType).toEqual('note');
 				expect(items[0].collections).toEqual(['WTTJ2J56']);
@@ -130,18 +130,18 @@ describe('Test User\'s library', () => {
 		expect(screen.queryByRole('listitem', { name: 'Untitled Note' })).not.toBeInTheDocument();
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': 0 }
 				});
 			}),
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
 				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items).toHaveLength(1);
 				expect(items[0].itemType).toEqual('note');

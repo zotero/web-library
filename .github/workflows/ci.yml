@@ -10,6 +10,6 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts/hydrogen'
+          node-version: 'lts/iron'
       - run: npm install
       - run: npm test

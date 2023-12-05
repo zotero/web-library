@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -67,13 +67,13 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('journalArticle');
 				return HttpResponse.json(newItemJournalArticle);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].itemType).toEqual('journalArticle');
 				expect(items[0].collections).toEqual(['WTTJ2J56']);
@@ -110,13 +110,13 @@ describe('Test User\'s library', () => {
 		let hasBeenCreated = false;
 
 		server.use(
-			rest.post('https://translate-server.zotero.org/Prod/search', async ({request}) => {
+			http.post('https://translate-server.zotero.org/Prod/search', async ({request}) => {
 				const identifier = await request.text();
 				expect(identifier).toEqual('0312558066');
 				hasBeenSearched = true;
 				return HttpResponse.json(searchByIdentifier);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('UHRGBS8D');
 				expect(items[0].ISBN).toBe('9780312558062');
@@ -124,10 +124,10 @@ describe('Test User\'s library', () => {
 				hasBeenCreated = true;
 				return HttpResponse.json(responseAddByIdentifier);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
 				return HttpResponse.json(itemTypeCreatorTypesBook);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', () => {
+			http.get('https://api.zotero.org/itemTypeFields', () => {
 				return HttpResponse.json(itemTypeFieldsBook);
 			}),
 		);
@@ -187,7 +187,7 @@ describe('Test User\'s library', () => {
 		let hasBeenUpdated = false;
 
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].collections).toEqual(["WTTJ2J56", "4VM2BFHN"]);
@@ -213,13 +213,13 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
 				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toEqual('VR82JUX8');
 				expect(items[0].collections).toEqual([]);
@@ -249,13 +249,13 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				const itemKey = url.searchParams.get('itemType');
 				expect(itemKey).toBe('note');
 				return HttpResponse.json(newItemNote);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toEqual('VR82JUX8');
 				expect(items[0].deleted).toEqual(1);
@@ -293,7 +293,7 @@ describe('Test User\'s library', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].title).toEqual('Effects of diet restriction on life span and age-related changes in dogs');
 				expect(items[0].collections).toEqual(['WTTJ2J56']);

@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { screen, getByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -73,7 +73,7 @@ describe('Item info', () => {
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].date).toBe('2021-10-04');
@@ -105,7 +105,7 @@ describe('Item info', () => {
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].date).toBe('2021-04-10');
@@ -137,7 +137,7 @@ describe('Item info', () => {
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].date).toBe('2021-04-10');
@@ -174,7 +174,7 @@ describe('Item info', () => {
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].date).toBe('2021-10-04');
@@ -210,7 +210,7 @@ describe('Item info', () => {
 		).toHaveTextContent('Journal of the American Veterinary Medical Association');
 
 		server.use(
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('VR82JUX8');
 				expect(items[0].itemType).toBe('radioBroadcast');

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -59,7 +59,7 @@ describe('No file uploads allowed', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': 0 },
 				});

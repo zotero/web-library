@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import fileSaver from 'file-saver';
 import { PDFWorker } from '../src/js/common/pdf-worker.js';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getByRole, screen, queryByRole, waitFor, findByRole, findAllByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -57,13 +57,13 @@ describe('Test User\'s read-only library', () => {
 		expect(screen.getByRole('tab', { name: 'Note', selected: true })).toBeInTheDocument();
 
 		server.use(
-			rest.get('https://api.zotero.org/creatorFields', () => {
+			http.get('https://api.zotero.org/creatorFields', () => {
 				return HttpResponse.json(creatorFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
 				return HttpResponse.json(itemTypeCreatorTypesBook);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', () => {
+			http.get('https://api.zotero.org/itemTypeFields', () => {
 				return HttpResponse.json(itemTypeFieldsBook);
 			}),
 		);
@@ -153,12 +153,12 @@ describe('Test User\'s read-only library', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json(testUserChildren, {
 					headers: { 'Total-Results': 2 }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/file/view/url', () => {
+			http.get('https://api.zotero.org/users/1/items/VG79HDDM/file/view/url', () => {
 				return HttpResponse.text('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf');
 			})
 		);
@@ -184,10 +184,10 @@ describe('Test User\'s read-only library', () => {
 		expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('href', '/testuser/collections/WTTJ2J56/items/VR82JUX8/attachment/VG79HDDM/reader');
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VG79HDDM/children', () => {
 				return HttpResponse.json([]);
 			}),
-			rest.get('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf', () => {
+			http.get('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf', () => {
 				return HttpResponse.text('');
 			})
 		);

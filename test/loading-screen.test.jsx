@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest, HttpResponse, delay } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, waitFor } from '@testing-library/react'
 
@@ -19,15 +19,15 @@ describe('Loading Screen', () => {
 
 	beforeAll(() => {
 		const handlers = [
-			rest.get('https://api.zotero.org/schema', () => {
+			http.get('https://api.zotero.org/schema', () => {
 				schemaRequested = true;
 				return HttpResponse.json(schema);
 			}),
-			rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				settingsRequested = true;
 				return HttpResponse.json({});
 			}),
-			rest.get('https://api.zotero.org/users/475425/collections', async ({ request }) => {
+			http.get('https://api.zotero.org/users/475425/collections', async ({ request }) => {
 				// first request (`start` is null or 0) is immediate,
 				// subsequent requests are delayed so we get a spinner
 				await delay(new URL(request.url).searchParams.get('start') ? 100 : 0);
@@ -36,14 +36,14 @@ describe('Loading Screen', () => {
 					headers: { 'Total-Results': '5142' },
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/items/top', () => {
 				return HttpResponse.json([], {
 					headers: {
 						'Total-Results': '0',
 					},
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
 				return HttpResponse.json([], {
 					headers: {
 						'Total-Results': '0',

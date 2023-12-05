@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { findAllByRole, getByRole, screen, queryByRole, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -74,12 +74,12 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
 				return HttpResponse.json(searchResultsTags, {
 					headers: { 'Total-Results': '1' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/items/top', () => {
 				return HttpResponse.json(searchResults, {
 					headers: { 'Total-Results': '15' }
 				});
@@ -113,12 +113,12 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', () => {
 				return HttpResponse.json(collectionItems, {
 					headers: { 'Total-Results': '12' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', () => {
 				return HttpResponse.json(collectionTags, {
 					headers: { 'Total-Results': '6' }
 				});
@@ -178,12 +178,12 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/items/top', () => {
 				return HttpResponse.json(tagResults, {
 					headers: { 'Total-Results': '1' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
 				return HttpResponse.json(tagResultsTags, {
 					headers: { 'Total-Results': '7' }
 				});
@@ -218,19 +218,19 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		server.use(
-			rest.get('https://api.zotero.org/itemTypes', () => {
+			http.get('https://api.zotero.org/itemTypes', () => {
 				return HttpResponse.json(itemTypes);
 			}),
-			rest.get('https://api.zotero.org/itemFields', () => {
+			http.get('https://api.zotero.org/itemFields', () => {
 				return HttpResponse.json(itemFields);
 			}),
-			rest.get('https://api.zotero.org/creatorFields', () => {
+			http.get('https://api.zotero.org/creatorFields', () => {
 				return HttpResponse.json(itemFields);
 			}),
-			rest.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
 				return HttpResponse.json(itemTypeCreatorTypesFilm);
 			}),
-			rest.get('https://api.zotero.org/itemTypeFields', () => {
+			http.get('https://api.zotero.org/itemTypeFields', () => {
 				return HttpResponse.json(itemTypeFieldsFilm);
 			}),
 		);

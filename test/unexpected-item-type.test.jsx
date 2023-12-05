@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { rest, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { findByRole, getByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -30,18 +30,18 @@ describe('Unexpected Item Types', () => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
 		server.use(
-			rest.get('https://api.zotero.org/schema', () => {
+			http.get('https://api.zotero.org/schema', () => {
 				return HttpResponse.json(schema);
 			}),
-			rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				return HttpResponse.json({});
 			}),
-			rest.get('https://api.zotero.org/users/475425/collections', () => {
+			http.get('https://api.zotero.org/users/475425/collections', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '42' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' }
 				});
@@ -55,7 +55,7 @@ describe('Unexpected Item Types', () => {
 	test(`Handle unexpected top level annotation`, async () => {
 		let itemsRequested = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/items/top', () => {
 				itemsRequested = true;
 				return HttpResponse.json(annotationItems, {
 					headers: { 'Total-Results': '1' }
@@ -78,7 +78,7 @@ describe('Unexpected Item Types', () => {
 	test(`Handle unexpected top level item type`, async () => {
 		let itemsRequested = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/475425/items/top', () => {
+			http.get('https://api.zotero.org/users/475425/items/top', () => {
 				itemsRequested = true;
 				return HttpResponse.json([
 					{

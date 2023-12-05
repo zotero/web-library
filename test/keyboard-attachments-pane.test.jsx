@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom';
 import { act, getByRole, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
 import { renderWithProviders } from './utils/render';
@@ -43,10 +43,10 @@ describe('', () => {
 		window.location = new URL('http://localhost/testuser/items/3JCLFUG4/attachment/37V7V4NT/library');
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/37V7V4NT/file/view/url', () => {
+			http.get('https://api.zotero.org/users/1/items/37V7V4NT/file/view/url', () => {
 				return HttpResponse.text('https://files.zotero.net/abcdefgh/18726.html');
 			}),
-			rest.get('https://api.zotero.org/users/1/items/K24TUDDL/file/view/url', () => {
+			http.get('https://api.zotero.org/users/1/items/K24TUDDL/file/view/url', () => {
 				return HttpResponse.text('https://files.zotero.net/abcdefgh/Silver%20-%202005%20-%20Cooperative%20pathfinding.pdf');
 			})
 		);

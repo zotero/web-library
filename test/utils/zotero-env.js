@@ -1,6 +1,6 @@
-import { TestEnvironment } from 'jest-environment-jsdom';
+import EnvWithFetch from './env-with-fetch.js';
 
-class ZoteroCssEnvironment extends TestEnvironment {
+class ZoteroCssEnvironment extends EnvWithFetch {
 	constructor(config, context) {
 		const html = `<!DOCTYPE html>
  		 	<html lang="en">

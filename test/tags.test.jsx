@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -49,12 +49,12 @@ describe('Tags', () => {
 		let libVersion = state.libraries.u1.sync.version;
 		let postCounter = 0;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/tags', ({request}) => {
+			http.get('https://api.zotero.org/users/1/tags', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('qmode')).toEqual('startswith');
 				expect(url.searchParams.get('q')).toEqual('t');
@@ -64,7 +64,7 @@ describe('Tags', () => {
 					headers: { 'Total-Results': '2' }
 				});
 			}),
-			rest.patch('https://api.zotero.org/users/1/items/VR82JUX8', async ({request}) => {
+			http.patch('https://api.zotero.org/users/1/items/VR82JUX8', async ({request}) => {
 				const patch = await request.json();
 				postCounter++;
 				if(postCounter === 1) {
@@ -73,12 +73,12 @@ describe('Tags', () => {
 					expect(patch.tags).toContainEqual({ tag: 'to read' });
 					expect(patch.tags).toContainEqual({ tag: 'today' });
 				}
-				return HttpResponse.text('', {
+				return new HttpResponse(null, {
 					status: 204,
 					headers: { 'Last-Modified-Version': ++libVersion }
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', () => {
 				return HttpResponse.json(testUserTagsForItem, {
 					headers: { 'Total-Results': '1' }
 				});
@@ -142,12 +142,12 @@ describe('Tags', () => {
 		const user = userEvent.setup();
 		let hasBeenPosted = false;
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', () => {
+			http.get('https://api.zotero.org/users/1/tags', () => {
 				return HttpResponse.json(testUserManageTags, {
 					headers: { 'Total-Results': '8' }
 				});
 			}),
-			rest.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
+			http.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
 				const tagColors = await request.json();
 				expect(tagColors.value).toHaveLength(5);
 				expect(tagColors.value).toContainEqual({
@@ -155,7 +155,7 @@ describe('Tags', () => {
 					'color': '#A28AE5'
 				});
 				hasBeenPosted = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			})
 		);
 
@@ -182,12 +182,12 @@ describe('Tags', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', () => {
+			http.get('https://api.zotero.org/users/1/tags', () => {
 				return HttpResponse.json(testUserManageTags, {
 					headers: { 'Total-Results': '8' }
 				});
 			}),
-			rest.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
+			http.put('https://api.zotero.org/users/1/settings/tagColors', async ({request}) => {
 				const tagColors = await request.json();
 				expect(tagColors.value).toHaveLength(3);
 				expect(tagColors.value).not.toContainEqual({
@@ -195,7 +195,7 @@ describe('Tags', () => {
 					'color': '#FF6666'
 				});
 				hasBeenPosted = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			})
 		);
 
@@ -217,7 +217,7 @@ describe('Tags', () => {
 		await waitForPosition();
 		const user = userEvent.setup();
 		server.use(
-			rest.get('https://api.zotero.org/users/1/tags', () => {
+			http.get('https://api.zotero.org/users/1/tags', () => {
 				return HttpResponse.json(testUserManageTags, {
 					headers: { 'Total-Results': '8' }
 				});

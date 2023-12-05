@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { findByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -56,7 +56,7 @@ describe('Test User: Collections', () => {
 
 		let hasBeenPosted = false;
 		server.use(
-			rest.post('https://api.zotero.org/users/1/collections', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/collections', async ({request}) => {
 				const collections = await request.json();
 				expect(collections[0].name).toBe('Irish Setter');
 				expect(collections[0].parentCollection).toBe('WTTJ2J56');
@@ -89,11 +89,11 @@ describe('Test User: Collections', () => {
 
 		let hasBeenPatched = false;
 		server.use(
-			rest.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
+			http.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
 				const patch = await request.json();
 				expect(patch.name).toBe('Cats');
 				hasBeenPatched = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			}),
 		);
 
@@ -114,11 +114,11 @@ describe('Test User: Collections', () => {
 
 		let hasBeenPatched = false;
 		server.use(
-			rest.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
+			http.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
 				const patch = await request.json();
 				expect(patch.name).toBe('Cats');
 				hasBeenPatched = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			}),
 		);
 
@@ -138,9 +138,9 @@ describe('Test User: Collections', () => {
 
 		let hasBeenDeleted = false;
 		server.use(
-			rest.delete('https://api.zotero.org/users/1/collections/CSB4KZUU', async () => {
+			http.delete('https://api.zotero.org/users/1/collections/CSB4KZUU', async () => {
 				hasBeenDeleted = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			}),
 		);
 
@@ -175,11 +175,11 @@ describe('Test User: Collections', () => {
 		let hasBeenPatched = false;
 
 		server.use(
-			rest.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
+			http.patch('https://api.zotero.org/users/1/collections/WTTJ2J56', async ({request}) => {
 				const patch = await request.json();
 				expect(patch.parentCollection).toBe('CSB4KZUU');
 				hasBeenPatched = true;
-				return HttpResponse.text('', { status: 204 });
+				return new HttpResponse(null, { status: 204 });
 			}),
 		);
 

@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse, delay } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import { setupServer } from 'msw/node';
 import { findByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -51,18 +51,18 @@ describe('Attachments', () => {
 		let hasBeenUploaded = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemType')).toBe('attachment');
 				expect(url.searchParams.get('linkMode')).toBe('imported_file');
 				return HttpResponse.json(newItemFileAttachment);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].itemType).toBe('attachment');
 				expect(items[0].linkMode).toBe('imported_file');
@@ -71,14 +71,14 @@ describe('Attachments', () => {
 				hasBeenPosted = true;
 				return HttpResponse.json(testUserAddNewAttachmentFile);
 			}),
-			rest.post('https://api.zotero.org/users/1/items/FFIILLEE/file', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items/FFIILLEE/file', async ({request}) => {
 				const body = await request.text();
 				expect(body).toMatch(/filename=hello.pdf/);
 				hasBeenUploaded = true;
 				await delay(100); // ensure "ongoing" state is shown
 				return HttpResponse.json({ exists: 1 });
 			}),
-			rest.get('https://api.zotero.org/users/1/items', ({request}) => {
+			http.get('https://api.zotero.org/users/1/items', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemKey')).toBe('VR82JUX8');
 				return HttpResponse.json(testUserAddAttachamentFileRefetchParent, {
@@ -118,18 +118,18 @@ describe('Attachments', () => {
 		let hasBeenPosted = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemType')).toBe('attachment');
 				expect(url.searchParams.get('linkMode')).toBe('linked_url');
 				return HttpResponse.json(newItemLinkedAttachment);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].itemType).toBe('attachment');
 				expect(items[0].linkMode).toBe('linked_url');
@@ -187,18 +187,18 @@ describe('Attachments', () => {
 		let hasBeenUploaded = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' }
 				});
 			}),
-			rest.get('https://api.zotero.org/items/new', ({request}) => {
+			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemType')).toBe('attachment');
 				expect(url.searchParams.get('linkMode')).toBe('imported_file');
 				return HttpResponse.json(newItemFileAttachment);
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				expect(items[0].itemType).toBe('attachment');
 				expect(items[0].linkMode).toBe('imported_file');
@@ -207,14 +207,14 @@ describe('Attachments', () => {
 				hasBeenPosted = true;
 				return HttpResponse.json(testUserAddNewAttachmentFile);
 			}),
-			rest.post('https://api.zotero.org/users/1/items/FFIILLEE/file', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items/FFIILLEE/file', async ({request}) => {
 				const body = await request.text();
 				expect(body).toMatch(/filename=hello.pdf/);
 				hasBeenUploaded = true;
 				await delay(100); // ensure "ongoing" state is shown
 				return HttpResponse.json({ exists: 1 });
 			}),
-			rest.get('https://api.zotero.org/users/1/items', ({request}) => {
+			http.get('https://api.zotero.org/users/1/items', ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('itemKey')).toBe('VR82JUX8');
 				return HttpResponse.json(testUserAddAttachamentFileRefetchParent, {

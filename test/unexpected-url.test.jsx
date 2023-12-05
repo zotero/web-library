@@ -2,7 +2,7 @@
 * @jest-environment ./test/utils/zotero-env.js
 */
 import '@testing-library/jest-dom'
-import { rest, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { getByRole, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -22,49 +22,49 @@ applyAdditionalJestTweaks();
 
 describe('Unexpected URL', () => {
 	const handlers = [
-		rest.get('https://api.zotero.org/schema', () => {
+		http.get('https://api.zotero.org/schema', () => {
 			return HttpResponse.json(schema);
 		}),
-		rest.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+		http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 			return HttpResponse.json({});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections', () => {
+		http.get('https://api.zotero.org/users/475425/collections', () => {
 			return HttpResponse.json(collections, {
 				headers: { 'Total-Results': '1' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/items/top', () => {
+		http.get('https://api.zotero.org/users/475425/items/top', () => {
 			return HttpResponse.json([], {
 				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+		http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
 			return HttpResponse.json([], {
 				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top', () => {
+		http.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top', () => {
 			return HttpResponse.json([], {
 				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top/tags', () => {
+		http.get('https://api.zotero.org/users/475425/collections/KCUHMRNZ/items/top/tags', () => {
 			return HttpResponse.json([], {
 				headers: { 'Total-Results': '0' }
 			});
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top', () => {
+		http.get('https://api.zotero.org/users/475425/collections/12345678/items/top', () => {
 			return HttpResponse.text('', { status: 404 });
 		}),
-		rest.get('https://api.zotero.org/users/475425/collections/12345678/items/top/tags', () => {
+		http.get('https://api.zotero.org/users/475425/collections/12345678/items/top/tags', () => {
 			return HttpResponse.text('', { status: 404 });
 		}),
-		rest.get('https://api.zotero.org/users/475425/groups', () => {
+		http.get('https://api.zotero.org/users/475425/groups', () => {
 			return HttpResponse.json(groups, {
 				headers: { 'Total-Results': '1' }
 			});
 		}),
-		rest.get('https://api.zotero.org/groups/42/collections', () => {
+		http.get('https://api.zotero.org/groups/42/collections', () => {
 			return HttpResponse.json(groupCollections, {
 				headers: { 'Total-Results': '1' }
 			});

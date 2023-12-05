@@ -3,7 +3,7 @@
 */
 
 import '@testing-library/jest-dom';
-import { rest, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
@@ -59,15 +59,15 @@ describe('Group libraries', () => {
 		let fileUploadRequests = false;
 
 		server.use(
-			rest.get('https://api.zotero.org/groups/5119976/collections', async () => {
+			http.get('https://api.zotero.org/groups/5119976/collections', async () => {
 				return HttpResponse.json(testGroupCollections, {
 					headers: { 'Total-Results': 3 },
 				});
 			}),
-			rest.get('https://api.zotero.org/groups/5119976/settings/tagColors', async () => {
+			http.get('https://api.zotero.org/groups/5119976/settings/tagColors', async () => {
 				return HttpResponse.json({});
 			}),
-			rest.post('https://api.zotero.org/groups/5119976/items', async ({request}) => {
+			http.post('https://api.zotero.org/groups/5119976/items', async ({request}) => {
 				const items = await request.json();
 				groupItemsPostCount++;
 				if(groupItemsPostCount === 1) {
@@ -90,7 +90,7 @@ describe('Group libraries', () => {
 					});
 				}
 			}),
-			rest.post('https://api.zotero.org/users/1/items', async ({request}) => {
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
 				const items = await request.json();
 				userItemsPostCount++;
 				if(userItemsPostCount === 1) {
@@ -102,19 +102,19 @@ describe('Group libraries', () => {
 				}
 				throw new Error('Unexpected request');
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VR82JUX8/children', async () => {
+			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', async () => {
 				return HttpResponse.json(testUserChildren, {
 					headers: { 'Total-Results': '2' },
 				});
 			}),
-			rest.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async ({request}) => {
+			http.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async ({request}) => {
 				fileUploadRequests++;
 				expect(await request.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf&filesize=248058&mtime=1673607166000');
 				return HttpResponse.json({ exists: 1 }, {
 					headers: { 'Last-Modified-Version': ++groupLibVersion },
 				});
 			}),
-			rest.get('https://api.zotero.org/users/1/items/VG79HDDM/children', async () => {
+			http.get('https://api.zotero.org/users/1/items/VG79HDDM/children', async () => {
 				return HttpResponse.json(testUserAttachmentAnnotations, {
 					headers: { 'Total-Results': 4 },
 				});
