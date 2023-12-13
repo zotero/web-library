@@ -21,6 +21,16 @@ const calculateDerivedData = (item, { meta, tagColors }) => {
 	return item;
 }
 
+const discardIfOldVersion = (newItems, oldItems) => {
+	const result = {};
+	for(const key of Object.keys(newItems)) {
+		if(!oldItems[key] || newItems[key].version >= oldItems[key].version) {
+			result[key] = newItems[key];
+		}
+	}
+	return result;
+}
+
 const items = (state = {}, action, metaAndTags) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
@@ -65,7 +75,7 @@ const items = (state = {}, action, metaAndTags) => {
 		case RECEIVE_TRASH_ITEMS:
 			return {
 				...state,
-				...indexByKey(calculateDerivedData(action.items, metaAndTags), 'key')
+				...discardIfOldVersion(indexByKey(calculateDerivedData(action.items, metaAndTags), 'key'), state)
 			};
 		case RECEIVE_UPLOAD_ATTACHMENT:
 			return {

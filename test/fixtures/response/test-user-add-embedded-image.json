@@ -1,0 +1,52 @@
+{
+    "successful": {
+        "0": {
+            "key": "EMBEDIMG",
+            "version": 158,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/EMBEDIMG",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/EMBEDIMG",
+                    "type": "text/html"
+                },
+                "up": {
+                    "href": "https://api.zotero.org/users/1/items/GNVWD3U4",
+                    "type": "application/json"
+                }
+            },
+            "meta": {},
+            "data": {
+                "key": "EMBEDIMG",
+                "version": 158,
+                "parentItem": "GNVWD3U4",
+                "itemType": "attachment",
+                "linkMode": "embedded_image",
+                "contentType": "image/gif",
+                "filename": "image.gif",
+                "md5": null,
+                "mtime": null,
+                "dateAdded": "2023-12-13T19:16:54Z",
+                "dateModified": "2023-12-13T19:16:54Z"
+            }
+        }
+    },
+    "success": {
+        "0": "EMBEDIMG"
+    },
+    "unchanged": {},
+    "failed": {}
+}
