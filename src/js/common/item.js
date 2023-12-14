@@ -24,6 +24,9 @@ const getAttachmentIcon = ({ linkMode, contentType }) => {
 	if (contentType === 'application/pdf' && ['linked_file', 'imported_file', 'imported_url'].includes(linkMode)) {
 		return linkMode === 'linked_file' ? 'pdf-linked' : 'pdf';
 	}
+	if (contentType === 'application/epub+zip' && ['linked_file', 'imported_file', 'imported_url'].includes(linkMode)) {
+		return linkMode === 'linked_file' ? 'epub-linked' : 'epub';
+	}
 
 	switch(linkMode) {
 		case 'linked_url':
@@ -48,6 +51,8 @@ const getAttachmentColumnIcon = item => {
 		const { attachmentType, attachmentSize = null } = bestAttachment
 		if(attachmentType === 'application/pdf' ) {
 			return 'pdf';
+		} else if (attachmentType === 'application/epub+zip') {
+			return 'epub';
 		} else if(attachmentType === 'text/html' && attachmentSize === null) {
 			return 'webpage-snapshot';
 		} else {
