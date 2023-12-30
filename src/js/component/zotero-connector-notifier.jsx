@@ -2,12 +2,11 @@ import { Fragment, memo, useEffect, useMemo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSelector, shallowEqual } from 'react-redux';
 
-import { get } from '../utils';
 import { useSourceData } from '../hooks';
 
 const mapItemKeysToTitles = (keys, selectedItemsKeys = [], items) =>
 	keys.reduce((acc, ik) => {
-		if(!(ik in items)) {
+		if (!items || !(ik in items)) {
 			return acc;
 		}
 		const title = items[ik][Symbol.for('derived')]?.title;
@@ -24,7 +23,7 @@ const ZoteroConnectorNotifier = () => {
 	const selectedItemsKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 	const tags = useSelector(state => state.current.tags, shallowEqual);
 	const { keys: itemKeysCurrentSource } = useSourceData();
-	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], null), shallowEqual);
+	const items = useSelector(state => state.libraries?.[libraryKey]?.items, shallowEqual);
 	const itemTitles = useMemo(
 		() => mapItemKeysToTitles((itemKeysCurrentSource || []), selectedItemsKeys, items),
 		[itemKeysCurrentSource, items, selectedItemsKeys]
