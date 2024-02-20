@@ -134,6 +134,7 @@ const Reader = () => {
 	const dispatch = useDispatch();
 	const iframeRef = useRef(null);
 	const reader = useRef(null);
+	const editedAnnotations = useRef(new Set());
 	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const attachmentKey = useSelector(state => {
@@ -295,6 +296,8 @@ const Reader = () => {
 			localizedStrings: strings,
 			showAnnotations: true,
 			onSaveAnnotations: (annotations) => {
+				const annotationKeys = annotations.map(a => a.id);
+				annotationKeys.forEach(ak => editedAnnotations.current.add(ak));
 				dispatch(postAnnotationsFromReader(annotations, attachmentKey));
 			},
 			onDeleteAnnotations: (annotationIds) => {
@@ -422,6 +425,12 @@ const Reader = () => {
 				return;
 			}
 			const changedAnnotations = annotations.filter(a => {
+				if (editedAnnotations.current.has(a.key)) {
+					editedAnnotations.current.delete(a.key);
+					return false;
+				}
+				return true;
+			}).filter(a => {
 				return !deepEqual(a, prevAnnotations.find(pa => pa.key === a.key))
 			});
 			reader.current.setAnnotations(getProcessedAnnotations(changedAnnotations));
