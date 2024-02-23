@@ -80,6 +80,7 @@ const config = {
 				'node_modules/react-dnd*/**',
 				'node_modules/dnd-multi-backend/**',
 				'node_modules/react-redux/**',
+				'node_modules/@reduxjs/**',
 			],
 			babelHelpers: 'bundled'
 		}),
