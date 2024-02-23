@@ -58,13 +58,18 @@ const config = {
 			mainFields: ['browser', 'main'],
 			extensions: ['.js', '.jsx'],
 		}),
-		json(),
-		commonjs(),
 		replace({
 			preventAssignment: true,
-			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
-			'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default')
+			objectGuards: true,
+			delimiters: ['', ''],
+			values: {
+				'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
+				"process.env['NODE_ENV']": JSON.stringify(process.env.NODE_ENV ?? 'development'),
+				'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default')
+			}
 		}),
+		json(),
+		commonjs(),
 		babel({
 			babelrc: false,
 			include: [
