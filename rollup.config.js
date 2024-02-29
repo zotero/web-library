@@ -81,6 +81,8 @@ const config = {
 				'node_modules/dnd-multi-backend/**',
 				'node_modules/react-redux/**',
 				'node_modules/@reduxjs/**',
+				'node_modules/immer/**',
+				'node_modules/reselect/**',
 			],
 			babelHelpers: 'bundled'
 		}),
