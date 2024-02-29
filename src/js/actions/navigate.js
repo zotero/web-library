@@ -17,6 +17,21 @@ const pushEmbedded = (path) => ({
 	}
 });
 
+const currentToPath = current => ({
+	attachmentKey: current.attachmentKey,
+	collection: current.collectionKey,
+	items: current.itemKeys,
+	library: current.libraryKey,
+	noteKey: current.noteKey,
+	publications: current.isMyPublications,
+	qmode: current.qmode,
+	search: current.search,
+	tags: current.tags,
+	trash: current.isTrash,
+	view: current.view,
+	location: current.location,
+});
+
 const navigate = (path, isAbsolute = false) => {
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
@@ -27,22 +42,24 @@ const navigate = (path, isAbsolute = false) => {
 			dispatch(pushFn(configuredPath));
 		} else {
 			const updatedPath = {
-				attachmentKey: current.attachmentKey,
-				collection: current.collectionKey,
-				items: current.itemKeys,
-				library: current.libraryKey,
-				noteKey: current.noteKey,
-				publications: current.isMyPublications,
-				qmode: current.qmode,
-				search: current.search,
-				tags: current.tags,
-				trash: current.isTrash,
-				view: current.view,
+				...currentToPath(current),
 				...path
 			};
 			const configuredPath = makePath(config, updatedPath);
 			dispatch(pushFn(configuredPath));
 		}
+	}
+};
+
+const openInReader = (path) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const readerPath = makePath(state.config, {
+			...path,
+			view: 'reader',
+		});
+
+		return window.open(readerPath);
 	}
 };
 
@@ -235,4 +252,4 @@ const redirectIfCollectionNotFound = () => {
 	}
 }
 
-export { navigate, navigateExitSearch, redirectIfCollectionNotFound, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };
+export { navigate, navigateExitSearch, openInReader, redirectIfCollectionNotFound, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };

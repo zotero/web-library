@@ -1,18 +1,10 @@
 import { fetchAllChildItems, fetchChildItems, getAttachmentUrl } from '.';
-import { cleanDOI, cleanURL, get, getDOIURL, openDelayedURL } from '../utils';
+import { cleanDOI, cleanURL, get, getDOIURL, getItemFromApiUrl, openDelayedURL } from '../utils';
 import { makePath } from '../common/navigation';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { REQUEST_EXPORT_PDF, RECEIVE_EXPORT_PDF, ERROR_EXPORT_PDF  } from '../constants/actions';
 import { saveAs } from 'file-saver';
 import { READER_CONTENT_TYPES } from '../constants/reader';
-
-const extractItemKey = url => {
-	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
-	if(matchResult) {
-		return matchResult[1];
-	}
-	return null;
-}
 
 const tryGetFirstLink = itemKey => {
 	return async (dispatch, getState) => {
@@ -83,7 +75,7 @@ const pickBestItemAction = itemKey => {
 		const current = state.current;
 		const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 		if(attachment) {
-			const attachmentItemKey = extractItemKey(attachment.href);
+			const attachmentItemKey = getItemFromApiUrl(attachment.href);
 			if (Object.keys(READER_CONTENT_TYPES).includes(attachment.attachmentType)) {
 				// "best" attachment is PDF, open in reader
 				const readerPath = makePath(state.config, {

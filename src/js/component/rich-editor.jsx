@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
 
-import { createAttachments, getAttachmentUrl, navigate } from '../actions';
+import { createAttachments, getAttachmentUrl, navigate, openInReader } from '../actions';
 import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
@@ -109,10 +109,20 @@ const RichEditor = memo(forwardRef((props, ref) => {
 			case 'showCitationItem':
 				handleShowCitationItem(event.data?.message?.citation?.citationItems);
 				break;
+			case 'openCitationPage': {
+				const { uris, locator } = event.data?.message?.citation?.citationItems?.[0] || {};
+				if(uris?.length === 1) {
+					const { libraryKey, itemKey } = getItemFromCanonicalUrl(uris[0]) ?? {};
+					if(libraryKey && itemKey) {
+						dispatch(openInReader({ items: itemKey, library: libraryKey, location: { pageNumber: locator } }));
+					}
+				}
+				break;
+			}
 			default:
 				break;
 		}
-	}, [isReadOnly, handleSubscription, handleImportImages, handleShowCitationItem, onEdit, changeIfDifferent, focusEditor]);
+	}, [isReadOnly, handleSubscription, handleImportImages, handleShowCitationItem, onEdit, changeIfDifferent, focusEditor, dispatch]);
 
 	// handles iframe loaded once, installed on mount, never updated, doesn't need useCallback deps
 	const handleIframeLoaded = useCallback(() => {

@@ -1,0 +1,142 @@
+[
+    {
+        "key": "4KTXPJNC",
+        "version": 287,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/4KTXPJNC",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/4KTXPJNC",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/N2PJUHD6",
+                "type": "application/json"
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "4KTXPJNC",
+            "version": 287,
+            "parentItem": "N2PJUHD6",
+            "itemType": "annotation",
+            "annotationType": "note",
+            "annotationComment": "Blue note",
+            "annotationColor": "#2ea8e5",
+            "annotationPageLabel": "1",
+            "annotationSortIndex": "00000|000171|00055",
+            "annotationPosition": "{\"pageIndex\":0,\"rects\":[[535.439,804.318,557.439,826.318]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-08-23T13:36:13Z",
+            "dateModified": "2023-08-23T13:36:44Z"
+        }
+    },
+    {
+        "key": "YN445PZK",
+        "version": 287,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/YN445PZK",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/YN445PZK",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/N2PJUHD6",
+                "type": "application/json"
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "YN445PZK",
+            "version": 287,
+            "parentItem": "N2PJUHD6",
+            "itemType": "annotation",
+            "annotationType": "ink",
+            "annotationComment": "",
+            "annotationColor": "#e56eee",
+            "annotationPageLabel": "2",
+            "annotationSortIndex": "00001|000047|00055",
+            "annotationPosition": "{\"pageIndex\":1,\"width\":2,\"paths\":[[295.926,605.96,290.931,605.461,286.555,602.618,284.335,597.943,285.189,592.588,287.902,588.189,290.604,583.88,295.574,582.219,300.587,582.163,305.848,583.805,309.771,587.323,310.367,592.392,307.589,597.076,303.99,601.064,299.423,603.667,298.06,604.36],[340.217,599.557,335.665,596.673,332.888,592.386,334.659,587.521,338.496,584.074,343.185,582.215,347.862,584.333,350.309,589.273,351.364,594.425,348.298,598.414,343.954,601.361,339.15,601.691],[322.607,581.947,322.395,576.874,322.123,571.769,322.279,566.641,323.32,561.206,323.675,559.001],[289.522,572.342,289.923,566.925,290.314,561.651,290.702,556.535,291.101,551.29,296.277,549.719,301.523,549.245,306.987,548.863,312.446,548.478,317.679,548.299,322.792,548.175,328.299,548.036,333.679,547.896,338.727,547.846,344.189,547.726,349.054,549.139,351.15,554.125,352.927,559.144,353.148,564.318,353.105,569.65,353.024,575.01,353.024,578.745]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-08-23T13:36:00Z",
+            "dateModified": "2023-08-23T13:36:05Z"
+        }
+    },
+    {
+        "key": "Z7RR8LVC",
+        "version": 287,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/Z7RR8LVC",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/Z7RR8LVC",
+                "type": "text/html"
+            },
+            "up": {
+                "href": "https://api.zotero.org/users/1/items/N2PJUHD6",
+                "type": "application/json"
+            }
+        },
+        "meta": {},
+        "data": {
+            "key": "Z7RR8LVC",
+            "version": 287,
+            "parentItem": "N2PJUHD6",
+            "itemType": "annotation",
+            "invalidProp": 1,
+            "annotationType": "underline",
+            "annotationText": "RETRIEVER",
+            "annotationComment": "Awesome doggo",
+            "annotationColor": "#a28ae5",
+            "annotationPageLabel": "1",
+            "annotationSortIndex": "00000|000062|00143",
+            "annotationPosition": "{\"pageIndex\":0,\"rects\":[[121.86,726.564,189.132,738.276]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2023-08-23T13:35:01Z",
+            "dateModified": "2023-08-23T13:35:12Z"
+        }
+    }
+]

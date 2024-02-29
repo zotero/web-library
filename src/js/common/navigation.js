@@ -13,7 +13,10 @@ const tagsToUrlPart = tags => tags.map(t => encodeURIComponent(t)).join(',');
 
 const makePath = (config, { library = null, collection = null,
 	items = null, trash = false, publications = false, tags = null,
-	search = null, qmode = null, view = null, noteKey = null, attachmentKey = null } = {}) => {
+	search = null, qmode = null, view = null, noteKey = null, attachmentKey = null,
+	location = null } = {}
+	) => {
+
 	const path = [];
 
 	if(library !== null) {
@@ -65,6 +68,11 @@ const makePath = (config, { library = null, collection = null,
 
 	if(view) {
 		path.push(view);
+	}
+
+	if (location && ['pageNumber', 'annotationID', 'position', 'href'].includes(Object.keys(location)[0])) {
+		path.push(Object.keys(location)[0])
+		path.push(location[Object.keys(location)[0]])
 	}
 
 	return '/' + path.join('/');

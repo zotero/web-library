@@ -84,6 +84,14 @@ const getItemFromCanonicalUrl = url => {
 	return null;
 }
 
+const getItemFromApiUrl = url => {
+	const matchResult = url.match(/\/items\/([A-Z0-9]{8})/);
+	if (matchResult) {
+		return matchResult[1];
+	}
+	return null;
+}
+
 const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true) => {
 	if (!(relationType in relations)) {
 		return [];
@@ -484,6 +492,7 @@ export {
     getFieldNameFromSortKey,
     getItemCanonicalUrl,
     getItemFromCanonicalUrl,
+	getItemFromApiUrl,
     getLibraryKeyFromTopic,
     getNextSibling,
     getPrevSibling,

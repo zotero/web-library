@@ -13,8 +13,7 @@ import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
 	deleteItems, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, tryGetAttachmentURL,
-	patchAttachment, postAnnotationsFromReader, uploadAttachment, updateLibrarySettings,
-	preferenceChange
+	patchAttachment, postAnnotationsFromReader,  uploadAttachment, updateLibrarySettings, preferenceChange
 } from '../actions';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
@@ -22,6 +21,7 @@ import { strings } from '../constants/strings.js';
 import TagPicker from './item-details/tag-picker.jsx';
 import { READER_CONTENT_TYPES } from '../constants/reader.js';
 import Portal from './portal';
+import { getItemFromApiUrl } from '../utils';
 
 const PAGE_SIZE = 100;
 
@@ -102,6 +102,10 @@ PopupPortal.propTypes = {
 
 const readerReducer = (state, action) => {
 	switch (action.type) {
+		case 'ROUTE_CONFIRMED':
+			return { ...state, isRouteConfirmed: true }
+		case 'COMPLETE_FETCH_SETTINGS':
+			return { ...state, isSettingsFetched: true }
 		case 'BEGIN_FETCH_DATA':
 			return { ...state, dataState: FETCHING };
 		case 'COMPLETE_FETCH_DATA':
@@ -146,6 +150,7 @@ const Reader = () => {
 			return null;
 		}
 	});
+	const location = useSelector(state => state.current.location);
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
 	const locationValue = useSelector(state => state.libraries[userLibraryKey]?.settings?.entries?.[pageIndexSettingKey]?.value ?? null);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
@@ -171,12 +176,15 @@ const Reader = () => {
 	});
 	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
+	// TODO: this should be entry-sepcific, but works for now because there is only one entry being fetched by the reader
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
 		isReady: false,
+		isRouteConfirmed: false,
+		isSettingsFetched: false,
 		data: null,
 		dataState: UNFETCHED,
 		annotationsState: NOT_IMPORTED,
@@ -252,8 +260,8 @@ const Reader = () => {
 
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
-		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
-		if (isPrimary && userLibraryKey) {
+		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
+		if (isPrimary && userLibraryKey && pageIndexKey) {
 			dispatch(updateLibrarySettings(pageIndexSettingKey, newViewState[pageIndexKey], userLibraryKey));
 		}
 	}, [attachmentItem, dispatch, pageIndexSettingKey, userLibraryKey]), 1000);
@@ -285,7 +293,7 @@ const Reader = () => {
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
 			primaryViewState: readerState,
 			secondaryViewState: null,
-			location: null,
+			location,
 			readOnly: isReadOnly,
 			authorName: isGroup ? currentUserSlug : '',
 			showItemPaneToggle: false,
@@ -329,9 +337,14 @@ const Reader = () => {
 			onSetDataTransferAnnotations: noop, // n/a in web library, noop prevents errors printed on console from reader
 			// onDeletePages: handleDeletePages
 		});
-	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, locationValue, readerSidebarWidth, state.data, state.importedAnnotations])
+	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, location, locationValue, readerSidebarWidth, state.data, state.importedAnnotations])
 
-	// On first render, fetch attachment item details or redirect if invalid URL
+	useEffect(() => {
+		// pdf js stores last page in localStorage but we want to use one from user library settings instead
+		localStorage.removeItem('pdfjs.history');
+	}, []);
+
+	// fetch attachment item details or redirect if invalid URL
 	useEffect(() => {
 		if(!attachmentKey) {
 			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }));
@@ -339,27 +352,24 @@ const Reader = () => {
 		if (attachmentKey && !attachmentItem) {
 			dispatch(fetchItemDetails(attachmentKey));
 		}
-		// pdf js stores last page in localStorage but we want to use one from user library settings instead
-		localStorage.removeItem('pdfjs.history');
-		// we also need user library settings for last page read syncing
-		dispatch(fetchLibrarySettings(userLibraryKey, pageIndexSettingKey));
-	}, []);// eslint-disable-line react-hooks/exhaustive-deps
+
+	}, [attachmentItem, attachmentKey, dispatch]);
 
 	// Fetch all child items (annotations). This effect will execute multiple times for each page of annotations
 	useEffect(() => {
-		if (!isFetching && !isFetched) {
+		if (state.isRouteConfirmed && !isFetching && !isFetched) {
 			const start = pointer || 0;
 			const limit = PAGE_SIZE;
 			dispatch(fetchChildItems(attachmentKey, { start, limit }));
 		}
-	}, [dispatch, attachmentKey, isFetching, isFetched, pointer]);
+	}, [attachmentKey, dispatch, isFetched, isFetching, pointer, state.isRouteConfirmed]);
 
 	// Fetch attachment URL
 	useEffect(() => {
-		if (!urlIsFresh && !isFetchingUrl) {
+		if (state.isRouteConfirmed && !urlIsFresh && !isFetchingUrl) {
 			dispatch(tryGetAttachmentURL(attachmentKey));
 		}
-	}, [attachmentKey, attachmentItem, dispatch, isFetchingUrl, prevAttachmentItem, urlIsFresh]);
+	}, [attachmentKey, attachmentItem, dispatch, isFetchingUrl, prevAttachmentItem, urlIsFresh, state.isRouteConfirmed]);
 
 	// Fetch attachment binary data
 	useEffect(() => {
@@ -400,18 +410,34 @@ const Reader = () => {
 	}, [attachmentItem, pdfWorker, state.annotationsState, state.data, state.dataState]);
 
 	useEffect(() => {
-		if (!state.isReady && isFetched && state.data && state.annotationsState == IMPORTED && !isFetchingUserLibrarySettings) {
+		if (!state.isReady && isFetched && state.data && state.annotationsState == IMPORTED && state.isSettingsFetched && !isFetchingUserLibrarySettings) {
 			dispatchState({ type: 'READY' });
 		}
-	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady]);
+	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady, state.isSettingsFetched]);
 
 	useEffect(() => {
-		if (attachmentItem && !prevAttachmentItem
-			&& (attachmentItem.itemType !== 'attachment' || !Object.keys(READER_CONTENT_TYPES).includes(attachmentItem.contentType))
-		) {
-			dispatch(navigate({ view: 'item-details' }));
+		if (state.isRouteConfirmed && !state.isSettingsFetched && !isFetchingUserLibrarySettings) {
+			dispatch(fetchLibrarySettings(userLibraryKey, pageIndexSettingKey));
+			dispatchState({ type: 'COMPLETE_FETCH_SETTINGS' });
 		}
-	}, [dispatch, attachmentItem, prevAttachmentItem]);
+	}, [dispatch, isFetchingUserLibrarySettings, pageIndexSettingKey, state.isRouteConfirmed, state.isSettingsFetched, userLibraryKey]);
+
+	useEffect(() => {
+		const isCompatible = (attachmentItem?.itemType === 'attachment' && Object.keys(READER_CONTENT_TYPES).includes(attachmentItem?.contentType));
+		if (attachmentItem && !prevAttachmentItem && !isCompatible) {
+			// item the URL points to is not an attachment or is of an unsupported type. We can try to navigate to the best attachment
+			const bestAttachment = attachmentItem?.[Symbol.for('links')]?.attachment;
+			const bestAttachmentKey = bestAttachment ? getItemFromApiUrl(bestAttachment.href) : null;
+			if (bestAttachmentKey) {
+				dispatch(navigate({ items: attachmentItem.key, attachmentKey: bestAttachmentKey }));
+			} else {
+				// best attachment not found, redirect to item details
+				dispatch(navigate({ view: 'item-details', location: null }));
+			}
+		} else if (!state.isRouteConfirmed && attachmentItem !== !prevAttachmentItem && isCompatible) {
+			dispatchState({ type: 'ROUTE_CONFIRMED' });
+		}
+	}, [dispatch, attachmentItem, prevAttachmentItem, state.isRouteConfirmed]);
 
 	useEffect(() => {
 		if (lastFetchItemDetailsNoResults) {

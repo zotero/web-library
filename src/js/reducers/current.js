@@ -36,6 +36,7 @@ const stateDefault = {
 	userLibraryKey: null,
 	useTransitions: false,
 	view: 'library',
+	location: null,
 };
 
 const getLibraryKey = (params, config) => {
@@ -84,6 +85,9 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			var itemsSource;
 			var searchState = state.searchState;
 			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
+			var location = params.locationType && params.locationValue ? {
+				[params.locationType]: params.locationValue
+			} : null;
 
 			if(tags.length || search.length) {
 				itemsSource = 'query';
@@ -96,6 +100,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 			} else {
 				itemsSource = 'top';
 			}
+
 
 			if(!view) {
 				//@TODO: Refactor
@@ -148,6 +153,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				tags: shallowEqual(tags, state.tags) ? state.tags : tags,
 				useTransitions: state.useTransitions,
 				view,
+				location
 			}
 		case TRIGGER_EDITING_ITEM:
 			return {

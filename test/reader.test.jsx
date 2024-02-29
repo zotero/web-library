@@ -11,12 +11,16 @@ import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import { JSONtoState } from './utils/state';
 import stateRaw from './fixtures/state/test-user-reader-view.json';
+import parentStateRaw from './fixtures/state/test-user-reader-parent-item-view.json';
 import newItemAnnotationNote from "./fixtures/response/new-item-annotation-note.json";
 import testUserCreateAnnotation from "./fixtures/response/test-user-create-annotation.json";
+import testUserReaderChildren from "./fixtures/response/test-user-reader-children.json";
 
 jest.mock('../src/js/common/pdf-worker.js');
 
 const state = JSONtoState(stateRaw);
+const parentState = JSONtoState(parentStateRaw);
+
 const noteAnnotation = {
 	"libraryID": "",
 	"id": "Z1Z2Z3Z4",
@@ -84,6 +88,66 @@ describe('Reader', () => {
 		iframe.contentWindow.createReader = jest.fn();
 		fireEvent(iframe, new Event('load', { bubbles: false, cancelable: false }));
 		expect(iframe.contentWindow.createReader).toHaveBeenCalled();
+	});
+
+	test('Redirects to the best attachment if URL points at a top-level item, saves annotations against correct item', async () => {
+		delete window.location;
+		window.location = new URL('http://localhost/testuser/items/KBFTPTI4/reader')
+
+		let requestedAttachmentChildItems = false;
+		let requestedTpl = false;
+		let postedAnnotation = false;
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/N2PJUHD6/children', () => {
+				requestedAttachmentChildItems = true;
+				return HttpResponse.json(testUserReaderChildren, {
+					headers: { 'Total-Results': testUserReaderChildren.length }
+				});
+			}),
+			http.get('https://api.zotero.org/items/new', ({ request }) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('itemType')).toBe('annotation');
+				expect(url.searchParams.get('annotationType')).toBe('note');
+				requestedTpl = true;
+				return HttpResponse.json(newItemAnnotationNote);
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items[0].key).toBe('Z1Z2Z3Z4');
+				expect(request.headers.get('If-Unmodified-Since-Version')).toBe('305');
+				expect(items[0].itemType).toBe('annotation');
+				expect(items[0].parentItem).toBe('N2PJUHD6');
+				postedAnnotation = true;
+				return HttpResponse.json(testUserCreateAnnotation, {
+					headers: { 'Last-Modified-Version': 12345 }
+				});
+			})
+		);
+
+		const { history, container } = renderWithProviders(<MainZotero />, { preloadedState: parentState });
+
+		await waitFor(() => expect(container.querySelector('iframe')).toBeInTheDocument(), { timeout: 3000 });
+
+		// URL has changed and child items for the correct attachment have been requested
+		expect(requestedAttachmentChildItems).toBe(true);
+		expect(history.location.pathname).toBe('/testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader');
+
+		const iframe = container.querySelector('iframe');
+		let readerConfig;
+		const mockReader = {
+			setAnnotations: jest.fn()
+		};
+
+		iframe.contentWindow.createReader = (_rc) => {
+			readerConfig = _rc;
+			return mockReader;
+		}
+		fireEvent(iframe, new Event('load', { bubbles: false, cancelable: false }));
+		await act(() => readerConfig.onSaveAnnotations([noteAnnotation]));
+		await waitForPosition();
+		expect(requestedTpl).toBe(true);
+		expect(postedAnnotation).toBe(true);
 	});
 
 	test('Update item that server is still creating', async () => {
