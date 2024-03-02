@@ -4,7 +4,6 @@
 
 .collection-tree {
 	flex: 1 1 0;
-	z-index: 1;
 
 	@include touch-or-bp-down(sm) {
 		display: flex;
@@ -17,6 +16,7 @@
 		padding: $collection-tree-padding-y 0;
 		overflow: auto;
 		line-height: $line-height-large;
+		z-index: 1; // Fix #531
 	}
 
 	section + section {
