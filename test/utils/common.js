@@ -24,7 +24,6 @@ class Worker {
 	}
 }
 
-
 export const applyAdditionalJestTweaks = ({ timeout = 30000, resolution = [1280, 720] } = {}) => {
 	jest.setTimeout(timeout);
 	resizeWindow(resolution[0], resolution[1]);
@@ -59,4 +58,13 @@ export const applyAdditionalJestTweaks = ({ timeout = 30000, resolution = [1280,
 			return element;
 		},
 	});
+}
+
+export const waitForLoad = async page => {
+	try {
+		await page.waitForLoadState('networkidle');
+	} catch (e) {
+		console.warn('networkidle never triggered');
+		// ignore as there is a good chance that everything required for the screenshot has actually loaded.
+	}
 }

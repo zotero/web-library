@@ -12,8 +12,8 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-item-view.json';
-import zoteroFormattingCollectionStateRaw from './fixtures/state/test-user-formatting-collection.json';
+import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
+import zoteroFormattingCollectionStateRaw from './fixtures/state/desktop-test-user-formatting-collection.json';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
 import responseAddItemToCollections from './fixtures/response/test-user-add-item-to-collection.json';
@@ -45,7 +45,7 @@ describe('Test User\'s library', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
+		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
 	});
 
 	afterEach(() => server.resetHandlers());

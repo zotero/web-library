@@ -12,7 +12,7 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-item-view.json';
+import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import testUserTagsSuggestions from './fixtures/response/test-user-tags-suggestions.json';
 import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.json';
 import testUserManageTags from './fixtures/response/test-user-manage-tags.json';
@@ -35,7 +35,7 @@ describe('Tags', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
+		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
 	});
 
 	afterEach(() => server.resetHandlers());

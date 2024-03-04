@@ -11,7 +11,7 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-note-view.json';
+import stateRaw from './fixtures/state/desktop-test-user-note-view.json';
 import newItemEmbeddedImage from './fixtures/response/new-item-embedded-image.json';
 import testUserAddEmbeddedImage from './fixtures/response/test-user-add-embedded-image.json';
 

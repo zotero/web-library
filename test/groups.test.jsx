@@ -12,8 +12,8 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-item-view.json';
-import stateGroupRaw from './fixtures/state/test-group-item-view.json';
+import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
+import stateGroupRaw from './fixtures/state/desktop-test-group-item-view.json';
 import testGroupCollections from './fixtures/response/test-group-collections.json';
 import testGroupAddItemToCollection from './fixtures/response/test-group-add-item-to-collection.json';
 import testUserUpdateRelationAfterCopy from './fixtures/response/test-user-update-relation-after-copy.json';
@@ -47,7 +47,7 @@ describe('Group libraries', () => {
 	afterAll(() => server.close());
 
 	test('should copy an item to a group library', async () => {
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
+		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();

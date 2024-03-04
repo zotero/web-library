@@ -13,7 +13,7 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-search-selected.json';
+import stateRaw from './fixtures/state/desktop-test-user-search-selected.json';
 import testUserCitations from './fixtures/response/test-user-citations.json';
 import testUserBibliographyMLA from './fixtures/response/test-user-bibliography-mla-xml.js';
 import testUserBibliographyTurabian from './fixtures/response/test-user-bibliography-turabian-xml.js';

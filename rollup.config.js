@@ -23,6 +23,7 @@ const stubdnd = `
 
 
 const isProduction = process.env.NODE_ENV?.startsWith('prod');
+const isTesting = process.env.NODE_ENV?.startsWith('test');
 
 const config = {
 	input: './src/js/main.js',
@@ -75,6 +76,7 @@ const config = {
 			include: [
 				'src/js/**',
 				'modules/web-common/**',
+				'test/utils/**', // required for playwright tests
 				// modules below need re-transpiled for compatibility with Safari 11
 				'node_modules/@floating-ui/**',
 				'node_modules/react-dnd*/**',
@@ -133,15 +135,29 @@ const embeddedTargetConfig = {
 const zoteroTargetConfig = {
 	...config,
 	plugins: [alias({ entries: [...commonAliases, ...embeddedAliases] }), ...config.plugins]
-}
+};
+
+// testing produces a bundle with main components in a global scope
+const testingTargetConfig = {
+	...config,
+	input: './test/utils/main-with-state.jsx',
+	output: {
+		...config.output,
+		file: './build/static/zotero-web-library-testing.js',
+		exports: 'named',
+		name: 'window',
+		extend: true,
+	},
+};
 
 const targets = {
+	'testing': testingTargetConfig,
 	'embedded': embeddedTargetConfig,
 	'zotero': zoteroTargetConfig,
 	'default': [zoteroTargetConfig, embeddedTargetConfig],
 };
 
-let target = process.env.TARGET ?? 'default';
+let target = process.env.TARGET ?? (isTesting ? 'testing' : 'default');
 
 if(!(target in targets)) {
 	console.warn(`Unrecognized target "${target}". Falling back to "default"`);

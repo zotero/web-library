@@ -11,5 +11,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 'lts/iron'
-      - run: npm install
+      - run: npm ci
       - run: npm test
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider #https://github.com/zotero/web-library/issues/487
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright/
+          retention-days: 30

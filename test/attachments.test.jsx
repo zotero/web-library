@@ -12,7 +12,7 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import stateRaw from './fixtures/state/test-user-item-view.json';
+import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import newItemFileAttachment from './fixtures/response/new-item-file-attachment.json';
 import newItemLinkedAttachment from './fixtures/response/new-item-linked-attachment.json';
 import testUserAddNewAttachmentFile from './fixtures/response/test-user-add-new-attachment-file.json';
@@ -37,7 +37,7 @@ describe('Attachments', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/collection');
+		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
 	});
 
 	afterEach(() => server.resetHandlers());

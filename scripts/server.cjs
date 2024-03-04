@@ -21,18 +21,7 @@ const handler = (req, resp) => {
 			resp.end(buf);
 		});
 	};
-	if(req.url.startsWith('/static/fonts')) {
-		proxy.web(req, resp, {
-			changeOrigin: true,
-			target: 'https://zotero.org/',
-			followRedirects: true,
-		});
-		proxy.on('error', () => {
-			resp.statusCode = 502;
-			resp.statusMessage = 'Failed to proxy font files';
-			resp.end();
-		});
-	} else if(req.url.startsWith('/web') || req.url.startsWith('/search') || req.url.startsWith('/export')) {
+	if(req.url.startsWith('/web') || req.url.startsWith('/search') || req.url.startsWith('/export')) {
 		proxy.web(req, resp, {
 			changeOrigin: true,
 			target: `${translateURL}`,

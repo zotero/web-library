@@ -8,7 +8,7 @@ import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import zoteroUserStateRaw from './fixtures/state/zotero-user.json';
+import zoteroUserStateRaw from './fixtures/state/desktop-zotero-user.json';
 import itemTypes from './fixtures/response/item-types';
 import itemFields from './fixtures/response/item-fields';
 import searchResults from './fixtures/response/zotero-user-search-results.json';
@@ -19,7 +19,6 @@ import tagResults from './fixtures/response/zotero-user-tag-results.json';
 import tagResultsTags from './fixtures/response/zotero-user-tag-results-tags.json';
 import itemTypeFieldsFilm from './fixtures/response/item-type-fields-film.json';
 import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-types-film.json';
-
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 applyAdditionalJestTweaks();

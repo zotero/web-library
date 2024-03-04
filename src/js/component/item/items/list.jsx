@@ -120,20 +120,26 @@ const ItemsList = memo(props => {
 					loadMoreItems={ handleLoadMore }
 				>
 					{({ onItemsRendered, ref }) => (
-						<List
+						<div
+							aria-label="items"
 							className={ cx('items-list', {
 								'editing': isSelectMode,
 							}) }
-							height={ height }
-							itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
-							itemData={ { keys } }
-							itemSize={ ROWHEIGHT }
-							onItemsRendered={ onItemsRendered }
-							ref={ r => { ref(r); listRef.current = r; } }
-							width={ width }
+							role={ isSelectMode ? 'listbox' : 'list' }
+							aria-rowcount={ totalResults }
 						>
-							{ ListRow }
-						</List>
+							<List
+								height={ height }
+								itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
+								itemData={ { keys } }
+								itemSize={ ROWHEIGHT }
+								onItemsRendered={ onItemsRendered }
+								ref={ r => { ref(r); listRef.current = r; } }
+								width={ width }
+							>
+								{ ListRow }
+							</List>
+						</div>
 					)}
 				</InfiniteLoader>
 			)}

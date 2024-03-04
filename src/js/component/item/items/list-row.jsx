@@ -120,8 +120,8 @@ const ListRow = memo(props => {
 			onTouchEnd={ handleTouchEnd }
 			onTouchMove={ handleTouchMove }
 			tabIndex={ shouldBeTabbable ? 0 : null }
-			role={ isSelectMode ? "checkbox" : null }
-			aria-checked={ isSelectMode ? isActive ? "true" : "false" : null }
+			role={ isSelectMode ? "option" : 'listitem' }
+			aria-selected={ isSelectMode ? isActive ? "true" : "false" : null }
 		>
 			{ isSelectMode && itemKey !== null && (
 				<input

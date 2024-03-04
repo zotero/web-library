@@ -36,6 +36,7 @@
         "userId": 1,
         "isEmbedded": false,
         "containterClassName": "zotero-wl",
+        "buyStorageUrl": "https://www.zotero.org/storage?ref=usb",
         "menus": {
             "desktop": [
                 {
@@ -157,7 +158,119 @@
             ]
         },
         "noteEditorURL": "/static/note-editor/editor.html",
-        "pdfReaderURL": "/static/pdf-reader/viewer.html",
+        "pdfReaderCMapsRoot": "/static/pdf-reader/pdf/web/cmaps/",
+        "pdfReaderURL": "/static/pdf-reader/reader.html",
+        "pdfWorkerURL": "/static/pdf-worker/worker.js",
+        "preferences": {
+            "citationStyle": "modern-language-association",
+            "citationLocale": "en-US",
+            "installedCitationStyles": [],
+            "columns": [
+                {
+                    "field": "title",
+                    "fraction": 0.45,
+                    "isVisible": true,
+                    "minFraction": 0.1,
+                    "sort": "asc"
+                },
+                {
+                    "field": "creator",
+                    "fraction": 0.3,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "date",
+                    "fraction": 0.2,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "itemType",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "year",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "publisher",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "publicationTitle",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "journalAbbreviation",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "language",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "libraryCatalog",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "callNumber",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "rights",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "dateAdded",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "dateModified",
+                    "fraction": 0.1,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "extra",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "createdByUser",
+                    "fraction": 0.2,
+                    "isVisible": false,
+                    "minFraction": 0.05
+                },
+                {
+                    "field": "attachment",
+                    "fraction": 0.05,
+                    "isVisible": true,
+                    "minFraction": 0.05
+                }
+            ]
+        },
         "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
         "translateUrl": "https://translate-server.zotero.org/Prod",
         "userSlug": "testuser",
@@ -177,10 +290,8 @@
         "isSelectMode": false,
         "isTagSelectorOpen": true,
         "isTouchTagSelectorOpen": false,
-        "itemKey": "VR82JUX8",
-        "itemKeys": [
-            "VR82JUX8"
-        ],
+        "itemKey": null,
+        "itemKeys": [],
         "itemsSource": "collection",
         "isFirstRendering": true,
         "libraryKey": "u1",
@@ -192,7 +303,8 @@
         "tagsSearchString": "",
         "userLibraryKey": "u1",
         "useTransitions": true,
-        "view": "collection",
+        "view": "item-list",
+        "location": null,
         "attachmentKey": null,
         "isMyPublications": false,
         "isTrash": false,
@@ -200,21 +312,21 @@
     },
     "device": {
         "isKeyboardUser": false,
-        "isMouseUser": true,
-        "isSingleColumn": false,
-        "isTouchOrSmall": false,
-        "isTouchUser": false,
-        "scrollbarWidth": 15,
-        "shouldUseEditMode": false,
-        "shouldUseModalCreatorField": false,
-        "shouldUseSidebar": false,
-        "shouldUseTabs": true,
-        "userType": "mouse",
-        "xxs": false,
+        "isMouseUser": false,
+        "isSingleColumn": true,
+        "isTouchOrSmall": true,
+        "isTouchUser": true,
+        "scrollbarWidth": 0,
+        "shouldUseEditMode": true,
+        "shouldUseModalCreatorField": true,
+        "shouldUseSidebar": true,
+        "shouldUseTabs": false,
+        "userType": "touch",
+        "xxs": true,
         "xs": false,
         "sm": false,
         "md": false,
-        "lg": true
+        "lg": false
     },
     "errors": [],
     "fetching": {
@@ -307,8 +419,81 @@
                 "isFetching": false,
                 "totalResults": 8
             },
+            "creating": {
+                "collections": {},
+                "items": {}
+            },
             "deleting": [],
             "items": {
+                "HHVQTHFT": {
+                    "key": "HHVQTHFT",
+                    "version": 239,
+                    "itemType": "webpage",
+                    "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                    "creators": [],
+                    "abstractNote": "",
+                    "websiteTitle": "",
+                    "websiteType": "",
+                    "date": "",
+                    "shortTitle": "",
+                    "url": "https://www.nature.com/articles/s41598-022-26991-5",
+                    "accessDate": "2023-01-13T11:38:38Z",
+                    "language": "",
+                    "rights": "",
+                    "extra": "",
+                    "tags": [
+                        {
+                            "tag": "⭐️"
+                        }
+                    ],
+                    "collections": [
+                        "WTTJ2J56"
+                    ],
+                    "relations": {},
+                    "dateAdded": "2023-01-13T11:38:38Z",
+                    "dateModified": "2023-01-13T11:38:42Z",
+                    "@@meta@@": {
+                        "numChildren": 1
+                    },
+                    "@@links@@": {
+                        "self": {
+                            "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                            "type": "application/json"
+                        },
+                        "alternate": {
+                            "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                            "type": "text/html"
+                        },
+                        "attachment": {
+                            "href": "https://api.zotero.org/users/1/items/D532CISN",
+                            "type": "application/json",
+                            "attachmentType": "text/html"
+                        }
+                    },
+                    "@@derived@@": {
+                        "attachmentIconName": "webpage-snapshot",
+                        "colors": [],
+                        "createdByUser": "",
+                        "creator": "",
+                        "date": "",
+                        "dateAdded": "13/01/2023, 12:38:38",
+                        "dateModified": "13/01/2023, 12:38:42",
+                        "emojis": [
+                            "⭐️"
+                        ],
+                        "extra": "",
+                        "iconName": "webpage",
+                        "itemType": "Web Page",
+                        "itemTypeRaw": "webpage",
+                        "key": "HHVQTHFT",
+                        "publicationTitle": "",
+                        "publisher": null,
+                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+                        "year": "",
+                        "language": "",
+                        "rights": ""
+                    }
+                },
                 "VR82JUX8": {
                     "key": "VR82JUX8",
                     "version": 246,
@@ -438,75 +623,6 @@
                         "language": "",
                         "libraryCatalog": "Google Scholar",
                         "callNumber": "",
-                        "rights": ""
-                    }
-                },
-                "HHVQTHFT": {
-                    "key": "HHVQTHFT",
-                    "version": 239,
-                    "itemType": "webpage",
-                    "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
-                    "creators": [],
-                    "abstractNote": "",
-                    "websiteTitle": "",
-                    "websiteType": "",
-                    "date": "",
-                    "shortTitle": "",
-                    "url": "https://www.nature.com/articles/s41598-022-26991-5",
-                    "accessDate": "2023-01-13T11:38:38Z",
-                    "language": "",
-                    "rights": "",
-                    "extra": "",
-                    "tags": [
-                        {
-                            "tag": "⭐️"
-                        }
-                    ],
-                    "collections": [
-                        "WTTJ2J56"
-                    ],
-                    "relations": {},
-                    "dateAdded": "2023-01-13T11:38:38Z",
-                    "dateModified": "2023-01-13T11:38:42Z",
-                    "@@meta@@": {
-                        "numChildren": 1
-                    },
-                    "@@links@@": {
-                        "self": {
-                            "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
-                            "type": "application/json"
-                        },
-                        "alternate": {
-                            "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
-                            "type": "text/html"
-                        },
-                        "attachment": {
-                            "href": "https://api.zotero.org/users/1/items/D532CISN",
-                            "type": "application/json",
-                            "attachmentType": "text/html"
-                        }
-                    },
-                    "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
-                        "colors": [],
-                        "createdByUser": "",
-                        "creator": "",
-                        "date": "",
-                        "dateAdded": "13/01/2023, 12:38:38",
-                        "dateModified": "13/01/2023, 12:38:42",
-                        "emojis": [
-                            "⭐️"
-                        ],
-                        "extra": "",
-                        "iconName": "webpage",
-                        "itemType": "Web Page",
-                        "itemTypeRaw": "webpage",
-                        "key": "HHVQTHFT",
-                        "publicationTitle": "",
-                        "publisher": null,
-                        "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
-                        "year": "",
-                        "language": "",
                         "rights": ""
                     }
                 },
@@ -926,47 +1042,37 @@
                 }
             },
             "itemsByParent": {},
-            "itemsRelated": {
-                "VR82JUX8": {
-                    "isFetching": false,
-                    "isFetched": true
-                }
-            },
+            "itemsRelated": {},
             "itemsTop": {},
             "itemsTrash": {},
             "settings": {
-                "lastPageIndex_g5119976_884H5PHI": {
-                    "value": 6,
-                    "version": 277
-                },
-                "lastPageIndex_u_F85DFW3Q": {
-                    "value": 9,
-                    "version": 218
-                },
-                "tagColors": {
-                    "value": [
-                        {
-                            "name": "cute",
-                            "color": "#A28AE5"
-                        },
-                        {
-                            "name": "annotated",
-                            "color": "#5FB236"
-                        },
-                        {
-                            "name": "to read",
-                            "color": "#FF6666"
-                        },
-                        {
-                            "name": "⭐️",
-                            "color": "#FF8C19"
-                        }
-                    ],
-                    "version": 218
+                "isFetching": false,
+                "entries": {
+                    "tagColors": {
+                        "value": [
+                            {
+                                "name": "cute",
+                                "color": "#A28AE5"
+                            },
+                            {
+                                "name": "annotated",
+                                "color": "#5FB236"
+                            },
+                            {
+                                "name": "to read",
+                                "color": "#FF6666"
+                            },
+                            {
+                                "name": "⭐️",
+                                "color": "#FF8C19"
+                            }
+                        ],
+                        "version": 218
+                    }
                 }
             },
             "sync": {
-                "version": 278,
+                "version": 305,
                 "isSynced": true,
                 "requestsPending": 0
             },
@@ -996,47 +1102,7 @@
                     "⭐️": "#FF8C19"
                 }
             },
-            "tagsByCollection": {
-                "WTTJ2J56": {
-                    "requests": [],
-                    "isFetching": false,
-                    "isFetchingColoredTags": false,
-                    "rawTags": [
-                        {
-                            "tag": "cute",
-                            "type": 0
-                        },
-                        {
-                            "tag": "to read",
-                            "type": 0
-                        },
-                        {
-                            "tag": "⭐️",
-                            "type": 0
-                        }
-                    ],
-                    "totalResults": 3,
-                    "sortBy": "title",
-                    "isError": false,
-                    "pointer": 100,
-                    "duplicatesCount": 0,
-                    "tags": [
-                        "cute",
-                        "to read",
-                        "⭐️"
-                    ],
-                    "tagTypeLookup": {
-                        "cute": 0,
-                        "to read": 0,
-                        "⭐️": 0
-                    },
-                    "coloredTags": [
-                        "cute",
-                        "to read",
-                        "⭐️"
-                    ]
-                }
-            },
+            "tagsByCollection": {},
             "tagsInPublicationsItems": {},
             "tagsInTrashItems": {},
             "tagsTop": {},
@@ -5127,26 +5193,83 @@
     },
     "ongoing": [],
     "preferences": {
-        "citationStyle": "modern-language-association",
-        "citationLocale": "en-US",
-        "installedCitationStyles": [],
+        "citationStyle": "harvard-educational-review",
+        "citationLocale": "pl-PL",
+        "installedCitationStyles": [
+            {
+                "name": "nature",
+                "title": "Nature"
+            },
+            {
+                "name": "harvard-educational-review",
+                "title": "Harvard Educational Review"
+            },
+            {
+                "name": "harvard1",
+                "title": "Harvard reference format 1 (deprecated)"
+            },
+            {
+                "name": "african-online-scientific-information-systems-harvard",
+                "title": "African Online Scientific Information Systems - Harvard"
+            },
+            {
+                "name": "harvard-anglia-ruskin-university",
+                "title": "Anglia Ruskin University - Harvard"
+            },
+            {
+                "name": "harvard-cape-peninsula-university-of-technology",
+                "title": "Cape Peninsula University of Technology - Harvard"
+            },
+            {
+                "name": "cardiff-university-harvard",
+                "title": "Cardiff University - Harvard"
+            },
+            {
+                "name": "harvard-cite-them-right-10th-edition",
+                "title": "Cite Them Right 10th edition - Harvard"
+            },
+            {
+                "name": "polar-biology",
+                "title": "Polar Biology"
+            },
+            {
+                "name": "polar-research",
+                "title": "Polar Research"
+            },
+            {
+                "name": "polar-science",
+                "title": "Polar Science"
+            },
+            {
+                "name": "police-practice-and-research",
+                "title": "Police Practice and Research"
+            },
+            {
+                "name": "policy-and-politics",
+                "title": "Policy & Politics"
+            },
+            {
+                "name": "policy-and-society",
+                "title": "Policy and Society"
+            }
+        ],
         "columns": [
             {
                 "field": "title",
-                "fraction": 0.4500000000000001,
+                "fraction": 0.33357142857142863,
                 "isVisible": true,
                 "minFraction": 0.1,
                 "sort": "asc"
             },
             {
                 "field": "creator",
-                "fraction": 0.2659090909090909,
+                "fraction": 0.29999999999999993,
                 "isVisible": true,
                 "minFraction": 0.05
             },
             {
                 "field": "date",
-                "fraction": 0.2,
+                "fraction": 0.10873786407766994,
                 "isVisible": true,
                 "minFraction": 0.05
             },
@@ -5206,8 +5329,8 @@
             },
             {
                 "field": "dateAdded",
-                "fraction": 0.1,
-                "isVisible": false,
+                "fraction": 0.10000000000000002,
+                "isVisible": true,
                 "minFraction": 0.05
             },
             {
@@ -5230,12 +5353,14 @@
             },
             {
                 "field": "attachment",
-                "fraction": 0.08409090909090909,
+                "fraction": 0.15769070735090152,
                 "isVisible": true,
                 "minFraction": 0.05
             }
         ],
-        "version": "1.3.9"
+        "version": "1.4.1",
+        "isReaderSidebarOpen": true,
+        "readerSidebarWidth": 255.00979614257812
     },
     "query": {
         "current": {
@@ -5260,12 +5385,12 @@
     },
     "traffic": {
         "SCHEMA": {
-            "lastRequest": 1689166846376,
+            "lastRequest": 1709545886094,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_SCHEMA",
                 "schema": {
-                    "version": 28,
+                    "version": 29,
                     "itemTypes": [
                         {
                             "itemType": "annotation",
@@ -9048,7 +9173,7 @@
                                 "case": "Cas",
                                 "computerProgram": "Programari",
                                 "conferencePaper": "Text d'una conferència",
-                                "dataset": "Dataset",
+                                "dataset": "Conjunt de dades",
                                 "dictionaryEntry": "Entrada de diccionari",
                                 "document": "Document",
                                 "email": "Correu electrònic",
@@ -9071,7 +9196,7 @@
                                 "presentation": "Presentació",
                                 "radioBroadcast": "Emissió de ràdio",
                                 "report": "Informe",
-                                "standard": "Standard",
+                                "standard": "Estàndard",
                                 "statute": "Estatut",
                                 "thesis": "Tesi",
                                 "tvBroadcast": "Emissió de televisió",
@@ -9090,7 +9215,7 @@
                                 "assignee": "Assignatari",
                                 "audioFileType": "Tipus de fitxer",
                                 "audioRecordingFormat": "Format",
-                                "authority": "Authority",
+                                "authority": "Autoritat",
                                 "billNumber": "Número de llei",
                                 "blogTitle": "Títol del blog",
                                 "bookTitle": "Títol del llibre",
@@ -9126,7 +9251,7 @@
                                 "forumTitle": "Títol de fòrum/llista",
                                 "genre": "Gènere",
                                 "history": "Història",
-                                "identifier": "Identifier",
+                                "identifier": "Identificador",
                                 "institution": "Institució",
                                 "interviewMedium": "Mitjà",
                                 "ISBN": "ISBN",
@@ -9151,7 +9276,7 @@
                                 "number": "Número",
                                 "numberOfVolumes": "Nre. de volums",
                                 "numPages": "Nre. de pàgines",
-                                "organization": "Organization",
+                                "organization": "Organització",
                                 "pages": "Pàgines",
                                 "patentNumber": "Número de patent",
                                 "place": "Lloc",
@@ -9170,7 +9295,7 @@
                                 "reportNumber": "Número d'informe",
                                 "reportType": "Tipus d'informe",
                                 "repository": "Repositori",
-                                "repositoryLocation": "Repo. Location",
+                                "repositoryLocation": "Ubicació del repo",
                                 "rights": "Drets",
                                 "runningTime": "Durada",
                                 "scale": "Escala",
@@ -9181,7 +9306,7 @@
                                 "seriesTitle": "Títol de la sèrie",
                                 "session": "Sessió",
                                 "shortTitle": "Títol curt",
-                                "status": "Status",
+                                "status": "Estat",
                                 "studio": "Estudi",
                                 "subject": "Tema",
                                 "system": "Sistema",
@@ -9650,7 +9775,7 @@
                                 "presentation": "Vortrag",
                                 "radioBroadcast": "Radiosendung",
                                 "report": "Bericht",
-                                "standard": "Standard",
+                                "standard": "Norm",
                                 "statute": "Gesetz",
                                 "thesis": "Dissertation",
                                 "tvBroadcast": "Fernsehsendung",
@@ -9669,7 +9794,7 @@
                                 "assignee": "Abtretungsempfänger",
                                 "audioFileType": "Dateityp",
                                 "audioRecordingFormat": "Format",
-                                "authority": "Authority",
+                                "authority": "Behörde",
                                 "billNumber": "Nummer des Gesetzentwurfs",
                                 "blogTitle": "Titel des Blogs",
                                 "bookTitle": "Buchtitel",
@@ -9749,7 +9874,7 @@
                                 "reportNumber": "Nummer des Berichts",
                                 "reportType": "Art von Bericht",
                                 "repository": "Repositorium",
-                                "repositoryLocation": "Repo. Location",
+                                "repositoryLocation": "Speicherort",
                                 "rights": "Rechte",
                                 "runningTime": "Laufzeit",
                                 "scale": "Maßstab",
@@ -9766,7 +9891,7 @@
                                 "system": "System",
                                 "thesisType": "Art",
                                 "title": "Titel",
-                                "type": "Type",
+                                "type": "Art",
                                 "university": "Universität",
                                 "url": "URL",
                                 "versionNumber": "Version",
@@ -10785,7 +10910,7 @@
                                 "case": "Kasu legala",
                                 "computerProgram": "Softwarea",
                                 "conferencePaper": "Kongresu artikulua",
-                                "dataset": "Dataset",
+                                "dataset": "Datu-multzoa",
                                 "dictionaryEntry": "Hiztegi-sarrera",
                                 "document": "Dokumentua",
                                 "email": "E-posta",
@@ -10808,7 +10933,7 @@
                                 "presentation": "Aurkezpena",
                                 "radioBroadcast": "Irrati saioa",
                                 "report": "Txostena",
-                                "standard": "Standard",
+                                "standard": "Estandarra",
                                 "statute": "Estatutua",
                                 "thesis": "Tesia",
                                 "tvBroadcast": "Telebista saioa",
@@ -10827,7 +10952,7 @@
                                 "assignee": "Nori esleitua",
                                 "audioFileType": "Fitxategi mota",
                                 "audioRecordingFormat": "Formatua",
-                                "authority": "Authority",
+                                "authority": "Agintaritza",
                                 "billNumber": "Proiektuaren zbk",
                                 "blogTitle": "Blogaren izenburua",
                                 "bookTitle": "Liburuaren izenburua",
@@ -10863,7 +10988,7 @@
                                 "forumTitle": "Forum/Listserv izenburua",
                                 "genre": "Generoa",
                                 "history": "Historia",
-                                "identifier": "Identifier",
+                                "identifier": "Identifikatzailea",
                                 "institution": "Instituzioa",
                                 "interviewMedium": "Komunikabidea",
                                 "ISBN": "ISBN",
@@ -10888,7 +11013,7 @@
                                 "number": "Zenbakia",
                                 "numberOfVolumes": "Ale kopurua",
                                 "numPages": "orr.kopurua",
-                                "organization": "Organization",
+                                "organization": "Erakundea",
                                 "pages": "Orrialdeak",
                                 "patentNumber": "Patente zenbakia",
                                 "place": "Tokia",
@@ -10907,7 +11032,7 @@
                                 "reportNumber": "Txostenaren zenbakia",
                                 "reportType": "Txosten mota",
                                 "repository": "Biltegia",
-                                "repositoryLocation": "Repo. Location",
+                                "repositoryLocation": "Errepositorioaren kokapena",
                                 "rights": "Eskubideak",
                                 "runningTime": "Luzapena",
                                 "scale": "Eskala",
@@ -10918,7 +11043,7 @@
                                 "seriesTitle": "Serie-izenburua",
                                 "session": "Saioa",
                                 "shortTitle": "Izenburu laburra",
-                                "status": "Status",
+                                "status": "Egoera",
                                 "studio": "Estudioa",
                                 "subject": "Gaia",
                                 "system": "Sistema",
@@ -11364,7 +11489,7 @@
                                 "case": "Affaire",
                                 "computerProgram": "Logiciel",
                                 "conferencePaper": "Article de colloque",
-                                "dataset": "Dataset",
+                                "dataset": "Jeu de données",
                                 "dictionaryEntry": "Entrée de dictionnaire",
                                 "document": "Document",
                                 "email": "Courriel",
@@ -11387,7 +11512,7 @@
                                 "presentation": "Présentation",
                                 "radioBroadcast": "Émission de radio",
                                 "report": "Rapport",
-                                "standard": "Standard",
+                                "standard": "Norme",
                                 "statute": "Acte juridique",
                                 "thesis": "Thèse",
                                 "tvBroadcast": "Émission de TV",
@@ -11406,7 +11531,7 @@
                                 "assignee": "Cessionnaire",
                                 "audioFileType": "Type de fichier",
                                 "audioRecordingFormat": "Format",
-                                "authority": "Authority",
+                                "authority": "Autorité",
                                 "billNumber": "N° de projet",
                                 "blogTitle": "Titre du blog",
                                 "bookTitle": "Titre du livre",
@@ -11442,7 +11567,7 @@
                                 "forumTitle": "Titre du forum/listserv",
                                 "genre": "Genre",
                                 "history": "Histoire",
-                                "identifier": "Identifier",
+                                "identifier": "Identifiant",
                                 "institution": "Institution",
                                 "interviewMedium": "Média",
                                 "ISBN": "ISBN",
@@ -11467,7 +11592,7 @@
                                 "number": "Numéro",
                                 "numberOfVolumes": "Nb de volumes",
                                 "numPages": "Nb de pages",
-                                "organization": "Organization",
+                                "organization": "Organisation",
                                 "pages": "Pages",
                                 "patentNumber": "N° de brevet",
                                 "place": "Lieu",
@@ -11486,7 +11611,7 @@
                                 "reportNumber": "N° du rapport",
                                 "reportType": "Type de rapport",
                                 "repository": "Dépôt",
-                                "repositoryLocation": "Repo. Location",
+                                "repositoryLocation": "Loc. du dépôt",
                                 "rights": "Autorisations",
                                 "runningTime": "Durée",
                                 "scale": "Échelle",
@@ -11497,7 +11622,7 @@
                                 "seriesTitle": "Titre de la coll.",
                                 "session": "Session",
                                 "shortTitle": "Titre abrégé",
-                                "status": "Status",
+                                "status": "Statut",
                                 "studio": "Studio",
                                 "subject": "Sujet",
                                 "system": "Système",
@@ -11557,7 +11682,7 @@
                                 "case": "Caso",
                                 "computerProgram": "Software",
                                 "conferencePaper": "Publicación de congreso",
-                                "dataset": "Dataset",
+                                "dataset": "Conxunto de datos",
                                 "dictionaryEntry": "Entrada de dicionario",
                                 "document": "Documento",
                                 "email": "Correo electrónico",
@@ -11599,7 +11724,7 @@
                                 "assignee": "Cesionario",
                                 "audioFileType": "Tipo de ficheiro",
                                 "audioRecordingFormat": "Formato",
-                                "authority": "Authority",
+                                "authority": "Autoridade",
                                 "billNumber": "Número da factura",
                                 "blogTitle": "Título do blogue",
                                 "bookTitle": "Título do libro",
@@ -11635,7 +11760,7 @@
                                 "forumTitle": "Título do foro/Listserv",
                                 "genre": "Xénero",
                                 "history": "Historia",
-                                "identifier": "Identifier",
+                                "identifier": "Identificador",
                                 "institution": "Institución",
                                 "interviewMedium": "Medio",
                                 "ISBN": "ISBN",
@@ -11660,7 +11785,7 @@
                                 "number": "Número",
                                 "numberOfVolumes": "Nº de tomos",
                                 "numPages": "Nº de Páxinas",
-                                "organization": "Organization",
+                                "organization": "Organización",
                                 "pages": "Páxinas",
                                 "patentNumber": "Número da patente",
                                 "place": "Lugar",
@@ -11679,7 +11804,7 @@
                                 "reportNumber": "Número do informe",
                                 "reportType": "Tipo de informe",
                                 "repository": "Repositorio",
-                                "repositoryLocation": "Repo. Location",
+                                "repositoryLocation": "Localización do repo.",
                                 "rights": "Dereitos",
                                 "runningTime": "Duración",
                                 "scale": "Escala",
@@ -11690,7 +11815,7 @@
                                 "seriesTitle": "Título da serie",
                                 "session": "Sesión",
                                 "shortTitle": "Título curto",
-                                "status": "Status",
+                                "status": "Estado",
                                 "studio": "Estudio",
                                 "subject": "Asunto",
                                 "system": "Sistema",
@@ -12908,7 +13033,7 @@
                                 "case": "訴訟",
                                 "computerProgram": "ソフトウェア",
                                 "conferencePaper": "学会発表",
-                                "dataset": "Dataset",
+                                "dataset": "データセット",
                                 "dictionaryEntry": "辞書項目",
                                 "document": "文書",
                                 "email": "電子メール",
@@ -12986,7 +13111,7 @@
                                 "forumTitle": "掲示板 / リストサーブの名称",
                                 "genre": "ジャンル",
                                 "history": "歴史",
-                                "identifier": "Identifier",
+                                "identifier": "識別子",
                                 "institution": "機関",
                                 "interviewMedium": "メディア",
                                 "ISBN": "ISBN",
@@ -14494,7 +14619,7 @@
                                 "assignee": "Beneficjent",
                                 "audioFileType": "Typ pliku",
                                 "audioRecordingFormat": "Format",
-                                "authority": "Authority",
+                                "authority": "Zarządca",
                                 "billNumber": "Numer projektu ustawy",
                                 "blogTitle": "Tytuł blogu",
                                 "bookTitle": "Tytuł książki",
@@ -14687,7 +14812,7 @@
                                 "assignee": "Beneficiário",
                                 "audioFileType": "Tipo de arquivo",
                                 "audioRecordingFormat": "Formato",
-                                "authority": "Authority",
+                                "authority": "Autoridade",
                                 "billNumber": "Número da lei",
                                 "blogTitle": "Título do blog",
                                 "bookTitle": "Título do livro",
@@ -14723,7 +14848,7 @@
                                 "forumTitle": "Título do fórum",
                                 "genre": "Gênero",
                                 "history": "Histórico",
-                                "identifier": "Identifier",
+                                "identifier": "Identificador",
                                 "institution": "Instituição",
                                 "interviewMedium": "Suporte",
                                 "ISBN": "ISBN",
@@ -14748,7 +14873,7 @@
                                 "number": "Número",
                                 "numberOfVolumes": "# de volumes",
                                 "numPages": "# de páginas",
-                                "organization": "Organization",
+                                "organization": "Organização",
                                 "pages": "Páginas",
                                 "patentNumber": "Número da Patente",
                                 "place": "Lugar",
@@ -14880,7 +15005,7 @@
                                 "assignee": "Responsável",
                                 "audioFileType": "Tipo do Arquivo",
                                 "audioRecordingFormat": "Formato",
-                                "authority": "Authority",
+                                "authority": "Autoridade",
                                 "billNumber": "Número do Diploma Legal",
                                 "blogTitle": "Título do Blogue",
                                 "bookTitle": "Título do Livro",
@@ -14916,7 +15041,7 @@
                                 "forumTitle": "Título do Fórum/Lista de Correio Electrónico",
                                 "genre": "Género",
                                 "history": "História",
-                                "identifier": "Identifier",
+                                "identifier": "Identificador",
                                 "institution": "Instituição",
                                 "interviewMedium": "Suporte",
                                 "ISBN": "ISBN",
@@ -14941,7 +15066,7 @@
                                 "number": "Número",
                                 "numberOfVolumes": "N.º de Volumes",
                                 "numPages": "N.º de Páginas",
-                                "organization": "Organization",
+                                "organization": "Organização",
                                 "pages": "Páginas",
                                 "patentNumber": "Número de Patente",
                                 "place": "Local",
@@ -15066,20 +15191,20 @@
                                 "accessDate": "Data accesării",
                                 "applicationNumber": "Număr aplicație",
                                 "archive": "Arhivă",
-                                "archiveID": "Archive ID",
+                                "archiveID": "ID Arhivă",
                                 "archiveLocation": "Locație în arhivă",
                                 "artworkMedium": "Mediu",
                                 "artworkSize": "Mărime lucrare de artă",
                                 "assignee": "Reprezentant",
                                 "audioFileType": "Tip de fișier",
                                 "audioRecordingFormat": "Formatare",
-                                "authority": "Authority",
+                                "authority": "Autoritate",
                                 "billNumber": "Număr proiect de lege",
                                 "blogTitle": "Titlu blog",
                                 "bookTitle": "Titlu carte",
                                 "callNumber": "Număr de tel.",
                                 "caseName": "Nume proces",
-                                "citationKey": "Citation Key",
+                                "citationKey": "Cheie citare",
                                 "code": "Cod",
                                 "codeNumber": "Număr de cod",
                                 "codePages": "Cod pagini",
@@ -15109,7 +15234,7 @@
                                 "forumTitle": "Titlu forum",
                                 "genre": "Gen",
                                 "history": "Istorie",
-                                "identifier": "Identifier",
+                                "identifier": "Identificator",
                                 "institution": "Instituție",
                                 "interviewMedium": "Mediu",
                                 "ISBN": "ISBN",
@@ -15134,7 +15259,7 @@
                                 "number": "Număr",
                                 "numberOfVolumes": "Nr. de volume",
                                 "numPages": "Nr. de pagini",
-                                "organization": "Organization",
+                                "organization": "Organizație",
                                 "pages": "Pagini",
                                 "patentNumber": "Număr brevet",
                                 "place": "Loc",
@@ -15152,7 +15277,7 @@
                                 "reporterVolume": "Volum reporter",
                                 "reportNumber": "Număr raport",
                                 "reportType": "Tip de raport",
-                                "repository": "Repository",
+                                "repository": "Depozit",
                                 "repositoryLocation": "Repo. Location",
                                 "rights": "Drepturi",
                                 "runningTime": "Timp de funcționare",
@@ -15164,7 +15289,7 @@
                                 "seriesTitle": "Titlu colecție",
                                 "session": "Sesiune",
                                 "shortTitle": "Titlu scurt",
-                                "status": "Status",
+                                "status": "Stare",
                                 "studio": "Studio",
                                 "subject": "Subiect",
                                 "system": "Sistem",
@@ -17000,7 +17125,7 @@
                                 "archiveLocation": "存档位置",
                                 "artworkMedium": "艺术品媒介",
                                 "artworkSize": "艺术品尺寸",
-                                "assignee": "代理人",
+                                "assignee": "受让人/所有权人",
                                 "audioFileType": "音频文件类型",
                                 "audioRecordingFormat": "音频格式",
                                 "authority": "主管机构",
@@ -17240,7 +17365,7 @@
                                 "issue": "期號",
                                 "issueDate": "發刊日期",
                                 "issuingAuthority": "發行當局",
-                                "itemType": "Item Type",
+                                "itemType": "項目類型",
                                 "journalAbbreviation": "期刊簡寫",
                                 "label": "商標",
                                 "language": "語言",
@@ -17337,25 +17462,37 @@
                     }
                 }
             },
-            "lastSuccess": 1689166846742,
+            "lastSuccess": 1709545886696,
             "errorCount": 0
         },
         "LIBRARY_SETTINGS": {
-            "lastRequest": 1689166846379,
+            "lastRequest": 1709545886095,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_LIBRARY_SETTINGS",
                 "libraryKey": "u1",
-                "settings": {
-                    "lastPageIndex_g5119976_884H5PHI": {
-                        "value": 6,
-                        "version": 277
+                "settingsKey": "tagColors",
+                "value": [
+                    {
+                        "name": "cute",
+                        "color": "#A28AE5"
                     },
-                    "lastPageIndex_u_F85DFW3Q": {
-                        "value": 9,
-                        "version": 218
+                    {
+                        "name": "annotated",
+                        "color": "#5FB236"
                     },
-                    "tagColors": {
+                    {
+                        "name": "to read",
+                        "color": "#FF6666"
+                    },
+                    {
+                        "name": "⭐️",
+                        "color": "#FF8C19"
+                    }
+                ],
+                "version": 218,
+                "response": {
+                    "raw": {
                         "value": [
                             {
                                 "name": "cute",
@@ -17375,39 +17512,6 @@
                             }
                         ],
                         "version": 218
-                    }
-                },
-                "response": {
-                    "raw": {
-                        "lastPageIndex_g5119976_884H5PHI": {
-                            "value": 6,
-                            "version": 277
-                        },
-                        "lastPageIndex_u_F85DFW3Q": {
-                            "value": 9,
-                            "version": 218
-                        },
-                        "tagColors": {
-                            "value": [
-                                {
-                                    "name": "cute",
-                                    "color": "#A28AE5"
-                                },
-                                {
-                                    "name": "annotated",
-                                    "color": "#5FB236"
-                                },
-                                {
-                                    "name": "to read",
-                                    "color": "#FF6666"
-                                },
-                                {
-                                    "name": "⭐️",
-                                    "color": "#FF8C19"
-                                }
-                            ],
-                            "version": 218
-                        }
                     },
                     "options": {
                         "apiAuthorityPart": "api.zotero.org",
@@ -17420,7 +17524,7 @@
                         "redirect": "follow",
                         "resource": {
                             "library": "u1",
-                            "settings": null
+                            "settings": "tagColors"
                         },
                         "retry": 2,
                         "retryDelay": null,
@@ -17434,11 +17538,11 @@
                     "response": {}
                 }
             },
-            "lastSuccess": 1689166846657,
+            "lastSuccess": 1709545886827,
             "errorCount": 0
         },
         "COLLECTIONS_IN_LIBRARY": {
-            "lastRequest": 1689166846382,
+            "lastRequest": 1709545886096,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
@@ -17835,539 +17939,11 @@
                 },
                 "totalResults": 8
             },
-            "lastSuccess": 1689166846744,
-            "errorCount": 0
-        },
-        "TAGS_IN_COLLECTION": {
-            "lastRequest": 1689166846853,
-            "ongoing": [],
-            "last": {
-                "type": "RECEIVE_TAGS_IN_COLLECTION",
-                "libraryKey": "u1",
-                "collectionKey": "WTTJ2J56",
-                "queryOptions": {
-                    "sort": "title",
-                    "start": 0,
-                    "limit": 100
-                },
-                "tags": [
-                    {
-                        "tag": "cute",
-                        "type": 0
-                    },
-                    {
-                        "tag": "to read",
-                        "type": 0
-                    },
-                    {
-                        "tag": "⭐️",
-                        "type": 0
-                    }
-                ],
-                "response": {
-                    "raw": [
-                        {
-                            "tag": "cute",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/cute",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/cute",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 6
-                            }
-                        },
-                        {
-                            "tag": "to read",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/to+read",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/to+read",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 8
-                            }
-                        },
-                        {
-                            "tag": "⭐️",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 5
-                            }
-                        }
-                    ],
-                    "options": {
-                        "apiAuthorityPart": "api.zotero.org",
-                        "cache": "default",
-                        "credentials": "omit",
-                        "format": "json",
-                        "method": "get",
-                        "mode": "cors",
-                        "pretend": false,
-                        "redirect": "follow",
-                        "resource": {
-                            "library": "u1",
-                            "collections": "WTTJ2J56",
-                            "items": null,
-                            "top": null,
-                            "tags": null
-                        },
-                        "retry": 2,
-                        "retryDelay": null,
-                        "uploadRegisterOnly": null,
-                        "executors": [
-                            null
-                        ],
-                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
-                        "sort": "title",
-                        "start": 0,
-                        "limit": 100,
-                        "retryCount": 0
-                    },
-                    "response": {}
-                },
-                "totalResults": 3
-            },
-            "lastSuccess": 1689166847159,
-            "errorCount": 0
-        },
-        "COLORED_TAGS_IN_COLLECTION": {
-            "lastRequest": 1689166846855,
-            "ongoing": [],
-            "last": {
-                "type": "RECEIVE_COLORED_TAGS_IN_COLLECTION",
-                "libraryKey": "u1",
-                "collectionKey": "WTTJ2J56",
-                "queryOptions": {
-                    "tag": "cute || annotated || to read || ⭐️"
-                },
-                "tags": [
-                    {
-                        "tag": "cute",
-                        "type": 0
-                    },
-                    {
-                        "tag": "to read",
-                        "type": 0
-                    },
-                    {
-                        "tag": "⭐️",
-                        "type": 0
-                    }
-                ],
-                "response": {
-                    "raw": [
-                        {
-                            "tag": "cute",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/cute",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/cute",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 6
-                            }
-                        },
-                        {
-                            "tag": "to read",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/to+read",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/to+read",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 8
-                            }
-                        },
-                        {
-                            "tag": "⭐️",
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "http://zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
-                                    "type": "text/html"
-                                }
-                            },
-                            "meta": {
-                                "type": 0,
-                                "numItems": 5
-                            }
-                        }
-                    ],
-                    "options": {
-                        "apiAuthorityPart": "api.zotero.org",
-                        "cache": "default",
-                        "credentials": "omit",
-                        "format": "json",
-                        "method": "get",
-                        "mode": "cors",
-                        "pretend": false,
-                        "redirect": "follow",
-                        "resource": {
-                            "library": "u1",
-                            "collections": "WTTJ2J56",
-                            "items": null,
-                            "top": null,
-                            "tags": null
-                        },
-                        "retry": 2,
-                        "retryDelay": null,
-                        "uploadRegisterOnly": null,
-                        "executors": [
-                            null
-                        ],
-                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
-                        "tag": "cute || annotated || to read || ⭐️",
-                        "retryCount": 0
-                    },
-                    "response": {}
-                },
-                "totalResults": 3
-            },
-            "lastSuccess": 1689166847167,
-            "errorCount": 0
-        },
-        "FETCH_ITEM_DETAILS": {
-            "lastRequest": 1689166846860,
-            "ongoing": [],
-            "last": {
-                "type": "RECEIVE_FETCH_ITEM_DETAILS",
-                "libraryKey": "u1",
-                "queryOptions": {
-                    "itemKey": "VR82JUX8",
-                    "signal": {}
-                },
-                "id": 2,
-                "items": [
-                    {
-                        "key": "VR82JUX8",
-                        "version": 246,
-                        "itemType": "journalArticle",
-                        "title": "Effects of diet restriction on life span and age-related changes in dogs",
-                        "creators": [
-                            {
-                                "creatorType": "author",
-                                "firstName": "Richard D.",
-                                "lastName": "Kealy"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Dennis F.",
-                                "lastName": "Lawler"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Joan M.",
-                                "lastName": "Ballam"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Sandra L.",
-                                "lastName": "Mantz"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Darryl N.",
-                                "lastName": "Biery"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Elizabeth H.",
-                                "lastName": "Greeley"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "George",
-                                "lastName": "Lust"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Mariangela",
-                                "lastName": "Segre"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Gail K.",
-                                "lastName": "Smith"
-                            },
-                            {
-                                "creatorType": "author",
-                                "firstName": "Howard D.",
-                                "lastName": "Stowe"
-                            }
-                        ],
-                        "abstractNote": "",
-                        "publicationTitle": "Journal of the American Veterinary Medical Association",
-                        "volume": "220",
-                        "issue": "9",
-                        "pages": "1315–1320",
-                        "date": "2002",
-                        "series": "",
-                        "seriesTitle": "",
-                        "seriesText": "",
-                        "journalAbbreviation": "",
-                        "language": "",
-                        "DOI": "",
-                        "ISSN": "",
-                        "shortTitle": "",
-                        "url": "",
-                        "accessDate": "",
-                        "archive": "",
-                        "archiveLocation": "",
-                        "libraryCatalog": "Google Scholar",
-                        "callNumber": "",
-                        "rights": "",
-                        "extra": "Publisher: Am Vet Med Assoc",
-                        "tags": [],
-                        "collections": [
-                            "WTTJ2J56"
-                        ],
-                        "relations": {},
-                        "dateAdded": "2023-01-13T10:52:40Z",
-                        "dateModified": "2023-01-13T10:52:40Z",
-                        "@@meta@@": {
-                            "creatorSummary": "Kealy et al.",
-                            "parsedDate": "2002",
-                            "numChildren": 2
-                        },
-                        "@@links@@": {
-                            "self": {
-                                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
-                                "type": "application/json"
-                            },
-                            "alternate": {
-                                "href": "https://www.zotero.org/testuser/items/VR82JUX8",
-                                "type": "text/html"
-                            },
-                            "attachment": {
-                                "href": "https://api.zotero.org/users/1/items/VG79HDDM",
-                                "type": "application/json",
-                                "attachmentType": "application/pdf",
-                                "attachmentSize": 248058
-                            }
-                        },
-                        "@@derived@@": {
-                            "attachmentIconName": "pdf",
-                            "colors": [],
-                            "createdByUser": "",
-                            "creator": "Kealy et al.",
-                            "date": "2002",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
-                            "emojis": [],
-                            "extra": "Publisher: Am Vet Med Assoc",
-                            "iconName": "journal-article",
-                            "itemType": "Journal Article",
-                            "itemTypeRaw": "journalArticle",
-                            "key": "VR82JUX8",
-                            "publicationTitle": "Journal of the American Veterinary Medical Association",
-                            "publisher": null,
-                            "title": "Effects of diet restriction on life span and age-related changes in dogs",
-                            "year": "2002",
-                            "journalAbbreviation": "",
-                            "language": "",
-                            "libraryCatalog": "Google Scholar",
-                            "callNumber": "",
-                            "rights": ""
-                        }
-                    }
-                ],
-                "response": {
-                    "raw": [
-                        {
-                            "key": "VR82JUX8",
-                            "version": 246,
-                            "library": {
-                                "type": "user",
-                                "id": 1,
-                                "name": "testuser",
-                                "links": {
-                                    "alternate": {
-                                        "href": "https://www.zotero.org/testuser",
-                                        "type": "text/html"
-                                    }
-                                }
-                            },
-                            "links": {
-                                "self": {
-                                    "href": "https://api.zotero.org/users/1/items/VR82JUX8",
-                                    "type": "application/json"
-                                },
-                                "alternate": {
-                                    "href": "https://www.zotero.org/testuser/items/VR82JUX8",
-                                    "type": "text/html"
-                                },
-                                "attachment": {
-                                    "href": "https://api.zotero.org/users/1/items/VG79HDDM",
-                                    "type": "application/json",
-                                    "attachmentType": "application/pdf",
-                                    "attachmentSize": 248058
-                                }
-                            },
-                            "meta": {
-                                "creatorSummary": "Kealy et al.",
-                                "parsedDate": "2002",
-                                "numChildren": 2
-                            },
-                            "data": {
-                                "key": "VR82JUX8",
-                                "version": 246,
-                                "itemType": "journalArticle",
-                                "title": "Effects of diet restriction on life span and age-related changes in dogs",
-                                "creators": [
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Richard D.",
-                                        "lastName": "Kealy"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Dennis F.",
-                                        "lastName": "Lawler"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Joan M.",
-                                        "lastName": "Ballam"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Sandra L.",
-                                        "lastName": "Mantz"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Darryl N.",
-                                        "lastName": "Biery"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Elizabeth H.",
-                                        "lastName": "Greeley"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "George",
-                                        "lastName": "Lust"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Mariangela",
-                                        "lastName": "Segre"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Gail K.",
-                                        "lastName": "Smith"
-                                    },
-                                    {
-                                        "creatorType": "author",
-                                        "firstName": "Howard D.",
-                                        "lastName": "Stowe"
-                                    }
-                                ],
-                                "abstractNote": "",
-                                "publicationTitle": "Journal of the American Veterinary Medical Association",
-                                "volume": "220",
-                                "issue": "9",
-                                "pages": "1315–1320",
-                                "date": "2002",
-                                "series": "",
-                                "seriesTitle": "",
-                                "seriesText": "",
-                                "journalAbbreviation": "",
-                                "language": "",
-                                "DOI": "",
-                                "ISSN": "",
-                                "shortTitle": "",
-                                "url": "",
-                                "accessDate": "",
-                                "archive": "",
-                                "archiveLocation": "",
-                                "libraryCatalog": "Google Scholar",
-                                "callNumber": "",
-                                "rights": "",
-                                "extra": "Publisher: Am Vet Med Assoc",
-                                "tags": [],
-                                "collections": [
-                                    "WTTJ2J56"
-                                ],
-                                "relations": {},
-                                "dateAdded": "2023-01-13T10:52:40Z",
-                                "dateModified": "2023-01-13T10:52:40Z"
-                            }
-                        }
-                    ],
-                    "options": {
-                        "apiAuthorityPart": "api.zotero.org",
-                        "cache": "default",
-                        "credentials": "omit",
-                        "format": "json",
-                        "method": "get",
-                        "mode": "cors",
-                        "pretend": false,
-                        "redirect": "follow",
-                        "resource": {
-                            "library": "u1",
-                            "items": null
-                        },
-                        "retry": 2,
-                        "retryDelay": null,
-                        "uploadRegisterOnly": null,
-                        "executors": [
-                            null
-                        ],
-                        "zoteroApiKey": "zzzzzzzzzzzzzzzzzzzzzzzz",
-                        "itemKey": "VR82JUX8",
-                        "signal": {},
-                        "retryCount": 0
-                    },
-                    "response": {}
-                },
-                "totalResults": 1
-            },
-            "lastSuccess": 1689166847330,
+            "lastSuccess": 1709545886894,
             "errorCount": 0
         },
         "ITEMS_IN_COLLECTION": {
-            "lastRequest": 1689166846908,
+            "lastRequest": 1709545886959,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEMS_IN_COLLECTION",
@@ -18380,7 +17956,7 @@
                     "direction": "asc",
                     "signal": {}
                 },
-                "id": 3,
+                "id": 2,
                 "items": [
                     {
                         "key": "HHVQTHFT",
@@ -19509,28 +19085,16 @@
                 },
                 "totalResults": 7
             },
-            "lastSuccess": 1689166847682,
-            "errorCount": 0
-        },
-        "RELATED_ITEMS": {
-            "lastRequest": 1689166847436,
-            "ongoing": [],
-            "last": {
-                "type": "RECEIVE_RELATED_ITEMS",
-                "itemKey": "VR82JUX8",
-                "libraryKey": "u1",
-                "items": []
-            },
-            "lastSuccess": 1689166847437,
+            "lastSuccess": 1709545887503,
             "errorCount": 0
         }
     },
     "router": {
         "location": {
-            "pathname": "/testuser/collections/WTTJ2J56/items/VR82JUX8/collection",
+            "pathname": "/testuser/collections/WTTJ2J56/item-list",
             "search": "",
             "hash": "",
-            "key": "f3yria",
+            "key": "z9pn6g",
             "query": {}
         },
         "action": "POP"
