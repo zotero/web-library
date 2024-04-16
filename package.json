@@ -60,7 +60,8 @@
     "test:jest-update-snapshots": "UPDATE_SCREENSHOTS=1 jest --selectProjects snapshots",
     "test:update-snapshots": "run-s test:delete-output test:delete-snapshots test:jest-update-snapshots",
     "fixed-state-server": "node scripts/fixed-state-server.mjs",
-    "add-license": "node scripts/add-license.cjs"
+    "add-license": "node scripts/add-license.cjs",
+    "compile-zotero-icons": "node scripts/compile-zotero-icons.mjs"
   },
   "keywords": [
     "Zotero"
