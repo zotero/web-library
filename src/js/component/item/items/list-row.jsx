@@ -133,8 +133,9 @@ const ListRow = memo(props => {
 			)}
 			{ itemKey !== null ?
 				<Icon
-					type={ `28/item-types/light/${iconName}` }
-					symbol={ isActive && !isSelectMode ? `${iconName}-active` : iconName }
+					type={ `28/item-type/${iconName}` }
+					symbol={ (isActive && !isSelectMode) ? `${iconName}-white` : iconName }
+					useThemeColors={ (isActive && !isSelectMode) ? false : true}
 					width="28"
 					height="28"
 					className="item-type hidden-xs-down"
@@ -162,8 +163,9 @@ const ListRow = memo(props => {
 							attachmentIconName && (
 								<Fragment>
 								<Icon
-									type={ `16/item-types/light/2x/${attachmentIconName}` }
+									type={ `16/item-type/${attachmentIconName}` }
 									symbol={ isActive && !isSelectMode ? `${attachmentIconName}-white` : itemData.attachmentIconName }
+									usePixelRatio={ true }
 									width="16"
 									height="16"
 								/>  </Fragment>) // eslint-disable-line no-irregular-whitespace

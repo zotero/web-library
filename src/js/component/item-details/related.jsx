@@ -34,9 +34,7 @@ const RelatedItem = memo(props => {
 
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
-		const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-		return isTouchOrSmall ?
-			`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
+		return isTouchOrSmall ? `28/item-type/${iconName}` : `16/item-type/${iconName}`;
 	}
 
 	return (
@@ -51,6 +49,8 @@ const RelatedItem = memo(props => {
 			>
 				<Icon
 					type={ getItemIcon(relatedItem) }
+					useThemeColors={ true }
+					usePixelRatio={ !isTouchOrSmall }
 					width={ iconSize }
 					height={ iconSize }
 				/>

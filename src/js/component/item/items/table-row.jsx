@@ -37,8 +37,10 @@ const TitleCell = memo(props => {
 		>
 			<Icon
 				label={ `${itemData.itemType} icon` }
-				type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
+				type={ `16/item-type/${itemData.iconName}` }
 				symbol={ isFocused && isSelected ? `${itemData.iconName}-white` : itemData.iconName }
+				usePixelRatio={ true }
+				useThemeColors={ isFocused && isSelected ? false : true }
 				width="16"
 				height="16"
 			/>
@@ -83,8 +85,9 @@ const AttachmentCell = memo(props => {
 			</div>
 			{ itemData.attachmentIconName && (
 				<Icon
-					type={ `16/item-types/light/${dvp}x/${itemData.attachmentIconName}` }
+					type={ `16/item-type/${itemData.attachmentIconName}` }
 					symbol={ isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
+					usePixelRatio={ true }
 					width="16"
 					height="16"
 				/>

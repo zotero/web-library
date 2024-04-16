@@ -92,7 +92,7 @@ const Note = memo(forwardRef((props, ref) => {
 			onFocus={ handleFocus }
 			onMouseDown={ handleMouseDown }
 		>
-			<Icon type={ '28/item-types/light/note'} width="28" height="28" className="hidden-mouse" />
+			<Icon type={'28/item-type/note'} width="28" height="28" className="hidden-mouse" useThemeColors={ true } />
 			<div
 				id={`note-${note.key}`}
 				className="multiline-truncate"

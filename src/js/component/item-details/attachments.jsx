@@ -6,7 +6,7 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import { Button, Icon, Spinner, TabPane } from 'web-common/components';
-import { useFocusManager } from 'web-common/hooks';
+import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 import { noop, isTriggerEvent } from 'web-common/utils';
 
 import AddLinkedUrlForm from './add-linked-url-form';
@@ -21,18 +21,16 @@ import { getFileData } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { makePath } from '../../common/navigation';
-import { useForceUpdate, useFetchingState } from '../../hooks';
+import { useFetchingState } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { iconName } = item[Symbol.for('derived')];
-	const suffix = isTouchOrSmall ? 'active' : 'white';
-	const symbol = isActive ? `${iconName}-${suffix}` : iconName;
-	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+	const symbol = isActive ? `${iconName}-white` : iconName;
 	const path = isTouchOrSmall ?
-		`28/item-types/light/${iconName}` : `16/item-types/light/${dvp}x/${iconName}`;
+		`28/item-type/${iconName}` : `16/item-type/${iconName}`;
 
-	return <Icon type={ path } symbol={ symbol} width={ size } height={ size } />
+	return <Icon type={path} symbol={symbol} width={size} height={size} usePixelRatio={!isTouchOrSmall} useThemeColors={ true } />
 });
 
 AttachmentIcon.displayName = 'AttachmentIcon';

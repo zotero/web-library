@@ -77,8 +77,9 @@ const SingleItemDragPreview = memo(({ itemData }) => {
 	return (
 		<div className="items-drag-indicator single">
 			<Icon
-				type={ `16/item-types/light/${dvp}x/${itemData.iconName}` }
+				type={ `16/item-type/${itemData.iconName}` }
 				symbol={ `${itemData.iconName}-white` }
+				usePixelRatio={ true }
 				width="16"
 				height="16"
 			/>
@@ -99,8 +100,9 @@ const MultiItemsDragPreview = memo(({ selectedItemKeysLength }) => {
 	return (
 		<div className="items-drag-indicator multiple">
 			<Icon
-				type={`16/item-types/light/${dvp}x/document`}
+				type={`16/item-type/document`}
 				symbol="document-white"
+				usePixelRatio={ true }
 				width="16"
 				height="16"
 			/>

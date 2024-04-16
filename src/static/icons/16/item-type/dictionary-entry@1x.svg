@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="dictionary-entry-light" viewBox="0 0 16 16">
+<path opacity="0.5" d="M10.707 0H2V16H15V4.293L10.707 0Z" fill="white"/>
+<path d="M10.293 1L14 4.707V15H3V1H10.293Z" fill="white"/>
+<path opacity="0.2" d="M10.707 0H2V16H15V4.293L10.707 0ZM11 1.707L13.293 4H11V1.707ZM3 15V1H10V5H14V15H3Z" fill="black"/>
+<path opacity="0.08" d="M11 1.70697V4H13.293L11 1.70697Z" fill="black"/>
+<path d="M12.036 13L9.343 6H7.657L4.964 13H4V14H7V13H6.036L6.42 12H10.58L10.964 13H10V14H13V13H12.036ZM6.805 11L8.343 7H8.657L10.2 11H6.805Z" fill="#DB2C3A"/>
+</symbol>
+<symbol id="dictionary-entry-dark" viewBox="0 0 16 16">
+<path opacity="0.6" d="M10.707 0H2V16H15V4.293L10.707 0ZM11 1.707L13.293 4H11V1.707ZM3 15V1H10V5H14V15H3Z" fill="white"/>
+<path opacity="0.24" d="M11 1.70697V4H13.293L11 1.70697Z" fill="white"/>
+<path opacity="0.9" d="M12.036 13L9.343 6H7.657L4.964 13H4V14H7V13H6.036L6.42 12H10.58L10.964 13H10V14H13V13H12.036ZM6.805 11L8.343 7H8.657L10.2 11H6.805Z" fill="#DB2C3A"/>
+</symbol>
+<symbol id="dictionary-entry-white" viewBox="0 0 16 16">
+<path opacity="0.4" d="M10.5 0.5V4.5H14.5L10.5 0.5Z" fill="white"/>
+<path d="M12.036 13L9.34398 6H7.65698L4.96498 13H4.00098V14H7.00098V13H6.03698L6.42198 12H10.581L10.966 13H10.002V14H13.002V13H12.038H12.036ZM6.80498 11L8.34298 7H8.65598L10.194 11H6.80498Z" fill="white"/>
+<path d="M10.707 0H2V16H15V4.293L10.707 0ZM11 1.707L13.293 4H11V1.707ZM14 15H3V1H10V5H14V15Z" fill="white"/>
+</symbol>
+<use xlink:href="#dictionary-entry-light" viewBox="0 0 16 16"/>
+</svg>

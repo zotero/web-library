@@ -3,14 +3,13 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { noop } from 'web-common/utils';
-import { useFocusManager } from 'web-common/hooks';
+import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 
 import RichEditor from 'component/rich-editor';
 import { dateLocalized } from 'common/format';
 import { get } from 'utils';
 import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
-import { useForceUpdate } from 'hooks';
-import { makePath } from '../../common/navigation';
+import { makePath }from '../../common/navigation';
 import { READER_CONTENT_TYPES } from '../../constants/reader';
 
 

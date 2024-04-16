@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="manuscript-light" viewBox="0 0 16 16">
+<path opacity="0.5" d="M13 0H0V16H13V0Z" fill="white"/>
+<path opacity="0.2" d="M12 1V15H1V1H12ZM13 0H0V16H13V0Z" fill="black"/>
+<path d="M12 1H1V15H12V1Z" fill="white"/>
+<path d="M13.4994 5.0002L12.9995 5.50012L13.4994 6.00005L13.9994 5.50012L13.4994 5.0002Z" fill="#E0AF97"/>
+<path d="M13.9994 5.5002L13.4995 6.00012L13.9994 6.50005L14.4994 6.00012L13.9994 5.5002Z" fill="white"/>
+<path d="M14.4994 6.0002L13.9995 6.50012L14.4994 7.00005L14.9994 6.50012L14.4994 6.0002Z" fill="#E0AF97"/>
+<path d="M14.4998 3.9993L13.5 4.99915L14.9998 6.49892L15.9996 5.49907L14.4998 3.9993Z" fill="#DB2C3A"/>
+<path d="M9 12.5L14.5 7L13 5.5L7.5 11L7 13L9 12.5Z" fill="#CC7A52"/>
+<path d="M8.37517 11.125L8.13817 11.361L7.97217 12.028L8.63917 11.862L8.87517 11.625L8.37517 11.125Z" fill="#F5E4DC"/>
+<path opacity="0.18" d="M8.37517 11.125L8.13817 11.361L7.97217 12.028L8.63917 11.862L8.87517 11.625L8.37517 11.125Z" fill="#CC7A52"/>
+</symbol>
+<symbol id="manuscript-dark" viewBox="0 0 16 16">
+<path opacity="0.6" d="M13 0H0V16H13V8.5L12 9.5V15L1 15.037V1H12V6.5L13 5.5V0Z" fill="white"/>
+<path opacity="0.54" d="M13.4994 5.0002L12.9995 5.50012L13.4994 6.00005L13.9994 5.50012L13.4994 5.0002Z" fill="#CC7A52"/>
+<path opacity="0.54" d="M14.4994 6.0002L13.9995 6.50012L14.4994 7.00005L14.9994 6.50012L14.4994 6.0002Z" fill="#CC7A52"/>
+<path opacity="0.9" d="M14.4998 3.9993L13.5 4.99915L14.9998 6.49892L15.9996 5.49907L14.4998 3.9993Z" fill="#DB2C3A"/>
+<path opacity="0.36" d="M8.37517 11.125L8.13817 11.361L7.97217 12.028L8.63917 11.862L8.87517 11.625L8.37517 11.125Z" fill="#CC7A52"/>
+<path opacity="0.9" fill-rule="evenodd" clip-rule="evenodd" d="M14.5 7L9 12.5L7 13L7.5 11L13 5.5L14.5 7ZM8.13817 11.361L8.37517 11.125L8.87517 11.625L8.63917 11.862L7.97217 12.028L8.13817 11.361Z" fill="#CC7A52"/>
+</symbol>
+<symbol id="manuscript-white" viewBox="0 0 16 16">
+<g clip-path="url(#clip0_143_1364)">
+<path d="M13 0H0V16H13V8.5L12 9.5V15L1 15.037V1H12V6.5L13 5.5V0Z" fill="white"/>
+<path opacity="0.6" d="M13.4994 5.0002L12.9995 5.50012L13.4994 6.00005L13.9994 5.50012L13.4994 5.0002Z" fill="white"/>
+<path opacity="0.6" d="M14.4994 6.0002L13.9995 6.50012L14.4994 7.00005L14.9994 6.50012L14.4994 6.0002Z" fill="white"/>
+<path d="M14.4998 3.9993L13.5 4.99915L14.9998 6.49892L15.9996 5.49907L14.4998 3.9993Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M14.5 7L9 12.5L7 13L7.5 11L13 5.5L14.5 7ZM8.13817 11.361L8.37517 11.125L8.87517 11.625L8.63917 11.862L7.97217 12.028L8.13817 11.361Z" fill="white"/>
+<path opacity="0.4" d="M8.37517 11.125L8.13817 11.361L7.97217 12.028L8.63917 11.862L8.87517 11.625L8.37517 11.125Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_143_1364">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</symbol>
+<use xlink:href="#manuscript-light" viewBox="0 0 16 16"/>
+</svg>

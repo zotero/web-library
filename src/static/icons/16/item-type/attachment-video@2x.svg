@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="attachment-video-light" viewBox="0 0 16 16">
+<path opacity="0.5" d="M9.70706 0H1.5V16H14.5V4.793L9.70706 0Z" fill="white"/>
+<path d="M9.29297 1L13.5 5.207V15H2.5V1H9.29297Z" fill="white"/>
+<path opacity="0.2" d="M9.707 0H1.5V16H14.5V4.793L9.707 0ZM10 1.707L12.793 4.5H10V1.707ZM2.5 15V1H9V5.5H13.5V15H2.5Z" fill="black"/>
+<path opacity="0.08" d="M10 1.70703V4.5H12.793L10 1.70703Z" fill="black"/>
+<path d="M11.5 9.49999L5.5 12.9641L5.5 6.03589L11.5 9.49999Z" fill="#C2DEFF"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 9.49999L5.5 6.03589V12.9641L11.5 9.49999ZM9.5 9.49999L6.5 7.76794L6.5 11.232L9.5 9.49999Z" fill="#66ADFF"/>
+</symbol>
+<symbol id="attachment-video-dark" viewBox="0 0 16 16">
+<path opacity="0.6" d="M9.707 0H1.5V16H14.5V4.793L9.707 0ZM10 1.707L12.793 4.5H10V1.707ZM2.5 15V1H9V5.5H13.5V15H2.5Z" fill="white"/>
+<path opacity="0.24" d="M10 1.70703V4.5H12.793L10 1.70703Z" fill="white"/>
+<path opacity="0.34" d="M6.5 7.76782L9.5 9.49987L6.5 11.2319L6.5 7.76782Z" fill="#66ADFF"/>
+<path opacity="0.85" fill-rule="evenodd" clip-rule="evenodd" d="M11.5 9.49999L5.5 6.03589V12.9641L11.5 9.49999ZM9.5 9.49999L6.5 7.76794L6.5 11.232L9.5 9.49999Z" fill="#66ADFF"/>
+</symbol>
+<symbol id="attachment-video-white" viewBox="0 0 16 16">
+<path d="M9.707 0H1.5V16H14.5V4.793L9.707 0ZM10 1.707L12.793 4.5H10V1.707ZM2.5 15V1H9V5.5H13.5V15H2.5Z" fill="white"/>
+<path opacity="0.4" d="M10 1.70703V4.5H12.793L10 1.70703Z" fill="white"/>
+<path opacity="0.4" d="M11.5 9.49999L5.5 12.9641L5.5 6.03589L11.5 9.49999Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 9.49999L5.5 6.03589V12.9641L11.5 9.49999ZM9.5 9.49999L6.5 7.76794L6.5 11.232L9.5 9.49999Z" fill="white"/>
+</symbol>
+<use xlink:href="#attachment-video-light" viewBox="0 0 16 16"/>
+</svg>
