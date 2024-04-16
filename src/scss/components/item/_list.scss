@@ -85,7 +85,7 @@
 		}
 
 		&:last-child:not(.active):not(:focus) {
-			background-color: $body-bg;
+			background-color: var(--color-background);
 
 			// Use box shadow once Safari is able to render 0.5px box-shadow
 			&::after {
@@ -96,7 +96,7 @@
 				bottom: 0;
 				left: 2 * $item-list-padding-x + 28px;
 				height: 1px;
-				box-shadow: 0 1px mix($item-border-color, $body-bg, 50%);
+				box-shadow: 0 1px var(--color-shade-2);
 
 				@media (min-resolution: 2dppx) {
 					box-shadow: 0 1px $item-border-color;

@@ -32,7 +32,7 @@
 
 
 		@include touch-or-bp-down(sm) {
-			@include hairline(top, $touch-collection-tree-border);
+			@include hairline(top, "shade-4");
 			padding: $border-width $collection-tree-padding-x-touch 0;
 			background-color: $touch-collection-tree-headings-bg;
 		}
@@ -52,7 +52,7 @@
 
 		@include touch-or-bp-down(sm) {
 			padding: $border-width $default-padding-x-touch 0;
-			@include hairline(top, $touch-collection-tree-border, $start: (2 * $default-padding-x-touch + 28px));
+			@include hairline(top, "shade-4", $start: (2 * $default-padding-x-touch + 28px));
 		}
 
 		@include mouse-and-bp-up(md) {
@@ -68,7 +68,7 @@
 
 		@include variant(".level-0:nth-child(3) > ul > li:first-child > .item-container") {
 			@include touch-or-bp-down(sm) {
-	 			@include hairline(top, $touch-collection-tree-border);
+	 			@include hairline(top, "shade-4");
 	 		}
 		}
 
@@ -84,7 +84,7 @@
 					bottom: 0;
 					left: 2 * $default-padding-x-touch + 28px;
 					height: 1px;
-					box-shadow: 0 1px mix($touch-collection-tree-border, $sidebar-bg, 50%);
+					box-shadow: 0 1px var(--color-collection-tree-shadow);
 
 					@media (min-resolution: 2dppx) {
 						box-shadow: 0 1px $touch-collection-tree-border;
@@ -272,7 +272,7 @@
 
 					@include state(".dropdown.show .dropdown-toggle") {
 						@include state("li.selected > .item-container") {
-							background-color: $body-bg;
+							background-color: var(--color-background);
 
 							.icon {
 								color: $touch-collection-tree-active-bg;
@@ -311,7 +311,7 @@
 
 				@include mouse-keyboard-and-bp-up(md) {
 					&:focus {
-						box-shadow: inset 0 0 0 $input-btn-focus-width $btn-secondary-color; // Align with twisty and item-container outline
+						box-shadow: inset 0 0 0 $input-btn-focus-width var(--accent-blue); // Align with twisty and item-container outline
 					}
 				}
 			}

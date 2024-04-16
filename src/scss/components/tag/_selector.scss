@@ -127,14 +127,14 @@
 					background-color: currentColor;
 					margin-right: $space-min;
 					border-radius: 5px;
-					border: $border-width solid rgba($shade-10, 0.08);
+					border: $border-width solid var(--tag-color-border);
 
 					@include state(".colored.selected", ".colored:active") {
-						border-color: $shade-0;
+						border-color: var(--color-button);
 					}
 
 					@include state(".colored.selected:active") {
-						border-color: rgba($shade-10, 0.08);
+						border-color: var(--tag-color-border);
 					}
 				}
 			}

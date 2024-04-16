@@ -29,7 +29,7 @@
 
 			.badge {
 				background-color: $result-hover-bg;
-				border-color: darken($badge-light-border-color, 4%);
+				border-color: var(--color-identifier-badge-hover-border);
 			}
 		}
 

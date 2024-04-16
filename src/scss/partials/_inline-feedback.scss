@@ -23,7 +23,7 @@
 			visibility: visible;
 
 			@include scopedVariant(".dropdown-menu") {
-				color: $success;
+				color: var(--accent-green);
 			}
 		}
 	}

@@ -38,8 +38,8 @@
 
 				@include mouse-keyboard-and-bp-up(md) {
 					&:focus {
-						border-color: $btn-secondary-color;
-						box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+						border-color: var(--accent-blue);
+						box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue);
 					}
 
 					@include state(".item-container.active") {

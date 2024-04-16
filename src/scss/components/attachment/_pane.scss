@@ -119,7 +119,7 @@
 
 			.btn {
 				@include touch-or-bp-down(sm) {
-					background-color: $shade-0;
+					background-color: var(--color-background);
 				}
 			}
 

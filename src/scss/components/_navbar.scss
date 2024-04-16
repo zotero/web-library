@@ -183,8 +183,8 @@
 			}
 
 			.badge {
-				background-color: $shade-6;
-				color: $shade-0;
+				background-color: var(--color-background50);
+				color: var(--color-button);
 			}
 		}
 	}

@@ -12,11 +12,11 @@
 	bottom: 0;
 	left: 0;
 	z-index: $z-index-loading-cover;
-	background-color: $shade-0;
+	background-color: var(--color-background);
 
 	.icon-z {
 		@include scopedVariant("html:not(.specifity)") {
-			color: $primary;
+			color: var(--accent-red);
 		}
 	}
 
@@ -41,7 +41,7 @@
 			&.front {
 				position: relative;
 				stroke-position: inside;
-				stroke: $secondary;
+				stroke: var(--accent-blue);
 				z-index: 1;
 			}
 		}

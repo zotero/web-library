@@ -9,7 +9,7 @@
 	position: relative;
 
 	&.color-exit, &.color-exit .select-value {
-		color: $blue;
+		color: var(--accent-blue);
 	}
 
 	&.color-exit-active, &.color-exit-active .select-value {
@@ -261,7 +261,7 @@
 			&:focus {
 				@include touch-or-bp-down(sm) {
 					outline: none;
-					box-shadow: 0 0 0 2px $red;
+					box-shadow: 0 0 0 2px var(--accent-red);
 				}
 
 				@include mouse-keyboard-and-bp-up(md) {
@@ -310,7 +310,7 @@
 					width: $space-lg;
 					height: $space-lg;
 					background: image-url("icons/24/minus-circle-strong.svg") no-repeat center center;
-					border: 1px solid $red;
+					border: 1px solid var(--accent-red);
 					border-radius: 50%;
 				}
 			}

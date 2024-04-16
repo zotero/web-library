@@ -1,7 +1,3 @@
-//
-// Library
-// --------------------------------------------------
-
 .library {
 	display: flex;
 	min-height: 0;
@@ -20,7 +16,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		border-top: $border-width solid tint($shade-4, 50%, $tint: $body-bg);
+		border-top: $border-width solid var(--color-shade-2);
 	}
 }
 

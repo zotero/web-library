@@ -1,76 +1,69 @@
-//
-// Button
-//
-
-@mixin button-variant($color, $outline: null, $inverse: null) {
-	$btn-color: if($inverse, $shade-0, $color);
-	$shade-0: if($inverse, $color, $shade-0);
-
-	background-color: if($outline, transparent, $btn-color);
-	border-color: if($outline, $btn-color, transparent);
+@mixin button-variant($color-name, $outline: null) {
+	background-color: if($outline, transparent, var(--#{color-name}));
+	border-color: if($outline, var(--#{color-name}), transparent);
 
 	&,
 	.icon {
 		&:not(.specifity) {
-			color: if($outline, $btn-color, $shade-0);
+			color: if($outline, var(--#{color-name}), var(--color-button));
 		}
 	}
 
 	&:hover {
 		@media (hover: hover) {
-			background-color: lighten($btn-color, 4%);
-			border-color: if($outline, lighten($btn-color, 4%), transparent);
-			box-shadow: 0 2px 4px $btn-box-shadow-color;
+			background-color: var(--#{color-name}-lighter);
+			border-color: if($outline, var(--#{color-name}-lighter), transparent);
+			box-shadow: 0 2px 4px var(--color-button-shadow);
 		}
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: $shade-0;
+				color: var(--color-button);
 			}
 		}
 	}
 
 	&:active,
 	.show > &.dropdown-toggle {
-		background-color: darken($btn-color, 8%);
-		border-color: if($outline, darken($btn-color, 8%), transparent);
+		background-color: var(--#{color-name}-darker);
+		border-color: if($outline, var(--#{color-name}-darker), transparent);
 		box-shadow: none;
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: $shade-0;
+				color: var(--color-button);
 			}
 		}
 	}
 
 	&:disabled {
-		background-color: if($outline, transparent, $btn-color);
-		border-color: if($outline, $btn-color, transparent);
+		background-color: if($outline, transparent, var(--#{color-name}));
+		border-color: if($outline, var(--#{color-name}), transparent);
 		box-shadow: none;
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: if($outline, $btn-color, $shade-0);
+				color: if($outline, var(--#{color-name}), var(--color-button));
 			}
 		}
 	}
 
 	&:focus {
 		.keyboard & {
-			box-shadow: 0 0 0 $input-btn-focus-width $btn-color;
+			box-shadow: 0 0 0 $input-btn-focus-width var(--#{color-name});
 
 			&:hover {
-				border-color: if($outline, lighten($btn-color, 4%), transparent);
+				border-color: if($outline, var(--#{color-name}-lighter), transparent);
 				box-shadow:
-					0 0 0 $input-btn-focus-width lighten($btn-color, 4%),
-					0 4px 4px $btn-box-shadow-color;
+					0 0 0 $input-btn-focus-width var(--#{color-name}-lighter),
+					0 4px 4px var(--color-button-shadow);
 			}
 
 			&:active {
-				box-shadow: 0 0 0 $input-btn-focus-width darken($btn-color, 8%);
+				box-shadow: 0 0 0 $input-btn-focus-width var(--#{color-name}-darker);
 			}
 		}
 	}
@@ -81,27 +74,27 @@
 
 		&:hover {
 			@media (hover: hover) {
-				background-color: lighten($btn-success-color, 4%);
+				background-color: var(--accent-green-lighter);
 			}
 		}
 
 		&:active {
-			background-color: darken($btn-success-color, 8%);
+			background-color: var(--accent-green-darker);
 		}
 
 		&:focus {
 			.keyboard & {
-				box-shadow: 0 0 0 $input-btn-focus-width $btn-success-color;
+				box-shadow: 0 0 0 $input-btn-focus-width var(--accent-green);
 
 				&:hover {
-					border-color: if($outline, lighten($btn-color, 4%), transparent);
+					border-color: if($outline, var(--#{color-name}-lighter), transparent);
 					box-shadow:
-						0 0 0 $input-btn-focus-width lighten($btn-success-color, 4%),
-						0 4px 4px $btn-box-shadow-color;
+						0 0 0 $input-btn-focus-width var(--accent-green-lighter),
+						0 4px 4px var(--color-button-shadow);
 				}
 
 				&:active {
-					box-shadow: 0 0 0 $input-btn-focus-width darken($btn-success-color, 8%);
+					box-shadow: 0 0 0 $input-btn-focus-width var(--accent-green-darker);
 				}
 			}
 		}

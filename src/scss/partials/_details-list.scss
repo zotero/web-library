@@ -31,8 +31,8 @@
 
 		&.selected {
 			@include touch-or-bp-down(sm) {
-				background-color: $focus-color;
-				color: $shade-0;
+				background-color: var(--color-accent);
+				color: var(--primary-on-accent);
 				@include hairline-disabled(top);
 
 				& + li {
@@ -136,7 +136,7 @@
 
 		.icon-minus-circle-strong {
 			@include touch-or-bp-down(sm) {
-				color: $btn-primary-color;
+				color: var(--accent-red);
 			}
 		}
 	}

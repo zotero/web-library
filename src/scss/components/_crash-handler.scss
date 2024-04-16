@@ -19,7 +19,7 @@
 		flex: 0 0 auto;
 
 		@include touch-or-bp-down(sm) {
-			background: $asphalt;
+			background: var(--accent-asphalt);
 			color: $shade-1;
 			display: block;
 			width: 100%;

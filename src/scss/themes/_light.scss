@@ -1,338 +1,92 @@
-//
-// Light theme
-// --------------------------------------------------
+@use 'sass:color';
+@use "sass:map";
 
+$-colors: (
+	accent-azure: #66adff,
+	accent-blue: #4072e5,
+	accent-blue10: #4072e51a,
+	accent-blue30: #4072e54d,
+	accent-blue50: #4072e580,
+	accent-gold: #cc9200,
+	accent-green: #39bf68,
+	accent-orange: #ff794c,
+	accent-red: #db2c3a,
+	accent-teal: #59adc4,
+	accent-white: #fff,
+	accent-wood-dark: #996b6f,
+	accent-wood: #cc7a52,
+	accent-yellow: #faa700,
+	accent-highlight: #ffea0080,
+	fill-primary: #000000d9,
+	fill-secondary: #00000080,
+	fill-tertiary: #00000040,
+	fill-quarternary: #0000001a,
+	fill-quinary: #0000000d,
+	fill-senary: #00000005,
+	color-background: #fff,
+	color-background50: #ffffff80,
+	color-background70: #ffffffb2,
+	color-border: #00000026,
+	color-border50: #00000014,
+	color-button: #fff,
+	color-control: #fff,
+	color-menu: #f6f6f6b8,
+	color-panedivider: #dadada,
+	color-sidepane: #f2f2f2,
+	color-tabbar: #f2f2f2,
+	color-toolbar: #f9f9f9,
+	color-scrollbar: rgb(194, 194, 194),
+	color-scrollbar-hover: rgb(125, 125, 125),
+	color-scrollbar-background: transparent,
+	color-stripe: #0000000a,
+	tag-blue: #2ea8e5,
+	tag-gray: #aaa,
+	tag-green: #5fb236,
+	tag-indigo: #576dd9,
+	tag-magenta: #e56eee,
+	tag-orange: #f19837,
+	tag-plum: #a6507b,
+	tag-purple: #a28ae5,
+	tag-red: #ff6666,
+	tag-teal: #009980,
+	tag-yellow: #ffd400,
 
-// Colors
-// --------------------------------------------------
+	// web-library-specific colors
+	accent-blue-dark: #333c66,
+	accent-asphalt: #7a8799,
 
-$red:           #db2c3a; // 355° 80 86
-$blue:          #4072e6; // 222° 72 90
-$yellow:		#dbb842;
-$asphalt:       #7a8799;
-$asphalt-light: #dadee3;
+	color-shade-0: #fff,
+	color-shade-1: #fafafa,
+	color-shade-2: #e6e6e6,
+	color-shade-3: #ddd,
+	color-shade-4: #ccc,
+	color-shade-5: #bbb,
+	color-shade-6: #737373,
+	color-shade-7: #555,
+	color-shade-8: #333,
+	color-shade-9: #111,
+	color-shade-10: #000,
 
-$primary:   $red;
-$secondary: $blue;
-$success:   #3abd57;
+	color-dnd-target-outline: #393939,
+	color-collection-tree-shadow: #e3e3e3, //mix($shade-4, $sidebar-bg, 50%)
+	touch-tag-placelhoder: #f3f3f3, //tint($shade-2, 50%)
+	color-tab-headings-bg: #f0f0f0, //shade($shade-1, 4%);
+	color-item-list-second-row: #888, //mix($body-bg, $text-color, 50%);
+	color-panel-backdrop-bg: rgba(0, 0, 0, 0.1), //rgba($shade-10, 0.1)
+	color-editable-hover-bg: rgba(0, 0, 0, 0.04),
+	color-editable-backdrop-hover-bg: #f0f0f0, // darken($shade-1, ($editable-hover-percent * 100%));, $editable-hover-percent = 0.04
+	color-shade-1-darker: #f5f5f5, // shade($shade-1, 2%) or mix($shade-10, $shade-1, 2%) or html whitesmoke
+	color-button-active-bg: #f0f0f0,
+	color-button-shadow: rgba(0, 0, 0, 0.2),
+	color-button-shadow-lighter: rgba(0, 0, 0, 0.06),
+	tag-color-border: rgba(0, 0, 0, 0.08),
+	color-text-disabled: #656565, // lighten($text-color, 33%);
+	color-nav-sidebar-border: #252525,
+	color-identifier-badge-hover-border: #b9b8b5,
+);
 
-$blue-dark:    #333c66;
-$blue-darkest: #3d4466;
-
-$transparent: transparent;
-
-
-// Grays
-// --------------------------------------------------
-
-$shade-0:  #fff;
-$shade-1:  #fafafa;
-$shade-2:  #e6e6e6;
-$shade-3:  #ddd;
-$shade-4:  #ccc;
-$shade-5:  #bbb;
-$shade-6:  #737373;
-$shade-7:  #555;
-$shade-8:  #333;
-$shade-9:  #111;
-$shade-10: #000;
-
-
-// Scaffolding
-// --------------------------------------------------
-
-$body-bg:    $shade-0;
-$text-color: $shade-9;
-
-$headings-color: $shade-8;
-
-$link-color:       $blue;
-$link-hover-color: $blue;
-
-$focus-color: $secondary;
-
-
-// Typography
-// --------------------------------------------------
-
-$text-selection-color: inherit;
-$text-selection-bg: rgba($secondary, 0.2);
-
-// Separator
-$separator-color: $shade-3;
-
-
-// Partials
-// --------------------------------------------------
-
-// Main
-$main-bg: $shade-0;
-
-// Sidebar
-$sidebar-bg:           $shade-1;
-$sidebar-border-color: $shade-4;
-
-// Details list
-$details-list-link-color:    $text-color;
-$details-list-border-color:  $shade-4;
-$details-list-selected-bg:   $shade-3;
-$details-list-focus-color:   $shade-0;
-$details-list-focus-bg:      $focus-color;
-
-// Scrollbar
-$scrollbar-bg:    transparent;
-$scrollbar-color: $shade-4;
-
-
-// Components
-// --------------------------------------------------
-
-// Icon
-$icon-color:        $shade-6;
-$icon-color-touch:  $link-color;
-$icon-active-color: $shade-9;
-$icon-circle-color: $shade-5;
-
-// Navbar
-$navbar-bg:                           $body-bg;
-$navbar-nav-mobile-bg:                $shade-9;
-$navbar-border-color:                 $shade-0;
-$navbar-link-color:                   $shade-9;
-$navbar-link-mobile-color:            $shade-0;
-$navbar-link-active-color:            $secondary;
-$navbar-link-mobile-active-color:     rgba($shade-0, 0.5);
-$navbar-dropdown-toggle-active-color: $shade-6;
-$icon-bar-bg:                         $shade-8;
-
-
-// Collection tree
-$collection-tree-headings-color:          $shade-6;
-$collection-tree-color:                   $shade-8;
-$collection-tree-active-color:            $shade-9;
-$collection-tree-active-icon-color:       $shade-7;
-$collection-tree-active-bg:               $shade-2;
-$collection-tree-focus-color:             $asphalt;
-$collection-tree-icon-color:              $shade-6;
-$collection-tree-picker-skip-color:       rgba($shade-10, .5);
-$collection-tree-disabled:                rgba($shade-10, .5);
-$collection-tree-picked-bg:               $blue;
-$collection-tree-picked-color:            $shade-0;
-$touch-collection-tree-headings-bg:       shade($shade-1, 4%);
-$touch-collection-tree-active-color:      $shade-0;
-$touch-collection-tree-active-bg:         $blue;
-$touch-collection-tree-border:            $shade-4;
-$touch-collection-tree-separator:         $body-bg;
-
-// Items
-$items-bg:                    $shade-0;
-$item-placeholder-color:      $shade-2;
-
-// Item list
-$item-border-color:              $shade-4;
-$item-active-color:              $shade-0;
-$item-active-bg:                 $secondary;
-$item-creator-date-color:        mix($body-bg, $text-color, 50%);
-$item-list-chevron-color:        $shade-4;
-$creator-date-placeholder-color: rgba($item-placeholder-color, 0.5);
-
-// Item table
-$item-table-head-color:     $shade-8;
-$item-table-head-border:    $shade-2;
-$item-table-head-active-bg: $shade-1;
-$item-table-odd-bg:         mix($shade-10, $shade-1, 2%);
-$item-table-active-bg:      $shade-3;
-$item-table-focus-color:    $shade-0;
-$item-table-focus-bg:       $secondary;
-$sort-indicator:            $secondary;
-$item-table-dnd-target-bg:  $shade-5;
-
-// Item details
-$item-details-bg:        $shade-1;
-$item-details-border:    $shade-4;
-$item-details-border-1x: $shade-3;
-$info-view-color:        $shade-5;
-
-// Panel
-$panel-bg:           $shade-1;
-$panel-header-color: $shade-8;
-$panel-backdrop-bg:  rgba($shade-10, 0.1);
-
-// Tabs
-$tabs-border-color:             $shade-3;
-$tab-active-color:              $secondary;
-$tab-inactive-color:            $headings-color;
-$tab-pane-heading-border-color: $shade-4;
-$tab-pane-heading-bg:           shade($shade-1, 4%);
-
-// Metadata list
-$key-color:                $shade-6;
-$handle-color-touch:       $shade-4;
-$handle-color-mouse:       $shade-6;
-$metadata-heading-color:   $shade-5;
-$metadata-separator-color: $shade-3;
-
-// Notes list
-$notes-toolbar-border-color: $shade-3;
-$note-active-bg:             $shade-3;
-$note-focus-color:           $shade-0;
-$note-focus-bg:              $blue;
-$note-border-color:          $shade-3;
-$note-border-color-touch:    $shade-4;
-$note-list-chevron-color:    $shade-4;
-$note-placeholder-color:     $shade-5;
-
-// Attachment list
-$attachments-toolbar-border-color: $shade-3;
-$attachment-details-border-color:  $shade-3;
-$attachment-placeholder-color:     $shade-5;
-$no-link-opacity:                  0.5;
-
-// Rich editor
-$editor-bg: $shade-0;
-$editor-border-color:        $shade-3;
-$tox-edit-area-border-color: $shade-2;
-
-// Note
-$note-headings-color:     $headings-color;
-$blockquote-border-color: $shade-3;
-
-// Button
-$btn-primary-color:           $primary;
-$btn-secondary-color:         $secondary;
-$btn-light-color:             $shade-6;
-$btn-default-color:           $shade-9;
-$btn-default-hover-bg:        $shade-0;
-$btn-default-border-color:    $shade-3;
-$btn-box-shadow-color:        rgba($shade-10, 0.2);
-$btn-success-color:           $success;
-$btn-icon-hover-bg:           shade($shade-1, 2%);
-$btn-icon-active-color:       $shade-7;
-$btn-icon-active-bg:          $shade-2;
-$btn-icon-separator-color:    $shade-3;
-$twisty-color:                $shade-6;
-$twisty-focus-color:          $asphalt;
-$twisty-selected-color:       $shade-7;
-$twisty-dnd-target-color:     $shade-0;
-
-// Forms
-$form-bg-touch:             $shade-1;
-$input-color:               $text-color;
-$input-bg:                  $body-bg;
-$input-border-color:        $shade-3;
-$input-border-color-touch:  $shade-5;
-$input-focus-color:         $secondary;
-$placeholder-color:         $shade-5;
-$checkbox-border-touch:     $shade-4;
-$checkbox-checked-bg-touch: $secondary;
-$label-color:               $shade-6;
-
-// Spinner
-$spinner-color: $secondary;
-
-// Touch header
-$touch-header-color:      $shade-8; // Better than $shade-6 to link color
-$touch-header-link-color: $blue;
-$touch-header-bg:         $shade-1;
-$touch-header-darker-bg:  shade($shade-1, 2%);
-$touch-header-border:     $shade-4;
-$btn-options-color:       $secondary;
-$btn-options-bg:          $transparent;
-$btn-options-focus-color: rgba($btn-options-color, 0.5);
-
-// Touch footer
-$touch-footer-color:     $shade-8;
-$touch-footer-bg:        $shade-1;
-$touch-footer-darker-bg: shade($shade-1, 2%);
-$touch-footer-border:    $shade-4;
-
-// Editable
-$editable-color:             $text-color;
-$editable-bg:                $shade-0;
-$editable-border-color:      $secondary;
-$editable-hover-percent:     0.04;
-$editable-hover-bg:          rgba($shade-10, $editable-hover-percent);
-$editable-backdrop-bg:       $shade-1;
-$editable-backdrop-hover-bg: darken($shade-1, ($editable-hover-percent * 100%));
-
-// Menu (select, dropdown, …)
-$menu-color:                  $text-color;
-$menu-color-disabled:         lighten($text-color, 33%);
-$menu-bg:                     $body-bg;
-$menu-box-shadow:             0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
-$menu-item-hover-bg:          mix($shade-10, $shade-1, 2%);
-$menu-item-selected-bg:       $shade-2;
-$menu-item-selected-hover-bg: $shade-3;
-$menu-devider:                $shade-2;
-$menu-no-results-color:       $shade-5;
-
-// Drag layer
-$creator-drag-preview-shadow: rgba($shade-10, 0.2);
-$items-drag-indicator-color:  $item-active-color;
-$items-drag-indicator-bg:     lighten($item-active-bg, 5%);
-
-// Modal
-$modal-backdrop-bg:           rgba($shade-10, 0.4);
-$modal-content-bg:            $body-bg;
-$modal-content-bg-touch:      $shade-1;
-$modal-header-bg:             $shade-0;
-$modal-touch-header-bg:       $shade-1;
-$modal-form-header-bg:        shade($shade-1, 2%);
-$modal-border-color:          $shade-2;
-$modal-border-color-touch:    $shade-4;
-$modal-icon-spin-color:       $shade-0;
-
-// Toolbar
-$toolbar-color:              $icon-color;
-$tool-group-separator-color: $shade-2;
-
-// Messages
-$message-bg: $body-bg;
-$error:      $red;
-$info:       $blue;
-$warning:	 $yellow;
-
-// Tag selector
-$tag-selector-border-color: 		$shade-3;
-$tag-selector-color:        		$shade-8;
-$tag-hover-bg:              		$shade-2;
-$tag-selected-color:        		$shade-0;
-$tag-selected-bg:           		$shade-6;
-$tag-selected-active-bg:    		$shade-7;
-$tag-selector-grip-color:   		$shade-4;
-$tag-selector-grip-color-active: 	$blue;
-
-// Touch tag selector
-$touch-tag-selector-pane-bg:      $shade-0;
-$touch-tag-selector-border-color: $shade-4;
-$touch-tag-selected-bg:           $shade-3;
-$tag-color-border-color:          $shade-4;
-$touch-tag-placeholder-bg:        tint($shade-2, 50%);
-
-// Popover
-$popover-bg:                  $body-bg;
-$popover-body-color:          $text-color;
-$popover-header-bg:           $body-bg;
-$popover-header-color:        $shade-8;
-$popover-header-border-color: $shade-2;
-$popover-box-shadow:          0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
-$popover-arrow-color:         $body-bg;
-$popover-arrow-outer-color:   rgba(0, 0, 0, 0.2);
-
-// Oncoing
-$ongoing-border-color: $shade-3;
-$ongoing-color: $shade-8;
-
-// Drag and drop target
-$dnd-target-color: rgba($secondary, 0.25);
-
-// Identifier picker
-$result-border-color: $shade-2;
-$result-hover-color:  $shade-0;
-$result-hover-bg:     $shade-1;
-$badge-light-border-color: $shade-3;
-$badge-light-bg: $shade-0;
-
-$select-chevron-icon: "icons/chevron-7.svg";
-
-// match popups from reader
-$reader-popup-shadow: 0 0 0 1px #0000001a, 0 5px 10px #0009;
+@media (prefers-color-scheme: light) {
+	:root {
+		@include derive-colors($-colors);
+	}
+}

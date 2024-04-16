@@ -54,7 +54,7 @@
 				top: 0;
 				left: $space-xl;
 				right: 0;
-				border-top: 1px solid lighten($navbar-nav-mobile-bg, 8%);
+				border-top: 1px solid var(--color-nav-sidebar-border);
 				z-index: -1;
 			}
 		}

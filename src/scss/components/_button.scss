@@ -1,6 +1,4 @@
-//
-// Buttons
-// --------------------------------------------------
+@use "sass:map";
 
 .btn {
 	padding: $input-btn-padding-y $input-btn-padding-x;
@@ -20,21 +18,21 @@
 		padding: $input-btn-padding-y-touch $default-padding-x-touch;
 
 		&.hairline-top {
-			@include hairline(top, #ccc);
+			@include hairline(top, "shade-4");
 			border-top: none;
 			padding-top: $input-btn-padding-y-touch + 2 * $input-border-width;
 		}
 
 		&.hairline-start-padding {
-			@include hairline(top, #ccc, $start: $default-padding-x-touch);
+			@include hairline(top, "shade-4", $start: $default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-24 {
-			@include hairline(top, #ccc, $start: $default-padding-x-touch);
+			@include hairline(top, "shade-4", $start: $default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-28 {
-			@include hairline(top, #ccc, $start: (2 * $default-padding-x-touch + 28px));
+			@include hairline(top, "shade-4", $start: (2 * $default-padding-x-touch + 28px));
 
 			.icon[width="24"] {
 				margin-left: 2px;
@@ -114,8 +112,8 @@
 
 	@include mouse-keyboard-and-bp-up(md) {
 		&:focus {
-			border-color: $btn-secondary-color;
-			box-shadow: 0 0 0 $input-btn-focus-width $btn-secondary-color;
+			border-color: var(--accent-blue);
+			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue);
 		}
 	}
 
@@ -170,23 +168,23 @@
 }
 
 .btn-primary {
-	@include button-variant($btn-primary-color);
+	@include button-variant("accent-red");
 }
 
 .btn-outline-primary {
-	@include button-variant($btn-primary-color, $outline: true);
+	@include button-variant("accent-red", $outline: true);
 }
 
 .btn-secondary {
-	@include button-variant($btn-secondary-color);
+	@include button-variant("accent-blue");
 }
 
 .btn-outline-secondary {
-	@include button-variant($btn-secondary-color, $outline: true);
+	@include button-variant("accent-blue", $outline: true);
 }
 
 .btn-transparent-secondary {
-	color: $btn-secondary-color;
+	color: var(--accent-blue);
 }
 
 .btn-outline-light {
@@ -199,11 +197,11 @@
 
 	@include state(".btn-default:hover", ".btn-file input:hover + .btn-default") {
 		background-color: $btn-default-hover-bg;
-		box-shadow: 0 2px 4px  rgba($shade-10, 0.06);
+		box-shadow: 0 2px 4px var(--color-button-shadow-lighter);
 	}
 
 	@include state(".btn-default:active", ".btn-file input:active + .btn-default") {
-		background-color: darken($shade-1, 4%);
+		background-color: var(--color-button-active-bg);
 		box-shadow: none;
 	}
 
@@ -213,24 +211,24 @@
 
 	@include scopedVariant(".keyboard") {
 		@include state(".btn-default:focus", ".btn-file input:focus + .btn-default") {
-			border-color: $secondary;
-			box-shadow: 0 0 0 $input-btn-focus-width $secondary;
+			border-color: var(--accent-blue);
+			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue);
 		}
 
 		@include state(
 			".btn-default:focus:hover", ".btn-file input:focus:hover + .btn-default"
 		) {
-			border-color: lighten($secondary, 4%);
+			border-color: var(--accent-blue-lighter);
 	 		box-shadow:
-	 			0 0 0 $input-btn-focus-width lighten($secondary, 4%),
-	 			0 4px 4px $btn-box-shadow-color;
+	 			0 0 0 $input-btn-focus-width var(--accent-blue-lighter),
+	 			0 4px 4px var(--color-button-shadow);
 		}
 
 		@include state(
 			".btn-default:focus:active", ".btn-file input:focus:active + .btn-default"
 		) {
-			border-color: darken($secondary, 8%);
-			box-shadow: 0 0 0 $input-btn-focus-width darken($secondary, 8%);
+			border-color: var(--accent-blue-darker);
+			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue-darker);
 		}
 	}
 }

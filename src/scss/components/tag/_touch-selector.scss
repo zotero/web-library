@@ -86,7 +86,7 @@
 
 		&[style*="color"] {
 			background-color: currentColor;
-			border: $border-width solid rgba($shade-10, 0.08);
+			border: $border-width solid var(--tag-color-border);
 		}
 	}
 
@@ -108,7 +108,7 @@
 					bottom: 0;
 					left:  2 * $default-padding-x-touch + $space-md;
 					height: 1px;
-					box-shadow: 0 1px mix($touch-tag-selector-border-color, $body-bg, 50%);
+					box-shadow: 0 1px var(--color-shade-2);
 
 					@media (min-resolution: 2dppx) {
 						box-shadow: 0 1px $touch-tag-selector-border-color;

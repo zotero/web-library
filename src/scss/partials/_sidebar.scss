@@ -25,7 +25,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		border-right: $border-width solid tint($sidebar-border-color, 50%);
+		border-right: $border-width solid var(--color-shade-2);
 	}
 
 	@include bp-up(sm) {

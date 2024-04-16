@@ -1,11 +1,16 @@
-//
-// Hairline
-// --------------------------------------------------
+@use 'sass:color';
+@use "sass:map";
+
+// lookup for color name foreground -> background
+$-colors-bg-lookup: (
+	shade-4: "shade-2",
+	shade-5: "shade-3"
+);
 
 // Use padding to compensate the hairline where needed
 // Todo: use 0.5px border once Chrome is ready (Chromium issue 623495)
 
-@mixin hairline($side, $color, $start: null, $end: null) {
+@mixin hairline($side, $color-name, $start: null, $end: null) {
 	$specs: (
 		top: (
 			top: 0,
@@ -76,15 +81,15 @@
 		left: $left;
 		width: $width;
 		height: $height;
-		background-color: mix($color, $body-bg, 50%);
+		background-color: var(--#{map.get($-colors-bg-lookup, $color-name)});
 	}
 
 	@media (min-resolution: 2dppx) {
 		#{$pseudo-element} {
 			background: linear-gradient(
 				$direction,
-				$color 0%,
-				$color 51%,
+				var(--#{$color-name}) 0%,
+				var(--#{$color-name}) 51%,
 				transparent 51%
 			) no-repeat $position;
 		}
