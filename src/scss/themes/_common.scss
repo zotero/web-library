@@ -116,7 +116,6 @@ $item-table-head-border: $shade-2;
 $item-table-head-active-bg: $shade-1;
 $item-table-odd-bg: var(--color-shade-1-darker);
 $item-table-active-bg: $shade-3;
-$item-table-focus-color: $shade-0;
 $item-table-focus-bg: var(--accent-blue);
 $sort-indicator: var(--accent-blue);
 $item-table-dnd-target-bg: $shade-5;
@@ -188,7 +187,6 @@ $twisty-dnd-target-color: $shade-0;
 
 // Forms
 $form-bg-touch: $shade-1;
-$input-color: $text-color;
 $input-bg: $body-bg;
 $input-border-color: $shade-3;
 $input-border-color-touch: $shade-5;
@@ -226,9 +224,7 @@ $editable-backdrop-bg: $shade-1;
 $editable-backdrop-hover-bg: var(--color-editable-backdrop-hover-bg);
 
 // Menu (select, dropdown, …)
-$menu-color: $text-color;
 $menu-color-disabled: var(--color-text-disabled);
-$menu-bg: $body-bg;
 $menu-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
 $menu-item-hover-bg: var(--color-shade-1-darker);
 $menu-item-selected-bg: $shade-2;
@@ -253,7 +249,6 @@ $modal-border-color-touch: $shade-4;
 $modal-icon-spin-color: $shade-0;
 
 // Toolbar
-$toolbar-color: $icon-color;
 $tool-group-separator-color: $shade-2;
 
 // Messages

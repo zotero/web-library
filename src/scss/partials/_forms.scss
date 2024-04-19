@@ -210,8 +210,8 @@ label {
 	flex: 1 1 auto;
 	display: block;
 	width: 100%;
-	color: $input-color;
-	background-color: $input-bg;
+	color: var(--fill-primary);
+	background-color: var(--material-background);
 	appearance: none;
 	transition:
 		border-color $input-btn-transition,

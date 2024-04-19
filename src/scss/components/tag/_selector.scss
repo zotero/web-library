@@ -7,7 +7,7 @@
 		flex: 0 0 $tag-selector-height;
 		display: flex;
 		flex-direction: column;
-		border-top: $border-width solid $tag-selector-border-color;
+		border-top: var(--material-border-quarternary);
 		line-height: $line-height-base;
 		min-height: 0;
 

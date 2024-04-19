@@ -38,8 +38,8 @@
 		flex-direction: row;
 		align-items: center;
 		border: {
-			top: $border-width solid $item-table-head-border;
-			bottom: $border-width solid $item-table-head-border;
+			top: var(--material-panedivider);
+			bottom: var(--material-panedivider);
 		}
 
 
@@ -182,30 +182,48 @@
 
 	.items-table-body {
 		padding-top: $space-min * 0.5;
-	 	background-image: repeating-linear-gradient(to bottom, $item-table-odd-bg $space-min * 0.5,
-	 		$item-table-odd-bg ($item-table-row-height + $space-min * 0.5),
-	 		transparent ($item-table-row-height + $space-min * 0.5),
-	 		transparent (2 * $item-table-row-height + $space-min * 0.5));
-	 	background-attachment: local;
+		margin-left: 8px;
 
-
-	 	> div {
-		 	position: relative;
-	 	}
+		> div {
+			position: relative;
+		}
 	}
 
 	.item {
+		align-items: center;
+		border-radius: 5px;
 		display: flex;
 		flex-direction: row;
-		align-items: center;
 		user-select: none;
 		width: 100%;
+
+		&.odd:not(.active) {
+			background-color: var(--material-stripe);
+		}
+
+		&.even:not(.active) {
+			background-color: var(--material-background);
+		}
+
+		&.active {
+			border-radius: 0;
+
+			&.first-active {
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+			}
+
+			&.last-active {
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+		}
 
 		&.active {
 			background-color: $item-table-active-bg;
 
 			&.focused {
-				color: $item-table-focus-color;
+				color: var(--primary-on-accent);
 				background-color: $item-table-focus-bg;
 			}
 		}
@@ -330,5 +348,5 @@
 	position: absolute;
 	width: 100%;
 	z-index: 100;
-    margin-top: $item-table-row-height;
+	margin-top: $item-table-row-height;
 }

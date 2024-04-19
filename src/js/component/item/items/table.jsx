@@ -485,6 +485,7 @@ const Table = () => {
 							aria-multiselectable="true"
 							aria-readonly="true"
 							aria-label="items"
+							data-width={ width }
 							aria-rowcount={ totalResults }
 						>
 							<HeaderRow
@@ -512,7 +513,7 @@ const Table = () => {
 								ref={ r => { ref(r); listRef.current = r } }
 								outerRef={ outerRef }
 								innerRef={ innerRef }
-								width={ width }
+								width={ width - 16 }
 							>
 								{ TableRow }
 							</List>

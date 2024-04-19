@@ -1,6 +1,7 @@
 @mixin dropdown-menu {
-	background-color: $menu-bg;
+	background: var(--material-toolbar);
 	box-shadow: $menu-box-shadow;
+	border: var(--material-panedivider);
 	border-radius: $menu-border-radius;
 	z-index: $z-index-menu;
 	margin: $space-min 0;
@@ -32,7 +33,7 @@
 	background-color: transparent;
 	margin: 0;
 	white-space: nowrap; // Prevent line break due to positioned dropdown-wrapper
-	color: $menu-color;
+	color: var(--fill-primary);
 	cursor: pointer;
 
 	@include touch-or-bp-down(sm) {
@@ -46,7 +47,7 @@
 	}
 
 	&.disabled {
-		color: $menu-color-disabled;
+		color: var(--color-text-disabled);
 
 		&:hover,
 		&:focus {

@@ -19,19 +19,19 @@
 
 	--color-accent: var(--accent-blue);
 	--primary-on-accent: var(--accent-white);
-	--accent-blue-lighter: lighten(map.get($colors, "accent-blue"), 4%);
-	--accent-blue-darker: darken(map.get($colors, "accent-blue"), 8%);
-	--accent-green-lighter: lighten(map.get($colors, "accent-green"), 4%);
-	--accent-green-darker: darken(map.get($colors, "accent-green"), 8%);
-	--accent-red-lighter: lighten(map.get($colors, "accent-red"), 4%);
-	--accent-red-darker: darken(map.get($colors, "accent-red"), 8%);
-	--color-shade-0-50: rgba(map.get($colors, "shade-0"), 0.5);
-	--color-shade-10-50: rgba(map.get($colors, "shade-10"), 0.5);
-	--color-shade-2-50: rgba(map.get($colors, "shade-2"), 0.5);
+	--accent-blue-lighter: #{lighten(map.get($colors, "accent-blue"), 4%)};
+	--accent-blue-darker: #{darken(map.get($colors, "accent-blue"), 8%)};
+	--accent-green-lighter: #{lighten(map.get($colors, "accent-green"), 4%)};
+	--accent-green-darker: #{darken(map.get($colors, "accent-green"), 8%)};
+	--accent-red-lighter: #{lighten(map.get($colors, "accent-red"), 4%)};
+	--accent-red-darker: #{darken(map.get($colors, "accent-red"), 8%)};
+	--color-shade-0-50: #{transparentize(map.get($colors, "color-shade-0"), 0.5)};
+	--color-shade-10-50: #{transparentize(map.get($colors, "color-shade-10"), 0.5)};
+	--color-shade-2-50: #{transparentize(map.get($colors, "color-shade-2"), 0.5)};
 
-	--color-text-selection-bg: rgba(map.get($colors, "accent-blue"), 0.2),
-
-	--color-dnd-target: rgba(map.get($colors, "accent-blue"), 0.25),
+	--color-text-selection-bg: rgba(map.get($colors, "accent-blue"), 0.2);
+	--color-text-selection-bg: rgba(map.get($colors, "accent-blue"), 0.2);
+	--color-dnd-target: rgba(map.get($colors, "accent-blue"), 0.25);
 
 	// composite (opaque) colors
 	--color-quinary-on-background: #{color.mix(
@@ -49,11 +49,6 @@
 	--color-stripe-on-background: #{color.mix(
 		map.get($colors, "color-background"), color.change(map.get($colors, "color-stripe"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "color-stripe")))
 	)};
-	--color-menu-opaque: rgb(
-		#{color.alpha(map.get($colors, "color-menu")) * color.red(map.get($colors, "color-menu"))},
-		#{color.alpha(map.get($colors, "color-menu")) * color.green(map.get($colors, "color-menu"))},
-		#{color.alpha(map.get($colors, "color-menu")) * color.blue(map.get($colors, "color-menu"))}
-	);
 
 	// background materials
 	--material-background: var(--color-background);

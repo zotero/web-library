@@ -150,7 +150,7 @@
 	}
 
 	@include mouse-and-bp-only(lg) {
-		border-left: $border-width solid var(--color-shade-2);
+		border-left: var(--material-border-quarternary);
 	}
 
 	.panel {

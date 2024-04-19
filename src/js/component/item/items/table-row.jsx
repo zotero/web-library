@@ -5,6 +5,7 @@ import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
 import { Icon } from 'web-common/components';
+import memoize from 'memoize-one';
 
 import Cell from './table-cell';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
@@ -146,6 +147,12 @@ PlaceholderCell.propTypes = {
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
+const getSelectedIndexes = memoize((selectedItemKeys, keys) => {
+	const selectedIndexes = selectedItemKeys.map(k => keys.indexOf(k));
+	selectedIndexes.sort();
+	return selectedIndexes;
+});
+
 const TableRow = props => {
 	const id = useId();
 	const labelledById = `${id}-title`;
@@ -157,6 +164,7 @@ const TableRow = props => {
 	const { onFileHoverOnRow, columns } = data;
 	const keys = useSourceKeys();
 	const itemKey = keys && keys[index] ? keys[index] : null;
+	const selectedItemKeys = useSelector(state => state.current.itemKeys);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isFileUploadAllowedInLibrary = useSelector(
@@ -172,8 +180,12 @@ const TableRow = props => {
 			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]
 			: null
 	);
-	const selectedItemKeysLength = useSelector(state => state.current.itemKeys.length);
+
+	const selectedIndexes = getSelectedIndexes(selectedItemKeys, keys);
+	const selectedItemKeysLength = selectedItemKeys.length;
 	const isSelected = useSelector(state => itemKey && state.current.itemKeys.includes(itemKey));
+	const isFirstRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index - 1);
+	const isLastRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index + 1);
 
 	//@NOTE: to avoid re-rendering unselected rows on focus change, we only check isFocused if isSelected
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isItemsTableFocused);
@@ -250,8 +262,10 @@ const TableRow = props => {
 		odd: (index + 1) % 2 === 1,
 		'nth-4n-1': (index + 2) % 4 === 0,
 		'nth-4n': (index + 1) % 4 === 0,
-		active: isSelected,
-		focused: isFocusedAndSelected,
+		'active': isSelected,
+		'first-active': isFirstRowOfSelectionBlock,
+		'last-active': isLastRowOfSelectionBlock,
+		'focused': isFocusedAndSelected,
 		'dnd-target': canDrop && itemData && !(['attachment', 'note'].includes(itemData.itemTypeRaw)) && isOver && dropZone === null,
 		'dnd-target-top': canDrop && isOver && dropZone === 'top',
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',

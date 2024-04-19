@@ -16,7 +16,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		border-top: $border-width solid var(--color-shade-2);
+		border-top: var(--material-panedivider);
 	}
 }
 

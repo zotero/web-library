@@ -1,69 +1,69 @@
 @mixin button-variant($color-name, $outline: null) {
-	background-color: if($outline, transparent, var(--#{color-name}));
-	border-color: if($outline, var(--#{color-name}), transparent);
+	background-color: if($outline, transparent, var(--#{$color-name}));
+	border-color: if($outline, var(--#{$color-name}), transparent);
 
 	&,
 	.icon {
 		&:not(.specifity) {
-			color: if($outline, var(--#{color-name}), var(--color-button));
+			color: if($outline, var(--#{$color-name}), var(--primary-on-accent));
 		}
 	}
 
 	&:hover {
 		@media (hover: hover) {
-			background-color: var(--#{color-name}-lighter);
-			border-color: if($outline, var(--#{color-name}-lighter), transparent);
+			background-color: var(--#{$color-name}-lighter);
+			border-color: if($outline, var(--#{$color-name}-lighter), transparent);
 			box-shadow: 0 2px 4px var(--color-button-shadow);
 		}
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: var(--color-button);
+				color: var(--primary-on-accent);
 			}
 		}
 	}
 
 	&:active,
 	.show > &.dropdown-toggle {
-		background-color: var(--#{color-name}-darker);
-		border-color: if($outline, var(--#{color-name}-darker), transparent);
+		background-color: var(--#{$color-name}-darker);
+		border-color: if($outline, var(--#{$color-name}-darker), transparent);
 		box-shadow: none;
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: var(--color-button);
+				color: var(--primary-on-accent);
 			}
 		}
 	}
 
 	&:disabled {
-		background-color: if($outline, transparent, var(--#{color-name}));
-		border-color: if($outline, var(--#{color-name}), transparent);
+		background-color: if($outline, transparent, var(--#{$color-name}));
+		border-color: if($outline, var(--#{$color-name}), transparent);
 		box-shadow: none;
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: if($outline, var(--#{color-name}), var(--color-button));
+				color: if($outline, var(--#{$color-name}), var(--primary-on-accent));
 			}
 		}
 	}
 
 	&:focus {
 		.keyboard & {
-			box-shadow: 0 0 0 $input-btn-focus-width var(--#{color-name});
+			box-shadow: 0 0 0 $input-btn-focus-width var(--#{$color-name});
 
 			&:hover {
-				border-color: if($outline, var(--#{color-name}-lighter), transparent);
+				border-color: if($outline, var(--#{$color-name}-lighter), transparent);
 				box-shadow:
-					0 0 0 $input-btn-focus-width var(--#{color-name}-lighter),
+					0 0 0 $input-btn-focus-width var(--#{$color-name}-lighter),
 					0 4px 4px var(--color-button-shadow);
 			}
 
 			&:active {
-				box-shadow: 0 0 0 $input-btn-focus-width var(--#{color-name}-darker);
+				box-shadow: 0 0 0 $input-btn-focus-width var(--#{$color-name}-darker);
 			}
 		}
 	}
@@ -87,7 +87,7 @@
 				box-shadow: 0 0 0 $input-btn-focus-width var(--accent-green);
 
 				&:hover {
-					border-color: if($outline, var(--#{color-name}-lighter), transparent);
+					border-color: if($outline, var(--#{$color-name}-lighter), transparent);
 					box-shadow:
 						0 0 0 $input-btn-focus-width var(--accent-green-lighter),
 						0 4px 4px var(--color-button-shadow);

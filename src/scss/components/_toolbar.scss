@@ -8,6 +8,7 @@
 	align-items: stretch;
 	flex: 0 0 auto;
 	white-space: nowrap;
+	background: var(--material-toolbar);
 
 	@include touch-or-bp-down(sm) {
 		height: $line-height-large-touch;
@@ -17,7 +18,7 @@
 	@include mouse-and-bp-up(md) {
 		height: $toolbar-height;
 		padding: 0 $default-padding-x;
-		color: $toolbar-color;
+		color: var(--fill-secondary);
 	}
 
 	@include variant(".toolbar.dense") {

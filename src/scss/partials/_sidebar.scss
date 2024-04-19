@@ -25,7 +25,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		border-right: $border-width solid var(--color-shade-2);
+		border-right: var(--material-border-quarternary);
 	}
 
 	@include bp-up(sm) {
