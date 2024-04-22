@@ -21,20 +21,27 @@ const getItemTitle = (mappings, item) => item.itemType === 'note' ?
 // logic based on:
 // https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
 const getAttachmentIcon = ({ linkMode, contentType }) => {
-	if (contentType === 'application/pdf' && ['linked_file', 'imported_file', 'imported_url'].includes(linkMode)) {
-		return linkMode === 'linked_file' ? 'pdf-linked' : 'pdf';
+	const isFileAttachment = ['linked_file', 'imported_file', 'imported_url'].includes(linkMode);
+	if (contentType === 'application/pdf' && isFileAttachment) {
+		return linkMode === 'linked_file' ? 'attachment-pdf-link' : 'attachment-pdf';
 	}
-	if (contentType === 'application/epub+zip' && ['linked_file', 'imported_file', 'imported_url'].includes(linkMode)) {
-		return linkMode === 'linked_file' ? 'epub-linked' : 'epub';
+	if (contentType === 'application/epub+zip' && isFileAttachment) {
+		return linkMode === 'linked_file' ? 'attachment-epub-link' : 'attachment-epub';
+	}
+	if (contentType.startsWith('image/') && isFileAttachment) {
+		return linkMode === 'linked_file' ? 'attachment-image-link' : 'attachment-image';
+	}
+	if (contentType.startsWith('video/') && isFileAttachment) {
+		return linkMode === 'linked_file' ? 'attachment-video-link' : 'attachment-video';
 	}
 
 	switch(linkMode) {
 		case 'linked_url':
-			return 'webpage-linked';
+			return 'attachment-web-link';
 		case 'imported_url':
-			return 'webpage-snapshot';
+			return 'attachment-snapshot';
 		case 'linked_file':
-			return 'document-linked';
+			return 'attachment-link';
 		case 'imported_file':
 		default:
 			return 'document';
@@ -48,13 +55,18 @@ const getAttachmentColumnIcon = item => {
 	const bestAttachment = get(item, [Symbol.for('links'), 'attachment'], null);
 
 	if(bestAttachment) {
-		const { attachmentType, attachmentSize = null } = bestAttachment
+		const { attachmentType, attachmentSize = null } = bestAttachment;
+
 		if(attachmentType === 'application/pdf' ) {
-			return 'pdf';
+			return 'attachment-pdf';
 		} else if (attachmentType === 'application/epub+zip') {
-			return 'epub';
+			return 'attachment-epub';
+		} else if(attachmentType.startsWith('image/')) {
+			return 'attachment-image';
+		} else if(attachmentType.startsWith('video/')) {
+			return 'attachment-video';
 		} else if(attachmentType === 'text/html' && attachmentSize === null) {
-			return 'webpage-snapshot';
+			return 'attachment-snapshot';
 		} else {
 			return 'document';
 		}

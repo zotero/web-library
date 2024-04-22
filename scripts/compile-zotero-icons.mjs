@@ -64,7 +64,7 @@ const makeIcon = (name, resolution, colorsMap) => {
                     const srcIconPath = join(srcIconDir, color, file);
                     const xml = await fs.readFile(srcIconPath, 'utf8');
                     try {
-                        const pixelRatio = resolution === '16' ? file.includes('@2x') ? '2x' : '1x' : '';
+                        const pixelRatio = (resolution === '16' && iconType !== 'collection-tree') ? file.includes('@2x') ? '2x' : '1x' : '';
                         const iconName = file.replace(/\.svg$/, '').replace(/@2x/g, '');
                         const iconBody = extractIcon(xml);
                         if (!map.has(iconName)) {
@@ -82,7 +82,7 @@ const makeIcon = (name, resolution, colorsMap) => {
 
             for (let [iconName, pixelRatioMap] of map) {
                 for (let [pixelRatio, colorsMap] of pixelRatioMap) {
-                    const targetIconPath = join(targetIconDir,  `${iconName}@${pixelRatio}.svg`);
+                    const targetIconPath = join(targetIconDir, `${iconName}${pixelRatio ? '@' + pixelRatio : ''}.svg`);
                     const svg = makeIcon(iconName, resolution, colorsMap);
                     await fs.writeFile(targetIconPath, svg);
                     counter++;
