@@ -50,6 +50,42 @@
 		map.get($colors, "color-background"), color.change(map.get($colors, "color-stripe"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "color-stripe")))
 	)};
 
+	--tag-blue-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-blue"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-blue")))
+	)};
+	--tag-gray-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-gray"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-gray")))
+	)};
+	--tag-green-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-green"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-green")))
+	)};
+	--tag-indigo-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-indigo"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-indigo")))
+	)};
+	--tag-magenta-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-magenta"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-magenta")))
+	)};
+	--tag-orange-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-orange"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-orange")))
+	)};
+	--tag-plum-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-plum"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-plum")))
+	)};
+	--tag-purple-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-purple"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-purple")))
+	)};
+	--tag-red-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-red"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-red")))
+	)};
+	--tag-teal-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-teal"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-teal")))
+	)};
+	--tag-yellow-on-background: #{color.mix(
+		map.get($colors, "color-background"), color.change(map.get($colors, "tag-yellow"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-yellow")))
+	)};
+
+
+
 	// background materials
 	--material-background: var(--color-background);
 	--material-background50: var(--color-background50);

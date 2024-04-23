@@ -86,9 +86,17 @@
 			}
 
 			&.colored {
+				font-weight: 600;
+
 				&.selected,
 				&:active {
 					background-color: currentColor;
+
+					@each $colorHex, $colorVar in $tagColorsLookup {
+						@include state('.tag[data-color="#{$colorHex}"]') {
+							background-color: var($colorVar);
+						}
+					}
 				}
 
 				&.selected:active {
@@ -106,15 +114,15 @@
 			}
 
 			.tag-label {
-				color: $tag-selector-color;
+				color: var(--fill-primary);
 				@include text-truncate;
 
 				@include state(".tag.selected", ".tag:active") {
-					color: $tag-selected-color;
+					color: var(--color-background);
 				}
 
 				@include state(".tag.selected:active") {
-					color: $tag-selector-color;
+					color: var(--fill-primary);
 				}
 			}
 
@@ -128,6 +136,12 @@
 					margin-right: $space-min;
 					border-radius: 5px;
 					border: $border-width solid var(--tag-color-border);
+
+					@each $colorHex, $colorVar in $tagColorsLookup {
+						@include state('.tag[data-color="#{$colorHex}"]') {
+							background-color: var($colorVar);
+						}
+					}
 
 					@include state(".colored.selected", ".colored:active") {
 						border-color: var(--color-button);

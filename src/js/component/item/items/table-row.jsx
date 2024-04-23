@@ -58,6 +58,7 @@ const TitleCell = memo(props => {
 							}
 							width={ index === 0 ? 10 : 7 }
 							height="10"
+							data-color={ color.toLowerCase() }
 							style={ { color } }
 						/>
 					)) }

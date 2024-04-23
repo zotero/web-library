@@ -36,6 +36,7 @@ const Tag = memo(props => {
 			'dnd-target': isOver && canDrop
 		}) }
 		data-tag={ tag.tag }
+		data-color={ tag.color ? tag.color.toLowerCase() : null }
 		key={ tag.tag }
 		onClick={ onClick }
 		onKeyDown={ onKeyDown }

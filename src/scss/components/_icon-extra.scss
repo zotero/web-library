@@ -27,6 +27,14 @@
 	margin-left: -2px;
 }
 
-.icon-circle {
+.icon-circle, .icon-crescent-circle {
 	color: $icon-circle-color;
+
+	@each $colorHex, $colorVar in $tagColorsLookupItemsTable {
+		&[data-color="#{$colorHex}"] {
+			// for known tag colors we're overriding the color set with style
+			// attribute to match equivalent theme color, hence !important
+			color: var($colorVar) !important;
+		}
+	}
 }

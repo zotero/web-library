@@ -444,3 +444,30 @@ $result-padding:      $space-md;
 // match popups from reader
 $reader-popup-border-radius: 5px;
 $reader-popup-padding: 5px 0;
+
+$tagColorsLookup: (
+	'#ff6666': --tag-red,
+	'#ff8c19': --tag-orange,
+	'#999999': --tag-gray,
+	'#5fb236': --tag-green,
+	'#009980': --tag-teal,
+	'#2ea8e5': --tag-blue,
+	'#576dd9': --tag-indigo,
+	'#a28ae5': --tag-purple,
+	'#a6507b': --tag-plum,
+);
+
+// When a color with an alpha channel is used as `fill` in an SVG, it doesn't
+// seem to be mixed correctly with the HTML background. Instead, we're using
+// these pre-calculated opaque colors.
+$tagColorsLookupItemsTable: (
+	'#ff6666': --tag-red-on-background,
+	'#ff8c19': --tag-orange-on-background,
+	'#999999': --tag-gray-on-background,
+	'#5fb236': --tag-green-on-background,
+	'#009980': --tag-teal-on-background,
+	'#2ea8e5': --tag-blue-on-background,
+	'#576dd9': --tag-indigo-on-background,
+	'#a28ae5': --tag-purple-on-background,
+	'#a6507b': --tag-plum-on-background,
+);

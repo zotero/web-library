@@ -182,6 +182,7 @@ const ListRow = memo(props => {
 									}
 									width={ index === 0 ? 12 : 8 }
 									height="12"
+									data-color={ color.toLowerCase() }
 									style={ { color } }
 								/>
 							))}
