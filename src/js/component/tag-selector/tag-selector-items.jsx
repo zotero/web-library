@@ -7,7 +7,7 @@ import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
-import { get } from '../../utils';
+import { get, isOnlyEmoji } from '../../utils';
 import { ITEM } from '../../constants/dnd';
 import { useSourceSignature, useTags } from '../../hooks';
 
@@ -31,6 +31,7 @@ const Tag = memo(props => {
 			disabled: tag.disabled,
 			selected: tag.selected,
 			colored: tag.color,
+			emoji: isOnlyEmoji(tag.tag),
 			placeholder: tag.isPlaceholder,
 			'dnd-target': isOver && canDrop
 		}) }

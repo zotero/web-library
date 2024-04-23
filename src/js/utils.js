@@ -474,6 +474,13 @@ const getPrevSibling = (elem, selector) => {
 	}
 };
 
+// https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
+const isOnlyEmoji = str => {
+	// Remove emoji, Zero Width Joiner, and Variation Selector-16 and see if anything's left
+	const re = /\p{Extended_Pictographic}|\u200D|\uFE0F/gu;
+	return !str.replace(re, '');
+}
+
 export {
     applyChangesToVisibleColumns,
     cede,
@@ -503,6 +510,7 @@ export {
     indexByGeneratedKey,
     indexByKey,
     isLikeURL,
+	isOnlyEmoji,
     JSONTryParse,
     localStorageWrapper,
     mapRelationsToItemKeys,

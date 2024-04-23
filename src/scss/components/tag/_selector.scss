@@ -118,7 +118,7 @@
 				}
 			}
 
-			&::before {
+			&:not(.emoji)::before {
 				@include variant(".tag.colored") {
 					content: "";
 					display: block;
