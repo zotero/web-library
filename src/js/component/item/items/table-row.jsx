@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
 import { Icon } from 'web-common/components';
 import memoize from 'memoize-one';
+import { pick } from 'web-common/utils';
 
 import Cell from './table-cell';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
@@ -24,17 +25,14 @@ const selectItem = (itemKey, ev, dispatch) => {
 }
 
 const TitleCell = memo(props => {
-	const { columnName, colIndex, width, isFocused, isSelected, labelledById, itemData } = props;
-	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-
+	const { columnName, isFocused, isSelected, labelledById, itemData, ...rest } = props;
 	const formattedSpan = document.createElement('span');
 	renderItemTitle(itemData[columnName], formattedSpan);
 
 	return (
 		<Cell
-			width={ width }
 			columnName={ columnName }
-			index={ colIndex }
+			{ ...pick(rest, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
 		>
 			<Icon
 				label={ `${itemData.itemType} icon` }
@@ -72,14 +70,12 @@ const TitleCell = memo(props => {
 TitleCell.displayName = 'TitleCell';
 
 const AttachmentCell = memo(props => {
-	const { columnName, colIndex, width, isFocused, isSelected, itemData } = props;
-	const dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+	const { columnName, isFocused, isSelected, itemData } = props;
 
 	return (
 		<Cell
-			width={ width }
 			columnName={ columnName }
-			index={ colIndex }
+			{ ...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
 		>
 			<div className="truncate">
 				{ itemData[columnName] }
@@ -101,13 +97,12 @@ const AttachmentCell = memo(props => {
 AttachmentCell.displayName = 'AttachmentCell';
 
 const GenericDataCell = memo(props => {
-	const { columnName, colIndex, width, itemData } = props;
+	const { columnName, itemData } = props;
 
 	return (
 		<Cell
-			width={ width }
 			columnName={ columnName }
-			index={ colIndex }
+			{ ...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
 		>
 			<div className="truncate">
 				{ itemData[columnName] }
@@ -129,12 +124,10 @@ GenericDataCell.propTypes = {
 
 
 const PlaceholderCell = props => {
-	const { columnName, colIndex, width } = props;
+	const { columnName } = props;
 	return (
 		<Cell
-			width={ width }
-			columnName={ columnName }
-			index={ colIndex }
+			{ ...pick(props, ['colIndex', 'columnName', 'width', 'isFirstColumn', 'isLastColumn']) }
 		>
 			{ columnName === 'title' && <div className="placeholder-icon" /> }
 			<div className="placeholder" />
@@ -344,6 +337,8 @@ const TableRow = props => {
 						labelledById={ labelledById }
 						key={ c.field }
 						colIndex={ colIndex }
+						isFirstColumn={ colIndex === 0 }
+						isLastColumn={ colIndex === columns.length - 1 }
 						columnName={ c.field }
 						isSelected={ isSelected }
 						isFocused={ isFocusedAndSelected }
@@ -354,6 +349,8 @@ const TableRow = props => {
 					<AttachmentCell
 						key={ c.field }
 						colIndex={ colIndex }
+						isFirstColumn={colIndex === 0}
+						isLastColumn={colIndex === columns.length - 1}
 						columnName={ c.field }
 						isSelected={ isSelected }
 						isFocused={ isFocusedAndSelected }
@@ -364,6 +361,8 @@ const TableRow = props => {
 					<GenericDataCell
 						key={ c.field }
 						colIndex={ colIndex }
+						isFirstColumn={colIndex === 0}
+						isLastColumn={colIndex === columns.length - 1}
 						columnName={ c.field }
 						itemData={ itemData }
 						width={ `var(--col-${colIndex}-width)` }
@@ -373,6 +372,8 @@ const TableRow = props => {
 				key={ c.field }
 				width={ `var(--col-${colIndex}-width)` }
 				colIndex={ colIndex }
+				isFirstColumn={colIndex === 0}
+				isLastColumn={colIndex === columns.length - 1}
 				columnName={ c.field }
 			/> ) }
 		</div>
