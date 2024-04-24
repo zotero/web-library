@@ -224,7 +224,7 @@
 
 			&.focused {
 				color: var(--primary-on-accent);
-				background-color: $item-table-focus-bg;
+				background-color: var(--color-accent);
 			}
 		}
 

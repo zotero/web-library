@@ -82,16 +82,6 @@ $icon-bar-bg: $shade-8;
 
 // Collection tree
 $collection-tree-headings-color: $shade-6;
-$collection-tree-color: $shade-8;
-$collection-tree-active-color: $shade-9;
-$collection-tree-active-icon-color: $shade-7;
-$collection-tree-active-bg: $shade-2;
-$collection-tree-focus-color: var(--accent-asphalt);
-$collection-tree-icon-color: $shade-6;
-$collection-tree-picker-skip-color: var(--color-shade-10-50);
-$collection-tree-disabled: var(--color-shade-10-50);
-$collection-tree-picked-bg: var(--accent-blue);
-$collection-tree-picked-color: $shade-0;
 $touch-collection-tree-headings-bg: var(--color-tab-headings-bg);
 $touch-collection-tree-active-color: $shade-0;
 $touch-collection-tree-active-bg: var(--accent-blue);
@@ -116,7 +106,6 @@ $item-table-head-border: $shade-2;
 $item-table-head-active-bg: $shade-1;
 $item-table-odd-bg: var(--color-shade-1-darker);
 $item-table-active-bg: $shade-3;
-$item-table-focus-bg: var(--accent-blue);
 $sort-indicator: var(--accent-blue);
 $item-table-dnd-target-bg: $shade-5;
 

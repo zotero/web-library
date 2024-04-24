@@ -9,7 +9,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 import Editable from '../editable';
 import Node from './node';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
-import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate } from '../../actions';
+import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate, triggerFocus } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 
 const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
@@ -96,6 +96,7 @@ const ItemsNode = memo(props => {
 	const isSelected = !isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({
@@ -113,7 +114,7 @@ const ItemsNode = memo(props => {
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
 			aria-level={ level }
-			className={ cx({ 'selected': isSelected })}
+			className={ cx({ 'selected': isSelected, 'focused': isFocusedAndSelected })}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
@@ -209,6 +210,7 @@ VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 
 const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({ publications: true });
@@ -225,7 +227,8 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, s
 			aria-level={ level }
 			className={ cx({
 				'publications': true,
-				'selected': isSelected
+				'selected': isSelected,
+				'focused': isFocusedAndSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -261,6 +264,7 @@ PublicationsNode.displayName = 'PublicationsNode';
 
 const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({ trash: true });
@@ -277,7 +281,8 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeT
 			aria-level={ level }
 			className={ cx({
 				'trash': true,
-				'selected': isSelected
+				'selected': isSelected,
+				'focused': isFocusedAndSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -347,10 +352,13 @@ const DotMenu = memo(props => {
 
 	const handleToggle = useCallback(ev => {
 		setDotMenuFor(isOpen ? null : collection.key);
+		if(!isOpen) {
+			dispatch(triggerFocus('collections-tree', true));
+		}
 		if(ev.type === 'click') {
 			ev.stopPropagation();
 		}
-	}, [collection, isOpen, setDotMenuFor]);
+	}, [collection.key, dispatch, isOpen, setDotMenuFor]);
 
 	const handleRenameClick = useCallback(ev => {
 		if(closeOnXArrowKey(ev)) {
@@ -550,6 +558,8 @@ const CollectionNode = memo(props => {
 	const isHighlighted = highlightedCollections.includes(collection.key);
 	const prevRenaming = usePrevious(renaming);
 	const inputRef = useRef(null);
+	const isSelected = derivedData[collection.key].isSelected;
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	// cannot be picked if isPickerSkip
 	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
@@ -674,14 +684,16 @@ const CollectionNode = memo(props => {
         <Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
-				'selected': !isPickerMode && derivedData[collection.key].isSelected,
+				'selected': !isPickerMode && isSelected,
+				'focused': !isPickerMode && isFocusedAndSelected,
 				'picked': isPickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'disabled': isDisabled,
+				'highlighted': isHighlighted,
 				'collection': true,
 			})}
 			aria-labelledby={ id.current }
-			aria-selected={ !isPickerMode && derivedData[collection.key].isSelected }
+			aria-selected={!isPickerMode && isSelected }
 			aria-level={ level }
 			data-collection-key={ collection.key }
 			aria-disabled={ isPickerMode && (isPickerSkip || isDisabled) }
@@ -715,7 +727,7 @@ const CollectionNode = memo(props => {
 			<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } className="touch" width="28" height="28" />
 			<Icon
 				type={ '16/folder' }
-				symbol={ isHighlighted ? 'folder-block' : 'folder' }
+				symbol={ 'folder' }
 				className="mouse"
 				width="16"
 				height="16"

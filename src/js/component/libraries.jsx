@@ -9,7 +9,7 @@ import { noop, pick } from 'web-common/utils';
 import CollectionTree from '../component/libraries/collection-tree';
 import cx from 'classnames';
 import Node from './libraries/node';
-import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
+import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate, triggerFocus } from '../actions';
 import { get, stopPropagation, getUniqueId } from '../utils';
 
 const LibraryNode = props => {
@@ -25,6 +25,7 @@ const LibraryNode = props => {
 	const hasChecked = totalResults !== null;
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c);
+	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
@@ -89,6 +90,7 @@ const LibraryNode = props => {
 			className={ cx({
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected && !isPickerMode,
+				'focused': isFocusedAndSelected && !isPickerMode,
 				'picked': isPickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
@@ -266,6 +268,23 @@ const Libraries = forwardRef((props, ref) => {
 		window.setTimeout(() => setVirtual({ libraryKey, collectionKey }));
 	}, [opened, toggleOpen]);
 
+
+	const handleFocus = useCallback(ev => {
+		const hasChangedFocused = receiveFocus(ev);
+		if (hasChangedFocused) {
+			dispatch(triggerFocus('collections-tree', true));
+		}
+	}, [dispatch, receiveFocus]);
+
+	const handleBlur = useCallback(ev => {
+		const hasChangedFocused = receiveBlur(ev);
+		const closestRootSkipDropdown = ev?.relatedTarget?.closest?.('[data-focus-root]:not(.dropdown-menu)');
+		// ignore blur within or to the "three dots" menu
+		if (hasChangedFocused && closestRootSkipDropdown !== treeRef.current) {
+			dispatch(triggerFocus('collections-tree', false));
+		}
+	}, [dispatch, receiveBlur]);
+
 	useEffect(() => {
 		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
 			toggleOpen(selectedLibraryKey, true);
@@ -312,8 +331,8 @@ const Libraries = forwardRef((props, ref) => {
         <nav
 			aria-label="collection tree"
 			className={ cx('collection-tree', { 'picker-mode': isPickerMode }) }
-			onFocus={ isTouchOrSmall ? noop : receiveFocus }
-			onBlur={ isTouchOrSmall ? noop : receiveBlur }
+			onFocus={ isTouchOrSmall ? noop : handleFocus }
+			onBlur={ isTouchOrSmall ? noop : handleBlur }
 			tabIndex={ 0 }
 			ref={ treeRef }
 		>

@@ -171,6 +171,9 @@ const Node = props => {
 	}, []);
 
 	return drag(drop(
+		// NOTE: Node can end up having both 'focus' and 'focused' classes.
+		// Former is when node has a keyboard focus, latter is when collection
+		// tree is focused. Admittedly, naming could be better.
 		<li className={ cx(className, { focus: isFocused }) }>
 			<div
 				{ ...pick(rest, propName => propName.startsWith('data-') ||

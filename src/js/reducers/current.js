@@ -37,6 +37,8 @@ const stateDefault = {
 	useTransitions: false,
 	view: 'library',
 	location: null,
+	isCollectionsTreeFocused: false,
+	isItemsTableFocused: false,
 };
 
 const getLibraryKey = (params, config) => {
@@ -211,7 +213,8 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 		case TRIGGER_FOCUS:
 			return {
 				...state,
-				isItemsTableFocused: action.section === 'items-table' && action.isOn
+				isItemsTableFocused: action.section === 'items-table' ? action.isOn : state.isItemsTableFocused,
+				isCollectionsTreeFocused: action.section === 'collections-tree' ? action.isOn : state.isCollectionsTreeFocused,
 			}
 		case TRIGGER_HIGHLIGHTED_COLLECTIONS:
 			return {

@@ -13,7 +13,7 @@
 	}
 
 	@include mouse-and-bp-up(md) {
-		padding: $collection-tree-padding-y 0;
+		padding: 8px;
 		overflow: auto;
 		line-height: $line-height-large;
 		z-index: 1; // Fix #531
@@ -58,6 +58,7 @@
 		@include mouse-and-bp-up(md) {
 			height: $line-height-large;
 			padding-right: $default-padding-x;
+			border-radius: 5px;
 		}
 
 		@include variant("li:first-child > .item-container") {
@@ -109,13 +110,26 @@
 
 		@include state("li.selected > .item-container") {
 			@include mouse-and-bp-up(md) {
-				background: $collection-tree-active-bg;
+				background: var(--color-quarternary-on-sidepane);
+			}
+		}
+
+		@include state("li.selected.focused > .item-container") {
+			@include mouse-and-bp-up(md) {
+				background-color: var(--color-accent);
+			}
+		}
+
+		@include state("li.highlighted > .item-container") {
+			@include mouse-and-bp-up(md) {
+
+				background: var(--accent-highlight);
 			}
 		}
 
 		@include state("li.picked > .item-container") {
 			@include mouse-and-bp-up(md) {
-				background: $collection-tree-picked-bg;
+				background: var(--color-accent);
 			}
 		}
 
@@ -165,11 +179,15 @@
 			@include mouse-and-bp-up(md) {
 				&:not(.icon-spin) {
 					@include state("li.selected > .item-container") {
-						color: $collection-tree-active-icon-color;
+						color: var(--color-primary);
+					}
+
+					@include state("li.selected.focused > .item-container") {
+						color: var(--primary-on-accent);
 					}
 
 					@include state("li.picked > .item-container") {
-						color: $collection-tree-picked-color;
+						color: var(--primary-on-accent);
 					}
 				}
 			}
@@ -193,14 +211,14 @@
 
 			@include state("li.disabled > .item-container") {
 				@include touch-or-bp-down(sm) {
-					color: $collection-tree-disabled;
+					color: var(--color-shade-10-50);
 				}
 			}
 		}
 
 		> .truncate {
 			flex: 1 1 auto;
-			color: $collection-tree-color;
+			color: var(--color-primary);
 			position: relative;
 
 			@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
@@ -211,23 +229,29 @@
 
 			@include state("li.selected > .item-container") {
 				@include mouse-and-bp-up(md) {
-					color: $collection-tree-active-color;
+					color: var(--color-primary);
+				}
+			}
+
+			@include state("li.selected.focused > .item-container") {
+				@include mouse-and-bp-up(md) {
+					color: var(--primary-on-accent);
 				}
 			}
 
 			@include state("li.picker-skip > .item-container") {
 				@include mouse-and-bp-up(md) {
-					color: $collection-tree-picker-skip-color;
+					color: var(--color-shade-10-50);
 				}
 			}
 
 			@include state("li.disabled > .item-container") {
-				color: $collection-tree-disabled;
+				color: var(--color-shade-10-50);
 			}
 
 			@include state("li.picked > .item-container") {
 				@include mouse-and-bp-up(md) {
-					color: $collection-tree-picked-color;
+					color: var(--primary-on-accent);
 				}
 			}
 		}
