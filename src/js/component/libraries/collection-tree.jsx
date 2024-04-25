@@ -114,7 +114,11 @@ const ItemsNode = memo(props => {
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
 			aria-level={ level }
-			className={ cx({ 'selected': isSelected, 'focused': isFocusedAndSelected })}
+			className={ cx({
+				'items-node': true,
+				'selected': isSelected,
+				'focused': isFocusedAndSelected
+			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }

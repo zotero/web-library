@@ -170,6 +170,36 @@
 		}
 
 		.icon {
+			&.icon-folder,
+			&.icon-folders {
+				color: var(--accent-blue);
+			}
+
+			&.icon-library,
+			&.icon-library-read-only {
+				@include state("li.library-node.my-library > .item-container") {
+					color: var(--accent-blue);
+				}
+
+				@include state("li.library-node:not(.my-library) > .item-container") {
+					color: var(--accent-teal);
+				}
+			}
+
+			&.icon-trash {
+				color: var(--accent-wood);
+			}
+
+			&.icon-document {
+				@include state("li.items-node > .item-container") {
+					color: var(--accent-blue);
+				}
+
+				@include state("li.publications > .item-container") {
+					color: var(--accent-green);
+				}
+			}
+
 			@include touch-or-bp-down(sm) {
 				@include state("li.selected > .item-container") {
 					color: $touch-collection-tree-active-color;
@@ -178,10 +208,6 @@
 
 			@include mouse-and-bp-up(md) {
 				&:not(.icon-spin) {
-					@include state("li.selected > .item-container") {
-						color: var(--color-primary);
-					}
-
 					@include state("li.selected.focused > .item-container") {
 						color: var(--primary-on-accent);
 					}

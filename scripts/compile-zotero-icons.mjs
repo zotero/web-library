@@ -12,7 +12,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const tmpDir = join(ROOT, 'tmp', 'builds', 'zotero');
 const defaultSymbolColor = 'light';
 
-const types = ['collection-tree', 'item-type'];
+const types = ['item-type'];
 const colors = ['light', 'dark', 'white'];
 const resolutions = ['16', '28'];
 const regex = /<svg(?:[^>]*)>([\S\s]*?)<\/svg>/i;
@@ -51,9 +51,6 @@ const makeIcon = (name, resolution, colorsMap) => {
     let counter = 0;
     for(let iconType of types) {
         for(let resolution of resolutions) {
-            if(iconType === 'collection-tree' && resolution != '16') {
-                continue; // In Zotero, only 16px icons are available for collection-tree
-            }
             const srcIconDir = join(tmpDir, 'zotero', iconsPath, iconType, resolution);
             const targetIconDir = join(ROOT, 'src', 'static', 'icons', resolution, iconType);
             let map = new Map();
@@ -64,7 +61,7 @@ const makeIcon = (name, resolution, colorsMap) => {
                     const srcIconPath = join(srcIconDir, color, file);
                     const xml = await fs.readFile(srcIconPath, 'utf8');
                     try {
-                        const pixelRatio = (resolution === '16' && iconType !== 'collection-tree') ? file.includes('@2x') ? '2x' : '1x' : '';
+                        const pixelRatio = resolution === '16' ? file.includes('@2x') ? '2x' : '1x' : '';
                         const iconName = file.replace(/\.svg$/, '').replace(/@2x/g, '');
                         const iconBody = extractIcon(xml);
                         if (!map.has(iconName)) {

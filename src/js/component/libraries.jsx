@@ -13,7 +13,7 @@ import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fe
 import { get, stopPropagation, getUniqueId } from '../utils';
 
 const LibraryNode = props => {
-	const { addVirtual, isOpen, isFileUploadAllowed, isPickerMode, isReadOnly, isSelected, libraryKey, name,
+	const { addVirtual, isOpen, isFileUploadAllowed, isMyLibrary, isPickerMode, isReadOnly, isSelected, libraryKey, name,
 		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
 		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
@@ -88,6 +88,8 @@ const LibraryNode = props => {
 	return (
         <Node
 			className={ cx({
+				'library-node': true, // using .library risks conflicting css rules
+				'my-library': isMyLibrary,
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected && !isPickerMode,
 				'focused': isFocusedAndSelected && !isPickerMode,
@@ -343,7 +345,7 @@ const Libraries = forwardRef((props, ref) => {
 							<div className={ cx('level', 'level-0') }>
 								<ul className="nav" role="group">
 									{ myLibraries.map(lib =>
-										<LibraryNode key={ lib.key } { ...getNodeProps(lib) } />
+										<LibraryNode key={ lib.key } isMyLibrary={ true } { ...getNodeProps(lib) } />
 									) }
 								</ul>
 							</div>

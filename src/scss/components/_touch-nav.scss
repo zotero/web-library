@@ -17,6 +17,7 @@
 	}
 
 	.icon-previous {
+		color: var(--accent-blue);
 		position: absolute;
 		left: $default-padding-x-touch;
 		top: ($line-height-large-touch - $space-md) * 0.5;
