@@ -222,12 +222,11 @@ $menu-devider: $shade-2;
 $menu-no-results-color: $shade-5;
 
 // Drag layer
-$creator-drag-preview-shadow: rgba($shade-10, 0.2);
+$creator-drag-preview-shadow: var(--color-drag-preview-shadow);
 $items-drag-indicator-color: $item-active-color;
 $items-drag-indicator-bg: var(--accent-blue-lighter);
 
 // Modal
-$modal-backdrop-bg: rgba($shade-10, 0.4);
 $modal-content-bg: $body-bg;
 $modal-content-bg-touch: $shade-1;
 $modal-header-bg: $shade-0;

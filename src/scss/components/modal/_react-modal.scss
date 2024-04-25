@@ -12,7 +12,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: $modal-backdrop-bg;
+	background-color: var(--color-backdrop);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 	z-index: $z-index-modal;
@@ -39,6 +39,8 @@
 }
 
 .modal {
+	border: var(--material-border-quarternary);
+
 	@include bp-up(sm) {
 		width: $modal-md;
 		margin: $space-xl auto;

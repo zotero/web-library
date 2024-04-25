@@ -53,7 +53,7 @@
 			right: 0;
 			bottom: 0;
 			left: 0;
-			background-color: $modal-backdrop-bg;
+			background-color: var(--color-backdrop);
 			z-index: $z-index-search-backdrop
 		}
 

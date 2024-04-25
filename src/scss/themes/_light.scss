@@ -79,10 +79,12 @@ $-colors: (
 	color-button-active-bg: #f0f0f0,
 	color-button-shadow: rgba(0, 0, 0, 0.2),
 	color-button-shadow-lighter: rgba(0, 0, 0, 0.06),
+	color-drag-preview-shadow: rgba(0, 0, 0, 0.2),
 	tag-color-border: rgba(0, 0, 0, 0.08),
 	color-text-disabled: #656565, // lighten($text-color, 33%);
 	color-nav-sidebar-border: #252525,
 	color-identifier-badge-hover-border: #b9b8b5,
+	color-backdrop: rgba(0, 0, 0, 0.4),
 );
 
 @media (prefers-color-scheme: light) {
