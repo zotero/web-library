@@ -43,13 +43,9 @@ $separator-color: $shade-3;
 // Main
 $main-bg: $shade-0;
 
-// Sidebar
-$sidebar-bg: $shade-1;
-$sidebar-border-color: $shade-4;
 
 // Details list
 $details-list-link-color: $text-color;
-$details-list-border-color: $shade-4;
 $details-list-selected-bg: $shade-3;
 $details-list-focus-color: $shade-0;
 $details-list-focus-bg: $focus-color;
@@ -82,7 +78,6 @@ $icon-bar-bg: $shade-8;
 
 // Collection tree
 $collection-tree-headings-color: $shade-6;
-$touch-collection-tree-headings-bg: var(--color-tab-headings-bg);
 $touch-collection-tree-active-color: $shade-0;
 $touch-collection-tree-active-bg: var(--accent-blue);
 $touch-collection-tree-border: $shade-4;
@@ -90,15 +85,12 @@ $touch-collection-tree-separator: $body-bg;
 
 // Items
 $items-bg: $shade-0;
-$item-placeholder-color: $shade-2;
 
 // Item list
-$item-border-color: $shade-4;
 $item-active-color: $shade-0;
 $item-active-bg: var(--accent-blue);
 $item-creator-date-color: var(--color-item-list-second-row);
 $item-list-chevron-color: $shade-4;
-$creator-date-placeholder-color: var(--color-shade-2-50);
 
 // Item table
 $item-table-head-color: $shade-8;
@@ -110,8 +102,6 @@ $sort-indicator: var(--accent-blue);
 $item-table-dnd-target-bg: $shade-5;
 
 // Item details
-$item-details-bg: $shade-1;
-$item-details-border: $shade-4;
 $item-details-border-1x: $shade-3;
 $info-view-color: $shade-5;
 
@@ -124,8 +114,6 @@ $panel-backdrop-bg: var(--color-panel-backdrop-bg);
 $tabs-border-color: $shade-3;
 $tab-active-color: var(--accent-blue);
 $tab-inactive-color: $headings-color;
-$tab-pane-heading-border-color: $shade-4;
-$tab-pane-heading-bg: var(--color-tab-headings-bg);
 
 // Metadata list
 $key-color: $shade-6;
@@ -140,7 +128,6 @@ $note-active-bg: $shade-3;
 $note-focus-color: $shade-0;
 $note-focus-bg: var(--accent-blue);
 $note-border-color: $shade-3;
-$note-border-color-touch: $shade-4;
 $note-list-chevron-color: $shade-4;
 $note-placeholder-color: $shade-5;
 
@@ -178,7 +165,6 @@ $twisty-dnd-target-color: $shade-0;
 $form-bg-touch: $shade-1;
 $input-bg: $body-bg;
 $input-border-color: $shade-3;
-$input-border-color-touch: $shade-5;
 $input-focus-color: var(--accent-blue);
 $placeholder-color: $shade-5;
 $checkbox-border-touch: $shade-4;
@@ -193,7 +179,6 @@ $touch-header-color: $shade-8; // Better than $shade-6 to link color
 $touch-header-link-color: var(--accent-blue);
 $touch-header-bg: $shade-1;
 $touch-header-darker-bg: var(--color-shade-1-darker);
-$touch-header-border: $shade-4;
 $btn-options-color: var(--accent-blue);
 $btn-options-bg: transparent;
 $btn-options-focus-color: rgba($btn-options-color, 0.5);
@@ -202,7 +187,6 @@ $btn-options-focus-color: rgba($btn-options-color, 0.5);
 $touch-footer-color: $shade-8;
 $touch-footer-bg: $shade-1;
 $touch-footer-darker-bg: var(--color-shade-1-darker);
-$touch-footer-border: $shade-4;
 
 // Editable
 $editable-color: $text-color;
@@ -233,7 +217,6 @@ $modal-header-bg: $shade-0;
 $modal-touch-header-bg: $shade-1;
 $modal-form-header-bg: var(--color-shade-1-darker);
 $modal-border-color: $shade-2;
-$modal-border-color-touch: $shade-4;
 $modal-icon-spin-color: $shade-0;
 
 // Toolbar
@@ -257,7 +240,6 @@ $tag-selector-grip-color-active: var(--accent-blue);
 
 // Touch tag selector
 $touch-tag-selector-pane-bg: $shade-0;
-$touch-tag-selector-border-color: $shade-4;
 $touch-tag-selected-bg: $shade-3;
 $tag-color-border-color: $shade-4;
 $touch-tag-placeholder-bg: var(--touch-tag-placelhoder);

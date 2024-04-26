@@ -5,8 +5,12 @@
 .item-details {
 	display: flex;
 	flex-direction: column;
-	background: $item-details-bg;
+	background: var(--material-sidepane);
 	overflow: hidden;
+
+	@include touch-or-bp-down(sm) {
+		background: var(--material-background);
+	}
 
 	@include bp-down(sm) {
 		@include same(right, bottom, left, 0);
@@ -145,7 +149,7 @@
 	}
 
 	@include touch-and-bp-only(lg) {
-		@include hairline(left, $item-details-border);
+		@include hairline(left, "color-shade-4");
 		flex: 0 0 $item-details-width-lg-touch;
 	}
 

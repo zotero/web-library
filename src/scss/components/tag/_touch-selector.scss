@@ -5,7 +5,7 @@
 .touch-tag-selector {
 	display: flex;
 	flex-direction: column;
-	@include hairline(right, $touch-tag-selector-border-color);
+	@include hairline(right, "color-shade-4");
 	position: absolute; // Override position relative from hairline mixin
 	top: 0;
 	right: 0;
@@ -36,7 +36,7 @@
 		align-items: center;
 		height: $line-height-large-touch + $border-width;
 		padding: 0 $space-min $border-width;
-		@include hairline(bottom, $touch-tag-selector-border-color);
+		@include hairline(bottom, "color-shade-4");
 	}
 
 	.tag {
@@ -48,7 +48,7 @@
 
 		@include hairline(
 			top,
-			$touch-tag-selector-border-color,
+			"color-shade-4",
 			$start: (2 * $default-padding-x-touch + $space-md)
 		);
 
@@ -58,7 +58,7 @@
 
 			@include hairline(
 				top,
-				$touch-tag-selector-border-color,
+				"color-shade-4",
 				$start: (2 * $default-padding-x + $space-md)
 			);
 
@@ -111,7 +111,7 @@
 					box-shadow: 0 1px var(--color-shade-2);
 
 					@media (min-resolution: 2dppx) {
-						box-shadow: 0 1px $touch-tag-selector-border-color;
+						box-shadow: 0 1px var(--color-shade-4);
 						transform: translateY(-0.5px);
 					}
 

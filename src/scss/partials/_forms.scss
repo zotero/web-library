@@ -48,8 +48,8 @@ fieldset {
 		margin-bottom: $form-group-margin-touch;
 		background-color: $input-bg;
 		position: relative;
-		@include hairline(top, $input-border-color-touch);
-		@include hairline(bottom, $input-border-color-touch);
+		@include hairline(top, "color-shade-5");
+		@include hairline(bottom, "color-shade-5");
 
 		@include variant(".form-group:last-child", "fieldset .form-group") {
 			margin-bottom: 0;
@@ -57,7 +57,7 @@ fieldset {
 
 		@include variant("fieldset .form-group") {
 			&:not(:first-child) {
-				@include hairline(top, $input-border-color-touch, $start: $default-padding-x-touch);
+				@include hairline(top, "color-shade-5", $start: $default-padding-x-touch);
 			}
 
 			&:not(:last-child) {
@@ -350,11 +350,11 @@ textarea {
 		display: flex;
 		align-items: center;
 		padding: $border-width $input-btn-padding-x-touch;
-		@include hairline(top, $input-border-color-touch);
-		@include hairline(bottom, $input-border-color-touch);
+		@include hairline(top, "color-shade-5");
+		@include hairline(bottom, "color-shade-5");
 
 		&:not(:first-child) {
-			@include hairline(top, $input-border-color-touch, $start: $default-padding-x-touch);
+			@include hairline(top, "color-shade-5", $start: $default-padding-x-touch);
 		}
 
 		&:not(:last-child) {

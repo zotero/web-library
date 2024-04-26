@@ -5,13 +5,13 @@
 .sidebar {
 	display: flex;
 	flex-direction: column;
-	background: $sidebar-bg;
+	background: var(--material-sidepane);
 	overflow: hidden;
 	position: relative;
 	min-height: 0;
 
 	@include touch-or-bp-down(sm) {
-		@include hairline(right, $sidebar-border-color);
+		@include hairline(right, "color-shade-4");
 	}
 
 	@include bp-down-normalized(xs) {

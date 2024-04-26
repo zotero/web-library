@@ -97,10 +97,10 @@
 			margin: 0;
 			line-height: $line-height-large-touch;
 			padding: $border-width $default-padding-x-touch;
-			background-color: $tab-pane-heading-bg;
+			background: var(--material-toolbar);
 
-			@include hairline(top, $tab-pane-heading-border-color);
-			@include hairline(bottom, $tab-pane-heading-border-color);
+			@include hairline(top, "color-shade-4");
+			@include hairline(bottom, "color-shade-4");
 		}
 	}
 

@@ -130,7 +130,7 @@
 	padding-bottom: $border-width;
 
 	@include touch-or-bp-down(sm) {
-		@include hairline(bottom, $modal-border-color-touch);
+		@include hairline(bottom, "color-shade-4");
 	}
 
 	@include mouse-and-bp-up(md) {
@@ -186,7 +186,7 @@
 	padding-top: $border-width;
 
 	@include touch-or-bp-down(sm) {
-		@include hairline(top, $modal-border-color-touch);
+		@include hairline(top, "color-shade-4");
 	}
 
 	@include mouse-and-bp-up(md) {

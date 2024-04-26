@@ -3,7 +3,7 @@
 	min-height: 0;
 
 	//@include touch-or-bp-down(sm) {
-	//	@include hairline(top, $shade-4);
+	//	@include hairline(top, "color-shade-4");
 	//}
 
 	@include bp-down(xs) {

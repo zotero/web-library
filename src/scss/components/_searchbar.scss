@@ -3,8 +3,8 @@
 // --------------------------------------------------
 
 .searchbar {
-	@include hairline(top, $touch-header-border);
-	@include hairline(bottom, $touch-header-border);
+	@include hairline(top, "color-shade-4");
+	@include hairline(bottom, "color-shade-4");
 	position: absolute;
 	top: 0;
 	right: 0;

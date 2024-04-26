@@ -7,7 +7,7 @@
 		@include touch-or-bp-down(sm) {
 			display: flex;
 			padding: $note-list-padding-top $default-padding-x-touch $note-list-padding-bottom;
-			@include hairline(top, $note-border-color-touch, $start: (2 * $default-padding-x-touch + 28px));
+			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
 
 			&:first-child {
 				@include hairline-disabled(top);

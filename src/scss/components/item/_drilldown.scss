@@ -44,7 +44,7 @@
 		}
 
 		.rich-editor {
-			@include hairline(top, $item-details-border);
+			@include hairline(top, "color-shade-4");
 		}
 	}
 

@@ -25,7 +25,7 @@
 			border: 0;
 			padding: 3px;
 			line-height: 2px;
-			background-color: $sidebar-bg;
+			background: var(--material-sidepane);
 			border-radius: 0;
 
 			@supports not (-webkit-font-smoothing: subpixel-antialiased) {
@@ -158,7 +158,7 @@
 			flex: 0 0 auto;
 			display: flex;
 			align-items: center;
-			background: $sidebar-bg;
+			background: var(--material-sidepane);
 			padding: $space-min $default-padding-x $space-min;
 			margin-top: auto;
 

@@ -27,10 +27,10 @@
 		display: flex;
 		padding: $item-list-padding-top $item-list-padding-x $item-list-padding-bottom;
 		position: relative;
-		@include hairline(top, $item-border-color, $start: (2 * $item-list-padding-x + 28px));
+		@include hairline(top, "color-shade-4", $start: (2 * $item-list-padding-x + 28px));
 
 		@include bp-down(xs) {
-			@include hairline(top, $item-border-color, $start: $item-list-padding-x);
+			@include hairline(top, "color-shade-4", $start: $item-list-padding-x);
 		}
 
 		@include state(".items-list:not(.editing)") {
@@ -50,10 +50,10 @@
 		@include state(".items-list.editing") {
 			padding-left: 2 * $item-list-padding-x + $space-lg;
 			padding-right: $item-list-padding-x;
-			@include hairline(top, $item-border-color, $start: (3 * $item-list-padding-x + $space-lg + 28px));
+			@include hairline(top, "color-shade-4", $start: (3 * $item-list-padding-x + $space-lg + 28px));
 
 			@include bp-down(xs) {
-				@include hairline(top, $item-border-color, $start: (2 * $item-list-padding-x + $space-lg));
+				@include hairline(top, "color-shade-4", $start: (2 * $item-list-padding-x + $space-lg));
 			}
 		}
 
@@ -99,7 +99,7 @@
 				box-shadow: 0 1px var(--color-shade-2);
 
 				@media (min-resolution: 2dppx) {
-					box-shadow: 0 1px $item-border-color;
+					box-shadow: 0 1px var(--color-shade-4);
 					transform: translateY(-0.5px);
 				}
 
@@ -128,6 +128,10 @@
 			flex: 0 0 auto;
 			align-self: center;
 			margin-right: $item-list-padding-x;
+
+			@include state(".item.placeholder") {
+				color: var(--color-shade-2);
+			}
 		}
 
 		.metadata {
@@ -137,7 +141,7 @@
 			@include state(".item.placeholder") {
 				height: 12px;
 				border-radius: 6px;
-				background-color: $item-placeholder-color;
+				background-color: var(--color-shade-2);
 			}
 		}
 
@@ -161,7 +165,7 @@
 			@include state(".item.placeholder") {
 				width: 60%;
 				margin-top: 12px;
-				background-color: $creator-date-placeholder-color;
+				background-color: var(--color-shade-2-50);
 
 				@include variant(".item.odd") {
 					width: 70%;

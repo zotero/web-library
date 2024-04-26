@@ -9,7 +9,7 @@
 		padding: $space-sm 0;
 
 		@include scopedVariant(".view-item-details-active") {
-			@include hairline(bottom, $touch-header-border);
+			@include hairline(bottom, "color-shade-4");
 		}
 
 		a:hover {

@@ -12,7 +12,7 @@
 			height: 42px;
 		}
 
-		@include hairline(top, $touch-header-border);
+		@include hairline(top, "color-shade-4");
 
 		.embedded-tag-selector {
 			display: flex;

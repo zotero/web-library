@@ -18,21 +18,21 @@
 		padding: $input-btn-padding-y-touch $default-padding-x-touch;
 
 		&.hairline-top {
-			@include hairline(top, "shade-4");
+			@include hairline(top, "color-shade-4");
 			border-top: none;
 			padding-top: $input-btn-padding-y-touch + 2 * $input-border-width;
 		}
 
 		&.hairline-start-padding {
-			@include hairline(top, "shade-4", $start: $default-padding-x-touch);
+			@include hairline(top, "color-shade-4", $start: $default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-24 {
-			@include hairline(top, "shade-4", $start: $default-padding-x-touch);
+			@include hairline(top, "color-shade-4", $start: $default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-28 {
-			@include hairline(top, "shade-4", $start: (2 * $default-padding-x-touch + 28px));
+			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
 
 			.icon[width="24"] {
 				margin-left: 2px;

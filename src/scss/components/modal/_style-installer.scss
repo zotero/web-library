@@ -58,7 +58,7 @@
 			padding: $space-xs 0;
 
 			@include touch-or-bp-down(sm) {
-				@include hairline(top, $shade-4, $start: ($space-lg + $default-padding-x-touch), $end: -16px);
+				@include hairline(top, "color-shade-4", $start: ($space-lg + $default-padding-x-touch), $end: -16px);
 				padding-top: $space-xs + $border-width;
 			}
 
