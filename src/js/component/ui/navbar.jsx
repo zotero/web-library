@@ -59,7 +59,12 @@ const Navbar = memo(({ entries = [] }) => {
 					onKeyDown={ handleKeyDown }
 					tabIndex={ -2 }
 				>
-					Zotero
+					<Icon
+						width={ isSingleColumn ? 84 : 96 }
+						height={ isSingleColumn ? 22 : 26 }
+						useThemeColors={ true }
+						type="zotero-logo"
+						label="Zotero" />
 				</a>
 			</h1>
 			<h2 id="site-navigation" className="offscreen">Site navigation</h2>

@@ -166,7 +166,7 @@ const ListRow = memo(props => {
 									type={ `16/item-type/${attachmentIconName}` }
 									symbol={ (isActive && !isSelectMode) ? `${attachmentIconName}-white` : itemData.attachmentIconName }
 									usePixelRatio={ true }
-										useThemeColors={ (isActive && isSelectMode) ? false : true}
+									useThemeColors={ (isActive && isSelectMode) ? false : true}
 									width="16"
 									height="16"
 								/>  </Fragment>) // eslint-disable-line no-irregular-whitespace

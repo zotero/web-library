@@ -85,6 +85,8 @@ $-colors: (
 	color-nav-sidebar-border: #252525,
 	color-identifier-badge-hover-border: #b9b8b5,
 	color-backdrop: rgba(0, 0, 0, 0.4),
+	accent-red-on-shade-1: #db2c3a, // only differs from accent-red in dark theme
+	primary-on-shade-1: #252525,
 );
 
 @media (prefers-color-scheme: light) {

@@ -16,7 +16,7 @@
 
 	.icon-z {
 		@include scopedVariant("html:not(.specifity)") {
-			color: var(--accent-red);
+			color: var(--accent-red-on-shade-1);
 		}
 	}
 

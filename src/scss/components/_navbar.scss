@@ -38,13 +38,8 @@
 
 		a {
 			display: block;
-			background: url("./images/zotero-logo.svg") 0 0 no-repeat;
-			background-size: 100%;
-			text-indent: 100%;
-			white-space: nowrap;
 			width: $navbar-brand-width-xs;
 			height: $navbar-brand-height-xs;
-			overflow: hidden;
 
 			@include bp-up(sm) {
 				width: $navbar-brand-width-sm;

@@ -22,7 +22,7 @@ const LoadingCover = () => {
 
 	return (
 		<div className="loading-cover">
-			<Icon type={'32/z'} width="32" height="32" label="Loading" />
+			<Icon type="32/z" width="32" height="32" label="Loading" />
 			{ (maxRequestsPendingSeen.current > 5 && requestsPending <= maxRequestsPendingSeen.current) && (
 				<div
 					role="progressbar"
