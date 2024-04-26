@@ -1,7 +1,7 @@
 <!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="z" viewBox="0 0 32 32">
-		<path fill="currentColor" d="M26.4,4.873,10.011,26.409H27V30H4.266V27.127L20.658,5.591H5.1V2H26.4Z"/>
+		<path fill="currentColor" d="M 30.3703,3.95429 28.4594,0 H 3.5679895 V 6.4 6.67657 H 18.847999 L 1.6297005,27.9611 3.5679895,32 H 30.3703 V 25.4674 25.1909 H 13.4217 Z" />
 	</symbol>
 	<use xlink:href="#z" viewBox="0 0 32 32"/>
 </svg>
