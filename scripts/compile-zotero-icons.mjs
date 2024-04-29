@@ -14,7 +14,7 @@ const defaultSymbolColor = 'light';
 
 const types = ['item-type'];
 const colors = ['light', 'dark', 'white'];
-const resolutions = ['16', '28'];
+const resolutions = ['12', '16', '28'];
 const regex = /<svg(?:[^>]*)>([\S\s]*?)<\/svg>/i;
 
 const extractIcon = xml => {

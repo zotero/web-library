@@ -83,12 +83,11 @@ const AttachmentCell = memo(props => {
 			</div>
 			{ itemData.attachmentIconName && (
 				<Icon
-					type={ `16/item-type/${itemData.attachmentIconName}` }
+					type={ `12/item-type/${itemData.attachmentIconName}` }
 					symbol={ isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
-					usePixelRatio={ true }
 					useThemeColors={ isFocused && isSelected ? false : true }
-					width="16"
-					height="16"
+					width="12"
+					height="12"
 				/>
 			) }
 		</Cell>
