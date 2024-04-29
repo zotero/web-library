@@ -9,7 +9,7 @@
 	bottom: 0;
 	width: $navbar-nav-mobile-width;
 	z-index: $z-index-mobile-nav;
-	background-color: $navbar-nav-mobile-bg;
+	background-color: var(--color-nav-sidebar);
 	overflow-y: scroll;
 	font-family: "AvenirNextLTPro", $font-family-sans-serif;
 	-webkit-font-smoothing: auto;
@@ -35,7 +35,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: $navbar-link-mobile-color;
+		color: var(--color-nav-sidebar-link);
 		padding: $navbar-padding-y-touch $navbar-padding-x-touch;
 		position: relative;
 
@@ -60,8 +60,8 @@
 		}
 
 		.badge {
-			color: $navbar-nav-mobile-bg;
-			background-color: $navbar-link-mobile-color;
+			color: var(--color-nav-sidebar);
+			background-color: var(--color-nav-sidebar-link);
 		}
 	}
 
