@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="attachment-image-light" viewBox="0 0 28 28">
+		<path opacity="0.5" d="M18.717 0H3V28H26V7.283L18.717 0Z" fill="white"/>
+		<path d="M4 1V27H25V7.698L18.302 1H4Z" fill="white"/>
+		<path opacity="0.08" d="M19 1.698V7H24.302L19 1.698Z" fill="black"/>
+		<path opacity="0.2" d="M18.717 0H3V28H26V7.283L18.717 0ZM19 1.7L24.3 7H19V1.7ZM25 27H4V1H18V8H25V27Z" fill="black"/>
+		<path d="M11 13C12.1046 13 13 12.1046 13 11C13 9.89543 12.1046 9 11 9C9.89543 9 9 9.89543 9 11C9 12.1046 9.89543 13 11 13Z" fill="#FF794C"/>
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5 19.5385L16.5 14L23 23H10L10 23H6L10.5 16.7692L12.5 19.5385Z" fill="#39BF68"/>
+	</symbol>
+	<symbol id="attachment-image-dark" viewBox="0 0 28 28">
+		<path opacity="0.8" d="M11 13C12.1046 13 13 12.1046 13 11C13 9.89543 12.1046 9 11 9C9.89543 9 9 9.89543 9 11C9 12.1046 9.89543 13 11 13Z" fill="#FF794C"/>
+		<path opacity="0.85" fill-rule="evenodd" clip-rule="evenodd" d="M12.5 19.5385L16.5 14L23 23H10L10 23H6L10.5 16.7692L12.5 19.5385Z" fill="#39BF68"/>
+		<path opacity="0.24" d="M19 1.698V7H24.302L19 1.698Z" fill="white"/>
+		<path opacity="0.6" d="M18.717 0H3V28H26V7.283L18.717 0ZM19 1.698L24.302 7H19V1.698ZM25 27H4V1H18V8H25V27Z" fill="white"/>
+	</symbol>
+	<symbol id="attachment-image-white" viewBox="0 0 28 28">
+		<path d="M11 13C12.1046 13 13 12.1046 13 11C13 9.89543 12.1046 9 11 9C9.89543 9 9 9.89543 9 11C9 12.1046 9.89543 13 11 13Z" fill="white"/>
+		<path opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" d="M12.5 19.5385L16.5 14L23 23H10L10 23H6L10.5 16.7692L12.5 19.5385Z" fill="white"/>
+		<path opacity="0.4" d="M18.5 0.48999V7.49999H25.51L18.5 0.48999Z" fill="white"/>
+		<path d="M18.717 0H3V28H26V7.283L18.717 0ZM19 1.698L24.302 7H19V1.698ZM25 27H4V1H18V8H25V27Z" fill="white"/>
+	</symbol>
+	<use xlink:href="#attachment-image-light" viewBox="0 0 28 28"/>
+</svg>
