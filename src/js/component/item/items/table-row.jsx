@@ -29,6 +29,8 @@ const TitleCell = memo(props => {
 	const formattedSpan = document.createElement('span');
 	renderItemTitle(itemData[columnName], formattedSpan);
 
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+
 	return (
 		<Cell
 			columnName={ columnName }
@@ -39,7 +41,8 @@ const TitleCell = memo(props => {
 				type={ `16/item-type/${itemData.iconName}` }
 				symbol={ isFocused && isSelected ? `${itemData.iconName}-white` : itemData.iconName }
 				usePixelRatio={ true }
-				useThemeColors={ isFocused && isSelected ? false : true }
+				useColorScheme={ isFocused && isSelected ? false : true }
+				colorScheme={ colorScheme }
 				width="16"
 				height="16"
 			/>
@@ -73,6 +76,8 @@ TitleCell.displayName = 'TitleCell';
 const AttachmentCell = memo(props => {
 	const { columnName, isFocused, isSelected, itemData } = props;
 
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+
 	return (
 		<Cell
 			columnName={ columnName }
@@ -85,7 +90,8 @@ const AttachmentCell = memo(props => {
 				<Icon
 					type={ `12/item-type/${itemData.attachmentIconName}` }
 					symbol={ isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
-					useThemeColors={ isFocused && isSelected ? false : true }
+					useColorScheme={ isFocused && isSelected ? false : true }
+					colorScheme={ colorScheme }
 					width="12"
 					height="12"
 				/>

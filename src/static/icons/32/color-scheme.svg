@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="color-scheme-light" viewBox="0 0 32 32">
+	<path d="M13.9974 0H17.9974V6H13.9974V0Z" fill="currentColor"/>
+	<path d="M13.9974 26H17.9974V32H13.9974V26Z" fill="currentColor"/>
+	<path d="M26 18.0208V14.0208H32V18.0208H26Z" fill="currentColor"/>
+	<path d="M0 18.0208V14.0208H6V18.0208H0Z" fill="currentColor"/>
+	<path d="M21.6569 24.5061L24.4853 21.6776L28.7279 25.9203L25.8995 28.7487L21.6569 24.5061Z" fill="currentColor"/>
+	<path d="M3.27209 6.1213L6.10051 3.29287L10.3432 7.53551L7.51473 10.3639L3.27209 6.1213Z" fill="currentColor"/>
+	<path d="M7.51213 21.6569L10.3406 24.4853L6.09792 28.7279L3.26949 25.8995L7.51213 21.6569Z" fill="currentColor"/>
+	<path d="M25.8969 3.27208L28.7253 6.10051L24.4827 10.3431L21.6543 7.51472L25.8969 3.27208Z" fill="currentColor"/>
+	<path d="M24 16C24 20.4183 20.4183 24 16 24C11.5817 24 8 20.4183 8 16C8 11.5817 11.5817 8 16 8C20.4183 8 24 11.5817 24 16Z" fill="currentColor"/>
+	<path d="M22 16C22 19.3137 19.3137 22 16 22C16 18 16 19.3137 16 16C16 12.6863 16 10 16 10C19.3137 10 22 12.6863 22 16Z" fill="#e3e3e3"/>
+</symbol>
+<symbol id="color-scheme-dark" viewBox="0 0 32 32">
+	<path d="M13.9974 0H17.9974V6H13.9974V0Z" fill="currentColor"/>
+	<path d="M13.9974 26H17.9974V32H13.9974V26Z" fill="currentColor"/>
+	<path d="M26 18.0208V14.0208H32V18.0208H26Z" fill="currentColor"/>
+	<path d="M0 18.0208V14.0208H6V18.0208H0Z" fill="currentColor"/>
+	<path d="M21.6569 24.5061L24.4853 21.6776L28.7279 25.9203L25.8995 28.7487L21.6569 24.5061Z" fill="currentColor"/>
+	<path d="M3.27209 6.1213L6.10051 3.29287L10.3432 7.53551L7.51473 10.3639L3.27209 6.1213Z" fill="currentColor"/>
+	<path d="M7.51213 21.6569L10.3406 24.4853L6.09792 28.7279L3.26949 25.8995L7.51213 21.6569Z" fill="currentColor"/>
+	<path d="M25.8969 3.27208L28.7253 6.10051L24.4827 10.3431L21.6543 7.51472L25.8969 3.27208Z" fill="currentColor"/>
+	<path d="M24 16C24 20.4183 20.4183 24 16 24C11.5817 24 8 20.4183 8 16C8 11.5817 11.5817 8 16 8C20.4183 8 24 11.5817 24 16Z" fill="currentColor"/>
+	<path d="M22 16C22 19.3137 19.3137 22 16 22C16 18 16 19.3137 16 16C16 12.6863 16 10 16 10C19.3137 10 22 12.6863 22 16Z" fill="#252525"/>
+</symbol>
+<use xlink:href="#color-scheme-light" viewBox="0 0 32 32"/>
+</svg>

@@ -16,6 +16,7 @@ const RelatedItem = memo(props => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const mappings = useSelector(state => state.meta.mappings);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const iconSize = isTouchOrSmall ? '28' : '16';
 	const id = useRef(getUniqueId());
 
@@ -49,7 +50,8 @@ const RelatedItem = memo(props => {
 			>
 				<Icon
 					type={ getItemIcon(relatedItem) }
-					useThemeColors={ true }
+					useColorScheme={ true }
+					colorScheme={ colorScheme }
 					usePixelRatio={ !isTouchOrSmall }
 					width={ iconSize }
 					height={ iconSize }

@@ -91,8 +91,12 @@ $-colors: (
 	color-nav-sidebar-link: #fff,
 );
 
+:root[data-color-scheme=light] {
+	@include derive-colors($-colors);
+}
+
 @media (prefers-color-scheme: light) {
-	:root {
+	:root:not([data-color-scheme]) {
 		@include derive-colors($-colors);
 	}
 }

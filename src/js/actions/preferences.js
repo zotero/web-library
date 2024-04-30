@@ -79,14 +79,19 @@ const preferencesLoad = () => {
 const preferenceChange = (name, value) => {
 	return async (dispatch) => {
 		await (new Promise(resolve => {
-			setTimeout(() => {
-				const preferences = {
-					...defaultPreferences,
-					...JSONTryParse(localStorageWrapper.getItem('zotero-web-library-prefs')),
-					[name]: value,
-					version
-				};
+			let preferences = {
+				...defaultPreferences,
+				...JSONTryParse(localStorageWrapper.getItem('zotero-web-library-prefs')),
+				version
+			};
 
+			if(typeof value === 'undefined' || value === null) {
+				delete preferences[name];
+			} else {
+				preferences[name] = value;
+			}
+
+			setTimeout(() => {
 				localStorageWrapper.setItem('zotero-web-library-prefs', JSON.stringify(preferences));
 				resolve();
 			}, 0)

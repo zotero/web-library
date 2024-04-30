@@ -36,6 +36,7 @@ const ListRow = memo(props => {
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const view = useSelector(state => state.current.view);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
 	const triggerSelectTimeout = useRef(null);
 	const tiggerSelectPosStart = useRef(null);
@@ -135,7 +136,8 @@ const ListRow = memo(props => {
 				<Icon
 					type={ `28/item-type/${iconName}` }
 					symbol={ (isActive && !isSelectMode) ? `${iconName}-white` : iconName }
-					useThemeColors={ (isActive && !isSelectMode) ? false : true}
+					useColorScheme={ (isActive && !isSelectMode) ? false : true}
+					colorScheme={ colorScheme }
 					width="28"
 					height="28"
 					className="item-type hidden-xs-down"
@@ -165,7 +167,8 @@ const ListRow = memo(props => {
 								<Icon
 									type={ `12/item-type/${attachmentIconName}` }
 									symbol={ (isActive && !isSelectMode) ? `${attachmentIconName}-white` : itemData.attachmentIconName }
-									useThemeColors={ (isActive && !isSelectMode) ? false : true }
+									useColorScheme={ (isActive && !isSelectMode) ? false : true }
+									colorScheme={ colorScheme }
 									width="12"
 									height="12"
 								/>  </Fragment>) // eslint-disable-line no-irregular-whitespace

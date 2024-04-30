@@ -166,7 +166,6 @@
 				padding: $space-min $space-md;
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
 
 				@include variant(".search .dropdown-menu") {
 					padding: (4.5px + $input-border-width) $space-sm;
@@ -192,6 +191,36 @@
 		@include scopedVariant("html:not(.specifity)") {
 			padding: 4.5px $space-sm;
 			border-radius: $input-btn-border-radius;
+		}
+	}
+
+	.color-scheme-dropdown {
+		.nav-link {
+			display: flex;
+			align-items: center;
+			color: $navbar-link-color;
+
+			@include bp-up(sm) {
+				margin-left: $space-sm;
+			}
+
+			@include state(".color-scheme-dropdown.show") {
+				@include scopedVariant("html:not(.specifity)") {
+					color: $navbar-dropdown-toggle-active-color;
+
+					.icon {
+						color: inherit;
+					}
+				}
+			}
+
+			.icon {
+				color: inherit;
+			}
+		}
+
+		.tick {
+			margin-right: $space-min;
 		}
 	}
 }

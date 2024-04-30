@@ -56,6 +56,7 @@ const Library = () => {
 	const view = useSelector(state => state.current.view);
 	const isSynced = useSelector(state => get(state, ['libraries', libraryKey, 'sync', 'isSynced'], true));
 	const menus = useSelector(state => state.config.menus);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const isLibraryReadOnly = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
 	);
@@ -81,12 +82,17 @@ const Library = () => {
 			dispatch(toggleNavbar(false));
 		}
 
+		if (colorScheme) {
+			document.documentElement.dataset.colorScheme = colorScheme;
+		} else {
+			delete document.documentElement.dataset.colorScheme;
+		}
 		document.documentElement.classList.toggle('keyboard', !!isKeyboardUser);
 		document.documentElement.classList.toggle('mouse', !!isMouseUser);
 		document.documentElement.classList.toggle('touch', !!isTouchUser);
 		document.documentElement.classList.toggle('scrollbar-style-permanent', scrollbarWidth > 0);
 
-	}, [dispatch, isKeyboardUser, isMouseUser, isNavBarOpen, isTouchUser, prevShouldUseSidebar, prevUserType, scrollbarWidth, shouldUseSidebar, userType]);
+	}, [colorScheme, dispatch, isKeyboardUser, isMouseUser, isNavBarOpen, isTouchUser, prevShouldUseSidebar, prevUserType, scrollbarWidth, shouldUseSidebar, userType]);
 
 	useEffect(() => {
 		if((isSearchMode && !wasSearchMode) || (!isSearchMode && wasSearchMode)) {

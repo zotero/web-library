@@ -27,6 +27,7 @@ const Note = memo(forwardRef((props, ref) => {
 	const isSelected = useSelector(state => noteKey === state.current.noteKey);
 	const isUpdating = useSelector(state => noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}));
 	const wasSelected = usePrevious(isSelected);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const ignoreNextFocus = useRef(false);
 
 	useEffect(() => {
@@ -92,7 +93,14 @@ const Note = memo(forwardRef((props, ref) => {
 			onFocus={ handleFocus }
 			onMouseDown={ handleMouseDown }
 		>
-			<Icon type={'28/item-type/note'} width="28" height="28" className="hidden-mouse" useThemeColors={ true } />
+			<Icon
+				type={'28/item-type/note'}
+				width="28"
+				height="28"
+				className="hidden-mouse"
+				useColorScheme={ true }
+				colorScheme={ colorScheme }
+			/>
 			<div
 				id={`note-${note.key}`}
 				className="multiline-truncate"

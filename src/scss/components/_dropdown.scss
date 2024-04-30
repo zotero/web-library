@@ -38,7 +38,8 @@
 
 		@include scopedVariant(".keyboard") {
 			&:focus {
-				background-color: $menu-item-hover-bg;
+				color: var(--primary-on-accent);
+				background-color: var(--color-accent);
 			}
 		}
 	}

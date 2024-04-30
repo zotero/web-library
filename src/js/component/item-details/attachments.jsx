@@ -25,12 +25,22 @@ import { useFetchingState } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+
 	const { iconName } = item[Symbol.for('derived')];
 	const symbol = isActive ? `${iconName}-white` : iconName;
 	const path = isTouchOrSmall ?
 		`28/item-type/${iconName}` : `16/item-type/${iconName}`;
 
-	return <Icon type={path} symbol={symbol} width={size} height={size} usePixelRatio={!isTouchOrSmall} useThemeColors={ true } />
+	return <Icon
+		type={path}
+		symbol={symbol}
+		width={size}
+		height={size}
+		usePixelRatio={!isTouchOrSmall}
+		useColorScheme={ true }
+		colorScheme={ colorScheme }
+	/>
 });
 
 AttachmentIcon.displayName = 'AttachmentIcon';

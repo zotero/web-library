@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import MenuEntry from './menu-entry';
 import Search from './../../component/search';
-import { currentTriggerSearchMode, toggleNavbar, toggleTouchTagSelector } from '../../actions';
+import { currentTriggerSearchMode, preferenceChange, toggleNavbar, toggleTouchTagSelector } from '../../actions';
 
 const Navbar = memo(({ entries = [] }) => {
 	const ref = useRef(null);
@@ -16,6 +16,7 @@ const Navbar = memo(({ entries = [] }) => {
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
 	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
 	const handleSearchButtonClick = useCallback(() => {
 		dispatch(currentTriggerSearchMode());
@@ -23,6 +24,12 @@ const Navbar = memo(({ entries = [] }) => {
 
 	const handleTagSelectorClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector());
+	}, [dispatch]);
+
+	const handleSelectColorScheme = useCallback((ev) => {
+		const colorScheme = ev.target.dataset.colorScheme === 'automatic'
+			? null : ev.target.dataset.colorScheme;
+		dispatch(preferenceChange('colorScheme', colorScheme));
 	}, [dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
@@ -62,9 +69,11 @@ const Navbar = memo(({ entries = [] }) => {
 					<Icon
 						width={ isSingleColumn ? 84 : 96 }
 						height={ isSingleColumn ? 22 : 26 }
-						useThemeColors={ true }
+						useColorScheme={ true }
+						colorScheme={ colorScheme }
 						type="zotero-logo"
-						label="Zotero" />
+						label="Zotero"
+					/>
 				</a>
 			</h1>
 			<h2 id="site-navigation" className="offscreen">Site navigation</h2>
@@ -85,6 +94,7 @@ const Navbar = memo(({ entries = [] }) => {
 				onFocusPrev={ focusPrev }
 				registerAutoFocus={ registerAutoFocus }
 			/>
+
 			{ isSingleColumn && !isLibrariesView && (
 				<Fragment>
 					<Button
@@ -105,6 +115,52 @@ const Navbar = memo(({ entries = [] }) => {
 					</Button>
 				</Fragment>
 			) }
+			<UncontrolledDropdown className="color-scheme-dropdown">
+				<DropdownToggle
+					color={null}
+					className="btn-icon dropdown-toggle nav-link"
+					tabIndex={-2}
+					title="Color Scheme"
+				>
+					<Icon
+						type={'32/color-scheme'}
+						useColorScheme={ true }
+						colorScheme={ colorScheme }
+						width="24"
+						height="24"
+					/>
+					<Icon type="16/chevron-9" width="16" height="16" />
+				</DropdownToggle>
+				<DropdownMenu>
+					<DropdownItem
+						role="menuitemcheckbox"
+						aria-checked={!colorScheme }
+						data-color-scheme="automatic"
+						onClick={ handleSelectColorScheme }
+					>
+						<span className="tick">{ !colorScheme ? "✓" : ""}</span>
+						Automatic
+					</DropdownItem>
+					<DropdownItem
+						role="menuitemcheckbox"
+						aria-checked={ colorScheme === 'light' }
+						data-color-scheme="light"
+						onClick={ handleSelectColorScheme }
+					>
+						<span className="tick">{ colorScheme === 'light' ? "✓" : "" }</span>
+						Light
+					</DropdownItem>
+					<DropdownItem
+						role="menuitemcheckbox"
+						aria-checked={ colorScheme === 'dark' }
+						data-color-scheme="dark"
+						onClick={ handleSelectColorScheme }
+					>
+						<span className="tick">{ colorScheme === 'dark' ? "✓" : "" }</span>
+						Dark
+					</DropdownItem>
+				</DropdownMenu>
+			</UncontrolledDropdown>
 			<Button
 				icon
 				data-navbar-toggle
