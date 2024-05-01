@@ -75,7 +75,6 @@
 
 		@include variant(".collection-tree:not(.picker-mode) li:last-child > .item-container") {
 			@include touch-or-bp-down(sm) {
-				background: var(--material-sidepane);
 
 				&::after {
 					content: "";
@@ -97,7 +96,7 @@
 
 		@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
 			@include touch-or-bp-down(sm) {
-				background: $touch-collection-tree-active-bg;
+				background: var(--accent-blue);
 				@include hairline-disabled(top);
 			}
 		}
@@ -202,7 +201,7 @@
 
 			@include touch-or-bp-down(sm) {
 				@include state("li.selected > .item-container") {
-					color: $touch-collection-tree-active-color;
+					color: var(--primary-on-accent);
 				}
 			}
 
@@ -249,7 +248,7 @@
 
 			@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
 				@include touch-or-bp-down(sm) {
-					color: $touch-collection-tree-active-color;
+					color: var(--primary-on-accent);
 				}
 			}
 
@@ -325,7 +324,7 @@
 							background-color: var(--color-background);
 
 							.icon {
-								color: $touch-collection-tree-active-bg;
+								color: var(--accent-blue);
 							}
 						}
 					}
@@ -336,7 +335,7 @@
 						outline-offset: $outline-offset; // Simulate btn-link
 
 						@include state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
-							outline-color: $touch-collection-tree-active-color;
+							outline-color: var(--primary-on-accent);
 						}
 					}
 				}

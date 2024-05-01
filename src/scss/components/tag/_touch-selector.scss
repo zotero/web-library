@@ -127,7 +127,7 @@
 					margin-right: auto;
 					height: $space-sm;
 					border-radius: $space-sm * 0.5;
-					background-color: $touch-tag-placeholder-bg;
+					background-color: var(--color-shade-2);
 
 					@include variant(".tag.odd") {
 						flex: 0 0 calc(85% - 32px);

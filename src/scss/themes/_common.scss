@@ -76,8 +76,6 @@ $icon-bar-bg: $shade-8;
 
 // Collection tree
 $collection-tree-headings-color: $shade-6;
-$touch-collection-tree-active-color: $shade-0;
-$touch-collection-tree-active-bg: var(--accent-blue);
 $touch-collection-tree-border: $shade-4;
 $touch-collection-tree-separator: $body-bg;
 
@@ -85,8 +83,6 @@ $touch-collection-tree-separator: $body-bg;
 $items-bg: $shade-0;
 
 // Item list
-$item-active-color: $shade-0;
-$item-active-bg: var(--accent-blue);
 $item-creator-date-color: var(--color-item-list-second-row);
 $item-list-chevron-color: $shade-4;
 
@@ -194,17 +190,21 @@ $editable-hover-bg: var(--color-editable-hover-bg);
 $editable-backdrop-bg: $shade-1;
 $editable-backdrop-hover-bg: var(--color-editable-backdrop-hover-bg);
 
-// Menu (select, dropdown, …)
+// Menu (select, dropdown, …) - required to configure components in web-common
+$menu-color: var(--color-primary);
 $menu-color-disabled: var(--color-text-disabled);
+$menu-bg: var(--color-shade-0);
+$menu-item-hover-color: var(--primary-on-accent);
+$menu-item-hover-bg: var(--color-accent);
 $menu-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
 $menu-item-selected-bg: $shade-2;
-$menu-item-selected-hover-bg: $shade-3;
+$menu-item-selected-hover-bg: var(--color-accent);
 $menu-devider: $shade-2;
 $menu-no-results-color: $shade-5;
 
 // Drag layer
 $creator-drag-preview-shadow: var(--color-drag-preview-shadow);
-$items-drag-indicator-color: $item-active-color;
+$items-drag-indicator-color: var(--primary-on-accent);
 $items-drag-indicator-bg: var(--accent-blue-lighter);
 
 // Modal
@@ -239,7 +239,6 @@ $tag-selector-grip-color-active: var(--accent-blue);
 $touch-tag-selector-pane-bg: $shade-0;
 $touch-tag-selected-bg: $shade-3;
 $tag-color-border-color: $shade-4;
-$touch-tag-placeholder-bg: var(--touch-tag-placelhoder);
 
 // Popover
 $popover-bg: $body-bg;

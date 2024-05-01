@@ -37,8 +37,8 @@
 			padding-right: $item-list-padding-right;
 
 			&.active {
-				color: $item-active-color;
-				background-color: $item-active-bg;
+				color: var(--primary-on-accent);
+				background-color: var(--accent-blue);
 				@include hairline-disabled(top);
 
 				& + .item {
@@ -64,7 +64,7 @@
 
 				&.active {
 					@include state(".items-list:not(.editing)") {
-						outline-color: $item-active-color;
+						outline-color: var(--primary-on-accent);
 					}
 				}
 
@@ -177,7 +177,7 @@
 				@include text-truncate;
 
 				@include state(".items-list:not(.editing) .item.active") {
-					color: $item-active-color;
+					color: var(--primary-on-accent);
 					opacity: 0.67;
 				}
 			}
@@ -233,7 +233,7 @@
 					margin-right: $space-min;
 
 					@include state(".items-list:not(.editing) .item.active") {
-						color: $item-active-color;
+						color: var(--primary-on-accent);
 					}
 				}
 			}
@@ -247,7 +247,7 @@
 			color: $item-list-chevron-color;
 
 			@include state(".item.active") {
-				color: $item-active-color;
+				color: var(--primary-on-accent);
 			}
 
 			@include state(".items-list.editing") {
