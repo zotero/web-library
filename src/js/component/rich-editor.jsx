@@ -1,11 +1,11 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { memo, forwardRef, useCallback, useRef, useImperativeHandle, useEffect, useLayoutEffect, } from 'react';
+import { memo, forwardRef, useCallback, useRef, useState, useImperativeHandle, useEffect, useLayoutEffect, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
 
-import { createAttachments, getAttachmentUrl, navigate, openInReader } from '../actions';
+import { createAttachments, getAttachmentUrl, initialize, navigate, openInReader } from '../actions';
 import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
@@ -17,6 +17,8 @@ const RichEditor = memo(forwardRef((props, ref) => {
 
 	const noteEditorURL = useSelector(state => state.config.noteEditorURL);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+	const [isInitialised, setIsInitialised] = useState(false);
 	const iframeRef = useRef(null);
 	const previousID = usePrevious(id);
 	const wasReadOnly = usePrevious(isReadOnly);
@@ -101,6 +103,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 				break;
 			case 'initialized':
 				editorReady.current = true;
+				setIsInitialised(true);
 				if (wantsFocus.current) {
 					wantsFocus.current = false;
 					focusEditor();
@@ -132,7 +135,8 @@ const RichEditor = memo(forwardRef((props, ref) => {
 			readOnly: isReadOnly,
 			disableDrag: isTouchOrSmall,
 			localizedStrings: [],
-			value, isAttachmentNote
+			value, isAttachmentNote,
+			colorScheme,
 		}, "*");
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -155,6 +159,14 @@ const RichEditor = memo(forwardRef((props, ref) => {
 			}
 		}
 	}, [handleIframeMessage]);
+
+
+	useEffect(() => {
+		iframeRef.current.contentWindow.postMessage({
+			action: 'setColorScheme',
+			colorScheme
+		});
+	}, [colorScheme])
 
 	useEffect(() => {
 		const hasIDChanged = typeof(previousID) !== 'undefined' && previousID !== id;
@@ -196,7 +208,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 
 	return (
 		<div className="rich-editor">
-			<div className={ cx('editor-container', { autoresize }) } >
+			<div className={cx('editor-container', { autoresize, initialized: isInitialised }) } >
 				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ noteEditorURL } /> :
 			</div>
 		</div>

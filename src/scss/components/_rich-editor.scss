@@ -20,6 +20,11 @@
 	.editor-container {
 		width: 100%;
 		height: 100%;
+		visibility: hidden; // prevent flicker of white in dark mode
+
+		&.initialized {
+			visibility: visible;
+		}
 	}
 
 	iframe {
