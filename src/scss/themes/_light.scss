@@ -91,6 +91,7 @@ $-colors: (
 );
 
 :root[data-color-scheme=light] {
+	color-scheme: light;
 	@include derive-colors($-colors);
 }
 
