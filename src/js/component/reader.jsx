@@ -180,6 +180,19 @@ const Reader = () => {
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
 
+	// NOTE: In reader, we read color scheme directly from local storage instead of redux.
+	//		This is because reader does not contain UI to update color scheme.
+	//		Instead, we want to match color scheme if overriden in another tab in the main Web Library UI.
+	let colorScheme = null;
+	let useDarkModeForContent = true;
+	try {
+		const prefs = JSON.parse(window.localStorage.getItem('zotero-web-library-prefs'));
+		colorScheme = prefs.colorScheme;
+		useDarkModeForContent = colorScheme !== 'light' && (prefs.useDarkModeForContent ?? true);
+	} catch (e) {
+		// ignore
+	}
+
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
 		isReady: false,
@@ -276,6 +289,16 @@ const Reader = () => {
 		dispatch(preferenceChange('readerSidebarWidth', newWidth));
 	}, [dispatch]), 1000);
 
+	const handlePrefChange = useCallback(() => {
+		try {
+			const newPrefs = JSON.parse(window.localStorage.getItem('zotero-web-library-prefs'));
+			reader.current.setColorScheme(newPrefs.colorScheme);
+			reader.current.useDarkModeForContent(newPrefs.colorScheme !== 'light' && (newPrefs.useDarkModeForContent ?? true));
+		} catch(e) {
+			// ignore
+		}
+	}, []);
+
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
@@ -291,6 +314,8 @@ const Reader = () => {
 				baseURI: new URL('/', window.location).toString()
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
+			useDarkModeForContent,
+			colorScheme,
 			primaryViewState: readerState,
 			secondaryViewState: null,
 			location,
@@ -337,11 +362,23 @@ const Reader = () => {
 			onSetDataTransferAnnotations: noop, // n/a in web library, noop prevents errors printed on console from reader
 			// onDeletePages: handleDeletePages
 		});
-	}, [annotations, attachmentItem, attachmentKey, currentUserSlug, dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, location, locationValue, readerSidebarWidth, state.data, state.importedAnnotations])
+	}, [annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug,
+		dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar,
+		handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, location,
+		locationValue, readerSidebarWidth, state.data, state.importedAnnotations,
+		useDarkModeForContent]
+	);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
 		localStorage.removeItem('pdfjs.history');
+	}, []);
+
+	useEffect(() => {
+		window.addEventListener("storage", handlePrefChange);
+		return () => {
+			window.removeEventListener("storage", () => handlePrefChange);
+		}
 	}, []);
 
 	// fetch attachment item details or redirect if invalid URL

@@ -51,6 +51,7 @@
 
 		&:hover,
 		&:focus {
+			color: var(--color-text-disabled);
 			background-color: transparent;
 		}
 	}

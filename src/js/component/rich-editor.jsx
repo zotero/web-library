@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
 
-import { createAttachments, getAttachmentUrl, initialize, navigate, openInReader } from '../actions';
+import { createAttachments, getAttachmentUrl, navigate, openInReader } from '../actions';
 import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 

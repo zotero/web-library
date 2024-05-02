@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
@@ -17,6 +18,8 @@ const Navbar = memo(({ entries = [] }) => {
 	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
+	// useDarkModeForContent === null means enabled
+	const useDarkModeForContent = useSelector(state => state.preferences.useDarkModeForContent) ?? true;
 
 	const handleSearchButtonClick = useCallback(() => {
 		dispatch(currentTriggerSearchMode());
@@ -31,6 +34,10 @@ const Navbar = memo(({ entries = [] }) => {
 			? null : ev.target.dataset.colorScheme;
 		dispatch(preferenceChange('colorScheme', colorScheme));
 	}, [dispatch]);
+
+	const handleToggleUseDarkModeForContent = useCallback(() => {
+		dispatch(preferenceChange('useDarkModeForContent', !useDarkModeForContent));
+	}, [dispatch, useDarkModeForContent]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -158,6 +165,17 @@ const Navbar = memo(({ entries = [] }) => {
 					>
 						<span className="tick">{ colorScheme === 'dark' ? "✓" : "" }</span>
 						Dark
+					</DropdownItem>
+					<DropdownItem divider />
+					<DropdownItem
+						role="menuitemcheckbox"
+						aria-checked={ useDarkModeForContent }
+						onClick={ handleToggleUseDarkModeForContent }
+						disabled={ colorScheme === 'light' }
+						className={ cx({ disabled: colorScheme === 'light' })}
+					>
+						<span className="tick">{useDarkModeForContent ? "✓" : ""}</span>
+						Use Dark Mode for content
 					</DropdownItem>
 				</DropdownMenu>
 			</UncontrolledDropdown>
