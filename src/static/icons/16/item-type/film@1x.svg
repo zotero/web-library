@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <symbol id="film-light" viewBox="0 0 16 16">
 <path d="M1 1V14H15V1H1ZM11 2V7H5V2H11ZM2 2H4V4H2V2ZM2 5H4V7H2V5ZM2 8H4V10H2V8ZM2 13V11H4V13H2ZM5 13V8H11V13H5ZM14 13H12V11H14V13ZM14 10H12V8H14V10ZM14 7H12V5H14V7ZM14 4H12V2H14V4Z" fill="#444444"/>

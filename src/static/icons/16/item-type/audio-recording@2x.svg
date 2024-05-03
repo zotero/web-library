@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <symbol id="audio-recording-light" viewBox="0 0 16 16">
 <path d="M6.5 2.5C6.5 2.10218 6.65804 1.72064 6.93934 1.43934C7.22064 1.15804 7.60218 1 8 1C8.39782 1 8.77936 1.15804 9.06066 1.43934C9.34196 1.72064 9.5 2.10218 9.5 2.5V8.5C9.5 8.89782 9.34196 9.27936 9.06066 9.56066C8.77936 9.84196 8.39782 10 8 10C7.60218 10 7.22064 9.84196 6.93934 9.56066C6.65804 9.27936 6.5 8.89782 6.5 8.5V2.5Z" fill="#DADADA"/>

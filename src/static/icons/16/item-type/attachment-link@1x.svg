@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <symbol id="attachment-link-light" viewBox="0 0 16 16">
 <path opacity="0.5" d="M13.5 11.5C12.3954 11.5 11.5 12.3954 11.5 13.5C11.5 12.3954 10.6046 11.5 9.5 11.5C8.39543 11.5 7.5 12.3954 7.5 13.5C7.5 13.6726 7.52188 13.8402 7.56301 14H6V15H2V0H9.707L15 5.293V10H14V11.563C13.8402 11.5219 13.6726 11.5 13.5 11.5Z" fill="white"/>

@@ -1,3 +1,4 @@
+<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <symbol id="hearing-light" viewBox="0 0 16 16">
 <path d="M15.5 15.5C15.5 14.1602 14.8398 13.5 13.5 13.5H9.5C8.16016 13.5 7.5 14.1602 7.5 15.5H15.5ZM1.5 14.5C1.23437 14.5 0.980469 14.3945 0.792969 14.207C0.402344 13.8164 0.402344 13.1836 0.792969 12.793L7.98828 5.98828L9.01172 7.01172L2.19531 14.2188C2.01953 14.3945 1.76562 14.5 1.5 14.5Z" fill="#D6C4C5"/>
