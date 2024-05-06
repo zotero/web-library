@@ -25,7 +25,7 @@ const DropdownItemType = props => {
 }
 
 const NewItemSelector = props => {
-	const { disabled, onFocusNext, onFocusPrev, onNewItemCreate, tabIndex } = props;
+	const { disabled, onFocusNext = noop, onFocusPrev = noop, onNewItemCreate = noop, tabIndex } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [isSecondaryVisible, setIsSecondaryVisible] = useState(false);
 	const fileInputRef = useRef(null);
@@ -179,16 +179,8 @@ DropdownItemType.propTypes = {
 	onNewItemCreate: PropTypes.func,
 };
 
-NewItemSelector.defaultProps = {
-	itemTypes: [],
-	onFocusNext: noop,
-	onFocusPrev: noop,
-	onNewItemCreate: noop,
-};
-
 NewItemSelector.propTypes = {
 	disabled: PropTypes.bool,
-	itemTypes: PropTypes.array,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,
 	onNewItemCreate: PropTypes.func,
