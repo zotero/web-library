@@ -10,7 +10,7 @@ import { navigate, fetchItemDetails } from '../../actions';
 import { get } from '../../utils';
 
 const ItemDetails = props => {
-	const { active } = props;
+	const { active = false } = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isTouchUser = useSelector(state => state.device.isTouchUser);
@@ -67,10 +67,6 @@ const ItemDetails = props => {
 		</section>
 	);
 }
-
-ItemDetails.defaultProps = {
-	active: false,
-};
 
 ItemDetails.propTypes = {
 	active: PropTypes.bool,

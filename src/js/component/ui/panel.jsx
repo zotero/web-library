@@ -29,8 +29,8 @@ const PanelBody = props => {
 }
 
 const Panel = props => {
-	const [header, ...body] = props.children;
-	const { bodyClassName, className, isBackdrop, headerClassName, onClick, onKeyDown } = props;
+	const [header, ...body] = props.children ?? [];
+	const { bodyClassName, className = '', isBackdrop, headerClassName, onClick, onKeyDown } = props;
 
 	return (
 		<section
@@ -61,11 +61,6 @@ Panel.propTypes = {
 	isBackdrop: PropTypes.bool,
 	onClick: PropTypes.func,
 	onKeyDown: PropTypes.func,
-};
-
-Panel.defaultProps = {
-	children: null,
-	className: ''
 };
 
 PanelBody.propTypes = {
