@@ -14,7 +14,7 @@ const getItemTitle = (mappings, item) => item.itemType === 'note' ?
 
 // logic based on:
 // https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
-const getAttachmentIcon = ({ linkMode, contentType }) => {
+const getAttachmentIcon = ({ linkMode, contentType = '' }) => {
 	const isFileAttachment = ['linked_file', 'imported_file', 'imported_url'].includes(linkMode);
 	if (contentType === 'application/pdf' && isFileAttachment) {
 		return linkMode === 'linked_file' ? 'attachment-pdf-link' : 'attachment-pdf';
@@ -49,7 +49,7 @@ const getAttachmentColumnIcon = item => {
 	const bestAttachment = get(item, [Symbol.for('links'), 'attachment'], null);
 
 	if(bestAttachment) {
-		const { attachmentType, attachmentSize = null } = bestAttachment;
+		const { attachmentType = '', attachmentSize = null } = bestAttachment;
 
 		if(attachmentType === 'application/pdf' ) {
 			return 'attachment-pdf';
