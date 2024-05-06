@@ -90,6 +90,11 @@ $-colors: (
 	color-nav-sidebar-link: #fff,
 );
 
+:root {
+	// fallback for browsers that do not support color-schemes (e.g., Safari 11)
+	@include derive-colors($-colors);
+}
+
 :root[data-color-scheme=light] {
 	color-scheme: light;
 	@include derive-colors($-colors);

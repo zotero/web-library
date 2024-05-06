@@ -165,7 +165,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 		iframeRef.current.contentWindow.postMessage({
 			action: 'setColorScheme',
 			colorScheme
-		});
+		}, '*');
 	}, [colorScheme])
 
 	useEffect(() => {
