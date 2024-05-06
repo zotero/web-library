@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { isTriggerEvent } from 'web-common/utils';
 import { Icon } from 'web-common/components';
 
@@ -13,7 +13,8 @@ const ROWHEIGHT = 26;
 const HeaderRow = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 	const mouseState = useRef(null);
-	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTarget, sortBy, sortDirection } = props;
+	const { field: sortBy, sort: sortDirection } = useSelector(state => state.preferences.columns.find(c => c.sort) || {}, shallowEqual);
+	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTarget } = props;
 	const { handleFocusNext, handleFocusPrev } = props; // drilldown focus management on table
 
 	const handleCellClickAndKeyDown = ev => {
@@ -155,8 +156,6 @@ HeaderRow.propTypes = {
 	onReorder: PropTypes.func,
 	onResize: PropTypes.func,
 	reorderTarget: PropTypes.object,
-	sortBy: PropTypes.string,
-	sortDirection: PropTypes.oneOf(['asc', 'desc']),
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 

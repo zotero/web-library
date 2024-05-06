@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -21,13 +21,14 @@ const ItemsList = memo(props => {
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
 	const dispatch = useDispatch();
-	const { hasChecked, isFetching, keys, requests, totalResults } = useSourceData();
+	const { hasChecked, isFetching, keys, requests, totalResults, sortBy, sortDirection } = useSourceData();
+	const prevSortBy = usePrevious(sortBy);
+	const prevSortDirection = usePrevious(sortDirection);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const view = useSelector(state => state.current.view);
-	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const isSearchModeTransitioningOut = !isSearchMode && isSearchModeTransitioning;
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
@@ -37,13 +38,6 @@ const ItemsList = memo(props => {
 	//		 where current items overlap empty search prompt we need the following hack. See #230
 	const isSearchModeHack = isSingleColumn && (isSearchMode || isSearchModeTransitioningOut) &&
 		itemsSource !== 'query' && view !== 'item-list';
-
-	const { field: sortBy, sort: sortDirection } = useMemo(() =>
-		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
-		[columnsData]
-	);
-	const prevSortBy = usePrevious(sortBy);
-	const prevSortDirection = usePrevious(sortDirection);
 
 	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
 

@@ -15,6 +15,7 @@ import MobileNav from './ui/mobile-nav';
 import ModalManager from './modal-manager';
 import Navbar from './ui/navbar';
 import Ongoing from './ongoing';
+import PreferencesObserver from './preferences-observer';
 import Reader from './reader';
 import SearchBackdrop from './search-backdrop';
 import TagSelector from '../component/tag-selector';
@@ -222,6 +223,7 @@ const Library = () => {
 			<ZoteroConnectorNotifier />
 			<TitleUpdater />
 			<ZoteroStreamingClient />
+			<PreferencesObserver />
 		</Fragment>
     );
 }

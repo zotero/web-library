@@ -93,7 +93,9 @@ const Table = () => {
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTarget, setReorderTarget] = useState(null);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
-	const { isFetching, keys, hasChecked, totalResults, requests } = useSourceData();
+	const { isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests } = useSourceData();
+	const prevSortBy = usePrevious(sortBy);
+	const prevSortDirection = usePrevious(sortDirection);
 	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -141,14 +143,6 @@ const Table = () => {
 		}
 		return columns;
 	}, [columnsData, isMyLibrary]);
-
-	const { field: sortBy, sort: sortDirection } = useMemo(() =>
-		columnsData.find(column => 'sort' in column) || { field: 'title', sort: 'asc' },
-		[columnsData]
-	);
-
-	const prevSortBy = usePrevious(sortBy);
-	const prevSortDirection = usePrevious(sortDirection);
 
 	const { receiveFocus, receiveBlur, focusBySelector, focusDrillDownNext,
 		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, ['[aria-selected="true"]', '[data-index="0"]']);
@@ -395,9 +389,11 @@ const Table = () => {
 		}
 
 		if(loader.current) {
+			// this will trigger `loadMoreItems` which in turn will call `handleLoadMore`
 			loader.current.resetloadMoreItemsCache(true);
 		}
 
+		// if we were fetching when sort changed, we need to abort the current request and re-fetch
 		if(isFetching) {
 			dispatch(abortAllRequests(requestType));
 			setTimeout(() => {
@@ -491,8 +487,6 @@ const Table = () => {
 							<HeaderRow
 								ref={ headerRef }
 								columns={ columns }
-								sortBy={ sortBy }
-								sortDirection={ sortDirection }
 								width={ width }
 								onResize={ handleResize }
 								onReorder={ handleReorder }

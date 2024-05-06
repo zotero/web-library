@@ -1,6 +1,6 @@
 import { omit } from 'web-common/utils';
 
-import { preferenceChange, sortItems } from '.';
+import { preferenceChange } from '.';
 
 const updateItemsSorting = (sortBy, sortDirection) => {
 	return (dispatch, getState) => {
@@ -12,10 +12,6 @@ const updateItemsSorting = (sortBy, sortDirection) => {
 				return omit(column, 'sort');
 			}
 		})));
-
-		dispatch(sortItems(
-			sortBy, sortDirection.toLowerCase()
-		));
 	}
 };
 

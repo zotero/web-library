@@ -1,6 +1,6 @@
-import { initialize } from '.';
+
 import { get, localStorageWrapper } from '../utils';
-import { ABORT_REQUEST, CONNECTION_ISSUES, INVALIDATE_META_CACHE } from '../constants/actions';
+import { ABORT_REQUEST, CONNECTION_ISSUES } from '../constants/actions';
 
 const requestsWaiting = {};
 const requestSchedule = [1, 2, 5, 10, 20, 30, 40, 50, 60];

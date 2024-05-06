@@ -178,20 +178,9 @@ const Reader = () => {
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
 	// TODO: this should be entry-sepcific, but works for now because there is only one entry being fetched by the reader
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
-
-	// NOTE: In reader, we read color scheme directly from local storage instead of redux.
-	//		This is because reader does not contain UI to update color scheme.
-	//		Instead, we want to match color scheme if overriden in another tab in the main Web Library UI.
-	let colorScheme = null;
-	let useDarkModeForContent = true;
-	try {
-		const prefs = JSON.parse(window.localStorage.getItem('zotero-web-library-prefs'));
-		colorScheme = prefs.colorScheme;
-		useDarkModeForContent = colorScheme !== 'light' && (prefs.useDarkModeForContent ?? true);
-	} catch (e) {
-		// ignore
-	}
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
@@ -289,16 +278,6 @@ const Reader = () => {
 		dispatch(preferenceChange('readerSidebarWidth', newWidth));
 	}, [dispatch]), 1000);
 
-	const handlePrefChange = useCallback(() => {
-		try {
-			const newPrefs = JSON.parse(window.localStorage.getItem('zotero-web-library-prefs'));
-			reader.current.setColorScheme(newPrefs.colorScheme);
-			reader.current.useDarkModeForContent(newPrefs.colorScheme !== 'light' && (newPrefs.useDarkModeForContent ?? true));
-		} catch(e) {
-			// ignore
-		}
-	}, []);
-
 	const handleIframeLoaded = useCallback(() => {
 		const processedAnnotations = getProcessedAnnotations(annotations);
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
@@ -375,11 +354,11 @@ const Reader = () => {
 	}, []);
 
 	useEffect(() => {
-		window.addEventListener("storage", handlePrefChange);
-		return () => {
-			window.removeEventListener("storage", () => handlePrefChange);
+		if(reader.current) {
+			reader.current.setColorScheme(colorScheme);
+			reader.current.useDarkModeForContent(useDarkModeForContent);
 		}
-	}, []);
+	}, [colorScheme, useDarkModeForContent]);
 
 	// fetch attachment item details or redirect if invalid URL
 	useEffect(() => {

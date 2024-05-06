@@ -5,14 +5,14 @@ import { getItemKeysPath } from '../common/state';
 import { MANAGE_TAGS } from '../constants/modals';
 
 const useFetchingState = path => {
-	const { isFetching, keys, pointer, totalResults, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
+	const { isFetching, keys, pointer, totalResults, sortBy, sortDirection, requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
 
 	const fetchingState = useMemo(() =>
-		({ isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests }),
-		[isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, totalResults, requests]);
+		({ isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, sortBy, sortDirection, totalResults, requests }),
+		[isFetching, isFetched, keys, hasChecked, hasMoreItems, pointer, sortBy, sortDirection, totalResults, requests]);
 
 	return fetchingState;
 };
