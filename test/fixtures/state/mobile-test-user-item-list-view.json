@@ -305,6 +305,8 @@
         "useTransitions": true,
         "view": "item-list",
         "location": null,
+        "isCollectionsTreeFocused": false,
+        "isItemsTableFocused": false,
         "attachmentKey": null,
         "isMyPublications": false,
         "isTrash": false,
@@ -471,13 +473,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 12:38:38",
-                        "dateModified": "13/01/2023, 12:38:42",
+                        "dateAdded": "1/13/2023, 12:38:38 PM",
+                        "dateModified": "1/13/2023, 12:38:42 PM",
                         "emojis": [
                             "⭐️"
                         ],
@@ -602,13 +604,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Kealy et al.",
                         "date": "2002",
-                        "dateAdded": "13/01/2023, 11:52:40",
-                        "dateModified": "13/01/2023, 11:52:40",
+                        "dateAdded": "1/13/2023, 11:52:40 AM",
+                        "dateModified": "1/13/2023, 11:52:40 AM",
                         "emojis": [],
                         "extra": "Publisher: Am Vet Med Assoc",
                         "iconName": "journal-article",
@@ -672,15 +674,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 11:54:08",
-                        "dateModified": "17/01/2023, 16:32:03",
+                        "dateAdded": "1/13/2023, 11:54:08 AM",
+                        "dateModified": "1/17/2023, 4:32:03 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "webpage",
@@ -735,8 +737,8 @@
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 11:54:44",
-                        "dateModified": "17/01/2023, 16:34:27",
+                        "dateAdded": "1/13/2023, 11:54:44 AM",
+                        "dateModified": "1/17/2023, 4:34:27 PM",
                         "emojis": [
                             "⭐️"
                         ],
@@ -811,13 +813,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Sanders",
                         "date": "1999",
-                        "dateAdded": "13/01/2023, 11:52:40",
-                        "dateModified": "13/01/2023, 11:52:40",
+                        "dateAdded": "1/13/2023, 11:52:40 AM",
+                        "dateModified": "1/13/2023, 11:52:40 AM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "book",
@@ -902,13 +904,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Miller and Murphy",
                         "date": "1995",
-                        "dateAdded": "13/01/2023, 11:52:40",
-                        "dateModified": "13/01/2023, 11:52:40",
+                        "dateAdded": "1/13/2023, 11:52:40 AM",
+                        "dateModified": "1/13/2023, 11:52:40 AM",
                         "emojis": [],
                         "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
                         "iconName": "journal-article",
@@ -975,7 +977,7 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [
                             "#A28AE5",
                             "#FF6666"
@@ -983,8 +985,8 @@
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 11:53:25",
-                        "dateModified": "13/01/2023, 11:53:25",
+                        "dateAdded": "1/13/2023, 11:53:25 AM",
+                        "dateModified": "1/13/2023, 11:53:25 AM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "webpage",
@@ -5193,83 +5195,31 @@
     },
     "ongoing": [],
     "preferences": {
-        "citationStyle": "harvard-educational-review",
-        "citationLocale": "pl-PL",
+        "citationStyle": "modern-language-association",
+        "citationLocale": "en-US",
         "installedCitationStyles": [
             {
                 "name": "nature",
                 "title": "Nature"
-            },
-            {
-                "name": "harvard-educational-review",
-                "title": "Harvard Educational Review"
-            },
-            {
-                "name": "harvard1",
-                "title": "Harvard reference format 1 (deprecated)"
-            },
-            {
-                "name": "african-online-scientific-information-systems-harvard",
-                "title": "African Online Scientific Information Systems - Harvard"
-            },
-            {
-                "name": "harvard-anglia-ruskin-university",
-                "title": "Anglia Ruskin University - Harvard"
-            },
-            {
-                "name": "harvard-cape-peninsula-university-of-technology",
-                "title": "Cape Peninsula University of Technology - Harvard"
-            },
-            {
-                "name": "cardiff-university-harvard",
-                "title": "Cardiff University - Harvard"
-            },
-            {
-                "name": "harvard-cite-them-right-10th-edition",
-                "title": "Cite Them Right 10th edition - Harvard"
-            },
-            {
-                "name": "polar-biology",
-                "title": "Polar Biology"
-            },
-            {
-                "name": "polar-research",
-                "title": "Polar Research"
-            },
-            {
-                "name": "polar-science",
-                "title": "Polar Science"
-            },
-            {
-                "name": "police-practice-and-research",
-                "title": "Police Practice and Research"
-            },
-            {
-                "name": "policy-and-politics",
-                "title": "Policy & Politics"
-            },
-            {
-                "name": "policy-and-society",
-                "title": "Policy and Society"
             }
         ],
         "columns": [
             {
                 "field": "title",
-                "fraction": 0.33357142857142863,
+                "fraction": 0.45,
                 "isVisible": true,
                 "minFraction": 0.1,
                 "sort": "asc"
             },
             {
                 "field": "creator",
-                "fraction": 0.29999999999999993,
+                "fraction": 0.3,
                 "isVisible": true,
                 "minFraction": 0.05
             },
             {
                 "field": "date",
-                "fraction": 0.10873786407766994,
+                "fraction": 0.2,
                 "isVisible": true,
                 "minFraction": 0.05
             },
@@ -5329,8 +5279,8 @@
             },
             {
                 "field": "dateAdded",
-                "fraction": 0.10000000000000002,
-                "isVisible": true,
+                "fraction": 0.1,
+                "isVisible": false,
                 "minFraction": 0.05
             },
             {
@@ -5353,14 +5303,12 @@
             },
             {
                 "field": "attachment",
-                "fraction": 0.15769070735090152,
+                "fraction": 0.05,
                 "isVisible": true,
                 "minFraction": 0.05
             }
         ],
-        "version": "1.4.1",
-        "isReaderSidebarOpen": true,
-        "readerSidebarWidth": 255.00979614257812
+        "version": "1.4.3"
     },
     "query": {
         "current": {
@@ -5385,7 +5333,7 @@
     },
     "traffic": {
         "SCHEMA": {
-            "lastRequest": 1709545886094,
+            "lastRequest": 1715088975005,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_SCHEMA",
@@ -17462,11 +17410,11 @@
                     }
                 }
             },
-            "lastSuccess": 1709545886696,
+            "lastSuccess": 1715088975354,
             "errorCount": 0
         },
         "LIBRARY_SETTINGS": {
-            "lastRequest": 1709545886095,
+            "lastRequest": 1715088975006,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_LIBRARY_SETTINGS",
@@ -17538,11 +17486,11 @@
                     "response": {}
                 }
             },
-            "lastSuccess": 1709545886827,
+            "lastSuccess": 1715088975737,
             "errorCount": 0
         },
         "COLLECTIONS_IN_LIBRARY": {
-            "lastRequest": 1709545886096,
+            "lastRequest": 1715088975007,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
@@ -17939,11 +17887,11 @@
                 },
                 "totalResults": 8
             },
-            "lastSuccess": 1709545886894,
+            "lastSuccess": 1715088975602,
             "errorCount": 0
         },
         "ITEMS_IN_COLLECTION": {
-            "lastRequest": 1709545886959,
+            "lastRequest": 1715088975795,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEMS_IN_COLLECTION",
@@ -18004,13 +17952,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 12:38:38",
-                            "dateModified": "13/01/2023, 12:38:42",
+                            "dateAdded": "1/13/2023, 12:38:38 PM",
+                            "dateModified": "1/13/2023, 12:38:42 PM",
                             "emojis": [
                                 "⭐️"
                             ],
@@ -18135,13 +18083,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Kealy et al.",
                             "date": "2002",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
+                            "dateAdded": "1/13/2023, 11:52:40 AM",
+                            "dateModified": "1/13/2023, 11:52:40 AM",
                             "emojis": [],
                             "extra": "Publisher: Am Vet Med Assoc",
                             "iconName": "journal-article",
@@ -18205,15 +18153,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 11:54:08",
-                            "dateModified": "17/01/2023, 16:32:03",
+                            "dateAdded": "1/13/2023, 11:54:08 AM",
+                            "dateModified": "1/17/2023, 4:32:03 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "webpage",
@@ -18268,8 +18216,8 @@
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 11:54:44",
-                            "dateModified": "17/01/2023, 16:34:27",
+                            "dateAdded": "1/13/2023, 11:54:44 AM",
+                            "dateModified": "1/17/2023, 4:34:27 PM",
                             "emojis": [
                                 "⭐️"
                             ],
@@ -18344,13 +18292,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Sanders",
                             "date": "1999",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
+                            "dateAdded": "1/13/2023, 11:52:40 AM",
+                            "dateModified": "1/13/2023, 11:52:40 AM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "book",
@@ -18435,13 +18383,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Miller and Murphy",
                             "date": "1995",
-                            "dateAdded": "13/01/2023, 11:52:40",
-                            "dateModified": "13/01/2023, 11:52:40",
+                            "dateAdded": "1/13/2023, 11:52:40 AM",
+                            "dateModified": "1/13/2023, 11:52:40 AM",
                             "emojis": [],
                             "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
                             "iconName": "journal-article",
@@ -18508,7 +18456,7 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [
                                 "#A28AE5",
                                 "#FF6666"
@@ -18516,8 +18464,8 @@
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 11:53:25",
-                            "dateModified": "13/01/2023, 11:53:25",
+                            "dateAdded": "1/13/2023, 11:53:25 AM",
+                            "dateModified": "1/13/2023, 11:53:25 AM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "webpage",
@@ -19085,7 +19033,7 @@
                 },
                 "totalResults": 7
             },
-            "lastSuccess": 1709545887503,
+            "lastSuccess": 1715088977444,
             "errorCount": 0
         }
     },
@@ -19094,7 +19042,6 @@
             "pathname": "/testuser/collections/WTTJ2J56/item-list",
             "search": "",
             "hash": "",
-            "key": "z9pn6g",
             "query": {}
         },
         "action": "POP"

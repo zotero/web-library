@@ -307,6 +307,8 @@
         "useTransitions": true,
         "view": "item-details",
         "location": null,
+        "isCollectionsTreeFocused": false,
+        "isItemsTableFocused": false,
         "attachmentKey": null,
         "isMyPublications": false,
         "isTrash": false,
@@ -496,15 +498,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "Silver",
                         "date": "2005",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:30:17",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:30:17 PM",
                         "emojis": [],
                         "extra": "Issue: 1",
                         "iconName": "conference-paper",
@@ -560,15 +562,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 12:00:19",
-                        "dateModified": "13/01/2023, 12:00:19",
+                        "dateAdded": "1/13/2023, 12:00:19 PM",
+                        "dateModified": "1/13/2023, 12:00:19 PM",
                         "emojis": [],
-                        "iconName": "webpage-snapshot",
+                        "iconName": "attachment-snapshot",
                         "itemType": "Attachment",
                         "itemTypeRaw": "attachment",
                         "key": "37V7V4NT",
@@ -621,15 +623,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "",
                         "date": "",
-                        "dateAdded": "13/01/2023, 12:00:03",
-                        "dateModified": "13/01/2023, 12:00:03",
+                        "dateAdded": "1/13/2023, 12:00:03 PM",
+                        "dateModified": "1/13/2023, 12:00:03 PM",
                         "emojis": [],
-                        "iconName": "pdf",
+                        "iconName": "attachment-pdf",
                         "itemType": "Attachment",
                         "itemTypeRaw": "attachment",
                         "key": "K24TUDDL",
@@ -706,13 +708,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Su and Drysdale",
                         "date": "1995",
-                        "dateAdded": "13/01/2023, 12:00:38",
-                        "dateModified": "13/01/2023, 12:00:38",
+                        "dateAdded": "1/13/2023, 12:00:38 PM",
+                        "dateModified": "1/13/2023, 12:00:38 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "conference-paper",
@@ -796,15 +798,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "Ruppert",
                         "date": "1995",
-                        "dateAdded": "13/01/2023, 12:00:38",
-                        "dateModified": "17/01/2023, 16:30:17",
+                        "dateAdded": "1/13/2023, 12:00:38 PM",
+                        "dateModified": "1/17/2023, 4:30:17 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -892,15 +894,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "Sloan",
                         "date": "1987",
-                        "dateAdded": "13/01/2023, 12:00:38",
-                        "dateModified": "17/01/2023, 16:38:33",
+                        "dateAdded": "1/13/2023, 12:00:38 PM",
+                        "dateModified": "1/17/2023, 4:38:33 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -1008,15 +1010,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "Foead et al.",
                         "date": "2021",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:29:50",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:29:50 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -1115,7 +1117,7 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#5FB236",
                             "#A28AE5"
@@ -1123,8 +1125,8 @@
                         "createdByUser": "",
                         "creator": "Cui and Shi",
                         "date": "2011",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:38:33",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:38:33 PM",
                         "emojis": [],
                         "extra": "Publisher: International Journal of Computer Science and Network Security (IJCSNS)",
                         "iconName": "journal-article",
@@ -1224,13 +1226,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Ho et al.",
                         "date": "2005",
-                        "dateAdded": "13/01/2023, 12:16:01",
-                        "dateModified": "13/01/2023, 12:16:01",
+                        "dateAdded": "1/13/2023, 12:16:01 PM",
+                        "dateModified": "1/13/2023, 12:16:01 PM",
                         "emojis": [],
                         "extra": "Issue: 3",
                         "iconName": "conference-paper",
@@ -1309,13 +1311,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Shewchuk",
                         "date": "2002",
-                        "dateAdded": "13/01/2023, 12:00:38",
-                        "dateModified": "13/01/2023, 12:00:38",
+                        "dateAdded": "1/13/2023, 12:00:38 PM",
+                        "dateModified": "1/13/2023, 12:00:38 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -1399,13 +1401,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Gong and Newman",
                         "date": "2016",
-                        "dateAdded": "13/01/2023, 12:16:01",
-                        "dateModified": "13/01/2023, 12:16:01",
+                        "dateAdded": "1/13/2023, 12:16:01 PM",
+                        "dateModified": "1/13/2023, 12:16:01 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "conference-paper",
@@ -1504,13 +1506,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "webpage-snapshot",
+                        "attachmentIconName": "attachment-snapshot",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Chen et al.",
                         "date": "2020",
-                        "dateAdded": "13/01/2023, 12:16:01",
-                        "dateModified": "13/01/2023, 12:16:01",
+                        "dateAdded": "1/13/2023, 12:16:01 PM",
+                        "dateModified": "1/13/2023, 12:16:01 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -1596,8 +1598,8 @@
                         "createdByUser": "",
                         "creator": "CGP Grey",
                         "date": "2020-11-03",
-                        "dateAdded": "13/01/2023, 12:06:50",
-                        "dateModified": "17/01/2023, 16:33:39",
+                        "dateAdded": "1/13/2023, 12:06:50 PM",
+                        "dateModified": "1/17/2023, 4:33:39 PM",
                         "emojis": [
                             "⭐️"
                         ],
@@ -1685,8 +1687,8 @@
                         "createdByUser": "",
                         "creator": "Patel",
                         "date": "2014",
-                        "dateAdded": "13/01/2023, 11:59:42",
-                        "dateModified": "17/01/2023, 16:33:24",
+                        "dateAdded": "1/13/2023, 11:59:42 AM",
+                        "dateModified": "1/17/2023, 4:33:24 PM",
                         "emojis": [
                             "⭐️"
                         ],
@@ -1773,8 +1775,8 @@
                         "createdByUser": "",
                         "creator": "Polster and Ross",
                         "date": "2018",
-                        "dateAdded": "13/01/2023, 12:36:20",
-                        "dateModified": "13/01/2023, 12:36:22",
+                        "dateAdded": "1/13/2023, 12:36:20 PM",
+                        "dateModified": "1/13/2023, 12:36:22 PM",
                         "emojis": [],
                         "extra": "Publisher: [Mathematical Association of America, Taylor & Francis, Ltd.]",
                         "iconName": "journal-article",
@@ -1845,8 +1847,8 @@
                         "createdByUser": "",
                         "creator": "Oskar Stålberg [@OskSta]",
                         "date": "2021-10-13",
-                        "dateAdded": "13/01/2023, 12:05:56",
-                        "dateModified": "17/01/2023, 16:38:06",
+                        "dateAdded": "1/13/2023, 12:05:56 PM",
+                        "dateModified": "1/17/2023, 4:38:06 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "forum-post",
@@ -1937,8 +1939,8 @@
                         "createdByUser": "",
                         "creator": "Broussard et al.",
                         "date": "2016",
-                        "dateAdded": "13/01/2023, 12:37:09",
-                        "dateModified": "17/01/2023, 16:38:33",
+                        "dateAdded": "1/13/2023, 12:37:09 PM",
+                        "dateModified": "1/17/2023, 4:38:33 PM",
                         "emojis": [],
                         "extra": "Publisher: [Taylor & Francis, Ltd., Mathematical Association of America]",
                         "iconName": "journal-article",
@@ -2038,15 +2040,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#FF6666"
                         ],
                         "createdByUser": "",
                         "creator": "Rafiq et al.",
                         "date": "2020",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:38:33",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:38:33 PM",
                         "emojis": [],
                         "extra": "Issue: 1",
                         "iconName": "conference-paper",
@@ -2141,13 +2143,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Gómez et al.",
                         "date": "2013",
-                        "dateAdded": "13/01/2023, 12:16:01",
-                        "dateModified": "13/01/2023, 12:16:01",
+                        "dateAdded": "1/13/2023, 12:16:01 PM",
+                        "dateModified": "1/13/2023, 12:16:01 PM",
                         "emojis": [],
                         "extra": "Publisher: Elsevier",
                         "iconName": "journal-article",
@@ -2232,13 +2234,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Stout",
                         "date": "1996",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:11:47",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:11:47 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "journal-article",
@@ -2328,15 +2330,15 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [
                             "#5FB236"
                         ],
                         "createdByUser": "",
                         "creator": "Lee and Schachter",
                         "date": "1980",
-                        "dateAdded": "13/01/2023, 12:00:38",
-                        "dateModified": "17/01/2023, 16:29:05",
+                        "dateAdded": "1/13/2023, 12:00:38 PM",
+                        "dateModified": "1/17/2023, 4:29:05 PM",
                         "emojis": [],
                         "extra": "Publisher: Springer",
                         "iconName": "journal-article",
@@ -2433,13 +2435,13 @@
                         }
                     },
                     "@@derived@@": {
-                        "attachmentIconName": "pdf",
+                        "attachmentIconName": "attachment-pdf",
                         "colors": [],
                         "createdByUser": "",
                         "creator": "Leigh et al.",
                         "date": "2007",
-                        "dateAdded": "13/01/2023, 11:58:57",
-                        "dateModified": "17/01/2023, 16:38:33",
+                        "dateAdded": "1/13/2023, 11:58:57 AM",
+                        "dateModified": "1/17/2023, 4:38:33 PM",
                         "emojis": [],
                         "extra": "",
                         "iconName": "conference-paper",
@@ -6680,83 +6682,31 @@
     },
     "ongoing": [],
     "preferences": {
-        "citationStyle": "harvard-educational-review",
-        "citationLocale": "pl-PL",
+        "citationStyle": "modern-language-association",
+        "citationLocale": "en-US",
         "installedCitationStyles": [
             {
                 "name": "nature",
                 "title": "Nature"
-            },
-            {
-                "name": "harvard-educational-review",
-                "title": "Harvard Educational Review"
-            },
-            {
-                "name": "harvard1",
-                "title": "Harvard reference format 1 (deprecated)"
-            },
-            {
-                "name": "african-online-scientific-information-systems-harvard",
-                "title": "African Online Scientific Information Systems - Harvard"
-            },
-            {
-                "name": "harvard-anglia-ruskin-university",
-                "title": "Anglia Ruskin University - Harvard"
-            },
-            {
-                "name": "harvard-cape-peninsula-university-of-technology",
-                "title": "Cape Peninsula University of Technology - Harvard"
-            },
-            {
-                "name": "cardiff-university-harvard",
-                "title": "Cardiff University - Harvard"
-            },
-            {
-                "name": "harvard-cite-them-right-10th-edition",
-                "title": "Cite Them Right 10th edition - Harvard"
-            },
-            {
-                "name": "polar-biology",
-                "title": "Polar Biology"
-            },
-            {
-                "name": "polar-research",
-                "title": "Polar Research"
-            },
-            {
-                "name": "polar-science",
-                "title": "Polar Science"
-            },
-            {
-                "name": "police-practice-and-research",
-                "title": "Police Practice and Research"
-            },
-            {
-                "name": "policy-and-politics",
-                "title": "Policy & Politics"
-            },
-            {
-                "name": "policy-and-society",
-                "title": "Policy and Society"
             }
         ],
         "columns": [
             {
                 "field": "title",
-                "fraction": 0.33357142857142863,
+                "fraction": 0.45,
                 "isVisible": true,
                 "minFraction": 0.1,
                 "sort": "asc"
             },
             {
                 "field": "creator",
-                "fraction": 0.29999999999999993,
+                "fraction": 0.3,
                 "isVisible": true,
                 "minFraction": 0.05
             },
             {
                 "field": "date",
-                "fraction": 0.10873786407766994,
+                "fraction": 0.2,
                 "isVisible": true,
                 "minFraction": 0.05
             },
@@ -6816,8 +6766,8 @@
             },
             {
                 "field": "dateAdded",
-                "fraction": 0.10000000000000002,
-                "isVisible": true,
+                "fraction": 0.1,
+                "isVisible": false,
                 "minFraction": 0.05
             },
             {
@@ -6840,14 +6790,12 @@
             },
             {
                 "field": "attachment",
-                "fraction": 0.15769070735090152,
+                "fraction": 0.05,
                 "isVisible": true,
                 "minFraction": 0.05
             }
         ],
-        "version": "1.4.1",
-        "isReaderSidebarOpen": true,
-        "readerSidebarWidth": 255.00979614257812
+        "version": "1.4.3"
     },
     "query": {
         "current": {
@@ -6872,7 +6820,7 @@
     },
     "traffic": {
         "SCHEMA": {
-            "lastRequest": 1709729428795,
+            "lastRequest": 1715089298677,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_SCHEMA",
@@ -18949,11 +18897,11 @@
                     }
                 }
             },
-            "lastSuccess": 1709729428935,
+            "lastSuccess": 1715089299032,
             "errorCount": 0
         },
         "LIBRARY_SETTINGS": {
-            "lastRequest": 1709729428797,
+            "lastRequest": 1715089298679,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_LIBRARY_SETTINGS",
@@ -19025,11 +18973,11 @@
                     "response": {}
                 }
             },
-            "lastSuccess": 1709729429057,
+            "lastSuccess": 1715089299317,
             "errorCount": 0
         },
         "COLLECTIONS_IN_LIBRARY": {
-            "lastRequest": 1709729428797,
+            "lastRequest": 1715089298680,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
@@ -19426,11 +19374,11 @@
                 },
                 "totalResults": 8
             },
-            "lastSuccess": 1709729429195,
+            "lastSuccess": 1715089299371,
             "errorCount": 0
         },
         "FETCH_ITEM_DETAILS": {
-            "lastRequest": 1709729429237,
+            "lastRequest": 1715089299413,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_FETCH_ITEM_DETAILS",
@@ -19510,15 +19458,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Silver",
                             "date": "2005",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:30:17",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:30:17 PM",
                             "emojis": [],
                             "extra": "Issue: 1",
                             "iconName": "conference-paper",
@@ -19651,11 +19599,11 @@
                 },
                 "totalResults": 1
             },
-            "lastSuccess": 1709729429690,
+            "lastSuccess": 1715089299835,
             "errorCount": 0
         },
         "ITEMS_IN_COLLECTION": {
-            "lastRequest": 1709729429250,
+            "lastRequest": 1715089299427,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEMS_IN_COLLECTION",
@@ -19737,13 +19685,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Su and Drysdale",
                             "date": "1995",
-                            "dateAdded": "13/01/2023, 12:00:38",
-                            "dateModified": "13/01/2023, 12:00:38",
+                            "dateAdded": "1/13/2023, 12:00:38 PM",
+                            "dateModified": "1/13/2023, 12:00:38 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "conference-paper",
@@ -19827,15 +19775,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Ruppert",
                             "date": "1995",
-                            "dateAdded": "13/01/2023, 12:00:38",
-                            "dateModified": "17/01/2023, 16:30:17",
+                            "dateAdded": "1/13/2023, 12:00:38 PM",
+                            "dateModified": "1/17/2023, 4:30:17 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -19923,15 +19871,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Sloan",
                             "date": "1987",
-                            "dateAdded": "13/01/2023, 12:00:38",
-                            "dateModified": "17/01/2023, 16:38:33",
+                            "dateAdded": "1/13/2023, 12:00:38 PM",
+                            "dateModified": "1/17/2023, 4:38:33 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -20039,15 +19987,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Foead et al.",
                             "date": "2021",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:29:50",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:29:50 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -20146,7 +20094,7 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#5FB236",
                                 "#A28AE5"
@@ -20154,8 +20102,8 @@
                             "createdByUser": "",
                             "creator": "Cui and Shi",
                             "date": "2011",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:38:33",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:38:33 PM",
                             "emojis": [],
                             "extra": "Publisher: International Journal of Computer Science and Network Security (IJCSNS)",
                             "iconName": "journal-article",
@@ -20242,15 +20190,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Silver",
                             "date": "2005",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:30:17",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:30:17 PM",
                             "emojis": [],
                             "extra": "Issue: 1",
                             "iconName": "conference-paper",
@@ -20349,13 +20297,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Ho et al.",
                             "date": "2005",
-                            "dateAdded": "13/01/2023, 12:16:01",
-                            "dateModified": "13/01/2023, 12:16:01",
+                            "dateAdded": "1/13/2023, 12:16:01 PM",
+                            "dateModified": "1/13/2023, 12:16:01 PM",
                             "emojis": [],
                             "extra": "Issue: 3",
                             "iconName": "conference-paper",
@@ -20434,13 +20382,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Shewchuk",
                             "date": "2002",
-                            "dateAdded": "13/01/2023, 12:00:38",
-                            "dateModified": "13/01/2023, 12:00:38",
+                            "dateAdded": "1/13/2023, 12:00:38 PM",
+                            "dateModified": "1/13/2023, 12:00:38 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -20524,13 +20472,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Gong and Newman",
                             "date": "2016",
-                            "dateAdded": "13/01/2023, 12:16:01",
-                            "dateModified": "13/01/2023, 12:16:01",
+                            "dateAdded": "1/13/2023, 12:16:01 PM",
+                            "dateModified": "1/13/2023, 12:16:01 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "conference-paper",
@@ -20629,13 +20577,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Chen et al.",
                             "date": "2020",
-                            "dateAdded": "13/01/2023, 12:16:01",
-                            "dateModified": "13/01/2023, 12:16:01",
+                            "dateAdded": "1/13/2023, 12:16:01 PM",
+                            "dateModified": "1/13/2023, 12:16:01 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -20721,8 +20669,8 @@
                             "createdByUser": "",
                             "creator": "CGP Grey",
                             "date": "2020-11-03",
-                            "dateAdded": "13/01/2023, 12:06:50",
-                            "dateModified": "17/01/2023, 16:33:39",
+                            "dateAdded": "1/13/2023, 12:06:50 PM",
+                            "dateModified": "1/17/2023, 4:33:39 PM",
                             "emojis": [
                                 "⭐️"
                             ],
@@ -20810,8 +20758,8 @@
                             "createdByUser": "",
                             "creator": "Patel",
                             "date": "2014",
-                            "dateAdded": "13/01/2023, 11:59:42",
-                            "dateModified": "17/01/2023, 16:33:24",
+                            "dateAdded": "1/13/2023, 11:59:42 AM",
+                            "dateModified": "1/17/2023, 4:33:24 PM",
                             "emojis": [
                                 "⭐️"
                             ],
@@ -20898,8 +20846,8 @@
                             "createdByUser": "",
                             "creator": "Polster and Ross",
                             "date": "2018",
-                            "dateAdded": "13/01/2023, 12:36:20",
-                            "dateModified": "13/01/2023, 12:36:22",
+                            "dateAdded": "1/13/2023, 12:36:20 PM",
+                            "dateModified": "1/13/2023, 12:36:22 PM",
                             "emojis": [],
                             "extra": "Publisher: [Mathematical Association of America, Taylor & Francis, Ltd.]",
                             "iconName": "journal-article",
@@ -20970,8 +20918,8 @@
                             "createdByUser": "",
                             "creator": "Oskar Stålberg [@OskSta]",
                             "date": "2021-10-13",
-                            "dateAdded": "13/01/2023, 12:05:56",
-                            "dateModified": "17/01/2023, 16:38:06",
+                            "dateAdded": "1/13/2023, 12:05:56 PM",
+                            "dateModified": "1/17/2023, 4:38:06 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "forum-post",
@@ -21062,8 +21010,8 @@
                             "createdByUser": "",
                             "creator": "Broussard et al.",
                             "date": "2016",
-                            "dateAdded": "13/01/2023, 12:37:09",
-                            "dateModified": "17/01/2023, 16:38:33",
+                            "dateAdded": "1/13/2023, 12:37:09 PM",
+                            "dateModified": "1/17/2023, 4:38:33 PM",
                             "emojis": [],
                             "extra": "Publisher: [Taylor & Francis, Ltd., Mathematical Association of America]",
                             "iconName": "journal-article",
@@ -21163,15 +21111,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#FF6666"
                             ],
                             "createdByUser": "",
                             "creator": "Rafiq et al.",
                             "date": "2020",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:38:33",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:38:33 PM",
                             "emojis": [],
                             "extra": "Issue: 1",
                             "iconName": "conference-paper",
@@ -21266,13 +21214,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Gómez et al.",
                             "date": "2013",
-                            "dateAdded": "13/01/2023, 12:16:01",
-                            "dateModified": "13/01/2023, 12:16:01",
+                            "dateAdded": "1/13/2023, 12:16:01 PM",
+                            "dateModified": "1/13/2023, 12:16:01 PM",
                             "emojis": [],
                             "extra": "Publisher: Elsevier",
                             "iconName": "journal-article",
@@ -21357,13 +21305,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Stout",
                             "date": "1996",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:11:47",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:11:47 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "journal-article",
@@ -21453,15 +21401,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [
                                 "#5FB236"
                             ],
                             "createdByUser": "",
                             "creator": "Lee and Schachter",
                             "date": "1980",
-                            "dateAdded": "13/01/2023, 12:00:38",
-                            "dateModified": "17/01/2023, 16:29:05",
+                            "dateAdded": "1/13/2023, 12:00:38 PM",
+                            "dateModified": "1/17/2023, 4:29:05 PM",
                             "emojis": [],
                             "extra": "Publisher: Springer",
                             "iconName": "journal-article",
@@ -21558,13 +21506,13 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "Leigh et al.",
                             "date": "2007",
-                            "dateAdded": "13/01/2023, 11:58:57",
-                            "dateModified": "17/01/2023, 16:38:33",
+                            "dateAdded": "1/13/2023, 11:58:57 AM",
+                            "dateModified": "1/17/2023, 4:38:33 PM",
                             "emojis": [],
                             "extra": "",
                             "iconName": "conference-paper",
@@ -23338,11 +23286,11 @@
                 },
                 "totalResults": 20
             },
-            "lastSuccess": 1709729430403,
+            "lastSuccess": 1715089300635,
             "errorCount": 0
         },
         "CHILD_ITEMS": {
-            "lastRequest": 1709729429699,
+            "lastRequest": 1715089299840,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_CHILD_ITEMS",
@@ -23394,15 +23342,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "webpage-snapshot",
+                            "attachmentIconName": "attachment-snapshot",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 12:00:19",
-                            "dateModified": "13/01/2023, 12:00:19",
+                            "dateAdded": "1/13/2023, 12:00:19 PM",
+                            "dateModified": "1/13/2023, 12:00:19 PM",
                             "emojis": [],
-                            "iconName": "webpage-snapshot",
+                            "iconName": "attachment-snapshot",
                             "itemType": "Attachment",
                             "itemTypeRaw": "attachment",
                             "key": "37V7V4NT",
@@ -23455,15 +23403,15 @@
                             }
                         },
                         "@@derived@@": {
-                            "attachmentIconName": "pdf",
+                            "attachmentIconName": "attachment-pdf",
                             "colors": [],
                             "createdByUser": "",
                             "creator": "",
                             "date": "",
-                            "dateAdded": "13/01/2023, 12:00:03",
-                            "dateModified": "13/01/2023, 12:00:03",
+                            "dateAdded": "1/13/2023, 12:00:03 PM",
+                            "dateModified": "1/13/2023, 12:00:03 PM",
                             "emojis": [],
-                            "iconName": "pdf",
+                            "iconName": "attachment-pdf",
                             "itemType": "Attachment",
                             "itemTypeRaw": "attachment",
                             "key": "K24TUDDL",
@@ -23619,11 +23567,11 @@
                 },
                 "totalResults": 2
             },
-            "lastSuccess": 1709729430177,
+            "lastSuccess": 1715089300158,
             "errorCount": 0
         },
         "RELATED_ITEMS": {
-            "lastRequest": 1709729429699,
+            "lastRequest": 1715089299840,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_RELATED_ITEMS",
@@ -23631,7 +23579,7 @@
                 "libraryKey": "u1",
                 "items": []
             },
-            "lastSuccess": 1709729429700,
+            "lastSuccess": 1715089299840,
             "errorCount": 0
         }
     },
@@ -23640,7 +23588,6 @@
             "pathname": "/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details",
             "search": "",
             "hash": "",
-            "key": "dgbtvj",
             "query": {}
         },
         "action": "POP"
