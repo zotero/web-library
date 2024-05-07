@@ -29,6 +29,10 @@
 	.panel-body {
 		flex: 1 1 0;
 
+		.icon-spin {
+			color: var(--color-accent);
+		}
+
 		@include touch-or-bp-down(sm) {
 			overflow-y: scroll;
 			-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–

@@ -18,6 +18,12 @@
 			}
 		}
 
+		> .btn-icon .icon {
+			@include touch-or-bp-down(sm) {
+				color: var(--color-accent);
+			}
+		}
+
 		> .btn-icon:last-child {
 			@include touch-or-bp-down(sm) {
 				margin-right: -$input-btn-padding-x-touch - $border-width;

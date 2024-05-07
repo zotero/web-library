@@ -9,7 +9,7 @@
 	overflow: hidden;
 
 	@include touch-or-bp-down(sm) {
-		background: var(--material-background);
+		background: var(--color-shade-1);
 	}
 
 	@include bp-down(sm) {

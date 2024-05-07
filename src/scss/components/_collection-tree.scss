@@ -186,7 +186,9 @@
 			}
 
 			&.icon-trash {
-				color: var(--accent-wood);
+				html:not(.specifity) & {
+					color: var(--accent-wood);
+				}
 			}
 
 			&.icon-document {
@@ -200,6 +202,8 @@
 			}
 
 			@include touch-or-bp-down(sm) {
+				color: var(--color-accent);
+
 				@include state("li.selected > .item-container") {
 					color: var(--primary-on-accent);
 				}

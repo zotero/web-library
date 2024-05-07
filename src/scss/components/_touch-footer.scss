@@ -14,6 +14,10 @@
 		background-color: $touch-footer-darker-bg;
 	}
 
+	.btn-icon .icon {
+		color: var(--color-accent);
+	}
+
 	.dropdown .btn-icon {
 		height: 100%;
 	}
