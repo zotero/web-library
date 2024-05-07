@@ -28,11 +28,11 @@ const AddLinkedUrlTouchModal = () => {
 		}
 	}, [dispatch]);
 
+	// NOTE: don't use `isBusy` Modal prop while testing URL as it unmounts and remounts the form
 	return (
 		<Modal
 			className="modal-touch"
 			contentLabel="Add Linked URL Attachment"
-			isBusy={ isBusy }
 			isOpen={ isOpen }
 			onRequestClose={ handleClose }
 			overlayClassName="modal-slide modal-centered"
