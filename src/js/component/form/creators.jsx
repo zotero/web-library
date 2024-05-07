@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, createRef } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -163,12 +163,12 @@ const Creators = props => {
 		if(creators && prevCreators && creators.length > prevCreators.length) {
 			const virtualEntryIndex = creators.findIndex(c => c[Symbol.for('isVirtual')]);
 			if(virtualEntryIndex > -1) {
-				fields.current[virtualEntryIndex].focus();
+				fields.current[virtualEntryIndex].current.focus();
 			}
 		}
 
 		if(focusOnNext.current !== null) {
-			fields.current[focusOnNext.current].focus();
+			fields.current[focusOnNext.current].current.focus();
 			focusOnNext.current = null;
 		}
 	}, [creators, prevCreators]);
@@ -193,43 +193,46 @@ const Creators = props => {
 
 	return (
         <Fragment>
-			{ creators.map((creator, index) => (
+			{ creators.map((creator, index) => {
+				let creatorFieldRef = createRef(null);
+				fields.current[index] = creatorFieldRef;
+				return (
 				<CSSTransition
 					key={ creator.id }
 					classNames="color"
 					in={ animateThisRender.includes(index) }
-					enter={ false }
 					timeout={ 600 }
+					nodeRef={ creatorFieldRef }
 				>
 					<CreatorField
-					className={ cx({
-						'touch-separated': hasVirtual && isEditing && index === creators.length - 1,
-					}) }
-					creator={ creator }
-					creatorsCount={ creators.length }
-					creatorTypes={ creatorTypes }
-					index={ index }
-					isCreateAllowed={ !hasVirtual }
-					isDeleteAllowed={ !hasVirtual || creators.length > 1 }
-					isForm={ isForm }
-					isReadOnly={ isReadOnly }
-					isSingle={ creators.length === 1 }
-					isVirtual={ creator[Symbol.for('isVirtual')] || false }
-					name={ name }
-					onChange={ handleValueChanged }
-					onCreatorAdd={ handleCreatorAdd }
-					onCreatorRemove={ handleCreatorRemove }
-					onCreatorTypeSwitch={ handleCreatorTypeSwitch }
-					onDragStatusChange={ onDragStatusChange }
-					onAddMany={ handleAddMany }
-					onReorder={ handleReorder }
-					onReorderCancel={ handleReorderCancel }
-					onReorderCommit={ handleReorderCommit }
-					ref={ ref => fields.current[index] = ref }
-					shouldPreOpenModal={ openOnThisRender === index }
-				/>
+						className={ cx({
+							'touch-separated': hasVirtual && isEditing && index === creators.length - 1,
+						}) }
+						creator={ creator }
+						creatorsCount={ creators.length }
+						creatorTypes={ creatorTypes }
+						index={ index }
+						isCreateAllowed={ !hasVirtual }
+						isDeleteAllowed={ !hasVirtual || creators.length > 1 }
+						isForm={ isForm }
+						isReadOnly={ isReadOnly }
+						isSingle={ creators.length === 1 }
+						isVirtual={ creator[Symbol.for('isVirtual')] || false }
+						name={ name }
+						onChange={ handleValueChanged }
+						onCreatorAdd={ handleCreatorAdd }
+						onCreatorRemove={ handleCreatorRemove }
+						onCreatorTypeSwitch={ handleCreatorTypeSwitch }
+						onDragStatusChange={ onDragStatusChange }
+						onAddMany={ handleAddMany }
+						onReorder={ handleReorder }
+						onReorderCancel={ handleReorderCancel }
+						onReorderCommit={ handleReorderCommit }
+						ref={ creatorFieldRef }
+						shouldPreOpenModal={ openOnThisRender === index }
+					/>
 				</CSSTransition>
-			))}
+			)})}
 			{ shouldUseEditMode && isEditing && !hasVirtual && (
 				<li className="metadata touch-separated has-btn-icon">
 					<Button

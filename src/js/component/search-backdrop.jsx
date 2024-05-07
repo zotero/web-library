@@ -1,15 +1,17 @@
-import { memo, useCallback } from 'react';
+import { forwardRef, memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { triggerSearchMode } from '../actions';
 
-const SearchBackdrop = () => {
+const SearchBackdrop = forwardRef((_props, ref) => {
 	const dispatch = useDispatch();
 
 	const handleClick = useCallback(() => {
 		dispatch(triggerSearchMode(false));
 	}, [dispatch]);
 
-	return <div onClick={ handleClick } className="search-backdrop" />;
-}
+	return <div ref={ ref } onClick={ handleClick } className="search-backdrop" />;
+});
+
+SearchBackdrop.displayName = 'SearchBackdrop';
 
 export default memo(SearchBackdrop);

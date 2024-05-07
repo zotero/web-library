@@ -21,6 +21,8 @@ const ManageTagsModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
 	const modalRef = useRef(null);
+	const tagColorManagerRef = useRef(null);
+	const fadeOverlayRef = useRef(null);
 	const [tagBeingManaged, setTagBeingManaged] = useState(null);
 	const prevTagBeingManaged = usePrevious(tagBeingManaged);
 
@@ -87,8 +89,9 @@ const ManageTagsModal = () => {
 				unmountOnExit
 				timeout={ 250 }
 				classNames="fade"
+				nodeRef={ fadeOverlayRef }
 			>
-				<div onClick={ handleTagManagerCancel } className="fade-overlay"></div>
+				<div ref={ fadeOverlayRef } onClick={ handleTagManagerCancel } className="fade-overlay"></div>
 			</CSSTransition>
 			<CSSTransition
 				classNames="slide-down"
@@ -96,8 +99,13 @@ const ManageTagsModal = () => {
 				unmountOnExit
 				in={ tagBeingManaged !== null }
 				timeout={ 500 }
+				nodeRef={ tagColorManagerRef }
 			>
-				<TagColorManager onToggleTagManager={ handleToggleTagManager } tag={ tagBeingManaged } />
+				<TagColorManager
+					ref={ tagColorManagerRef }
+					onToggleTagManager={ handleToggleTagManager }
+					tag={ tagBeingManaged }
+				/>
 			</CSSTransition>
 			<div className="modal-header">
 				<div className="modal-header-left">

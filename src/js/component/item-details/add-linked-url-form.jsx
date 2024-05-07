@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Fragment, forwardRef, memo, useCallback, useImperativeHandle, useRef, useState, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Spinner } from 'web-common/components';
+import { Button } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 
 import { Toolbar } from '../ui/toolbars';
@@ -12,7 +12,6 @@ import { cleanURL } from '../../utils';
 
 const AddLinkedUrlFormToolbar = props => {
 	const toolbarRef = useRef(null);
-	const [isBusy, setBusy] = useState(false);
 	const { onClose, onSubmit } = props;
 	const { focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(toolbarRef);
 
@@ -24,10 +23,8 @@ const AddLinkedUrlFormToolbar = props => {
 		}
 	}, [focusNext, focusPrev]);
 
-	const handleLinkedFileConfirmClick = useCallback(async () => {
-		setBusy(true);
-		const isSuccess = await onSubmit();
-		setBusy(false);
+	const handleLinkedFileConfirmClick = useCallback(() => {
+		const isSuccess = onSubmit();
 		if(isSuccess) {
 			onClose();
 		}
@@ -40,8 +37,7 @@ const AddLinkedUrlFormToolbar = props => {
 			ref={ toolbarRef }
 			tabIndex={ 0 }
 		>
-			{ isBusy && <div className="toolbar-right"><Spinner className="small" /></div> }
-			<div className={ cx('toolbar-right', { 'hidden': isBusy }) }>
+			<div className={ cx('toolbar-right') }>
 				<Fragment>
 					<Button
 						className="btn-default"
@@ -65,27 +61,31 @@ const AddLinkedUrlFormToolbar = props => {
     );
 }
 
-const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
+const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
 	const dispatch = useDispatch();
 	const itemKey = useSelector(state => state.current.itemKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [url, setUrl] = useState('');
 	const [title, setTitle] = useState('');
 	const [isValid, setIsValid] = useState(true);
+	const innerRef = useRef(null);
 
-	const submit = useCallback(async () => {
+	const submit = useCallback(() => {
 		var cleanedUrl = cleanURL(url, true);
 		if(!cleanedUrl) {
 			setIsValid(false);
 			return false;
 		}
 
-		await dispatch(createLinkedUrlAttachments({ url: cleanedUrl, title }, { parentItem: itemKey }));
+		dispatch(createLinkedUrlAttachments({ url: cleanedUrl, title }, { parentItem: itemKey }));
 		return true;
 	}, [dispatch, itemKey, title, url]);
 
-	// Allow submiting form by parent
-	useImperativeHandle(ref, () => ({ submit }));
+	// Allow submiting form by parent, but return innerRef so that CSSTransition can mount and animate
+	useImperativeHandle(outerRef, () => {
+		innerRef.current.submit = submit;
+		return innerRef.current;
+	}, [submit]);
 
 	const handleUrlChange = useCallback(newValue => {
 		setIsValid(true);
@@ -107,6 +107,7 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, ref) => {
 			role="dialog"
 			className="add-linked-url form"
 			onKeyDown={ handleKeyDown }
+			ref={ innerRef }
 		>
 			<div className="form-group form-row">
 				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>

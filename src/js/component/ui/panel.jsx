@@ -1,4 +1,4 @@
-import { cloneElement } from 'react';
+import { cloneElement, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
@@ -31,6 +31,7 @@ const PanelBody = props => {
 const Panel = props => {
 	const [header, ...body] = props.children ?? [];
 	const { bodyClassName, className = '', isBackdrop, headerClassName, onClick, onKeyDown } = props;
+	const ref = useRef(null);
 
 	return (
 		<section
@@ -46,8 +47,9 @@ const Panel = props => {
 				classNames="nav-fade"
 				mountOnEnter
 				unmountOnExit
+				nodeRef={ ref }
 			>
-				<div className="panel-backdrop" />
+				<div ref={ ref } className="panel-backdrop" />
 			</CSSTransition>
 		</section>
 	);

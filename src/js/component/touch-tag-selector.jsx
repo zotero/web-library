@@ -75,6 +75,7 @@ const TouchTagSelector = () => {
 	const tagsListRef = useRef(null);
 	const selectedListRef = useRef();
 	const shouldRefocus = useRef(false);
+	const touchTagSelectorRef = useRef(null);
 	const isOpen = useSelector(state => state.current.isTouchTagSelectorOpen);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
@@ -179,10 +180,11 @@ const TouchTagSelector = () => {
 			classNames="slide-up"
 			mountOnEnter
 			unmountOnExit
+			nodeRef={ touchTagSelectorRef }
 			enter={ !isEmbedded }
 			exit={ !isEmbedded }
 		>
-				<div onKeyDown={ handleKeyDown } className="touch-tag-selector">
+				<div ref={ touchTagSelectorRef } onKeyDown={ handleKeyDown } className="touch-tag-selector">
 					{ !isEmbedded && (
 						<header className="touch-header">
 							<Toolbar>

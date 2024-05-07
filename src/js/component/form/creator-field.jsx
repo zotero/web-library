@@ -302,7 +302,7 @@ CreatorFieldInputWrap.propTypes = {
 	onFieldFocus: PropTypes.func,
 };
 
-const CreatorField = forwardRef((props, ref) => {
+const CreatorField = forwardRef((props, outerRef) => {
 	const { className, creator, creatorsCount, creatorTypes, index, isCreateAllowed,
 		isDeleteAllowed, isForm, isReadOnly, isSingle, isVirtual, onAddMany, onChange,
 		onCreatorAdd, onCreatorRemove, onCreatorTypeSwitch, onDragStatusChange, onReorder,
@@ -316,6 +316,7 @@ const CreatorField = forwardRef((props, ref) => {
 		shouldUseModalCreatorField && shouldUseEditMode && isEditing && shouldPreOpenModal
 	);
 	const fieldComponents = useRef({});
+	const innerRef = useRef(null);
 
 	const icon = 'name' in creator ? '20/input-dual' : '20/input-single';
 	const isDual = 'lastName' in creator;
@@ -325,16 +326,18 @@ const CreatorField = forwardRef((props, ref) => {
 		return creatorTypeDescription.label;
 	}, [creator, creatorTypes]);
 
-	useImperativeHandle(ref, () => ({
-		focus: () => {
+	useImperativeHandle(outerRef, () => {
+		// Custom logic for focus() but return innerRef for CSSTransition
+		innerRef.current.focus = () => {
 			const key = 'lastName' in creator ? 'lastName' : 'name';
-			if(!isReadOnly && !isForm) {
+			if (!isReadOnly && !isForm) {
 				setActive(key);
 			} else {
 				key in fieldComponents.current && fieldComponents.current[key].focus();
 			}
-		}
-	}));
+		};
+		return innerRef.current;
+	}, [creator, isForm, isReadOnly]);
 
 	const handleFieldClick = useCallback(ev => {
 		const { fieldName } = ev.currentTarget.dataset;
@@ -441,6 +444,7 @@ const CreatorField = forwardRef((props, ref) => {
 			onDragStatusChange={ onDragStatusChange }
 			raw={ raw }
 			tabIndex = { isEditing ? 0 : null }
+			ref={ innerRef }
 		>
 			{ shouldUseModalCreatorField ?
 				<div className="truncate">{ creatorLabel }</div> :

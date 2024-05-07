@@ -401,6 +401,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 		);
 
 	const fileInput = useRef(null);
+	const addLinkUrlFormRef = useRef(null);
 	const addLinkedUrlButtonRef = useRef(null);
 	const [isAddingLinkedUrl, setIsAddingLinkedUrl] = useState(false);
 
@@ -511,11 +512,12 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 				enter={ !isTouchOrSmall }
 				exit={ !isTouchOrSmall }
 				in={ !isTouchOrSmall && isAddingLinkedUrl }
-				mountOnEnter
+				nodeRef={ addLinkUrlFormRef }
 				timeout={ 500 }
+				mountOnEnter
 				unmountOnExit
 			>
-				<AddLinkedUrlForm onClose={ handleLinkedFileCancel } />
+				<AddLinkedUrlForm ref={ addLinkUrlFormRef } onClose={ handleLinkedFileCancel } />
 			</CSSTransition>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
 			{ !isTouchOrSmall && (

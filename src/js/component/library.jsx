@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { DndProvider } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
-import { Fragment, memo, useCallback, useEffect, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useState, useRef } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -67,6 +67,9 @@ const Library = () => {
 	const prevShouldUseSidebar= usePrevious(shouldUseSidebar);
 	const wasSearchMode = usePrevious(isSearchMode);
 	// const prevItemsSource = usePrevious(itemsSource);
+
+	const sectionNodeRef = useRef(null);
+	const backdropNodeRef = useRef(null);
 
 	const [hasUserTypeChanged, setHasUserTypeChanged] = useState(false);
 	const [isSearchModeTransitioning, setIsSearchModeTransitioning] = useState(false);
@@ -179,10 +182,11 @@ const Library = () => {
 									in={ (isSingleColumn && isSearchMode) || !isSingleColumn }
 									timeout={ 250 }
 									classNames="fade"
+									nodeRef={ sectionNodeRef }
 									enter={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
 									exit={ isSingleColumn && (view !== 'item-list' && view !== 'item-details') }
 								>
-									<section className={ cx('items', {
+									<section ref={ sectionNodeRef } className={ cx('items', {
 										'active': view === 'item-list',
 										'select-mode': isTouchOrSmall && isSelectMode,
 										'read-only': isLibraryReadOnly,
@@ -201,9 +205,10 @@ const Library = () => {
 											in={ isSingleColumn && isSearchMode && itemsSource !== 'query' }
 											timeout={ 250 }
 											classNames="fade"
+											nodeRef={ backdropNodeRef }
 											unmountOnExit
 										>
-											<SearchBackdrop />
+											<SearchBackdrop ref={ backdropNodeRef } />
 										</CSSTransition>
 									</section>
 								</CSSTransition>

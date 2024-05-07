@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
@@ -57,6 +57,7 @@ const mapPathToHeaders = (path, previous) => {
 
 const TouchNavigation = props => {
 	const { onNavigate = noop, path } = props;
+	const iconRef = useRef(null);
 	const prevPath = usePrevious(path);
 	const [headers, setHeaders] = useState(mapPathToHeaders(path, EMPTY));
 	const hasPrevious = headers.some(h => h.slot === 'previous' && h.key != null);
@@ -93,8 +94,9 @@ const TouchNavigation = props => {
 				timeout={ 250 }
 				classNames="fade"
 				unmountOnExit
+				nodeRef={ iconRef }
 			>
-				<Icon type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
+				<Icon ref={ iconRef } type={ '16/caret-16' } width="16" height="16" className="icon-previous" />
 			</CSSTransition>
 			<ul>
 				{ headers.map((header, index) => {

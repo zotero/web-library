@@ -17,9 +17,9 @@ const AddLinkedUrlTouchModal = () => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
 
-	const handleCreateClick = useCallback(async () => {
+	const handleCreateClick = useCallback(() => {
 		setIsBusy(true);
-		const isSuccess = await formRef.current.submit();
+		const isSuccess = formRef.current.submit();
 		if(isSuccess) {
 			setTimeout(() => setIsBusy(false), 300);
 			dispatch(toggleModal(null, false));

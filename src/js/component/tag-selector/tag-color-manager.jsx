@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useCallback, useEffect, useId, useRef, useState, memo } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, memo, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
@@ -17,12 +17,12 @@ const pickAvailableTagColor = ((colors, tagColorsData) => {
 	return colors.find(c => !tagColors.includes(c)) || colors[0];
 });
 
-const TagColorManager = ({ onToggleTagManager, tag }) => {
+const TagColorManager = forwardRef(({ onToggleTagManager, tag }, outerRef) => {
 	const dispatch = useDispatch();
-	const ref = useRef(null);
+	const innerRef = useRef(null);
 	const id = useId();
 	const { value: tagColors } = useSelector(state => state.libraries[state.current.libraryKey].tagColors)
-	const { receiveFocus, receiveBlur } = useFocusManager(ref);
+	const { receiveFocus, receiveBlur } = useFocusManager(innerRef);
 
 	const indexInTagColors = tagColors.findIndex(tc => tag === tc.name);
 	const options = [...Array.from({ length: tagColors.length }, (_, i) => i), indexInTagColors === -1 ? tagColors.length : null]
@@ -30,6 +30,8 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 		.map(o => ({ label: (o + 1).toString(), value: o.toString() }));
 	const [tagColor, setTagColor] = useState(indexInTagColors === -1 ? pickAvailableTagColor(colors, tagColors) : tagColors[indexInTagColors].color);
 	const [position, setPosition] = useState(indexInTagColors === -1 ? tagColors.length : indexInTagColors);
+
+	useImperativeHandle(outerRef, () => innerRef.current, []);
 
 	const handleColorPicked = useCallback(newColor => {
 		setTagColor(newColor);
@@ -76,17 +78,17 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 
 		// trap focus inside the tag color manager
 		if(ev.relatedTarget && !ev.relatedTarget.closest('.tag-color-manager')) {
-			ref.current.querySelector('[tabIndex="0"]').focus();
+			innerRef.current.querySelector('[tabIndex="0"]').focus();
 		}
-	}, [receiveBlur])
+	}, [receiveBlur, innerRef])
 
 	useEffect(() => {
-		ref.current.focus();
+		innerRef.current.focus();
 	}, []);
 
 	return (
 		<div
-			ref={ ref }
+			ref={ innerRef }
 			onBlur={ handleBlur }
 			onFocus={ receiveFocus }
 			onKeyDown={ handleKeyDown }
@@ -147,7 +149,9 @@ const TagColorManager = ({ onToggleTagManager, tag }) => {
 			</div>
 		</div>
 	)
-}
+});
+
+TagColorManager.displayName = 'TagColorManager';
 
 TagColorManager.propTypes = {
 	tag: PropTypes.string,

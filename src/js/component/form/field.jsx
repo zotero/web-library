@@ -43,7 +43,7 @@ SimpleField.propTypes = {
 	tabIndex: PropTypes.number,
 };
 
-const SortableField = memo(props => {
+const SortableField = memo(forwardRef((props, outerRef) => {
 	const { className, index, onReorder = noop, onReorderCancel = noop, onReorderCommit = noop,
 	raw = {}, ...rest } = props;
 
@@ -103,9 +103,9 @@ const SortableField = memo(props => {
 		{ ...rest }
 		className={ fieldClassName }
 		dragHandle={ dragHandle }
-		ref={ ref => { fieldRef.current = ref; drop(ref); preview(ref); } }
+		ref={ ref => { fieldRef.current = ref; outerRef.current = ref; drop(ref); preview(ref); } }
 	/>;
-});
+}));
 
 SortableField.displayName = 'SortableField';
 
@@ -118,9 +118,9 @@ SortableField.propTypes = {
 	raw: PropTypes.object,
 };
 
-const Field = memo(({ isSortable, ...rest }) => isSortable ?
-	<SortableField { ...rest } /> :
-	<SimpleField { ...rest } />);
+const Field = memo(forwardRef(({ isSortable, ...rest }, ref) => isSortable ?
+	<SortableField ref={ ref } { ...rest } /> :
+	<SimpleField ref={ ref } { ...rest } />));
 
 Field.displayName = 'Field';
 
