@@ -20,7 +20,9 @@
 
 		> .btn-icon .icon {
 			@include touch-or-bp-down(sm) {
-				color: var(--color-accent);
+				@include variant(".attachment:not(.selected)") {
+					color: var(--color-accent);
+				}
 			}
 		}
 

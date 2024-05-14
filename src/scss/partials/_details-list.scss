@@ -43,7 +43,7 @@
 			}
 
 			@include mouse-and-bp-up(md) {
-				background-color: $details-list-selected-bg;
+				background-color: var(--color-shade-3);
 			}
 		}
 
@@ -51,20 +51,20 @@
 			outline: none;
 
 			@include mouse-and-bp-up(md) {
-				color: $details-list-focus-color;
-				background-color: $details-list-focus-bg;
+				color: var(--primary-on-accent);
+				background-color: var(--color-accent);
 			}
 		}
 
 		.icon {
 			@include state("li.selected") {
 				@include touch-or-bp-down(sm) {
-					color: $details-list-focus-color;
+					color: var(--primary-on-accent);
 				}
 			}
 
 			@include state("li:focus") {
-				color: $details-list-focus-color;
+				color: var(--primary-on-accent);
 			}
 		}
 
@@ -126,7 +126,7 @@
 
 		a {
 			flex: 1 1 auto;
-			color: $details-list-link-color;
+			color: var(--color-shade-9);
 			@include text-truncate;
 		}
 

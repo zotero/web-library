@@ -38,7 +38,7 @@ const AttachmentIcon = memo(({ isActive, item, size }) => {
 		width={size}
 		height={size}
 		usePixelRatio={!isTouchOrSmall}
-		useColorScheme={ true }
+		useColorScheme={ isActive ? false : true }
 		colorScheme={ colorScheme }
 	/>
 });
@@ -297,7 +297,7 @@ const Attachment = memo(props => {
 			<AttachmentIcon
 				item={ attachment }
 				size={ iconSize }
-				isActive={ isFocused && isSelected }
+				isActive={ (isFocused || isTouchOrSmall) && isSelected }
 			/>
 			<div className="truncate" id={ id.current }>
 				{ attachment.title ||
