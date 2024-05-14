@@ -191,10 +191,11 @@ const RichEditor = memo(forwardRef((props, ref) => {
 				disableDrag: isTouchOrSmall,
 				localizedStrings: [],
 				value: lastSeenValue.current,
-				isAttachmentNote
+				isAttachmentNote,
+				colorScheme
 			}, "*");
 		}
-	}, [id, isAttachmentNote, isReadOnly, changeIfDifferent, previousID, value, wasReadOnly, wasTouchOrSmall, isTouchOrSmall]);
+	}, [id, colorScheme, isAttachmentNote, isReadOnly, changeIfDifferent, previousID, value, wasReadOnly, wasTouchOrSmall, isTouchOrSmall]);
 
 	useLayoutEffect(() => {
 		const storedRef = iframeRef.current;
