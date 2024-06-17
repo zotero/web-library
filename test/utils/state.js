@@ -50,5 +50,14 @@ function JSONtoState(json) {
 	return stateProcessSymbolsReverse(json);
 }
 
+function getPatchedState(state, path, patch) {
+	const pathParts = path.split('.')
+	if (pathParts.length === 1) {
+		return { ...state, [path]: { ...state[path], ...patch } };
+	} else {
+		return { ...state, [pathParts[0]]: getPatchedState(state[pathParts[0]], pathParts.slice(1).join('.'), patch) };
+	}
+}
 
-export { stateToJSON, JSONtoState };
+
+export { stateToJSON, JSONtoState, getPatchedState };
