@@ -809,12 +809,12 @@ CollectionNode.displayName = 'CollectionNode';
 
 const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest }) => {
 	const sortedFilteredCollections = useMemo(() => {
-		const sortedCollections = [ ...collections ];
+		const sfCollections = collections.filter(c => !c.deleted);
 
-		sortedCollections.sort((c1, c2) =>
+		sfCollections.sort((c1, c2) =>
 			c1.name.toUpperCase().localeCompare(c2.name.toUpperCase())
 		);
-		return sortedCollections;
+		return sfCollections;
 	}, [collections]);
 
 	return (
@@ -953,15 +953,17 @@ const CollectionTree = props => {
 
 	useEffect(() => {
 		if(!shallowEqual(highlightedCollections, prevHighlightedCollections)) {
-			const parentsOfHighlighted = highlightedCollections.reduce((acc, cKey) => {
+			const parentsOfHighlighted = highlightedCollections.map(cKey => {
+				let parentCKeys = [cKey];
 				do {
 					cKey = cKey in collections ? collections[cKey].parentCollection : null;
-					if(cKey) {
-						acc.push(cKey);
+					if (cKey) {
+						parentCKeys.push(cKey);
 					}
-				} while(cKey);
-				return acc;
-			}, []);
+				} while (cKey);
+				// if the highlighted collection or any of its parents is deleted, don't open any of them
+				return parentCKeys.some(cKey => collections[cKey]?.deleted) ? [] : parentCKeys;
+			}).flat();
 
 			if(parentsOfHighlighted.length > 0) {
 				setOpened([...opened,  ...parentsOfHighlighted]);

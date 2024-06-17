@@ -9,7 +9,7 @@ import { findByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getPatchedState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -186,4 +186,18 @@ describe('Test User: Collections', () => {
 		await userEvent.click(moveBtn);
 		expect(hasBeenPatched).toBe(true);
 	});
+
+	test('Deleted collection does not appear in the tree', async () => {
+		const modifiedState = getPatchedState(state, 'libraries.u1.collections.data.SGQRGR2J', { deleted: 1 });
+		renderWithProviders(<MainZotero />, { preloadedState: modifiedState });
+		await waitForPosition();
+		expect(screen.queryByRole('treeitem', { name: 'Board Games' })).not.toBeInTheDocument();
+	});
+
+	test("Non-deleted collection appears in the tree", async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		expect(screen.queryByRole('treeitem', { name: 'Board Games' })).toBeInTheDocument();
+	});
+
 });
