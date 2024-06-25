@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { forumsUrl } from '../constants/defaults';
 
-const forumsUrl = 'https://forums.zotero.org/';
 const oldWebLibraryUrl = 'https://www.zotero.org/mylibrary?usenewlibrary=0';
 
 const CrashHandler = ({ error = {}, info = {} }) => (

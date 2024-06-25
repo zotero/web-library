@@ -1,54 +1,79 @@
 .reader-wrapper {
-	display: flex;
-	flex-direction: column;
-	flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 
-	.spinner-wrapper {
-		align-items: center;
-		display: flex;
-		flex: 1 1 auto;
-		justify-content: center;
-	}
+    .incompatible {
+        max-width: 480px;
+        padding: $space-lg $space-md;
+        align-self: center;
+        margin-top: 3em;
 
-	.portal {
-		position: absolute;
-		inset: 0;
-		overflow: hidden;
-	}
+        h1 {
+            font-size: $font-size-h1;
+            font-weight: bold;
+            margin-bottom: $space-md;
+        }
 
-	.popup {
-		background-color: $popover-bg;
-		border-radius: $reader-popup-border-radius;
-		box-shadow: $reader-popup-shadow;
-		padding: $reader-popup-padding;
-		min-width: 214px;
-		min-height: 60px;
+        textarea {
+            font-size: $font-size-small;
+            border: 1px solid $shade-3;
+            color: $shade-9;
+            flex: 1 1 auto;
+            max-width: calc(100% - 2em);
+            resize: none;
 
-		.toolbar {
-			.counter {
-				margin-right: $space-xs;
-			}
-		}
+            @include touch-or-bp-down(sm) {
+                margin: 1em auto;
+            }
+        }
+    }
 
-		.scroll-container-mouse {
-			// limit tags popup height to 12 items (then it will scroll)
-			overflow-y: auto;
-			max-height: 12 * 26px;
-		}
-	}
+    .spinner-wrapper {
+        align-items: center;
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: center;
+    }
 
-	.dropdown {
-		.dropdown-item {
-			.icon {
-				vertical-align: baseline;
-				margin-right: $space-min;
+    .portal {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
 
-			}
-		}
-	}
+    .popup {
+        background-color: $popover-bg;
+        border-radius: $reader-popup-border-radius;
+        box-shadow: $reader-popup-shadow;
+        padding: $reader-popup-padding;
+        min-width: 214px;
+        min-height: 60px;
 
-	> iframe {
-		border: none;
-		flex: 1 1 100%;
-	}
+        .toolbar {
+            .counter {
+                margin-right: $space-xs;
+            }
+        }
+
+        .scroll-container-mouse {
+            // limit tags popup height to 12 items (then it will scroll)
+            overflow-y: auto;
+            max-height: 12 * 26px;
+        }
+    }
+
+    .dropdown {
+        .dropdown-item {
+            .icon {
+                vertical-align: baseline;
+                margin-right: $space-min;
+            }
+        }
+    }
+
+    > iframe {
+        border: none;
+        flex: 1 1 100%;
+    }
 }

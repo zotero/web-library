@@ -22,6 +22,7 @@ import TagPicker from './item-details/tag-picker.jsx';
 import { READER_CONTENT_TYPES } from '../constants/reader.js';
 import Portal from './portal';
 import { getItemFromApiUrl } from '../utils';
+import { forumsUrl } from '../constants/defaults.js';
 
 const PAGE_SIZE = 100;
 
@@ -180,7 +181,8 @@ const Reader = () => {
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
-	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
+	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);;
+	const isCompatibleBrowser = typeof structuredClone === "function";
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
@@ -487,24 +489,38 @@ const Reader = () => {
 	}, [rotatePages, state.action, state.data, state.isReady]);
 
 	return (
-		<section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">
-			{state.isReady ? (
-				<>
-					<iframe onLoad={handleIframeLoaded} ref={iframeRef} src={pdfReaderURL} />
-					{ tagPicker && (
-						<PopupPortal anchor={ anchor } onClose={ handleClose }>
-							{ tagPicker && <TagPicker itemKey={ tagPicker.key } libraryKey={ libraryKey } /> }
-						</PopupPortal>
-					) }
-				</>
-			) : (
-				<div className="spinner-wrapper">
-					<Spinner />
-				</div>
-			)
-			}
-		</section>
-	);
+    <section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">
+      {isCompatibleBrowser ? (
+        state.isReady ? (
+          <>
+            <iframe onLoad={handleIframeLoaded} ref={iframeRef} src={pdfReaderURL} />
+            {tagPicker && (
+              <PopupPortal anchor={anchor} onClose={handleClose}>
+                {tagPicker && <TagPicker itemKey={tagPicker.key} libraryKey={libraryKey} />}
+              </PopupPortal>
+            )}
+          </>
+        ) : (
+          <div className="spinner-wrapper">
+            <Spinner />
+          </div>
+        )
+      ) : (
+        <div className="incompatible">
+          <h1>Incompatible Browser</h1>
+          <p>
+            Your browser appears to be too old to display Reader. Please ensure you are using a
+            recent version of your browser. We recommend using the latest version of Firefox,
+            Chrome, Safari, or Edge.
+          </p>
+          <p>
+            If you see this message despite using a recent version of a major browser, please report
+            this issue on the <a href={forumsUrl}>Zotero forums</a> and mention <em>web library</em> in the thread title.
+          </p>
+        </div>
+      )}
+    </section>
+  );
 }
 
 export default memo(Reader);

@@ -9,6 +9,7 @@ export const apiConfig = {
 };
 
 export const websiteUrl = 'https://www.zotero.org/';
+export const forumsUrl = 'https://forums.zotero.org/';
 export const buyStorageUrl = websiteUrl + 'storage?ref=usb';
 export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 export const streamingApiUrl = 'wss://stream.zotero.org/';
