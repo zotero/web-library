@@ -27,7 +27,7 @@
     "build:scss": "for f in src/scss/*.scss; do sass --no-source-map $f build/static/`basename $f .scss`.css; done;",
     "build:html": "mkdir -p build/ && rsync -vazL src/html/* build/",
     "build:styles-json": "node scripts/build-styles-json.cjs",
-    "build:fetch-or-build-modules": "node scripts/fetch-or-build-modules.cjs",
+    "build:fetch-or-build-modules": "node scripts/fetch-or-build-modules.mjs",
     "build:fonts": "node scripts/fetch-fonts.cjs",
     "build:locale": "node scripts/fetch-locale.cjs",
     "build:date-formats": "node scripts/fetch-date-formats.cjs",
