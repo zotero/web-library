@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 ::placeholder {
-	color: #777;
+	color: var(--color-shade-4);
 }
 
 .form { // We do not use a form element for its side effects
