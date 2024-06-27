@@ -481,6 +481,8 @@ const isOnlyEmoji = str => {
 	return !str.replace(re, '');
 }
 
+const isReaderCompatibleBrowser = () => typeof structuredClone === "function";
+
 export {
     applyChangesToVisibleColumns,
     cede,
@@ -511,6 +513,7 @@ export {
     indexByKey,
     isLikeURL,
 	isOnlyEmoji,
+	isReaderCompatibleBrowser,
     JSONTryParse,
     localStorageWrapper,
     mapRelationsToItemKeys,

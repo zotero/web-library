@@ -7,7 +7,7 @@ import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 
 import RichEditor from 'component/rich-editor';
 import { dateLocalized } from 'common/format';
-import { get } from 'utils';
+import { isReaderCompatibleBrowser, get } from 'utils';
 import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { makePath }from '../../common/navigation';
 import { READER_CONTENT_TYPES } from '../../constants/reader';
@@ -169,7 +169,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				className="download-options"
 				ref={ downloadOptionsRef }
 			>
-				{ isReaderCompatible && (
+				{(isReaderCompatibleBrowser() && isReaderCompatible) && (
 					<a
 						className="btn btn-default"
 						href={ openInReaderPath }
@@ -183,7 +183,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						Open
 					</a>
 				) }
-				{ isPDF ? (
+				{(isReaderCompatibleBrowser() && isPDF) ? (
 					<Dropdown
 						isOpen={ isDropdownOpen }
 						onToggle={ handleToggleDropdown }

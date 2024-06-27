@@ -21,7 +21,7 @@ import { strings } from '../constants/strings.js';
 import TagPicker from './item-details/tag-picker.jsx';
 import { READER_CONTENT_TYPES } from '../constants/reader.js';
 import Portal from './portal';
-import { getItemFromApiUrl } from '../utils';
+import { getItemFromApiUrl, isReaderCompatibleBrowser } from '../utils';
 import { forumsUrl } from '../constants/defaults.js';
 
 const PAGE_SIZE = 100;
@@ -181,8 +181,7 @@ const Reader = () => {
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
-	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);;
-	const isCompatibleBrowser = typeof structuredClone === "function";
+	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,
@@ -490,7 +489,7 @@ const Reader = () => {
 
 	return (
     <section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">
-      {isCompatibleBrowser ? (
+		{isReaderCompatibleBrowser() ? (
         state.isReady ? (
           <>
             <iframe onLoad={handleIframeLoaded} ref={iframeRef} src={pdfReaderURL} />

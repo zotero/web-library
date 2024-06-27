@@ -16,7 +16,7 @@ import { ATTACHMENT } from '../../constants/dnd';
 import { READER_CONTENT_TYPES } from '../../constants/reader.js';
 import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveToTrash, fetchChildItems, navigate,
 tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
-import { get, getScrollContainerPageCount, getUniqueId, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
+import { get, getScrollContainerPageCount, getUniqueId, isReaderCompatibleBrowser, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
 import { getFileData } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
@@ -117,7 +117,7 @@ const AttachmentActions = memo(props => {
 
 	return attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
         <Fragment>
-            { isReaderCompatible && (
+			{ isReaderCompatibleBrowser() && isReaderCompatible && (
 				<a
 					className="btn btn-icon"
 					href={ openInReaderPath }
@@ -131,7 +131,7 @@ const AttachmentActions = memo(props => {
 					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 				</a>
 			) }
-			{ isPDF ? (
+			{ isReaderCompatibleBrowser() && isPDF ? (
 				isPreppingPDF ? <Spinner className="small" /> :
 					preppedPDFURL ? (
 						<a
