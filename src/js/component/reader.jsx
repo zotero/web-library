@@ -241,7 +241,7 @@ const Reader = () => {
 	const rotatePages = useCallback(async (oldBuf, pageIndexes, degrees) => {
 		reader.current.freeze();
 		const modifiedBuf = await pdfWorker.rotatePages(cloneData(oldBuf), pageIndexes, degrees, true);
-		reader.current.reload({ buf: cloneData(modifiedBuf), baseURI: url });
+		reader.current.reload({ buf: new Uint8Array(cloneData(modifiedBuf)), baseURI: url });
 		reader.current.unfreeze();
 		dispatchState({ type: 'ROTATED_PAGES', data: cloneData(modifiedBuf) });
 		try {
