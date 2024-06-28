@@ -17,6 +17,8 @@ import testUserCreateAnnotation from "./fixtures/response/test-user-create-annot
 import testUserReaderChildren from "./fixtures/response/test-user-reader-children.json";
 
 jest.mock('../src/js/common/pdf-worker.js');
+// need to mock structuredClone, otherwise web library shows incompatible browser error message where reader iframe would normally be. See #548
+global.structuredClone = jest.fn();
 
 const state = JSONtoState(stateRaw);
 const parentState = JSONtoState(parentStateRaw);

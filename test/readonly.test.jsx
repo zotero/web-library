@@ -18,6 +18,8 @@ import testUserChildren from './fixtures/response/test-user-children.json';
 
 jest.mock('file-saver');
 jest.mock('../src/js/common/pdf-worker.js');
+// need to mock structuredClone, otherwise web library hides export/open related to reader/pdf.js. See #548
+global.structuredClone = jest.fn();
 
 // Force My Library to be read-only
 stateRaw.config.libraries[0].isReadOnly = true;

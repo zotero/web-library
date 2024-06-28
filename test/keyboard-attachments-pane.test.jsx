@@ -15,6 +15,9 @@ import stateRaw from './fixtures/state/desktop-test-user-attachment-view.json';
 
 const state = JSONtoState(stateRaw);
 
+// need to mock structuredClone, otherwise web library hides export/open related to reader/pdf.js. See #548
+global.structuredClone = jest.fn();
+
 describe('', () => {
 	// these tests include styles which makes them very slow
 	applyAdditionalJestTweaks({ timeout: 240000 });

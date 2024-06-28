@@ -19,6 +19,9 @@ import testUserAddNewAttachmentFile from './fixtures/response/test-user-add-new-
 import testUserAddAttachamentFileRefetchParent from './fixtures/response/test-user-add-attachment-file-refetch-parent.json';
 import testUserAddNewLinkedURLAttachment from './fixtures/response/test-user-add-new-linked-url-attachment.json';
 
+// need to mock structuredClone, otherwise web library hides export/open related to reader/pdf.js. See #548
+global.structuredClone = jest.fn();
+
 const state = JSONtoState(stateRaw);
 
 describe('Attachments', () => {
