@@ -154,7 +154,8 @@ const targets = {
 	'testing': testingTargetConfig,
 	'embedded': embeddedTargetConfig,
 	'zotero': zoteroTargetConfig,
-	'default': [zoteroTargetConfig, embeddedTargetConfig],
+	'all': [zoteroTargetConfig, embeddedTargetConfig],
+	'default': zoteroTargetConfig
 };
 
 let target = process.env.TARGET ?? (isTesting ? 'testing' : 'default');
