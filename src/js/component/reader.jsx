@@ -372,6 +372,15 @@ const Reader = () => {
 
 	}, [attachmentItem, attachmentKey, dispatch]);
 
+	useEffect(() => {
+		if (libraryKey !== userLibraryKey && libraryKey.startsWith('u')) {
+			// Opening reader for an item in a public user library is not supported.
+			// It cannot work because API does not include 'enclosure' link for attachments in public user libraries.
+			// Redirect to item details instead.
+			dispatch(navigate({ view: 'item-details', location: null }));
+		}
+	}, [dispatch, libraryKey, userLibraryKey]);
+
 	// Fetch all child items (annotations). This effect will execute multiple times for each page of annotations
 	useEffect(() => {
 		if (state.isRouteConfirmed && !isFetching && !isFetched) {
