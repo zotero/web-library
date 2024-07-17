@@ -1,5 +1,6 @@
 import { STREAMING_REMOTE_LIBRARY_UPDATE } from '../constants/actions';
 import { get } from '../utils';
+import { getLastPageIndexSettingKey } from '../common/item';
 import { fetchDeletedContentSince, fetchAllCollectionsSince, fetchAllItemsSince, fetchLibrarySettings } from '.';
 
 const remoteLibraryUpdate = (libraryKey, version) => {
@@ -12,6 +13,10 @@ const remoteLibraryUpdate = (libraryKey, version) => {
 			dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } }));
 			dispatch(fetchAllCollectionsSince(oldVersion, libraryKey));
 			dispatch(fetchDeletedContentSince(oldVersion, libraryKey));
+			if (state.current.view === 'reader' && state.current.attachmentKey) {
+				const pageIndexSettingKey = getLastPageIndexSettingKey(state.current.attachmentKey, state.current.libraryKey);
+				dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
+			}
 		}
 	}
 }

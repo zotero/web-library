@@ -107,6 +107,10 @@ const readerReducer = (state, action) => {
 			return { ...state, isRouteConfirmed: true }
 		case 'COMPLETE_FETCH_SETTINGS':
 			return { ...state, isSettingsFetched: true }
+		case 'BEGIN_PUSH_SETTINGS':
+			return { ...state, isSettingPushRequired: true, newSettings: action.value }
+		case 'COMPLETE_PUSH_SETTINGS':
+			return { ...state, isSettingPushRequired: false, newSettings: null }
 		case 'BEGIN_FETCH_DATA':
 			return { ...state, dataState: FETCHING };
 		case 'COMPLETE_FETCH_DATA':
@@ -188,6 +192,8 @@ const Reader = () => {
 		isReady: false,
 		isRouteConfirmed: false,
 		isSettingsFetched: false,
+		isSettingPushRequired: false,
+		newSettings: null,
 		data: null,
 		dataState: UNFETCHED,
 		annotationsState: NOT_IMPORTED,
@@ -265,9 +271,9 @@ const Reader = () => {
 	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
 		if (isPrimary && userLibraryKey && pageIndexKey) {
-			dispatch(updateLibrarySettings(pageIndexSettingKey, newViewState[pageIndexKey], userLibraryKey));
+			dispatchState({ type: 'BEGIN_PUSH_SETTINGS', value: newViewState[pageIndexKey] });
 		}
-	}, [attachmentItem, dispatch, pageIndexSettingKey, userLibraryKey]), 1000);
+	}, [attachmentItem, userLibraryKey]), 1000);
 
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleToggleSidebar = useDebouncedCallback(useCallback((isOpen) => {
@@ -495,6 +501,13 @@ const Reader = () => {
 			rotatePages(state.data, state.action.pageIndexes, state.action.degrees);
 		}
 	}, [rotatePages, state.action, state.data, state.isReady]);
+
+	useEffect(() => {
+		if (state.isSettingsFetched && state.isSettingPushRequired) {
+			dispatch(updateLibrarySettings(pageIndexSettingKey, state.newSettings, userLibraryKey, { ignore: true }));
+			dispatchState({ type: 'COMPLETE_PUSH_SETTINGS' });
+		}
+	}, [dispatch, pageIndexSettingKey, state.isSettingPushRequired, state.isSettingsFetched, state.newSettings, userLibraryKey]);
 
 	return (
     <section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">

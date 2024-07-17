@@ -62,7 +62,7 @@ const fetchLibrarySettings = (libraryKey, settingsKey) => {
 }
 
 
-const updateLibrarySettings = (settingsKey, value, libraryKey = null) => {
+const updateLibrarySettings = (settingsKey, value, libraryKey = null, options) => {
 	return async (dispatch, getState) => {
 		libraryKey = libraryKey ?? getState().current.libraryKey;
 		const id = requestTracker.id++;
@@ -76,24 +76,25 @@ const updateLibrarySettings = (settingsKey, value, libraryKey = null) => {
 			});
 
 			dispatch(
-				queueUpdateLibrarySettings(settingsKey, value, libraryKey, { resolve, reject, id })
+				queueUpdateLibrarySettings(settingsKey, value, libraryKey, options, { resolve, reject, id })
 			);
 		});
 	};
 }
 
-const queueUpdateLibrarySettings = (settingsKey, value, libraryKey, { resolve, reject, id }) => {
+const queueUpdateLibrarySettings = (settingsKey, value, libraryKey, options, { resolve, reject, id }) => {
 	return {
 		queue: `${libraryKey}:${settingsKey}`, // independent queue for each library/settingsKey pair, does not block libraryKey queue
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
 			const oldValue = state.libraries?.[libraryKey].settings?.entries?.[settingsKey];
-			const version = oldValue?.version ?? 0;
+			const version = options?.version ?? oldValue?.version ?? 0;
 
 			if(oldValue?.value === value) {
 				dispatch({
 					type: CANCEL_UPDATE_LIBRARY_SETTINGS,
+					reason: 'no-change',
 					settingsKey,
 					value,
 					libraryKey,
@@ -130,15 +131,36 @@ const queueUpdateLibrarySettings = (settingsKey, value, libraryKey, { resolve, r
 				});
 				resolve();
 			} catch(error) {
-				dispatch({
-					type: ERROR_UPDATE_LIBRARY_SETTINGS,
-					settingsKey,
-					value,
-					libraryKey,
-					error
-				});
-				reject(error);
-				throw error;
+				if (error?.response?.status === 412 && (options.force || options.ignore)) {
+					// remote version is newer, but we've been asked to force or ignore conflict
+					let serverVersion = error.getVersion();
+					dispatch({
+						type: CANCEL_UPDATE_LIBRARY_SETTINGS,
+						reason: options.force ? 'conflict-force' : 'conflict-ignore',
+						localVersion: version,
+						serverVersion,
+						settingsKey,
+						value,
+						libraryKey,
+						id
+					});
+					if (options.ignore) {
+						dispatch(fetchLibrarySettings(libraryKey, settingsKey));
+					} else if (options.force) {
+						dispatch(updateLibrarySettings(settingsKey, value, libraryKey, { version: serverVersion }));
+					}
+					resolve();
+				} else {
+					dispatch({
+						type: ERROR_UPDATE_LIBRARY_SETTINGS,
+						settingsKey,
+						value,
+						libraryKey,
+						error
+					});
+					reject(error);
+					throw error;
+				}
 			} finally {
 				next();
 			}
