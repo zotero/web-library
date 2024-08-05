@@ -73,6 +73,12 @@ import {
 	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
 
+class PartialWriteError extends Error {
+	constructor(message, response) {
+		super(message);
+		this.response = response;
+	}
+}
 
 const postItemsMultiPatch = async (state, multiPatch, libraryKey = null) => {
 	libraryKey = libraryKey ?? state.current.libraryKey;
@@ -147,7 +153,6 @@ const queueCreateItems = (items, libraryKey, id, resolve, reject) => {
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const version = state.libraries[libraryKey].sync.version;
 
 			dispatch({
 				type: REQUEST_CREATE_ITEMS,
@@ -158,13 +163,12 @@ const queueCreateItems = (items, libraryKey, id, resolve, reject) => {
 
 			try {
 				let response = await api(config.apiKey, config.apiConfig)
-					.version(version)
 					.library(libraryKey)
 					.items()
 					.post(items);
 
 				if(!response.isSuccess()) {
-					throw response.getErrors();
+					throw new PartialWriteError(JSON.stringify(response.getErrors()), response);
 				}
 
 				const createdItems = extractItems(response, state);
@@ -188,7 +192,7 @@ const queueCreateItems = (items, libraryKey, id, resolve, reject) => {
 						error,
 						libraryKey,
 						items,
-						id
+						id,
 					});
 				reject(error);
 				throw error;
@@ -218,7 +222,7 @@ const createItem = (properties, libraryKey) => {
 				.post([properties]);
 
 			if(!response.isSuccess()) {
-				throw response.getErrors()[0];
+				throw new PartialWriteError(response.getErrors()[0], response);
 			}
 
 			const item = {
@@ -694,31 +698,23 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
 
-				if(response.isSuccess()) {
-					dispatch({
-						type: RECEIVE_MOVE_ITEMS_TRASH,
-						libraryKey,
-						response,
-						id,
-						itemKeys,
-						...itemsData,
-						otherItems: state.libraries[libraryKey].items,
-					});
-
-					if(affectedParentItemKeys.length > 0) {
-						dispatch(fetchItemsByKeys(affectedParentItemKeys));
-					}
-				} else {
-					dispatch({
-						type: ERROR_MOVE_ITEMS_TRASH,
-						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
-						error: response.getErrors(),
-						libraryKey,
-						id
-					});
+				if(!response.isSuccess()) {
+					throw new PartialWriteError(response.getErrors(), response);
 				}
 
-				return;
+				dispatch({
+					type: RECEIVE_MOVE_ITEMS_TRASH,
+					libraryKey,
+					response,
+					id,
+					itemKeys,
+					...itemsData,
+					otherItems: state.libraries[libraryKey].items,
+				});
+
+				if(affectedParentItemKeys.length > 0) {
+					dispatch(fetchItemsByKeys(affectedParentItemKeys));
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_MOVE_ITEMS_TRASH,
@@ -774,30 +770,21 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
 
-				if(response.isSuccess()) {
-					dispatch({
-						type: RECEIVE_RECOVER_ITEMS_TRASH,
-						libraryKey,
-						response,
-						id,
-						itemKeys,
-						...itemsData,
-						otherItems: state.libraries[libraryKey].items,
-					});
-					if(affectedParentItemKeys.length > 0) {
-						dispatch(fetchItemsByKeys(affectedParentItemKeys));
-					}
-				} else {
-					dispatch({
-						type: ERROR_RECOVER_ITEMS_TRASH,
-						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
-						error: response.getErrors(),
-						libraryKey,
-						id
-					});
+				if(!response.isSuccess()) {
+					throw new PartialWriteError(response.getErrors(), response);
 				}
-
-				return;
+				dispatch({
+					type: RECEIVE_RECOVER_ITEMS_TRASH,
+					libraryKey,
+					response,
+					id,
+					itemKeys,
+					...itemsData,
+					otherItems: state.libraries[libraryKey].items,
+				});
+				if(affectedParentItemKeys.length > 0) {
+					dispatch(fetchItemsByKeys(affectedParentItemKeys));
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_RECOVER_ITEMS_TRASH,
@@ -856,30 +843,20 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				if(response.isSuccess()) {
-					dispatch({
-						type: RECEIVE_ADD_TAGS_TO_ITEMS,
-						libraryKey,
-						itemKeys,
-						itemKeysChanged,
-						tagsToToggle,
-						items,
-						response,
-						id,
-						// otherItems: state.libraries[libraryKey].items,
-					});
-				} else {
-					dispatch({
-						type: ERROR_ADD_TAGS_TO_ITEMS,
-						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
-						error: response.getErrors(),
-						libraryKey,
-						tagsToToggle,
-						id
-					});
+				if(!response.isSuccess()) {
+					throw new PartialWriteError(response.getErrors(), response);
 				}
-
-				return;
+				dispatch({
+					type: RECEIVE_ADD_TAGS_TO_ITEMS,
+					libraryKey,
+					itemKeys,
+					itemKeysChanged,
+					tagsToToggle,
+					items,
+					response,
+					id,
+					// otherItems: state.libraries[libraryKey].items,
+				});
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_TAGS_TO_ITEMS,
@@ -945,30 +922,20 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				if(response.isSuccess()) {
-					dispatch({
-						type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
-						libraryKey,
-						itemKeys,
-						itemKeysChanged,
-						collectionKey,
-						items,
-						response,
-						id,
-						otherItems: state.libraries[libraryKey].items,
-					});
-				} else {
-					dispatch({
-						type: ERROR_ADD_ITEMS_TO_COLLECTION,
-						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
-						error: response.getErrors(),
-						libraryKey,
-						collectionKey,
-						id
-					});
+				if(!response.isSuccess()) {
+					throw new PartialWriteError(response.getErrors(), response);
 				}
-
-				return;
+				dispatch({
+					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
+					libraryKey,
+					itemKeys,
+					itemKeysChanged,
+					collectionKey,
+					items,
+					response,
+					id,
+					otherItems: state.libraries[libraryKey].items,
+				});
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_ITEMS_TO_COLLECTION,
@@ -1023,11 +990,21 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 			await dispatch(fetchLibrarySettings(targetLibraryKey, 'tagColors'));
 		}
 
+		itemKeys = itemKeys.filter(ik => {
+			const sourceItem = state.libraries[sourceLibraryKey].items[ik];
+			if (!sourceItem) {
+				return false;
+			}
+			if (targetLibrary.isGroupLibrary && sourceItem.itemType === 'attachment' && sourceItem.linkMode === 'linked_file') {
+				return false;
+			}
+			return true;
+		});
+
 		const newItems = await dispatch(
 			createItems(
 				itemKeys.map(ik => {
 					const sourceItem = state.libraries[sourceLibraryKey].items[ik];
-
 					// add 'owl:sameAs' relation for items and notes but not attachments or annotations (based on https://github.com/zotero/zotero/blob/c5a769285b31bde5e78ff51349adc5be8d23871f/chrome/content/zotero/collectionTree.jsx#L1636-L1661)
 					const newRelations = (['attachment', 'annotation'].includes(sourceItem.itemType) || shouldStoreRelationInSource) ? sourceItem.relations : {
 							...sourceItem.relations,
@@ -1272,30 +1249,20 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				const { response, itemKeys, items } = await postItemsMultiPatch(state, multiPatch);
 				const itemKeysChanged = Object.values(response.raw.success);
 
-				if(response.isSuccess()) {
-					dispatch({
-						type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
-						libraryKey,
-						itemKeys,
-						itemKeysChanged,
-						collectionKey,
-						items,
-						response,
-						id,
-						otherItems: state.libraries[libraryKey].items,
-					});
-				} else {
-					dispatch({
-						type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,
-						itemKeys: itemKeys.filter(itemKey => !itemKeys.includes(itemKey)),
-						error: response.getErrors(),
-						libraryKey,
-						collectionKey,
-						id
-					});
+				if(!response.isSuccess()) {
+					throw new PartialWriteError(response.getErrors(), response);
 				}
-
-				return;
+				dispatch({
+					type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
+					libraryKey,
+					itemKeys,
+					itemKeysChanged,
+					collectionKey,
+					items,
+					response,
+					id,
+					otherItems: state.libraries[libraryKey].items,
+				});
 			} catch(error) {
 				dispatch({
 					type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,

@@ -117,7 +117,6 @@ describe('Reader', () => {
 			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
 				const items = await request.json();
 				expect(items[0].key).toBe('Z1Z2Z3Z4');
-				expect(request.headers.get('If-Unmodified-Since-Version')).toBe('305');
 				expect(items[0].itemType).toBe('annotation');
 				expect(items[0].parentItem).toBe('N2PJUHD6');
 				postedAnnotation = true;
@@ -155,6 +154,7 @@ describe('Reader', () => {
 	test('Update item that server is still creating', async () => {
 		let hasRequestedTpl = false;
 		let postCounter = 0;
+		let firstRequestFired = false;
 		server.use(
 			http.get('https://api.zotero.org/items/new', ({request}) => {
 				const url = new URL(request.url);
@@ -167,17 +167,17 @@ describe('Reader', () => {
 				const items = await request.json();
 				expect(items[0].key).toBe('Z1Z2Z3Z4');
 
-				if(postCounter == 0) {
-					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('292');
+				if (!firstRequestFired) {
 					expect(items[0].itemType).toBe('annotation');
 					expect(items[0].parentItem).toBe('N2PJUHD6');
 					expect(items[0].annotationType).toBe('note');
 					expect(items[0].annotationComment).toBe('hello note annotation');
+					// set `firstRequestFired = true` before the delay so that we can start the second request while this one is still pending
+					firstRequestFired = true;
 				} else {
 					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('12345');
 					expect(items[0].annotationComment).toBe('updated note annotation');
 				}
-
 				await delay(100);
 				return HttpResponse.json(testUserCreateAnnotation, {
 					headers: { 'Last-Modified-Version': 12345 + postCounter++ }
@@ -201,7 +201,9 @@ describe('Reader', () => {
 		await act(() => readerConfig.onSaveAnnotations([noteAnnotation]));
 		await waitForPosition();
 		expect(hasRequestedTpl).toBe(true);
-		await waitFor(() => expect(postCounter).toBe(1));
+		await waitFor(() => expect(firstRequestFired).toBe(true));
+		// At this point first request (`createItems`) has not finished yet. We start the second request (`updateMultipleItems`) while the first one is still pending
+		// This should delay the second request until the first one is finished, instead of spawning another `createItems` request
 		await act(() => readerConfig.onSaveAnnotations([{ ...noteAnnotation, comment: 'updated note annotation' }]));
 		await waitForPosition();
 		await waitFor(() => expect(postCounter).toBe(2));

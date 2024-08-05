@@ -20,7 +20,12 @@ const sync = (state = defaultState, action) => {
 		}
 	} else if(action.type && action.type.startsWith('ERROR_')) {
 		newState.requestsPending--;
-		if(action.error && action.error.response && action.error.response.status === 412) {
+
+		if(typeof action.error?.response?.getVersion?.() !== 'undefined') {
+			newState.version = Math.max(action.error.response.getVersion(), state.version);
+		}
+
+		if(action.error?.response?.status === 412) {
 			newState.isSynced = false;
 		}
 	} else if(action.type && action.type.startsWith('DROP_')) {
