@@ -22,7 +22,8 @@
 
 	&.dnd-target {
 		position: relative;
-		@include dnd-target;
+		color: var(--material-background);
+		background: var(--fill-secondary);
 	}
 
 	> .toolbar {

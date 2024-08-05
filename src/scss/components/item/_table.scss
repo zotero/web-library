@@ -21,13 +21,15 @@
 	}
 
 	&.dnd-target {
-		@include dnd-target;
-
 		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
 			pointer-events: none;
 			background-color: transparent;
-			outline: 3px solid var(--color-dnd-target-outline);
-			outline-offset: -3px;
+			outline: 2px solid var(--fill-secondary);
+			outline-offset: -2px;
+			opacity: 0.5;
 		}
 	}
 }
@@ -234,8 +236,9 @@
 			}
 		}
 
-		&.dnd-target {
-			@include dnd-target;
+		&.dnd-target:not(.specifity) {
+			color: var(--material-background);
+			background: var(--fill-secondary);
 		}
 
 		&.dnd-target-top, &.dnd-target-bottom + .item {
@@ -243,7 +246,7 @@
 
 			&::before {
 				content: "";
-				background: $item-table-dnd-target-bg;
+				background: var(--fill-secondary);
 				position: absolute;
 				top: -1px;
 				width: 80px;

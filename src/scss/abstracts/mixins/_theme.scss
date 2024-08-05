@@ -29,9 +29,8 @@
 	--color-shade-10-50: #{transparentize(map.get($colors, "color-shade-10"), 0.5)};
 	--color-shade-2-50: #{transparentize(map.get($colors, "color-shade-2"), 0.5)};
 
-	--color-text-selection-bg: rgba(map.get($colors, "accent-blue"), 0.2);
-	--color-text-selection-bg: rgba(map.get($colors, "accent-blue"), 0.2);
-	--color-dnd-target: rgba(map.get($colors, "accent-blue"), 0.25);
+	--color-text-selection-bg: #{rgba(map.get($colors, "accent-blue"), 0.2)};
+	--color-text-selection-bg: #{rgba(map.get($colors, "accent-blue"), 0.2)};
 
 	// composite (opaque) colors
 	--color-quinary-on-background: #{color.mix(

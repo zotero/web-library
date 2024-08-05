@@ -110,7 +110,8 @@
 			}
 
 			&.dnd-target {
-				background-color: $dnd-target-color;
+				color: var(--material-background);
+				background: var(--fill-secondary);
 			}
 
 			.tag-label {

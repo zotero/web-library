@@ -150,7 +150,8 @@
 
 		@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 			@include mouse-and-bp-up(md) {
-				@include dnd-target;
+				color: var(--material-background);
+				background: var(--fill-secondary);
 			}
 		}
 
@@ -217,6 +218,9 @@
 
 					@include state("li.picked > .item-container") {
 						color: var(--primary-on-accent);
+					}
+					@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
+						color: var(--material-background);
 					}
 				}
 			}

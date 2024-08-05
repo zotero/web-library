@@ -87,7 +87,6 @@ $item-table-head-active-bg: $shade-1;
 $item-table-odd-bg: var(--color-shade-1-darker);
 $item-table-active-bg: $shade-3;
 $sort-indicator: var(--accent-blue);
-$item-table-dnd-target-bg: $shade-5;
 
 // Item details
 $item-details-border-1x: $shade-3;
@@ -147,7 +146,6 @@ $btn-icon-separator-color: $shade-3;
 $twisty-color: $shade-6;
 $twisty-focus-color: var(--accent-asphalt);
 $twisty-selected-color: $shade-7;
-$twisty-dnd-target-color: $shade-0;
 
 // Forms
 $form-bg-touch: $shade-1;
@@ -247,9 +245,6 @@ $popover-arrow-outer-color: rgba(0, 0, 0, 0.2);
 // Oncoing
 $ongoing-border-color: $shade-3;
 $ongoing-color: $shade-8;
-
-// Drag and drop target
-$dnd-target-color: var(--color-dnd-target);
 
 // Identifier picker
 $result-border-color: $shade-2;
