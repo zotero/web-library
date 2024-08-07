@@ -1,5 +1,5 @@
 const isHighlightKeyDown = ev => {
-	const isWindows = navigator.appVersion.indexOf("Win") >= 0;
+	const isWindows = navigator.userAgent.indexOf("Windows") >= 0;
 	return (isWindows && ev.getModifierState('Control')) ||
 		(!isWindows && ev.getModifierState('Alt'));
 }

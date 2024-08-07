@@ -954,7 +954,7 @@ const CollectionTree = props => {
 	useEffect(() => {
 		if(!shallowEqual(highlightedCollections, prevHighlightedCollections)) {
 			const parentsOfHighlighted = highlightedCollections.map(cKey => {
-				let parentCKeys = [cKey];
+				let parentCKeys = [];
 				do {
 					cKey = cKey in collections ? collections[cKey].parentCollection : null;
 					if (cKey) {

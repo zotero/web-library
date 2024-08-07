@@ -25,8 +25,7 @@ test('Select multiple items using keyboard', async () => {
 
 	act(() => screen.getByRole('row',
 		{ name: 'Effects of diet restriction on life span and age-related changes in dogs' }
-	).focus()
-	);
+	).focus());
 
 	await user.keyboard('{Shift>}{arrowdown}{arrowdown}{/Shift}');
 

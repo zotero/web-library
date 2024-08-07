@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { findByRole, getByRole, screen, waitFor } from '@testing-library/react';
+import { act, findByRole, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -13,9 +13,11 @@ import { JSONtoState, getPatchedState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
+import stateSearchRaw from './fixtures/state/desktop-test-user-search-phrase-selected.json';
 import testuserAddCollection from './fixtures/response/test-user-add-collection.json';
 
 const state = JSONtoState(stateRaw);
+const stateSearch = JSONtoState(stateSearchRaw);
 
 describe('Test User: Collections', () => {
 	const handlers = [];
@@ -198,6 +200,65 @@ describe('Test User: Collections', () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 		expect(screen.queryByRole('treeitem', { name: 'Board Games' })).toBeInTheDocument();
+	});
+
+	["Windows", "MacOS"].forEach((platform) => {
+		test(`Should highlight collection in which the item is present on ${platform}`, async () => {
+			let userAgent, key, wrongKey;
+			switch (platform) {
+				case "MacOS":
+					userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0";
+					key = "Alt";
+					wrongKey = "Control";
+					break;
+				case "Windows":
+					userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0";
+					key = "Control";
+					wrongKey = "Alt";
+					break;
+			}
+
+			jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue(userAgent);
+			delete window.location;
+			window.location = new URL('http://localhost/testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list');
+
+			renderWithProviders(<MainZotero />, { preloadedState: stateSearch });
+			await waitForPosition();
+			const user = userEvent.setup();
+
+			act(() => screen.getByRole('row',
+				{ name: 'Retriever' }
+			).focus());
+
+
+			expect(screen.getByRole('treeitem', { name: 'Dogs', expanded: false })).toBeInTheDocument();
+
+			await user.keyboard(`{${key}>}`);
+			// Parent collection is automatically expanded
+			expect(screen.getByRole('treeitem', { name: 'Dogs', expanded: true })).toBeInTheDocument();
+			expect(screen.getByRole('treeitem', { name: 'Goldens' }).parentNode).toHaveClass('highlighted');
+			await user.keyboard(`{/${key}}`);
+			await user.keyboard(`{${wrongKey}>}`);
+			expect(screen.getByRole('treeitem', { name: 'Goldens' }).parentNode).not.toHaveClass('highlighted');
+			await user.keyboard(`{/${wrongKey}}`);
+		});
+	});
+
+	test("Should not expand highlighted collection", async () => {
+		jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0');
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		act(() => screen.getByRole('row',
+			{ name: 'Effects of diet restriction on life span and age-related changes in dogs' }
+		).focus()
+		);
+
+		await user.keyboard(`{Alt>}`);
+		expect(screen.getByRole('treeitem', { name: 'Dogs', expanded: false })).toBeInTheDocument();
+		expect(screen.getByRole('treeitem', { name: 'Dogs' }).parentNode).toHaveClass('highlighted');
+		await user.keyboard(`{Alt>}`);
 	});
 
 });
