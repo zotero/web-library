@@ -173,7 +173,9 @@ const ListRow = memo(props => {
 									height="12"
 								/>  </Fragment>) // eslint-disable-line no-irregular-whitespace
 						}
-						{ emojis.join(' ') }
+						{ emojis.map(emoji => {
+							return <span key={emoji} className="emoji">{emoji}</span>
+						}) }
 						<span className="tag-circles">
 							{ colors.map((color, index) => (
 								<Icon
@@ -183,7 +185,7 @@ const ListRow = memo(props => {
 										(!isSelectMode && isActive) ? 'circle-active' : 'circle' :
 										(!isSelectMode && isActive) ? 'crescent-circle-active' : 'crescent-circle'
 									}
-									width={ index === 0 ? 12 : 8 }
+									width="12"
 									height="12"
 									data-color={ color.toLowerCase() }
 									style={ { color } }

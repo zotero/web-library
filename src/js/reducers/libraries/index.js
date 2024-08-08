@@ -35,7 +35,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				creating: creating(state[action.libraryKey]?.creating, action),
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
 				items: items(get(state, [action.libraryKey, 'items']), action, {
-					tagColors: state[action.libraryKey]?.tagColors?.lookup, meta
+					tagColors: (state[action.libraryKey]?.tagColors || {}), meta
 				} ),
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action, {
 					items: (state[action.libraryKey] || {}).items, meta

@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react';
+import { getAllByRole, getByRole, getByText, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -13,6 +13,7 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
+import stateLibraryView from './fixtures/state/desktop-test-user-library-view.json';
 import zoteroFormattingCollectionStateRaw from './fixtures/state/desktop-test-user-formatting-collection.json';
 import itemTypeFieldsBook from './fixtures/response/item-type-fields-book.json';
 import itemTypeCreatorTypesBook from './fixtures/response/item-type-creator-types-book.json';
@@ -25,8 +26,13 @@ import testUserTrashItem from './fixtures/response/test-user-trash-item.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier.json';
 import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier.json';
 import testUserDuplicateItem from './fixtures/response/test-user-duplicate-item.json';
+import testUserSearchResults from './fixtures/response/test-user-search-results.json';
+import testUserSearchResultsTags from './fixtures/response/test-user-search-results-tags.json';
+import testUserItemsGolden from './fixtures/response/test-user-get-items-golden.json';
+import testUserItemsGoldenTags from './fixtures/response/test-user-get-items-golden-tags.json';
 
 const state = JSONtoState(stateRaw);
+const libraryViewState = JSONtoState(stateLibraryView);
 const formattingState = JSONtoState(zoteroFormattingCollectionStateRaw);
 
 describe('Test User\'s library', () => {
@@ -345,5 +351,70 @@ describe('Test User\'s library', () => {
 
 		const row9 = getByRole(gridBody, 'row', { name: '<a href="http://zotero.org">links</a> not allowed' });
 		expect(row9.innerHTML).toEqual(expect.stringContaining('&lt;a href="http://zotero.org"&gt;links&lt;/a&gt; <b>not</b> allowed'));
+	});
+	test("Renders correctly ordered tag color swatches in the items list", async () => {
+		delete window.location;
+		window.location = new URL('http://localhost/testuser/');
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
+		await waitForPosition();
+
+		// derived data for current view is already present in fixture so we need to "fetch" different view to test this feature
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/top/tags', () => {
+				return HttpResponse.json(testUserSearchResultsTags, {
+					headers: { 'Total-Results': testUserSearchResultsTags.length }
+				});
+			}),
+			http.get('https://api.zotero.org/users/1/items/top', () => {
+				return HttpResponse.json(testUserSearchResults, {
+					headers: { 'Total-Results': testUserSearchResults.length }
+				});
+			})
+		);
+
+		const searchBox = screen.getByRole('searchbox', { name: 'Title, Creator, Year' });
+		await user.type(searchBox, 'pathfinding');
+
+		await waitFor(() => expect(searchBox).toHaveValue('pathfinding'));
+		await waitFor(() => expect(screen.getByText('7 items in this view')).toBeInTheDocument());
+
+		const row = screen.getByRole('row', { name: 'A*-based pathfinding in modern computer games' });
+		const violetSwatch = getByRole(row, 'img', { name: 'violet circle icon' }); // position 1
+		const greenSwatch = getByRole(row, 'img', { name: 'green circle icon' }); // position 2
+
+		// https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition#node.document_position_following
+		// otherNode follows the node, i.e. greenSwatch follows violetSwatch
+		expect(violetSwatch.compareDocumentPosition(greenSwatch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeGreaterThan(0);
+	});
+
+	test("Includes emoji from non-colored tags in the items list", async () => {
+		delete window.location;
+		window.location = new URL('http://localhost/testuser/');
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
+		await waitForPosition();
+
+		// derived data for current view is already present in fixture so we need to "fetch" different view to test this feature
+		server.use(
+			http.get('https://api.zotero.org/users/1/collections/9WZDZ7YA/items/top/tags', () => {
+				return HttpResponse.json(testUserItemsGoldenTags, {
+					headers: { 'Total-Results': testUserItemsGoldenTags.length }
+				});
+			}),
+			http.get('https://api.zotero.org/users/1/collections/9WZDZ7YA/items/top', () => {
+				return HttpResponse.json(testUserItemsGolden, {
+					headers: { 'Total-Results': testUserItemsGolden.length }
+				});
+			})
+		);
+
+		await user.click(getByRole(screen.getByRole('treeitem', { name: 'Dogs' }), 'button', { name: 'Expand' }));
+		await user.click(screen.getByRole('treeitem', { name: 'Goldens' }));
+
+		await waitFor(() => expect(screen.getByText('5 items in this view')).toBeInTheDocument());
+
+		const row = screen.getByRole('row', { name: 'Retriever' });
+		expect(getByText(row, '🐕')).toBeInTheDocument();
 	});
 });

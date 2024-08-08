@@ -1,0 +1,393 @@
+[
+    {
+        "key": "Q6ALXLJG",
+        "version": 226,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/Q6ALXLJG",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/Q6ALXLJG",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 4
+        },
+        "data": {
+            "key": "Q6ALXLJG",
+            "version": 226,
+            "itemType": "note",
+            "note": "<div data-schema-version=\"8\"><h1>Photos</h1>\n<p><img alt=\"\" data-attachment-key=\"QC2T9K65\" width=\"2848\" height=\"4272\"><img alt=\"\" data-attachment-key=\"2V2KZQ6Q\" width=\"5184\" height=\"2916\"><img alt=\"\" data-attachment-key=\"W4M86S8T\" width=\"5255\" height=\"3503\"><img alt=\"\" data-attachment-key=\"N552NNGB\" width=\"4000\" height=\"6000\"></p>\n</div>",
+            "tags": [
+                {
+                    "tag": "cute"
+                },
+                {
+                    "tag": "⭐️"
+                }
+            ],
+            "collections": [
+                "9WZDZ7YA"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-17T15:43:51Z",
+            "dateModified": "2023-01-17T15:44:41Z"
+        }
+    },
+    {
+        "key": "KBFTPTI4",
+        "version": 309,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/KBFTPTI4",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/KBFTPTI4",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/N2PJUHD6",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 142747
+            }
+        },
+        "meta": {
+            "creatorSummary": "Shearin and Doty",
+            "parsedDate": "2002",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "KBFTPTI4",
+            "version": 309,
+            "itemType": "bookSection",
+            "title": "Retriever",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Faith",
+                    "lastName": "Shearin"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mark",
+                    "lastName": "Doty"
+                }
+            ],
+            "abstractNote": "",
+            "bookTitle": "Owl Question",
+            "series": "Poems",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "University Press of Colorado",
+            "date": "2002",
+            "pages": "17-18",
+            "language": "",
+            "ISBN": "978-0-87421-445-1",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/j.ctt46nwk9.16",
+            "accessDate": "2023-01-17T15:43:16Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "DOI: 10.2307/j.ctt46nwk9.16",
+            "tags": [
+                {
+                    "tag": "dogs 🐕"
+                }
+            ],
+            "collections": [
+                "9WZDZ7YA"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-17T15:43:17Z",
+            "dateModified": "2024-08-08T15:12:37Z"
+        }
+    },
+    {
+        "key": "Z77UB935",
+        "version": 226,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/Z77UB935",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/Z77UB935",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Guy et al.",
+            "parsedDate": "2015",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "Z77UB935",
+            "version": 226,
+            "itemType": "journalArticle",
+            "title": "The Golden Retriever Lifetime Study: establishing an observational cohort study with translational relevance for human health",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Michael K.",
+                    "lastName": "Guy"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Rodney L.",
+                    "lastName": "Page"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Wayne A.",
+                    "lastName": "Jensen"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Patricia N.",
+                    "lastName": "Olson"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "J. David",
+                    "lastName": "Haworth"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Erin E.",
+                    "lastName": "Searfoss"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Diane E.",
+                    "lastName": "Brown"
+                }
+            ],
+            "abstractNote": "The Golden Retriever Lifetime Study (GRLS) is the first prospective longitudinal study attempted in veterinary medicine to identify the major dietary, genetic and environmental risk factors for cancer and other important diseases in dogs. The GRLS is an observational study that will follow a cohort of 3000 purebred Golden Retrievers throughout their lives via annual online questionnaires from the dog owner and annual physical examinations and collection of biological samples by the primary care veterinarian. The field of comparative medicine investigating naturally occurring disorders in pets is specifically relevant to the many diseases that have a genetic basis for disease in both animals and humans, including cancer, blindness, metabolic and behavioural disorders and some neurodegenerative disorders. The opportunity for the GRLS to provide high-quality data for translational comparative medical initiatives in several disease categories is great. In particular, the opportunity to develop a lifetime dataset of lifestyle and activity, environmental exposure and diet history combined with simultaneous annual biological sample sets and detailed health outcomes will provide disease incidence data for this cohort of geographically dispersed dogs and associations with a wide variety of potential risk factors. The GRLS will provide a lifetime historical context, repeated biological sample sets and outcomes necessary to interrogate complex associations between genes and environmental influences and cancer.",
+            "publicationTitle": "Philosophical Transactions: Biological Sciences",
+            "volume": "370",
+            "issue": "1673",
+            "pages": "1-10",
+            "date": "2015",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "0962-8436",
+            "shortTitle": "The Golden Retriever Lifetime Study",
+            "url": "https://www.jstor.org/stable/24505122",
+            "accessDate": "2023-01-17T15:43:16Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Royal Society",
+            "tags": [],
+            "collections": [
+                "9WZDZ7YA"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-17T15:43:17Z",
+            "dateModified": "2023-01-17T15:43:17Z"
+        }
+    },
+    {
+        "key": "85GHLHB2",
+        "version": 226,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/85GHLHB2",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/85GHLHB2",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Markovits and Crosby",
+            "parsedDate": "2014",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "85GHLHB2",
+            "version": 226,
+            "itemType": "bookSection",
+            "title": "The Golden/Labrador Retriever Comparison",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Andrei S.",
+                    "lastName": "Markovits"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Katherine N.",
+                    "lastName": "Crosby"
+                }
+            ],
+            "abstractNote": "The information presented in the previous chapters demonstrate the large diversity of breed rescues. They come in all sizes, from very large thoroughly professionalized organizations to small operations often run by just a few persons, even, on occasion, merely one committed individual. Rescues vary in their organizational philosophies as well as approaches on how best to serve their needy clientele; they pursue different strategies in terms of their relations with outside organizations that also populate the human world devoted to dogs, from American Kennel Club (AKC) groups and clubs to shelters and humane societies. This chapter analyzes how the devotion",
+            "bookTitle": "From Property to Family",
+            "series": "American Dog Rescue and the Discourse of Compassion",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "University of Michigan Press",
+            "date": "2014",
+            "pages": "239-258",
+            "language": "",
+            "ISBN": "978-0-472-07246-0",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/10.3998/mpub.7586916.12",
+            "accessDate": "2023-01-17T15:43:15Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9WZDZ7YA"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-17T15:43:17Z",
+            "dateModified": "2023-01-17T15:43:17Z"
+        }
+    },
+    {
+        "key": "JTZKUB7I",
+        "version": 226,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/JTZKUB7I",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/JTZKUB7I",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Markovits and Crosby",
+            "parsedDate": "2014",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "JTZKUB7I",
+            "version": 226,
+            "itemType": "bookSection",
+            "title": "The History of Golden Retriever Rescue as a Case Study of Breed Specific Rescue",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Andrei S.",
+                    "lastName": "Markovits"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Katherine N.",
+                    "lastName": "Crosby"
+                }
+            ],
+            "abstractNote": "A person looking for a Golden Retriever rescue in 1979 would have discovered that such a thing simply did not exist in the United States. Thirtyfive years later, there are over one hundred such groups in the country, covering all fifty states, not infrequently featuring multiple rescues located in the same city. The evolution of Golden Retriever rescues is a product of the discourse of compassion that emerged in the United States (as well as other liberal democracies) in the 1970s. Understanding how these groups function today requires a detailed examination of their history and the factors affecting their creation,",
+            "bookTitle": "From Property to Family",
+            "series": "American Dog Rescue and the Discourse of Compassion",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "University of Michigan Press",
+            "date": "2014",
+            "pages": "107-154",
+            "language": "",
+            "ISBN": "978-0-472-07246-0",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/10.3998/mpub.7586916.8",
+            "accessDate": "2023-01-17T15:43:17Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "9WZDZ7YA"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-17T15:43:17Z",
+            "dateModified": "2023-01-17T15:43:17Z"
+        }
+    }
+]

@@ -31,12 +31,12 @@ const discardIfOldVersion = (newItems, oldItems) => {
 	return result;
 }
 
-const items = (state = {}, action, metaAndTags) => {
+const items = (state = {}, action, { meta, tagColors }) => {
 	switch(action.type) {
 		case RECEIVE_CREATE_ITEM:
 			return {
 				...state,
-				[action.item.key]: calculateDerivedData(action.item, metaAndTags)
+				[action.item.key]: calculateDerivedData(action.item, { meta, tagColors })
 			};
 		case RECEIVE_DELETE_ITEM:
 			return omit(state, action.item.key);
@@ -48,7 +48,7 @@ const items = (state = {}, action, metaAndTags) => {
 				[action.itemKey]: calculateDerivedData({
 					...get(state, action.itemKey, {}),
 					...action.item
-				}, metaAndTags)
+				}, { meta, tagColors })
 			};
 		case RECEIVE_UPDATE_MULTIPLE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
@@ -61,7 +61,7 @@ const items = (state = {}, action, metaAndTags) => {
 				...indexByKey(Object.values(action.items), 'key', item => (calculateDerivedData({
 					...state[item.key],
 					...item
-				}, metaAndTags)))
+				}, { meta, tagColors })))
 			}
 		case RECEIVE_CHILD_ITEMS:
 		case RECEIVE_CREATE_ITEMS:
@@ -75,7 +75,7 @@ const items = (state = {}, action, metaAndTags) => {
 		case RECEIVE_TRASH_ITEMS:
 			return {
 				...state,
-				...discardIfOldVersion(indexByKey(calculateDerivedData(action.items, metaAndTags), 'key'), state)
+				...discardIfOldVersion(indexByKey(calculateDerivedData(action.items, { meta, tagColors }), 'key'), state)
 			};
 		case RECEIVE_UPLOAD_ATTACHMENT:
 			return {
@@ -104,12 +104,12 @@ const items = (state = {}, action, metaAndTags) => {
 		case RECEIVE_LIBRARY_SETTINGS:
 		case RECEIVE_UPDATE_LIBRARY_SETTINGS:
 			return action.settingsKey === 'tagColors' ? mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
-					meta: metaAndTags.meta,
-					tagColors: indexByKey(action.value ?? [], 'name', ({ color }) => color)
+					meta,
+					tagColors: { value: action.value ?? [], lookup: indexByKey(action.value ?? [], 'name', ({ color }) => color)}
 			})]) : state;
 		case RECEIVE_DELETE_LIBRARY_SETTINGS:
 			return action.settingsKey === 'tagColors' ? mapObject(state, (itemKey, item) => [itemKey, calculateDerivedData(item, {
-					meta: metaAndTags.meta,
+					meta,
 					tagColors: {}
 			})]) : state;
 		case RECEIVE_DELETE_TAGS:

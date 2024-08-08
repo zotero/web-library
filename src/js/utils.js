@@ -474,12 +474,19 @@ const getPrevSibling = (elem, selector) => {
 	}
 };
 
-// https://github.com/zotero/zotero/blob/256bd157edd7707aa1affa1822f68f41be1f988c/chrome/content/zotero/xpcom/utilities_internal.js#L408
-const isOnlyEmoji = str => {
-	// Remove emoji, Zero Width Joiner, and Variation Selector-16 and see if anything's left
-	const re = /\p{Extended_Pictographic}|\u200D|\uFE0F/gu;
-	return !str.replace(re, '');
+// https://github.com/zotero/zotero/blob/214a668286d35a630db293bb835f544693698297/chrome/content/zotero/xpcom/utilities_internal.js#L399-L408
+const containsEmoji = str => {
+	let re = /\p{Extended_Pictographic}/gu;
+	return !!str.match(re);
 }
+
+// https://github.com/abaevbog/zotero/blob/f8fd90945663d4745306d88be298633f8c7229de/chrome/content/zotero/xpcom/data/tags.js#L1000
+const extractEmoji = str => {
+	// Split by anything that is not an emoji, Zero Width Joiner, or Variation Selector-16
+	// And return first continuous span of emojis
+	let re = /[^\p{Extended_Pictographic}\u200D\uFE0F]+/gu; //eslint-disable-line no-misleading-character-class
+	return str.split(re).filter(Boolean)[0] || null;
+};
 
 const isReaderCompatibleBrowser = () => typeof structuredClone === "function";
 
@@ -491,10 +498,12 @@ export {
     cleanURL,
     compare,
     compareItem,
+	containsEmoji,
     deduplicate,
     deduplicateByHash,
     deduplicateByKey,
     enumerateObjects,
+	extractEmoji,
     get,
     getAbortController,
     getDOIURL,
@@ -512,7 +521,6 @@ export {
     indexByGeneratedKey,
     indexByKey,
     isLikeURL,
-	isOnlyEmoji,
 	isReaderCompatibleBrowser,
     JSONTryParse,
     localStorageWrapper,

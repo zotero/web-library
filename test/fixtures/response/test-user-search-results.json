@@ -1,0 +1,643 @@
+[
+    {
+        "key": "J489T6X3",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 536523
+            }
+        },
+        "meta": {
+            "creatorSummary": "Foead et al.",
+            "parsedDate": "2021",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "J489T6X3",
+            "version": 219,
+            "itemType": "journalArticle",
+            "title": "A systematic literature review of A* pathfinding",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Daniel",
+                    "lastName": "Foead"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Alifio",
+                    "lastName": "Ghifari"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Marchel Budi",
+                    "lastName": "Kusuma"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Novita",
+                    "lastName": "Hanafiah"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Eric",
+                    "lastName": "Gunawan"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Procedia Computer Science",
+            "volume": "179",
+            "issue": "",
+            "pages": "507–514",
+            "date": "2021",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Elsevier",
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:29:50Z"
+        }
+    },
+    {
+        "key": "MCJ8XUBI",
+        "version": 304,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/MCJ8XUBI",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/MCJ8XUBI",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/9Y2RN5L6",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 376145
+            }
+        },
+        "meta": {
+            "creatorSummary": "Cui and Shi",
+            "parsedDate": "2011",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "MCJ8XUBI",
+            "version": 304,
+            "itemType": "journalArticle",
+            "title": "A*-based pathfinding in modern computer games",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Xiao",
+                    "lastName": "Cui"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Hao",
+                    "lastName": "Shi"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "International Journal of Computer Science and Network Security",
+            "volume": "11",
+            "issue": "1",
+            "pages": "125–130",
+            "date": "2011",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: International Journal of Computer Science and Network Security (IJCSNS)",
+            "tags": [
+                {
+                    "tag": "annotated"
+                },
+                {
+                    "tag": "coding"
+                },
+                {
+                    "tag": "cute"
+                },
+                {
+                    "tag": "pathfinding"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:38:33Z"
+        }
+    },
+    {
+        "key": "3JCLFUG4",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 848371
+            }
+        },
+        "meta": {
+            "creatorSummary": "Silver",
+            "parsedDate": "2005",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "3JCLFUG4",
+            "version": 219,
+            "itemType": "conferencePaper",
+            "title": "Cooperative pathfinding",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "David",
+                    "lastName": "Silver"
+                }
+            ],
+            "abstractNote": "",
+            "date": "2005",
+            "proceedingsTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+            "conferenceName": "",
+            "place": "",
+            "publisher": "",
+            "volume": "1",
+            "pages": "117–122",
+            "series": "",
+            "language": "",
+            "DOI": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Issue: 1",
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:30:17Z"
+        }
+    },
+    {
+        "key": "2MNVWQBP",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/2MNVWQBP",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/2MNVWQBP",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/LZ35XNZF",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 1497781
+            }
+        },
+        "meta": {
+            "creatorSummary": "Rafiq et al.",
+            "parsedDate": "2020",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "2MNVWQBP",
+            "version": 219,
+            "itemType": "conferencePaper",
+            "title": "Pathfinding Algorithms in game development",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Abdul",
+                    "lastName": "Rafiq"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Tuty Asmawaty Abdul",
+                    "lastName": "Kadir"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Siti Normaziah",
+                    "lastName": "Ihsan"
+                }
+            ],
+            "abstractNote": "",
+            "date": "2020",
+            "proceedingsTitle": "IOP Conference Series: Materials Science and Engineering",
+            "conferenceName": "",
+            "place": "",
+            "publisher": "IOP Publishing",
+            "volume": "769",
+            "pages": "012021",
+            "series": "",
+            "language": "",
+            "DOI": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Issue: 1",
+            "tags": [
+                {
+                    "tag": "coding"
+                },
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:38:33Z"
+        }
+    },
+    {
+        "key": "VBKLAGB3",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/VBKLAGB3",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/VBKLAGB3",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/2KGHKVPJ",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 108640
+            }
+        },
+        "meta": {
+            "creatorSummary": "Stout",
+            "parsedDate": "1996",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "VBKLAGB3",
+            "version": 219,
+            "itemType": "journalArticle",
+            "title": "Smart moves: Intelligent pathfinding",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Bryan",
+                    "lastName": "Stout"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Game developer magazine",
+            "volume": "10",
+            "issue": "",
+            "pages": "28–35",
+            "date": "1996",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "Smart moves",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:11:47Z"
+        }
+    },
+    {
+        "key": "BLVYJQMH",
+        "version": 222,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/BLVYJQMH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/BLVYJQMH",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/7IENM8NC",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 29755
+            }
+        },
+        "meta": {
+            "creatorSummary": "Tomasz and Chat GPT",
+            "parsedDate": "2023-01-13",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "BLVYJQMH",
+            "version": 222,
+            "itemType": "preprint",
+            "title": "Summary of pathfinding algorithms used in game development",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Najdek",
+                    "lastName": "Tomasz"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Chat GPT"
+                }
+            ],
+            "abstractNote": "Pathfinding algorithms are used in game development to allow characters or entities to navigate through a virtual world. Two of the most commonly used algorithms are A* and Dijkstra's.",
+            "genre": "",
+            "repository": "",
+            "archiveID": "",
+            "place": "",
+            "date": "2023-01-13",
+            "series": "",
+            "seriesNumber": "",
+            "DOI": "",
+            "citationKey": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "shortTitle": "",
+            "language": "",
+            "libraryCatalog": "",
+            "callNumber": "",
+            "rights": "CC0 1.0 Universal Public Domain Dedication",
+            "extra": "",
+            "inPublications": true,
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                }
+            ],
+            "collections": [],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:24:44Z",
+            "dateModified": "2023-01-17T15:11:40Z"
+        }
+    },
+    {
+        "key": "JRUVUGUJ",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/JRUVUGUJ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/JRUVUGUJ",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/TMWD2INQ",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 310814
+            }
+        },
+        "meta": {
+            "creatorSummary": "Leigh et al.",
+            "parsedDate": "2007",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "JRUVUGUJ",
+            "version": 219,
+            "itemType": "conferencePaper",
+            "title": "Using a genetic algorithm to explore A*-like pathfinding algorithms",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Ryan",
+                    "lastName": "Leigh"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sushil J.",
+                    "lastName": "Louis"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Chris",
+                    "lastName": "Miles"
+                }
+            ],
+            "abstractNote": "",
+            "date": "2007",
+            "proceedingsTitle": "2007 IEEE Symposium on Computational Intelligence and Games",
+            "conferenceName": "",
+            "place": "",
+            "publisher": "IEEE",
+            "volume": "",
+            "pages": "72–79",
+            "series": "",
+            "language": "",
+            "DOI": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "coding"
+                },
+                {
+                    "tag": "pathfinding"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:38:33Z"
+        }
+    }
+]

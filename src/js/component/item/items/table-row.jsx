@@ -48,19 +48,21 @@ const TitleCell = memo(props => {
 			/>
 			<div className="truncate" id={labelledById} dangerouslySetInnerHTML={ { __html: formattedSpan.outerHTML } } />
 			<div className="tag-colors">
-				{ itemData.emojis.join(' ') }
+				{ itemData.emojis.map(emoji => {
+					return <span key={ emoji } className="emoji">{ emoji }</span>
+				}) }
 				<span className="tag-circles">
 					{ itemData.colors.map((color, index) => (
 						<Icon
 							label={ `${colorNames[color] || ''} circle icon` }
 							key={ index }
-							type={ index === 0 ? '10/circle' : '10/crescent-circle' }
+							type={ index === 0 ? '12/circle' : '12/crescent-circle' }
 							symbol={ index === 0 ?
-								(isFocused && isSelected ? 'circle-focus' : 'circle') :
-								(isFocused && isSelected ? 'crescent-circle-focus' : 'crescent-circle')
+								(isFocused && isSelected ? 'circle-active' : 'circle') :
+								(isFocused && isSelected ? 'crescent-circle-active' : 'crescent-circle')
 							}
-							width={ index === 0 ? 10 : 7 }
-							height="10"
+							width="12"
+							height="12"
 							data-color={ color.toLowerCase() }
 							style={ { color } }
 						/>

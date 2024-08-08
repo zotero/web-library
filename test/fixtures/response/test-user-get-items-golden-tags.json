@@ -1,0 +1,53 @@
+[
+    {
+        "tag": "cute",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/cute",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/cute",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 7
+        }
+    },
+    {
+        "tag": "dogs 🐕",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/dogs+%F0%9F%90%95",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/dogs+%F0%9F%90%95",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 3
+        }
+    },
+    {
+        "tag": "⭐️",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/%E2%AD%90%EF%B8%8F",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 5
+        }
+    }
+]

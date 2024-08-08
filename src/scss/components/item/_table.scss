@@ -332,8 +332,14 @@
 				overflow: hidden;
 				padding-left: $space-xs;
 
+				.emoji {
+					margin-left: 4px;
+				}
+
 				.tag-circles {
-					display: inline-flex;
+					// match the behaviour of the client where tag swatches are displayed flipped
+					// https://github.com/zotero/zotero/blob/214a668286d35a630db293bb835f544693698297/scss/components/_item-tree.scss#L106
+					transform: scaleX(-1);
 					margin-left: $space-min;
 				}
 			}

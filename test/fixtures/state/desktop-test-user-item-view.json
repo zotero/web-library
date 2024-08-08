@@ -37,6 +37,7 @@
         "isEmbedded": false,
         "containterClassName": "zotero-wl",
         "buyStorageUrl": "https://www.zotero.org/storage?ref=usb",
+        "forumsUrl": "https://forums.zotero.org/",
         "menus": {
             "desktop": [
                 {
@@ -701,12 +702,15 @@
                 },
                 "Z6HA62VJ": {
                     "key": "Z6HA62VJ",
-                    "version": 219,
+                    "version": 310,
                     "itemType": "note",
                     "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\n<p></p>\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\n</div>",
                     "tags": [
                         {
                             "tag": "cute"
+                        },
+                        {
+                            "tag": "dogs 🐕"
                         },
                         {
                             "tag": "⭐️"
@@ -717,7 +721,7 @@
                     ],
                     "relations": {},
                     "dateAdded": "2023-01-13T10:54:44Z",
-                    "dateModified": "2023-01-17T15:34:27Z",
+                    "dateModified": "2024-08-08T15:20:25Z",
                     "@@meta@@": {
                         "numChildren": 3
                     },
@@ -740,9 +744,10 @@
                         "creator": "",
                         "date": "",
                         "dateAdded": "1/13/2023, 11:54:44 AM",
-                        "dateModified": "1/17/2023, 4:34:27 PM",
+                        "dateModified": "8/8/2024, 5:20:25 PM",
                         "emojis": [
-                            "⭐️"
+                            "⭐️",
+                            "🐕"
                         ],
                         "iconName": "note",
                         "itemType": "Note",
@@ -1081,7 +1086,7 @@
                 }
             },
             "sync": {
-                "version": 305,
+                "version": 310,
                 "isSynced": true,
                 "requestsPending": 0
             },
@@ -1116,14 +1121,13 @@
                     "requests": [],
                     "isFetching": false,
                     "isFetchingColoredTags": false,
-                    "coloredTags": [
-                        "cute",
-                        "to read",
-                        "⭐️"
-                    ],
                     "rawTags": [
                         {
                             "tag": "cute",
+                            "type": 0
+                        },
+                        {
+                            "tag": "dogs 🐕",
                             "type": 0
                         },
                         {
@@ -1135,21 +1139,28 @@
                             "type": 0
                         }
                     ],
-                    "totalResults": 3,
+                    "totalResults": 4,
                     "sortBy": "title",
                     "isError": false,
                     "pointer": 100,
                     "duplicatesCount": 0,
                     "tags": [
                         "cute",
+                        "dogs 🐕",
                         "to read",
                         "⭐️"
                     ],
                     "tagTypeLookup": {
                         "cute": 0,
+                        "dogs 🐕": 0,
                         "to read": 0,
                         "⭐️": 0
-                    }
+                    },
+                    "coloredTags": [
+                        "cute",
+                        "to read",
+                        "⭐️"
+                    ]
                 }
             },
             "tagsInPublicationsItems": {},
@@ -5253,20 +5264,20 @@
         "columns": [
             {
                 "field": "title",
-                "fraction": 0.45,
+                "fraction": 0.3500000000000001,
                 "isVisible": true,
                 "minFraction": 0.1,
                 "sort": "asc"
             },
             {
                 "field": "creator",
-                "fraction": 0.3,
+                "fraction": 0.30000000000000004,
                 "isVisible": true,
                 "minFraction": 0.05
             },
             {
                 "field": "date",
-                "fraction": 0.2,
+                "fraction": 0.1347426470588235,
                 "isVisible": true,
                 "minFraction": 0.05
             },
@@ -5332,8 +5343,8 @@
             },
             {
                 "field": "dateModified",
-                "fraction": 0.1,
-                "isVisible": false,
+                "fraction": 0.16066176470588237,
+                "isVisible": true,
                 "minFraction": 0.05
             },
             {
@@ -5350,12 +5361,15 @@
             },
             {
                 "field": "attachment",
-                "fraction": 0.05,
+                "fraction": 0.054595588235294125,
                 "isVisible": true,
                 "minFraction": 0.05
             }
         ],
-        "version": "1.4.3"
+        "version": "1.5.0",
+        "useDarkModeForContent": true,
+        "isReaderSidebarOpen": true,
+        "readerSidebarWidth": 248.09765625
     },
     "query": {
         "current": {
@@ -5380,7 +5394,7 @@
     },
     "traffic": {
         "SCHEMA": {
-            "lastRequest": 1715089130303,
+            "lastRequest": 1723130509896,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_SCHEMA",
@@ -17457,11 +17471,11 @@
                     }
                 }
             },
-            "lastSuccess": 1715089130639,
+            "lastSuccess": 1723130510461,
             "errorCount": 0
         },
         "LIBRARY_SETTINGS": {
-            "lastRequest": 1715089130305,
+            "lastRequest": 1723130509898,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_LIBRARY_SETTINGS",
@@ -17533,11 +17547,11 @@
                     "response": {}
                 }
             },
-            "lastSuccess": 1715089130778,
+            "lastSuccess": 1723130510597,
             "errorCount": 0
         },
         "COLLECTIONS_IN_LIBRARY": {
-            "lastRequest": 1715089130305,
+            "lastRequest": 1723130509898,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLLECTIONS_IN_LIBRARY",
@@ -17934,11 +17948,11 @@
                 },
                 "totalResults": 8
             },
-            "lastSuccess": 1715089130846,
+            "lastSuccess": 1723130510655,
             "errorCount": 0
         },
         "TAGS_IN_COLLECTION": {
-            "lastRequest": 1715089130881,
+            "lastRequest": 1723130510694,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_TAGS_IN_COLLECTION",
@@ -17952,6 +17966,10 @@
                 "tags": [
                     {
                         "tag": "cute",
+                        "type": 0
+                    },
+                    {
+                        "tag": "dogs 🐕",
                         "type": 0
                     },
                     {
@@ -17980,6 +17998,23 @@
                             "meta": {
                                 "type": 0,
                                 "numItems": 7
+                            }
+                        },
+                        {
+                            "tag": "dogs 🐕",
+                            "links": {
+                                "self": {
+                                    "href": "https://api.zotero.org/users/1/tags/dogs+%F0%9F%90%95",
+                                    "type": "application/json"
+                                },
+                                "alternate": {
+                                    "href": "http://zotero.org/users/1/tags/dogs+%F0%9F%90%95",
+                                    "type": "text/html"
+                                }
+                            },
+                            "meta": {
+                                "type": 0,
+                                "numItems": 3
                             }
                         },
                         {
@@ -18047,13 +18082,13 @@
                     },
                     "response": {}
                 },
-                "totalResults": 3
+                "totalResults": 4
             },
-            "lastSuccess": 1715089131182,
+            "lastSuccess": 1723130510951,
             "errorCount": 0
         },
         "COLORED_TAGS_IN_COLLECTION": {
-            "lastRequest": 1715089130881,
+            "lastRequest": 1723130510695,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_COLORED_TAGS_IN_COLLECTION",
@@ -18160,11 +18195,11 @@
                 },
                 "totalResults": 3
             },
-            "lastSuccess": 1715089131171,
+            "lastSuccess": 1723130510979,
             "errorCount": 0
         },
         "FETCH_ITEM_DETAILS": {
-            "lastRequest": 1715089130883,
+            "lastRequest": 1723130510696,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_FETCH_ITEM_DETAILS",
@@ -18462,11 +18497,11 @@
                 },
                 "totalResults": 1
             },
-            "lastSuccess": 1715089131639,
+            "lastSuccess": 1723130511008,
             "errorCount": 0
         },
         "ITEMS_IN_COLLECTION": {
-            "lastRequest": 1715089130897,
+            "lastRequest": 1723130510710,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_ITEMS_IN_COLLECTION",
@@ -18753,12 +18788,15 @@
                     },
                     {
                         "key": "Z6HA62VJ",
-                        "version": 219,
+                        "version": 310,
                         "itemType": "note",
                         "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\n<p></p>\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\n</div>",
                         "tags": [
                             {
                                 "tag": "cute"
+                            },
+                            {
+                                "tag": "dogs 🐕"
                             },
                             {
                                 "tag": "⭐️"
@@ -18769,7 +18807,7 @@
                         ],
                         "relations": {},
                         "dateAdded": "2023-01-13T10:54:44Z",
-                        "dateModified": "2023-01-17T15:34:27Z",
+                        "dateModified": "2024-08-08T15:20:25Z",
                         "@@meta@@": {
                             "numChildren": 3
                         },
@@ -18792,9 +18830,10 @@
                             "creator": "",
                             "date": "",
                             "dateAdded": "1/13/2023, 11:54:44 AM",
-                            "dateModified": "1/17/2023, 4:34:27 PM",
+                            "dateModified": "8/8/2024, 5:20:25 PM",
                             "emojis": [
-                                "⭐️"
+                                "⭐️",
+                                "🐕"
                             ],
                             "iconName": "note",
                             "itemType": "Note",
@@ -19305,7 +19344,7 @@
                         },
                         {
                             "key": "Z6HA62VJ",
-                            "version": 219,
+                            "version": 310,
                             "library": {
                                 "type": "user",
                                 "id": 1,
@@ -19332,12 +19371,15 @@
                             },
                             "data": {
                                 "key": "Z6HA62VJ",
-                                "version": 219,
+                                "version": 310,
                                 "itemType": "note",
                                 "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\n<p></p>\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\n</div>",
                                 "tags": [
                                     {
                                         "tag": "cute"
+                                    },
+                                    {
+                                        "tag": "dogs 🐕"
                                     },
                                     {
                                         "tag": "⭐️"
@@ -19348,7 +19390,7 @@
                                 ],
                                 "relations": {},
                                 "dateAdded": "2023-01-13T10:54:44Z",
-                                "dateModified": "2023-01-17T15:34:27Z"
+                                "dateModified": "2024-08-08T15:20:25Z"
                             }
                         },
                         {
@@ -19608,11 +19650,11 @@
                 },
                 "totalResults": 7
             },
-            "lastSuccess": 1715089131854,
+            "lastSuccess": 1723130511169,
             "errorCount": 0
         },
         "RELATED_ITEMS": {
-            "lastRequest": 1715089131671,
+            "lastRequest": 1723130511035,
             "ongoing": [],
             "last": {
                 "type": "RECEIVE_RELATED_ITEMS",
@@ -19620,7 +19662,7 @@
                 "libraryKey": "u1",
                 "items": []
             },
-            "lastSuccess": 1715089131675,
+            "lastSuccess": 1723130511035,
             "errorCount": 0
         }
     },

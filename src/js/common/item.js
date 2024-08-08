@@ -1,4 +1,4 @@
-import { cleanDOI, cleanURL, get, isOnlyEmoji } from '../utils';
+import { cleanDOI, cleanURL, get, containsEmoji, extractEmoji } from '../utils';
 import { noteAsTitle, itemTypeLocalized, dateLocalized } from './format';
 import { itemTypesWithIcons } from '../../../data/item-types-with-icons.json';
 
@@ -98,19 +98,29 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
 		item[Symbol.for('meta')].parsedDate :
 		'';
+
+	const colors = [];
 	const emojis = [];
-	const colors = item.tags.reduce(
-		(acc, { tag }) => {
-			if(tag in tagColors) {
-				if(isOnlyEmoji(tag)) {
-					emojis.push(tag);
-				} else {
-					acc.push(tagColors[tag]);
-				}
-			}
-			return acc;
-		}, []
-	);
+
+	// colored tags, including emoji tags, ordered by position (value is an array ordered by position)
+	tagColors.value.forEach(({ name, color }) => {
+		if(!item.tags.some(({ tag }) => tag === name)) {
+			return;
+		}
+		if (containsEmoji(name)) {
+			emojis.push(extractEmoji(name));
+		} else {
+			colors.push(color);
+		}
+	});
+
+	// non-colored tags containing emoji, sorted alphabetically (item.tags should already be sorted)
+	item.tags.forEach(({ tag }) => {
+		if (!(tag in tagColors.lookup) && containsEmoji(tag)) {
+			emojis.push(extractEmoji(tag));
+		}
+	});
+
 	const createdByUser = item[Symbol.for('meta')] && item[Symbol.for('meta')].createdByUser ?
 		item[Symbol.for('meta')].createdByUser.username :
 		'';
