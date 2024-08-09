@@ -8,6 +8,7 @@ import { getLastPageIndexSettingKey } from '../common/item';
 import { Spinner } from 'web-common/components';
 import { useFloating, flip, shift } from '@floating-ui/react-dom';
 import PropTypes from 'prop-types';
+import strings from "pdf-reader/src/en-us.strings.js";
 
 import { annotationItemToJSON } from '../common/annotations.js';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
@@ -17,7 +18,6 @@ import {
 } from '../actions';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { useFetchingState } from '../hooks';
-import { strings } from '../constants/strings.js';
 import TagPicker from './item-details/tag-picker.jsx';
 import { READER_CONTENT_TYPES } from '../constants/reader.js';
 import Portal from './portal';
