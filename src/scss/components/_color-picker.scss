@@ -42,6 +42,8 @@
 	}
 
 	.color-picker-option {
+		border: none;
+
 		@include mouse-and-bp-up(md) {
 			width: 100%;
 			height: 100%;

@@ -104,6 +104,7 @@ const TagColorManager = forwardRef(({ onToggleTagManager, tag }, outerRef) => {
 							selectedColor={tagColor}
 							colors={colors}
 							onColorPicked={handleColorPicked}
+							useTagColorLookup={ true }
 						/>
 					</div>
 					<label className="col-form-label">Position</label>

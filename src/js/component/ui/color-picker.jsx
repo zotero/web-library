@@ -8,11 +8,12 @@ import { isTriggerEvent, pick } from 'web-common/utils';
 
 import { useEffect } from 'react';
 import colorNames from '../../constants/color-names';
+import colorTagLookup from '../../constants/color-tag-lookup';
 
 const gridCols = 3;
 
 const ColorPicker = props => {
-	const { colors, onKeyDown, onColorPicked, selectedColor, tabIndex = 0, ...rest } = props;
+	const { colors, onKeyDown, onColorPicked, selectedColor, tabIndex = 0, useTagColorLookup = false, ...rest } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const wasOpen = usePrevious(isOpen);
 	const ref = useRef(null);
@@ -67,6 +68,11 @@ const ColorPicker = props => {
 		}
 	}, [focusNext, focusPrev, handleClick]);
 
+	const lookup = useCallback(
+		color => useTagColorLookup ? `var(${colorTagLookup[color]})` || color : color,
+		[useTagColorLookup]
+	);
+
 	useEffect(() => {
 		if(isOpen && !wasOpen) {
 			update();
@@ -92,7 +98,7 @@ const ColorPicker = props => {
 				title={ colorNames[selectedColor] || selectedColor }
 				tabIndex={ -1 }
 				className="color-swatch"
-				style={{ backgroundColor: selectedColor } }
+				style={{ backgroundColor: lookup(selectedColor) } }
 			>
 			</Button>
 			<Button
@@ -122,7 +128,7 @@ const ColorPicker = props => {
 					onClick={ handleClick }
 					onKeyDown={ handleKeyDown }
 					role="option"
-					style={{ backgroundColor: color }}
+					style={{ backgroundColor: lookup(color) }}
 					tabIndex={-2}
 					title={ colorNames[color] || color }
 				/>
@@ -138,7 +144,8 @@ ColorPicker.propTypes = {
     onColorPicked: PropTypes.func,
     onKeyDown: PropTypes.func,
     selectedColor: PropTypes.string,
-    tabIndex: PropTypes.number
+    tabIndex: PropTypes.number,
+	useTagColorLookup: PropTypes.bool
 };
 
 export default memo(ColorPicker);
