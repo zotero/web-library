@@ -1,5 +1,5 @@
 import { getPort, getServer } from '../utils/fixed-state-server.js';
-import { BrowserStackManager, mobileContexts } from '../utils/browserstack.js';
+import { BrowserStackManager, mobileContexts, singleColumnContexts } from '../utils/browserstack.js';
 import { screenshot } from '../utils/screenshot.js';
 import { expect } from '@playwright/test';
 import { waitForLoad } from '../utils/common.js';
@@ -39,6 +39,17 @@ describe('Mobile Snapshots', () => {
 			const itemsList = page.getByRole('list', { name: 'items' });
 			expect(await itemsList.getByRole('listitem').count()).toBe(7);
 			expect(await screenshot(page, `mobile-items-list-${browserName}`)).toBeTruthy();
+
+			if (singleColumnContexts.includes(browserName)) {
+				// on small screens, enable search mode and take a screenshot
+				const toggleSearch = await page.getByRole('button', { name: 'Toggle search' });
+				await toggleSearch.click();
+				expect(await page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeVisible();
+				// avoid flaky screenshot with half-faded search bar
+				await page.waitForFunction(() => document.querySelector('.searchbar').classList.contains('fade-enter-done'));
+				expect(await screenshot(page, `mobile-items-list-search-enabled-${browserName}`)).toBeTruthy();
+			}
+
 			await page.close();
 		});
 

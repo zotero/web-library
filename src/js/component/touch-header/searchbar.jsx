@@ -4,7 +4,6 @@ import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { Button } from 'web-common/components';
 
 import Search from '../../component/search';
-import { ItemActionsTouch } from '../item/actions'
 import { navigateExitSearch, triggerSearchMode, } from '../../actions';
 
 const SearchBar = () => {
@@ -33,7 +32,6 @@ const SearchBar = () => {
 				<Button onClick={ handleCancelSearchClick } className="btn-link">
 					Cancel
 				</Button>
-				<ItemActionsTouch />
 			</div>
 		</CSSTransition>
 	);
