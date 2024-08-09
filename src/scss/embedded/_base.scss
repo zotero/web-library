@@ -21,6 +21,7 @@
 	font-family: $font-family-base;
 	cursor: default;
 	user-select: none;
+	-webkit-tap-highlight-color: transparent;
 
 	@include touch-or-bp-down(sm) {
 		line-height: $line-height-base-mobile;
@@ -35,8 +36,6 @@
 	::after {
 		box-sizing: border-box;
 	}
-
-	-webkit-tap-highlight-color: transparent;
 
 	@include bp-down(sm) {
 		font-size: $font-size-mobile; // 1rem

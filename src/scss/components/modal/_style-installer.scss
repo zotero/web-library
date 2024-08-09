@@ -58,8 +58,8 @@
 			padding: $space-xs 0;
 
 			@include touch-or-bp-down(sm) {
-				@include hairline(top, "color-shade-4", $start: ($space-lg + $default-padding-x-touch), $end: -16px);
 				padding-top: $space-xs + $border-width;
+				@include hairline(top, "color-shade-4", $start: ($space-lg + $default-padding-x-touch), $end: -16px);
 			}
 
 			@include mouse-and-bp-up(md) {
@@ -68,8 +68,8 @@
 
 			&:first-child {
 				@include touch-or-bp-down(sm) {
-					@include hairline-disabled(top);
 					padding-top: $space-xs;
+					@include hairline-disabled(top);
 				}
 
 				@include mouse-and-bp-up(md) {

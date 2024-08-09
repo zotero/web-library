@@ -3,8 +3,6 @@
 // --------------------------------------------------
 
 .searchbar {
-	@include hairline(top, "color-shade-4");
-	@include hairline(bottom, "color-shade-4");
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -15,6 +13,8 @@
 	padding: 0 $default-padding-x-touch;
 	background: var(--color-toolbar);
 	z-index: $z-index-search-bar;
+	@include hairline(top, "color-shade-4");
+	@include hairline(bottom, "color-shade-4");
 
 	.input-group.search {
 		margin: 0 $default-padding-x-touch 0 (-$default-padding-x-touch + $space-min);

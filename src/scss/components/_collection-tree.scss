@@ -32,9 +32,9 @@
 
 
 		@include touch-or-bp-down(sm) {
-			@include hairline(top, "color-shade-4");
 			padding: $border-width $collection-tree-padding-x-touch 0;
 			background: var(--material-toolbar);
+			@include hairline(top, "color-shade-4");
 		}
 
 		@include mouse-and-bp-up(md) {

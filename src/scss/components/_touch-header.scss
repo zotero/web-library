@@ -9,9 +9,9 @@
 	color: $touch-header-color;
 	height: $touch-header-height;
 	position: relative;
+	padding: $border-width 0;
 	@include hairline(top, "color-shade-4");
 	@include hairline(bottom, "color-shade-4");
-	padding: $border-width 0;
 
 	&.darker {
 		background-color: $touch-header-darker-bg;

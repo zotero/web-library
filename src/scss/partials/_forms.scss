@@ -61,8 +61,8 @@ fieldset {
 			}
 
 			&:not(:last-child) {
-				@include hairline-disabled(bottom);
 				padding-bottom: 0;
+				@include hairline-disabled(bottom);
 			}
 		}
 	}
@@ -336,10 +336,10 @@ textarea {
 .radios,
 .files {
 	@include touch-or-bp-down(sm) {
-		@include hairline-disabled(top);
-		@include hairline-disabled(bottom);
 		display: block;
 		padding: 0;
+		@include hairline-disabled(top);
+		@include hairline-disabled(bottom);
 	}
 }
 
@@ -358,8 +358,8 @@ textarea {
 		}
 
 		&:not(:last-child) {
-			@include hairline-disabled(bottom);
 			padding-bottom: 0;
+			@include hairline-disabled(bottom);
 		}
 
 		label,
@@ -440,14 +440,13 @@ input[type="checkbox"] {
 		height: $space-md;
 		background-color: $input-bg;
 		border: $input-border-width solid $checkbox-border-touch;
+		font-size: 16px;
+		margin: 2px 6px 0 0;
 
 		&:checked {
 			border: 0;
 			background: image-url("icons/tick-white-16.svg") no-repeat 0 0 $checkbox-checked-bg-touch;
 		}
-
-		font-size: 16px;
-		margin: 2px 6px 0 0;
 	}
 
 	@include mouse-keyboard-and-bp-up(md) {

@@ -69,7 +69,9 @@ $-colors-bg-lookup: (
 	$height: map-get(map-get($specs, $side), height);
 	$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
 
-	position: relative;
+	& {
+		position: relative;
+	}
 
 	#{$pseudo-element} {
 		content: "";

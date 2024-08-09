@@ -20,8 +20,8 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		@include hairline-disabled(right);
 		overflow: visible; // Allow touch-tag-selector to overflow
+		@include hairline-disabled(right);
 	}
 
 	@include mouse-and-bp-up(md) {

@@ -149,8 +149,8 @@
 	}
 
 	@include touch-and-bp-only(lg) {
-		@include hairline(left, "color-shade-4");
 		flex: 0 0 $item-details-width-lg-touch;
+		@include hairline(left, "color-shade-4");
 	}
 
 	@include mouse-and-bp-only(lg) {

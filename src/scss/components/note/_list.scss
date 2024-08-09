@@ -10,8 +10,8 @@
 			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
 
 			&:first-child {
-				@include hairline-disabled(top);
 				padding-top: $note-list-padding-top - $border-width;
+				@include hairline-disabled(top);
 			}
 
 			.icon-note {

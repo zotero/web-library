@@ -18,9 +18,9 @@
 		padding: $input-btn-padding-y-touch $default-padding-x-touch;
 
 		&.hairline-top {
-			@include hairline(top, "color-shade-4");
 			border-top: none;
 			padding-top: $input-btn-padding-y-touch + 2 * $input-border-width;
+			@include hairline(top, "color-shade-4");
 		}
 
 		&.hairline-start-padding {

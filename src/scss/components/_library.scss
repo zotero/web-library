@@ -151,6 +151,7 @@
 
 				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view on tablets
 					.center-axis {
+						animation: fade-in-search-results $fade-transition-duration ease-in-out forwards;
 						@keyframes fade-in-search-results {
 							0% {
 								opacity: 0;
@@ -160,8 +161,6 @@
 								opacity: 1;
 							}
 						}
-
-						animation: fade-in-search-results $fade-transition-duration ease-in-out forwards;
 					}
 				}
 	  	}

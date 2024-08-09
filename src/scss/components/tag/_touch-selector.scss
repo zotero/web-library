@@ -5,18 +5,21 @@
 .touch-tag-selector {
 	display: flex;
 	flex-direction: column;
-	@include hairline(right, "color-shade-4");
-	position: absolute; // Override position relative from hairline mixin
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
 	z-index: $z-index-touch-tag-selector;
 	background-color: $touch-tag-selector-pane-bg;
+	@include hairline(right, "color-shade-4");
+
+	& {
+		position: absolute; // Override position relative from hairline mixin
+	}
 
 	@include bp-down(xs) {
-		@include hairline-disabled(right);
 		top: -$touch-header-height - $navbar-height-xs;
+		@include hairline-disabled(right);
 	}
 
 }
@@ -24,9 +27,9 @@
 .touch-tag-selector, .tag-manager-list-container {
 	.touch-header {
 		@include bp-down(xs) {
-			@include hairline-disabled(top);
 			padding-top: 0;
 			height: $line-height-large-touch + $border-width;
+			@include hairline-disabled(top);
 		}
 	}
 

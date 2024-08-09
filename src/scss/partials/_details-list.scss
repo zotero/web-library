@@ -24,8 +24,8 @@
 
 		&:first-child {
 			@include touch-or-bp-down(sm) {
-				@include hairline-disabled(top);
 				padding-top: 0;
+				@include hairline-disabled(top);
 			}
 		}
 
