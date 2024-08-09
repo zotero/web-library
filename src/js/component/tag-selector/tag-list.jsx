@@ -13,6 +13,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
 import { maxColoredTags } from '../../constants/constants';
 import { useTags } from '../../hooks';
+import { makeRequestsUpTo } from '../../utils';
 
 const PAGESIZE = 100;
 
@@ -95,7 +96,7 @@ TagDotMenu.displayName = 'TagDotMenu';
 
 const TagListItem = memo(props => {
 	const { className, dotMenuFor, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev,
-	isManager, isSelected = false, onDotMenuToggle = noop, style, tag, toggleTag, ...rest } = props;
+	isManager, isSelected = false, onDotMenuToggle = noop, style, tag, toggleTag, index, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const id = useId();
 
@@ -134,6 +135,7 @@ const TagListItem = memo(props => {
 
 	return (
 		<li
+			data-index={ index }
 			aria-labelledby={ id }
 			tabIndex={ tag ? -2 : null }
 			data-tag={ tag ? tag.tag : null }
@@ -201,6 +203,7 @@ TagListItem.propTypes = {
 
 const TagListRow = memo(({ data, index, ...rest }) => (
 	<TagListItem
+		index={ index }
 		tag={ data.tags?.[index] }
 		className={ cx({ odd: (index + 1) % 2 === 1 }) }
 		{ ...omit(data, ['tags', 'index']) }
@@ -220,15 +223,17 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 	const dispatch = useDispatch();
 	const loader = useRef(null);
 
-	const { duplicatesCount, hasMoreItems, isFetchingColoredTags, isFetching, pointer, requests,
-		tags, totalResults, selectedTags, hasChecked, hasCheckedColoredTags } = useTags(!isManager);
+	const { duplicatesCount, hasMoreItems, isFetchingColoredTags, isFetching, pointer,
+		requests, tags, totalResults, selectedTags, hasChecked, hasCheckedColoredTags } = useTags(!isManager);
 
 	const listRef = useRef(null);
+	const requestedPointer = useRef([]);
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
 	const isFilteringOrHideAutomatic = (tagsSearchString !== '' || tagsHideAutomatic);
+	const wasFilteringOrHideAutomatic = usePrevious(isFilteringOrHideAutomatic);
 	const selectedTagsCount = selectedTags.length;
 	const prevHasChecked = usePrevious(hasChecked);
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev } = useFocusManager(listRef);
@@ -251,16 +256,26 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 		return requests.some(r => index >= r[0] && index < r[1]); // loading
 	}, [requests, tags]);
 
-	const handleLoadMore = useCallback((startIndex, stopIndex) => {
-		// pagination only happens if filtering disabled
-		// @NOTE: adding duplicatesCount here is a band-aid rather than a proper fix. Tags, as
-		// 		  returned by api, contin duplicates. These are counted and removed from the
+
+
+	const handleLoadMore = useCallback((_startIndex, stopIndex) => {
+		// @NOTE: Pagination only happens if filtering disabled
+		// @NOTE: Fetches entire pages of results, paralleled as needed, rather than what
+		// 		  InfiniteLoader requested.
+		// @NOTE: Adding duplicatesCount here is a band-aid rather than a proper fix. Tags, as
+		// 		  returned by api, contain duplicates. These are counted and removed from the
 		// 		  displayed list, which creates disrepentancy between list index and remote index so
 		// 		  when infinite scroll asks for rows n through m, we actaully fetch n through m +
 		// 		  duplicates count to be on the safe side. This works for as long as m + duplicates
 		// 		  is less than maximum page allowed by the API.
-		dispatch(fetchTags(startIndex, stopIndex + duplicatesCount));
-	}, [duplicatesCount, dispatch]);
+
+		// prepare batches from pointer to stopIndex + duplicatesCount
+		let maxWanted = stopIndex + duplicatesCount;
+		let nextRequests = makeRequestsUpTo(pointer, maxWanted, PAGESIZE).filter(r => !requestedPointer.current.some(rp => rp.start === r.start && rp.stop === r.stop));
+		requestedPointer.current.push(...nextRequests);
+
+		return Promise.all(nextRequests.map(r => dispatch(fetchTags(r.start, r.stop))))
+	}, [dispatch, duplicatesCount, pointer]);
 
 	const handleDotMenuToggle = useCallback(ev => {
 		if(ev === null) {
@@ -281,22 +296,37 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 		// usually because tags have been discarded after edit or source has changed
 		if(!hasChecked && (prevHasChecked === true || typeof(prevHasChecked) === 'undefined')) {
 			dispatch(fetchTags(0, PAGESIZE - 1));
+			requestedPointer.current = [];
 		}
 	}, [dispatch, hasChecked, prevHasChecked, isFetching]);
 
 	useEffect(() => {
 		// if we're filtering, we need to prefetch all matching tags under spinner
 		// this is because filtering happens locally and we don't know the number of total results
-		if(isFilteringOrHideAutomatic && !isFetching && hasMoreItems) {
-			dispatch(fetchTags(pointer, pointer + PAGESIZE - 1));
+		if (hasMoreItems && (isFilteringOrHideAutomatic && !wasFilteringOrHideAutomatic))  {
+			Promise.all(makeRequestsUpTo(pointer, totalResults, PAGESIZE).map(r => dispatch(fetchTags(r.start, r.stop))));
 		}
-	}, [dispatch, isFilteringOrHideAutomatic, isFetching, hasMoreItems, pointer]);
+	}, [dispatch, hasMoreItems, isFilteringOrHideAutomatic, pointer, totalResults, wasFilteringOrHideAutomatic]);
 
 	useEffect(() => {
 		if(!hasCheckedColoredTags && !isFetchingColoredTags) {
 			dispatch(checkColoredTags());
 		}
 	}, [dispatch, hasCheckedColoredTags, isFetchingColoredTags]);
+
+	let itemCount = isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0;
+	let previousItemCount = usePrevious(itemCount);
+
+	useEffect(() => {
+		// As more pages are fetched, duplicates counter goes up causing itemCount goes down.
+		// Infinite loader gets confused by this and ends up displaying rows that are not there.
+		// This is a workaround to reset the cache when itemCount changes.
+		if (typeof previousItemCount !== 'undefined' && itemCount !== previousItemCount) {
+			if (loader.current) {
+				loader.current.resetloadMoreItemsCache(true);
+			}
+		}
+	}, [itemCount, previousItemCount]);
 
 	return (
 		<div className="scroll-container">
@@ -306,7 +336,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 					<InfiniteLoader
 						ref={ loader }
 						isItemLoaded={ handleIsItemLoaded }
-						itemCount={ isFilteringOrHideAutomatic ? tags.length : totalResults }
+						itemCount={ itemCount }
 						loadMoreItems={ handleLoadMore }
 					>
 						{({ onItemsRendered, ref }) => (
@@ -324,7 +354,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 								<List
 									className="tag-selector-list"
 									height={ height }
-									itemCount={ isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0 }
+									itemCount={ itemCount }
 									itemData={ { tags, toggleTag, isManager, focusNext, focusPrev,
 										focusDrillDownNext, focusDrillDownPrev, dotMenuFor,
 										onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }

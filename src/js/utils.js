@@ -490,6 +490,16 @@ const extractEmoji = str => {
 
 const isReaderCompatibleBrowser = () => typeof structuredClone === "function";
 
+const makeRequestsUpTo = (start, max, pageSize = 100) => {
+	let nextPointer = start;
+	const pages = [];
+	while (nextPointer < max) {
+		pages.push({ start: nextPointer, stop: nextPointer + pageSize - 1 });
+		nextPointer += pageSize;
+	}
+	return pages;
+};
+
 export {
     applyChangesToVisibleColumns,
     cede,
@@ -524,6 +534,7 @@ export {
 	isReaderCompatibleBrowser,
     JSONTryParse,
     localStorageWrapper,
+	makeRequestsUpTo,
     mapRelationsToItemKeys,
     openDelayedURL,
     parseBase64File,

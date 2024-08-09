@@ -7,7 +7,7 @@ import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import { connectionIssues, checkColoredTags, fetchTags, navigate } from '../../actions';
-import { containsEmoji, get } from '../../utils';
+import { containsEmoji, get, makeRequestsUpTo } from '../../utils';
 import { ITEM } from '../../constants/dnd';
 import { useSourceSignature, useTags } from '../../hooks';
 
@@ -69,7 +69,7 @@ const TagSelectorItems = () => {
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
 	const tagFocusNext = useRef({ tag: null, isQueryChanged: false });
-	const { isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
+	const { hasMoreItems, isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const prevTagColors = usePrevious(tagColors);
@@ -83,9 +83,15 @@ const TagSelectorItems = () => {
 			case 'top': return get(state, ['traffic', 'TAGS_IN_TOP_ITEMS', 'errorCount'], 0);
 		}
 	});
+	const isFiltering = tagsSearchString.length > 0 || tagsHideAutomatic;
+	const wasFiltering = usePrevious(isFiltering);
 	const prevErrorCount = usePrevious(errorCount);
 
 	const maybeLoadMore = useCallback(() => {
+		if(isFiltering) {
+			// disable fetch-as-you-scroll mechanism when filtering, we fetch all tags in an effect instead
+			return;
+		}
 		const containerHeight = containerRef.current?.getBoundingClientRect?.().height ?? 0;
 		const totalHeight = listRef.current?.getBoundingClientRect?.().height ?? 0;
 		const scrollProgress = (containerRef.current?.scrollTop + containerHeight) / totalHeight;
@@ -93,7 +99,7 @@ const TagSelectorItems = () => {
 		if(pointer && scrollProgress > 0.5 && !isFetching && ((totalResults > pointer) || (totalResults === null))) {
 			dispatch(fetchTags(pointer, pointer + PAGE_SIZE - 1));
 		}
-	}, [dispatch, isFetching, pointer, totalResults]);
+	}, [dispatch, isFetching, isFiltering, pointer, totalResults]);
 
 	const toggleTag = useCallback(tagName => {
 		const index = selectedTags.indexOf(tagName);
@@ -131,12 +137,6 @@ const TagSelectorItems = () => {
 	}, [focusNext, focusPrev, handleClick]);
 
 	useEffect(() => {
-		if(totalResults === null) {
-			dispatch(fetchTags(0, PAGE_SIZE - 1));
-		}
-	}, [dispatch, totalResults]);
-
-	useEffect(() => {
 		if(!hasChecked && !isFetching) {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
 		}
@@ -151,8 +151,12 @@ const TagSelectorItems = () => {
 	}, [dispatch, sourceSignature, prevTagColors, tagColors, hasCheckedColoredTags, isFetchingColoredTags]);
 
 	useEffect(() => {
-		setTimeout(maybeLoadMore, 0);
-	}, [maybeLoadMore, tagsHideAutomatic, tagsSearchString, pointer]);
+		// if we're filtering, we need to prefetch all matching tags under spinner
+		// this is because filtering happens locally and we don't know the number of total results
+		if (hasMoreItems && (isFiltering && !wasFiltering)) {
+			Promise.all(makeRequestsUpTo(pointer, totalResults, PAGE_SIZE).map(r => dispatch(fetchTags(r.start, r.stop))));
+		}
+	}, [dispatch, hasMoreItems, isFiltering, pointer, totalResults, wasFiltering]);
 
 	useEffect(() => {
 		if(errorCount > 3 && prevErrorCount === 3) {

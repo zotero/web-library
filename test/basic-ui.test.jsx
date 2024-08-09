@@ -19,6 +19,7 @@ import tagResults from './fixtures/response/zotero-user-tag-results.json';
 import tagResultsTags from './fixtures/response/zotero-user-tag-results-tags.json';
 import itemTypeFieldsFilm from './fixtures/response/item-type-fields-film.json';
 import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-types-film.json';
+import tagsSecondPage from './fixtures/response/zotero-user-tags-second-page.json';
 
 const zoteroUserState = JSONtoState(zoteroUserStateRaw);
 applyAdditionalJestTweaks();
@@ -160,6 +161,14 @@ describe('Basic UI', () => {
 		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
 		await waitForPosition();
 
+		server.use(
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json(tagsSecondPage, {
+					headers: { 'Total-Results': tagsSecondPage.length }
+				});
+			}),
+		);
+
 		const filterTagsInput = screen.getByRole('searchbox', { name: 'Filter Tags' });
 
 		await user.type(filterTagsInput, 'Film');
@@ -169,7 +178,7 @@ describe('Basic UI', () => {
 			.filter(tb => tb.getAttribute('title') !== 'Collapse Tag Selector')
 			.filter(tb => tb.getAttribute('title') !== 'Tag Selector Options');
 
-		expect(tagButtons).toHaveLength(8);
+		await waitFor(() => expect(tagButtons).toHaveLength(11));
 	});
 
 	test('Filtering items by tag', async () => {

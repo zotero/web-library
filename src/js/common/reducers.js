@@ -195,7 +195,7 @@ const populateTags = (state, newTags, action) => {
 	return {
 		...data,
 		duplicatesCount,
-		pointer,
+		pointer: Math.max(pointer ?? 0, state.pointer ?? 0),
 		tags,
 		tagTypeLookup,
 		totalResults,

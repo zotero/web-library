@@ -1,0 +1,1566 @@
+[
+    {
+        "tag": "Lee, Robert E",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Lee%2C+Robert+E",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Lee%2C+Robert+E",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Lincoln, Abraham",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Lincoln%2C+Abraham",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Lincoln%2C+Abraham",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Love",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Love",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Love",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Lymph Node Excision",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Lymph+Node+Excision",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Lymph+Node+Excision",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Lymphocyte transformation",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Lymphocyte+transformation",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Lymphocyte+transformation",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Male",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Male",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Male",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Materials",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Materials",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Materials",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "methods",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/methods",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/methods",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Microencapsulation",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Microencapsulation",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Microencapsulation",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Microscopy",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Microscopy",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Microscopy",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Microscopy, Electron, Scanning",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Microscopy%2C+Electron%2C+Scanning",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Microscopy%2C+Electron%2C+Scanning",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Microspheres",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Microspheres",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Microspheres",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Middle Aged",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Middle+Aged",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Middle+Aged",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Missionaries",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Missionaries",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Missionaries",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Molecular biology",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Molecular+biology",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Molecular+biology",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Moriarty, Professor (Fictitious character)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Moriarty%2C+Professor+%28Fictitious+character%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Moriarty%2C+Professor+%28Fictitious+character%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Motion pictures and the conflict",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Motion+pictures+and+the+conflict",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Motion+pictures+and+the+conflict",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Murder",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Murder",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Murder",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Murderers -- Fiction.",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Murderers+--+Fiction.",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Murderers+--+Fiction.",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Muslims",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Muslims",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Muslims",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Neoplasm Recurrence, Local",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Neoplasm+Recurrence%2C+Local",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Neoplasm+Recurrence%2C+Local",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Neoplasm Staging",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Neoplasm+Staging",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Neoplasm+Staging",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "New York Times",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/New+York+Times",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/New+York+Times",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Newspapers",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Newspapers",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Newspapers",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Nineteen eighty-four",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Nineteen+eighty-four",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Nineteen+eighty-four",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Obama, Barack",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Obama%2C+Barack",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Obama%2C+Barack",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Oncology Service, Hospital",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Oncology+Service%2C+Hospital",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Oncology+Service%2C+Hospital",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Oregon",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Oregon",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Oregon",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Organ Size",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Organ+Size",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Organ+Size",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Orwell, George",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Orwell%2C+George",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Orwell%2C+George",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Osseointegration",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Osseointegration",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Osseointegration",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Osteogenesis",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Osteogenesis",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Osteogenesis",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Pathophysiology",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Pathophysiology",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Pathophysiology",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "People with mental disabilities",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/People+with+mental+disabilities",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/People+with+mental+disabilities",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Physicians",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Physicians",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Physicians",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Plants, Edible",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Plants%2C+Edible",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Plants%2C+Edible",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Poetry",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Poetry",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Poetry",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Poland",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Poland",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Poland",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Popular music",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Popular+music",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Popular+music",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Porosity",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Porosity",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Porosity",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Practice Guidelines as Topic",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Practice+Guidelines+as+Topic",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Practice+Guidelines+as+Topic",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Presidents",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Presidents",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Presidents",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Prices (Fares, Fees and Rates)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Prices+%28Fares%2C+Fees+and+Rates%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Prices+%28Fares%2C+Fees+and+Rates%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Prognosis",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Prognosis",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Prognosis",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Puerto Rico",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Puerto+Rico",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Puerto+Rico",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Rats",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Rats",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Rats",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Registers of births, etc",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Registers+of+births%2C+etc",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Registers+of+births%2C+etc",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Retrospective Studies",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Retrospective+Studies",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Retrospective+Studies",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Righteous gentiles in the Holocaust",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Righteous+gentiles+in+the+Holocaust",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Righteous+gentiles+in+the+Holocaust",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Ríos, Julián",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/R%C3%ADos%2C+Juli%C3%A1n",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/R%C3%ADos%2C+Juli%C3%A1n",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Robert Edward",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Robert+Edward",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Robert+Edward",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "robertdowneyjr",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/robertdowneyjr",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/robertdowneyjr",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Robotics",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Robotics",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Robotics",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Schindler, Oskar",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Schindler%2C+Oskar",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Schindler%2C+Oskar",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Schindler's list",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Schindler%27s+list",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Schindler%27s+list",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Schindler's list (Motion picture)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Schindler%27s+list+%28Motion+picture%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Schindler%27s+list+%28Motion+picture%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Science fiction films",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Science+fiction+films",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Science+fiction+films",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Sherlock Holmes films",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Sherlock+Holmes+films",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Sherlock+Holmes+films",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "sherlockholmes",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/sherlockholmes",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/sherlockholmes",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Skin",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Skin",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Skin",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Social conditions",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Social+conditions",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Social+conditions",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Speeches and Statements",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Speeches+and+Statements",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Speeches+and+Statements",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Spielberg, Steven",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Spielberg%2C+Steven",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Spielberg%2C+Steven",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Survival Rate",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Survival+Rate",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Survival+Rate",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Sus scrofa",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Sus+scrofa",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Sus+scrofa",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "T-Lymphocytes",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/T-Lymphocytes",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/T-Lymphocytes",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Television music",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Television+music",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Television+music",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "therapy",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/therapy",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/therapy",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Tissue Scaffolds",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Tissue+Scaffolds",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Tissue+Scaffolds",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Tombstone inscriptions, Whitman County",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Tombstone+inscriptions%2C+Whitman+County",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Tombstone+inscriptions%2C+Whitman+County",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Tomography, X-Ray Computed",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Tomography%2C+X-Ray+Computed",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Tomography%2C+X-Ray+Computed",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Totalitarianism",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Totalitarianism",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Totalitarianism",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 2
+        }
+    },
+    {
+        "tag": "Transducers",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Transducers",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Transducers",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Tucson (Ariz)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Tucson+%28Ariz%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Tucson+%28Ariz%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Tucson Shooting (2011)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Tucson+Shooting+%282011%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Tucson+Shooting+%282011%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "United States",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/United+States",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/United+States",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 5
+        }
+    },
+    {
+        "tag": "United States Politics and Government",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/United+States+Politics+and+Government",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/United+States+Politics+and+Government",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "University of Arizona",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/University+of+Arizona",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/University+of+Arizona",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Vietnamese Conflict, 1961-1975",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Vietnamese+Conflict%2C+1961-1975",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Vietnamese+Conflict%2C+1961-1975",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Virgin Islands of the United States",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Virgin+Islands+of+the+United+States",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Virgin+Islands+of+the+United+States",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "War films",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/War+films",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/War+films",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Washington (State)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Washington+%28State%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Washington+%28State%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Water resources development",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Water+resources+development",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Water+resources+development",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Western stories",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Western+stories",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Western+stories",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Whitman County (Wash.)",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Whitman+County+%28Wash.%29",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Whitman+County+%28Wash.%29",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Whitman, Marcus",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Whitman%2C+Marcus",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Whitman%2C+Marcus",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Whitman, Narcissa Prentiss",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Whitman%2C+Narcissa+Prentiss",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Whitman%2C+Narcissa+Prentiss",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Whitman, Walt",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Whitman%2C+Walt",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Whitman%2C+Walt",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Women labor leaders",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Women+labor+leaders",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Women+labor+leaders",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Women social reformers",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Women+social+reformers",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Women+social+reformers",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "World War, 1939-1945",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/World+War%2C+1939-1945",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/World+War%2C+1939-1945",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 1,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Zotero API",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/475425/tags/Zotero+API",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/475425/tags/Zotero+API",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    }
+]
