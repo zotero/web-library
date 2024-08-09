@@ -90,6 +90,14 @@
 		&[style*="color"] {
 			background-color: currentColor;
 			border: $border-width solid var(--tag-color-border);
+
+			@each $colorHex, $colorVar in $tagColorsLookupItemsTable {
+				&[data-color="#{$colorHex}"] {
+					// for known tag colors we're overriding the color set with style
+					// attribute to match equivalent theme color, hence !important
+					color: var($colorVar) !important;
+				}
+			}
 		}
 	}
 

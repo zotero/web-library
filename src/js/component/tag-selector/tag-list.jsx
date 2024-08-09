@@ -147,7 +147,7 @@ const TagListItem = memo(props => {
 			onClick={ tag && handleClick }
 			onKeyDown={ handleKeyDown }
 		>
-			<div className="tag-color" style={ tag && (tag.color && { color: tag.color }) } />
+			<div className="tag-color" data-color={ tag?.color?.toLowerCase() } style={ tag && (tag.color && { color: tag.color }) } />
 			<div
 				id={ id }
 				className="truncate"
