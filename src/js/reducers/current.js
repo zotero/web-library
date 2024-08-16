@@ -4,7 +4,7 @@ import { shallowEqual } from 'react-redux';
 import { CONFIGURE, FILTER_TAGS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
 	TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM, TRIGGER_FOCUS, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_SEARCH_MODE,
-	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE,
+	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, TRIGGER_VIEWPORT_CHANGE
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
@@ -27,6 +27,7 @@ const stateDefault = {
 	itemsSource: null,
 	isFirstRendering: null,
 	libraryKey: null,
+	viewportCount: 0,
 	qmode: 'titleCreatorYear',
 	search: '',
 	searchState: {},
@@ -236,6 +237,11 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 				...state,
 				itemKey: null,
 				itemKeys: [],
+			}
+		case TRIGGER_VIEWPORT_CHANGE:
+			return {
+				...state,
+				viewportCount: state.viewportCount + 1
 			}
 		default:
 			return state;

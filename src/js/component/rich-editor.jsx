@@ -81,7 +81,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 		}
 		const [libraryKey] = libraryKeys;
 		const itemKeys = data.filter(id => id.libraryKey === libraryKey).map(id => id.itemKey);
-		dispatch(navigate({ library: libraryKey, items: itemKeys }, true));
+		dispatch(navigate({ library: libraryKey, items: itemKeys }, true, true));
 	}, [dispatch]);
 
 	const handleIframeMessage = useCallback(async (event) => {

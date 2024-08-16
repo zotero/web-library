@@ -1,6 +1,7 @@
 import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
 import api from 'zotero-api-client';
 import { escapeBooleanSearches, extractItems, getApiForItems } from '../common/actions';
+import { getItemKeysPath } from '../common/state';
 import { get, getAbortController, mapRelationsToItemKeys } from '../utils';
 import columnProperties from '../constants/column-properties';
 import { connectionIssues, requestTracker, requestWithBackoff } from '.';
@@ -86,9 +87,13 @@ const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
 // @NOTE: same as fetch items but limited to one item and ignored when considering membership
 // 		  (collection, trash etc.).
 const fetchItemDetails = (itemKey, queryOptions, overrides) => {
-	return fetchItems(
-		'FETCH_ITEM_DETAILS', {}, { ...queryOptions, itemKey }, overrides
-	);
+	return async (dispatch, getState) => {
+		const state = getState();
+		const includeTrashed = state.current.isTrash ? 1 : 0;
+		return dispatch(fetchItems(
+			'FETCH_ITEM_DETAILS', {}, { ...queryOptions, includeTrashed, itemKey }, overrides
+		));
+	};
 }
 
 const fetchAllItemsSince = (version, queryOptions, overrides) => {
@@ -313,6 +318,73 @@ const fetchAllChildItems = (itemKey, queryOptions = {}, overrides) => {
 	}
 }
 
+const findRowIndexInSource = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const itemKey = state.current.itemKeys?.[0];
+
+		if(itemKey === null || typeof itemKey === 'undefined') {
+			return 0;
+		}
+
+		const libraryKey = state.current.libraryKey;
+		const config = state.config;
+		const { collectionKey, isTrash, isMyPublications, itemsSource, search: q, qmode,
+			tags: tag = [] } = state.current;
+		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
+			column => 'sort' in column) || { field: 'title', sort: 'asc' };
+
+		const direction = sortDirection.toLowerCase();
+		const sort = (sortBy in columnProperties && columnProperties[sortBy].sortKey) || 'title';
+		const sortAndDirection = { sort, direction };
+
+		let type = 'TOP_ITEMS';
+		let queryConfig = {};
+		let queryOptions = { ...sortAndDirection };
+		let path = getItemKeysPath({ itemsSource, libraryKey, collectionKey });
+		let keys = get(state, [...path, 'keys'], []);
+
+		switch (itemsSource) {
+			case 'query':
+				type = 'ITEMS_BY_QUERY';
+				queryConfig = { collectionKey, isMyPublications, isTrash, };
+				queryOptions = { q, tag, qmode, ...sortAndDirection };
+				break;
+			case 'top':
+				type = 'TOP_ITEMS';
+				break;
+			case 'trash':
+				type = 'TRASH_ITEMS';
+				break;
+			case 'publications':
+				type = 'PUBLICATIONS_ITEMS';
+				break;
+			case 'collection':
+				type = 'ITEMS_IN_COLLECTION';
+				queryConfig = { collectionKey };
+				break;
+		}
+
+		let itemIndexLocal = keys.indexOf(itemKey);
+
+		if (itemIndexLocal !== -1) {
+			return itemIndexLocal;
+		}
+
+		try {
+			const api = getApiForItems({ config, libraryKey }, type, queryConfig);
+			const response = await api.get({ ...escapeBooleanSearches(queryOptions, 'tag'), format: 'keys' });
+			const keys = (await response.getData().text()).split("\n");
+			if(keys.indexOf(itemKey) !== -1) {
+				return keys.indexOf(itemKey);
+			}
+			return 0;
+		} catch (error) {
+			return 0;
+		}
+	}
+}
+
 export {
 	fetchAllChildItems,
 	fetchAllItemsSince,
@@ -326,6 +398,7 @@ export {
 	fetchSource,
 	fetchTopItems,
 	fetchTrashItems,
+	findRowIndexInSource,
 	getAttachmentUrl,
 	sortItems,
 };

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -12,6 +12,7 @@ import ListRow from './list-row';
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
+import ScrollEffectComponent, { SCROLL_BUFFER } from './scroll-effect';
 
 const ROWHEIGHT = 61;
 
@@ -33,6 +34,7 @@ const ItemsList = memo(props => {
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const prevErrorCount = usePrevious(errorCount);
+	const [scrollToRow, setScrollToRow] = useState(null);
 
 	//@NOTE: On mobiles (single-column) we have a dedicated search mode where. To prevent visual glitches
 	//		 where current items overlap empty search prompt we need the following hack. See #230
@@ -54,11 +56,13 @@ const ItemsList = memo(props => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if(!hasChecked && !isFetching) {
-			dispatch(fetchSource(0, 50));
-			lastRequest.current = { startIndex: 0, stopIndex: 50 };
+		if (scrollToRow !== null && !hasChecked && !isFetching) {
+			let startIndex = Math.max(scrollToRow - 20, 0);
+			let stopIndex = scrollToRow + 50;
+			dispatch(fetchSource(startIndex, stopIndex));
+			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow]);
 
 	useEffect(() => {
 		if(errorCount > 0 && errorCount > prevErrorCount) {
@@ -75,7 +79,7 @@ const ItemsList = memo(props => {
 	}, [dispatch, errorCount, prevErrorCount]);
 
 	useEffect(() => {
-		if(prevSortBy === sortBy && prevSortDirection === sortDirection) {
+		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
 			return;
 		}
 
@@ -104,40 +108,44 @@ const ItemsList = memo(props => {
 
 	return (
 		<div className="items-list-wrap">
-			<AutoSizer>
-			{({ height, width }) => (
-				<InfiniteLoader
-					ref={ loader }
-					listRef={ listRef }
-					isItemLoaded={ handleIsItemLoaded }
-					itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
-					loadMoreItems={ handleLoadMore }
-				>
-					{({ onItemsRendered, ref }) => (
-						<div
-							aria-label="items"
-							className={ cx('items-list', {
-								'editing': isSelectMode,
-							}) }
-							role={ isSelectMode ? 'listbox' : 'list' }
-							aria-rowcount={ totalResults }
-						>
-							<List
-								height={ height }
-								itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
-								itemData={ { keys } }
-								itemSize={ ROWHEIGHT }
-								onItemsRendered={ onItemsRendered }
-								ref={ r => { ref(r); listRef.current = r; } }
-								width={ width }
+			<ScrollEffectComponent listRef={listRef} setScrollToRow={setScrollToRow} />
+			{ hasChecked && (
+				<AutoSizer>
+				{({ height, width }) => (
+					<InfiniteLoader
+						ref={ loader }
+						listRef={ listRef }
+						isItemLoaded={ handleIsItemLoaded }
+						itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
+						loadMoreItems={ handleLoadMore }
+					>
+						{({ onItemsRendered, ref }) => (
+							<div
+								aria-label="items"
+								className={ cx('items-list', {
+									'editing': isSelectMode,
+								}) }
+								role={ isSelectMode ? 'listbox' : 'list' }
+								aria-rowcount={ totalResults }
 							>
-								{ ListRow }
-							</List>
-						</div>
-					)}
-				</InfiniteLoader>
+								<List
+									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROWHEIGHT}
+									height={ height }
+									itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
+									itemData={ { keys } }
+									itemSize={ ROWHEIGHT }
+									onItemsRendered={ onItemsRendered }
+									ref={ r => { ref(r); listRef.current = r; } }
+									width={ width }
+								>
+									{ ListRow }
+								</List>
+							</div>
+						)}
+					</InfiniteLoader>
+				)}
+				</AutoSizer>
 			)}
-			</AutoSizer>
 			{ !hasChecked && !isSearchModeHack && <Spinner className="large" /> }
 			{ hasChecked && totalResults === 0 && (
 				<div className="item-list-empty">

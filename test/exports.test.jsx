@@ -65,7 +65,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('format')).toEqual('bibtex');
-				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('includeTrashed')).toEqual('1');
 				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
 
 				hasBeenRequested = true;
@@ -90,7 +90,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('include')).toEqual('citation');
-				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('includeTrashed')).toEqual('1');
 				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
 				expect(url.searchParams.get('style')).toEqual('modern-language-association');
 				expect(url.searchParams.get('locale')).toEqual('en-US');
@@ -120,7 +120,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
 				const url = new URL(request.url);
 				expect(url.searchParams.get('format')).toEqual('bib');
-				expect(url.searchParams.get('includeTrashed')).toEqual('true');
+				expect(url.searchParams.get('includeTrashed')).toEqual('1');
 				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
 
 				const style = url.searchParams.get('style');

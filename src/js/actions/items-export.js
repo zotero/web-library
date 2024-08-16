@@ -35,7 +35,7 @@ const exportItems = (itemKeys, libraryKey, format) => {
 			const response = await api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()
-				.get({ itemKey: itemKeys.join(','), includeTrashed: true, format });
+				.get({ itemKey: itemKeys.join(','), includeTrashed: 1, format });
 
 			const exportData = await response.response.blob();
 
@@ -119,7 +119,7 @@ const citeItems = (itemKeys, libraryKey, style = 'chicago-note-bibliography', lo
 				.get({
 					itemKey: itemKeys.join(','),
 					include: 'citation',
-					includeTrashed: true,
+					includeTrashed: 1,
 					style,
 					locale
 				});
@@ -165,7 +165,7 @@ const bibliographyFromItems = (itemKeys, libraryKey, style = 'chicago-note-bibli
 				.get({
 					itemKey: itemKeys.join(','),
 					format: 'bib',
-					includeTrashed: true,
+					includeTrashed: 1,
 					style,
 					locale,
 				});

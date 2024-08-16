@@ -1,6 +1,7 @@
 import { makePath } from '../common/navigation';
 import { getItemKeysPath } from '../common/state';
 import { LOCATION_CHANGE, push } from 'connected-react-router';
+import { TRIGGER_VIEWPORT_CHANGE } from '../constants/actions';
 import { clamp, get } from '../utils';
 
 const pushEmbedded = (path) => ({
@@ -32,7 +33,18 @@ const currentToPath = current => ({
 	location: current.location,
 });
 
-const navigate = (path, isAbsolute = false) => {
+
+/**
+ * Navigates to a specified path.
+ *
+ * @param {string} path - The path to navigate to.
+ * @param {boolean} [isAbsolute=false] - Indicates whether the path is absolute or relative to the current path.
+ * @param {boolean} [viewportChange=false] - Indicates whether a viewport change should be triggered after navigation.
+ * This, for example, triggers table list to query for all item keys so that it can figure out where in the list target item is.
+ * @returns {Function} - The async action function.
+ */
+const navigate = (path, isAbsolute = false, viewportChange = false) => {
+	// console.trace('navigate', { path, isAbsolute, viewportChange });
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
 		const isEmbedded = config.isEmbedded;
@@ -47,6 +59,11 @@ const navigate = (path, isAbsolute = false) => {
 			};
 			const configuredPath = makePath(config, updatedPath);
 			dispatch(pushFn(configuredPath));
+		}
+		if (viewportChange) {
+			dispatch({
+				type: TRIGGER_VIEWPORT_CHANGE,
+			});
 		}
 	}
 };

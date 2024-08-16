@@ -25,7 +25,7 @@ const RelatedItem = memo(props => {
 		dispatch(navigate({
 			library: libraryKey,
 			items: relatedItemKey
-		}, true));
+		}, true, true));
 	}, [dispatch, libraryKey]);
 
 	const handleDelete = useCallback(ev => {

@@ -10,6 +10,7 @@ import { useThrottledCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
+import PropTypes from 'prop-types';
 
 import columnProperties from '../../../constants/column-properties';
 import HeaderRow from './table-header-row';
@@ -19,9 +20,11 @@ import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource, resiz
 import { ATTACHMENT } from '../../../constants/dnd';
 import { abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
-triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
+	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
+import ScrollEffectComponent, { SCROLL_BUFFER } from './scroll-effect';
+
 
 const ROWHEIGHT = 26;
 
@@ -56,26 +59,14 @@ const TableFocus = memo(({ focusBySelector, resetLastFocused }) => {
 	return null;
 });
 
+TableFocus.propTypes = {
+	focusBySelector: PropTypes.func.isRequired,
+	resetLastFocused: PropTypes.func.isRequired,
+};
+
 TableFocus.displayName = "TableFocus";
 
-const TableScroll = memo(({ listRef }) => {
-	const selectedItemKeys = useSelector(state => state.current.itemKeys);
-	const { keys } = useSourceData();
-	const previousSelectedItemKeys = usePrevious(selectedItemKeys);
-	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
 
-	useEffect(() => {
-		if(listRef.current && keys && selectedItemKeys.length > 0 && !shallowEqual(selectedItemKeys, previousSelectedItemKeys)) {
-			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
-			const itemKeyIndex = keys.findIndex(k => k === itemKey);
-			listRef.current.scrollToItem(itemKeyIndex);
-		}
-	}, [selectedItemKeys, isItemsTableFocused, keys, listRef, previousSelectedItemKeys]);
-
-	return null;
-});
-
-TableScroll.displayName = "TableScroll";
 
 const Table = () => {
 	const containerDom = useRef(null);
@@ -110,11 +101,13 @@ const Table = () => {
 		) || {}).isFileUploadAllowed
 	);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
+	const [scrollToRow, setScrollToRow] = useState(null);
 	const columnsData = useSelector(state => state.preferences.columns, shallowEqual);
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
+
 	const columns = useMemo(() => {
 		const columns = columnsData
 		.filter(c => c.isVisible)
@@ -368,11 +361,13 @@ const Table = () => {
 	}, [dispatch, receiveBlur]);
 
 	useEffect(() => {
-		if(!hasChecked && !isFetching) {
-			dispatch(fetchSource(0, 50));
-			lastRequest.current = { startIndex: 0, stopIndex: 50 };
+		if(scrollToRow !== null && !hasChecked && !isFetching) {
+			let startIndex = Math.max(scrollToRow - 20, 0);
+			let stopIndex = scrollToRow + 50;
+			dispatch(fetchSource(startIndex, stopIndex));
+			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow]);
 
 	useEffect(() => {
 		return () => {
@@ -384,7 +379,7 @@ const Table = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if(prevSortBy === sortBy && prevSortDirection === sortDirection) {
+		if((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
 			return;
 		}
 
@@ -459,63 +454,66 @@ const Table = () => {
 			}) }
 		>
 			<TableFocus focusBySelector={ focusBySelector } resetLastFocused={ resetLastFocused } />
-			<TableScroll listRef={ listRef } />
-			<AutoSizer>
-			{({ height, width }) => (
-				<InfiniteLoader
-					isItemLoaded={ handleIsItemLoaded }
-					itemCount={ hasChecked ? totalResults : 0 }
-					loadMoreItems={ handleLoadMore }
-					ref={ loader }
-				>
-					{({ onItemsRendered, ref }) => (
-						<div
-							tabIndex={ 0 }
-							onFocus={ handleTableFocus }
-							onBlur={ handleTableBlur }
-							onKeyDown={ handleKeyDown }
-							ref={ tableRef }
-							className="items-table"
-							style={ getColumnCssVars(columns, width, scrollbarWidth) }
-							role="grid"
-							aria-multiselectable="true"
-							aria-readonly="true"
-							aria-label="items"
-							data-width={ width }
-							aria-rowcount={ totalResults }
-						>
-							<HeaderRow
-								ref={ headerRef }
-								columns={ columns }
-								width={ width }
-								onResize={ handleResize }
-								onReorder={ handleReorder }
-								isResizing={ isResizing }
-								isReordering={ isReordering }
-								reorderTarget= { reorderTarget }
-								handleFocusNext={ focusDrillDownNext }
-								handleFocusPrev={ focusDrillDownPrev }
-							/>
-							<List
-								outerElementType={ TableBody }
-								className="items-table-body"
-								height={ height - ROWHEIGHT } // add margin for HeaderRow
-								itemCount={ hasChecked ? totalResults : 0 }
-								itemData={ rowData }
-								itemSize={ ROWHEIGHT }
-								onItemsRendered={ onItemsRendered }
-								ref={ r => { ref(r); listRef.current = r } }
-								outerRef={ outerRef }
-								innerRef={ innerRef }
-								width={ width - 16 }
+			<ScrollEffectComponent listRef={ listRef } setScrollToRow={setScrollToRow} />
+			{ hasChecked && (
+				<AutoSizer>
+				{({ height, width }) => (
+					<InfiniteLoader
+						isItemLoaded={ handleIsItemLoaded }
+						itemCount={ hasChecked ? totalResults : 0 }
+						loadMoreItems={ handleLoadMore }
+						ref={ loader }
+					>
+						{({ onItemsRendered, ref }) => (
+							<div
+								tabIndex={ 0 }
+								onFocus={ handleTableFocus }
+								onBlur={ handleTableBlur }
+								onKeyDown={ handleKeyDown }
+								ref={ tableRef }
+								className="items-table"
+								style={ getColumnCssVars(columns, width, scrollbarWidth) }
+								role="grid"
+								aria-multiselectable="true"
+								aria-readonly="true"
+								aria-label="items"
+								data-width={ width }
+								aria-rowcount={ totalResults }
 							>
-								{ TableRow }
-							</List>
-						</div>
-					)}
-				</InfiniteLoader>
-			)}
-			</AutoSizer>
+								<HeaderRow
+									ref={ headerRef }
+									columns={ columns }
+									width={ width }
+									onResize={ handleResize }
+									onReorder={ handleReorder }
+									isResizing={ isResizing }
+									isReordering={ isReordering }
+									reorderTarget= { reorderTarget }
+									handleFocusNext={ focusDrillDownNext }
+									handleFocusPrev={ focusDrillDownPrev }
+								/>
+								<List
+									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROWHEIGHT}
+									outerElementType={ TableBody }
+									className="items-table-body"
+									height={ height - ROWHEIGHT } // add margin for HeaderRow
+									itemCount={ hasChecked ? totalResults : 0 }
+									itemData={ rowData }
+									itemSize={ ROWHEIGHT }
+									onItemsRendered={ onItemsRendered }
+									ref={ r => { ref(r); listRef.current = r } }
+									outerRef={ outerRef }
+									innerRef={ innerRef }
+									width={ width - 16 }
+								>
+									{ TableRow }
+								</List>
+							</div>
+						)}
+					</InfiniteLoader>
+				)}
+				</AutoSizer>
+			) }
 			{ !hasChecked && <Spinner className="large" /> }
 			{ isAdvancedSearch && (
 				<div className="table-cover">
