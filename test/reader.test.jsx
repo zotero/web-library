@@ -137,7 +137,8 @@ describe('Reader', () => {
 		const iframe = container.querySelector('iframe');
 		let readerConfig;
 		const mockReader = {
-			setAnnotations: jest.fn()
+			setAnnotations: jest.fn(),
+			unsetAnnotations: jest.fn()
 		};
 
 		iframe.contentWindow.createReader = (_rc) => {
@@ -190,7 +191,8 @@ describe('Reader', () => {
 		let readerConfig;
 
 		const mockReader = {
-			setAnnotations: jest.fn()
+			setAnnotations: jest.fn(),
+			unsetAnnotations: jest.fn()
 		};
 
 		iframe.contentWindow.createReader = (_rc) => {
