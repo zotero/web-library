@@ -491,7 +491,13 @@ const Reader = () => {
 			}).filter(a => {
 				return !deepEqual(a, prevAnnotations.find(pa => pa.key === a.key))
 			});
+
+			const deletedAnnotations = prevAnnotations
+				.filter(pa => !annotations.find(a => a.key === pa.key))
+				.map(a => a.key);
+
 			reader.current.setAnnotations(getProcessedAnnotations(changedAnnotations));
+			reader.current.unsetAnnotations(deletedAnnotations);
 		}
 	}, [annotations, getProcessedAnnotations, isBusy, prevAnnotations, state.importedAnnotations, state.isReady, wasBusy]);
 
