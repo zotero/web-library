@@ -473,10 +473,12 @@
 		@include mouse-and-bp-up(md) {
 			padding-left: $metadata-list-gutter * 0.5;
 
-			.select-value {
-				// reduce internal select input padding to match the padding of the other inputs
-				padding-left: $editable-padding;
-				padding-right: $editable-padding;
+			.has-value {
+				.select-value {
+					// reduce internal select input padding to match the padding of the other inputs
+					padding-left: $editable-padding;
+					padding-right: $editable-padding;
+				}
 			}
 		}
 
