@@ -352,6 +352,7 @@ describe('Test User\'s library', () => {
 		const row9 = getByRole(gridBody, 'row', { name: '<a href="http://zotero.org">links</a> not allowed' });
 		expect(row9.innerHTML).toEqual(expect.stringContaining('&lt;a href="http://zotero.org"&gt;links&lt;/a&gt; <b>not</b> allowed'));
 	});
+
 	test("Renders correctly ordered tag color swatches in the items list", async () => {
 		delete window.location;
 		window.location = new URL('http://localhost/testuser/');

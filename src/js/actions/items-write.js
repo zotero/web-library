@@ -423,7 +423,10 @@ const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
 						.library(libraryKey)
 						.items(itemKey)
 						.version(itemVersion)
-						.patch(patch);
+						.patch({
+							dateModified: new Date().toISOString().slice(0, -5) + "Z",
+							...patch
+						});
 					updatedItem = {
 						...item,
 						...response.getData()

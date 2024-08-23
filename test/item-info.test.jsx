@@ -230,4 +230,40 @@ describe('Item info', () => {
 		expect(screen.queryByRole('textbox', { name: 'Publication' })).not.toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
 	});
+
+	test("Patch an item and update date modified", async () => {
+		let hasBeenPatched = false;
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		server.use(
+			http.patch('https://api.zotero.org/users/1/items/VR82JUX8', async ({ request }) => {
+				const item = await request.json();
+				expect(item.title).toBe('updated title');
+				hasBeenPatched = true;
+				return new HttpResponse(null, { status: 204 });
+			}),
+		);
+
+		const titleField = screen.getByRole('textbox', { name: 'Title' });
+		expect(titleField).toHaveTextContent('Effects of diet restriction on life span and age-related changes in dogs');
+
+		let expectedDate = new Date().toLocaleString(window.navigator.language);
+
+		await user.click(screen.getByRole('textbox', { name: 'Title' }));
+		expect(await screen.findByRole('textbox', { name: 'Title' })).toHaveFocus();
+		await user.type(
+			screen.getByRole('textbox', { name: 'Title' }),
+			'updated title{enter}', { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Title' })
+		).toHaveTextContent('updated title'));
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date Modified' })
+		).toHaveTextContent(new RegExp(`^${expectedDate.split(',')[0]}`)));
+		expect(hasBeenPatched).toBe(true);
+	});
 });
