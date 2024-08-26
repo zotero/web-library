@@ -58,7 +58,7 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotM
 			</DropdownToggle>
 			<DropdownMenu>
 				<DropdownItem
-					disabled={ tagColorsLength >= maxColoredTags }
+					disabled={ !hasColor && tagColorsLength >= maxColoredTags }
 					onClick={ handleAssignColorClick }
 				>
 					Assign Color

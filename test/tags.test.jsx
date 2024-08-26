@@ -9,13 +9,14 @@ import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, waitFor }
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { getPatchedState, JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import testUserTagsSuggestions from './fixtures/response/test-user-tags-suggestions.json';
 import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.json';
 import testUserManageTags from './fixtures/response/test-user-manage-tags.json';
+import { maxColoredTags } from '../src/js/constants/constants';
 
 const state = JSONtoState(stateRaw);
 
@@ -233,5 +234,34 @@ describe('Tags', () => {
 
 		await user.type(screen.getByRole('searchbox', { name: 'Filter Tags' }), 'read');
 		expect(await findAllByRole(list, 'listitem')).toHaveLength(1); // eslint-disable-line jest-dom/prefer-in-document
+	});
+
+	test('Assign color should be disabled if at max tag colors', async () => {
+		renderWithProviders(<MainZotero />,
+			{ preloadedState: getPatchedState(
+				state,
+				'libraries.u1.tagColors', { value: Array(maxColoredTags).fill(0).map((n, i) => ({ tag: `Tag ${i}`, color: `#00000${i}` })) }
+			)}
+		);
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(testUserManageTags, {
+					headers: { 'Total-Results': '8' }
+				});
+			}),
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		const tagItem = await findByRole(list, 'listitem', { name: 'pathfinding' });
+		const moreButton = getByRole(tagItem, 'button', { name: 'More' });
+		await user.click(moreButton);
+		expect(await screen.findByRole('menuitem', { name: 'Assign Color' })).toBeDisabled();
 	});
 });
