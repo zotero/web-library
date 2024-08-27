@@ -4,16 +4,55 @@
 	overflow: hidden;
 	transition: height $ongoing-transition;
 
+	&.flash {
+		animation: .33s 2 flash-background;
+
+		@keyframes flash-background {
+			0% {
+				background-color: var(transparent);
+
+			}
+
+			50% {
+				background-color: var(--color-shade-10);
+			}
+
+			100% {
+				background-color: var(transparent);
+			}
+		}
+
+		.process {
+			animation: .33s 2 flash-foreground;
+
+			@keyframes flash-foreground {
+				0% {
+					color: $ongoing-color;
+				}
+
+				50% {
+
+					color: var(--color-accent);
+				}
+
+				100% {
+					color: $ongoing-color;
+				}
+			}
+		}
+	}
+
 	&:empty {
 		height: 0;
 	}
 
 	.process {
-		padding: $space-xs $default-padding-x;
-		border-top: $border-width solid $ongoing-border-color;
-		display: flex;
 		align-items: center;
+		border-top: $border-width solid $ongoing-border-color;
 		color: $ongoing-color;
+		display: flex;
+		font-weight: bold;
+		padding: $space-xs $default-padding-x;
 	}
 
 	.icon-spin {
