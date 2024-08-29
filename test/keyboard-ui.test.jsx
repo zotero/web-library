@@ -57,4 +57,16 @@ test('Tabulate through the UI', async () => {
 	expect(screen.getAllByRole('combobox', { name: 'Creator Type' }).shift()).toHaveFocus();
 });
 
+test('Tabbing back to item details tabs should focus on the last selected tab', async () => {
+	delete window.location;
+	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+	const user = userEvent.setup()
+	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
 
+	await user.click(screen.getByRole('tab', { name: 'Tags' }));
+	await user.keyboard('{tab}');
+	expect(screen.getByRole('button', { name: 'Add Tag' })).toHaveFocus();
+
+	await user.keyboard('{shift>}{tab}{/shift}');
+	expect(screen.getByRole('tab', { name: 'Tags' })).toHaveFocus();
+});

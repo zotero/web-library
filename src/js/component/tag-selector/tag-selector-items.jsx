@@ -186,6 +186,7 @@ const TagSelectorItems = () => {
 
 	return (
 		<div
+			tabIndex="-1"
 			className="scroll-container"
 			onScroll={ maybeLoadMore }
 			ref={ containerRef }

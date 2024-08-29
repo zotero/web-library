@@ -347,6 +347,11 @@ const Table = () => {
 	}, [dispatch, isEmbedded, focusBySelector]);
 
 	const handleTableFocus = useCallback(ev => {
+		// The overflow list is made focusable by default in most browsers and to prevent this we
+		// need to set `tabIndex` to -1. However, since this element is rendered by react-window, we
+		// cannot pass it as a prop. As a workaround, we set the tabIndex attribute directly here.
+		// This fixes issue #519.
+		outerRef.current?.setAttribute?.('tabindex', '-1');
 		const hasChangedFocused = receiveFocus(ev);
 		if(hasChangedFocused) {
 			dispatch(triggerFocus('items-table', true));
