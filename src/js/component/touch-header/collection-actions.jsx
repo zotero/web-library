@@ -9,7 +9,7 @@ import { toggleModal } from '../../actions';
 const CollectionActions = props => {
 	const { collectionKey, collectionHasChildren } = props;
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const collectionParentKey = useSelector(state => state.libraries[state.current.libraryKey]?.collections?.data[collectionKey]?.parentCollection);
+	const collectionParentKey = useSelector(state => state.libraries[state.current.libraryKey]?.dataObjects[collectionKey]?.parentCollection);
 	const dispatch = useDispatch();
 	const [isOpen, setIsOpen] = useState(false);
 

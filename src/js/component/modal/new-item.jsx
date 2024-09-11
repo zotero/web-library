@@ -14,9 +14,9 @@ const NewItemModal = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isOpen = useSelector(state => state.modal.id === NEW_ITEM);
-	const collection = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'collections', 'data', state.modal.collectionKey]
-	), shallowEqual);
+	const collection = useSelector(
+		state => state.libraries[state.current.libraryKey]?.dataObjects[state.modal.collectionKey], shallowEqual
+	);
 	const itemTypes = useSelector(state => state.meta.itemTypes, shallowEqual);
 	const inputId = useRef(getUniqueId());
 	const [isBusy, setIsBusy] = useState(false);

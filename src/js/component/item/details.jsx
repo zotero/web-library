@@ -18,7 +18,10 @@ const ItemDetails = props => {
 	const itemKey = useSelector(state => state.current.itemKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
-	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], null));
+	const item = useSelector(state => get(state, ['libraries', libraryKey, 'dataObjects', itemKey], null));
+	// collections are prefetched so if item is null, it's not a collection
+	const isCollection = item?.[Symbol.for('type')] === 'collection';
+	const shouldFetchItem = itemKey && !isCollection && !item;
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const shouldRedirectToParentItem = !isTrash && itemKey && item && item.parentItem;
@@ -28,10 +31,10 @@ const ItemDetails = props => {
 	});
 
 	useEffect(() => {
-		if(itemKey && !item) {
+		if (shouldFetchItem) {
 			dispatch(fetchItemDetails(itemKey));
 		}
-	}, [dispatch, item, itemKey]);
+	}, [dispatch, itemKey, shouldFetchItem]);
 
 	useEffect(() => {
 		if(lastFetchItemDetailsNoResults) {
@@ -57,11 +60,12 @@ const ItemDetails = props => {
 				/>
 			) }
 			{
-				(!isTouchOrSmall || (isTouchOrSmall && !isSelectMode))
-				&& item && !shouldRedirectToParentItem ? (
-					<ItemDetailsTabs />
-				) : (
-					<ItemDetailsInfoView />
+				isCollection ? null : (
+					(!isTouchOrSmall || (isTouchOrSmall && !isSelectMode)) && item && !shouldRedirectToParentItem ? (
+						<ItemDetailsTabs />
+					) : (
+						<ItemDetailsInfoView />
+					)
 				)
 			}
 		</section>

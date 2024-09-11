@@ -19,18 +19,19 @@ const ROOT_NODE = {
 
 const TouchHeaderWrap = memo(({ className, variant }) => {
 	const dispatch = useDispatch();
-	const collections = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'collections', 'data'],
-	));
+	const libraryKey = useSelector(state => state.current.libraryKey);
+	const collectionKeys = useSelector(state => state.libraries[libraryKey]?.collections.keys);
+	const dataObjects = useSelector(state => state.libraries[libraryKey]?.dataObjects);
+	const collections = Object.fromEntries((collectionKeys ?? []).map(key => [key, dataObjects[key]]));
 	const item = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]
+		state, ['libraries', libraryKey, 'items', state.current.itemKey]
 	));
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const itemsSource = useSelector(state => state.current.itemsSource);
-	const libraryKey = useSelector(state => state.current.libraryKey);
+
 	const noteKey = useSelector(state => state.current.noteKey);
 	const qmode = useSelector(state => state.current.qmode);
 	const search = useSelector(state => state.current.search);

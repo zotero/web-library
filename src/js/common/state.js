@@ -29,7 +29,7 @@ const getItemKeysPath = ({ itemsSource, libraryKey, collectionKey }) => {
 		case 'top':
 			return ['libraries', libraryKey, 'itemsTop'];
 		case 'trash':
-			return ['libraries', libraryKey, 'itemsTrash'];
+			return ['libraries', libraryKey, 'itemsAndCollectionsTrash'];
 		case 'publications':
 			return ['itemsPublications'];
 		case 'collection':

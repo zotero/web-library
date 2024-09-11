@@ -260,9 +260,9 @@ const redirectIfCollectionNotFound = () => {
 		const state = getState();
 		const libraryKey = state.current.libraryKey;
 		const collectionKey = state.current.collectionKey;
-		const collections = state.libraries[libraryKey]?.collections?.data;
+		const dataObjects = state.libraries[libraryKey]?.dataObjects;
 
-		if (collectionKey !== null && collections !== null && !(collectionKey in collections)) {
+		if (collectionKey !== null && dataObjects !== null && !(collectionKey in dataObjects)) {
 			process.env.NODE_ENV === 'development' && console.warn(`Collection ${collectionKey} not found in library ${libraryKey}`);
 			dispatch(navigate({ library: libraryKey, view: 'library' }, true));
 		}

@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types';
 import { memo, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import fileSaver from 'file-saver';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
@@ -23,9 +24,17 @@ const ExportActionsItem = ({ format }) => {
 	);
 }
 
-const ExportActions = ({ onFocusNext, onFocusPrev, tabIndex }) => {
+ExportActionsItem.propTypes = {
+	format: PropTypes.shape({
+		key: PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
+		extension: PropTypes.string
+	}).isRequired
+};
+
+
+const ExportActions = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const itemKeysLength = useSelector(state => state.current.itemKeys.length);
 
 	const handleToggleDropdown = useCallback(() => {
 		setIsOpen(isOpen => !isOpen);
@@ -52,7 +61,7 @@ const ExportActions = ({ onFocusNext, onFocusPrev, tabIndex }) => {
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
-				disabled={ itemKeysLength === 0 || itemKeysLength > 100 }
+				disabled={ disabled }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ tabIndex }
 				title="Export"
@@ -67,5 +76,12 @@ const ExportActions = ({ onFocusNext, onFocusPrev, tabIndex }) => {
 		</Dropdown>
 	);
 }
+
+ExportActions.propTypes = {
+	disabled: PropTypes.bool,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
+	tabIndex: PropTypes.number
+};
 
 export default memo(ExportActions);

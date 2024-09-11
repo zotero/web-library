@@ -12,7 +12,7 @@ import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../consta
 import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate, triggerFocus } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 
-const makeDerivedData = (collections, path = [], opened, isTouchOrSmall) => {
+const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
 	const childLookup = {};
 	const derivedData = Object.values(collections).reduce((aggr, c) => {
@@ -859,9 +859,7 @@ const CollectionTree = props => {
 	pickerState, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
-	const collections = useSelector(
-		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.data : {}
-	);
+	const dataObjects = useSelector(state => state.libraries[parentLibraryKey]?.dataObjects);
 	const libraries = useSelector(state => state.config.libraries);
 	const isFetchingAllCollections = useSelector(
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.isFetchingAll : false
@@ -874,7 +872,7 @@ const CollectionTree = props => {
 	const prevSelectedCollectionKey = usePrevious(selectedCollectionKey);
 	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
 	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
-	const selectedCollection = collections[selectedCollectionKey];
+	const selectedCollection = dataObjects?.[selectedCollectionKey];
 	const prevSelectedCollection = usePrevious(selectedCollection);
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -886,11 +884,11 @@ const CollectionTree = props => {
 
 	const isCurrentLibrary = parentLibraryKey === selectedLibraryKey;
 	const usesItemsNode = isSingleColumn && !isPickerMode;
-	const allCollections = useMemo(() => Object.values(collections), [collections]);
+	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
 	const path = useMemo(
-		() => makeCollectionsPath(selectedCollectionKey, collections, isCurrentLibrary),
-		[collections, isCurrentLibrary, selectedCollectionKey]
+		() => makeCollectionsPath(selectedCollectionKey, dataObjects ?? {}, isCurrentLibrary),
+		[dataObjects, isCurrentLibrary, selectedCollectionKey]
 	);
 
 	const [opened, setOpened] = useState(path.slice(0, -1));
@@ -899,13 +897,13 @@ const CollectionTree = props => {
 
 	const getParents = useCallback((collectionKey) => {
 		const parents = [];
-		let parentKey = collections[collectionKey]?.parentCollection;
+		let parentKey = dataObjects?.[collectionKey]?.parentCollection;
 		while(parentKey) {
 			parents.push(parentKey);
-			parentKey = collections[parentKey]?.parentCollection;
+			parentKey = dataObjects?.[parentKey]?.parentCollection;
 		}
 		return parents;
-	}, [collections]);
+	}, [dataObjects]);
 
 	const toggleOpen = useCallback((collectionKey, shouldOpen = null) => {
 		if(shouldOpen === null) {
@@ -934,9 +932,9 @@ const CollectionTree = props => {
 
 	const derivedData = useMemo(
 		() => {
-			return makeDerivedData(collections, path, opened, isTouchOrSmall);
+			return makeDerivedData(dataObjects, path, opened, isTouchOrSmall);
 		},
-		[collections, isTouchOrSmall, opened, path]
+		[dataObjects, isTouchOrSmall, opened, path]
 	);
 
 	const selectedDepth = path.length;
@@ -944,7 +942,7 @@ const CollectionTree = props => {
 	const hasOpen = (selectedDepth > 0 && (selectedHasChildren || usesItemsNode)) || selectedDepth > 1;
 
 	const topLevelCollections = allCollections.filter(c => c.parentCollection === false );
-	const isLastLevel = usesItemsNode ? false : collections.length === 0;
+	const isLastLevel = usesItemsNode ? false : Object.keys(dataObjects ?? []).length === 0;
 
 	const shouldBeTabbableOnTouch = isCurrentLibrary && !selectedCollectionKey;
 	const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
@@ -956,20 +954,20 @@ const CollectionTree = props => {
 			const parentsOfHighlighted = highlightedCollections.map(cKey => {
 				let parentCKeys = [];
 				do {
-					cKey = cKey in collections ? collections[cKey].parentCollection : null;
+					cKey = cKey in dataObjects ? dataObjects[cKey].parentCollection : null;
 					if (cKey) {
 						parentCKeys.push(cKey);
 					}
 				} while (cKey);
 				// if the highlighted collection or any of its parents is deleted, don't open any of them
-				return parentCKeys.some(cKey => collections[cKey]?.deleted) ? [] : parentCKeys;
+				return parentCKeys.some(cKey => dataObjects[cKey]?.deleted) ? [] : parentCKeys;
 			}).flat();
 
 			if(parentsOfHighlighted.length > 0) {
 				setOpened([...opened,  ...parentsOfHighlighted]);
 			}
 		}
-	}, [collections, highlightedCollections, opened, prevHighlightedCollections]);
+	}, [dataObjects, highlightedCollections, opened, prevHighlightedCollections]);
 
 	useEffect(() => {
 		if(selectedCollectionKey !== prevSelectedCollectionKey) {

@@ -2,9 +2,10 @@ import { omit } from 'web-common/utils';
 
 import attachmentsExportPDF from './attachments-export-pdf';
 import attachmentsUrl from './attachments-url';
+import dataObjects from './data-objects';
 import collections from './collections';
+import itemsAndCollectionsTrash from './items-and-collections-trash';
 import deleting from './deleting';
-import items from './items';
 import creating from './creating';
 import itemsByCollection from './items-by-collection';
 import itemsByParent from './items-by-parent';
@@ -26,17 +27,23 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 	if(action.type === 'RESET_LIBRARY') {
 		return omit(state, action.libraryKey);
 	} else if(action.libraryKey) {
+		const collectionsState = collections(get(state, [action.libraryKey, 'collections']), action);
+		const itemsTrashState = itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {
+			items: (state[action.libraryKey] || {}).items, meta
+		});
+		const dataObjectsState = dataObjects(get(state, [action.libraryKey, 'dataObjects']), action, {
+			tagColors: state[action.libraryKey]?.tagColors, meta
+		});
 		return {
 			...state,
 			[action.libraryKey]: {
 				attachmentsExportPDF: attachmentsExportPDF(state[action.libraryKey]?.attachmentsExportPDF, action),
 				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
-				collections: collections(get(state, [action.libraryKey, 'collections']), action),
+				collections: collectionsState,
 				creating: creating(state[action.libraryKey]?.creating, action),
+				dataObjects: dataObjectsState,
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
-				items: items(get(state, [action.libraryKey, 'items']), action, {
-					tagColors: (state[action.libraryKey]?.tagColors || {}), meta
-				} ),
+				items: dataObjectsState, // TODO: remove all uses of .items and remove this line
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action, {
 					items: (state[action.libraryKey] || {}).items, meta
 				}),
@@ -47,8 +54,9 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				itemsTop: itemsTop(get(state, [action.libraryKey, 'itemsTop']), action, {
 					items: (state[action.libraryKey] || {}).items, meta
 				}),
-				itemsTrash: itemsTrash(get(state, [action.libraryKey, 'itemsTrash']), action, {
-					items: (state[action.libraryKey] || {}).items, meta
+				itemsTrash: itemsTrashState,
+				itemsAndCollectionsTrash: itemsAndCollectionsTrash(get(state, [action.libraryKey, 'itemsAndCollectionsTrash']), action, {
+					dataObjectsState, collectionsState, itemsTrashState, meta
 				}),
 				settings: settings(get(state, [action.libraryKey, 'settings']), action),
 				sync: sync(get(state, [action.libraryKey, 'sync']), action),

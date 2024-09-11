@@ -8,8 +8,6 @@ const defaultState = {
 	apiKey: null,
 	defaultLibraryKey: null,
 	libraries: [],
-	sortBy: 'title',
-	sortDirection: 'asc',
 	streamingApiUrl: '',
 	userId: null,
 	isEmbedded: false,
@@ -114,12 +112,6 @@ const config = (state = defaultState, action) => {
 			];
 			sortByKey(libraries, 'name');
 			return { ...state, libraries }
-		case SORT_ITEMS:
-			return {
-				...state,
-				sortBy: action.sortBy,
-				sortDirection: action.sortDirection
-			};
 		default:
 			return state;
 	}

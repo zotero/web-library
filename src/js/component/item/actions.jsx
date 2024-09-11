@@ -130,6 +130,7 @@ const ItemActionsDesktop = memo(props => {
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
+	const selectedContainsCollection = useSelector(state => state.current.itemKeys.some(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'));
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const { handleCiteModalOpen, handleNewItemCreate,  handleNewStandaloneNote, handleAddToCollectionModalOpen,
@@ -225,7 +226,7 @@ const ItemActionsDesktop = memo(props => {
 							onClick={ handlePermanentlyDelete }
 							onKeyDown={ handleKeyDown }
 							tabIndex={ -2 }
-							title="Delete Item"
+							title="Delete Permanently"
 						>
 							<Icon type="16/empty-trash" width="16" height="16" />
 						</Button>
@@ -245,9 +246,14 @@ const ItemActionsDesktop = memo(props => {
 				</Fragment>
 			) }
 			<ToolGroup>
-				<ExportActions tabIndex={ -2 } onFocusNext={ onFocusNext } onFocusPrev={ onFocusPrev } />
+				<ExportActions
+					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
+					tabIndex={ -2 }
+					onFocusNext={ onFocusNext }
+					onFocusPrev={ onFocusPrev }
+				/>
 				<Button
-					disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }
+					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
 					icon
 					onClick={ handleCiteModalOpen }
 					onKeyDown={ handleKeyDown }
@@ -257,7 +263,7 @@ const ItemActionsDesktop = memo(props => {
 					<Icon type="16/cite" width="16" height="16" />
 				</Button>
 				<Button
-					disabled={ selectedItemsCount === 0 || selectedItemsCount > 100 }
+					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
 					icon
 					onClick={ handleBibliographyModalOpen }
 					onKeyDown={ handleKeyDown }

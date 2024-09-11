@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeChildMap } from '../common/collection';
-import { get } from '../utils';
 
 const defaultNavState = {
 	path: [],
@@ -13,9 +12,10 @@ const defaultNavState = {
 const useNavigationState = () => {
 	const [navState, setNavState] = useState(defaultNavState);
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
-	const collectionsDataInSelectedLibrary = useSelector(
-		state => get(state, ['libraries', navState.libraryKey, 'collections', 'data'], []), shallowEqual
-	);
+
+	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey].collections.keys);
+	const dataObjects = useSelector(state => state.libraries[navState.libraryKey].dataObjects);
+	const collectionsDataInSelectedLibrary = Object.fromEntries(collectionKeys.map(key => [key, dataObjects[key]]));
 
 	const handleNavigation = useCallback(({ library = null, collection = null, view = null } = {}) => {
 		if(view === 'library') {

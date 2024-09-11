@@ -142,9 +142,9 @@ const fetchAllCollections = (libraryKey, { sort = 'dateModified', direction = "d
 		const state = getState();
 		const expectedCount = get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null);
 		const isKnown = expectedCount !== null;
-		const collections = get(state, ['libraries', libraryKey, 'collections', 'data'], {});
+		const collectionKeys = state.libraries[libraryKey]?.collections?.keys ?? [];
 		const isFetchingAll = get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], null);
-		const actualCount = Object.keys(collections).length;
+		const actualCount = Object.keys(collectionKeys).length;
 		const isCountCorrect = expectedCount === actualCount
 
 		if(isFetchingAll) {
@@ -263,7 +263,10 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const collection = get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]);
+			const collection = state.libraries[libraryKey]?.dataObjects[collectionKey];
+			if (!collection) {
+				throw new Error(`Collection ${collectionKey} not found in library ${libraryKey}`);
+			}
 			const version = collection.version;
 
 			dispatch({

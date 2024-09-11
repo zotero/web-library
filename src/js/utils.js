@@ -132,7 +132,13 @@ const getSortKeyForItemType = (mappings, sortKey, itemType) => {
 
 const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 	sortBy = columnProperties[sortBy].sortKey;
-	if(item.itemType === 'note' && sortBy === 'title') {
+
+	if (!item.itemType && item.name && sortBy === 'title') {
+		// must be a collection
+		return item.name;
+	}
+
+	if (item.itemType === 'note' && sortBy === 'title') {
 		return noteAsTitle(item.note || '');
 	}
 

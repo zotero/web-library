@@ -24,6 +24,7 @@ const runRequest = async (dispatch, request, { id, type, payload }, requestOpts 
 				error
 			});
 		} else {
+			console.error(error);
 			dispatch({
 				type: `ERROR_${type}`,
 				...payload, id,

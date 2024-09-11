@@ -15,7 +15,7 @@ const NewFileModal = () => {
 	const isOpen = useSelector(state => state.modal.id === NEW_FILE);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
-	const collection = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey]));
+	const collection = useSelector(state => state.libraries[libraryKey]?.dataObjects[collectionKey]);
 	const files = useSelector(state => state.modal.files, shallowEqual);
 
 	const inputId = useRef(getUniqueId());

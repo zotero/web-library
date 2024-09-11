@@ -5,7 +5,7 @@ import { Button, Icon } from 'web-common/components';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { COLLECTION_ADD } from '../../constants/modals';
-import { get, getUniqueId } from '../../utils';
+import { getUniqueId } from '../../utils';
 import { toggleModal, createCollection } from '../../actions';
 
 const NewCollectionModal = () => {
@@ -13,7 +13,7 @@ const NewCollectionModal = () => {
 	const [name, setName] = useState('');
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const parentCollection = useSelector(state =>
-		get(state, ['libraries', libraryKey, 'collections', 'data', state.modal.parentCollectionKey]),
+		state.libraries[libraryKey]?.dataObjects[state.modal.parentCollectionKey],
 		shallowEqual
 	);
 

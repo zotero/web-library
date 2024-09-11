@@ -9,8 +9,15 @@ const getBaseMappedValue = (mappings, item, property) => {
 		item[mappings[itemType][property]] : property in item ? item[property] : null;
 }
 
-const getItemTitle = (mappings, item) => item.itemType === 'note' ?
-	noteAsTitle(item.note) : getBaseMappedValue(mappings, item, 'title') || '';
+const getItemTitle = (mappings, item) => {
+	if (item.itemType === 'note') {
+		return noteAsTitle(item.note);
+	}
+	if (!item.itemType && item.name) {
+		return item.name;
+	}
+	return getBaseMappedValue(mappings, item, 'title') || '';
+}
 
 // logic based on:
 // https://github.com/zotero/zotero/blob/26ee0e294b604ed9ea473c76bb072715c318eac2/chrome/content/zotero/xpcom/data/item.js#L3697
@@ -102,9 +109,13 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	const colors = [];
 	const emojis = [];
 
+	if (!tagColors?.value || !tagColors?.lookup) {
+		tagColors = { value: [], lookup: {} };
+	}
+
 	// colored tags, including emoji tags, ordered by position (value is an array ordered by position)
 	tagColors.value.forEach(({ name, color }) => {
-		if(!item.tags.some(({ tag }) => tag === name)) {
+		if(!(item?.tags ?? []).some(({ tag }) => tag === name)) {
 			return;
 		}
 		if (containsEmoji(name)) {
@@ -115,7 +126,7 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	});
 
 	// non-colored tags containing emoji, sorted alphabetically (item.tags should already be sorted)
-	item.tags.forEach(({ tag }) => {
+	(item?.tags ?? []).forEach(({ tag }) => {
 		if (!(tag in tagColors.lookup) && containsEmoji(tag)) {
 			emojis.push(extractEmoji(tag));
 		}
@@ -125,7 +136,7 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 		item[Symbol.for('meta')].createdByUser.username :
 		'';
 	const itemTypeName = itemTypeLocalized(item, itemTypes);
-	const iconName = item.itemType === 'attachment' ? getAttachmentIcon(item) : getItemTypeIcon(item.itemType);
+	const iconName = (!item.itemType && item.name) ? 'folder' : item.itemType === 'attachment' ? getAttachmentIcon(item) : getItemTypeIcon(item.itemType);
 
 
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
@@ -157,6 +168,15 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	}
 };
 
+const calculateDerivedData = (item, { meta = { mappings: {}, itemTypes: [] }, tagColors } = {}) => {
+	if (Array.isArray(item)) {
+		return item.map(i => calculateDerivedData(i, { meta, tagColors }));
+	}
+
+	item[Symbol.for('derived')] = getDerivedData(meta.mappings, item, meta.itemTypes, tagColors);
+	return item;
+}
+
 const getFieldDisplayValue = (item, field) => {
 	switch(field) {
 		case 'accessDate':
@@ -172,6 +192,4 @@ const getFieldDisplayValue = (item, field) => {
 const getLastPageIndexSettingKey = (itemKey, libraryKey) =>
 	`lastPageIndex_${libraryKey[0] === 'u' ? 'u' : libraryKey}_${itemKey}`;
 
-export { getBaseMappedValue, getDerivedData, getFieldDisplayValue,
-	getItemTitle, getLastPageIndexSettingKey
-};
+export { calculateDerivedData, getBaseMappedValue, getDerivedData, getFieldDisplayValue, getItemTitle, getLastPageIndexSettingKey };

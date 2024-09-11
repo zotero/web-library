@@ -6,7 +6,6 @@ import deepEqual from 'deep-equal';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';
-import { get } from '../../utils';
 import { MOVE_COLLECTION } from '../../constants/modals';
 import { toggleModal, updateCollection } from '../../actions';
 import { useNavigationState } from '../../hooks';
@@ -16,7 +15,7 @@ const MoveCollectionsModal = () => {
 	const collectionKey = useSelector(state => state.modal.collectionKey);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const currentParentCollectionKey = useSelector(
-		state => get(state, ['libraries', libraryKey, 'collections', 'data', collectionKey, 'parentCollection'], false)
+		state => state.libraries[libraryKey]?.dataObjects[collectionKey]?.parentCollection ?? false
 	);
 	const isOpen = useSelector(state => state.modal.id === MOVE_COLLECTION);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);

@@ -22,7 +22,7 @@ const ItemsList = memo(props => {
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
 	const dispatch = useDispatch();
-	const { hasChecked, isFetching, keys, requests, totalResults, sortBy, sortDirection } = useSourceData();
+	const { injectPoints, hasChecked, isFetching, keys, requests, totalResults, sortBy, sortDirection } = useSourceData();
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
@@ -51,9 +51,15 @@ const ItemsList = memo(props => {
 	}, [keys, requests]);
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
-		dispatch(fetchSource(startIndex, stopIndex))
+		let offset = 0;
+		for (let i = 0; i <= injectPoints.length; i++) {
+			if (injectPoints[i] <= startIndex) {
+				offset++;
+			}
+		}
+		dispatch(fetchSource(Math.min(startIndex - offset, 0), stopIndex))
 		lastRequest.current = { startIndex, stopIndex };
-	}, [dispatch]);
+	}, [dispatch, injectPoints]);
 
 	useEffect(() => {
 		if (scrollToRow !== null && !hasChecked && !isFetching) {

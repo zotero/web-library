@@ -15,7 +15,7 @@ const EmbeddedCollectionPicker = props => {
 	const { tabIndex = -2, onFocusNext, onFocusPrev } = props;
 	const libraryName = useSelector(state => state.config.libraries?.[0].name);
 	const collectionKey = useSelector(state => state.current.collectionKey)
-	const collectionName = useSelector(state => state.libraries[state.current.libraryKey]?.collections?.data?.[state.current.collectionKey]?.name);
+	const collectionName = useSelector(state => state.libraries[state.current.libraryKey]?.dataObjects?.[state.current.collectionKey]?.name);
 
 	const dispatch = useDispatch();
 
@@ -83,7 +83,7 @@ const EmbeddedHeader = () => {
 	const dispatch = useDispatch();
 	const backLabel = useSelector(state =>
 		state.current.collectionKey ?
-			state.libraries[state.current.libraryKey]?.collections?.data?.[state.current.collectionKey]?.name :
+			state.libraries[state.current.libraryKey]?.dataObjects?.[state.current.collectionKey]?.name :
 			state.config.libraries?.[0].name
 	);
 	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(ref, '.search-input');

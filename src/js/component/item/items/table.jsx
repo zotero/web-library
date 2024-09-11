@@ -84,7 +84,7 @@ const Table = () => {
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTarget, setReorderTarget] = useState(null);
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
-	const { isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests } = useSourceData();
+	const { injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests } = useSourceData();
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
 	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
@@ -174,9 +174,15 @@ const Table = () => {
 	}, [keys, requests]);
 
 	const handleLoadMore = useCallback((startIndex, stopIndex) => {
-		dispatch(fetchSource(startIndex, stopIndex))
+		let offset = 0;
+		for(let i = 0; i <= injectPoints.length; i++) {
+			if(injectPoints[i] <= startIndex) {
+				offset++;
+			}
+		}
+		dispatch(fetchSource(Math.max(startIndex - offset, 0), stopIndex))
 		lastRequest.current = { startIndex, stopIndex };
-	}, [dispatch]);
+	}, [dispatch, injectPoints]);
 
 	const handleResize = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);

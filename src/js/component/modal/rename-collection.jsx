@@ -13,13 +13,12 @@ const RenameCollectionModal = () => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.modal.collectionKey);
-	const collection = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'collections', 'data', state.modal.collectionKey]
-	), shallowEqual);
-	const collections = useSelector(state => get(
-		state, ['libraries', state.current.libraryKey, 'collections', 'data']
-	), shallowEqual);
-
+	const collection = useSelector(
+		state => state.libraries[state.current.libraryKey]?.dataObjects[state.modal.collectionKey], shallowEqual
+	);
+	const collections = useSelector(
+		state =>  state.libraries[libraryKey]?.collections?.keys.map(key => state.libraries[libraryKey].dataObjects[key]), shallowEqual
+	);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_RENAME);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [name, setName] = useState('');
