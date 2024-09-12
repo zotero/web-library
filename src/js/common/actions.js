@@ -35,12 +35,33 @@ const extractItems = response => {
 	}));
 }
 
-//@TODO: deprecate in favour of items-write.jsx chunkedAction()
-const sequentialChunkedAcion = async (action, itemKeys, extraArgs = []) => {
-	do {
-		const itemKeysChunk = itemKeys.splice(0, 50);
-		await action(itemKeysChunk, ...extraArgs);
-	} while (itemKeys.length > 0);
+const chunkedAction = (action, keys, ...args) => {
+	let chunkIndex = 0;
+	const chunkSize = 50;
+
+	return async dispatch => {
+		const results = [];
+		while ((chunkIndex * chunkSize) < keys.length) {
+			const keysChunk = keys.slice(chunkIndex * chunkSize, (chunkIndex * chunkSize) + chunkSize);
+			results.push(await dispatch(action(keysChunk, ...args)));
+			chunkIndex += 1;
+		}
+		return results;
+	}
+}
+
+const splitItemAndCollectionKeys = (itemAndCollectionKeys, libraryKey, state) => {
+	const itemKeys = [];
+	const collectionKeys = [];
+	while (itemAndCollectionKeys.length > 0) {
+		const key = itemAndCollectionKeys.pop();
+		if (state.libraries[libraryKey]?.dataObjects[key]?.[Symbol.for('type')] === 'collection') {
+			collectionKeys.push(key);
+		} else {
+			itemKeys.push(key);
+		}
+	}
+	return { itemKeys, collectionKeys };
 }
 
 const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
@@ -95,4 +116,11 @@ const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
 	}
 }
 
-export { escapeBooleanSearches, extractItems, getApiForItems, sequentialChunkedAcion };
+class PartialWriteError extends Error {
+	constructor(message, response) {
+		super(message);
+		this.response = response;
+	}
+}
+
+export { escapeBooleanSearches, extractItems, chunkedAction, getApiForItems, splitItemAndCollectionKeys, PartialWriteError };

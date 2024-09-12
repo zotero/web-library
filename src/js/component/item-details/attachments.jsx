@@ -14,7 +14,7 @@ import AttachmentDetails from './attachment-details';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
 import { READER_CONTENT_TYPES } from '../../constants/reader.js';
-import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveToTrash, fetchChildItems, navigate,
+import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveItemsToTrash, fetchChildItems, navigate,
 tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, isReaderCompatibleBrowser, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
 import { getFileData } from '../../common/event';
@@ -239,7 +239,7 @@ const Attachment = memo(props => {
 
 	const handleDelete = useCallback(ev => {
 		ev.stopPropagation();
-		dispatch(moveToTrash([attachment.key]));
+		dispatch(moveItemsToTrash([attachment.key]));
 		if(attachmentKey === attachment.key) {
 			dispatch(navigate({ attachmentKey: null, noteKey: null }));
 		}

@@ -8,7 +8,7 @@ export * from "./items-export";
 export * from "./items-other";
 export * from "./items-read";
 export * from "./items-write";
-export * from './items-current';
+export * from './current';
 export * from "./library";
 export * from "./meta";
 export * from "./navigate";

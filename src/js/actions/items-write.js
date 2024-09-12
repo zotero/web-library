@@ -1,7 +1,7 @@
 import api from 'zotero-api-client';
 import { omit, pick } from 'web-common/utils';
 
-import { extractItems } from '../common/actions';
+import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
 import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
@@ -73,12 +73,6 @@ import {
 	REQUEST_UPLOAD_ATTACHMENT,
 } from '../constants/actions';
 
-class PartialWriteError extends Error {
-	constructor(message, response) {
-		super(message);
-		this.response = response;
-	}
-}
 
 const postItemsMultiPatch = async (state, multiPatch, libraryKey = null) => {
 	libraryKey = libraryKey ?? state.current.libraryKey;
@@ -662,7 +656,8 @@ const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => 
 	};
 }
 
-const moveToTrash = itemKeys => {
+// TODO: Merge `moveItemsToTrash` and `recoverItemsFromTrash` into `updateItemsTrash` (+ matching queue fn). See `updateCollectionsTrash` for reference.
+const moveItemsToTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
 		const id = requestTracker.id++;
@@ -734,7 +729,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 	};
 }
 
-const recoverFromTrash = itemKeys => {
+const recoverItemsFromTrash = itemKeys => {
 	return async (dispatch, getState) => {
 		const { libraryKey } = getState().current;
 		const id = requestTracker.id++;
@@ -1328,43 +1323,17 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 	};
 }
 
-const chunkedAction = (action, itemKeys, ...args) => {
-	let chunkIndex = 0;
-	const chunkSize = 50;
-
-	return async dispatch => {
-		const results = [];
-		while ((chunkIndex * chunkSize) < itemKeys.length) {
-			const itemKeysChunk = itemKeys.slice(chunkIndex * chunkSize, (chunkIndex * chunkSize) + chunkSize);
-			results.push(await dispatch(action(itemKeysChunk, ...args)));
-			chunkIndex += 1;
-		}
-		return results;
-	}
-}
-
 const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
 const chunkedToggleTagsOnItems = (itemKeys, ...args) => chunkedAction(toggleTagsOnItems, itemKeys, ...args);
 
 const chunkedDeleteItems = (itemKeys, ...args) => chunkedAction(deleteItems, itemKeys, ...args);
 
-const chunkedMoveToTrash = (itemKeys, ...args) => chunkedAction(moveToTrash, itemKeys, ...args);
+const chunkedMoveItemsToTrash = (itemKeys, ...args) => chunkedAction(moveItemsToTrash, itemKeys, ...args);
 
-const chunkedRecoverFromTrash = (itemKeys, ...args) => chunkedAction(recoverFromTrash, itemKeys, ...args);
+const chunkedRecoverItemsFromTrash = (itemKeys, ...args) => chunkedAction(recoverItemsFromTrash, itemKeys, ...args);
 
 const chunkedRemoveFromCollection = (itemKeys, ...args) => chunkedAction(removeFromCollection, itemKeys, ...args);
-
-const chunkedTrashOrDelete = (itemKeys, ...args) => {
-	return async (dispatch, getState) => {
-		const { itemsSource } = getState().current;
-		if(itemsSource === 'trash') {
-			return await dispatch(chunkedDeleteItems(itemKeys, ...args));
-		} else {
-			return await dispatch(chunkedMoveToTrash(itemKeys, ...args));
-		}
-	}
-}
 
 const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 	return async dispatch => {
@@ -1584,11 +1553,10 @@ export {
 	chunkedAddToCollection,
 	chunkedCopyToLibrary,
 	chunkedDeleteItems,
-	chunkedMoveToTrash,
-	chunkedRecoverFromTrash,
+	chunkedMoveItemsToTrash,
+	chunkedRecoverItemsFromTrash,
 	chunkedRemoveFromCollection,
 	chunkedToggleTagsOnItems,
-	chunkedTrashOrDelete,
 	copyToLibrary,
 	createAttachments,
 	createAttachmentsFromDropped,
@@ -1598,9 +1566,9 @@ export {
 	createLinkedUrlAttachments,
 	deleteItem,
 	deleteItems,
-	moveToTrash,
+	moveItemsToTrash,
 	patchAttachment,
-	recoverFromTrash,
+	recoverItemsFromTrash,
 	removeFromCollection,
 	removeRelatedItem,
 	toggleTagsOnItems,

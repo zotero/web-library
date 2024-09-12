@@ -1,8 +1,9 @@
 import { mapObject, omit } from 'web-common/utils';
 import {
 	RECEIVE_ADD_ITEMS_TO_COLLECTION, RECEIVE_ADD_TAGS_TO_ITEMS, RECEIVE_CHILD_ITEMS,
-	RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
-	RECEIVE_DELETE_TAGS, RECEIVE_FETCH_ITEM_DETAILS, RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_BY_QUERY,
+	RECEIVE_UPDATE_COLLECTIONS_TRASH, RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS,
+	RECEIVE_DELETE_COLLECTIONS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS, RECEIVE_DELETE_TAGS,
+	RECEIVE_FETCH_ITEM_DETAILS, RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_IN_COLLECTION, RECEIVE_LIBRARY_SETTINGS, RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_PUBLICATIONS_ITEMS, RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_RELATED_ITEMS,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TOP_ITEMS, RECEIVE_TRASH_ITEMS,
@@ -51,6 +52,8 @@ const dataObjects = (state = {}, action, { meta, tagColors }) => {
 			};
 		case RECEIVE_DELETE_COLLECTION:
 			return omit(state, action.collection.key);
+		case RECEIVE_DELETE_COLLECTIONS:
+			return omit(state, action.collectionKeys);
 		case RECEIVE_DELETED_CONTENT:
 			return omit(state, action.collectionKeys);
 		case RECEIVE_DELETE_ITEM:
@@ -70,6 +73,14 @@ const dataObjects = (state = {}, action, { meta, tagColors }) => {
 					...action.item
 				}, { meta, tagColors })
 			};
+		case RECEIVE_UPDATE_COLLECTIONS_TRASH:
+			return {
+				...state,
+				...indexByKey(Object.values(action.collections), 'key', collection => (processCollection({
+					...state[collection.key],
+					...collection
+				})))
+			}
 		case RECEIVE_UPDATE_MULTIPLE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:

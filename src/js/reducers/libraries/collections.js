@@ -3,7 +3,7 @@ import { omit } from 'web-common/utils';
 import {
 	BEGIN_FETCH_ALL_COLLECTIONS, BEGIN_FETCH_COLLECTIONS_SINCE, COMPLETE_FETCH_ALL_COLLECTIONS,
 	COMPLETE_FETCH_COLLECTIONS_SINCE, ERROR_COLLECTIONS_IN_LIBRARY, RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_CREATE_COLLECTIONS, RECEIVE_DELETE_COLLECTION, RECEIVE_DELETED_CONTENT,
+	RECEIVE_CREATE_COLLECTIONS, RECEIVE_DELETE_COLLECTION, RECEIVE_DELETE_COLLECTIONS, RECEIVE_DELETED_CONTENT,
 	REQUEST_COLLECTIONS_IN_LIBRARY,
 } from '../../constants/actions.js';
 
@@ -20,18 +20,6 @@ const countNewCollections = (action, state) => {
 
 	const count = action.collections
 		.filter(collection => !(collection.key in state.keys))
-		.length;
-	return count;
-}
-
-const countRemovedCollections = (action, state) => {
-	if(!('totalResults' in state)) {
-		// haven't checked collections in this library yet, ignore
-		return 0;
-	}
-
-	const count = action.collectionKeys
-		.filter(collectionKey => (state.keys.includes(collectionKey)))
 		.length;
 	return count;
 }
@@ -74,11 +62,14 @@ const collections = (state = defaultState, action) => {
 				totalResults: state.totalResults - 1
 			}
 		case RECEIVE_DELETED_CONTENT:
+		case RECEIVE_DELETE_COLLECTIONS: {
+			const keys = state.keys.filter(key => !action.collectionKeys.includes(key));
 			return {
 				...state,
-				keys: state.keys.filter(key => !action.collectionKeys.includes(key)),
-				totalResults: (state.totalResults || 0) - countRemovedCollections(action, state)
+				keys,
+				totalResults: keys.length
 			}
+		}
 		case BEGIN_FETCH_ALL_COLLECTIONS:
 			return {
 				...state,

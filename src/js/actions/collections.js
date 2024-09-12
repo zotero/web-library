@@ -16,10 +16,19 @@ import {
     REQUEST_UPDATE_COLLECTION,
     BEGIN_FETCH_COLLECTIONS_SINCE,
 	COMPLETE_FETCH_COLLECTIONS_SINCE,
+	PRE_UPDATE_COLLECTIONS_TRASH,
+	REQUEST_UPDATE_COLLECTIONS_TRASH,
+	RECEIVE_UPDATE_COLLECTIONS_TRASH,
+	ERROR_UPDATE_COLLECTIONS_TRASH,
+	PRE_DELETE_COLLECTIONS,
+	REQUEST_DELETE_COLLECTIONS,
+	RECEIVE_DELETE_COLLECTIONS,
+	ERROR_DELETE_COLLECTIONS,
 } from '../constants/actions';
 
 import { requestTracker, requestWithBackoff } from '.';
 import { cede, get } from '../utils';
+import { chunkedAction } from '../common/actions';
 
 const rescheduleBadRequests = (badRequestsArray, allRequestsArray, dispatch, libraryKey, args) => {
 	let hasScheduledNewRequest = false;
@@ -352,13 +361,164 @@ const deleteCollection = (collection, libraryKey) => {
 	};
 }
 
+const deleteCollections = (collectionKeys, libraryKey) => {
+	return async dispatch => {
+		const id = requestTracker.id++;
+
+		dispatch({
+			type: PRE_DELETE_COLLECTIONS,
+			collectionKeys,
+			libraryKey,
+			id
+		});
+
+		const promise = new Promise((resolve, reject) => {
+			dispatch(
+				queueDeleteCollections(collectionKeys, libraryKey, id, resolve, reject)
+			);
+		});
+		return promise;
+	};
+}
+
+const chunkedDeleteCollections = (...args) => chunkedAction(deleteCollections, ...args);
+
+const queueDeleteCollections = (collectionKeys, libraryKey, id, resolve, reject) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const config = getState().config;
+
+			dispatch({
+				type: REQUEST_DELETE_COLLECTIONS,
+				libraryKey,
+				collectionKeys,
+				id
+			});
+
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.collections()
+					.delete(collectionKeys);
+
+				dispatch({
+					type: RECEIVE_DELETE_COLLECTIONS,
+					libraryKey,
+					collectionKeys,
+					response,
+					id
+				});
+				resolve(response);
+			} catch(error) {
+				dispatch({
+						type: ERROR_DELETE_COLLECTIONS,
+						error,
+						libraryKey,
+						collectionKeys,
+						id
+					});
+				reject(error);
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
+const updateCollectionsTrash = (collectionKeys, libraryKey, deleted) => {
+	return async dispatch => {
+		const id = requestTracker.id++;
+
+		if (deleted !== 0 && deleted !== 1) {
+			throw new Error('deleted must be 0 or 1');
+		}
+
+		dispatch({
+			type: PRE_UPDATE_COLLECTIONS_TRASH,
+			collectionKeys,
+			libraryKey,
+			deleted,
+			id
+		});
+
+		dispatch(
+			queueUpdateCollectionsTrash(collectionKeys, libraryKey, deleted, id)
+		);
+	};
+}
+
+const chunkedUpdateCollectionsTrash = (...args) => chunkedAction(updateCollectionsTrash, ...args);
+
+const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const config = state.config;
+			const version = state.libraries[libraryKey].sync.version;
+
+			dispatch({
+				type: REQUEST_UPDATE_COLLECTIONS_TRASH,
+				libraryKey,
+				collectionKeys,
+				deleted,
+				id
+			});
+
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.version(version)
+					.collections()
+					.post(collectionKeys.map(key => ({ key, deleted })));
+
+				const updatedCollectionsKeys = [];
+				const collections = [];
+
+				collectionKeys.forEach((_, index) => {
+					const updatedCollection = response.getEntityByIndex(index);
+					collections.push(updatedCollection);
+					updatedCollectionsKeys.push(updatedCollection.key);
+				});
+
+				dispatch({
+					type: RECEIVE_UPDATE_COLLECTIONS_TRASH,
+					libraryKey,
+					collections,
+					collectionKeys: updatedCollectionsKeys,
+					deleted,
+					response,
+					id
+				});
+			} catch(error) {
+				dispatch({
+						type: ERROR_UPDATE_COLLECTIONS_TRASH,
+						error,
+						libraryKey,
+						collectionKeys,
+						deleted,
+						id
+					});
+				throw error;
+			} finally {
+				next();
+			}
+		}
+	}
+}
+
 export {
-	createCollection,
-	createCollections,
-	deleteCollection,
-	fetchAllCollections,
-	fetchAllCollectionsSince,
-	fetchCollections,
-	queueUpdateCollection,
-	updateCollection,
+    chunkedUpdateCollectionsTrash,
+    createCollection,
+    createCollections,
+    deleteCollection,
+    deleteCollections,
+    fetchAllCollections,
+    fetchAllCollectionsSince,
+    fetchCollections,
+    queueUpdateCollection,
+    updateCollection,
+    updateCollectionsTrash,
+	chunkedDeleteCollections
 };

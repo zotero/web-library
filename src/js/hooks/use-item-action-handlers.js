@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch} from 'react-redux';
 import { currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
-currentTrashItems, currentDeleteItems, currentRecoverTrashItems, triggerSelectMode,
+	currentMoveToTrash, currentDeletePermanently, currentRecoverFromTrash, triggerSelectMode,
 currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
 navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal,
 currentNewFileModal, } from '../actions';
@@ -19,17 +19,17 @@ const useItemActionHandlers = () => {
 	}, [dispatch]);
 
 	const handleTrash = useCallback(async () => {
-		await dispatch(currentTrashItems());
+		await dispatch(currentMoveToTrash());
 		dispatch(triggerSelectMode(false, true));
 	}, [dispatch]);
 
 	const handlePermanentlyDelete = useCallback(async () => {
-		await dispatch(currentDeleteItems());
+		await dispatch(currentDeletePermanently());
 		dispatch(triggerSelectMode(false, true));
 	}, [dispatch]);
 
 	const handleUndelete = useCallback(async () => {
-		await dispatch(currentRecoverTrashItems());
+		await dispatch(currentRecoverFromTrash());
 		dispatch(triggerSelectMode(false, true));
 	}, [dispatch]);
 

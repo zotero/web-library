@@ -9,7 +9,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 import Editable from '../editable';
 import Node from './node';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
-import { createAttachmentsFromDropped, deleteCollection, toggleModal, updateCollection, navigate, triggerFocus } from '../../actions';
+import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate, triggerFocus } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 
 const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) => {
@@ -397,7 +397,7 @@ const DotMenu = memo(props => {
 			focusBySelector(upNode ?? rootNode);
 		}, 0);
 
-		dispatch(deleteCollection(collection, parentLibraryKey));
+		dispatch(updateCollectionsTrash([collection.key], parentLibraryKey, 1));
 
 		if(currentLibraryKey === parentLibraryKey && collection.key === currentCollectionKey) {
 			if(collection.parentCollection) {

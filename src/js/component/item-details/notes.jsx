@@ -14,7 +14,7 @@ import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { useFetchingState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
-	fetchItemTemplate, moveToTrash, navigate } from 'actions';
+	fetchItemTemplate, moveItemsToTrash, navigate } from 'actions';
 
 const PAGE_SIZE = 100;
 
@@ -216,7 +216,7 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 			noteKeyToAutoDelete.current = null;
 		} else if(!isAutoDelete) {
 			focusBySelector(`.note:first-child:not([data-key="${note.key}"]), .note:nth-child(2)`);
-			dispatch(moveToTrash([note.key]));
+			dispatch(moveItemsToTrash([note.key]));
 			if(note.key === noteKey) {
 				dispatch(navigate({ noteKey: null, attachmentKey: null }));
 			}

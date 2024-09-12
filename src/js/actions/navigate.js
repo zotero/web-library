@@ -44,7 +44,6 @@ const currentToPath = current => ({
  * @returns {Function} - The async action function.
  */
 const navigate = (path, isAbsolute = false, viewportChange = false) => {
-	// console.trace('navigate', { path, isAbsolute, viewportChange });
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
 		const isEmbedded = config.isEmbedded;

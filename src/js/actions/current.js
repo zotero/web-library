@@ -1,9 +1,9 @@
 import { omit } from 'web-common/utils';
 
-import { getApiForItems } from '../common/actions';
+import { getApiForItems, splitItemAndCollectionKeys } from '../common/actions';
 import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
-chunkedTrashOrDelete, chunkedDeleteItems, chunkedMoveToTrash, chunkedRecoverFromTrash,
-chunkedRemoveFromCollection, createItem, createItemOfType, toggleModal } from '.';
+	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
+	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem, createItemOfType, toggleModal } from '.';
 import columnProperties from '../constants/column-properties';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
@@ -90,35 +90,48 @@ const currentCiteModal = () => {
 	}
 }
 
-const currentTrashItems = () => {
+const currentMoveToTrash = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { itemKeys } = state.current;
-		return await dispatch(chunkedMoveToTrash(itemKeys));
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const itemsPromise = dispatch(chunkedMoveItemsToTrash(itemKeys));
+		const collectionsPromise = dispatch(chunkedUpdateCollectionsTrash(collectionKeys, libraryKey, 1));
+		return await Promise.all([itemsPromise, collectionsPromise]);
 	}
 }
 
-const currentRecoverTrashItems = () => {
+const currentRecoverFromTrash = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { itemKeys } = state.current;
-		return await dispatch(chunkedRecoverFromTrash(itemKeys));
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const itemsPromise = dispatch(chunkedRecoverItemsFromTrash(itemKeys));
+		const collectionsPromise = dispatch(chunkedUpdateCollectionsTrash(collectionKeys, libraryKey, 0));
+		return await Promise.all([itemsPromise, collectionsPromise]);
+	}
+}
+
+const currentDeletePermanently = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const itemsPromise = await dispatch(chunkedDeleteItems(itemKeys));
+		const collectionsPromise = await dispatch(chunkedDeleteCollections(collectionKeys, libraryKey));
+		return await Promise.all([itemsPromise, collectionsPromise]);
 	}
 }
 
 const currentTrashOrDelete = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { itemKeys } = state.current;
-		return await dispatch(chunkedTrashOrDelete(itemKeys));
-	}
-}
-
-const currentDeleteItems = () => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const { itemKeys } = state.current;
-		return await dispatch(chunkedDeleteItems(itemKeys));
+		const { itemsSource } = state.current;
+		if (itemsSource === 'trash') {
+			return await dispatch(currentDeletePermanently());
+		} else {
+			return await dispatch(currentMoveToTrash());
+		}
 	}
 }
 
@@ -254,17 +267,17 @@ export {
 	currentCiteModal,
 	currentCopyToLibrary,
 	currentCreateItemOfType,
-	currentDeleteItems,
+	currentDeletePermanently,
 	currentDuplicateItem,
 	currentExportItems,
 	currentExportItemsModal,
 	currentGoToSubscribeUrl,
 	currentNewFileModal,
 	currentNewItemModal,
-	currentRecoverTrashItems,
+	currentRecoverFromTrash,
 	currentRemoveColoredTags,
 	currentRemoveItemFromCollection,
 	currentToggleTagByIndex,
-	currentTrashItems,
+	currentMoveToTrash,
 	currentTrashOrDelete,
 }
