@@ -262,12 +262,52 @@ const detectIfItemsChanged = ({ items, libraryKey }, allItems = {}, check = () =
 	return items.some(newItem => check(newItem, allItems[newItem.key]));
 }
 
+const injectTrashedCollections = (itemsState, collectionsState, dataObjectsState, meta) => {
+	let trashedCollections = collectionsState.keys
+		.map(key => dataObjectsState[key])
+		.filter(collection => {
+			if(!collection.deleted) {
+				return false;
+			}
+			// if itemsState is queryState, execute query on collections locally
+			if (itemsState?.current?.q.length) {
+				if (!collection.name.toLowerCase().includes(itemsState.current.q.toLowerCase())) {
+					return false;
+				}
+			}
+			return true;
+	});
+
+	// Skip collections that are children of other trashed collections
+	const trashedCollectionKeys = new Set(trashedCollections.map(collection => collection.key));
+	trashedCollections = trashedCollections.filter(collection => !trashedCollectionKeys.has(collection.parentCollection));
+
+	if (!('keys' in itemsState) || itemsState.keys.length === 0) {
+		return { ...itemsState, keys: trashedCollections.map(collection => collection.key), injectPoints: trashedCollections.map((_, i) => i) };
+	}
+
+	const keysTrash = [
+		...itemsState.keys,
+		...trashedCollections.map(collection => collection.key)
+	];
+
+	if ('sortBy' in itemsState && 'sortDirection' in itemsState) {
+		const { sortBy, sortDirection } = itemsState;
+		sortItemsByKey(meta.mappings, keysTrash, sortBy, sortDirection, key => dataObjectsState[key]);
+	}
+
+	const indices = trashedCollections.map((collection) => keysTrash.indexOf(collection.key));
+
+	return { ...itemsState, keys: keysTrash, injectPoints: indices };
+}
+
 export {
 	detectIfItemsChanged,
 	detectItemsChanged,
 	filterItemKeys,
 	filterTags,
 	injectExtraItemKeys,
+	injectTrashedCollections,
 	populateGroups,
 	populateItemKeys,
 	populateTags,

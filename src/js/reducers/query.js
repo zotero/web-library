@@ -27,7 +27,7 @@ const isMatchingQuery = (action, state) => {
 const defaultState = {
 	current: {},
 	isFetching: false,
-	itemKeys: [],
+	keys: [],
 	requests: [],
 	tags: {},
 	totalResults: null,

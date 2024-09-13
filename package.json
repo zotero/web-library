@@ -75,7 +75,6 @@
     "@reduxjs/toolkit": "^2.2.7",
     "bootstrap-sass": "^3.4.3",
     "classnames": "^2.5.1",
-    "combine-section-reducers": "^1.0.6",
     "connected-react-router": "^6.9.3",
     "copy-to-clipboard": "^3.3.3",
     "core-js": "^3.38.0",
