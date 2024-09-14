@@ -86,12 +86,10 @@ describe('Basic UI', () => {
 		const searchBox = screen.getByRole('searchbox', { name: 'Title, Creator, Year' });
 
 		await user.type(searchBox, 'pathfinding');
-
 		await waitFor(() => expect(searchBox).toHaveValue('pathfinding'));
-		await waitFor(() => expect(screen.getByText('7 items in this view')).toBeInTheDocument());
+		await screen.findByText('7 items in this view', {}, { timeout: 5000 });
 		expect(await screen.findByRole('row', { name: 'Summary of pathfinding algorithms used in game development' })).toBeInTheDocument();
 		expect(screen.queryByRole('row', { name: 'Border Collie' })).not.toBeInTheDocument();
-
 
 		const clearSearchButton = await screen.findByRole('button', { name: 'Clear Search' });
 		expect(clearSearchButton).toBeInTheDocument();

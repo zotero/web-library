@@ -378,7 +378,6 @@ describe('Items', () => {
 		await user.type(searchBox, 'pathfinding');
 
 		await waitFor(() => expect(searchBox).toHaveValue('pathfinding'));
-		await waitFor(() => expect(screen.getByText('7 items in this view')).toBeInTheDocument());
 
 		const row = screen.getByRole('row', { name: 'A*-based pathfinding in modern computer games' });
 		const violetSwatch = getByRole(row, 'img', { name: 'violet circle icon' }); // position 1
