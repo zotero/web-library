@@ -1,0 +1,769 @@
+[
+    {
+        "key": "HR8N9XDH",
+        "version": 327,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/HR8N9XDH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/HR8N9XDH",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Higgins",
+            "parsedDate": "2018",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "HR8N9XDH",
+            "version": 327,
+            "itemType": "journalArticle",
+            "title": "Connecting Music to Ethics",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Kathleen M.",
+                    "lastName": "Higgins"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "College Music Symposium",
+            "volume": "58",
+            "issue": "3",
+            "pages": "1-20",
+            "date": "2018",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "0069-5696",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/26608534",
+            "accessDate": "2023-01-13T11:34:37Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: College Music Society",
+            "tags": [
+                {
+                    "tag": "Philosophy of Music"
+                }
+            ],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2024-09-13T23:23:24Z"
+        }
+    },
+    {
+        "key": "JB35IL7B",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/JB35IL7B",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/JB35IL7B",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Gebhardt et al.",
+            "parsedDate": "2014",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "JB35IL7B",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Emotion Modulation in Psychiatric Patients Through Music",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Stefan",
+                    "lastName": "Gebhardt"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Markus",
+                    "lastName": "Kunkel"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Richard von",
+                    "lastName": "Georgi"
+                }
+            ],
+            "abstractNote": "This study explores differences in the use of music in everyday life among diagnostic groups of a psychiatric population (n = 180) in reference to a group of healthy subjects (n = 430). The results indicate that patients with mental disorders use music more for emotion modulation than healthy controls. In particular, patients with substance abuse and those with personality disorders used music mainly for cognitive problem solving and the reduction of negative activation, whereas patients with substance abuse in addition used music not often to stimulate themselves positively. Patients suffering from schizophrenia and personality disorders more often applied music for relaxation than the subjects of the reference group. Furthermore, the degree of severity of the psychiatric disorder correlated with the increased use of music for emotion modulation, i.e., for relaxation and cognitive problem solving. Thus, the results demonstrate an increased use of music for emotion modulation in patients with mental disorders in association with the severity of the disorder.",
+            "publicationTitle": "Music Perception: An Interdisciplinary Journal",
+            "volume": "31",
+            "issue": "5",
+            "pages": "485-493",
+            "date": "2014",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "10.1525/mp.2014.31.5.485",
+            "ISSN": "0730-7829",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/10.1525/mp.2014.31.5.485",
+            "accessDate": "2023-01-13T11:34:38Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: University of California Press",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    },
+    {
+        "key": "ZLM5SHFR",
+        "version": 340,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/ZLM5SHFR",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/ZLM5SHFR",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Halnon",
+            "parsedDate": "2006",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "ZLM5SHFR",
+            "version": 340,
+            "itemType": "journalArticle",
+            "title": "Heavy Metal Carnival and Dis-alienation: The Politics of Grotesque Realism",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Karen Bettez",
+                    "lastName": "Halnon"
+                }
+            ],
+            "abstractNote": "Based on four years of concert fieldwork and extensive music media analysis (including bands such as Cradle of Filth, GWAR, Insane Clown Posse, Marilyn Manson, and Slipknot), this article shows how heavy metal music and its carnival culture express a dis-alienating politics of resistance. Applying Bakhtin's multifaceted conceptualization of the carnival-grotesque, the author explains how grotesque realism in metal music and performances constitutes a proto-utopian liminal alternative to the impersonal, conformist, superficial, unequal, and numbing realities of commercialism and, more abstractly, a resistance to a society of spectacle and nothingness.",
+            "publicationTitle": "Symbolic Interaction",
+            "volume": "29",
+            "issue": "1",
+            "pages": "33-48",
+            "date": "2006",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "10.1525/si.2006.29.1.33",
+            "ISSN": "0195-6086",
+            "shortTitle": "Heavy Metal Carnival and Dis-alienation",
+            "url": "https://www.jstor.org/stable/10.1525/si.2006.29.1.33",
+            "accessDate": "2023-01-13T11:34:38Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: [Wiley, Society for the Study of Symbolic Interaction]",
+            "tags": [
+                {
+                    "tag": "Political Theory"
+                },
+                {
+                    "tag": "Subculture"
+                }
+            ],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2024-09-13T23:26:45Z"
+        }
+    },
+    {
+        "key": "HIPQ8PJU",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/HIPQ8PJU",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/HIPQ8PJU",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Roccor",
+            "parsedDate": "2000",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "HIPQ8PJU",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Heavy Metal: Forces of Unification and Fragmentation within a Musical Subculture",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Bettina",
+                    "lastName": "Roccor"
+                }
+            ],
+            "abstractNote": "The history of heavy metal reaches back to the 1960s. An independent cultural practice developed in the 1970s and experienced its height during the 1980s, declining in popularity in the course of the following decade. Today the heavy metal scene in Germany is a multifaceted cultural landscape in which a diversity of styles that developed over three decades coexists side by side, more or less peacefully. In spite of their many differences, most fans feel themselves to be members of one family because all heavy metal styles are based on the same basic musical patterns, the values supporting their culture have remained predominantly the same and the music's negative image has unified the fans in their indignation.",
+            "publicationTitle": "The World of Music",
+            "volume": "42",
+            "issue": "1",
+            "pages": "83-94",
+            "date": "2000",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "0043-8774",
+            "shortTitle": "Heavy Metal",
+            "url": "https://www.jstor.org/stable/41699315",
+            "accessDate": "2023-01-13T11:34:36Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: [Florian Noetzel GmbH Verlag, VWB - Verlag für Wissenschaft und Bildung, Schott Music GmbH & Co. KG, Bärenreiter]",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    },
+    {
+        "key": "IY45CHYB",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/IY45CHYB",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/IY45CHYB",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Boyer and Graham",
+            "parsedDate": "2016",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "IY45CHYB",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Hip Hop in the United States",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Holly",
+                    "lastName": "Boyer"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Aimee",
+                    "lastName": "Graham"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Reference & User Services Quarterly",
+            "volume": "55",
+            "issue": "3",
+            "pages": "215-218",
+            "date": "2016",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "1094-9054",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/refuseserq.55.3.215",
+            "accessDate": "2023-01-13T11:36:01Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: American Library Association",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:36:01Z",
+            "dateModified": "2023-01-13T11:36:01Z"
+        }
+    },
+    {
+        "key": "9W9JYRAH",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/9W9JYRAH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/9W9JYRAH",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Alridge and Stewart",
+            "parsedDate": "2005",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "9W9JYRAH",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Introduction: Hip Hop in History: Past, Present, and Future",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Derrick P.",
+                    "lastName": "Alridge"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "James B.",
+                    "lastName": "Stewart"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "The Journal of African American History",
+            "volume": "90",
+            "issue": "3",
+            "pages": "190-195",
+            "date": "2005",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "1548-1867",
+            "shortTitle": "Introduction",
+            "url": "https://www.jstor.org/stable/20063997",
+            "accessDate": "2023-01-13T11:36:01Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Association for the Study of African American Life and History, Inc.",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:36:01Z",
+            "dateModified": "2023-01-13T11:36:01Z"
+        }
+    },
+    {
+        "key": "SQ7Z8D8Y",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/SQ7Z8D8Y",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/SQ7Z8D8Y",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/FULGQU8C",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 996503
+            }
+        },
+        "meta": {
+            "creatorSummary": "Mansfield",
+            "parsedDate": "2014",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "SQ7Z8D8Y",
+            "version": 164,
+            "itemType": "bookSection",
+            "title": "Listening to Heavy Metal in Wadeye",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "John",
+                    "lastName": "Mansfield"
+                },
+                {
+                    "creatorType": "editor",
+                    "firstName": "Amanda",
+                    "lastName": "Harris"
+                }
+            ],
+            "abstractNote": "Most of the chapters in this volume examine how Aboriginal cultural artefacts have travelled outwards from their places of origin, being distributed, deployed or displaced in distant social contexts. This chapter treats the inverse situation: how a cultural product that has its origins in Europe and North America has been received and re-used in an Aboriginal town of tropical northern Australia. The cultural product in question is heavy metal—primarily a musical genre, which first emerged in Britain and the US in the 1980s, but also an associated array of images, texts and fashion statements.¹ The site of reception is",
+            "bookTitle": "Circulating Cultures",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "ANU Press",
+            "date": "2014",
+            "pages": "239-262",
+            "language": "",
+            "ISBN": "978-1-925022-19-3",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/j.ctt13wwv9j.12",
+            "accessDate": "2023-01-13T11:34:37Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    },
+    {
+        "key": "QWPWPNNM",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/QWPWPNNM",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/QWPWPNNM",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Ahlkvist",
+            "parsedDate": "1999",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "QWPWPNNM",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Music and Cultural Analysis in the Classroom: Introducing Sociology through Heavy Metal",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jarl A.",
+                    "lastName": "Ahlkvist"
+                }
+            ],
+            "abstractNote": "This article demonstrates that popular music's potential as a tool for teaching interactive introductory sociology courses is enhanced when a cultural analysis of a specific music genre is incorporated into the classroom. Using this type of analysis as an integrative course theme promotes active learning as students apply sociological ideas to explain empirical reality. Using heavy metal music as an example, I present a two-part model for integrating a cultural analysis of this music and its subculture into the introductory course. Students first conduct a sociologically grounded cultural analysis of heavy metal music. Then they expand this analysis during the rest of the course by applying new concepts, theories, and research to explain this cultural object sociologically. The article's final section discusses the application of this model in a range of class contexts and provides student responses to its use in an introductory sociology course.",
+            "publicationTitle": "Teaching Sociology",
+            "volume": "27",
+            "issue": "2",
+            "pages": "126-144",
+            "date": "1999",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "10.2307/1318699",
+            "ISSN": "0092-055X",
+            "shortTitle": "Music and Cultural Analysis in the Classroom",
+            "url": "https://www.jstor.org/stable/1318699",
+            "accessDate": "2023-01-13T11:34:39Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: [Sage Publications, Inc., American Sociological Association]",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    },
+    {
+        "key": "SE6UUYX8",
+        "version": 164,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/SE6UUYX8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/SE6UUYX8",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Pieslak",
+            "parsedDate": "2008",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "SE6UUYX8",
+            "version": 164,
+            "itemType": "journalArticle",
+            "title": "Sound, Text and Identity in Korn's 'Hey Daddy'",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jonathan",
+                    "lastName": "Pieslak"
+                }
+            ],
+            "abstractNote": "Most of the existing literature on metal approaches the subject from a sociological, anthropological or historical perspective, dedicating more attention to the surrounding musical (sub) cultures and their transformations than to the songs and music itself This essay addresses this gap in recent metal scholarship by examining issues of sound, text and identity in one of the most influential and popular metal bands of the post-grunge era, Korn. I interpret possible meanings within 'Hey Daddy', a track from Issues (1999), based on the relationships among the music, both as pitch and sound/timbre, and the text. In addition, I explore different processes of identification, offering an assessment of identification in the genre of metal and challenges in respect to listener identity in ' Hey Daddy'.",
+            "publicationTitle": "Popular Music",
+            "volume": "27",
+            "issue": "1",
+            "pages": "35-52",
+            "date": "2008",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "0261-1430",
+            "shortTitle": "",
+            "url": "https://www.jstor.org/stable/40212443",
+            "accessDate": "2023-01-13T11:34:39Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Cambridge University Press",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    },
+    {
+        "key": "L5R2FCAE",
+        "version": 163,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/L5R2FCAE",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/L5R2FCAE",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Mayer and Timberlake",
+            "parsedDate": "2014",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "L5R2FCAE",
+            "version": 163,
+            "itemType": "journalArticle",
+            "title": "\"The Fist in the Face of God\": Heavy Metal Music and Decentralized Cultural Diffusion",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Adam",
+                    "lastName": "Mayer"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Jeffrey M.",
+                    "lastName": "Timberlake"
+                }
+            ],
+            "abstractNote": "The purpose of this paper is to explain the timing and location of the diffusion of heavy metal music. We use data from an Internet archive to measure the population-adjusted rate of metal band foundings in 150 countries for the 1991-2008 period. We hypothesize that growth in \"digital capacity\" (Internet and personal computer use) catalyzed the diffusion of metal music. We include time-varying controls for gross national income, political regime, global economic integration, and degree of metal penetration of countries sharing a land or maritime border with each country. We find that digital capacity is positively associated with heavy metal band foundings, but, net of all controls, the effect is much stronger for countries with no history of metal music prior to 1990. Hence, our results indicate that increasing global digital capacity may be a stronger catalyst for between-country than for within-country diffusion of cultural products.",
+            "publicationTitle": "Sociological Perspectives",
+            "volume": "57",
+            "issue": "1",
+            "pages": "27-51",
+            "date": "2014",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "0731-1214",
+            "shortTitle": "\"The Fist in the Face of God\"",
+            "url": "https://www.jstor.org/stable/44289985",
+            "accessDate": "2023-01-13T11:34:36Z",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "JSTOR",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Sage Publications, Inc.",
+            "tags": [],
+            "collections": [
+                "4VM2BFHN"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:34:39Z",
+            "dateModified": "2023-01-13T11:34:39Z"
+        }
+    }
+]

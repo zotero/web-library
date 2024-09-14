@@ -5,23 +5,19 @@ import { findAllByRole, getByRole, screen, queryByRole, waitFor } from '@testing
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getPatchedState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import zoteroUserStateRaw from './fixtures/state/desktop-zotero-user.json';
-import itemTypes from './fixtures/response/item-types';
-import itemFields from './fixtures/response/item-fields';
-import searchResults from './fixtures/response/zotero-user-search-results.json';
-import searchResultsTags from './fixtures/response/zotero-user-search-results-tags.json';
-import collectionItems from './fixtures/response/zotero-user-collection-items.json';
-import collectionTags from './fixtures/response/zotero-user-collection-tags.json';
-import tagResults from './fixtures/response/zotero-user-tag-results.json';
-import tagResultsTags from './fixtures/response/zotero-user-tag-results-tags.json';
-import itemTypeFieldsFilm from './fixtures/response/item-type-fields-film.json';
-import itemTypeCreatorTypesFilm from './fixtures/response/item-type-creator-types-film.json';
+import stateLibraryView from './fixtures/state/desktop-test-user-library-view.json';
+import testUserSearchResults from './fixtures/response/test-user-search-results.json';
+import testUserSearchResultsTags from './fixtures/response/test-user-search-results-tags.json';
+import collectionItems from './fixtures/response/test-user-collection-items.json';
+import collectionTags from './fixtures/response/test-user-collection-items-tags.json';
+import searchByTagResults from './fixtures/response/test-user-search-by-tag-results.json';
+import searchByTagResultsTags from './fixtures/response/test-user-search-by-tag-results-tags.json';
 import tagsSecondPage from './fixtures/response/zotero-user-tags-second-page.json';
 
-const zoteroUserState = JSONtoState(zoteroUserStateRaw);
+const libraryViewState = JSONtoState(stateLibraryView);
 applyAdditionalJestTweaks();
 
 describe('Basic UI', () => {
@@ -46,7 +42,7 @@ describe('Basic UI', () => {
 	afterAll(() => server.close());
 
 	test('Shows all UI elements', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 		expect(screen.queryByRole('img', { name: 'Loading' })).not.toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'Zotero' })).toBeInTheDocument();
@@ -64,36 +60,37 @@ describe('Basic UI', () => {
 		expect(screen.getByRole('button', { name: 'Tag Selector Options' })).toBeInTheDocument();
 		expect(screen.getByRole('toolbar', { name: 'items toolbar' })).toBeInTheDocument();
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
-		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
 	});
 
 
 	test('Entering text into search box runs search, clearing it clears search', async () => {
 		const user = userEvent.setup();
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
 		server.use(
-			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
-				return HttpResponse.json(searchResultsTags, {
-					headers: { 'Total-Results': '1' }
+			http.get('https://api.zotero.org/users/1/items/top', () => {
+				return HttpResponse.json(testUserSearchResults, {
+					headers: { 'Total-Results': testUserSearchResults.length }
 				});
 			}),
-			http.get('https://api.zotero.org/users/475425/items/top', () => {
-				return HttpResponse.json(searchResults, {
-					headers: { 'Total-Results': '15' }
+			http.get('https://api.zotero.org/users/1/items/top/tags', () => {
+				return HttpResponse.json(testUserSearchResultsTags, {
+					headers: { 'Total-Results': testUserSearchResultsTags.length }
 				});
-			})
+			}),
 		);
 
 		expect(screen.queryByRole('button', { name: 'Clear Search' })).not.toBeInTheDocument();
 		const searchBox = screen.getByRole('searchbox', { name: 'Title, Creator, Year' });
 
-		await user.type(searchBox, 'Zotero');
+		await user.type(searchBox, 'pathfinding');
 
-		await waitFor(() => expect(searchBox).toHaveValue('Zotero'));
-		await waitFor(() => expect(screen.getByText('15 items in this view')).toBeInTheDocument());
-		expect(await screen.findByRole('row', { name: 'Zotero | Home' })).toBeInTheDocument();
+		await waitFor(() => expect(searchBox).toHaveValue('pathfinding'));
+		await waitFor(() => expect(screen.getByText('7 items in this view')).toBeInTheDocument());
+		expect(await screen.findByRole('row', { name: 'Summary of pathfinding algorithms used in game development' })).toBeInTheDocument();
+		expect(screen.queryByRole('row', { name: 'Border Collie' })).not.toBeInTheDocument();
 
 
 		const clearSearchButton = await screen.findByRole('button', { name: 'Clear Search' });
@@ -101,26 +98,24 @@ describe('Basic UI', () => {
 		await user.click(clearSearchButton);
 
 		await waitFor(() => expect(searchBox).toHaveValue(''));
-		await waitFor(() => expect(screen.getByText('164 items in this view')).toBeInTheDocument());
-		expect(await screen.findByRole('row',
-			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
-		).toBeInTheDocument();
-		expect(screen.queryByRole('row', { name: 'Zotero | Home' })).not.toBeInTheDocument();
+		await waitFor(() => expect(screen.getByText('81 items in this view')).toBeInTheDocument());
+		expect(await screen.findByRole('row', { name: 'Border Collie' })).toBeInTheDocument();
+		expect(screen.queryByRole('row', { name: 'Summary of pathfinding algorithms used in game development' })).not.toBeInTheDocument();
 	});
 
 	test('Navigating to a collection', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
 		server.use(
-			http.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top', () => {
+			http.get('https://api.zotero.org/users/1/collections/4VM2BFHN/items/top', () => {
 				return HttpResponse.json(collectionItems, {
-					headers: { 'Total-Results': '12' }
+					headers: { 'Total-Results': collectionItems.length }
 				});
 			}),
-			http.get('https://api.zotero.org/users/475425/collections/9MK5KS97/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/1/collections/4VM2BFHN/items/top/tags', () => {
 				return HttpResponse.json(collectionTags, {
-					headers: { 'Total-Results': '6' }
+					headers: { 'Total-Results': collectionTags.length }
 				});
 			}),
 		);
@@ -129,12 +124,12 @@ describe('Basic UI', () => {
 			{ name: 'My Library', selected: true })
 		).toBeInTheDocument();
 
-		const collectionItem = screen.getByRole('treeitem', { name: 'Humanities', selected: false });
+		const collectionItem = screen.getByRole('treeitem', { name: 'Music', selected: false });
 		await userEvent.click(collectionItem);
 		await waitForPosition();
 
 		expect(screen.getByRole('treeitem',
-			{ name: 'Humanities', selected: true })
+			{ name: 'Music', selected: true })
 		).toBeInTheDocument();
 
 		expect(screen.queryByRole('treeitem',
@@ -146,23 +141,31 @@ describe('Basic UI', () => {
 		).toBeInTheDocument();
 
 		expect(screen.getByRole('row',
-			{ name: 'Lady Hester Lucy Stanhope: a new light on her life and love affairs.' })
+			{ name: 'Connecting Music to Ethics' })
 		).toBeInTheDocument();
 
 		expect(screen.queryByRole('row',
-			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+			{ name: 'A systematic literature review of A* pathfinding' })
 		).not.toBeInTheDocument();
 
-		expect(screen.getByText('12 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('10 items in this view')).toBeInTheDocument();
 	});
 
 	test('Filtering tags', async () => {
+		let hasRequestedSecondPage = false;
 		const user = userEvent.setup();
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, {
+			preloadedState: getPatchedState(libraryViewState, 'libraries.u1.tagsTop', {
+				totalResults: libraryViewState.libraries.u1.tagsTop.totalResults + tagsSecondPage.length,
+				pointer: libraryViewState.libraries.u1.tagsTop.tags.length
+			})
+		});
 		await waitForPosition();
 
+
 		server.use(
-			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+			http.get('https://api.zotero.org/users/1/items/top/tags', () => {
+				hasRequestedSecondPage = true;
 				return HttpResponse.json(tagsSecondPage, {
 					headers: { 'Total-Results': tagsSecondPage.length }
 				});
@@ -178,91 +181,74 @@ describe('Basic UI', () => {
 			.filter(tb => tb.getAttribute('title') !== 'Collapse Tag Selector')
 			.filter(tb => tb.getAttribute('title') !== 'Tag Selector Options');
 
-		await waitFor(() => expect(tagButtons).toHaveLength(11));
+		await waitFor(() => expect(tagButtons).toHaveLength(3));
+		expect(hasRequestedSecondPage).toBe(true);
 	});
 
 	test('Filtering items by tag', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
 		server.use(
-			http.get('https://api.zotero.org/users/475425/items/top', () => {
-				return HttpResponse.json(tagResults, {
-					headers: { 'Total-Results': '1' }
+			http.get('https://api.zotero.org/users/1/items/top', () => {
+				return HttpResponse.json(searchByTagResults, {
+					headers: { 'Total-Results': searchByTagResults.length }
 				});
 			}),
-			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
-				return HttpResponse.json(tagResultsTags, {
-					headers: { 'Total-Results': '7' }
+			http.get('https://api.zotero.org/users/1/items/top/tags', () => {
+				return HttpResponse.json(searchByTagResultsTags, {
+					headers: { 'Total-Results': searchByTagResultsTags.length }
 				});
 			})
 		);
 
 		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
-		const tagButton = getByRole(tagSelector, 'button', { name: 'Adventure films', pressed: false });
+		const tagButton = getByRole(tagSelector, 'button', { name: 'to read', pressed: false });
 
-		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
 
 		await userEvent.click(tagButton);
 		await waitForPosition();
 
 		expect(screen.getByRole('row',
-			{ name: 'Indiana Jones and the Temple of Doom' })
+			{ name: 'A systematic literature review of A* pathfinding' })
 		).toBeInTheDocument();
 
 		expect(getByRole(tagSelector, 'button',
-			{ name: 'Adventure films', pressed: true })
+			{ name: 'to read', pressed: true })
 		).toBeInTheDocument();
 
 		expect(getByRole(tagSelector, 'button',
-			{ name: 'Fantasy films', pressed: false })
+			{ name: 'coding', pressed: false })
 		).toBeInTheDocument();
 
-		expect(screen.getByText('1 item in this view')).toBeInTheDocument();
+		expect(screen.getByText('7 items in this view')).toBeInTheDocument();
 	});
 
 	test('Selecting item', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
-		server.use(
-			http.get('https://api.zotero.org/itemTypes', () => {
-				return HttpResponse.json(itemTypes);
-			}),
-			http.get('https://api.zotero.org/itemFields', () => {
-				return HttpResponse.json(itemFields);
-			}),
-			http.get('https://api.zotero.org/creatorFields', () => {
-				return HttpResponse.json(itemFields);
-			}),
-			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
-				return HttpResponse.json(itemTypeCreatorTypesFilm);
-			}),
-			http.get('https://api.zotero.org/itemTypeFields', () => {
-				return HttpResponse.json(itemTypeFieldsFilm);
-			}),
-		);
-
-		expect(screen.getByText('164 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
 		expect(screen.queryByRole('tablist', { name: 'Item Details' })).not.toBeInTheDocument();
 
 		const item = screen.getByRole('row',
-			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' });
+			{ name: 'A comparison of sequential Delaunay triangulation algorithms' });
 
 		await userEvent.click(item);
 		await waitForPosition();
 
 		expect(screen.getByRole('row',
-			{ name: 'Acute Phase T Cell Help in Neutrophil-Mediated Clearance of Helicobacter Pylori' })
+			{ name: 'A comparison of sequential Delaunay triangulation algorithms' })
 		).toHaveAttribute('aria-selected', 'true');
 
-		expect(screen.queryByRole('164 items in this view')).not.toBeInTheDocument();
+		expect(screen.queryByRole('81 items in this view')).not.toBeInTheDocument();
 		expect(screen.getByRole('tablist', { name: 'Item Details' })).toBeInTheDocument();
 		expect(screen.getByRole('tab', { name: 'Info', selected: true })).toBeInTheDocument();
 	});
 
 	test('Configuring columns', async () => {
-		renderWithProviders(<MainZotero />, { preloadedState: zoteroUserState });
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
 		const grid = screen.getByRole('grid', { name: 'items' });

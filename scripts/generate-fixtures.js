@@ -109,6 +109,7 @@ const fixtures = [
 	[`${URL}testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader`, 'desktop-test-user-reader-view'],
 	[`${URL}testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list`, 'desktop-test-user-search-phrase-selected'],
 	[`${URL}testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list`, 'desktop-test-user-search-selected'],
+	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
 	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view']
 ];
@@ -125,11 +126,12 @@ async function makeFixture(stateURL, name) {
 	let requestsCount = 0;
 	let lastRequestStarted = Date.now();
 
-	page.on('request', request => {
-		if (request.url().match(/^https?:\/\/files.zotero.net\/.*?$/)) {
-			// Ignore file requests
-			return;
-		}
+	await page.route(/^https?:\/\/files.zotero.net\/.*?$/, route => route.fulfill({
+		status: 200,
+		body: '',
+	}));
+
+	page.on('request', () => {
 		lastRequestStarted = Date.now();
 		requestsCount++;
 	});
@@ -140,10 +142,6 @@ async function makeFixture(stateURL, name) {
 
 	page.on('requestfailed', async request => {
 		requestsCount--;
-		if (request.url().match(/^https?:\/\/files.zotero.net\/.*?$/)) {
-			// Ignore failed file requests
-			return;
-		}
 		await browser.close();
 		throw new Error('Request failed: ' + request.url() + ' ' + request.failure().errorText);
 	});

@@ -1,0 +1,589 @@
+[
+    {
+        "key": "65WVZHGE",
+        "version": 221,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/65WVZHGE",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/65WVZHGE",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/ZWWURE87",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 408141
+            }
+        },
+        "meta": {
+            "creatorSummary": "Ruppert",
+            "parsedDate": "1995",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "65WVZHGE",
+            "version": 221,
+            "itemType": "journalArticle",
+            "title": "A Delaunay refinement algorithm for quality 2-dimensional mesh generation",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jim",
+                    "lastName": "Ruppert"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Journal of algorithms",
+            "volume": "18",
+            "issue": "3",
+            "pages": "548–585",
+            "date": "1995",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Elsevier",
+            "tags": [
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:00:38Z",
+            "dateModified": "2023-01-17T15:30:17Z"
+        }
+    },
+    {
+        "key": "SQXGAJCH",
+        "version": 220,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/SQXGAJCH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/SQXGAJCH",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/TZHL432Z",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 1170669
+            }
+        },
+        "meta": {
+            "creatorSummary": "Sloan",
+            "parsedDate": "1987",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "SQXGAJCH",
+            "version": 220,
+            "itemType": "journalArticle",
+            "title": "A fast algorithm for constructing Delaunay triangulations in the plane",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "S. W.",
+                    "lastName": "Sloan"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Advances in Engineering Software (1978)",
+            "volume": "9",
+            "issue": "1",
+            "pages": "34–55",
+            "date": "1987",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Elsevier",
+            "tags": [
+                {
+                    "tag": "coding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:00:38Z",
+            "dateModified": "2023-01-17T15:38:33Z"
+        }
+    },
+    {
+        "key": "J489T6X3",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/J489T6X3",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/J489T6X3",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/36ATEWDS",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 536523
+            }
+        },
+        "meta": {
+            "creatorSummary": "Foead et al.",
+            "parsedDate": "2021",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "J489T6X3",
+            "version": 219,
+            "itemType": "journalArticle",
+            "title": "A systematic literature review of A* pathfinding",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Daniel",
+                    "lastName": "Foead"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Alifio",
+                    "lastName": "Ghifari"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Marchel Budi",
+                    "lastName": "Kusuma"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Novita",
+                    "lastName": "Hanafiah"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Eric",
+                    "lastName": "Gunawan"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Procedia Computer Science",
+            "volume": "179",
+            "issue": "",
+            "pages": "507–514",
+            "date": "2021",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Elsevier",
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:29:50Z"
+        }
+    },
+    {
+        "key": "3JCLFUG4",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/3JCLFUG4",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/3JCLFUG4",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/K24TUDDL",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 848371
+            }
+        },
+        "meta": {
+            "creatorSummary": "Silver",
+            "parsedDate": "2005",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "3JCLFUG4",
+            "version": 219,
+            "itemType": "conferencePaper",
+            "title": "Cooperative pathfinding",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "David",
+                    "lastName": "Silver"
+                }
+            ],
+            "abstractNote": "",
+            "date": "2005",
+            "proceedingsTitle": "Proceedings of the aaai conference on artificial intelligence and interactive digital entertainment",
+            "conferenceName": "",
+            "place": "",
+            "publisher": "",
+            "volume": "1",
+            "pages": "117–122",
+            "series": "",
+            "language": "",
+            "DOI": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Issue: 1",
+            "tags": [
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:30:17Z"
+        }
+    },
+    {
+        "key": "J2NYHR6N",
+        "version": 338,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "J2NYHR6N",
+            "version": 338,
+            "itemType": "webpage",
+            "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+            "accessDate": "2023-01-13T10:54:08Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "Animal Cognition"
+                },
+                {
+                    "tag": "Animal-Human Bond"
+                },
+                {
+                    "tag": "Canine Intelligence"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:54:08Z",
+            "dateModified": "2024-09-13T23:26:19Z"
+        }
+    },
+    {
+        "key": "2MNVWQBP",
+        "version": 219,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/2MNVWQBP",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/2MNVWQBP",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/LZ35XNZF",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 1497781
+            }
+        },
+        "meta": {
+            "creatorSummary": "Rafiq et al.",
+            "parsedDate": "2020",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "2MNVWQBP",
+            "version": 219,
+            "itemType": "conferencePaper",
+            "title": "Pathfinding Algorithms in game development",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Abdul",
+                    "lastName": "Rafiq"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Tuty Asmawaty Abdul",
+                    "lastName": "Kadir"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Siti Normaziah",
+                    "lastName": "Ihsan"
+                }
+            ],
+            "abstractNote": "",
+            "date": "2020",
+            "proceedingsTitle": "IOP Conference Series: Materials Science and Engineering",
+            "conferenceName": "",
+            "place": "",
+            "publisher": "IOP Publishing",
+            "volume": "769",
+            "pages": "012021",
+            "series": "",
+            "language": "",
+            "DOI": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Issue: 1",
+            "tags": [
+                {
+                    "tag": "coding"
+                },
+                {
+                    "tag": "pathfinding"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:58:57Z",
+            "dateModified": "2023-01-17T15:38:33Z"
+        }
+    },
+    {
+        "key": "WRCN45PC",
+        "version": 241,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "WRCN45PC",
+            "version": 241,
+            "itemType": "webpage",
+            "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+            "accessDate": "2023-01-13T10:53:25Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "cute"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:53:25Z",
+            "dateModified": "2023-01-13T10:53:25Z"
+        }
+    }
+]

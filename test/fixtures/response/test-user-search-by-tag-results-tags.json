@@ -1,0 +1,121 @@
+[
+    {
+        "tag": "Animal Cognition",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Animal+Cognition",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Animal+Cognition",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Animal-Human Bond",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Animal-Human+Bond",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Animal-Human+Bond",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Canine Intelligence",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Canine+Intelligence",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Canine+Intelligence",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "coding",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/coding",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/coding",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 7
+        }
+    },
+    {
+        "tag": "cute",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/cute",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/cute",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 7
+        }
+    },
+    {
+        "tag": "pathfinding",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/pathfinding",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/pathfinding",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 8
+        }
+    },
+    {
+        "tag": "to read",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/to+read",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/to+read",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 8
+        }
+    }
+]

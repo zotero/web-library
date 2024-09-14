@@ -9,7 +9,7 @@ import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getPachtedStateMultiple } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -152,7 +152,16 @@ describe('Group libraries', () => {
 	test('should sort locally by addedBy', async () => {
 		window.location = new URL('http://localhost/groups/5119976/animals/items/X9WEHDAN/item-list');
 		const user = userEvent.setup();
-		renderWithProviders(<MainZotero />, { preloadedState: stateGroup });
+		const preloadedState = getPachtedStateMultiple(stateGroup, [
+			['libraries.g5119976.dataObjects.RQW7ZKYL.@@meta@@.createdByUser', { username: 'zotero' }],
+			['libraries.g5119976.dataObjects.RQW7ZKYL.@@derived@@', { createdByUser: 'zotero' }],
+			['libraries.g5119976.dataObjects.CWHXG6QF.@@meta@@.createdByUser', { username: 'Garfield'}],
+			['libraries.g5119976.dataObjects.CWHXG6QF.@@derived@@', { createdByUser: 'Garfield' }],
+			['libraries.g5119976.dataObjects.6ELC3UWC.@@meta@@.createdByUser', { username: 'HELLO TESTS'}],
+			['libraries.g5119976.dataObjects.6ELC3UWC.@@derived@@', { createdByUser: 'HELLO TESTS' }],
+		]);
+
+		renderWithProviders(<MainZotero />, { preloadedState });
 
 		await user.click(await screen.findByRole('button', { name: 'Column Selector' }));
 		await user.click(screen.getByRole('menuitemcheckbox', { name: 'Added By' }));
@@ -161,7 +170,7 @@ describe('Group libraries', () => {
 		const gridBody = getByRole(grid, 'rowgroup');
 		let rows = getAllByRole(gridBody, 'row');
 
-		expect(getByRole(rows[0], 'gridcell', { name: 'foobar' })).toHaveTextContent('foobar');
+		expect(getByRole(rows[0], 'gridcell', { name: 'zotero' })).toHaveTextContent('zotero');
 		expect(getByRole(rows[1], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
 		expect(getByRole(rows[2], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
 		expect(getByRole(rows[3], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
@@ -169,9 +178,17 @@ describe('Group libraries', () => {
 		await user.click(await screen.findByRole('columnheader', { name: 'Added By' }));
 		rows = getAllByRole(gridBody, 'row');
 
-		expect(getByRole(rows[0], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
+		expect(getByRole(rows[0], 'gridcell', { name: 'zotero' })).toHaveTextContent('zotero');
+		expect(getByRole(rows[1], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
+		expect(getByRole(rows[2], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
+		expect(getByRole(rows[3], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
+
+		await user.click(await screen.findByRole('columnheader', { name: 'Added By' }));
+		rows = getAllByRole(gridBody, 'row');
+
+		expect(getByRole(rows[0], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
 		expect(getByRole(rows[1], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
-		expect(getByRole(rows[2], 'gridcell', { name: 'Garfield' })).toHaveTextContent('Garfield');
-		expect(getByRole(rows[3], 'gridcell', { name: 'foobar' })).toHaveTextContent('foobar');
+		expect(getByRole(rows[2], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
+		expect(getByRole(rows[3], 'gridcell', { name: 'zotero' })).toHaveTextContent('zotero');
 	});
 });

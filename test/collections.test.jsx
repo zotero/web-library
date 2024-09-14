@@ -129,7 +129,8 @@ describe('Test User: Collections', () => {
 		expect(hasBeenPatched).toBe(true);
 	});
 
-	test('Delete a collection using "More" menu', async () => {
+	test('Trash a collection using "More" menu', async () => {
+		const libVer = state.libraries.u1.sync.version;
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
@@ -138,17 +139,21 @@ describe('Test User: Collections', () => {
 		await user.click(getByRole(collectionTreeItem, 'button', { name: 'More' }));
 		const deleteOpt = await findByRole(collectionTreeItem, 'menuitem', { name: 'Delete' });
 
-		let hasBeenDeleted = false;
+		let hasBeenTrashed = false;
 		server.use(
-			http.delete('https://api.zotero.org/users/1/collections/CSB4KZUU', async () => {
-				hasBeenDeleted = true;
-				return new HttpResponse(null, { status: 204 });
+			http.post('https://api.zotero.org/users/1/collections', async ({ request }) => {
+				const collections = await request.json();
+				expect(collections[0].deleted).toBe(1);
+				expect(collections[0].key).toBe('CSB4KZUU');
+				hasBeenTrashed = true;
+				const responseBody = { success: { "0": 'CSB4KZUU' }, successful: { "0": { key: 'CSB4KZUU', version: libVer, data: { ...state.libraries.u1.dataObjects.CSB4KZUU, deleted: 1 } } } };
+				return HttpResponse.json(responseBody);
 			}),
 		);
 
 		await user.click(deleteOpt);
 		await waitFor(() => expect(screen.queryByRole('treeitem', { name: 'Algorithms' })).not.toBeInTheDocument());
-		expect(hasBeenDeleted).toBe(true);
+		expect(hasBeenTrashed).toBe(true);
 	});
 
 	test('Move a collection using "More" menu', async () => {
@@ -190,7 +195,7 @@ describe('Test User: Collections', () => {
 	});
 
 	test('Deleted collection does not appear in the tree', async () => {
-		const modifiedState = getPatchedState(state, 'libraries.u1.collections.data.SGQRGR2J', { deleted: 1 });
+		const modifiedState = getPatchedState(state, 'libraries.u1.dataObjects.SGQRGR2J', { deleted: 1 });
 		renderWithProviders(<MainZotero />, { preloadedState: modifiedState });
 		await waitForPosition();
 		expect(screen.queryByRole('treeitem', { name: 'Board Games' })).not.toBeInTheDocument();

@@ -27,7 +27,7 @@ stateRaw.config.libraries[0].isReadOnly = true;
 const state = JSONtoState(stateRaw);
 applyAdditionalJestTweaks();
 
-describe('Test User\'s read-only library', () => {
+describe('Read-only', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
 
@@ -187,7 +187,7 @@ describe('Test User\'s read-only library', () => {
 
 		server.use(
 			http.get('https://api.zotero.org/users/1/items/VG79HDDM/children', () => {
-				return HttpResponse.json([]);
+				return HttpResponse.json([], { headers: { 'Total-Results': 0 }});
 			}),
 			http.get('https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf', () => {
 				return HttpResponse.text('');

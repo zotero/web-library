@@ -9,7 +9,7 @@ import { act, waitFor, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getStateWithout } from './utils/state';
 import stateRaw from './fixtures/state/desktop-test-user-reader-view.json';
 import parentStateRaw from './fixtures/state/desktop-test-user-reader-parent-item-view.json';
 import newItemAnnotationNote from "./fixtures/response/new-item-annotation-note.json";
@@ -126,7 +126,7 @@ describe('Reader', () => {
 			})
 		);
 
-		const { history, container } = renderWithProviders(<MainZotero />, { preloadedState: parentState });
+		const { history, container } = renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(parentState, 'libraries.u1.itemsByParent.N2PJUHD6') });
 
 		await waitFor(() => expect(container.querySelector('iframe')).toBeInTheDocument(), { timeout: 3000 });
 

@@ -35,7 +35,7 @@ const state = JSONtoState(stateRaw);
 const libraryViewState = JSONtoState(stateLibraryView);
 const formattingState = JSONtoState(zoteroFormattingCollectionStateRaw);
 
-describe('Test User\'s library', () => {
+describe('Items', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();
@@ -323,7 +323,7 @@ describe('Test User\'s library', () => {
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
 		const grid = screen.getByRole('grid', { name: 'items' });
 		const gridBody = getByRole(grid, 'rowgroup');
-		expect(getAllByRole(gridBody, 'row')).toHaveLength(9);
+		expect(getAllByRole(gridBody, 'row')).toHaveLength(10);
 
 		const row1 = getByRole(gridBody, 'row', { name: 'has subscript and superscript' });
 		expect(row1.innerHTML).toEqual(expect.stringContaining('has <sub>subscript</sub> and <sup>superscript</sup>'));

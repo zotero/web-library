@@ -13,8 +13,8 @@ const useNavigationState = () => {
 	const [navState, setNavState] = useState(defaultNavState);
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
 
-	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey].collections.keys);
-	const dataObjects = useSelector(state => state.libraries[navState.libraryKey].dataObjects);
+	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey]?.collections.keys) ?? [];
+	const dataObjects = useSelector(state => state.libraries[navState.libraryKey]?.dataObjects) ?? {};
 	const collectionsDataInSelectedLibrary = Object.fromEntries(collectionKeys.map(key => [key, dataObjects[key]]));
 
 	const handleNavigation = useCallback(({ library = null, collection = null, view = null } = {}) => {

@@ -1,0 +1,53 @@
+[
+    {
+        "tag": "Philosophy of Music",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Philosophy+of+Music",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Philosophy+of+Music",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Political Theory",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Political+Theory",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Political+Theory",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    },
+    {
+        "tag": "Subculture",
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/tags/Subculture",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "http://zotero.org/users/1/tags/Subculture",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "type": 0,
+            "numItems": 1
+        }
+    }
+]

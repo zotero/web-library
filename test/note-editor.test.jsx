@@ -33,7 +33,7 @@ describe('Note Editor', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/items/BLVYJQMH/note/GNVWD3U4/item-details');
+		window.location = new URL('http://localhost/testuser/collections/CSB4KZUU/items/BLVYJQMH/note/GNVWD3U4/item-details');
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -41,23 +41,25 @@ describe('Note Editor', () => {
 
 
 	test("It adds an image to a note and keeps track of version", async () => {
+		const libVer = state.libraries.u1.sync.version;
+		const itemVer = state.libraries.u1.items.GNVWD3U4.version;
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 		let patchCounter = 0;
+		let nextVersion = libVer;
 
 		server.use(
 			http.patch('https://api.zotero.org/users/1/items/GNVWD3U4', async ({ request }) => {
-				let nextVersion;
 				const patch = await request.json();
 				if (patchCounter === 0) {
 					expect(patch.note).toBe('new value <img src="test" />');
-					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('163');
+					expect(request.headers.get('If-Unmodified-Since-Version')).toBe(`${itemVer}`);
 					delay(100); // we delay this response to simulate #529
-					nextVersion = 168; // this is the correct version
+					nextVersion++; // this is the correct version
 				} else if (patchCounter === 1) {
 					expect(patch.note).toBe('new value <img src="test" /> updated');
-					expect(request.headers.get('If-Unmodified-Since-Version')).toBe('168');
-					nextVersion = 169;
+					expect(request.headers.get('If-Unmodified-Since-Version')).toBe(`${libVer + 1}`);
+					nextVersion++;
 				}
 				patchCounter++;
 				return new HttpResponse(null, { status: 204, headers: { 'Last-Modified-Version': nextVersion } });
