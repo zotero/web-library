@@ -3,7 +3,7 @@ import { omit } from 'web-common/utils';
 import { getApiForItems, splitItemAndCollectionKeys } from '../common/actions';
 import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
 	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
-	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem, createItemOfType, toggleModal } from '.';
+	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem, createItemOfType, toggleModal, navigate } from '.';
 import columnProperties from '../constants/column-properties';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
@@ -106,6 +106,9 @@ const currentRecoverFromTrash = () => {
 		const state = getState();
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+
+		// unselect items before recovering them to avoid needless request for item details if one item is selected
+		await dispatch(navigate({ items: [] }));
 		const itemsPromise = dispatch(chunkedRecoverItemsFromTrash(itemKeys));
 		const collectionsPromise = dispatch(chunkedUpdateCollectionsTrash(collectionKeys, libraryKey, 0));
 		return await Promise.all([itemsPromise, collectionsPromise]);
@@ -117,6 +120,9 @@ const currentDeletePermanently = () => {
 		const state = getState();
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+
+		// unselect items before deleting them to avoid needless request for item details if one item is selected
+		await dispatch(navigate({ items: [] }));
 		const itemsPromise = await dispatch(chunkedDeleteItems(itemKeys));
 		const collectionsPromise = await dispatch(chunkedDeleteCollections(collectionKeys, libraryKey));
 		return await Promise.all([itemsPromise, collectionsPromise]);

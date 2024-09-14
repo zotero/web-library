@@ -283,7 +283,7 @@ const injectTrashedCollections = (itemsState, collectionsState, dataObjectsState
 	trashedCollections = trashedCollections.filter(collection => !trashedCollectionKeys.has(collection.parentCollection));
 
 	if (!('keys' in itemsState) || itemsState.keys.length === 0) {
-		return { ...itemsState, keys: trashedCollections.map(collection => collection.key), injectPoints: trashedCollections.map((_, i) => i) };
+		return { ...itemsState, keys: trashedCollections.map(collection => collection.key), injectPoints: trashedCollections.map((_, i) => i), totalCount: trashedCollections.length };
 	}
 
 	const keysTrash = [
@@ -298,7 +298,7 @@ const injectTrashedCollections = (itemsState, collectionsState, dataObjectsState
 
 	const indices = trashedCollections.map((collection) => keysTrash.indexOf(collection.key));
 
-	return { ...itemsState, keys: keysTrash, injectPoints: indices };
+	return { ...itemsState, keys: keysTrash, injectPoints: indices, totalCount: itemsState.totalResults + trashedCollections.length };
 }
 
 export {

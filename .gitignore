@@ -9,6 +9,7 @@ node_modules
 coverage
 visualizer
 .nyc_output
+.secret.json
 
 src/static/pdf-reader/
 src/static/pdf-worker/

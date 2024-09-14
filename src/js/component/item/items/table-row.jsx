@@ -179,7 +179,7 @@ const TableRow = props => {
 
 	const itemData = useSelector(
 		state => itemKey ?
-			state.libraries[state.current.libraryKey].dataObjects?.[itemKey]?.[Symbol.for('derived')]
+			state.libraries[state.current.libraryKey]?.dataObjects?.[itemKey]?.[Symbol.for('derived')]
 			: null
 	);
 

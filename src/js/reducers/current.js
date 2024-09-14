@@ -22,7 +22,8 @@ const stateDefault = {
 	isSelectMode: false,
 	isTagSelectorOpen: true,
 	isTouchTagSelectorOpen: false,
-	//NOTE: After #547 itemKey(s) might also contain collection keys
+	//NOTE: After #547 itemKey(s) might also contain collection keys.
+	//TODO: Rename to objectKey(s)
 	itemKey: null,
 	itemKeys: [],
 	itemsSource: null,

@@ -5,7 +5,7 @@ import { Button, Icon } from 'web-common/components';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { COLLECTION_RENAME } from '../../constants/modals';
-import { get, getUniqueId } from '../../utils';
+import { getUniqueId } from '../../utils';
 import { makeChildMap } from '../../common/collection';
 import { toggleModal, updateCollection } from '../../actions';
 
@@ -17,7 +17,7 @@ const RenameCollectionModal = () => {
 		state => state.libraries[state.current.libraryKey]?.dataObjects[state.modal.collectionKey], shallowEqual
 	);
 	const collections = useSelector(
-		state =>  state.libraries[libraryKey]?.collections?.keys.map(key => state.libraries[libraryKey].dataObjects[key]), shallowEqual
+		state =>  state.libraries[libraryKey]?.collections?.keys.map(key => state.libraries[libraryKey]?.dataObjects[key]), shallowEqual
 	);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_RENAME);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);

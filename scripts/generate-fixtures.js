@@ -110,6 +110,7 @@ const fixtures = [
 	[`${URL}testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list`, 'desktop-test-user-search-phrase-selected'],
 	[`${URL}testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list`, 'desktop-test-user-search-selected'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
+	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
 	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view']
 ];

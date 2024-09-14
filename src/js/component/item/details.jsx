@@ -7,7 +7,6 @@ import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
 import TouchHeaderWrap from '../../component/touch-header-wrap';
 import { navigate, fetchItemDetails } from '../../actions';
-import { get } from '../../utils';
 
 const ItemDetails = props => {
 	const { active = false } = props;
@@ -18,7 +17,7 @@ const ItemDetails = props => {
 	const itemKey = useSelector(state => state.current.itemKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
-	const item = useSelector(state => get(state, ['libraries', libraryKey, 'dataObjects', itemKey], null));
+	const item = useSelector(state => state.libraries[libraryKey]?.dataObjects?.[itemKey]);
 	// collections are prefetched so if item is null, it's not a collection
 	const isCollection = item?.[Symbol.for('type')] === 'collection';
 	const shouldFetchItem = itemKey && !isCollection && !item;
@@ -60,12 +59,10 @@ const ItemDetails = props => {
 				/>
 			) }
 			{
-				isCollection ? null : (
-					(!isTouchOrSmall || (isTouchOrSmall && !isSelectMode)) && item && !shouldRedirectToParentItem ? (
-						<ItemDetailsTabs />
-					) : (
-						<ItemDetailsInfoView />
-					)
+				(!isCollection && !isTouchOrSmall || (isTouchOrSmall && !isSelectMode)) && item && !shouldRedirectToParentItem ? (
+					<ItemDetailsTabs />
+				) : (
+					<ItemDetailsInfoView />
 				)
 			}
 		</section>

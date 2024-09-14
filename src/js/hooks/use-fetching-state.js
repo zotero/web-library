@@ -175,4 +175,4 @@ const useSourceSignature = () => {
 	}
 }
 
-export { useFetchingState, useSourceSignature, useSourceData, useSourceKeys, useTags };
+export { useFetchingState, useSourceSignature, useSourceData, useSourceKeys, useSourcePath, useTags };

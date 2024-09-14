@@ -106,7 +106,7 @@ const dataObjects = (state = {}, action, { meta, tagColors }) => {
 		case RECEIVE_TRASH_ITEMS:
 			return {
 				...state,
-				...discardIfOldVersion(indexByKey(processItem(action.items, { meta, tagColors }), 'key'), state)
+				...discardIfOldVersion(indexByKey(action.items, 'key', item => processItem(item, { meta, tagColors })), state)
 			};
 		case RECEIVE_UPLOAD_ATTACHMENT:
 			return {

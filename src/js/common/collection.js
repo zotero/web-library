@@ -16,4 +16,15 @@ const _makeChildMap = collections => {
 
 const makeChildMap = memoize(_makeChildMap, deepEqual);
 
-export { makeChildMap };
+const getDescendants = (collectionKey, childMap, keys = []) => {
+	if(!(collectionKey in childMap)) {
+		return keys;
+	}
+	for(let childKey of childMap[collectionKey]) {
+		keys.push(childKey);
+		getDescendants(childKey, childMap, keys);
+	}
+	return keys;
+}
+
+export { makeChildMap, getDescendants };

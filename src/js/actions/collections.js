@@ -29,6 +29,7 @@ import {
 import { requestTracker, requestWithBackoff } from '.';
 import { cede, get } from '../utils';
 import { chunkedAction } from '../common/actions';
+import { makeChildMap, getDescendants } from '../common/collection';
 
 const rescheduleBadRequests = (badRequestsArray, allRequestsArray, dispatch, libraryKey, args) => {
 	let hasScheduledNewRequest = false;
@@ -361,9 +362,21 @@ const deleteCollection = (collection, libraryKey) => {
 	};
 }
 
-const deleteCollections = (collectionKeys, libraryKey) => {
-	return async dispatch => {
+const deleteCollections = (collectionKeys, libraryKey, recursively = true) => {
+	return async (dispatch, getState) => {
 		const id = requestTracker.id++;
+		const state = getState();
+		const collections = state.libraries[libraryKey].collections.keys.map(key => state.libraries[libraryKey].dataObjects[key]);
+
+		if (recursively) {
+			// at this point child map should be memoized
+			const childMap = makeChildMap(collections);
+			const childKeys = [];
+			for(const key of collectionKeys) {
+				childKeys.push(...getDescendants(key, childMap));
+			}
+			collectionKeys.push(...childKeys);
+		}
 
 		dispatch({
 			type: PRE_DELETE_COLLECTIONS,
@@ -426,12 +439,24 @@ const queueDeleteCollections = (collectionKeys, libraryKey, id, resolve, reject)
 	};
 }
 
-const updateCollectionsTrash = (collectionKeys, libraryKey, deleted) => {
-	return async dispatch => {
+const updateCollectionsTrash = (collectionKeys, libraryKey, deleted, recursively = true) => {
+	return async (dispatch, useState) => {
 		const id = requestTracker.id++;
+		const state = useState();
+		const collections = state.libraries[libraryKey].collections.keys.map(key => state.libraries[libraryKey].dataObjects[key]);
 
 		if (deleted !== 0 && deleted !== 1) {
 			throw new Error('deleted must be 0 or 1');
+		}
+
+		if (recursively) {
+			// at this point child map should be memoized
+			const childMap = makeChildMap(collections);
+			const childKeys = [];
+			for (const key of collectionKeys) {
+				childKeys.push(...getDescendants(key, childMap));
+			}
+			collectionKeys.push(...childKeys);
 		}
 
 		dispatch({
