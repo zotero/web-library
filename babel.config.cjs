@@ -13,6 +13,7 @@ const presets = [
 
 const plugins = [
 	"babel-plugin-transform-import-meta",
-]
+	"@babel/plugin-syntax-import-attributes"
+];
 
 module.exports = { presets, plugins };

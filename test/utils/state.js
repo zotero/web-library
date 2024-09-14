@@ -50,14 +50,39 @@ function JSONtoState(json) {
 	return stateProcessSymbolsReverse(json);
 }
 
+const getKeyOrSymbolKey = key => {
+	const symbolMatch = key.match(/@@(.*)@@/);
+	if (symbolMatch) {
+		return Symbol.for(symbolMatch[1]);
+	}
+	return key;
+}
+
 function getPatchedState(state, path, patch) {
 	const pathParts = path.split('.')
 	if (pathParts.length === 1) {
-		return { ...state, [path]: { ...state[path], ...patch } };
+		const key = getKeyOrSymbolKey(path);
+		return { ...state, [key]: { ...state[key], ...patch } };
 	} else {
-		return { ...state, [pathParts[0]]: getPatchedState(state[pathParts[0]], pathParts.slice(1).join('.'), patch) };
+		const key = getKeyOrSymbolKey(pathParts[0]);
+		return { ...state, [key]: getPatchedState(state[key], pathParts.slice(1).join('.'), patch) };
 	}
 }
 
+function getStateWithout(state, path) {
+	const pathParts = path.split('.')
+	if (pathParts.length === 1) {
+		const newState = { ...state };
+		delete newState[path];
+		return newState;
+	} else {
+		return { ...state, [pathParts[0]]: getStateWithout(state[pathParts[0]], pathParts.slice(1).join('.')) };
+	}
+}
 
-export { stateToJSON, JSONtoState, getPatchedState };
+function getPachtedStateMultiple(state, patches) {
+	return patches.reduce((state, [path, patch]) => getPatchedState(state, path, patch), state);
+}
+
+
+export { stateProcessSymbols, stateToJSON, JSONtoState, getPatchedState, getPachtedStateMultiple, getStateWithout };
