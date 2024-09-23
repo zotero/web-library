@@ -9,7 +9,7 @@ import { isTriggerEvent, noop, scrollIntoViewIfNeeded } from 'web-common/utils';
 
 import RichEditor from 'component/rich-editor';
 import { get } from 'utils';
-import { noteAsTitle, pluralize } from 'common/format';
+import { noteSummary, pluralize } from 'common/format';
 import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { useFetchingState, usePrepForUnmount } from 'hooks';
@@ -105,7 +105,7 @@ const Note = memo(forwardRef((props, ref) => {
 				id={`note-${note.key}`}
 				className="multiline-truncate"
 			>
-				{ note.note && noteAsTitle(note.note) || <em>Untitled Note</em> }
+				{note.note && noteSummary(note.note) || <em>Untitled Note</em> }
 			</div>
 			{ !isReadOnly && (
 				<Dropdown
@@ -176,7 +176,7 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'note');
 
-	sortByKey(notes, n => noteAsTitle(n.note));
+	sortByKey(notes, n => noteSummary(n.note));
 
 	const editorRef = useRef();
 	const addedNoteKey = useRef();

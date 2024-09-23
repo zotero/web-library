@@ -54,6 +54,16 @@ const reverseMap = map => {
 	}, {});
 };
 
+// https://github.com/zotero/utilities/blob/e00d98d3a11f6233651a052c108117cf44873edc/utilities.js#L699
+const unescapeHTML = str => {
+	if (str.indexOf("<") === -1 && str.indexOf("&") === -1) {
+		return str;
+	}
+	const node = document.createElement("div");
+	node.innerHTML = str;
+	return ("textContent" in node ? node.textContent : node.innerText).replace(/ {2,}/g, " ");
+};
+
 const deduplicate = array => [...(new Set(array))];
 
 const deduplicateByKey = (array, key) => deduplicateByHash(array, item => item[key]);
@@ -553,5 +563,6 @@ export {
     splice,
     stopPropagation,
     transform,
+	unescapeHTML,
     vec2dist
 };
