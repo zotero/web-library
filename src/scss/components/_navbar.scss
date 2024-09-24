@@ -121,7 +121,7 @@
 	.search-toggle,
 	.touch-tag-selector-toggle {
 		.icon {
-			color: $icon-bar-bg;
+			color: var(--color-shade-8);
 		}
 	}
 
@@ -140,7 +140,7 @@
 			display: block;
 			width: $icon-bar-width;
 			height: $icon-bar-height;
-			background: $icon-bar-bg;
+			background: var(--color-shade-8);
 
 			& + .icon-bar {
 				margin-top: $icon-bar-spacing;
@@ -194,33 +194,13 @@
 		}
 	}
 
-	.color-scheme-dropdown {
-		.nav-link {
-			display: flex;
-			align-items: center;
-			color: $navbar-link-color;
-
-			@include bp-up(sm) {
-				margin-left: $space-sm;
-			}
-
-			@include state(".color-scheme-dropdown.show") {
-				@include scopedVariant("html:not(.specifity)") {
-					color: $navbar-dropdown-toggle-active-color;
-
-					.icon {
-						color: inherit;
-					}
-				}
-			}
-
-			.icon {
-				color: inherit;
-			}
+	.settings-toggle {
+		@include bp-up(sm) {
+			margin-left: $space-min;
 		}
 
-		.tick {
-			margin-right: $space-min;
+		.icon {
+			color: var(--color-shade-8);
 		}
 	}
 }

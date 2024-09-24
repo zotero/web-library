@@ -1,4 +1,4 @@
-import { TRIGGER_USER_TYPE_CHANGE, TRIGGER_RESIZE_VIEWPORT } from '../constants/actions.js';
+import { TRIGGER_USER_TYPE_CHANGE, TRIGGER_RESIZE_VIEWPORT, PREFERENCE_CHANGE } from '../constants/actions.js';
 import { getScrollbarWidth, pick } from 'web-common/utils';
 
 const isInitiallyMouse = typeof(matchMedia) === 'function' ? matchMedia('(pointer:fine)').matches : null;
@@ -41,19 +41,42 @@ const getDevice = (userType, viewport, { isEmbedded } = {}) => {
 		shouldUseSidebar, shouldUseTabs };
 };
 
-const device = (state = defaultState, action, { config } = {}) => {
-	var viewport;
+const getUserType = (state, action, preferences) => {
+	if (action.type === PREFERENCE_CHANGE && action.name === 'density') {
+		return action.value ? action.value : state.lastDetectedUserType;
+	}
+
+	if (preferences.density) {
+		return preferences.density;
+	}
+
+	return state.userType;
+}
+
+const getUserTypeBooleans = (state, action, userType) => {
+	return {
+		isKeyboardUser: action.type === TRIGGER_USER_TYPE_CHANGE ? action.isKeyboardUser : state.isKeyboardUser,
+		isMouseUser: userType === 'mouse',
+		isTouchUser: userType === 'touch'
+	};
+}
+
+const device = (state = defaultState, action, { config, preferences } = {}) => {
 	switch(action.type) {
+		case PREFERENCE_CHANGE:
 		case TRIGGER_RESIZE_VIEWPORT:
-		case TRIGGER_USER_TYPE_CHANGE:
-			viewport = action.type === TRIGGER_RESIZE_VIEWPORT ? getViewport(action) : pick(state, ['xxs', 'xs', 'sm', 'md', 'lg']);
+		case TRIGGER_USER_TYPE_CHANGE: {
+			const viewport = action.type === TRIGGER_RESIZE_VIEWPORT ? getViewport(action) : pick(state, ['xxs', 'xs', 'sm', 'md', 'lg']);
+			const userType = getUserType(state, action, preferences);
 			return {
 				...state,
-				...pick(action, ['isKeyboardUser', 'isMouseUser', 'isTouchUser', 'userType']),
-				...getDevice('userType' in action ? action.userType : state.userType, viewport, config),
+				...getUserTypeBooleans(state, action, userType),
+				...getDevice(userType, viewport, config),
 				...viewport,
-				scrollbarWidth: state.userType === 'touch' && action.userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth
+				lastDetectedUserType: action.type === TRIGGER_USER_TYPE_CHANGE ? action.userType : state.lastDetectedUserType,
+				scrollbarWidth: state.userType === 'touch' && userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth
 			}
+		}
 		default:
 			return state;
 	}

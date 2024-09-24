@@ -42,6 +42,10 @@ fieldset {
 }
 
 .form-group {
+	&.checkbox {
+		display: flex;
+	}
+
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		padding: $input-border-width $input-btn-padding-x-touch;
@@ -346,6 +350,12 @@ textarea {
 .checkbox,
 .radio,
 .file {
+	html:not(.specifity) &.disabled {
+		label {
+			color: var(--color-text-disabled);
+		}
+	}
+
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		align-items: center;
@@ -354,7 +364,7 @@ textarea {
 		@include hairline(bottom, "color-shade-5");
 
 		&:not(:first-child) {
-			@include hairline(top, "color-shade-5", $start: $default-padding-x-touch);
+			@include hairline(top, "color-shade-5");
 		}
 
 		&:not(:last-child) {

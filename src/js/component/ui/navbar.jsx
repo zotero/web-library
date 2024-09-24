@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
+import { Button, Icon } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import MenuEntry from './menu-entry';
 import Search from './../../component/search';
-import { currentTriggerSearchMode, preferenceChange, toggleNavbar, toggleTouchTagSelector } from '../../actions';
+import { SETTINGS } from '../../constants/modals';
+import { currentTriggerSearchMode, toggleModal,
+	toggleNavbar, toggleTouchTagSelector } from '../../actions';
 
 const Navbar = memo(({ entries = [] }) => {
 	const ref = useRef(null);
@@ -18,8 +19,6 @@ const Navbar = memo(({ entries = [] }) => {
 	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
-	// useDarkModeForContent === null means enabled
-	const useDarkModeForContent = useSelector(state => state.preferences.useDarkModeForContent) ?? true;
 
 	const handleSearchButtonClick = useCallback(() => {
 		dispatch(currentTriggerSearchMode());
@@ -28,16 +27,6 @@ const Navbar = memo(({ entries = [] }) => {
 	const handleTagSelectorClick = useCallback(() => {
 		dispatch(toggleTouchTagSelector());
 	}, [dispatch]);
-
-	const handleSelectColorScheme = useCallback((ev) => {
-		const colorScheme = ev.target.dataset.colorScheme === 'automatic'
-			? null : ev.target.dataset.colorScheme;
-		dispatch(preferenceChange('colorScheme', colorScheme));
-	}, [dispatch]);
-
-	const handleToggleUseDarkModeForContent = useCallback(() => {
-		dispatch(preferenceChange('useDarkModeForContent', !useDarkModeForContent));
-	}, [dispatch, useDarkModeForContent]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.target !== ev.currentTarget) {
@@ -54,6 +43,10 @@ const Navbar = memo(({ entries = [] }) => {
 			focusPrev(ev);
 		}
 	}, [focusNext, focusPrev]);
+
+	const handleSettingsButtonClick = useCallback(() => {
+		dispatch(toggleModal(SETTINGS, true));
+	}, [dispatch]);
 
 	const handleNavbarToggle = useCallback(() => {
 		dispatch(toggleNavbar(null));
@@ -122,63 +115,16 @@ const Navbar = memo(({ entries = [] }) => {
 					</Button>
 				</Fragment>
 			) }
-			<UncontrolledDropdown className="color-scheme-dropdown">
-				<DropdownToggle
-					color={null}
-					className="btn-icon dropdown-toggle nav-link"
+				<Button
+					aria-label="Open Settings"
+					className="settings-toggle"
+					icon
+					onClick={ handleSettingsButtonClick }
+					onKeyDown={handleKeyDown}
 					tabIndex={-2}
-					title="Color Scheme"
 				>
-					<Icon
-						type={'32/color-scheme'}
-						useColorScheme={ true }
-						colorScheme={ colorScheme }
-						width="24"
-						height="24"
-					/>
-					<Icon type="16/chevron-9" width="16" height="16" />
-				</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem
-						role="menuitemcheckbox"
-						aria-checked={!colorScheme }
-						data-color-scheme="automatic"
-						onClick={ handleSelectColorScheme }
-					>
-						<span className="tick">{ !colorScheme ? "✓" : ""}</span>
-						Automatic
-					</DropdownItem>
-					<DropdownItem
-						role="menuitemcheckbox"
-						aria-checked={ colorScheme === 'light' }
-						data-color-scheme="light"
-						onClick={ handleSelectColorScheme }
-					>
-						<span className="tick">{ colorScheme === 'light' ? "✓" : "" }</span>
-						Light
-					</DropdownItem>
-					<DropdownItem
-						role="menuitemcheckbox"
-						aria-checked={ colorScheme === 'dark' }
-						data-color-scheme="dark"
-						onClick={ handleSelectColorScheme }
-					>
-						<span className="tick">{ colorScheme === 'dark' ? "✓" : "" }</span>
-						Dark
-					</DropdownItem>
-					<DropdownItem divider />
-					<DropdownItem
-						role="menuitemcheckbox"
-						aria-checked={ useDarkModeForContent }
-						onClick={ handleToggleUseDarkModeForContent }
-						disabled={ colorScheme === 'light' }
-						className={ cx({ disabled: colorScheme === 'light' })}
-					>
-						<span className="tick">{useDarkModeForContent ? "✓" : ""}</span>
-						Use Dark Mode for content
-					</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
+					<Icon type={'16/cog'} width="24" height="24" />
+				</Button>
 			<Button
 				icon
 				data-navbar-toggle

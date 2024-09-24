@@ -62,7 +62,7 @@ const getLibraryKey = (params, config) => {
 }
 
 
-const current = (state = stateDefault, action, { config = {}, device = {} } = {}) => {
+const current = (state = stateDefault, action, { config = {}, device = {}, preferences = {} } = {}) => {
 	switch(action.type) {
 		case CONFIGURE:
 			return {
@@ -210,7 +210,7 @@ const current = (state = stateDefault, action, { config = {}, device = {} } = {}
 		case TRIGGER_USER_TYPE_CHANGE:
 			return {
 				...state,
-				editingItemKey: action.userType === 'mouse' && !device.xxs && !device.xs &&
+				editingItemKey: (preferences.density ? preferences.density : action.userType) === 'mouse' && !device.xxs && !device.xs &&
 					!device.sm && !device.md ? null : state.editingItemKey
 			}
 		case TRIGGER_FOCUS:
