@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ItemDetailsInfoView from '../item-details/info-view';
 import ItemDetailsTabs from '../item-details/tabs';
-import TouchHeaderWrap from '../../component/touch-header-wrap';
+import TouchHeaderWrap from '../touch-header-wrap';
 import { navigate, fetchItemDetails } from '../../actions';
 
 const ItemDetails = props => {
@@ -59,7 +59,7 @@ const ItemDetails = props => {
 				/>
 			) }
 			{
-				(!isCollection && !isTouchOrSmall || (isTouchOrSmall && !isSelectMode)) && item && !shouldRedirectToParentItem ? (
+				!isCollection && (!isTouchOrSmall || (isTouchOrSmall && !isSelectMode)) && item && !shouldRedirectToParentItem ? (
 					<ItemDetailsTabs />
 				) : (
 					<ItemDetailsInfoView />

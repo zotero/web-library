@@ -74,7 +74,7 @@ const Abstract = ({ isReadOnly, ...rest }) => {
 		/>
 	);
 
-	if (!(itemTypeFields[item.itemType].find(f => f.field === 'abstractNote'))) {
+	if (!(itemTypeFields[item.itemType]?.find(f => f.field === 'abstractNote'))) {
 		return null;
 	}
 

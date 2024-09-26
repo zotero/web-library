@@ -10,18 +10,16 @@ import ItemsActions from './item/actions';
 import Searchbar from './touch-header/searchbar';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pluralize } from '../common/format';
+import CollectionTrashOptions from './touch-header/collection-trash-options';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 
 const TouchHeader = props => {
-	const { className, collectionKey, collectionHasChildren, isEditing, isModal, isSelectMode,
-		onNavigate, onSelectModeToggle, path = [], shouldIncludeEditButton,
+	const { className, collectionKey, collectionHasChildren, isModal, isSelectMode,
+		onNavigate, onSelectModeToggle, path = [], shouldHideNav, shouldIncludeEditButton,
 		shouldIncludeItemListOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
-		selectedItemsCount } = props;
+		shouldIncludeCollectionTrashOptions, selectedItemsCount } = props;
 
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-
-	const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
-			(shouldHandleSelectMode && isSelectMode);
 
 	const selectedLabel = selectedItemsCount === 0 ?
 		'Select Items' : [
@@ -80,6 +78,12 @@ const TouchHeader = props => {
 						</div>
 					)
 				}
+				{shouldIncludeCollectionTrashOptions && (
+					<CollectionTrashOptions
+						isSingleColumn={ isSingleColumn }
+						shouldHideNav={ shouldHideNav }
+					/>
+				)}
 			{
 				shouldHandleSelectMode && isSelectMode && (
 					<Fragment>
@@ -118,10 +122,12 @@ TouchHeader.propTypes = {
 	onSelectModeToggle: PropTypes.func,
 	path: PropTypes.array,
 	selectedItemsCount: PropTypes.number,
+	shouldHideNav: PropTypes.bool,
 	shouldHandleSelectMode: PropTypes.bool,
 	shouldIncludeCollectionOptions: PropTypes.bool,
 	shouldIncludeEditButton: PropTypes.bool,
 	shouldIncludeItemListOptions: PropTypes.bool,
+	shouldIncludeCollectionTrashOptions: PropTypes.bool,
 };
 
 export default memo(TouchHeader);

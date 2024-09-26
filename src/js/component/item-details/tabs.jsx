@@ -40,11 +40,13 @@ const ItemDetailsTabs = () => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey], {}));
 	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowEqual);
+	// collections are prefetched so if item is null, it's not a collection
+	const isCollection = item?.[Symbol.for('type')] === 'collection';
 	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
 	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowEqual);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
-	const shouldFetchChildItems = !['attachment', 'note'].includes(item.itemType);
+	const shouldFetchChildItems = !isCollection && !['attachment', 'note'].includes(item.itemType);
 
 	const { attachments, notes } = useMemo(() => {
 		return (childItemsState.keys || []).reduce((acc, childItemKey) => {
@@ -57,7 +59,8 @@ const ItemDetailsTabs = () => {
 			}
 			return acc;
 		}, { attachments: [], notes: [] })
-	}, [childItemsState.keys, itemKey, items]);
+	}, [childItemsState.keys, items]);
+
 	const relatedKeys = mapRelationsToItemKeys(item.relations || {}, libraryKey);
 
 	const [isEditing, ] = useEditMode();
@@ -72,21 +75,21 @@ const ItemDetailsTabs = () => {
 	const shouldShowAttachmentsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || attachments.length > 0));
 	const shouldShowNotesTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || notes.length > 0));
 	const shouldShowRelatedTab = shouldUseTabs || (!shouldUseTabs && (relatedKeys.length > 0));
-	const shouldShowTagsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || item.tags.length > 0));
+	const shouldShowTagsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || !!item.tags?.length));
 
 	useEffect(() => {
 		// fetch child items on devices that don't use tabs, unless item type cannot have child items
-		if(shouldUseTabs || !shouldFetchChildItems) {
+		if (shouldUseTabs || !shouldFetchChildItems) {
 			return;
 		}
 
-		if(itemKey && !childItemsState.isFetching && !childItemsState.isFetched) {
+		if (itemKey && !childItemsState.isFetching && !childItemsState.isFetched) {
 			const start = childItemsState.pointer || 0;
 			const limit = PAGE_SIZE;
 			dispatch(fetchChildItems(itemKey, { start, limit }));
 		}
 
-	}, [childItemsState, shouldUseTabs, itemKey]);
+	}, [childItemsState, shouldUseTabs, itemKey, shouldFetchChildItems, isCollection, dispatch]);
 
 	useEffect(() => {
 		// fetch related items on devices that don't use tabs
@@ -97,7 +100,7 @@ const ItemDetailsTabs = () => {
 		if(itemKey && !relatedItemsState.isFetching && !relatedItemsState.isFetched) {
 			dispatch(fetchRelatedItems(itemKey));
 		}
-	}, [relatedItemsState])
+	}, [dispatch, itemKey, relatedItemsState, shouldUseTabs])
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target.closest('.tab')) {
@@ -132,7 +135,7 @@ const ItemDetailsTabs = () => {
 			['note', 'attachment'].includes(itemType)) {
 			setActiveTab(pickDefaultActiveTab(item.itemType, attachmentKey, noteKey));
 		}
-	}, [item]);
+	}, [activeTab, attachmentKey, item, noteKey]);
 
 
 	return (
@@ -279,7 +282,6 @@ const ItemDetailsTabs = () => {
 								/>
 							)
 						}
-
 						{
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
@@ -290,7 +292,6 @@ const ItemDetailsTabs = () => {
 								/>
 							)
 						}
-
 						{ shouldShowTagsTab && (
 							<Tags
 								key={ 'tags-' + item.key }

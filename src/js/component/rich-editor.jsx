@@ -210,7 +210,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 	return (
 		<div className="rich-editor">
 			<div className={cx('editor-container', { autoresize, initialized: isInitialised }) } >
-				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ noteEditorURL } /> :
+				<iframe onLoad={ handleIframeLoaded } ref={ iframeRef } src={ noteEditorURL } />
 			</div>
 		</div>
 	);
