@@ -17,6 +17,7 @@ import child_process from "child_process";
 // 	"translateServerURL": ""
 // }
 
+const URL = 'http://localhost:8001/';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const NPMST_TIMEOUT = 30000;
 
@@ -34,7 +35,8 @@ const fixtures = [
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
 	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
-	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view']
+	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view'],
+	[`${URL}testuser/trash/items/Z7B4P73I/item-details`, 'mobile-test-user-trash-collection-details-view'],
 ];
 
 const config = JSON.stringify({
@@ -57,8 +59,6 @@ const config = JSON.stringify({
 		profileThumbnail: ""
 	}
 });
-
-const URL = 'http://localhost:8001/';
 
 const index = await fs.readFile(join(ROOT, 'src', 'html', 'index.html'), 'utf8');
 const controller = new AbortController();

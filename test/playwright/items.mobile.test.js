@@ -63,5 +63,23 @@ describe('Mobile Snapshots', () => {
 			expect(await screenshot(page, `mobile-item-details-${browserName}`)).toBeTruthy();
 			await page.close();
 		});
+
+		test(`should render collection in trash on "${browserName}"`, async () => {
+			server = await getServer('mobile-test-user-trash-collection-details-view', port);
+			context = await browsers.getBrowserContext(browserName);
+			const page = await context.newPage();
+			await page.goto(`http://localhost:${port}/testuser/trash/items/Z7B4P73I/item-details`);
+			await waitForLoad(page);
+
+			if (singleColumnContexts.includes(browserName)) {
+				await page.getByRole('button', { name: 'Collection Trash Options' }).click();
+			}
+
+			const role = singleColumnContexts.includes(browserName) ? 'menuitem' : 'button';
+			await expect(page.getByRole(role, { name: 'Restore to Library' })).toBeVisible();
+			await expect(page.getByRole(role, { name: 'Delete Permanently' })).toBeVisible();
+			expect(await screenshot(page, `mobile-trash-collection-details-${browserName}`)).toBeTruthy();
+			await page.close();
+		});
 	});
 });

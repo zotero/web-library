@@ -35,6 +35,7 @@ const CollectionTrashOptions = ({ isSingleColumn, shouldHideNav, }) => {
 						placement="bottom-end"
 					>
 						<DropdownToggle
+							title="Collection Trash Options"
 							className="btn-link btn-icon dropdown-toggle"
 						>
 							<Icon
