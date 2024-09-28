@@ -172,13 +172,6 @@ label {
 		}
 
 		&.busy {
-			&::after {
-				content: "";
-				position: absolute;
-				right: 0;
-				background-color: $body-bg;
-			}
-
 			.icon-spin {
 				top: auto;
 				z-index: 2; // Over generated content 'backdrop'
