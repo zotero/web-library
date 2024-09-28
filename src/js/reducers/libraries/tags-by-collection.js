@@ -55,7 +55,7 @@ const tags = (state = {}, action, { items } = {}) => {
 			return {
 				...state,
 				[action.collectionKey]: {
-					...state[action.collectionKey],
+					...(state[action.collectionKey] || {}),
 					...populateTags(state[action.collectionKey], action.tags, action),
 					...updateFetchingState(state[action.collectionKey], action),
 				}
@@ -100,7 +100,7 @@ const tags = (state = {}, action, { items } = {}) => {
 			return {
 				...state,
 				[action.collectionKey]: action.items.some(item => 'tags' in item && item.tags.length > 0) ?
-					{} : action.collectionKey in state ? state[action.collectionKey] : {}
+					{} : action.collectionKey in state ? (state[action.collectionKey] ?? {}) : {}
 			}
 		case RECEIVE_CREATE_ITEMS:
 			return {
@@ -122,7 +122,7 @@ const tags = (state = {}, action, { items } = {}) => {
 				...state,
 				...('collections' in action.item ? action.item.collections.reduce(
 					(acc, colKey) => {
-						acc[colKey] = 'tags' in action.patch ? {} : state[colKey];
+						acc[colKey] = 'tags' in action.patch ? {} : state[colKey] ?? {};
 						return acc;
 					}, {}
 				) : {})
