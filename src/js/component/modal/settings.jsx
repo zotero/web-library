@@ -32,8 +32,6 @@ const SettingsModal = () => {
 	const densityInputId = useRef(getUniqueId());
 	const useDarkModeForContentInputId = useRef(getUniqueId());
 
-	console.log({ isSmall });
-
 	const handleChange = useCallback(() => true, []);
 
 	const handleSelectColorScheme = useCallback((newColorScheme) => {

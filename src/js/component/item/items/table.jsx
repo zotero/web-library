@@ -36,7 +36,7 @@ const getColumnCssVars = (columns, width, scrollbarWidth) =>
 
 // @NOTE: TableFocus and TableScroll are two effect-only components that have been extracted from Table
 // 		  to avoid re-rendering the entire Table whenever selectedItemKeys/isItemsTableFocused changes.
-const TableFocus = memo(({ focusBySelector, resetLastFocused }) => {
+const TableFocus = memo(({ tableRef, focusBySelector, resetLastFocused }) => {
 	const dispatch = useDispatch();
 	const selectedItemKeysLength = useSelector(state => state.current.itemKeys.length);
 	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
@@ -46,7 +46,7 @@ const TableFocus = memo(({ focusBySelector, resetLastFocused }) => {
 		if(!wasItemsTableFocused && isItemsTableFocused && selectedItemKeysLength === 0) {
 			(async () => {
 				const index = await dispatch(selectFirstItem(true));
-				if(index !== null) {
+				if (index !== null && tableRef.current) {
 					focusBySelector('[data-index="0"]');
 				}
 			})();
@@ -54,12 +54,13 @@ const TableFocus = memo(({ focusBySelector, resetLastFocused }) => {
 		if(wasItemsTableFocused && !isItemsTableFocused) {
 			resetLastFocused();
 		}
-	}, [dispatch, focusBySelector, isItemsTableFocused, selectedItemKeysLength, resetLastFocused, wasItemsTableFocused]);
+	}, [dispatch, focusBySelector, isItemsTableFocused, selectedItemKeysLength, resetLastFocused, wasItemsTableFocused, tableRef]);
 
 	return null;
 });
 
 TableFocus.propTypes = {
+	tableRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
 	focusBySelector: PropTypes.func.isRequired,
 	resetLastFocused: PropTypes.func.isRequired,
 };
@@ -464,7 +465,11 @@ const Table = () => {
 				'dnd-target': (isOver && canDrop) || isHoveringBetweenRows
 			}) }
 		>
-			<TableFocus focusBySelector={ focusBySelector } resetLastFocused={ resetLastFocused } />
+			<TableFocus
+				tableRef={ tableRef }
+				focusBySelector={ focusBySelector }
+				resetLastFocused={ resetLastFocused }
+			/>
 			<ScrollEffectComponent listRef={ listRef } setScrollToRow={setScrollToRow} />
 			{ hasChecked && (
 				<AutoSizer>

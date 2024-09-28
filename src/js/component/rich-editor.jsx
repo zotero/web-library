@@ -26,8 +26,8 @@ const RichEditor = memo(forwardRef((props, ref) => {
 	const dispatch = useDispatch();
 
 	const focusEditor = useCallback(() => {
-		iframeRef.current.focus();
-		iframeRef.current.contentWindow.postMessage({ action: 'focus' }, "*");
+		iframeRef.current?.focus();
+		iframeRef.current?.contentWindow.postMessage({ action: 'focus' }, "*");
 	}, []);
 
 	// ensure content has actually changed before sending to the API
@@ -43,7 +43,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 		if (subscription && subscription.type === 'image' && subscription.data?.attachmentKey) {
 			const { id, data: { attachmentKey } } = subscription;
 			const url = await dispatch(getAttachmentUrl(attachmentKey));
-			iframeRef.current.contentWindow.postMessage({ action: 'notifySubscription', id, data: { src: url } }, "*");
+			iframeRef.current?.contentWindow.postMessage({ action: 'notifySubscription', id, data: { src: url } }, "*");
 		}
 	}, [dispatch])
 
@@ -68,7 +68,9 @@ const RichEditor = memo(forwardRef((props, ref) => {
 			const attachmentKey = createdItems?.[index]?.key;
 
 			if(attachmentKey) {
-				iframeRef.current.contentWindow.postMessage({ action: 'attachImportedImage', nodeID, attachmentKey }, "*");
+				iframeRef.current?.contentWindow.postMessage(
+					{ action: 'attachImportedImage', nodeID, attachmentKey }, "*"
+				);
 			}
 		}, []);
 	}, [dispatch]);
@@ -85,7 +87,7 @@ const RichEditor = memo(forwardRef((props, ref) => {
 	}, [dispatch]);
 
 	const handleIframeMessage = useCallback(async (event) => {
-		if (event.source !== iframeRef.current.contentWindow) {
+		if (event.source !== iframeRef.current?.contentWindow) {
 			return;
 		}
 		switch (event.data?.message?.action) {
