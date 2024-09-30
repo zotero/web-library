@@ -1,6 +1,6 @@
 import { omit } from 'web-common/utils';
 
-import { sortItemsByKey, compareItem } from '../utils';
+import { sortItemsByKey, compareItem, binarySearch } from '../utils';
 import { getFieldNameFromSortKey } from '../utils';
 
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
@@ -286,15 +286,15 @@ const injectTrashedCollections = (itemsState, collectionsState, dataObjectsState
 		return { ...itemsState, keys: trashedCollections.map(collection => collection.key), injectPoints: trashedCollections.map((_, i) => i), totalCount: trashedCollections.length };
 	}
 
-	const keysTrash = [
-		...itemsState.keys,
-		...trashedCollections.map(collection => collection.key)
-	];
+	const keysTrash = [...itemsState.keys];
+	const compareFn = (keyA, keyB) => {
+		return compareItem(meta.mappings, dataObjectsState[keyA], dataObjectsState[keyB], itemsState.sortBy);
+	};
 
-	if ('sortBy' in itemsState && 'sortDirection' in itemsState) {
-		const { sortBy, sortDirection } = itemsState;
-		sortItemsByKey(meta.mappings, keysTrash, sortBy, sortDirection, key => dataObjectsState[key]);
-	}
+	trashedCollections.forEach((collection) => {
+		const index = binarySearch(keysTrash, collection.key, compareFn, itemsState.sortDirection);
+		keysTrash.splice(index, 0, collection.key);
+	});
 
 	const indices = trashedCollections.map((collection) => keysTrash.indexOf(collection.key));
 

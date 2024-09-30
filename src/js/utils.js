@@ -143,6 +143,10 @@ const getSortKeyForItemType = (mappings, sortKey, itemType) => {
 const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 	sortBy = columnProperties[sortBy].sortKey;
 
+	if(!item) {
+		return null;
+	}
+
 	if (!item.itemType && item.name && sortBy === 'title') {
 		// must be a collection
 		return item.name;
@@ -195,7 +199,7 @@ const compareItem = (mappings, itemA, itemB, sortBy) => {
 
 	// fallback for dateModified comparision
 	if(compareResult === 0) {
-		return compare(itemA.dateModified, itemB.dateModified);
+		return compare(itemA?.dateModified, itemB?.dateModified);
 	} else {
 		return compareResult;
 	}
@@ -516,8 +520,27 @@ const makeRequestsUpTo = (start, max, pageSize = 100) => {
 	return pages;
 };
 
+function binarySearch(array, item, compareFn, sortDirection) {
+	let low = 0;
+	let high = array.length;
+
+	while (low < high) {
+		let mid = Math.floor((low + high) / 2);
+		const compare = sortDirection === 'asc' ? compareFn(array[mid], item) : compareFn(item, array[mid]);
+
+		if (compare < 0) {
+			low = mid + 1;
+		} else {
+			high = mid;
+		}
+	}
+
+	return low;
+}
+
 export {
     applyChangesToVisibleColumns,
+	binarySearch,
     cede,
     clamp,
     cleanDOI,
