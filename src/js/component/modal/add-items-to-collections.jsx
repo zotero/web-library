@@ -17,9 +17,12 @@ const AddItemsToCollectionsModal = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_SELECT);
 	const sourceItemKeys = useSelector(state => state.modal.items);
-	const modalItems = useSelector(state => state.modal.items);
 	const items = useSelector(state => state.libraries?.[libraryKey]?.items);
-	const sourceItemCollections = (modalItems || []).map(ik => items?.[ik]?.collections || []);
+	const sourceItemCollections = (sourceItemKeys || []).map(ik => items?.[ik]?.collections || []);
+	const hasAttachment = (sourceItemKeys || []).some(ik => {
+		const item = items?.[ik];
+		return item.itemType === 'attachment' || !!item?.[Symbol.for('links')]?.attachment
+	});
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
@@ -127,6 +130,7 @@ const AddItemsToCollectionsModal = () => {
 					pickerNavigate={ handleNavigation }
 					pickerPick={ pickerPick }
 					pickerSkipCollections={ pickerSkipCollections }
+					pickerRequireFileUpload={ hasAttachment }
 					pickerState= { { ...navState, picked } }
 				/>
 				</Fragment>

@@ -14,7 +14,7 @@ import { get, stopPropagation, getUniqueId } from '../utils';
 
 const LibraryNode = props => {
 	const { addVirtual, isOpen, isFileUploadAllowed, isMyLibrary, isPickerMode, isReadOnly, isSelected, libraryKey, name,
-		pickerNavigate, pickerPick, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
+		pickerNavigate, pickerPick, pickerRequireFileUpload, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
 		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
@@ -31,7 +31,7 @@ const LibraryNode = props => {
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
 	// trash) and has no collections
 	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
-	const isPickerSkip = isPickerMode && isReadOnly;
+	const isPickerSkip = isPickerMode && (isReadOnly || (pickerRequireFileUpload && !isFileUploadAllowed));
 
 	const handleSelect = useCallback(() => {
 		const path = { library: libraryKey, view: 'library' };
@@ -110,7 +110,7 @@ const LibraryNode = props => {
 			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
 			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
-			dndData={ isReadOnly ? { } : { 'targetType': 'library', libraryKey: libraryKey } }
+			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
 			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
 		>
 			{ isReadOnly ? (
@@ -156,6 +156,7 @@ const LibraryNode = props => {
 LibraryNode.propTypes = {
 	addVirtual: PropTypes.func,
 	isFileUploadAllowed: PropTypes.bool,
+	isMyLibrary: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isPickerMode: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
@@ -167,6 +168,7 @@ LibraryNode.propTypes = {
 	pickerAllowRoot: PropTypes.bool,
 	pickerNavigate: PropTypes.func,
 	pickerPick: PropTypes.func,
+	pickerRequireFileUpload: PropTypes.bool,
 	pickerState: PropTypes.object,
 	shouldBeTabbable: PropTypes.bool,
 	toggleOpen: PropTypes.func,
@@ -324,8 +326,8 @@ const Libraries = forwardRef((props, ref) => {
 			onFocusPrev: focusPrev,
 			focusBySelector,
 			...pick(props, ['isPickerMode', 'disabledCollections', 'onNodeSelected', 'picked',
-			'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerState',
-			'pickerSkipCollections' ])
+				'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerRequireFileUpload', 'pickerState',
+				'pickerSkipCollections' ])
 		}
 	}
 

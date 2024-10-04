@@ -178,9 +178,13 @@ const TableRow = props => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const itemData = useSelector(
-		state => itemKey ?
-			state.libraries[state.current.libraryKey]?.dataObjects?.[itemKey]?.[Symbol.for('derived')]
+		state => itemKey
+			? state.libraries[state.current.libraryKey]?.dataObjects?.[itemKey]?.[Symbol.for('derived')]
 			: null
+	);
+	const bestAttachment = useSelector(state => itemKey
+		? state.libraries[state.current.libraryKey]?.dataObjects?.[itemKey]?.[Symbol.for('links')]?.attachment
+		: false
 	);
 
 	const selectedIndexes = getSelectedIndexes(selectedItemKeys, keys);
@@ -200,7 +204,7 @@ const TableRow = props => {
 		type: ITEM,
 		options: useDragOptions,
 		item: () => {
-			return { itemKey, selectedItemKeysLength, itemData, libraryKey }
+			return { itemKey, selectedItemKeysLength, itemData, libraryKey, hasAttachment: !!bestAttachment || itemData.itemTypeRaw === 'attachment' };
 		},
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();

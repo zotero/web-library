@@ -701,7 +701,7 @@ const CollectionNode = memo(props => {
 			aria-level={ level }
 			data-collection-key={ collection.key }
 			aria-disabled={ isPickerMode && (isPickerSkip || isDisabled) }
-			dndData={ { 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents } }
+			dndData={{ 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents, isFileUploadAllowed } }
 			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ derivedData[collection.key].isOpen }
 			isReadOnly={ isReadOnly }

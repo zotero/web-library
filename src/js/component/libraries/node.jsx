@@ -56,6 +56,9 @@ const Node = props => {
 
 			if(srcItemType === ITEM) {
 				const { libraryKey: sourceLibraryKey } = srcItem;
+				if (srcItem.hasAttachment && !dndData.isFileUploadAllowed) {
+					return false;
+				}
 				if(dndData.targetType === 'library' && dndData.libraryKey !== sourceLibraryKey) {
 					return true;
 				}
