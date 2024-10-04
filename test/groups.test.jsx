@@ -9,7 +9,7 @@ import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState, getPachtedStateMultiple } from './utils/state';
+import { JSONtoState, getPachtedStateMultiple, getPatchedStateArray } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -49,7 +49,7 @@ describe('Group libraries', () => {
 	test('should copy an item to a group library', async () => {
 		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
 		const user = userEvent.setup();
-		renderWithProviders(<MainZotero />, { preloadedState: state });
+		renderWithProviders(<MainZotero />, { preloadedState: getPatchedStateArray(state, 'config.libraries', 1, { isFileUploadAllowed: true })});
 		await waitForPosition();
 
 		let myLibVersion = state.libraries.u1.sync.version;

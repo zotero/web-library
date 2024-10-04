@@ -84,5 +84,17 @@ function getPachtedStateMultiple(state, patches) {
 	return patches.reduce((state, [path, patch]) => getPatchedState(state, path, patch), state);
 }
 
+function getPatchedStateArray(state, path, index, patch) {
+	const pathParts = path.split('.')
+	let obj = state;
+	for (const part of pathParts) {
+		obj = obj[part];
+	}
+	const originalArray = obj;
+	const patchedEntry = { ...originalArray[index], ...patch };
+	const newArray = originalArray.toSpliced(index, 1, patchedEntry);
+	return getPatchedState(state, pathParts.slice(0, -1).join('.'), { [pathParts[pathParts.length - 1]]: newArray });
+}
 
-export { stateProcessSymbols, stateToJSON, JSONtoState, getPatchedState, getPachtedStateMultiple, getStateWithout };
+
+export { stateProcessSymbols, stateToJSON, JSONtoState, getPatchedState, getPachtedStateMultiple, getPatchedStateArray, getStateWithout };
