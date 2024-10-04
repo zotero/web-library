@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import { get } from '../utils';
+import { get, unescapeHTML } from '../utils';
 
 const TitleUpdater = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -51,7 +51,7 @@ const TitleUpdater = () => {
 
 		title.reverse();
 
-		document.title = title.join(' | ');
+		document.title = unescapeHTML(title.join(' | '));
 	}, 50);
 
 	useEffect(() => { debouncedNotify(); } , [
