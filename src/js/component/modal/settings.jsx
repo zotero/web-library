@@ -23,9 +23,9 @@ const densityOptions = [
 
 const SettingsModal = () => {
 	const dispatch = useDispatch();
-	const colorScheme = useSelector(state => state.preferences.colorScheme);
-	const density = useSelector(state => state.preferences.density);
-	const useDarkModeForContent = useSelector(state => state.preferences.useDarkModeForContent);
+	const colorScheme = useSelector(state => state.preferences.colorScheme ?? '');
+	const density = useSelector(state => state.preferences.density ?? '');
+	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
 	const isSmall = useSelector(state => state.device.xxs || state.device.xs || state.device.sm);
 	const isOpen = useSelector(state => state.modal.id === SETTINGS);
 	const colorSchemeInputId = useRef(getUniqueId());
