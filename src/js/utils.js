@@ -508,7 +508,18 @@ const extractEmoji = str => {
 	return str.split(re).filter(Boolean)[0] || null;
 };
 
-const isReaderCompatibleBrowser = () => typeof structuredClone === "function";
+const isReaderCompatibleBrowser = () => {
+	if (typeof structuredClone !== "function") {
+		return false;
+	}
+
+	// Exclude Safari 15, See #568
+	if (!navigator.userAgent.match(/Chrome|Chromium|Edge?|Firefox/i) && navigator.userAgent.match(/Safari/i) && navigator.userAgent.match(/Version\/15\.[0-6]/)) {
+		return false;
+	}
+
+	return true;
+}
 
 const makeRequestsUpTo = (start, max, pageSize = 100) => {
 	let nextPointer = start;
