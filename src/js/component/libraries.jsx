@@ -78,8 +78,7 @@ const LibraryNode = props => {
 
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
-			'focusBySelector', 'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev',
-			'pickerSkipCollections']),
+			'focusBySelector', 'onFocusNext', 'onFocusPrev', 'pickerSkipCollections']),
 			isPickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
 			pickerState, virtual: isVirtualInThisTree ? virtual : null,
 		}
@@ -111,7 +110,7 @@ const LibraryNode = props => {
 			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
-			{ ...pick(props, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev'])}
+			{ ...pick(props, ['onFocusNext', 'onFocusPrev'])}
 		>
 			{ isReadOnly ? (
 				<Fragment>
@@ -190,8 +189,7 @@ const Libraries = forwardRef((props, ref) => {
 	const firstIsTrash = useSelector(state => state.current.firstIsTrash);
 	const treeRef = useRef();
 	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
-	const { focusBySelector, focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev,
-	receiveBlur, receiveFocus } = useFocusManager(treeRef);
+	const { focusBySelector, focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(treeRef);
 
 	const filteredLibraries = useMemo(
 		() => (includeLibraries || excludeLibraries) ?
@@ -320,8 +318,6 @@ const Libraries = forwardRef((props, ref) => {
 			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected,
 			addVirtual, commitAdd, cancelAdd, toggleOpen, virtual,
 			...rest,
-			onDrillDownNext: focusDrillDownNext,
-			onDrillDownPrev: focusDrillDownPrev,
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
 			focusBySelector,

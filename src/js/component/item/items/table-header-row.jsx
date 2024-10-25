@@ -3,6 +3,7 @@ import { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { isTriggerEvent } from 'web-common/utils';
 import { Icon } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks';
 
 import Cell from './table-cell';
 import columnProperties from '../../../constants/column-properties';
@@ -15,7 +16,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 	const mouseState = useRef(null);
 	const { field: sortBy, sort: sortDirection } = useSelector(state => state.preferences.columns.find(c => c.sort) || {}, shallowEqual);
 	const { columns, width, isReordering, isResizing, onReorder, onResize, reorderTarget } = props;
-	const { handleFocusNext, handleFocusPrev } = props; // drilldown focus management on table
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(ref, { targetTabIndex: -3 });
 
 	const handleCellClickAndKeyDown = ev => {
 		if(isTriggerEvent(ev)) {
@@ -36,23 +37,15 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 		if((ev.key === 'ArrowDown' || ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) {
 			if(ev.key === 'ArrowDown') {
 				ref.current.closest('.items-table').querySelector('.items-table-body').focus();
-			}
-			else if(ev.key === 'ArrowRight') {
-				handleFocusNext(ev);
-			}
-			else if(ev.key === 'ArrowLeft') {
-				handleFocusPrev(ev);
+			} else if(ev.key === 'ArrowRight') {
+				focusNext(ev, { useCurrentTarget: false });
+			} else if(ev.key === 'ArrowLeft') {
+				focusPrev(ev, { useCurrentTarget: false });
 			}
 			ev.preventDefault();
 			return;
 		}
 	}
-
-	const handleFocus = useCallback(ev => {
-		if(ev.currentTarget === ev.target) {
-			handleFocusNext(ev);
-		}
-	});
 
 	const handleMouseDown = useCallback(ev => {
 		if('resizeHandle' in ev.target.dataset) {
@@ -65,11 +58,11 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 			}
 		}, 300);
 		mouseState.current = { x: ev.clientX, y: ev.clientY, stamp: Date.now(), triggerEvent: ev, timeout };
-	});
+	}, [isReordering, onReorder]);
 
 	const handleMouseUp = useCallback(() => {
 		mouseState.current = null;
-	});
+	}, []);
 
 	const handleMouseMove = useCallback(ev => {
 		if(mouseState.current !== null) {
@@ -81,7 +74,7 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 				mouseState.current = null;
 			}
 		}
-	});
+	}, [onReorder]);
 
 	useEffect(() => {
 		mouseState.current = null;
@@ -97,7 +90,8 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 			onMouseDown={ handleMouseDown }
 			onMouseMove={ handleMouseMove }
 			onMouseUp = { handleMouseUp }
-			onFocus={ handleFocus }
+			onFocus={ receiveFocus }
+			onBlur={ receiveBlur }
 			role="row"
 		>
 			{ columns.map((c, colIndex) => (

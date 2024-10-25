@@ -138,8 +138,9 @@ const Table = () => {
 		return columns;
 	}, [columnsData, isMyLibrary]);
 
-	const { receiveFocus, receiveBlur, focusBySelector, focusDrillDownNext,
-		focusDrillDownPrev, resetLastFocused } = useFocusManager(tableRef, ['[aria-selected="true"]', '[data-index="0"]']);
+	const { receiveFocus, receiveBlur, focusBySelector, resetLastFocused } = useFocusManager(
+		tableRef, { initialQuerySelector: ['[aria-selected="true"]', '[data-index="0"]'] }
+	);
 
 	const dispatch = useDispatch();
 
@@ -346,7 +347,7 @@ const Table = () => {
 
 		const cursorIndex = await dispatch(selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
-		if(cursorIndex === -1) {
+		if (cursorIndex === -1 && document.activeElement?.closest('.items-table-head') !== headerRef.current) {
 			focusBySelector('.items-table-head');
 		} else {
 			focusBySelector(`[data-index="${cursorIndex}"]`);
@@ -505,8 +506,6 @@ const Table = () => {
 									isResizing={ isResizing }
 									isReordering={ isReordering }
 									reorderTarget= { reorderTarget }
-									handleFocusNext={ focusDrillDownNext }
-									handleFocusPrev={ focusDrillDownPrev }
 								/>
 								<List
 									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROWHEIGHT}

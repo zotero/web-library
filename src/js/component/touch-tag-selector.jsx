@@ -87,8 +87,7 @@ const TouchTagSelector = () => {
 	const selectedTagsLength = selectedTags.length;
 	const prevSelectedTagsLength = usePrevious(selectedTags.length);
 	const prevTagsCount = usePrevious(tags.count);
-	const { receiveFocus, receiveBlur, focusBySelector, resetLastFocused, focusNext, focusPrev, focusDrillDownNext,
-	focusDrillDownPrev } = useFocusManager(selectedListRef);
+	const { receiveFocus, receiveBlur, focusBySelector, resetLastFocused, focusNext, focusPrev } = useFocusManager(selectedListRef);
 
 	const handleClose = useCallback(ev => {
 		if(isTriggerEvent(ev)) {
@@ -255,10 +254,8 @@ const TouchTagSelector = () => {
 										tag={ tag }
 										toggleTag={ toggleTag }
 										isSelected={ true }
-										focusNext={ focusNext }
-										focusPrev={ focusPrev }
-										focusDrillDownNext={ focusDrillDownNext }
-										focusDrillDownPrev={ focusDrillDownPrev }
+										onFocusNext={ focusNext }
+										onFocusPrev={ focusPrev }
 									/>) }
 									</ul>
 								)}

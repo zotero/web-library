@@ -209,6 +209,10 @@ AttachmentActions.propTypes = {
 const Attachment = memo(props => {
 	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading, onKeyDown } = props;
 	const dispatch = useDispatch();
+	const ref = useRef(null);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(
+		ref, { targetTabIndex: -3, isFocusable: true, isCarousel: false }
+	);
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
@@ -246,7 +250,15 @@ const Attachment = memo(props => {
 		focusBySelector(`.attachment:first-child:not([data-key="${attachment.key}"]), .attachment:nth-child(2)`);
 	}, [attachment, attachmentKey, focusBySelector, dispatch]);
 
-	const handleKeyDown = useCallback(ev => onKeyDown(ev), [onKeyDown]);
+	const handleKeyDown = useCallback(ev => {
+		if(ev.key === 'ArrowRight') {
+			focusNext(ev, { useCurrentTarget: false });
+		} else if(ev.key === 'ArrowLeft') {
+			focusPrev(ev, { useCurrentTarget: false });
+		} else {
+			onKeyDown(ev)
+		}
+	}, [focusNext, focusPrev, onKeyDown]);
 
 	const handleAttachmentSelect = useCallback(() => {
 		focusBySelector(`[data-key="${attachment.key}"]`);
@@ -254,6 +266,7 @@ const Attachment = memo(props => {
 	}, [dispatch, focusBySelector, attachment]);
 
 	const handleFocus = useCallback(ev => {
+		receiveFocus(ev);
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
@@ -262,14 +275,15 @@ const Attachment = memo(props => {
 		}
 		dispatch(navigate({ attachmentKey: attachment.key, noteKey: null }));
 		setIsFocused(true);
-	}, [dispatch, attachment, isTouchOrSmall]);
+	}, [receiveFocus, isTouchOrSmall, dispatch, attachment.key]);
 
-	const handleBlur = useCallback(() => {
+	const handleBlur = useCallback(ev => {
+		receiveBlur(ev);
 		if(isTouchOrSmall) {
 			return;
 		}
 		setIsFocused(false);
-	}, [isTouchOrSmall]);
+	}, [isTouchOrSmall, receiveBlur]);
 
 	return drag(
 		<li
@@ -282,6 +296,7 @@ const Attachment = memo(props => {
 			onFocus={ handleFocus }
 			onKeyDown={ handleKeyDown }
 			tabIndex={ -2 }
+			ref={ ref }
 		>
 			{ (isTouchOrSmall && !isReadOnly) && (
 				<Button
@@ -385,9 +400,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 		) || {}).isFileUploadAllowed
 	);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
-
 	const isReady = !shouldUseTabs || (shouldUseTabs && isFetched);
-
 	const attachments = (isReady && keys ? keys : [])
 		.map(childItemKey => allItems[childItemKey])
 		.filter(item => !item.deleted && item.itemType === 'attachment');
@@ -395,10 +408,9 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 	sortByKey(attachments, a => a.title || a.fileName)
 
 	const scrollContainerRef = useRef(null);
-	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, focusBySelector } = useFocusManager(
-			scrollContainerRef, '.attachment.selected', false
-		);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur, focusBySelector } = useFocusManager(
+		scrollContainerRef, { initialQuerySelector: '.attachment.selected', isCarousel: false }
+	);
 
 	const fileInput = useRef(null);
 	const addLinkUrlFormRef = useRef(null);
@@ -425,11 +437,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 	}, [dispatch, itemKey]);
 
 	const handleKeyDown = useCallback(ev => {
-		if(ev.key === "ArrowLeft") {
-			focusDrillDownPrev(ev);
-		} else if(ev.key === "ArrowRight") {
-			focusDrillDownNext(ev);
-		} else if(ev.key === 'ArrowDown') {
+		if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: fileInput.current || addLinkedUrlButtonRef.current });
@@ -459,15 +467,15 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	}, [focusBySelector, focusNext, focusDrillDownNext, focusDrillDownPrev, focusPrev]);
+	}, [focusBySelector, focusNext, focusPrev]);
 
 	const handleFileInputKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
 			ev.currentTarget === fileInput.current ?
-				addLinkedUrlButtonRef.current.focus() :
+				addLinkedUrlButtonRef.current?.focus() :
 				fileInput.current?.focus();
 		} else if(ev.key === 'ArrowDown') {
-			scrollContainerRef.current.focus();
+			scrollContainerRef.current?.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End') {
 			focusBySelector('.attachment:last-child');

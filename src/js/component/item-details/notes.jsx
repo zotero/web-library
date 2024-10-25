@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, TabPane } from 'web-common/components';
 import PropTypes from 'prop-types';
-import { memo, forwardRef, useCallback, useEffect, useState, useRef } from 'react';
+import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop, scrollIntoViewIfNeeded } from 'web-common/utils';
@@ -18,7 +18,7 @@ import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchCh
 
 const PAGE_SIZE = 100;
 
-const Note = memo(forwardRef((props, ref) => {
+const Note = memo(props => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
@@ -29,6 +29,10 @@ const Note = memo(forwardRef((props, ref) => {
 	const wasSelected = usePrevious(isSelected);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const ignoreNextFocus = useRef(false);
+	const noteRef = useRef(null);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(
+		noteRef, { targetTabIndex: -3, isFocusable: true, isCarousel: false }
+	);
 
 	useEffect(() => {
 		if(!isSelected && wasSelected && !isUpdating && note.note === '') {
@@ -55,6 +59,8 @@ const Note = memo(forwardRef((props, ref) => {
 	}, [note, onDuplicate]);
 
 	const handleFocus = useCallback(ev => {
+		receiveFocus(ev);
+
 		if (ignoreNextFocus.current) {
 			ignoreNextFocus.current = false;
 			return;
@@ -62,12 +68,15 @@ const Note = memo(forwardRef((props, ref) => {
 		if(ev.target !== ev.currentTarget) {
 			return;
 		}
+
+		setDropdownOpen(false);
+
 		if(isTouchOrSmall) {
 			return;
 		}
 
 		dispatch(navigate({ noteKey: note.key, attachmentKey: null }));
-	}, [dispatch, isTouchOrSmall, note]);
+	}, [dispatch, isTouchOrSmall, note, receiveFocus]);
 
 	const handleMouseDown = useCallback(() => {
 		ignoreNextFocus.current = true;
@@ -77,9 +86,13 @@ const Note = memo(forwardRef((props, ref) => {
 		if(ev.key === 'Escape' && isDropdownOpen) {
 			// Escape should not move focus back to the list in this case
 			ev.stopPropagation();
+		} else if (ev.key === "ArrowLeft") {
+			focusPrev(ev);
+		} else if (ev.key === "ArrowRight") {
+			focusNext(ev);
 		}
 		onKeyDown(ev);
-	}, [isDropdownOpen, onKeyDown]);
+	}, [focusNext, focusPrev, isDropdownOpen, onKeyDown]);
 
 	return (
 		<li
@@ -89,8 +102,9 @@ const Note = memo(forwardRef((props, ref) => {
 			onKeyDown={ handleKeyDown }
 			tabIndex={ -2 }
 			data-key={ note.key }
-			ref={ ref }
+			ref={ noteRef }
 			onFocus={ handleFocus }
+			onBlur={ receiveBlur }
 			onMouseDown={ handleMouseDown }
 		>
 			<Icon
@@ -142,7 +156,7 @@ const Note = memo(forwardRef((props, ref) => {
 			<Icon type={ '16/chevron-13' } width="16" height="16" className="hidden-mouse" />
 		</li>
 	);
-}));
+});
 
 Note.displayName = 'Note';
 
@@ -181,13 +195,13 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 	const editorRef = useRef();
 	const addedNoteKey = useRef();
 	const notesEl = useRef(null);
-	const selectedNoteRef = useRef(null);
 	const addNoteRef = useRef(null);
 	const hasScrolledIntoViewRef = useRef(false);
 	const noteKeyToAutoDelete = useRef(null);
 
-	const { focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev, receiveFocus,
-		receiveBlur, focusBySelector } = useFocusManager(notesEl, '.note.selected', false);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur, focusBySelector } = useFocusManager(
+		notesEl, { initialQuerySelector: '.note.selected', isCarousel: false }
+	);
 
 	const selectedNote = notes.find(n => n && n.key === noteKey);
 
@@ -241,11 +255,7 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 	}, [dispatch, itemKey, libraryKey]);
 
 	const handleKeyDown = useCallback(ev => {
-		if(ev.key === "ArrowLeft") {
-			focusDrillDownPrev(ev);
-		} else if(ev.key === "ArrowRight") {
-			focusDrillDownNext(ev);
-		} else if(ev.key === 'ArrowDown') {
+		if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: addNoteRef.current });
@@ -275,7 +285,7 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 			ev.target.click();
 			ev.preventDefault();
 		}
-	}, [focusBySelector, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev]);
+	}, [focusBySelector, focusNext, focusPrev]);
 
 	const handleButtonKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown') {
@@ -383,7 +393,6 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 											onDuplicate={ handleDuplicate }
 											onSelect={ handleSelect }
 											onKeyDown={ handleKeyDown }
-											ref={ noteKey === note.key ? selectedNoteRef : null }
 										/>
 									);
 								})

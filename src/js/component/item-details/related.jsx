@@ -19,6 +19,10 @@ const RelatedItem = memo(props => {
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const iconSize = isTouchOrSmall ? '28' : '16';
 	const id = useRef(getUniqueId());
+	const ref = useRef(null);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(
+		ref, { targetTabIndex: -3, isFocusable: true, isCarousel: false }
+	);
 
 	const handleSelect = useCallback(ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
@@ -33,6 +37,15 @@ const RelatedItem = memo(props => {
 		dispatch(removeRelatedItem(parentItemKey, relatedItemKey));
 	}, [dispatch, parentItemKey]);
 
+	const handleKeyDown = useCallback(ev => {
+		if (ev.key === "ArrowLeft") {
+			focusPrev(ev, { useCurrentTarget: false });
+		} else if (ev.key === "ArrowRight") {
+			focusNext(ev, { useCurrentTarget: false });
+		}
+		onKeyDown(ev);
+	}, [focusNext, focusPrev, onKeyDown]);
+
 	const getItemIcon = item => {
 		const { iconName } = item[Symbol.for('derived')];
 		return isTouchOrSmall ? `28/item-type/${iconName}` : `16/item-type/${iconName}`;
@@ -44,9 +57,12 @@ const RelatedItem = memo(props => {
 				className="related"
 				data-key={ relatedItem.key }
 				key={ relatedItem.key }
-				onKeyDown={ onKeyDown }
+				onKeyDown={ handleKeyDown }
 				role="listitem button"
 				tabIndex={ -2 }
+				ref={ ref }
+				onFocus={ receiveFocus }
+				onBlur={ receiveBlur }
 			>
 				<Icon
 					type={ getItemIcon(relatedItem) }
@@ -99,15 +115,10 @@ const Related = ({ id, isActive }) => {
 	sortItemsByKey(mappings, sortedRelatedItems, 'title');
 
 	const scrollContainerRef = useRef(null);
-	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext,
-		focusPrev } = useFocusManager(scrollContainerRef, null, false);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(scrollContainerRef, { isCarousel: false });
 
 	const handleKeyDown = useCallback(ev => {
-		if(ev.key === "ArrowLeft") {
-			focusDrillDownPrev(ev);
-		} else if(ev.key === "ArrowRight") {
-			focusDrillDownNext(ev);
-		} else if(ev.key === 'ArrowDown') {
+		if(ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && focusNext(ev);
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev);
@@ -131,7 +142,7 @@ const Related = ({ id, isActive }) => {
 			ev.target.querySelector('a').click();
 			ev.preventDefault();
 		}
-	}, [focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev]);
+	}, [focusNext, focusPrev]);
 
 		useEffect(() => {
 		if(!isFetching && !isFetched) {

@@ -107,7 +107,10 @@ describe('Tags', () => {
 
 		// item has one tag now
 		const list1 = await screen.findByRole('list', { name: 'Tags' });
-		expect(await findByRole(list1, 'listitem', { name: 'to read' })).toBeInTheDocument();
+		const toReadTag = await findByRole(list1, 'listitem', { name: 'to read' });
+		expect(toReadTag).toBeInTheDocument();
+		expect(toReadTag.querySelector('svg.icon')).toHaveStyle({color:'rgb(255, 102, 102)'});
+
 		expect(screen.getByText('1 tag')).toBeInTheDocument();
 
 		// item has one tag (read-only textbox) + input field for another

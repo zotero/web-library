@@ -14,11 +14,97 @@ import { pluralize } from '../../common/format';
 
 var nextId = 0;
 
+const TagPickerItem = memo(({ isReadOnly, onCancel, onChange, onCommit, onDelete,
+	onEdit, onEditableBlur, onKeyDown, suggestions, tag, tagColors, tagRedacted
+ }) => {
+	const ref = useRef(null);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(
+		ref, { targetTabIndex: -3, isFocusable: true, isCarousel: false }
+	);
+
+	const handleKeyDown = useCallback(ev => {
+		if (ev.key === "ArrowLeft") {
+			focusPrev(ev, { useCurrentTarget: false });
+		} else if (ev.key === "ArrowRight") {
+			focusNext(ev, { useCurrentTarget: false });
+		} else {
+			onKeyDown(ev);
+		}
+	}, [focusNext, focusPrev, onKeyDown]);
+
+	return (
+		<li
+			aria-label={tag.tag === tagRedacted ? null : tag.tag}
+			className="tag"
+			data-tag={tag.tag}
+			key={tag.id}
+			onKeyDown={handleKeyDown}
+			tabIndex={-2}
+			ref={ref}
+			onFocus={receiveFocus}
+			onBlur={receiveBlur}
+		>
+
+			<Icon
+				color={tag.tag in tagColors ? tagColors[tag.tag] : null}
+				height="12"
+				symbol={tag.tag in tagColors ? 'circle' : 'circle-empty'}
+				type="12/circle"
+				width="12"
+			/>
+			<Editable
+				autoFocus
+				isActive={tag.tag === tagRedacted}
+				onCancel={onCancel}
+				onChange={onChange}
+				onClick={onEdit}
+				onCommit={onCommit}
+				onBlur={onEditableBlur}
+				selectOnFocus
+				suggestions={suggestions}
+				value={tag.tag}
+				aria-label="Tag Name"
+				tabIndex={-1}
+			/>
+			{!(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
+				<Button
+					aria-label="remove tag"
+					icon
+					onClick={onDelete}
+					tabIndex={-3}
+				>
+					<Icon type="16/minus-circle" width="16" height="16" />
+				</Button>
+			)}
+		</li>
+	);
+});
+
+TagPickerItem.displayName = 'TagPickerItem';
+
+TagPickerItem.propTypes = {
+	isReadOnly: PropTypes.bool.isRequired,
+	onCancel: PropTypes.func.isRequired,
+	onChange: PropTypes.func.isRequired,
+	onCommit: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
+	onEdit: PropTypes.func.isRequired,
+	onEditableBlur: PropTypes.func.isRequired,
+	onKeyDown: PropTypes.func.isRequired,
+	suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
+	tag: PropTypes.shape({
+		id: PropTypes.number.isRequired,
+		tag: PropTypes.string.isRequired,
+	}).isRequired,
+	tagColors: PropTypes.object,
+	tagRedacted: PropTypes.string,
+}
+
 const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 	const dispatch = useDispatch();
 	const initialTags = useSelector(state => get(state, ['libraries', libraryKey, 'items', itemKey, 'tags'], []));
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors']));
+	const tagColors = useSelector(state => get(state, ['libraries', libraryKey, 'tagColors', 'lookup']));
 
 	// tags stored in the item property may require sorting. See #434
 	const sortedTags = [...initialTags];
@@ -34,9 +120,8 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 	const requestId = useRef(1);
 	const addTagRef = useRef(null);
 	const scrollContainerRef = useRef(null);
-	const { receiveBlur, focusDrillDownPrev, focusDrillDownNext, receiveFocus, focusNext, focusPrev,
-		focusBySelector, focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, null,
-			false);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector,
+		focusOnLast, resetLastFocused } = useFocusManager(scrollContainerRef, { isCarousel: false });
 	const prevInitialTags = usePrevious(initialTags);
 	const realTagCount = tags.filter(t => t.tag !== '').length;
 
@@ -99,11 +184,20 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 	}, [isReadOnly]);
 
 	const handleDelete = useCallback(ev => {
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
+		const tagEl = ev.currentTarget.closest('[data-tag]');
+		const otherTagEl = tagEl.previousElementSibling || tagEl.nextElementSibling;
+		const tag = tagEl.dataset.tag;
+		const otherTag = otherTagEl ? otherTagEl.dataset.tag : null;
 		const updatedTags = tags.filter(t => t.tag !== tag);
 		setTags(updatedTags);
 		dispatch(updateItem(itemKey, { tags: updatedTags.map(t => pick(t, ['tag'])) }));
-	}, [dispatch, itemKey, tags]);
+		if(otherTag) {
+			// wait for setTags to complete, then move focus to the previous/next tag
+			setTimeout(() => focusBySelector(`[data-tag="${otherTag}"]`), 0);
+		} else {
+			addTagRef.current.focus();
+		}
+	}, [dispatch, focusBySelector, itemKey, tags]);
 
 	const handleAddTag = useCallback(() => {
 		setTags([...tags.filter(t => t.tag !== ''), { tag: '', id: ++nextId }]);
@@ -131,12 +225,15 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 		if (ev.target.nodeName === 'INPUT') {
 			return;
 		}
-		if (ev.key === "ArrowLeft") {
-			focusDrillDownPrev(ev);
-		} else if (ev.key === "ArrowRight") {
-			focusDrillDownNext(ev);
-		} else if (ev.key === 'ArrowDown') {
-			ev.target === ev.currentTarget && focusNext(ev);
+		if (ev.key === 'ArrowDown') {
+			const isAddButton = ev.currentTarget === addTagRef.current;
+			const isShift = ev.getModifierState('Shift');
+			if (isAddButton && !isShift && ev.target === ev.currentTarget) {
+				resetLastFocused();
+				scrollContainerRef.current?.focus();
+			} else {
+				ev.target === ev.currentTarget && focusNext(ev);
+			}
 		} else if (ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: addTagRef.current });
 		} else if (isTriggerEvent(ev)) {
@@ -161,14 +258,8 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 			const itemEl = containerEl.querySelector('.tag');
 			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
-		} else if (ev.key === 'Tab') {
-			const isAddButton = ev.currentTarget === addTagRef.current;
-			const isShift = ev.getModifierState('Shift');
-			if (isAddButton && !isShift) {
-				ev.target === ev.currentTarget && focusNext(ev);
-			}
 		}
-	}, [focusBySelector, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev, isReadOnly, resetLastFocused]);
+	}, [focusBySelector, focusNext, focusPrev, isReadOnly, resetLastFocused]);
 
 	const handleFocusOnContainer = useCallback(ev => {
 		if (ev.target.nodeName === 'INPUT' || isTouchOrSmall) {
@@ -185,8 +276,10 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 		}
 		if (typeof (prevInitialTags) !== 'undefined' && !deepEqual(initialTags, prevInitialTags)) {
 			setTags(initialTags.map(t => ({ ...t, id: ++nextId })));
+			// wait for setTags to complete, then refocus on the last focused tag (node will be gone but it will use index among candidates)
+			setTimeout(focusOnLast, 0);
 		}
-	}, [isPendingTagChanges, tagRedacted, initialTags, prevInitialTags]);
+	}, [isPendingTagChanges, tagRedacted, initialTags, prevInitialTags, focusOnLast]);
 
 	return (
 		<>
@@ -224,52 +317,23 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 					<nav>
 						<ul aria-label="Tags" className="details-list tag-list">
 							{
-								tags.map(tag => {
-									return (
-										<li
-											aria-label={tag.tag === tagRedacted ? null : tag.tag}
-											className="tag"
-											data-key={tag.id}
-											data-tag={tag.tag}
-											key={tag.id}
-											onKeyDown={handleKeyDown}
-											tabIndex={-2}
-										>
-
-											<Icon
-												color={tag.tag in tagColors ? tagColors[tag.tag] : null}
-												height="12"
-												symbol={tag.tag in tagColors ? 'circle' : 'circle-empty'}
-												type="12/circle"
-												width="12"
-											/>
-											<Editable
-												autoFocus
-												isActive={tag.tag === tagRedacted}
-												onCancel={handleCancel}
-												onChange={handleChange}
-												onClick={handleEdit}
-												onCommit={handleCommit}
-												onBlur={handleEditableBlur}
-												selectOnFocus
-												suggestions={suggestions}
-												value={tag.tag}
-												aria-label="Tag Name"
-												tabIndex={-1}
-											/>
-											{!(tag.tag === tagRedacted && tagRedacted === '') && !isReadOnly && (
-												<Button
-													aria-label="remove tag"
-													icon
-													onClick={handleDelete}
-													tabIndex={-3}
-												>
-													<Icon type="16/minus-circle" width="16" height="16" />
-												</Button>
-											)}
-										</li>
-									);
-								})
+								tags.map(tag => (
+									<TagPickerItem
+										key={tag.id}
+										isReadOnly={isReadOnly}
+										onCancel={handleCancel}
+										onChange={handleChange}
+										onCommit={handleCommit}
+										onDelete={handleDelete}
+										onEdit={handleEdit}
+										onEditableBlur={handleEditableBlur}
+										onKeyDown={handleKeyDown}
+										suggestions={suggestions}
+										tag={tag}
+										tagColors={tagColors}
+										tagRedacted={tagRedacted}
+									/>
+								))
 							}
 						</ul>
 					</nav>
@@ -289,8 +353,9 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 }
 
 TagPicker.propTypes = {
-
 	isReadOnly: PropTypes.bool,
+	itemKey: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string.isRequired,
 }
 
 export default memo(TagPicker);

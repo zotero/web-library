@@ -95,9 +95,11 @@ TagDotMenu.propTypes = {
 TagDotMenu.displayName = 'TagDotMenu';
 
 const TagListItem = memo(props => {
-	const { className, dotMenuFor, focusDrillDownNext, focusDrillDownPrev, focusNext, focusPrev,
-	isManager, isSelected = false, onDotMenuToggle = noop, style, tag, toggleTag, index, ...rest } = props;
+	const { className, dotMenuFor, onFocusNext, onFocusPrev, isManager, isSelected = false,
+		onDotMenuToggle = noop, style, tag, toggleTag, index, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const itemRef = useRef(null);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(itemRef, { isFocusable: true, targetTabIndex: -3 });
 	const id = useId();
 
 	const handleClick = useCallback(ev => {
@@ -117,21 +119,21 @@ const TagListItem = memo(props => {
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown' && ev.target === ev.currentTarget) {
-			focusNext(ev);
+			onFocusNext(ev);
 			onDotMenuToggle(null);
 		} else if(ev.key === 'ArrowUp' && ev.target === ev.currentTarget) {
-			focusPrev(ev);
+			onFocusPrev(ev);
 			onDotMenuToggle(null);
 		} else if(ev.key === 'ArrowRight') {
-			focusDrillDownNext(ev);
+			focusNext(ev);
 		} else if(ev.key === 'ArrowLeft') {
-			focusDrillDownPrev(ev);
+			focusPrev(ev);
 			onDotMenuToggle(null);
 		} else if(isTriggerEvent(ev)) {
 			ev.currentTarget.blur();
 			toggleTag(ev.currentTarget.dataset.tag);
 		}
-	}, [focusNext, focusPrev, focusDrillDownPrev, focusDrillDownNext, onDotMenuToggle, toggleTag]);
+	}, [focusNext, focusPrev, onDotMenuToggle, onFocusNext, onFocusPrev, toggleTag]);
 
 	return (
 		<li
@@ -146,6 +148,9 @@ const TagListItem = memo(props => {
 			}, className) }
 			onClick={ tag && handleClick }
 			onKeyDown={ handleKeyDown }
+			ref={ itemRef }
+			onFocus={ receiveFocus }
+			onBlur={ receiveBlur }
 		>
 			<div className="tag-color" data-color={ tag?.color?.toLowerCase() } style={ tag && (tag.color && { color: tag.color }) } />
 			<div
@@ -189,16 +194,14 @@ TagListItem.displayName = 'TagListItem';
 TagListItem.propTypes = {
 	className: PropTypes.string,
 	dotMenuFor: PropTypes.string,
-	focusDrillDownNext: PropTypes.func,
-	focusDrillDownPrev: PropTypes.func,
-	focusNext: PropTypes.func,
-	focusPrev: PropTypes.func,
 	isManager: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	onDotMenuToggle: PropTypes.func,
 	style: PropTypes.object,
 	tag: PropTypes.object,
 	toggleTag: PropTypes.func,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
 };
 
 const TagListRow = memo(({ data, index, ...rest }) => (
@@ -236,7 +239,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 	const wasFilteringOrHideAutomatic = usePrevious(isFilteringOrHideAutomatic);
 	const selectedTagsCount = selectedTags.length;
 	const prevHasChecked = usePrevious(hasChecked);
-	const { receiveFocus, receiveBlur, focusNext, focusPrev, focusDrillDownNext, focusDrillDownPrev } = useFocusManager(listRef);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(listRef);
 	const [isBusy] = useDebounce(!hasChecked || (isFetching && isFilteringOrHideAutomatic), 100);
 
 	const [dotMenuFor, setDotMenuFor] = useState(null);
@@ -355,9 +358,8 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 									className="tag-selector-list"
 									height={ height }
 									itemCount={ itemCount }
-									itemData={ { tags, toggleTag, isManager, focusNext, focusPrev,
-										focusDrillDownNext, focusDrillDownPrev, dotMenuFor,
-										onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
+									itemData={ { tags, toggleTag, isManager, onFocusNext: focusNext, onFocusPrev: focusPrev,
+										dotMenuFor, onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
 									}
 									itemSize={ isTouchOrSmall ? 43 : 28 }
 									onItemsRendered={ onItemsRendered }

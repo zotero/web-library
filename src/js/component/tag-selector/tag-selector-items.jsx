@@ -65,7 +65,7 @@ const TagSelectorItems = () => {
 	const prevSelectedTagsLength = usePrevious(selectedTags.length);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector } = useFocusManager(tagContainerRef, null, false);
+	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector } = useFocusManager(tagContainerRef, { isCarousel: false });
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
 	const tagFocusNext = useRef({ tag: null, isQueryChanged: false });

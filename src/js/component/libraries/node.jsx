@@ -1,11 +1,12 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd'
 import { useDebouncedCallback } from 'use-debounce';
 import { isTriggerEvent, noop, pick } from 'web-common/utils';
 import { Icon } from 'web-common/components';
+import { useFocusManager } from 'web-common/hooks'
 
 import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
 import { stopPropagation } from '../../utils';
@@ -13,9 +14,10 @@ import { stopPropagation } from '../../utils';
 const Node = props => {
 	const { className, children, dndData, isOpen, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, onOpen = noop, onRename =
 		noop, onRenameCancel = noop, onSelect = noop, showTwisty, onFocusNext = noop, onFocusPrev =
-		noop, onKeyDown = noop, subtree, onDrillDownNext = noop, onDrillDownPrev = noop,
-		shouldBeDraggable, ...rest } = props;
+		noop, onKeyDown = noop, subtree, shouldBeDraggable, ...rest } = props;
 	const [isFocused, setIsFocused] = useState(false);
+	const containerRef = useRef(null);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(containerRef, { isFocusable: true, targetTabIndex: -3 });
 
 	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
 		type: COLLECTION,
@@ -148,9 +150,9 @@ const Node = props => {
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === "ArrowLeft") {
-			ev.target === ev.currentTarget ? onOpen(ev, false) : onDrillDownPrev(ev);
+			ev.target === ev.currentTarget ? onOpen(ev, false) : focusPrev(ev);
 		} else if(ev.key === "ArrowRight") {
-			isOpen || !showTwisty ? onDrillDownNext(ev) : onOpen(ev, true);
+			isOpen || !showTwisty ? focusNext(ev) : onOpen(ev, true);
 		} else if(ev.key === "ArrowDown") {
 			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === "ArrowUp") {
@@ -159,19 +161,21 @@ const Node = props => {
 			ev.target === ev.currentTarget && onSelect(ev);
 		}
 		onKeyDown(ev);
-	}, [isOpen, onDrillDownNext, onDrillDownPrev, onFocusNext, onFocusPrev, onSelect, onKeyDown, onOpen, showTwisty]);
+	}, [onKeyDown, onOpen, focusPrev, isOpen, showTwisty, focusNext, onFocusNext, onFocusPrev, onSelect]);
 
 	const handleFocus = useCallback(ev => {
 		if(ev.target === ev.currentTarget) {
 			setIsFocused(true);
 		}
-	}, []);
+		receiveFocus(ev);
+	}, [receiveFocus]);
 
 	const handleBlur = useCallback(ev => {
 		if(ev.target === ev.currentTarget) {
 			setIsFocused(false);
 		}
-	}, []);
+		receiveBlur(ev);
+	}, [receiveBlur]);
 
 	return drag(drop(
 		// NOTE: Node can end up having both 'focus' and 'focused' classes.
@@ -189,6 +193,7 @@ const Node = props => {
 				onFocus={ handleFocus }
 				onBlur={ handleBlur }
 				onKeyDown={ handleKeyDown }
+				ref={ containerRef }
 			>
 				{ subtree || showTwisty ? (
 					<button
@@ -216,8 +221,6 @@ Node.propTypes = {
 	dndData: PropTypes.object,
 	isOpen: PropTypes.bool,
 	isOver: PropTypes.bool,
-	onDrillDownNext: PropTypes.func,
-	onDrillDownPrev: PropTypes.func,
 	onFileDrop: PropTypes.func,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,

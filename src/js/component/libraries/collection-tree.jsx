@@ -715,7 +715,7 @@ const CollectionNode = memo(props => {
 			shouldBeDraggable={ !isPickerMode && renaming !== collection.key }
 			showTwisty={ hasSubCollections && !isDisabled }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
-			{ ...pick(rest, ['onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev']) }
+			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 			subtree={ (shouldRenderSubtree && (hasSubCollectionsOrItemsNode || hasVirtual)) ? (
 				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
 					<CollectionsNodeList
@@ -832,10 +832,10 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
 					'commitAdd', 'derivedData', 'dotMenuFor', 'disabledCollections',
 					'focusBySelector', 'getParents', 'isCurrentLibrary', 'isPickerMode',
-					'isFileUploadAllowed', 'isReadOnly', 'level', 'onDrillDownNext', 'onDrillDownPrev',
-					'onFocusNext', 'onFocusPrev', 'onOpen', 'opened', 'parentLibraryKey',
-					'pickerSkipCollections', 'picked', 'pickerPick', 'renaming', 'selectedCollectionKey',
-					'selectNode', 'setDotMenuFor', 'setOpened', 'setRenaming', 'shouldBeTabbable', 'virtual',])}
+					'isFileUploadAllowed', 'isReadOnly', 'level', 'onFocusNext', 'onFocusPrev', 'onOpen',
+					'opened', 'parentLibraryKey', 'pickerSkipCollections', 'picked', 'pickerPick', 'renaming',
+					'selectedCollectionKey', 'selectNode', 'setDotMenuFor', 'setOpened', 'setRenaming',
+					'shouldBeTabbable', 'virtual',])}
 				/>
 			) }
 			<VirtualCollectionNode
@@ -1034,8 +1034,8 @@ const CollectionTree = props => {
 				shouldBeTabbable={ shouldBeTabbable }
 				getParents ={ getParents }
 				{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd', 'disabledCollections',
-				'onDrillDownNext', 'onDrillDownPrev', 'onFocusNext', 'onFocusPrev', 'focusBySelector', 'picked',
-				'pickerPick', 'pickerSkipCollections', 'virtual']) }
+				'onFocusNext', 'onFocusPrev', 'focusBySelector', 'picked', 'pickerPick',
+				'pickerSkipCollections', 'virtual']) }
 			/>
 			<PublicationsNode
 				level={ 2 }
@@ -1045,8 +1045,7 @@ const CollectionTree = props => {
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
-				{ ...pick(rest, ['onDrillDownNext', 'onDrillDownPrev',
-				'onFocusNext', 'onFocusPrev']) }
+				{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 			/>
 			<TrashNode
 				level={ 2 }
@@ -1056,8 +1055,7 @@ const CollectionTree = props => {
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
 				shouldBeTabbable = { shouldBeTabbable }
-				{ ...pick(rest, ['onDrillDownNext', 'onDrillDownPrev',
-				'onFocusNext', 'onFocusPrev']) }
+				{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
 			/>
 		</LevelWrapper>
 	);

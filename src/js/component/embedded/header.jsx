@@ -86,7 +86,7 @@ const EmbeddedHeader = () => {
 			state.libraries[state.current.libraryKey]?.dataObjects?.[state.current.collectionKey]?.name :
 			state.config.libraries?.[0].name
 	);
-	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(ref, '.search-input');
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(ref, { initialQuerySelector: '.search-input' });
 
 	const handleBackClick = useCallback(ev => {
 		if(isTriggerEvent(ev)) {

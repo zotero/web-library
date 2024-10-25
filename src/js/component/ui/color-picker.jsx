@@ -24,7 +24,7 @@ const ColorPicker = props => {
 		placement: 'bottom', middleware: [shift()]
 	});
 
-	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(menuRef, `[role="menuitem"][data-color="${selectedColor}"]`);
+	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(menuRef, { initialQuerySelector: `[role="menuitem"][data-color="${selectedColor}"]` });
 
 	const handleToggle = useCallback(ev => {
 		if(isTriggerEvent(ev) || (ev.type === 'keydown' && (['ArrowUp', 'ArrowDown'].includes(ev.key)))) {

@@ -47,5 +47,6 @@ const TouchDrilldown = memo(() => {
 	);
 });
 
+TouchDrilldown.displayName = 'TouchDrilldown';
 
 export default TouchDrilldown;
