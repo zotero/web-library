@@ -94,7 +94,7 @@ const SettingsModal = () => {
 								onCommit={handleSelectDensity}
 								options={densityOptions}
 								value={isSmall ? 'touch' : density}
-								searchable={true}
+								searchable={false}
 							/>
 						</div>
 					</div>
@@ -113,7 +113,7 @@ const SettingsModal = () => {
 								onCommit={handleSelectColorScheme}
 								options={colorSchemeOptions}
 								value={colorScheme}
-								searchable={true}
+								searchable={false}
 							/>
 						</div>
 					</div>
