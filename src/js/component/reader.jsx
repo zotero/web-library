@@ -169,7 +169,7 @@ const Reader = () => {
 	const pdfWorkerURL = useSelector(state => state.config.pdfWorkerURL);
 	const pdfReaderCMapsRoot = useSelector(state => state.config.pdfReaderCMapsRoot);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? []);
-	const { isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
+	const { isGroupLibrary: isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
 	const isCreating = Object.keys(useSelector(state => state.libraries[libraryKey]?.creating?.items) ?? {}).length > 0;
 	const isUpdating = Object.keys(useSelector(state => state.libraries[libraryKey]?.updating?.items) ?? {}).length > 0;
@@ -214,7 +214,7 @@ const Reader = () => {
 	const prevAnnotations = usePrevious(annotations);
 
 	const currentUser = useMemo(() => (
-		{ id: currentUserID, username: currentUserSlug }
+		{ id: parseInt(currentUserID), username: currentUserSlug }
 	), [currentUserID, currentUserSlug]);
 
 	const handleClose = useCallback(() => {

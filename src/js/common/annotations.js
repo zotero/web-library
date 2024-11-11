@@ -3,7 +3,7 @@
 // const ANNOTATION_POSITION_MAX_SIZE = 65000;
 
 /**
- * @param {Zotero.Item} item
+ * @param {Object} item
  * @returns {Object} pdf-reader compatible annotation data
  */
 const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser, isGroup, isReadOnly, libraryKey, lastModifiedByUser, tagColors = new Set() } = {}) => {
@@ -12,7 +12,8 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 	o.id = item.key;
 	o.type = item.annotationType;
 	o.isExternal = item.annotationIsExternal;
-	const isAuthor = !item.createdByUser?.id || item.createdByUser?.id === currentUser?.id;
+	const isAuthor = !item[Symbol.for('meta')]?.createdByUser?.id || item[Symbol.for('meta')]?.createdByUser?.id === currentUser?.id;
+
 	if (item.annotationAuthorName) {
 		o.authorName = item.annotationAuthorName;
 		if (isGroup) {
@@ -74,7 +75,7 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 
 /**
  * @param {Object} json pdf-reader compatible annotation data
- * @return {Zotero.Item} Annotation item
+ * @return {Object} Annotation item
  */
 const annotationItemFromJSON = function (json) {
 	var item = {
