@@ -57,7 +57,7 @@ const ItemsList = memo(props => {
 				offset++;
 			}
 		}
-		dispatch(fetchSource(Math.min(startIndex - offset, 0), stopIndex))
+		dispatch(fetchSource(Math.max(startIndex - offset, 0), stopIndex))
 		lastRequest.current = { startIndex, stopIndex };
 	}, [dispatch, injectPoints]);
 
