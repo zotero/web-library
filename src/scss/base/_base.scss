@@ -8,6 +8,10 @@
 	box-sizing: border-box;
 }
 
+html, body {
+	overscroll-behavior: none;
+}
+
 html,
 body,
 #zotero-web-library,
