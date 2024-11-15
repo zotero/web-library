@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { screen, getByRole, waitFor } from '@testing-library/react';
+import { screen, getAllByRole, getByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -265,5 +265,56 @@ describe('Item info', () => {
 			{ name: 'Date Modified' })
 		).toHaveTextContent(new RegExp(`^${expectedDate.split(',')[0]}`)));
 		expect(hasBeenPatched).toBe(true);
+	});
+
+	test('It should update creator types after changing the item type', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		server.use(
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].itemType).toBe('radioBroadcast');
+				return HttpResponse.json(testUserUpdateItemType);
+			}),
+		);
+
+		const mapNodesToLabels = nodes => nodes.map(node => node.textContent);
+		expect(screen.queryByRole('textbox', { name: 'Program Title' })).not.toBeInTheDocument();
+
+		let firstAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[0];
+		await user.click(firstAuthorTypeCombo);
+
+		screen
+
+		expect(mapNodesToLabels(getAllByRole(getByRole(firstAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([
+			'Author',
+			'Contributor',
+			'Editor',
+			'Translator',
+			'Reviewed Author',
+			'Move Down'
+		]));
+
+		const inputTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
+		await user.click(inputTypeCombo);
+		await user.selectOptions(getByRole(inputTypeCombo, 'listbox'), 'Radio Broadcast');
+
+		await waitFor(() => expect(screen.getByRole('textbox', { name: 'Program Title' })).toBeInTheDocument());
+		const expectedAuthorTypes = ['Director','Scriptwriter','Producer','Cast Member','Contributor','Guest',];
+
+		firstAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[0];
+		await user.click(firstAuthorTypeCombo);
+		expect(mapNodesToLabels(getAllByRole(getByRole(firstAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Down']));
+
+		const secondAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[1];
+		await user.click(secondAuthorTypeCombo);
+		expect(mapNodesToLabels(getAllByRole(getByRole(secondAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move Down']));
+
+		const lastAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[9];
+		await user.click(lastAuthorTypeCombo);
+		expect(mapNodesToLabels(getAllByRole(getByRole(lastAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move to Top']));
 	});
 });
