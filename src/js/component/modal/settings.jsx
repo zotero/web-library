@@ -23,6 +23,7 @@ const densityOptions = [
 
 const SettingsModal = () => {
 	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const colorScheme = useSelector(state => state.preferences.colorScheme ?? '');
 	const density = useSelector(state => state.preferences.density ?? '');
 	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
@@ -80,14 +81,16 @@ const SettingsModal = () => {
 				<div className="form">
 					<div className={cx("form-group", { disabled: isSmall })}>
 						<label
+							id={`${densityInputId.current}-label`}
 							className="col-form-label"
-							htmlFor={densityInputId.current}
+							htmlFor={isTouchOrSmall ? densityInputId.current : null}
 						>
 							UI Density
 						</label>
 						<div className="col">
 							<Select
 								isDisabled={isSmall}
+								aria-labelledby={isTouchOrSmall ? null : `${densityInputId.current}-label` }
 								id={densityInputId.current}
 								className="form-control form-control-sm"
 								onChange={handleChange}
@@ -100,13 +103,15 @@ const SettingsModal = () => {
 					</div>
 					<div className="form-group">
 						<label
+							id={`${colorSchemeInputId.current}-label`}
 							className="col-form-label"
-							htmlFor={colorSchemeInputId.current}
+							htmlFor={isTouchOrSmall ? colorSchemeInputId.current : null}
 						>
 							Color Scheme
 						</label>
 						<div className="col">
 							<Select
+								aria-labelledby={isTouchOrSmall ? null : `${colorSchemeInputId.current}-label`}
 								id={colorSchemeInputId.current}
 								className="form-control form-control-sm"
 								onChange={handleChange}
