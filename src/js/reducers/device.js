@@ -50,6 +50,10 @@ const getUserType = (state, action, preferences) => {
 		return preferences.density;
 	}
 
+	if(action.type === TRIGGER_USER_TYPE_CHANGE) {
+		return action.userType;
+	}
+
 	return state.userType;
 }
 
