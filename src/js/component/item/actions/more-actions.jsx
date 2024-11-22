@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
 import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
 import { useItemActionHandlers } from '../../../hooks';
+import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 
 const MoreActionsItems = ({ divider = false }) => {
 	const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const MoreActionsItems = ({ divider = false }) => {
         <Fragment>
 			{ isViewFile && (
 				<DropdownItem onClick={ handleViewFileClick }>
-					View { attachment.attachmentType === 'application/pdf' ? 'PDF' : 'File' }
+					View {Object.keys(READER_CONTENT_TYPES).includes(attachment.attachmentType) ? READER_CONTENT_TYPES_HUMAN_READABLE[attachment.attachmentType] : 'File' }
 				</DropdownItem>
 			) }
 			{ isViewOnline && (

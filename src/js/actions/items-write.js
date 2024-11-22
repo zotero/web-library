@@ -2,7 +2,7 @@ import api from 'zotero-api-client';
 import { omit, pick } from 'web-common/utils';
 
 import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
-import { fetchItemsByKeys, fetchChildItems, fetchItemTemplate } from '.';
+import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
@@ -10,6 +10,7 @@ import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
 import { parseDescriptiveString } from '../common/format';
 import { strToISO } from '../common/date';
 import { sniffForMIMEType } from '../common/mime';
+import { READER_CONTENT_TYPES } from '../constants/reader';
 
 import {
 	BEGIN_ONGOING,
@@ -1089,12 +1090,13 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 				const newItem = newItems[index];
 				const skipChildItems = newItem.itemType === 'annotation'
 					|| newItem.linkMode === 'embedded_image'
-					|| (newItem.itemType === 'attachment' && newItem.contentType !== 'application/pdf');
+					|| (newItem.itemType === 'attachment' && !Object.keys(READER_CONTENT_TYPES).includes(newItem.contentType));
 
 				if (skipChildItems) {
 					return;
 				}
-				await dispatch(fetchChildItems(ik, { start: 0, limit: 100 }, { current: { libraryKey: sourceLibraryKey }}));
+
+				await dispatch(fetchAllChildItems(ik, null, { current: { libraryKey: sourceLibraryKey }}));
 				const childItemsKeys = get(getState(), ['libraries', sourceLibraryKey, 'itemsByParent', ik, 'keys'], []);
 				if(childItemsKeys && childItemsKeys.length) {
 					const newChildItemsChunked = await dispatch(chunkedAction(copyToLibrary, childItemsKeys, sourceLibraryKey, targetLibraryKey, [], { parentItem: newItem.key }, depth + 1, aggrMultiPatch));

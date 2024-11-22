@@ -1,4 +1,4 @@
-import { CONFIGURE, SORT_ITEMS, RECEIVE_GROUPS } from '../constants/actions.js';
+import { CONFIGURE, RECEIVE_GROUPS, RECEIVE_SCHEMA } from '../constants/actions.js';
 import { sortByKey } from '../utils';
 import { pick } from 'web-common/utils';
 import * as defaults from '../constants/defaults';
@@ -63,6 +63,14 @@ const slugify = name => {
 
 const config = (state = defaultState, action) => {
 	switch(action.type) {
+		case RECEIVE_SCHEMA:
+			return {
+				...state,
+				apiConfig: {
+					...state.apiConfig,
+					zoteroSchemaVersion: action.schema.version
+				}
+			}
 		case CONFIGURE:
 			action.libraries = action.libraries || {};
 			return {
