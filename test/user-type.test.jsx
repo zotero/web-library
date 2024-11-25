@@ -8,10 +8,11 @@ import { act, fireEvent, getByRole, screen, waitFor } from '@testing-library/rea
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getStateWithout } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateLibraryView from './fixtures/state/desktop-test-user-library-view.json';
+import { mockMatchMedia } from './mocks/matchmedia';
 
 const libraryViewState = JSONtoState(stateLibraryView);
 applyAdditionalJestTweaks();
@@ -37,6 +38,7 @@ describe('User Type', () => {
 	afterEach(() => {
 		server.resetHandlers()
 		localStorage.clear();
+		delete window.matchMedia;
 	});
 
 	afterAll(() => server.close());
@@ -123,5 +125,35 @@ describe('User Type', () => {
 
 		await userEvent.selectOptions(densityComboBox, 'Mouse');
 		expect(window.document.documentElement).toHaveClass('mouse');
+	});
+
+	test("It should opt for touch interface on device that reports touch pointer", async () => {
+		mockMatchMedia({ isTouch: true, isMouse: false });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(libraryViewState, 'device') });
+		await waitForPosition();
+		expect(window.document.documentElement).toHaveClass('touch');
+	});
+
+	test("It should opt for mouse interface on device that reports mouse pointer", async () => {
+		mockMatchMedia({ isTouch: false, isMouse: true });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(libraryViewState, 'device') });
+		await waitForPosition();
+		expect(window.document.documentElement).toHaveClass('mouse');
+	});
+
+	test("It should opt for mouse interface on Windows device that reports both touch and mouse pointers", async () => {
+		jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
+		mockMatchMedia({ isTouch: true, isMouse: true, isPrimaryMouse: false, isPrimaryTouch: true });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(libraryViewState, 'device') });
+		await waitForPosition();
+		expect(window.document.documentElement).toHaveClass('mouse');
+	});
+
+	test("It should opt for touch interface on iOS device that reports both touch and mouse pointers", async () => {
+		jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (iPad; CPU OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1');
+		mockMatchMedia({ isTouch: true, isMouse: true, isPrimaryMouse: false, isPrimaryTouch: true });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(libraryViewState, 'device') });
+		await waitForPosition();
+		expect(window.document.documentElement).toHaveClass('touch');
 	});
 });

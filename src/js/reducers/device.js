@@ -1,9 +1,6 @@
 import { TRIGGER_USER_TYPE_CHANGE, TRIGGER_RESIZE_VIEWPORT, PREFERENCE_CHANGE } from '../constants/actions.js';
 import { getScrollbarWidth, pick } from 'web-common/utils';
 
-const isInitiallyMouse = typeof(matchMedia) === 'function' ? matchMedia('(pointer:fine)').matches : null;
-const isInitiallyTouch = typeof(matchMedia) === 'function' ? matchMedia('(pointer:coarse)').matches : null;
-
 const getViewport = ({ width }) => {
 	return {
 		xxs: width < 480,
@@ -14,19 +11,25 @@ const getViewport = ({ width }) => {
 	};
 };
 
-const defaultState = {
-	isKeyboardUser: false,
-	isMouseUser: isInitiallyMouse,
-	isSingleColumn: false,
-	isTouchOrSmall: false,
-	isTouchUser: isInitiallyTouch,
-	scrollbarWidth: getScrollbarWidth(),
-	shouldUseEditMode: false,
-	shouldUseModalCreatorField: false,
-	shouldUseSidebar: false,
-	shouldUseTabs: false,
-	userType: isInitiallyTouch ? 'touch' : 'mouse',
-	...getViewport(process.env.NODE_ENV === 'test' ? {} : window.innerWidth)
+const getDefaultState = () => {
+	const isWindows = navigator.userAgent.indexOf("Windows") >= 0;
+	const isInitiallyMouse = typeof (window.matchMedia) === 'function' ? (window.matchMedia('(pointer:fine)').matches || (isWindows && window.matchMedia('(any-pointer:fine)'))) : null;
+	const isInitiallyTouch = !isInitiallyMouse && (typeof(window.matchMedia) === 'function' ? window.matchMedia('(pointer:coarse)').matches : null);
+
+	return {
+		isKeyboardUser: false,
+		isMouseUser: isInitiallyMouse,
+		isSingleColumn: false,
+		isTouchOrSmall: false,
+		isTouchUser: isInitiallyTouch,
+		scrollbarWidth: getScrollbarWidth(),
+		shouldUseEditMode: false,
+		shouldUseModalCreatorField: false,
+		shouldUseSidebar: false,
+		shouldUseTabs: false,
+		userType: isInitiallyTouch ? 'touch' : 'mouse',
+		...getViewport(process.env.NODE_ENV === 'test' ? {} : window.innerWidth)
+	}
 };
 
 const getDevice = (userType, viewport, { isEmbedded } = {}) => {
@@ -65,7 +68,7 @@ const getUserTypeBooleans = (state, action, userType) => {
 	};
 }
 
-const device = (state = defaultState, action, { config, preferences } = {}) => {
+const device = (state = getDefaultState(), action, { config, preferences } = {}) => {
 	switch(action.type) {
 		case PREFERENCE_CHANGE:
 		case TRIGGER_RESIZE_VIEWPORT:
