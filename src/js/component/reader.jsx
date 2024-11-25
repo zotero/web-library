@@ -270,7 +270,7 @@ const Reader = () => {
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
-		if (isPrimary && userLibraryKey && pageIndexKey) {
+		if (isPrimary && userLibraryKey && pageIndexKey && (newViewState?.[pageIndexKey] ?? null) !== null && newViewState[pageIndexKey] !== '') {
 			dispatchState({ type: 'BEGIN_PUSH_SETTINGS', value: newViewState[pageIndexKey] });
 		}
 	}, [attachmentItem, userLibraryKey]), 1000);
