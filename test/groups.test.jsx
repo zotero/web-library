@@ -103,9 +103,22 @@ describe('Group libraries', () => {
 				throw new Error('Unexpected request');
 			}),
 			http.get('https://api.zotero.org/users/1/items/VR82JUX8/children', async () => {
+				// This is the parent item, this request is for the children of that item, we return the two attachments
 				return HttpResponse.json(testUserChildren, {
 					headers: { 'Total-Results': '2' },
 				});
+			}),
+			http.get('https://api.zotero.org/users/1/items/MWVZPK6B/children', async () => {
+				// This is the first attachment, this request is for the annotations for that attachment
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' },
+				})
+			}),
+			http.get('https://api.zotero.org/users/1/items/VG79HDDM/file', async () => {
+				// this is the second attachment, this request is for the annotations for that attachment
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' },
+				})
 			}),
 			http.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async ({request}) => {
 				fileUploadRequests++;
