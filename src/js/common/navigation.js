@@ -74,7 +74,7 @@ const makePath = (config, { library = null, collection = null,
 		const locationType = Object.keys(location)[0];
 		const locationValue = location[locationType];
 		path.push(locationType);
-		path.push(locationType === 'position' ? JSON.stringify(locationValue) : locationValue);
+		path.push(encodeURIComponent(locationType === 'position' ? JSON.stringify(locationValue) : locationValue));
 	}
 
 	return '/' + path.join('/');

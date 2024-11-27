@@ -99,7 +99,7 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 			var searchState = state.searchState;
 			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
 			var location = params.locationType && params.locationValue ? {
-				[params.locationType]: params.locationType === 'position' ? tryParse(params.locationValue) : params.locationValue
+				[params.locationType]: params.locationType === 'position' ? tryParse(decodeURIComponent(params.locationValue)) : decodeURIComponent(params.locationValue)
 			} : null;
 
 			if(tags.length || search.length) {
