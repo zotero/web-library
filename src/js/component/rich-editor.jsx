@@ -124,6 +124,12 @@ const RichEditor = memo(forwardRef((props, ref) => {
 				}
 				break;
 			}
+			case 'openAnnotation': {
+				let { attachmentURI, position } = event.data?.message ?? {};
+				const { libraryKey, itemKey } = getItemFromCanonicalUrl(attachmentURI) ?? {};
+				dispatch(openInReader({ items: itemKey, library: libraryKey, location: { position } }));
+				break;
+			}
 			default:
 				break;
 		}

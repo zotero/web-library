@@ -71,8 +71,10 @@ const makePath = (config, { library = null, collection = null,
 	}
 
 	if (location && ['pageNumber', 'annotationID', 'position', 'href'].includes(Object.keys(location)[0])) {
-		path.push(Object.keys(location)[0])
-		path.push(location[Object.keys(location)[0]])
+		const locationType = Object.keys(location)[0];
+		const locationValue = location[locationType];
+		path.push(locationType);
+		path.push(locationType === 'position' ? JSON.stringify(locationValue) : locationValue);
 	}
 
 	return '/' + path.join('/');

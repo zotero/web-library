@@ -61,6 +61,14 @@ const getLibraryKey = (params, config) => {
 	return config.defaultLibraryKey;
 }
 
+const tryParse = (value) => {
+	try {
+		return JSON.parse(value);
+	} catch(e) {
+		return null;
+	}
+};
+
 
 const current = (state = stateDefault, action, { config = {}, device = {}, preferences = {} } = {}) => {
 	switch(action.type) {
@@ -91,7 +99,7 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 			var searchState = state.searchState;
 			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
 			var location = params.locationType && params.locationValue ? {
-				[params.locationType]: params.locationValue
+				[params.locationType]: params.locationType === 'position' ? tryParse(params.locationValue) : params.locationValue
 			} : null;
 
 			if(tags.length || search.length) {
