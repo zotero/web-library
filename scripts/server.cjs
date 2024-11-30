@@ -21,7 +21,7 @@ const handler = (req, resp) => {
 			resp.end(buf);
 		});
 	};
-	if(req.url.startsWith('/web') || req.url.startsWith('/search') || req.url.startsWith('/export')) {
+	if (req.url.startsWith('/web') || req.url.startsWith('/search') || req.url.startsWith('/export') || req.url.startsWith('/import')) {
 		proxy.web(req, resp, {
 			changeOrigin: true,
 			target: `${translateURL}`,

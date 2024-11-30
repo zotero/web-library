@@ -4,6 +4,7 @@ import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } fr
 
 import { ToolGroup } from '../ui/toolbars';
 import NewItemSelector from 'component/item/actions/new-item';
+import ImportAction from 'component/item/actions/import';
 import ExportActions from 'component/item/actions/export';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from 'component/item/actions/add-by-identifier';
@@ -246,6 +247,11 @@ const ItemActionsDesktop = memo(props => {
 				</Fragment>
 			) }
 			<ToolGroup>
+				<ImportAction
+					tabIndex={-2}
+					onFocusNext={onFocusNext}
+					onFocusPrev={onFocusPrev}
+				/>
 				<ExportActions
 					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
 					tabIndex={ -2 }

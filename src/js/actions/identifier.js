@@ -22,29 +22,41 @@ const getNextLinkFromResponse = response => {
 	return next;
 }
 
+const importFromFile = fileData => {
+	return searchIdentifier(fileData.file, { shouldImport: true });
+}
 
-const searchIdentifier = identifier => {
+const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 	return async (dispatch, getState) => {
-		identifier = identifier.trim();
 		const { config } = getState();
 		const { translateUrl } = config;
-		const matchDOI = decodeURIComponent(identifier)
-			.match(/^https?:\/\/doi.org\/(10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,])$/);
-		if(matchDOI) {
-			identifier = matchDOI[1];
-		}
-		const identifierIsUrl = isLikeURL(identifier);
-		if(!identifierIsUrl) {
-			const identifierObjects = extractIdentifiers(identifier);
-			if(identifierObjects.length === 0) {
-				// invalid identifier, if we don't return, it will run search for a generic term like zbib
-				dispatch(reportIdentifierNoResults());
-				return;
-			} else {
-				return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
+
+		let identifierIsUrl = false;
+		let url;
+
+		if(!shouldImport) {
+			identifier = identifier.trim();
+			const matchDOI = decodeURIComponent(identifier)
+				.match(/^https?:\/\/doi.org\/(10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,])$/);
+			if(matchDOI) {
+				identifier = matchDOI[1];
 			}
+			const identifierIsUrl = isLikeURL(identifier);
+			if(!identifierIsUrl) {
+				const identifierObjects = extractIdentifiers(identifier);
+				if(identifierObjects.length === 0) {
+					// invalid identifier, if we don't return, it will run search for a generic term like zbib
+					dispatch(reportIdentifierNoResults());
+					return;
+				} else {
+					return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
+				}
+			}
+			url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
+		} else {
+			url = `${translateUrl}/import`;
 		}
-		const url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
+
 		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl });
 
 		try {
@@ -214,9 +226,7 @@ const currentAddTranslatedItem = translatedItem => {
 const searchIdentifierMore = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { config } = state
-		const { translateUrl } = config;
-		const { identifier, identifierIsUrl, next, result } = state.identifier;
+		const { identifier, next, result } = state.identifier;
 		if(!identifier || result !== CHOICE) {
 			return;
 		}
@@ -262,4 +272,4 @@ const reportIdentifierNoResults = () => ({
 	errorType: 'info',
 });
 
-export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };
+export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, importFromFile, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };
