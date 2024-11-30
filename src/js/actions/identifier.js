@@ -22,30 +22,42 @@ const getNextLinkFromResponse = response => {
 	return next;
 }
 
+const importFromFile = fileData => {
+	return searchIdentifier(fileData.file, { shouldImport: true });
+}
 
-const searchIdentifier = identifier => {
+const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 	return async (dispatch, getState) => {
-		identifier = identifier.trim();
 		const { config } = getState();
 		const { translateUrl } = config;
-		const matchDOI = decodeURIComponent(identifier)
-			.match(/^https?:\/\/doi.org\/(10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,])$/);
-		if(matchDOI) {
-			identifier = matchDOI[1];
-		}
-		const identifierIsUrl = isLikeURL(identifier);
-		if(!identifierIsUrl) {
-			const identifierObjects = extractIdentifiers(identifier);
-			if(identifierObjects.length === 0) {
-				// invalid identifier, if we don't return, it will run search for a generic term like zbib
-				dispatch(reportIdentifierNoResults());
-				return;
-			} else {
-				return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
+
+		let identifierIsUrl = false;
+		let url;
+
+		if(!shouldImport) {
+			identifier = identifier.trim();
+			const matchDOI = decodeURIComponent(identifier)
+				.match(/^https?:\/\/doi.org\/(10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,])$/);
+			if(matchDOI) {
+				identifier = matchDOI[1];
 			}
+			const identifierIsUrl = isLikeURL(identifier);
+			if(!identifierIsUrl) {
+				const identifierObjects = extractIdentifiers(identifier);
+				if(identifierObjects.length === 0) {
+					// invalid identifier, if we don't return, it will run search for a generic term like zbib
+					dispatch(reportIdentifierNoResults());
+					return;
+				} else {
+					return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
+				}
+			}
+			url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
+		} else {
+			url = `${translateUrl}/import`;
 		}
-		const url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
-		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl });
+
+		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, import: shouldImport });
 
 		try {
 			const response = await fetch(url, {
@@ -57,6 +69,9 @@ const searchIdentifier = identifier => {
 
 			if (response.status === 501 || response.status === 400) {
 				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+			} else if (response.status === 413) {
+				const message = 'Selected file is too large.';
 				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 			} else if (response.status === 300) {
 				const data = await response.json();
@@ -71,20 +86,21 @@ const searchIdentifier = identifier => {
 					identifierIsUrl,
 					identifier,
 					items,
+					import: shouldImport,
 					response
 				});
 				return items;
 			} else if(response.status !== 200) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else if (!response.headers.get('content-type').startsWith('application/json')) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else {
 				const json = await response.json();
 				if (!json.length) {
 					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 				} else {
 					const rootItems = json.filter(item => !item.parentItem);
 
@@ -95,6 +111,7 @@ const searchIdentifier = identifier => {
 							items: rootItems.map(ri => omit(ri, ['key', 'version'])),
 							identifierIsUrl,
 							identifier,
+							import: shouldImport,
 							response
 						});
 						return rootItems;
@@ -109,6 +126,7 @@ const searchIdentifier = identifier => {
 							item,
 							identifier,
 							identifierIsUrl,
+							import: shouldImport,
 							response
 						});
 						return item;
@@ -116,7 +134,7 @@ const searchIdentifier = identifier => {
 				}
 			}
 		} catch(error) {
-			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier });
+			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier, import: shouldImport });
 		}
 	}
 }
@@ -214,9 +232,7 @@ const currentAddTranslatedItem = translatedItem => {
 const searchIdentifierMore = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { config } = state
-		const { translateUrl } = config;
-		const { identifier, identifierIsUrl, next, result } = state.identifier;
+		const { identifier, next, result } = state.identifier;
 		if(!identifier || result !== CHOICE) {
 			return;
 		}
@@ -256,10 +272,10 @@ const searchIdentifierMore = () => {
 	}
 }
 
-const reportIdentifierNoResults = () => ({
+const reportIdentifierNoResults = (message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.') => ({
 	type: ERROR_IDENTIFIER_NO_RESULT,
-	error: 'Zotero could not find any identifiers in your input. Please verify your input and try again.',
+	error: message,
 	errorType: 'info',
 });
 
-export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };
+export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, importFromFile, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };

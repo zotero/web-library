@@ -4,6 +4,7 @@ import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } fr
 
 import { ToolGroup } from '../ui/toolbars';
 import NewItemSelector from 'component/item/actions/new-item';
+import ImportAction from 'component/item/actions/import';
 import ExportActions from 'component/item/actions/export';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from 'component/item/actions/add-by-identifier';
@@ -101,6 +102,7 @@ const ItemActionsTouch = memo(() => {
 							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
 								Add By Identifier
 							</DropdownItem>
+							<ImportAction />
 						</Fragment>
 					)}
 					{ !isEmbedded && (
@@ -179,6 +181,13 @@ const ItemActionsDesktop = memo(props => {
 						>
 							<Icon type="16/note" width="16" height="16" />
 						</Button>
+					)}
+					{(itemsSource === 'collection' || itemsSource === 'top') && (
+						<ImportAction
+							tabIndex={-2}
+							onFocusNext={onFocusNext}
+							onFocusPrev={onFocusPrev}
+						/>
 					)}
 				</ToolGroup>
 				<ToolGroup>

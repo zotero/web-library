@@ -21,6 +21,7 @@ const AddByIdentifier = props => {
 	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
+	const message = useSelector(state => state.identifier.message);
 	const prevItem = usePrevious(item);
 	const prevItems = usePrevious(items);
 	const wasSearching = usePrevious(isSearching);
@@ -103,7 +104,7 @@ const AddByIdentifier = props => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
+		if (isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 			setIsOpen(!isOpen);
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
@@ -113,13 +114,13 @@ const AddByIdentifier = props => {
 		if(!isSearching && wasSearching) {
 			setIdentifier('');
 			if(result === EMPTY) {
-				dispatch(reportIdentifierNoResults());
+				dispatch(reportIdentifierNoResults(message));
 			} else {
 				ref.current.focus();
 				setIsOpen(false);
 			}
 		}
-	}, [dispatch, isSearching, wasSearching, result]);
+	}, [dispatch, isSearching, wasSearching, result, message]);
 
 	useLayoutEffect(() => {
 		if (isOpen && !wasOpen) {

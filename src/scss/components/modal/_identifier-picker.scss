@@ -1,8 +1,18 @@
-//
-// Multiple choice dialog
-//
-
 .identifier-picker-modal {
+	.modal-body {
+		overflow: auto;
+		max-height: calc(100vh - 96px);
+
+		@include mouse-and-bp-up(md) {
+			max-height: calc(90vh - 96px - 32px); // 90% of the screen, accounting for the modal header and modal margin
+		}
+	}
+
+	.modal-footer-left {
+		.btn-link + .btn-link {
+			margin-left: $space-sm;
+		}
+	}
 
 	.results {
 		margin: 0 - $modal-inner-padding;

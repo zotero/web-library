@@ -16,6 +16,7 @@ const AddByIdentifierModal = () => {
 	const result = useSelector(state => state.identifier.result);
 	const item = useSelector(state => state.identifier.item);
 	const items = useSelector(state => state.identifier.items);
+	const message = useSelector(state => state.identifier.message);
 	const prevItem = usePrevious(item);
 	const prevItems = usePrevious(items);
 	const wasSearching = usePrevious(isSearching);
@@ -81,7 +82,7 @@ const AddByIdentifierModal = () => {
 		if(isOpen && wasSearching && !isSearching) {
 			setIdentifier('');
 			if(result === EMPTY) {
-				dispatch(reportIdentifierNoResults());
+				dispatch(reportIdentifierNoResults(message));
 			} else {
 				dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
 				if(items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
@@ -90,7 +91,7 @@ const AddByIdentifierModal = () => {
 			}
 
 		}
-	}, [dispatch, isOpen, isSearching, items, prevItems, result, wasSearching]);
+	}, [dispatch, isOpen, isSearching, items, message, prevItems, result, wasSearching]);
 
 	return (
 		<Modal
