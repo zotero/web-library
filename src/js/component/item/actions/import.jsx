@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, DropdownItem, Icon } from 'web-common/components';
 
-import { importFromFile } from '../../../actions';
+import { importFromFile, toggleModal } from '../../../actions';
 import { getFileData } from '../../../common/event';
+import { IDENTIFIER_PICKER } from '../../../constants/modals';
 
 
 const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 	const dispatch = useDispatch();
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const uploadFileId = useId();
 	const fileInputRef = useRef(null);
 
@@ -24,18 +26,45 @@ const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 		}
 	}, [onFocusNext, onFocusPrev]);
 
-	const handleImportClick = useCallback(() => {
-		fileInputRef.current.click();
+	const handleImportClick = useCallback(ev => {
+		if (ev.currentTarget === ev.target) {
+			fileInputRef.current.click();
+		}
+		ev.stopPropagation();
 	}, []);
 
 	const handleFileInputChange = useCallback(async ev => {
-		const fileData = await getFileData(ev.currentTarget.files[0]);
+		const target = ev.currentTarget; // persist, or it will be nullified after await
+		const fileData = await getFileData(target.files[0]);
+		target.value = ''; // clear the invisible input so that onChange is triggered even if the same file is selected again
 		if (fileData) {
 			dispatch(importFromFile(fileData));
+			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
 	}, [dispatch]);
 
-	return (
+	return isTouchOrSmall ? (
+		<DropdownItem
+			onClick={handleImportClick}
+			className="btn-file"
+			aria-labelledby={uploadFileId}
+		>
+			<span
+				id={uploadFileId}
+				className="flex-row align-items-center"
+			>
+				Import From a File
+			</span>
+			<input
+				aria-labelledby={uploadFileId}
+				multiple={false}
+				onChange={handleFileInputChange}
+				ref={fileInputRef}
+				tabIndex={-1}
+				type="file"
+			/>
+		</DropdownItem>
+	) : (
 		<div className="btn-file">
 			<input
 				aria-labelledby={uploadFileId}

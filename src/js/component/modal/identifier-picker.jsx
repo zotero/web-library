@@ -2,7 +2,7 @@ import { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { Button, Spinner } from 'web-common/components';
+import { Button, Icon, Spinner } from 'web-common/components';
 import { usePrevious } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
@@ -12,6 +12,7 @@ import { useBufferGate } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
 import { CHOICE } from '../../constants/identifier-result-types';
+import { pluralize } from '../../common/format';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
 	const { description } = item;
@@ -92,6 +93,7 @@ const IdentifierPicker = () => {
 	const isOpen = useSelector(state => state.modal.id === IDENTIFIER_PICKER);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
 	const items = useSelector(state => state.identifier.items);
+	const isImport = useSelector(state => state.identifier.import);
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
@@ -101,7 +103,9 @@ const IdentifierPicker = () => {
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
 	const processedItems = items && processIdentifierMultipleItems(items, itemTypes, false);  //@TODO: isUrl source should be stored in redux
 	const [selectedKeys, setSelectedKeys] = useState([]);
-	const isBusy = useBufferGate(!wasSearchingMultiple && isSearchingMultiple, 200);
+	const isBusy = useBufferGate((isImport && isSearching) || (!wasSearchingMultiple && isSearchingMultiple), 200);
+	const isReady = isOpen && !isBusy;
+	const wasReady = usePrevious(isReady);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(IDENTIFIER_PICKER, false));
@@ -122,11 +126,25 @@ const IdentifierPicker = () => {
 		dispatch(searchIdentifierMore());
 	}, [dispatch]);
 
+	const handleSelectAll = useCallback(() => {
+		setSelectedKeys(processedItems.map(i => i.key));
+	}, [processedItems]);
+
+	const handleClearSelection = useCallback(() => {
+		setSelectedKeys([]);
+	}, []);
+
 	useEffect(() => {
 		if(wasSearchingMultiple && !isSearchingMultiple) {
 			dispatch(toggleModal(IDENTIFIER_PICKER, false));
 		}
 	}, [dispatch, isSearchingMultiple, wasSearchingMultiple]);
+
+	useEffect(() => {
+		if(!wasReady && isReady) {
+			handleSelectAll();
+		}
+	}, [handleSelectAll, isReady, wasReady]);
 
 	const className = cx({
 		'identifier-picker-modal modal-scrollable modal-lg': true,
@@ -142,30 +160,20 @@ const IdentifierPicker = () => {
 			onRequestClose={ handleCancel }
 		>
 			<div className="modal-header">
-				<div className="modal-header-left">
-					<Button
-						className="btn-link"
-						onClick={ handleCancel }
-					>
-						Cancel
-					</Button>
-				</div>
-				<div className="modal-header-center">
-					<h4 className="modal-title truncate">
-						Select Items
-					</h4>
-				</div>
-				<div className="modal-header-right">
-					<Button
-						onClick={ handleAddSelected }
-						className="btn-link"
-					>
-						Add
-					</Button>
-				</div>
+				<h4 className="modal-title truncate">
+					Select Items
+				</h4>
+				<Button
+					icon
+					className="close"
+					onClick={handleCancel}
+					title="Close Dialog"
+				>
+					<Icon type={'16/close'} width="16" height="16" />
+				</Button>
 			</div>
 			<div className="modal-body">
-				<div className="results">
+				<ul className="results">
 					{ Array.isArray(processedItems) && processedItems
 						.map(item => <Item
 							identifierIsUrl={ identifierIsUrl }
@@ -176,19 +184,41 @@ const IdentifierPicker = () => {
 							onChange={ handleItemChange }
 						/>)
 					}
+				</ul>
+			</div>
+			<div className="modal-footer">
+				<div className="modal-footer-left">
+					<Button className="btn btn-link" onClick={handleSelectAll} tabIndex={-2}>
+						Select All
+					</Button>
+					<Button className="btn btn-link" onClick={handleClearSelection} tabIndex={-2}>
+						Clear Selection
+					</Button>
 				</div>
-				{ identifierResult === CHOICE && (
-					<div className="more-button-wrap">
-						{ isSearching ? <Spinner /> : (
-						<Button
-							className="btn btn btn-lg btn-secondary more-button"
-							onClick={ handleSearchMore }
-						>
-							More
-						</Button>
-						) }
-					</div>
-				)}
+					{ identifierResult === CHOICE && (
+						<div className="modal-footer-center">
+							{ isSearching ? <Spinner /> : (
+							<Button
+								className="btn btn btn-lg btn-secondary more-button"
+								onClick={ handleSearchMore }
+							>
+								More
+							</Button>
+							) }
+						</div>
+					) }
+				<div className="modal-footer-right">
+					<Button
+						disabled={selectedKeys.length === 0}
+						className="btn-outline-secondary btn-min-width"
+						onClick={ handleAddSelected }
+						tabIndex={-2}
+					>
+						{
+							selectedKeys.length > 0 ? `Add ${selectedKeys.length} ${pluralize('Item', selectedKeys.length)}` : 'Add Selected'
+						}
+					</Button>
+				</div>
 			</div>
 		</Modal>
 	);

@@ -57,7 +57,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 			url = `${translateUrl}/import`;
 		}
 
-		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl });
+		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, import: shouldImport });
 
 		try {
 			const response = await fetch(url, {
@@ -83,20 +83,21 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 					identifierIsUrl,
 					identifier,
 					items,
+					import: shouldImport,
 					response
 				});
 				return items;
 			} else if(response.status !== 200) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else if (!response.headers.get('content-type').startsWith('application/json')) {
 				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else {
 				const json = await response.json();
 				if (!json.length) {
 					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 				} else {
 					const rootItems = json.filter(item => !item.parentItem);
 
@@ -107,6 +108,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 							items: rootItems.map(ri => omit(ri, ['key', 'version'])),
 							identifierIsUrl,
 							identifier,
+							import: shouldImport,
 							response
 						});
 						return rootItems;
@@ -121,6 +123,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 							item,
 							identifier,
 							identifierIsUrl,
+							import: shouldImport,
 							response
 						});
 						return item;
@@ -128,7 +131,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 				}
 			}
 		} catch(error) {
-			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier });
+			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier, import: shouldImport });
 		}
 	}
 }

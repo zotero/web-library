@@ -12,6 +12,7 @@ const defaultState = {
 	items: null,
 	identifier: null,
 	identifierIsUrl: null,
+	import: false,
 	next: null,
 }
 
@@ -32,6 +33,7 @@ const identifier = (state = defaultState, action) => {
 				result: null,
 				item: null,
 				items: null,
+				import: action.import,
 				next: null,
 			};
 		case RECEIVE_ADD_BY_IDENTIFIER:
@@ -44,6 +46,7 @@ const identifier = (state = defaultState, action) => {
 				result: action.result,
 				item: action.item || null,
 				items: action.items || null,
+				import: action.import,
 				next: action.next,
 			};
 		case ERROR_ADD_BY_IDENTIFIER:
@@ -56,6 +59,7 @@ const identifier = (state = defaultState, action) => {
 				item: null,
 				items: null,
 				identifierIsUrl: null,
+				import: action.import,
 				next: null,
 			};
 		case REQUEST_IDENTIFIER_MORE:

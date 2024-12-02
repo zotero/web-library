@@ -102,6 +102,7 @@ const ItemActionsTouch = memo(() => {
 							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
 								Add By Identifier
 							</DropdownItem>
+							<ImportAction />
 						</Fragment>
 					)}
 					{ !isEmbedded && (

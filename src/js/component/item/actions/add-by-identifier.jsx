@@ -103,7 +103,7 @@ const AddByIdentifier = props => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if(items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
+		if (isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 			setIsOpen(!isOpen);
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
