@@ -70,6 +70,9 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 			if (response.status === 501 || response.status === 400) {
 				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
 				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
+			} else if (response.status === 413) {
+				const message = 'Selected file is too large.';
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
 			} else if (response.status === 300) {
 				const data = await response.json();
 				const items = 'items' in data && 'session' in data ? data.items : data;
@@ -269,9 +272,9 @@ const searchIdentifierMore = () => {
 	}
 }
 
-const reportIdentifierNoResults = () => ({
+const reportIdentifierNoResults = (message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.') => ({
 	type: ERROR_IDENTIFIER_NO_RESULT,
-	error: 'Zotero could not find any identifiers in your input. Please verify your input and try again.',
+	error: message,
 	errorType: 'info',
 });
 

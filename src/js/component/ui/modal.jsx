@@ -2,6 +2,8 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import ReactModal from 'react-modal';
+import { createPortal} from 'react-dom';
+
 import { useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import { getScrollbarWidth, pick } from 'web-common/utils';
@@ -51,20 +53,26 @@ const Modal = forwardRef((props, ref) => {
 		}
 	}, [isOpen, wasOpen]);
 
-	return (
+	return isBusy ? createPortal(
+		<div className="ReactModalPortal">
+			<div className={cx('ReactModal__Overlay modal-backdrop loading') }>
+				<Spinner className="large" />
+			</div>
+		</div>, document.querySelector(`.${containterClassName}`)
+	) : (
 		<ReactModal
 			role="dialog"
 			onAfterOpen={ handleModalAfterOpen }
 			contentRef= { setContentRef }
 			appElement= { document.querySelector('.library-container') }
 			parentSelector={ () => document.querySelector(`.${containterClassName}`) }
-			className= { cx('modal modal-content', className) }
-			overlayClassName={ cx({ 'loading': isBusy }, 'modal-backdrop', overlayClassName) }
+			className={cx('modal modal-content', className) }
+			overlayClassName={cx('modal-backdrop', overlayClassName) }
 			isOpen={ isOpen }
 			closeTimeoutMS={ isTouchOrSmall ? 200 : null }
 			{ ...pick(rest, ['contentLabel', 'onRequestClose', 'shouldFocusAfterRender', 'shouldCloseOnOverlayClick', 'shouldCloseOnEsc', 'shouldReturnFocusAfterClose']) }
 		>
-			{ isBusy ? <Spinner className="large" /> : children }
+			{ children }
 		</ReactModal>
 	);
 });

@@ -14,6 +14,7 @@ const defaultState = {
 	identifierIsUrl: null,
 	import: false,
 	next: null,
+	message: null
 }
 
 const identifier = (state = defaultState, action) => {
@@ -48,6 +49,7 @@ const identifier = (state = defaultState, action) => {
 				items: action.items || null,
 				import: action.import,
 				next: action.next,
+				message: action.message,
 			};
 		case ERROR_ADD_BY_IDENTIFIER:
 			return {

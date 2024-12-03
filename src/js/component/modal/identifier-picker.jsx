@@ -7,11 +7,11 @@ import { usePrevious } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
-import { currentAddMultipleTranslatedItems, searchIdentifierMore, toggleModal } from '../../actions';
+import { currentAddMultipleTranslatedItems, searchIdentifierMore, reportIdentifierNoResults, toggleModal } from '../../actions';
 import { useBufferGate } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
-import { CHOICE } from '../../constants/identifier-result-types';
+import { CHOICE, EMPTY, MULTIPLE } from '../../constants/identifier-result-types';
 import { pluralize } from '../../common/format';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
@@ -97,6 +97,7 @@ const IdentifierPicker = () => {
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
+	const identifierMessage = useSelector(state => state.identifier.message);
 	const mappings = useSelector(state => state.meta.mappings);
 	const isSearching = useSelector(state => state.identifier.isSearching);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -127,7 +128,9 @@ const IdentifierPicker = () => {
 	}, [dispatch]);
 
 	const handleSelectAll = useCallback(() => {
-		setSelectedKeys(processedItems.map(i => i.key));
+		if (Array.isArray(processedItems)) {
+			setSelectedKeys(processedItems.map(i => i.key));
+		}
 	}, [processedItems]);
 
 	const handleClearSelection = useCallback(() => {
@@ -142,35 +145,72 @@ const IdentifierPicker = () => {
 
 	useEffect(() => {
 		if(!wasReady && isReady) {
-			handleSelectAll();
+			if (identifierResult === EMPTY) {
+				dispatch(toggleModal(IDENTIFIER_PICKER, false));
+				if (identifierMessage) {
+					dispatch(reportIdentifierNoResults(identifierMessage));
+				}
+			} else if(isImport || identifierResult === MULTIPLE) {
+				// Select all if either importing or add by identifier result is multiple (but not choice)
+				handleSelectAll();
+			}
 		}
-	}, [handleSelectAll, isReady, wasReady]);
-
-	const className = cx({
-		'identifier-picker-modal modal-scrollable modal-lg': true,
-		'modal-touch': isTouchOrSmall
-	});
+	}, [dispatch, handleSelectAll, identifierMessage, identifierResult, isImport, isReady, wasReady]);
 
 	return (
 		<Modal
-			className={ className }
+			className="identifier-picker-modal modal-scrollable modal-lg modal-touch"
 			contentLabel="Add By Identifier"
 			isOpen={ isOpen }
 			isBusy={ isBusy }
 			onRequestClose={ handleCancel }
+			overlayClassName="modal-slide modal-centered"
 		>
 			<div className="modal-header">
-				<h4 className="modal-title truncate">
-					Select Items
-				</h4>
-				<Button
-					icon
-					className="close"
-					onClick={handleCancel}
-					title="Close Dialog"
-				>
-					<Icon type={'16/close'} width="16" height="16" />
-				</Button>
+				{
+					isTouchOrSmall ? (
+						<>
+							<div className="modal-header-left">
+								<Button
+									className="btn-link"
+									onClick={handleCancel}
+								>
+									Cancel
+								</Button>
+							</div>
+							<div className="modal-header-center">
+								<h4 className="modal-title truncate">
+									Select Items
+								</h4>
+							</div>
+							<div className="modal-header-right">
+								<Button
+									disabled={selectedKeys.length === 0}
+									className="btn-link"
+									onClick={handleAddSelected}
+								>
+									{
+										selectedKeys.length > 0 ? `Add ${selectedKeys.length} ${pluralize('Item', selectedKeys.length)}` : 'Add Selected'
+									}
+								</Button>
+							</div>
+						</>
+					) : (
+						<>
+							<h4 className="modal-title truncate">
+								Select Items
+							</h4>
+							<Button
+								icon
+								className="close"
+								onClick={handleCancel}
+								title="Close Dialog"
+							>
+								<Icon type={'16/close'} width="16" height="16" />
+							</Button>
+						</>
+					)
+				}
 			</div>
 			<div className="modal-body">
 				<ul className="results">
@@ -199,7 +239,7 @@ const IdentifierPicker = () => {
 						<div className="modal-footer-center">
 							{ isSearching ? <Spinner /> : (
 							<Button
-								className="btn btn btn-lg btn-secondary more-button"
+								className={cx("btn more-button", { 'btn-link': isTouchOrSmall, 'btn-lg btn-secondary': !isTouchOrSmall }) }
 								onClick={ handleSearchMore }
 							>
 								More
@@ -207,18 +247,20 @@ const IdentifierPicker = () => {
 							) }
 						</div>
 					) }
-				<div className="modal-footer-right">
-					<Button
-						disabled={selectedKeys.length === 0}
-						className="btn-outline-secondary btn-min-width"
-						onClick={ handleAddSelected }
-						tabIndex={-2}
-					>
-						{
-							selectedKeys.length > 0 ? `Add ${selectedKeys.length} ${pluralize('Item', selectedKeys.length)}` : 'Add Selected'
-						}
-					</Button>
-				</div>
+				{ !isTouchOrSmall && (
+					<div className="modal-footer-right">
+						<Button
+							disabled={selectedKeys.length === 0}
+							className="btn-outline-secondary btn-min-width"
+							onClick={ handleAddSelected }
+							tabIndex={-2}
+						>
+							{
+								selectedKeys.length > 0 ? `Add ${selectedKeys.length} ${pluralize('Item', selectedKeys.length)}` : 'Add Selected'
+							}
+						</Button>
+					</div>
+				) }
 			</div>
 		</Modal>
 	);
