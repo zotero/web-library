@@ -182,6 +182,13 @@ const ItemActionsDesktop = memo(props => {
 							<Icon type="16/note" width="16" height="16" />
 						</Button>
 					)}
+					{(itemsSource === 'collection' || itemsSource === 'top') && (
+						<ImportAction
+							tabIndex={-2}
+							onFocusNext={onFocusNext}
+							onFocusPrev={onFocusPrev}
+						/>
+					)}
 				</ToolGroup>
 				<ToolGroup>
 				{ !isTrash && (
@@ -248,11 +255,6 @@ const ItemActionsDesktop = memo(props => {
 				</Fragment>
 			) }
 			<ToolGroup>
-				<ImportAction
-					tabIndex={-2}
-					onFocusNext={onFocusNext}
-					onFocusPrev={onFocusPrev}
-				/>
 				<ExportActions
 					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
 					tabIndex={ -2 }
