@@ -34,7 +34,7 @@
 		}
 
 		.icon-spin {
-			color: $modal-icon-spin-color;
+			color: var(--color-backdrop-spinner);
 		}
 	}
 }
