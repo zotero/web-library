@@ -72,6 +72,20 @@ const AddByIdentifierModal = () => {
 		dispatch(searchIdentifier(identifier));
 	}, [dispatch, identifier]);
 
+	const handlePaste = useCallback(ev => {
+		const clipboardData = ev.clipboardData || window.clipboardData;
+		const pastedData = clipboardData.getData('Text');
+		const isMultiLineData = pastedData.split('\n').filter(line => line.trim().length > 0).length > 1;
+
+		if (!isMultiLineData) {
+			return;
+		}
+
+		ev.preventDefault();
+		setIdentifier(pastedData);
+		dispatch(searchIdentifier(pastedData, { shouldImport: true }));
+	}, [dispatch]);
+
 	useEffect(() => {
 		if(isOpen && item && prevItem === null) {
 			addItem({ ...item });
@@ -134,6 +148,7 @@ const AddByIdentifierModal = () => {
 							onBlur={ handleInputBlur }
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
+							onPaste={ handlePaste }
 							placeholder="URL, ISBNs, DOIs, PMIDs, or arXiv IDs"
 							ref={ inputEl }
 							tabIndex={ 0 }

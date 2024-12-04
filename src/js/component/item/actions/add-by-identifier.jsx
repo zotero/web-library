@@ -97,6 +97,20 @@ const AddByIdentifier = props => {
 		}
 	}, [toggleOpen]);
 
+	const handlePaste = useCallback(ev => {
+		const clipboardData = ev.clipboardData || window.clipboardData;
+		const pastedData = clipboardData.getData('Text');
+		const isMultiLineData = pastedData.split('\n').filter(line => line.trim().length > 0).length > 1;
+
+		if (!isMultiLineData) {
+			return;
+		}
+
+		ev.preventDefault();
+		setIdentifier(pastedData);
+		dispatch(searchIdentifier(pastedData, { shouldImport: true }));
+	}, [dispatch]);
+
 	useEffect(() => {
 		if(isOpen && item && prevItem === null) {
 			addItem({ ...item });
@@ -194,6 +208,7 @@ const AddByIdentifier = props => {
 								onChange={ handleInputChange }
 								onCommit={ handleInputCommit }
 								onKeyDown={ handleInputKeyDown }
+								onPaste={ handlePaste }
 								ref={ inputEl }
 								tabIndex={ 0 }
 								value={ identifier }
