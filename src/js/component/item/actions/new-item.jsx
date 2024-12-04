@@ -154,6 +154,7 @@ const NewItemSelector = props => {
 				</DropdownItem>
 			</Fragment>
 			)}
+			<DropdownItem divider />
 			{ isSecondaryVisible ?
 				secondaryItemTypesDesc.map(itemTypeSpec => (
 					<DropdownItemType
@@ -163,7 +164,6 @@ const NewItemSelector = props => {
 					/>
 				)) : (
 				<Fragment>
-					<DropdownItem divider />
 					<DropdownItem onClick={ handleToggleMore }>
 						More
 					</DropdownItem>
