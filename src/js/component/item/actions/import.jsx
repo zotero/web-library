@@ -83,7 +83,7 @@ const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 				tabIndex={tabIndex}
 				title="Import From a File (BiBTeX, RIS, etc.)"
 			>
-				<Icon type="16/caret-16" width="16" height="16" />
+				<Icon type="16/import" width="16" height="16" />
 			</Button>
 
 		</div>
