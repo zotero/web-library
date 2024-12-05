@@ -43,13 +43,10 @@
 			}
 		}
 
-		&:focus {
+		&:focus, &:focus-within {
 			@include scopedVariant(".keyboard") {
+				outline: 3px solid var(--accent-blue);
 				outline-offset: -3px;
-
-				& + .result {
-					border-top-color: transparent;
-				}
 			}
 		}
 

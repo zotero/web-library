@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Button, Icon, Spinner } from 'web-common/components';
-import { usePrevious } from 'web-common/hooks';
+import { usePrevious, useFocusManager } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
@@ -72,6 +72,7 @@ const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
 						type="checkbox"
 						checked={ isPicked }
 						onChange={ onChange }
+						tabIndex={-2}
 					/>
 				</div>
 			</li>
@@ -88,6 +89,63 @@ Item.propTypes = {
 	mappings: PropTypes.object.isRequired
 };
 
+const IdentifierList = ({ selectedKeys, setSelectedKeys, processedItems }) => {
+	const listRef = useRef(null);
+	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
+	const mappings = useSelector(state => state.meta.mappings);
+	const { focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(
+		listRef, { isCarousel: false }
+	);
+
+	const handleItemChange = useCallback(ev => {
+		try {
+			const key = ev.currentTarget.closest('[data-key]').dataset.key;
+			setSelectedKeys(selectedKeys.includes(key) ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key]);
+		} catch (e) { } // eslint-disable-line no-empty
+	}, [selectedKeys, setSelectedKeys]);
+
+	const handleListKeyDown = useCallback(ev => {
+		if (ev.key === 'ArrowDown') {
+			focusNext(ev, { useCurrentTarget: false });
+		} else if (ev.key === 'ArrowUp') {
+			focusPrev(ev, { useCurrentTarget: false });
+		} else if (ev.key === 'PageDown') {
+			focusNext(ev, { useCurrentTarget: false, offset: 10 });
+		} else if (ev.key === 'PageUp') {
+			focusPrev(ev, { useCurrentTarget: false, offset: 10 });
+		}
+	}, [focusNext, focusPrev]);
+
+	return (
+		<ul
+			tabIndex={0}
+			ref={listRef}
+			onFocus={receiveFocus}
+			onBlur={receiveBlur}
+			onKeyDown={handleListKeyDown}
+			aria-label="Results"
+			className="results"
+		>
+			{Array.isArray(processedItems) && processedItems
+				.map(item => <Item
+					identifierIsUrl={identifierIsUrl}
+					key={item.key}
+					item={item}
+					mappings={mappings}
+					isPicked={selectedKeys.includes(item.key)}
+					onChange={handleItemChange}
+				/>)
+			}
+		</ul>
+	);
+}
+
+IdentifierList.propTypes = {
+	selectedKeys: PropTypes.array.isRequired,
+	setSelectedKeys: PropTypes.func.isRequired,
+	processedItems: PropTypes.array
+};
+
 const IdentifierPicker = () => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.modal.id === IDENTIFIER_PICKER);
@@ -95,10 +153,8 @@ const IdentifierPicker = () => {
 	const items = useSelector(state => state.identifier.items);
 	const isImport = useSelector(state => state.identifier.import);
 	const isSearchingMultiple = useSelector(state => state.identifier.isSearchingMultiple);
-	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
 	const identifierResult = useSelector(state => state.identifier.result);
 	const identifierMessage = useSelector(state => state.identifier.message);
-	const mappings = useSelector(state => state.meta.mappings);
 	const isSearching = useSelector(state => state.identifier.isSearching);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const wasSearchingMultiple = usePrevious(isSearchingMultiple);
@@ -107,17 +163,15 @@ const IdentifierPicker = () => {
 	const isBusy = useBufferGate((isImport && isSearching) || (!wasSearchingMultiple && isSearchingMultiple), 200);
 	const isReady = isOpen && !isBusy;
 	const wasReady = usePrevious(isReady);
+	const footerRef = useRef(null);
+	const skipNextFocusRef = useRef(false); // required for modal's scopedTab (focus trap) to work correctly
+	const { focusNext, focusPrev, receiveBlur, receiveFocus, resetLastFocused } = useFocusManager(
+		footerRef, { initialQuerySelector: '.btn-outline-secondary:not(:disabled)' }
+	);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(IDENTIFIER_PICKER, false));
 	}, [dispatch]);
-
-	const handleItemChange = useCallback(ev => {
-		try {
-			const key = ev.currentTarget.closest('[data-key]').dataset.key;
-			setSelectedKeys(selectedKeys.includes(key) ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key]);
-		} catch(e) {} // eslint-disable-line no-empty
-	}, [selectedKeys]);
 
 	const handleAddSelected = useCallback(() => {
 		dispatch(currentAddMultipleTranslatedItems(selectedKeys));
@@ -135,6 +189,40 @@ const IdentifierPicker = () => {
 
 	const handleClearSelection = useCallback(() => {
 		setSelectedKeys([]);
+	}, []);
+
+	const handleFocus = useCallback((ev) => {
+		if (skipNextFocusRef.current) {
+			skipNextFocusRef.current = false;
+		} else {
+			receiveFocus(ev);
+		}
+	}, [receiveFocus]);
+
+	const handleBlur = useCallback((ev) => {
+		// Forget the last focused element every time the footer loses focus
+		// This means that, once at least one item is selected, after tabbing to the footer focus goes to the "Add Selected" button
+		receiveBlur(ev);
+		resetLastFocused();
+	}, [receiveBlur, resetLastFocused])
+
+	const handleFooterKeyDown = useCallback((ev) => {
+		if (ev.key === 'ArrowRight') {
+			focusNext(ev, { useCurrentTarget: false });
+		} else if (ev.key === 'ArrowLeft') {
+			focusPrev(ev, { useCurrentTarget: false });
+		} else if (ev.key === 'Tab' && !ev.shiftKey) {
+			// for the modal's focus trap to work correctly, we need to make sure the focus is moved to the footerRef
+			// (scopedTab in react-modal needs focus to be on the last "tabbable" so that it can trap the focus)
+			skipNextFocusRef.current = true;
+			footerRef.current.focus();
+			footerRef.current.tabIndex = 0;
+			footerRef.current.dataset.focusRoot = '';
+		}
+	}, [focusNext, focusPrev]);
+
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => footerRef.current.focus(), 0);
 	}, []);
 
 	useEffect(() => {
@@ -163,6 +251,7 @@ const IdentifierPicker = () => {
 			contentLabel="Add By Identifier"
 			isOpen={ isOpen }
 			isBusy={ isBusy }
+			onAfterOpen={ handleAfterOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-slide modal-centered"
 		>
@@ -212,21 +301,21 @@ const IdentifierPicker = () => {
 					)
 				}
 			</div>
-			<div className="modal-body">
-				<ul className="results">
-					{ Array.isArray(processedItems) && processedItems
-						.map(item => <Item
-							identifierIsUrl={ identifierIsUrl }
-							key={ item.key }
-							item={ item }
-							mappings={ mappings }
-							isPicked={ selectedKeys.includes(item.key) }
-							onChange={ handleItemChange }
-						/>)
-					}
-				</ul>
+			<div className="modal-body" tabIndex="-1">
+				<IdentifierList
+					selectedKeys={selectedKeys}
+					setSelectedKeys={setSelectedKeys}
+					processedItems={processedItems}
+				/>
 			</div>
-			<div className="modal-footer">
+			<div
+				className="modal-footer"
+				ref={footerRef}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+				onKeyDown={handleFooterKeyDown}
+				tabIndex={0}
+			>
 				<div className="modal-footer-left">
 					<Button className="btn btn-link" onClick={handleSelectAll} tabIndex={-2}>
 						Select All
