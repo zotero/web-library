@@ -42,6 +42,7 @@ const ItemsList = memo(props => {
 		itemsSource !== 'query' && view !== 'item-list';
 
 	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
+	const isModalOpen = useSelector(state => state.modal.id);
 
 	const handleIsItemLoaded = useCallback(index => {
 		if(keys && !!keys[index]) {
@@ -152,7 +153,7 @@ const ItemsList = memo(props => {
 				)}
 				</AutoSizer>
 			)}
-			{ !hasChecked && !isSearchModeHack && <Spinner className="large" /> }
+			{!hasChecked && !isModalOpen && !isSearchModeHack && <Spinner className="large" /> }
 			{ hasChecked && totalResults === 0 && (
 				<div className="item-list-empty">
 					No items in this view

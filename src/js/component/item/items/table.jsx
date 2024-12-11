@@ -108,6 +108,7 @@ const Table = () => {
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
+	const isModalOpen = useSelector(state => state.modal.id);
 
 	const columns = useMemo(() => {
 		const columns = columnsData
@@ -529,7 +530,7 @@ const Table = () => {
 				)}
 				</AutoSizer>
 			) }
-			{ !hasChecked && <Spinner className="large" /> }
+			{ !hasChecked && !isModalOpen && <Spinner className="large" /> }
 			{ isAdvancedSearch && (
 				<div className="table-cover">
 					Advanced search mode — press Enter to search.

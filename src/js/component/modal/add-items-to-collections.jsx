@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
+import { usePrevious } from 'web-common/hooks';
 
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
@@ -18,18 +19,21 @@ const AddItemsToCollectionsModal = () => {
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_SELECT);
 	const sourceItemKeys = useSelector(state => state.modal.items);
 	const items = useSelector(state => state.libraries?.[libraryKey]?.items);
+	const isItemsReady = useSelector(state => state.current.itemKeys
+		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
+	);
+	const wasItemsReady = usePrevious(isItemsReady);
 	const sourceItemCollections = (sourceItemKeys || []).map(ik => items?.[ik]?.collections || []);
-	const hasAttachment = (sourceItemKeys || []).some(ik => {
+	const hasAttachment = isItemsReady ? (sourceItemKeys || []).some(ik => {
 		const item = items?.[ik];
-		return item.itemType === 'attachment' || !!item?.[Symbol.for('links')]?.attachment
-	});
+		return item?.itemType === 'attachment' || !!item?.[Symbol.for('links')]?.attachment
+	}) : false;
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
 
-	const [isBusy, setBusy] = useState(false);
+	const [isBusy, setBusy] = useState(!isItemsReady);
 	const [picked, setPicked] = useState([]);
-
 
 	const pickerSkipCollections = useMemo(() => {
 		const result = [];
@@ -45,6 +49,12 @@ const AddItemsToCollectionsModal = () => {
 		}
 		return result;
 	}, [sourceItemCollections, sourceItemKeys]);
+
+	useEffect(() => {
+		if (!wasItemsReady && isItemsReady) {
+			setBusy(false);
+		}
+	}, [wasItemsReady, isItemsReady]);
 
 	useEffect(() => {
 		if(!isOpen) {
