@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
-import { Fragment, memo, useCallback, useId, useMemo, useRef, useState } from 'react';
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
-import { useDispatch, useSelector } from 'react-redux';
+import { Fragment, memo, useCallback, useMemo, useState } from 'react';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
+import { useSelector } from 'react-redux';
 import { noop } from 'web-common/utils';
 
 import primaryItemTypes from '../../../constants/primary-item-types';
-import { createAttachments } from '../../../actions';
-import { getFilesData } from '../../../common/event';
 import { getPrevSibling } from '../../../utils';
+import UploadAction from './upload';
 
 const DropdownItemType = props => {
 	const { itemTypeSpec, onNewItemCreate } = props;
@@ -28,12 +27,8 @@ const NewItemSelector = props => {
 	const { disabled, onFocusNext = noop, onFocusPrev = noop, onNewItemCreate = noop, tabIndex } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [isSecondaryVisible, setIsSecondaryVisible] = useState(false);
-	const fileInputRef = useRef(null);
 	const itemTypes = useSelector(state => state.meta.itemTypes);
-	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isFileUploadAllowed = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isFileUploadAllowed);
-	const dispatch = useDispatch();
-	const uploadFileId = useId();
 
 	const primaryItemTypesDesc = useMemo(() => {
 		const primaryTypes = itemTypes.filter(
@@ -82,20 +77,6 @@ const NewItemSelector = props => {
 		}
 	}, [onFocusNext, onFocusPrev]);
 
-	const handleFileInputChange = useCallback(async ev => {
-		const filesData = await getFilesData(Array.from(ev.currentTarget.files));
-		dispatch(createAttachments(filesData, { collection: collectionKey }));
-		setIsOpen(!isOpen);
-		setIsSecondaryVisible(false);
-	}, [collectionKey, dispatch, isOpen]);
-
-	const handleClick = useCallback(ev => {
-		if(ev.currentTarget === ev.target) {
-			fileInputRef.current.click();
-		}
-		ev.stopPropagation();
-	}, []);
-
 	return (
         <Dropdown
 			className="new-item-selector"
@@ -124,34 +105,7 @@ const NewItemSelector = props => {
 			{ isFileUploadAllowed && (
 			<Fragment>
 				<DropdownItem divider />
-				<DropdownItem
-					data-no-toggle
-					onClick={ handleClick }
-					tag="div"
-					className="btn-file"
-					aria-labelledby={uploadFileId }
-				>
-					<Button
-						className="btn-link upload-file icon-left"
-						tabIndex={ -1 }
-					>
-							<span
-								id={ uploadFileId }
-								className="flex-row align-items-center"
-							>
-						Upload File
-					</span>
-					</Button>
-					<input
-						aria-labelledby={ uploadFileId }
-						data-no-toggle
-						multiple={ true }
-						onChange={ handleFileInputChange }
-						ref={ fileInputRef }
-						tabIndex={ -1 }
-						type="file"
-					/>
-				</DropdownItem>
+				<UploadAction />
 			</Fragment>
 			)}
 			<DropdownItem divider />

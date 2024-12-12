@@ -6,6 +6,7 @@ import { ToolGroup } from '../ui/toolbars';
 import NewItemSelector from 'component/item/actions/new-item';
 import ImportAction from 'component/item/actions/import';
 import ExportActions from 'component/item/actions/export';
+import UploadAction from 'component/item/actions/upload';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from 'component/item/actions/add-by-identifier';
 import { useItemActionHandlers } from '../../hooks';
@@ -29,8 +30,7 @@ const ItemActionsTouch = memo(() => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const { handleSortModalOpen,  handleSortOrderToggle,  handleNewItemModalOpen,
-	handleNewStandaloneNote,  handleNewFileModalOpen,  handleAddByIdentifierModalOpen } =
-	useItemActionHandlers();
+		handleNewStandaloneNote,  handleAddByIdentifierModalOpen } = useItemActionHandlers();
 
 	const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
 	const sortColumnLabel = sortColumn.field in columnProperties ?
@@ -94,11 +94,7 @@ const ItemActionsTouch = memo(() => {
 							<DropdownItem onClick={ handleNewStandaloneNote } >
 								New Standalone Note
 							</DropdownItem>
-							{ isFileUploadAllowed && (
-								<DropdownItem onClick={ handleNewFileModalOpen } >
-									Upload File
-								</DropdownItem>
-							)}
+							{ isFileUploadAllowed && <UploadAction /> }
 							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
 								Add By Identifier
 							</DropdownItem>
