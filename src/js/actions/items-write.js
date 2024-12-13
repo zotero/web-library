@@ -1342,8 +1342,10 @@ const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 		const id = getUniqueId();
 
 		dispatch({
-			count: itemKeys.length,
 			id,
+			data: {
+				count: itemKeys.length,
+			},
 			kind: 'cross-library-copy-items',
 			libraryKey: sourceLibraryKey,
 			type: BEGIN_ONGOING,
@@ -1452,14 +1454,21 @@ const createAttachments = (filesData, { linkMode = 'imported_file', collection =
 		if (libraryKey === null) {
 			libraryKey = state.current.libraryKey;
 		}
+		const data = {
+			count: filesData.length,
+			collectionKey: collection,
+			libraryKey
+		};
 
 		dispatch({
-			count: filesData.length,
 			id,
+			data,
 			kind: 'upload',
 			libraryKey,
 			type: BEGIN_ONGOING,
 		});
+
+		let createdItems;
 
 		try {
 			const attachmentTemplate = await dispatch(
@@ -1474,7 +1483,7 @@ const createAttachments = (filesData, { linkMode = 'imported_file', collection =
 				title: fd.fileName,
 			}));
 
-			const createdItems = await dispatch(
+			createdItems = await dispatch(
 				createItems(attachmentItems, libraryKey)
 			);
 
@@ -1495,6 +1504,10 @@ const createAttachments = (filesData, { linkMode = 'imported_file', collection =
 		} finally {
 			dispatch({
 				id,
+				data: {
+					...data,
+					createdItemsKeys: createdItems?.length ? createdItems.map(i => i.key) : []
+				},
 				kind: 'upload',
 				libraryKey,
 				type: COMPLETE_ONGOING,

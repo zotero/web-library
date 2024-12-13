@@ -7,20 +7,19 @@ import AddItemsToCollectionsModal from './modal/add-items-to-collections';
 import AddLinkedUrlTouchModal from './modal/add-linked-url-touch';
 import BibliographyModal from './modal/bibliography';
 import ExportModal from './modal/export';
+import IdentifierPicker from './modal/identifier-picker';
 import ItemsSortModal from './modal/items-sort';
+import ManageTagsModal from './modal/manage-tags';
 import MoveCollectionsModal from './modal/move-collections';
 import NewCollectionModal from './modal/new-collection';
-import NewFileModal from './modal/new-file';
 import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import SettingsModal from './modal/settings';
 import StyleInstallerModal from './modal/style-installer';
-import IdentifierPicker from './modal/identifier-picker';
-import ManageTagsModal from './modal/manage-tags';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
 EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, MOVE_COLLECTION, NEW_ITEM, SETTINGS, SORT_ITEMS,
-STYLE_INSTALLER, ADD_BY_IDENTIFIER, NEW_FILE } from '../constants/modals';
+STYLE_INSTALLER, ADD_BY_IDENTIFIER, } from '../constants/modals';
 
 const lookup = {
 	[ADD_BY_IDENTIFIER]: AddByIdentifierModal,
@@ -33,11 +32,10 @@ const lookup = {
 	[IDENTIFIER_PICKER]: IdentifierPicker,
 	[MANAGE_TAGS]: ManageTagsModal,
 	[MOVE_COLLECTION]: MoveCollectionsModal,
-	[NEW_FILE]: NewFileModal,
 	[NEW_ITEM]: NewItemModal,
+	[SETTINGS]: SettingsModal,
 	[SORT_ITEMS]: ItemsSortModal,
 	[STYLE_INSTALLER]: StyleInstallerModal,
-	[SETTINGS]: SettingsModal,
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

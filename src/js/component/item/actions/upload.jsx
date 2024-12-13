@@ -20,7 +20,9 @@ const UploadAction = () => {
 	}, []);
 
 	const handleFileInputChange = useCallback(async ev => {
+		const target = ev.currentTarget; // persist, or it will be nullified after await
 		const filesData = await getFilesData(Array.from(ev.currentTarget.files));
+		target.value = ''; // clear the invisible input so that onChange is triggered even if the same file is selected again
 		dispatch(createAttachments(filesData, { collection: collectionKey }));
 	}, [collectionKey, dispatch]);
 

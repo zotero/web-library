@@ -5,7 +5,7 @@ import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedC
 	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
 	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem, createItemOfType, toggleModal, navigate } from '.';
 import columnProperties from '../constants/column-properties';
-import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_FILE, NEW_ITEM } from '../constants/modals';
+import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
 
 const currentDuplicateItem = () => {
@@ -31,14 +31,6 @@ const currentNewItemModal = () => {
 		const state = getState();
 		const { collectionKey } = state.current;
 		return await dispatch(toggleModal(NEW_ITEM, true, { collectionKey }));
-	}
-}
-
-const currentNewFileModal = () => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const { collectionKey } = state.current;
-		return await dispatch(toggleModal(NEW_FILE, true, { collectionKey }));
 	}
 }
 
@@ -278,7 +270,6 @@ export {
 	currentExportItems,
 	currentExportItemsModal,
 	currentGoToSubscribeUrl,
-	currentNewFileModal,
 	currentNewItemModal,
 	currentRecoverFromTrash,
 	currentRemoveColoredTags,

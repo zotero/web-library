@@ -549,6 +549,11 @@ function binarySearch(array, item, compareFn, sortDirection) {
 	return low;
 }
 
+function maxByKey(arrOfObjects, key) {
+	// pick item with the highest value of key from an array of objects
+	return arrOfObjects.reduce((max, obj) => obj[key] > max[key] ? obj : max, arrOfObjects[0]);
+}
+
 export {
     applyChangesToVisibleColumns,
 	binarySearch,
@@ -586,6 +591,7 @@ export {
     localStorageWrapper,
 	makeRequestsUpTo,
     mapRelationsToItemKeys,
+	maxByKey,
     openDelayedURL,
     parseBase64File,
     processIdentifierMultipleItems,

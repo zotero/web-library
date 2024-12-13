@@ -3,8 +3,7 @@ import { useDispatch} from 'react-redux';
 import { currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
 	currentMoveToTrash, currentDeletePermanently, currentRecoverFromTrash, triggerSelectMode,
 currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
-navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal,
-currentNewFileModal, } from '../actions';
+navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal } from '../actions';
 import { SORT_ITEMS, ADD_BY_IDENTIFIER } from '../constants/modals';
 
 const useItemActionHandlers = () => {
@@ -74,16 +73,12 @@ const useItemActionHandlers = () => {
 		dispatch(currentNewItemModal());
 	}, [dispatch]);
 
-	const handleNewFileModalOpen = useCallback(() => {
-		dispatch(currentNewFileModal());
-	}, [dispatch]);
-
 	const handleAddByIdentifierModalOpen = useCallback(() => {
 		dispatch(toggleModal(ADD_BY_IDENTIFIER, true));
 	}, [dispatch]);
 
 	return { handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
-	handleNewFileModalOpen, handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
+	handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
 	handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
 	handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
 	handleExportModalOpen, }

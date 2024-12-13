@@ -1,8 +1,8 @@
 .ongoing-pane {
 	flex: 0 0 auto;
-	height: 43px;
 	overflow: hidden;
-	transition: height $ongoing-transition;
+	transition: height 0.25s ease;
+	height: 0;
 
 	&.flash {
 		animation: .33s 2 flash-background;
@@ -47,16 +47,19 @@
 	}
 
 	.process {
-		align-items: center;
 		border-top: $border-width solid $ongoing-border-color;
+	}
+}
+
+
+.ongoing-pane,
+.ongoing-modal {
+	.process {
+		align-items: center;
 		color: $ongoing-color;
 		display: flex;
 		font-weight: bold;
 		padding: $space-xs $default-padding-x;
-	}
-
-	.icon-spin {
-		margin-right: $space-xs;
 	}
 
 	.ongoing-text {
