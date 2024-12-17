@@ -71,8 +71,8 @@ export class PDFWorker {
 				let respData = null;
 				try {
 					if (message.action === 'FetchBuiltInCMap') {
-						let response = await fetch(this.config.pdfReaderCMapsRoot + message.data + '.bcmap');
-						let arrayBuffer = await response.arrayBuffer();
+						const response = await fetch(this.config.pdfReaderCMapsURL + message.data + '.bcmap');
+						const arrayBuffer = await response.arrayBuffer();
 						respData = {
 							compressionType: 1,
 							cMapData: new Uint8Array(arrayBuffer)
@@ -83,6 +83,19 @@ export class PDFWorker {
 					console.log('Failed to fetch CMap data:');
 					console.log(e);
 				}
+
+				try {
+					if (message.action === 'FetchStandardFontData') {
+						const response = await fetch(this.config.pdfReaderStandardFontsURL + message.data);
+						const arrayBuffer = await response.arrayBuffer();
+						respData = new Uint8Array(arrayBuffer);
+					}
+				}
+				catch (e) {
+					console.log('Failed to fetch standard font data:');
+					console.log(e);
+				}
+
 				this._worker.postMessage({ responseID: event.data.id, data: respData });
 			}
 		});

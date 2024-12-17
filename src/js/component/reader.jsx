@@ -167,7 +167,8 @@ const Reader = () => {
 	const currentUserID = useSelector(state => state.config.userId);
 	const currentUserSlug = useSelector(state => state.config.userSlug);
 	const pdfWorkerURL = useSelector(state => state.config.pdfWorkerURL);
-	const pdfReaderCMapsRoot = useSelector(state => state.config.pdfReaderCMapsRoot);
+	const pdfReaderCMapsURL = useSelector(state => state.config.pdfReaderCMapsURL);
+	const pdfReaderStandardFontsURL = useSelector(state => state.config.pdfReaderStandardFontsURL);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? []);
 	const { isGroupLibrary: isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
@@ -185,7 +186,7 @@ const Reader = () => {
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
-	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot }), [pdfReaderCMapsRoot, pdfWorkerURL]);
+	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL }), [pdfReaderCMapsURL, pdfReaderStandardFontsURL, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
 		action: null,

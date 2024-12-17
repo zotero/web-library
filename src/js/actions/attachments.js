@@ -151,7 +151,7 @@ const exportAttachmentWithAnnotations = itemKey => {
 			const attachmentURL = await dispatch(getAttachmentUrl(itemKey));
 			await dispatch(fetchAllChildItems(itemKey));
 			const state = getState();
-			const { pdfWorkerURL, pdfReaderCMapsRoot } = state.config;
+			const { pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL } = state.config;
 			const childItems = state.libraries[state.current.libraryKey]?.itemsByParent[itemKey]?.keys ?? [];
 			const allItems = state.libraries[state.current.libraryKey]?.items;
 			const attachmentItem = allItems[itemKey];
@@ -162,7 +162,7 @@ const exportAttachmentWithAnnotations = itemKey => {
 				.map(childItemKey => allItems[childItemKey])
 				.filter(item => !item.deleted && item.itemType === 'annotation');
 
-			const pdfWorker = new PDFWorker({ pdfWorkerURL, pdfReaderCMapsRoot });
+			const pdfWorker = new PDFWorker({ pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL });
 			const data = await (await fetch(attachmentURL)).arrayBuffer();
 			const buf = await pdfWorker.export(data, annotations);
 			const blob = new Blob([buf], { type: 'application/pdf' });
