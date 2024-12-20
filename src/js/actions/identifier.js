@@ -1,4 +1,4 @@
-import { omit, pick } from 'web-common/utils';
+import { pick } from 'web-common/utils';
 
 import { isLikeURL } from '../utils';
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
@@ -102,19 +102,17 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
 					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 				} else {
-					const rootItems = json.filter(item => !item.parentItem);
-
-					if(rootItems.length > 1) {
+					if(json.length > 0) {
 						dispatch({
 							type: RECEIVE_ADD_BY_IDENTIFIER,
 							result: MULTIPLE,
-							items: rootItems.map(ri => omit(ri, ['key', 'version'])),
+							items: json,
 							identifierIsUrl,
 							identifier,
 							import: shouldImport,
 							response
 						});
-						return rootItems;
+						return json;
 					} else {
 						const item = json[0];
 						delete item.key;
@@ -185,15 +183,40 @@ const currentAddMultipleTranslatedItems = identifiers => {
 
 			if(translatedItems && translatedItems.length) {
 				if(itemsSource === 'collection' && collectionKey) {
-					translatedItems.forEach(i => i.collections = [collectionKey]);
+					translatedItems
+						.filter(i => !i.parentItem)
+						.forEach(i => i.collections = [collectionKey]);
 				}
-				const data = await dispatch(createItems(translatedItems, libraryKey));
-				const keys = data.map(d => d.key);
+				// order items so that parent items are created before child items
+				translatedItems.sort((a, b) => {
+					if(a.parentItem && !b.parentItem) {
+						return 1;
+					} else if(b.parentItem && !a.parentItem) {
+						return -1;
+					}
+					return 0;
+				});
+				// split translatedItems into batches of 50
+				const batches = translatedItems.reduce((acc, item, index) => {
+					const batchIndex = Math.floor(index / 50);
+					if(!acc[batchIndex]) {
+						acc[batchIndex] = [];
+					}
+					acc[batchIndex].push(item);
+					return acc;
+				}, []);
+				const rootItemKeys = [];
+
+				for(const batch of batches) {
+					const data = await dispatch(createItems(batch, libraryKey));
+					const batchRootItemKeys = data.filter(d => !d.parentItem).map(d => d.key);
+					rootItemKeys.push(...batchRootItemKeys);
+				}
 
 				dispatch(navigate({
 					library: libraryKey,
 					collection: collectionKey,
-					items: keys,
+					items: rootItemKeys,
 					view: 'item-list'
 				}, true));
 			}

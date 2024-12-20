@@ -238,12 +238,15 @@ const IdentifierPicker = () => {
 				if (identifierMessage) {
 					dispatch(reportIdentifierNoResults(identifierMessage));
 				}
-			} else if(isImport || identifierResult === MULTIPLE) {
-				// Select all if either importing or add by identifier result is multiple (but not choice)
+			} else if (isImport && processedItems?.length) {
+				// Skip the selection step if we're importing
+				dispatch(currentAddMultipleTranslatedItems(processedItems.map(i => i.key)));
+			} else if(identifierResult === MULTIPLE) {
+				// Select all if add by identifier result is multiple (but not choice)
 				handleSelectAll();
 			}
 		}
-	}, [dispatch, handleSelectAll, identifierMessage, identifierResult, isImport, isReady, wasReady]);
+	}, [dispatch, handleSelectAll, identifierMessage, identifierResult, isImport, isReady, processedItems, wasReady]);
 
 	return (
 		<Modal
