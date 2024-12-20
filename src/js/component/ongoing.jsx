@@ -118,11 +118,9 @@ const Ongoing = () => {
 
 	useEffect(() => {
 		if (isTouchOrSmall && activeProcesses?.length > 0 && prevActiveProcesses?.length === 0) {
-			console.log('set modal open');
 			setModalOpen(true);
 		}
 		if (isTouchOrSmall && activeProcesses?.length === 0 && prevActiveProcesses?.length > 0) {
-			console.log('set modal closed');
 			setModalOpen(false);
 			handleOngoingCompleted();
 		}
