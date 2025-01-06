@@ -13,6 +13,7 @@ import meta from './meta';
 import modal from './modal';
 import ongoing from './ongoing';
 import preferences from './preferences';
+import recognize from './recognize';
 import query from './query';
 import queryAndCollectionsTrash from './query-and-collections-trash';
 import sources from './sources'
@@ -35,6 +36,7 @@ const createReducers = (extraReducers = {}) => (state, action) => {
 		modal: modal(state?.modal, action, state),
 		ongoing: ongoing(state?.ongoing, action, state),
 		preferences: preferences(state?.preferences, action, state),
+		recognize: recognize(state?.recognize, action, state),
 		query: query(state?.query, action, state),
 		sources: sources(state?.sources, action, state),
 		styles: styles(state?.styles, action, state),

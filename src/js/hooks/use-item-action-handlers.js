@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
-import { useDispatch} from 'react-redux';
-import { currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
+import { useDispatch } from 'react-redux';
+import {
+	currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
 	currentMoveToTrash, currentDeletePermanently, currentRecoverFromTrash, triggerSelectMode,
-currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
-navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal } from '../actions';
+	currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
+	currentRetrieveMetadata, navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection,
+	currentNewItemModal
+} from '../actions';
 import { SORT_ITEMS, ADD_BY_IDENTIFIER } from '../constants/modals';
 
 const useItemActionHandlers = () => {
@@ -77,11 +80,17 @@ const useItemActionHandlers = () => {
 		dispatch(toggleModal(ADD_BY_IDENTIFIER, true));
 	}, [dispatch]);
 
-	return { handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
-	handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
-	handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
-	handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
-	handleExportModalOpen, }
+	const handleRetrieveMetadata = useCallback(() => {
+		dispatch(currentRetrieveMetadata());
+	}, [dispatch]);
+
+	return {
+		handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
+		handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
+		handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
+		handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
+		handleExportModalOpen, handleRetrieveMetadata
+	};
 }
 
 export { useItemActionHandlers }

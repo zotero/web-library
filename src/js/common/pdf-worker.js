@@ -216,4 +216,32 @@ export class PDFWorker {
 			return modifiedBuf;
 		}, isPriority);
 	}
+
+	/**
+	 * Get data for recognizer-server
+	 *
+	 * @param {ArrayBuffer} buf PDF file
+	 * @param {Boolean} [isPriority]
+	 * @param {String} [password]
+	 * @returns {Promise}
+	 */
+	async getRecognizerData(buf, isPriority, password) {
+		return this._enqueue(async () => {
+			try {
+				var result = await this._query('getRecognizerData', { buf, password }, [buf]);
+			}
+			catch (e) {
+				let error = new Error(`Worker 'getRecognizerData' failed: ${JSON.stringify({ error: e.message })}`);
+				try {
+					error.name = JSON.parse(e.message).name;
+				}
+				catch (e) {
+					console.log(e);
+				}
+				console.log(error);
+				throw error;
+			}
+			return result;
+		}, isPriority);
+	}
 }

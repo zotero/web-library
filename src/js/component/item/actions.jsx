@@ -29,12 +29,12 @@ const ItemActionsTouch = memo(() => {
 
 	const [isOpen, setIsOpen] = useState(false);
 
-	const { handleSortModalOpen,  handleSortOrderToggle,  handleNewItemModalOpen,
-		handleNewStandaloneNote,  handleAddByIdentifierModalOpen } = useItemActionHandlers();
+	const { handleSortModalOpen, handleSortOrderToggle, handleNewItemModalOpen,
+		handleNewStandaloneNote, handleAddByIdentifierModalOpen } = useItemActionHandlers();
 
 	const sortColumn = columns.find(c => c.sort) || columns.find(c => c.field === 'title');
 	const sortColumnLabel = sortColumn.field in columnProperties ?
-			columnProperties[sortColumn.field].name : sortColumn.field;
+		columnProperties[sortColumn.field].name : sortColumn.field;
 	const sortColumnOrder = sortColumn.sort === 'desc' ? "Descending" : "Ascending"
 	const isNewItemAllowed = !isReadOnly &&
 		(itemsSource === 'top' || itemsSource === 'collection') &&
@@ -53,71 +53,71 @@ const ItemActionsTouch = memo(() => {
 	}, [dispatch]);
 
 	return (
-        <Fragment>
+		<Fragment>
 			<Dropdown
-				isOpen={ isOpen }
-				onToggle={ handleDropdownToggle }
-				disabled={ isActionsDisabled }
+				isOpen={isOpen}
+				onToggle={handleDropdownToggle}
+				disabled={isActionsDisabled}
 			>
 				<DropdownToggle
-					disabled={ isActionsDisabled }
+					disabled={isActionsDisabled}
 					className="btn-link btn-icon dropdown-toggle item-actions-touch"
 				>
 					<Icon
 						type="24/options"
-						symbol={ isOpen ? 'options-block' : 'options' }
+						symbol={isOpen ? 'options-block' : 'options'}
 						width="24"
 						height="24"
 					/>
 				</DropdownToggle>
 				<DropdownMenu>
-					{ (isSingleColumn && !isEmbedded) && (
+					{(isSingleColumn && !isEmbedded) && (
 						<Fragment>
-							<DropdownItem onClick={ handleSelectModeToggle } >
-								{ isSelectMode ? 'Cancel' : 'Select Items' }
+							<DropdownItem onClick={handleSelectModeToggle} >
+								{isSelectMode ? 'Cancel' : 'Select Items'}
 							</DropdownItem>
 							<DropdownItem divider />
 						</Fragment>
-					) }
-					<DropdownItem onClick={ handleSortModalOpen } >
-						Sort By: { sortColumnLabel }
+					)}
+					<DropdownItem onClick={handleSortModalOpen} >
+						Sort By: {sortColumnLabel}
 					</DropdownItem>
-					<DropdownItem onClick={ handleSortOrderToggle } >
-						Sort Order: { sortColumnOrder }
+					<DropdownItem onClick={handleSortOrderToggle} >
+						Sort Order: {sortColumnOrder}
 					</DropdownItem>
-					{ isNewItemAllowed && (
+					{isNewItemAllowed && (
 						<Fragment>
 							<DropdownItem divider />
-							<DropdownItem onClick={ handleNewItemModalOpen } >
+							<DropdownItem onClick={handleNewItemModalOpen} >
 								New Item
 							</DropdownItem>
-							<DropdownItem onClick={ handleNewStandaloneNote } >
+							<DropdownItem onClick={handleNewStandaloneNote} >
 								New Standalone Note
 							</DropdownItem>
-							{ isFileUploadAllowed && <UploadAction /> }
-							<DropdownItem onClick={ handleAddByIdentifierModalOpen } >
+							{isFileUploadAllowed && <UploadAction />}
+							<DropdownItem onClick={handleAddByIdentifierModalOpen} >
 								Add By Identifier
 							</DropdownItem>
 							<ImportAction />
 						</Fragment>
 					)}
-					{ !isEmbedded && (
+					{!isEmbedded && (
 						<Fragment>
 							<DropdownItem divider />
-							<DropdownItem onClick={ handleSubscribeClick }>
+							<DropdownItem onClick={handleSubscribeClick}>
 								Subscribe To Feed
 							</DropdownItem>
 						</Fragment>
-					) }
+					)}
 				</DropdownMenu>
 			</Dropdown>
-			{ !isSingleColumn && (
-				<Button onClick={ handleSelectModeToggle } className="btn-link select-button">
-					{ isSelectMode ? 'Cancel' : 'Select' }
+			{!isSingleColumn && (
+				<Button onClick={handleSelectModeToggle} className="btn-link select-button">
+					{isSelectMode ? 'Cancel' : 'Select'}
 				</Button>
 			)}
 		</Fragment>
-    );
+	);
 });
 
 ItemActionsTouch.displayName = 'ItemActionsTouch';
@@ -131,148 +131,158 @@ const ItemActionsDesktop = memo(props => {
 	const selectedContainsCollection = useSelector(state => state.current.itemKeys.some(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'));
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
-	const { handleCiteModalOpen, handleNewItemCreate,  handleNewStandaloneNote, handleAddToCollectionModalOpen,
-	handleRemoveFromCollection,  handleTrash, handlePermanentlyDelete,  handleUndelete,
-	handleBibliographyModalOpen, } = useItemActionHandlers();
+	const { handleCiteModalOpen, handleNewItemCreate, handleNewStandaloneNote, handleAddToCollectionModalOpen,
+		handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleUndelete,
+		handleBibliographyModalOpen, handleRetrieveMetadata } = useItemActionHandlers();
 
 	const handleKeyDown = useCallback(ev => {
-		if(ev.target !== ev.currentTarget) {
+		if (ev.target !== ev.currentTarget) {
 			return;
 		}
 
-		if(ev.key === 'ArrowRight') {
+		if (ev.key === 'ArrowRight') {
 			onFocusNext(ev);
-		} else if(ev.key === 'ArrowLeft') {
+		} else if (ev.key === 'ArrowLeft') {
 			onFocusPrev(ev);
 		}
 	}, [onFocusNext, onFocusPrev]);
 
 	return (
-        <Fragment>
-			{ !isReadOnly && (
+		<Fragment>
+			{!isReadOnly && (
 				<Fragment>
-				<ToolGroup>
-					<NewItemSelector
-						disabled={ !['top', 'collection'].includes(itemsSource) }
-						onFocusNext={ onFocusNext }
-						onFocusPrev={ onFocusPrev }
-						onNewItemCreate={ handleNewItemCreate }
-						tabIndex={ -2 }
-					/>
-					{
-						(itemsSource === 'collection' || itemsSource === 'top') && (
-						<AddByIdentifier
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-						/>
-					)}
-					{
-						(itemsSource === 'collection' || itemsSource === 'top') && (
-						<Button
-							icon
-							onClick={ handleNewStandaloneNote }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="New Standalone Note"
-						>
-							<Icon type="16/note" width="16" height="16" />
-						</Button>
-					)}
-					{(itemsSource === 'collection' || itemsSource === 'top') && (
-						<ImportAction
-							tabIndex={-2}
+					<ToolGroup>
+						<NewItemSelector
+							disabled={!['top', 'collection'].includes(itemsSource)}
 							onFocusNext={onFocusNext}
 							onFocusPrev={onFocusPrev}
+							onNewItemCreate={handleNewItemCreate}
+							tabIndex={-2}
 						/>
-					)}
-				</ToolGroup>
-				<ToolGroup>
-				{ !isTrash && (
-					<Fragment>
-						<Button
-							disabled={ selectedItemsCount === 0 }
-							icon
-							onClick={ handleAddToCollectionModalOpen }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="Add To Collection"
-						>
-							<Icon type="20/add-collection" width="20" height="20" />
-						</Button>
-						{ (itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
-							<Button
-								disabled={ selectedItemsCount === 0 }
-								icon
-								onClick={ handleRemoveFromCollection }
-								onKeyDown={ handleKeyDown }
-								tabIndex={ -2 }
-								title="Remove From Collection"
-							>
-								<Icon type="20/remove-from-collection" width="20" height="20" />
-							</Button>
+						{
+							(itemsSource === 'collection' || itemsSource === 'top') && (
+								<AddByIdentifier
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+								/>
+							)}
+						{
+							(itemsSource === 'collection' || itemsSource === 'top') && (
+								<Button
+									icon
+									onClick={handleNewStandaloneNote}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="New Standalone Note"
+								>
+									<Icon type="16/note" width="16" height="16" />
+								</Button>
+							)}
+						{(itemsSource === 'collection' || itemsSource === 'top') && (
+							<ImportAction
+								tabIndex={-2}
+								onFocusNext={onFocusNext}
+								onFocusPrev={onFocusPrev}
+							/>
 						)}
-						<Button
-							disabled={ selectedItemsCount === 0 }
-							icon
-							onClick={ handleTrash }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="Move To Trash"
-						>
-							<Icon type={ '16/trash' } width="16" height="16" />
-						</Button>
-					</Fragment>
-				)}
-				{ isTrash && (
-					<Fragment>
-						<Button
-							disabled={ selectedItemsCount === 0 }
-							icon
-							onClick={ handlePermanentlyDelete }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="Delete Permanently"
-						>
-							<Icon type="16/empty-trash" width="16" height="16" />
-						</Button>
-						<Button
-							disabled={ selectedItemsCount === 0 }
-							icon
-							onClick={ handleUndelete }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ -2 }
-							title="Restore to Library"
-						>
-							<Icon type="16/restore" width="16" height="16" />
-						</Button>
-					</Fragment>
-				)}
-				</ToolGroup>
+					</ToolGroup>
+					<ToolGroup>
+						{!isTrash && (
+							<Fragment>
+								<Button
+									disabled={selectedItemsCount === 0}
+									icon
+									onClick={handleRetrieveMetadata}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Retrieve Metadata"
+								>
+									<Icon type="20/input-dual" width="20" height="20" />
+								</Button>
+								<Button
+									disabled={selectedItemsCount === 0}
+									icon
+									onClick={handleAddToCollectionModalOpen}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Add To Collection"
+								>
+									<Icon type="20/add-collection" width="20" height="20" />
+								</Button>
+								{(itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
+									<Button
+										disabled={selectedItemsCount === 0}
+										icon
+										onClick={handleRemoveFromCollection}
+										onKeyDown={handleKeyDown}
+										tabIndex={-2}
+										title="Remove From Collection"
+									>
+										<Icon type="20/remove-from-collection" width="20" height="20" />
+									</Button>
+								)}
+								<Button
+									disabled={selectedItemsCount === 0}
+									icon
+									onClick={handleTrash}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Move To Trash"
+								>
+									<Icon type={'16/trash'} width="16" height="16" />
+								</Button>
+							</Fragment>
+						)}
+						{isTrash && (
+							<Fragment>
+								<Button
+									disabled={selectedItemsCount === 0}
+									icon
+									onClick={handlePermanentlyDelete}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Delete Permanently"
+								>
+									<Icon type="16/empty-trash" width="16" height="16" />
+								</Button>
+								<Button
+									disabled={selectedItemsCount === 0}
+									icon
+									onClick={handleUndelete}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Restore to Library"
+								>
+									<Icon type="16/restore" width="16" height="16" />
+								</Button>
+							</Fragment>
+						)}
+					</ToolGroup>
 				</Fragment>
-			) }
+			)}
 			<ToolGroup>
 				<ExportActions
-					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
-					tabIndex={ -2 }
-					onFocusNext={ onFocusNext }
-					onFocusPrev={ onFocusPrev }
+					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
+					tabIndex={-2}
+					onFocusNext={onFocusNext}
+					onFocusPrev={onFocusPrev}
 				/>
 				<Button
-					disabled={ selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
+					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
 					icon
-					onClick={ handleCiteModalOpen }
-					onKeyDown={ handleKeyDown }
-					tabIndex={ -2 }
+					onClick={handleCiteModalOpen}
+					onKeyDown={handleKeyDown}
+					tabIndex={-2}
 					title="Create Citations"
 				>
 					<Icon type="16/cite" width="16" height="16" />
 				</Button>
 				<Button
-					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100 }
+					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
 					icon
-					onClick={ handleBibliographyModalOpen }
-					onKeyDown={ handleKeyDown }
-					tabIndex={ -2 }
+					onClick={handleBibliographyModalOpen}
+					onKeyDown={handleKeyDown}
+					tabIndex={-2}
 					title="Create Bibliography"
 				>
 					<Icon type="16/bibliography" width="16" height="16" />
@@ -280,13 +290,13 @@ const ItemActionsDesktop = memo(props => {
 			</ToolGroup>
 			<ToolGroup>
 				<MoreActionsDropdownDesktop
-					onFocusNext={ onFocusNext }
-					onFocusPrev={ onFocusPrev }
-					tabIndex={ -2 }
+					onFocusNext={onFocusNext}
+					onFocusPrev={onFocusPrev}
+					tabIndex={-2}
 				/>
 			</ToolGroup>
 		</Fragment>
-    );
+	);
 });
 
 ItemActionsDesktop.displayName = 'ItemActionsDesktop';
@@ -296,7 +306,7 @@ const ItemsActions = ({ onFocusNext, onFocusPrev }) => {
 	return (
 		isTouchOrSmall ?
 			<ItemActionsTouch /> :
-			<ItemActionsDesktop onFocusNext={ onFocusNext } onFocusPrev={ onFocusPrev } />
+			<ItemActionsDesktop onFocusNext={onFocusNext} onFocusPrev={onFocusPrev} />
 	);
 }
 

@@ -7,7 +7,7 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
 import { extractIdentifiers } from '../common/identifiers';
-import { EMPTY, SINGLE, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
+import { EMPTY, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
 
 const getNextLinkFromResponse = response => {
 	let next = null;
@@ -102,33 +102,16 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
 					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 				} else {
-					if(json.length > 0) {
-						dispatch({
-							type: RECEIVE_ADD_BY_IDENTIFIER,
-							result: MULTIPLE,
-							items: json,
-							identifierIsUrl,
-							identifier,
-							import: shouldImport,
-							response
-						});
-						return json;
-					} else {
-						const item = json[0];
-						delete item.key;
-						delete item.version;
-
-						dispatch({
-							type: RECEIVE_ADD_BY_IDENTIFIER,
-							result: SINGLE,
-							item,
-							identifier,
-							identifierIsUrl,
-							import: shouldImport,
-							response
-						});
-						return item;
-					}
+					dispatch({
+						type: RECEIVE_ADD_BY_IDENTIFIER,
+						result: MULTIPLE,
+						items: json,
+						identifierIsUrl,
+						identifier,
+						import: shouldImport,
+						response
+					});
+					return json;
 				}
 			}
 		} catch(error) {
@@ -174,7 +157,7 @@ const currentAddMultipleTranslatedItems = identifiers => {
 				const promises = identifiers.map(identifier => fetch(url, {
 					method: 'post',
 					mode: 'cors',
-					headers: { 'content-type': 'text/plain' },
+					headers: { 'Content-Type': 'text/plain' },
 					body: identifier
 				}).then(async r => (await r.json())[0]).catch(() => null));
 
@@ -266,7 +249,7 @@ const searchIdentifierMore = () => {
 			const response = await fetch(next, {
 				method: 'post',
 				mode: 'cors',
-				headers: { 'content-type': 'text/plain' },
+				headers: { 'Content-Type': 'text/plain' },
 				body: identifier
 			});
 

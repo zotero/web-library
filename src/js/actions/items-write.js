@@ -354,9 +354,11 @@ const queueDeleteItems = (itemKeys, libraryKey, id, resolve, reject) => {
 	};
 }
 
-const updateItem = (itemKey, patch) => {
+const updateItem = (itemKey, patch, libraryKey) => {
 	return async (dispatch, getState) => {
-		const { libraryKey } = getState().current;
+		if (libraryKey === undefined) {
+			libraryKey = getState().current.libraryKey;
+		}
 		const id = requestTracker.id++;
 
 		dispatch({

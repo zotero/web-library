@@ -7,6 +7,7 @@ const serveStatic = require('serve-static');
 const checkTrue = env => !!(env && (parseInt(env) || env === true || env === "true"));
 
 const translateURL = process.env.TRANSLATE_URL ?? 'http://localhost:1969';
+const recognizerURL = process.env.RECOGNIZER_URL ?? 'http://localhost:1970';
 const useHTTPS = checkTrue(process.env.USE_HTTPS);
 const htmlFile = checkTrue(process.env.EMBEDDED) ? 'embedded.html' : 'index.html';
 const port = process.env.PORT ?? (useHTTPS ? 8443 : 8001);
@@ -15,7 +16,7 @@ const serve = serveStatic(path.join(__dirname, '..', 'build'), { 'index': false 
 const proxy = httpProxy.createProxyServer();
 
 const handler = (req, resp) => {
-	const fallback = () => {
+const fallback = () => {
 		fs.readFile(path.join(__dirname, '..', 'build', htmlFile), (err, buf) => {
 			resp.setHeader('Content-Type', 'text/html');
 			resp.end(buf);
@@ -30,6 +31,17 @@ const handler = (req, resp) => {
 		proxy.on('error', err => {
 			resp.statusCode = 502;
 			resp.statusMessage = `Translation Server not available at ${translateURL}: ${err}`;
+			resp.end();
+		});
+	} else if(req.url.startsWith('/recognize')) {
+		proxy.web(req, resp, {
+			changeOrigin: true,
+			target: `${recognizerURL}`,
+			secure: false
+		});
+		proxy.on('error', err => {
+			resp.statusCode = 502;
+			resp.statusMessage = `Recognizer Server not available at ${recognizerURL}: ${err}`;
 			resp.end();
 		});
 	} else {
