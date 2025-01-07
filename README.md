@@ -22,8 +22,11 @@ Production-ready version can be built with `npm run build` and served with `npm 
 
 Configuration
 ----------------------
-Web Library reads configuration from a DOM node with ID `zotero-web-library-config`. See example config in `src/html/index.html`. To access private libraries, `userId` and `apiKey` must be provided. It's also possible to configure Web Library to only display public libraries, in which case `libraries` object must be populated and it must include value for `defaultLibraryKey` as well as `includeMyLibrary` set to `false`.
+The Web Library reads its configuration from a DOM node with the ID `zotero-web-library-config`. You can find an example configuration in `src/html/index.html`.  
 
+To access private libraries, `userId` and `apiKey` must be provided. These can be obtained at https://www.zotero.org/settings/security#applications.
+
+Alternatively, it's possible to configure the Web Library to display only specified public libraries. In this case, the `libraries` object must be populated, including a value for `defaultLibraryKey`, and with `includeMyLibrary` set to `false`.
 
 Build targets
 -------------
