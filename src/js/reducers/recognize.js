@@ -1,55 +1,95 @@
+import { getBaseMappedValue } from '../common/item';
 import { BEGIN_RECOGNIZE_DOCUMENT, CLEAR_RECOGNIZE_DOCUMENT, CLEAR_RECOGNIZE_DOCUMENTS, COMPLETE_RECOGNIZE_DOCUMENT,
 	ERROR_RECOGNIZE_DOCUMENT, UPDATE_RECOGNIZE_DOCUMENT } from '../constants/actions';
 
-const recognize = (state = [], action) => {
+const TOTALSTAGES = 4; // 3 progress update stages + 1 for completion
+
+const updateProgressInState = (state) => {
+	const progress = state.entries.reduce(
+		(acc, { stage, completed, error }) => (completed || error) ? (acc + TOTALSTAGES) : (acc + stage), 0
+	);
+	const total = state.entries.length * TOTALSTAGES;
+
+	return {
+		...state,
+		progress: progress / total,
+	};
+}
+
+
+const recognize = (state = { progress: 0, entries: [] }, action, globalState) => {
 	switch (action.type) {
 		case BEGIN_RECOGNIZE_DOCUMENT:
-			return [
+			return updateProgressInState({
 				...state,
-				{
-					itemKey: action.itemKey,
-					libraryKey: action.libraryKey,
-					stage: 0,
-					error: null,
-					completed: false,
-				}
-			];
+				entries: [
+					...state.entries,
+					{
+						itemKey: action.itemKey,
+						itemTitle: getBaseMappedValue(
+							globalState?.meta?.mappings, globalState.libraries[globalState.current.libraryKey]?.items?.[action.itemKey], 'title'
+						),
+						libraryKey: action.libraryKey,
+						stage: 0,
+						error: null,
+						completed: false,
+					}
+				]
+			});
 		case UPDATE_RECOGNIZE_DOCUMENT:
-			return state.map(recognize => {
-				if (recognize.itemKey === action.itemKey && recognize.libraryKey === action.libraryKey) {
-					return {
-						...recognize,
-						stage: action.stage,
-					};
-				}
-				return recognize;
+			return updateProgressInState({
+				...state,
+				entries: state.entries.map(entry => {
+					if (entry.itemKey === action.itemKey && entry.libraryKey === action.libraryKey) {
+						return {
+							...entry,
+							stage: action.stage,
+						};
+					}
+					return entry;
+				})
 			});
 		case COMPLETE_RECOGNIZE_DOCUMENT:
-			return state.map(recognize => {
-				if (recognize.itemKey === action.itemKey && recognize.libraryKey === action.libraryKey) {
-					return {
-						...recognize,
-						parentItemKey: action.parentItemKey,
-						completed: true,
-					};
-				}
-				return recognize;
+			return updateProgressInState({
+				...state,
+				entries: state.entries.map(entry => {
+					if (entry.itemKey === action.itemKey && entry.libraryKey === action.libraryKey) {
+						return {
+							...entry,
+							parentItemKey: action.parentItemKey,
+							parentItemTitle: getBaseMappedValue(
+								globalState?.meta?.mappings, globalState.libraries[globalState.current.libraryKey]?.items?.[action.parentItemKey], 'title'
+							),
+							completed: true,
+						};
+					}
+					return entry;
+				})
 			});
 		case ERROR_RECOGNIZE_DOCUMENT:
-			return state.map(recognize => {
-				if (recognize.itemKey === action.itemKey && recognize.libraryKey === action.libraryKey) {
-					return {
-						...recognize,
-						stage: 3,
-						error: action.error,
-					};
-				}
-				return recognize;
+			return updateProgressInState({
+				...state,
+				entries: state.entries.map(entry => {
+					if (entry.itemKey === action.itemKey && entry.libraryKey === action.libraryKey) {
+						return {
+							...entry,
+							error: action.error,
+						};
+					}
+					return entry;
+				})
 			});
 		case CLEAR_RECOGNIZE_DOCUMENT:
-			return state.filter(recognize => recognize.itemKey !== action.itemKey);
+			return updateProgressInState({
+				...state,
+				entries: state.entries.filter(entry => entry.itemKey !== action.itemKey)
+			});
 		case CLEAR_RECOGNIZE_DOCUMENTS:
-			return [];
+			return {
+				...state,
+				progress: 0,
+				entries: []
+			}
 		default:
 			return state;
 	}

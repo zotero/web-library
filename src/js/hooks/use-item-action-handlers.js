@@ -4,10 +4,9 @@ import {
 	currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
 	currentMoveToTrash, currentDeletePermanently, currentRecoverFromTrash, triggerSelectMode,
 	currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
-	currentRetrieveMetadata, navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection,
-	currentNewItemModal
+	navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal
 } from '../actions';
-import { SORT_ITEMS, ADD_BY_IDENTIFIER } from '../constants/modals';
+import { ADD_BY_IDENTIFIER, METADATA_RETRIEVAL, SORT_ITEMS } from '../constants/modals';
 
 const useItemActionHandlers = () => {
 	const dispatch = useDispatch();
@@ -81,7 +80,7 @@ const useItemActionHandlers = () => {
 	}, [dispatch]);
 
 	const handleRetrieveMetadata = useCallback(() => {
-		dispatch(currentRetrieveMetadata());
+		dispatch(toggleModal(METADATA_RETRIEVAL, true));
 	}, [dispatch]);
 
 	return {

@@ -262,7 +262,6 @@ const currentRetrieveMetadata = () => {
 		const state = getState();
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
-
 		const promises = itemKeys.map(key => dispatch(retrieveMetadata(key, libraryKey)));
 		return await Promise.all(promises);
 	}

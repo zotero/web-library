@@ -10,6 +10,7 @@ import ExportModal from './modal/export';
 import IdentifierPicker from './modal/identifier-picker';
 import ItemsSortModal from './modal/items-sort';
 import ManageTagsModal from './modal/manage-tags';
+import metadataRetrieval from './modal/metadata-retrieval';
 import MoveCollectionsModal from './modal/move-collections';
 import NewCollectionModal from './modal/new-collection';
 import NewItemModal from './modal/new-item';
@@ -18,8 +19,8 @@ import SettingsModal from './modal/settings';
 import StyleInstallerModal from './modal/style-installer';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
-EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, MOVE_COLLECTION, NEW_ITEM, SETTINGS, SORT_ITEMS,
-STYLE_INSTALLER, ADD_BY_IDENTIFIER, } from '../constants/modals';
+	EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, METADATA_RETRIEVAL, MOVE_COLLECTION, NEW_ITEM, SETTINGS,
+	SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, } from '../constants/modals';
 
 const lookup = {
 	[ADD_BY_IDENTIFIER]: AddByIdentifierModal,
@@ -36,6 +37,7 @@ const lookup = {
 	[SETTINGS]: SettingsModal,
 	[SORT_ITEMS]: ItemsSortModal,
 	[STYLE_INSTALLER]: StyleInstallerModal,
+	[METADATA_RETRIEVAL]: metadataRetrieval,
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

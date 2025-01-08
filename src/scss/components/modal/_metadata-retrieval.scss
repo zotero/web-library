@@ -1,0 +1,27 @@
+.recognize-progress {
+	progress {
+		width: 100%;
+	}
+}
+
+.recognize-table {
+	margin-top: 1em;
+
+	.recognize-row {
+		display: flex;
+		padding: 0.33em 0;
+	}
+
+	.recognize-row-left, .recognize-row-right {
+		@include text-truncate;
+	}
+
+	.recognize-row-left {
+		flex: 0 0 100px;
+		padding-right: 24px;
+	}
+
+	.recognize-row-right {
+		flex: 1 1 auto;
+	}
+}
