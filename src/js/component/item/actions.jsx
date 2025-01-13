@@ -128,7 +128,15 @@ const ItemActionsDesktop = memo(props => {
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
-	const selectedContainsCollection = useSelector(state => state.current.itemKeys.some(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'));
+	const selectedContainsCollection = useSelector(
+		state => state.current.itemKeys.some(
+			key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'
+	));
+	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.every(
+		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
+			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
+	));
+
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const { handleCiteModalOpen, handleNewItemCreate, handleNewStandaloneNote, handleAddToCollectionModalOpen,
@@ -189,16 +197,16 @@ const ItemActionsDesktop = memo(props => {
 					<ToolGroup>
 						{!isTrash && (
 							<Fragment>
-								<Button
-									disabled={selectedItemsCount === 0}
-									icon
-									onClick={handleRetrieveMetadata}
-									onKeyDown={handleKeyDown}
-									tabIndex={-2}
-									title="Retrieve Metadata"
-								>
-									<Icon type="20/input-dual" width="20" height="20" />
-								</Button>
+									<Button
+										disabled={selectedItemsCount === 0 || !selectedItemsCanBeRecognized}
+										icon
+										onClick={handleRetrieveMetadata}
+										onKeyDown={handleKeyDown}
+										tabIndex={-2}
+										title="Retrieve Metadata"
+									>
+										<Icon type="20/input-dual" width="20" height="20" />
+									</Button>
 								<Button
 									disabled={selectedItemsCount === 0}
 									icon
