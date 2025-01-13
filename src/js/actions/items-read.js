@@ -210,14 +210,14 @@ const sortItems = (sortBy, sortDirection) => {
 	}
 };
 
-const getAttachmentUrl = itemKey => {
+const getAttachmentUrl = (itemKey, forceFresh = false) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { libraryKey } = state.current;
 		const attachmentURLdata = state.libraries[state.current.libraryKey]?.attachmentsUrl[itemKey];
 
 		try {
-			const isURLFresh = (attachmentURLdata && Date.now() - attachmentURLdata.timestamp < 60000);
+			const isURLFresh = !forceFresh && (attachmentURLdata && Date.now() - attachmentURLdata.timestamp < 60000);
 			const isPromise = attachmentURLdata?.promise instanceof Promise;
 			const promise = (isURLFresh && isPromise) ? attachmentURLdata.promise : api(state.config.apiKey, state.config.apiConfig)
 				.library(libraryKey)
@@ -229,6 +229,7 @@ const getAttachmentUrl = itemKey => {
 				type: REQUEST_ATTACHMENT_URL,
 				libraryKey,
 				itemKey,
+				forceFresh,
 				promise
 			});
 
@@ -239,6 +240,7 @@ const getAttachmentUrl = itemKey => {
 				type: RECEIVE_ATTACHMENT_URL,
 				libraryKey,
 				itemKey,
+				forceFresh,
 				url
 			});
 
@@ -246,7 +248,7 @@ const getAttachmentUrl = itemKey => {
 		} catch(error) {
 			dispatch({
 				type: ERROR_ATTACHMENT_URL,
-				libraryKey, itemKey, error,
+				libraryKey, itemKey, forceFresh, error,
 			});
 
 			throw error;

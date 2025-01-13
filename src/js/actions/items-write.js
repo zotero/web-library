@@ -361,21 +361,23 @@ const updateItem = (itemKey, patch, libraryKey) => {
 		}
 		const id = requestTracker.id++;
 
-		dispatch({
-			type: PRE_UPDATE_ITEM,
-			itemKey,
-			libraryKey,
-			patch,
-			id
-		});
+		return new Promise((resolve, reject) => {
+			dispatch({
+				type: PRE_UPDATE_ITEM,
+				itemKey,
+				libraryKey,
+				patch,
+				id
+			});
 
-		dispatch(
-			queueUpdateItem(itemKey, patch, libraryKey, id)
-		);
+			dispatch(
+				queueUpdateItem(itemKey, patch, libraryKey, { resolve, reject, id })
+			);
+		});
 	};
 }
 
-const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
+const queueUpdateItem = (itemKey, patch, libraryKey, { resolve, reject, id }) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -441,7 +443,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
 					otherItems: state.libraries[libraryKey].items,
 				});
 
-				return updatedItem;
+				resolve(updatedItem);
 			} catch(error) {
 				dispatch({
 					type: ERROR_UPDATE_ITEM,
@@ -451,6 +453,7 @@ const queueUpdateItem = (itemKey, patch, libraryKey, id) => {
 					patch,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();

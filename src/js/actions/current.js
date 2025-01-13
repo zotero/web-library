@@ -3,7 +3,8 @@ import { omit } from 'web-common/utils';
 import { getApiForItems, splitItemAndCollectionKeys } from '../common/actions';
 import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
 	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
-	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem, createItemOfType, toggleModal, navigate, retrieveMetadata } from '.';
+	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem,
+	createItemOfType, toggleModal, navigate, retrieveMetadata, undoRetrieveMetadata } from '.';
 import columnProperties from '../constants/column-properties';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
@@ -267,6 +268,16 @@ const currentRetrieveMetadata = () => {
 	}
 }
 
+const currentUndoRetrieveMetadata = () => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const promises = itemKeys.map(key => dispatch(undoRetrieveMetadata(key, libraryKey)));
+		return await Promise.all(promises);
+	}
+}
+
 export {
 	currentAddTags,
 	currentAddToCollection,
@@ -280,12 +291,13 @@ export {
 	currentExportItems,
 	currentExportItemsModal,
 	currentGoToSubscribeUrl,
+	currentMoveToTrash,
 	currentNewItemModal,
 	currentRecoverFromTrash,
 	currentRemoveColoredTags,
 	currentRemoveItemFromCollection,
 	currentRetrieveMetadata,
 	currentToggleTagByIndex,
-	currentMoveToTrash,
 	currentTrashOrDelete,
+	currentUndoRetrieveMetadata,
 }

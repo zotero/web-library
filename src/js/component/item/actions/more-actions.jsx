@@ -4,7 +4,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-
 import { useDispatch, useSelector } from 'react-redux';
 
 import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
-import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
+import { currentGoToSubscribeUrl, currentUndoRetrieveMetadata, pickBestItemAction } from '../../../actions';
 import { useItemActionHandlers } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 
@@ -13,6 +13,10 @@ const MoreActionsItems = ({ divider = false }) => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
 	const itemsSource = useSelector(state => state.current.itemsSource);
+	const selectedItemsCanBeUnrecognized = useSelector(state =>
+		state.current.itemKeys.every(
+			key => !!state.recognize.lookup[`${state.current.libraryKey}-${key}`]
+	));
 	const { handleDuplicate } = useItemActionHandlers();
 
 	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
@@ -34,6 +38,10 @@ const MoreActionsItems = ({ divider = false }) => {
 		}
 	}, [doi, url]);
 
+	const handleUnrecognize = useCallback(() => {
+		dispatch(currentUndoRetrieveMetadata());
+	}, [dispatch]);
+
 	return (
         <Fragment>
 			{ isViewFile && (
@@ -51,7 +59,15 @@ const MoreActionsItems = ({ divider = false }) => {
 				Duplicate Item
 			</DropdownItem>
 			) }
-			{ divider && (canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider/> }
+			{ selectedItemsCanBeUnrecognized && (
+				<>
+					{(canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider /> }
+					<DropdownItem onClick={ handleUnrecognize }>
+						Undo Retrieve Metadata
+					</DropdownItem>
+				</>
+			) }
+			{divider && (canDuplicate || isViewFile || isViewOnline || selectedItemsCanBeUnrecognized) && <DropdownItem divider/> }
 		</Fragment>
     );
 }
@@ -111,6 +127,10 @@ const MoreActionsDropdownDesktop = memo(props => {
 		</Dropdown>
 	);
 });
+
+MoreActionsItems.propTypes = {
+	divider: PropTypes.bool,
+};
 
 MoreActionsDropdownDesktop.propTypes = {
 	onFocusNext: PropTypes.func,

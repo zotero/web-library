@@ -1,5 +1,7 @@
-import { createItem, getAttachmentUrl, updateItem } from '.';
-import { BEGIN_RECOGNIZE_DOCUMENT, COMPLETE_RECOGNIZE_DOCUMENT, ERROR_RECOGNIZE_DOCUMENT, UPDATE_RECOGNIZE_DOCUMENT } from '../constants/actions';
+import { createItem, deleteItem, getAttachmentUrl, updateItem } from '.';
+import { BEGIN_RECOGNIZE_DOCUMENT, COMPLETE_RECOGNIZE_DOCUMENT, ERROR_RECOGNIZE_DOCUMENT,
+	UPDATE_RECOGNIZE_DOCUMENT, BEGIN_UNRECOGNIZE_DOCUMENT, COMPLETE_UNRECOGNIZE_DOCUMENT,
+	ERROR_UNRECOGNIZE_DOCUMENT, } from '../constants/actions';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { pick } from 'web-common/utils';
 
@@ -65,7 +67,13 @@ const getRecognizerData = itemKey => {
 		}
 
 		const attachmentURL = await dispatch(getAttachmentUrl(itemKey));
-		const data = await (await fetch(attachmentURL)).arrayBuffer();
+		let response = await fetch(attachmentURL);
+		if (response.status === 410) {
+			const attachmentURL = await dispatch(getAttachmentUrl(itemKey, true));
+			response = await fetch(attachmentURL);
+		}
+
+		const data = await response.arrayBuffer();
 		const { pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL, recognizerUrl } = state.config;
 		const pdfWorker = new PDFWorker({ pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL });
 		const recognizerInputData = await pdfWorker.getRecognizerData(data); // TODO: add suport for password-protected PDFs
@@ -84,14 +92,14 @@ const getRecognizerData = itemKey => {
 		}
 
 		const url = `${recognizerUrl}/recognize`;
-		const response = await fetch(url, {
+		const recognizerResponse = await fetch(url, {
 			method: 'POST',
 			mode: 'cors',
 			headers: { 'content-type': 'application/json', },
 			body: JSON.stringify(recognizerInputData)
 		});
-		if (response.ok) {
-			return await response.json();
+		if (recognizerResponse.ok) {
+			return await recognizerResponse.json();
 		} else {
 			throw new Error('Failed to recognize document');
 		}
@@ -172,4 +180,42 @@ const recognizePDF = (recognizerData) => {
 	}
 }
 
-export { retrieveMetadata };
+const undoRetrieveMetadata = (itemKey, libraryKey) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		dispatch({
+			type: BEGIN_UNRECOGNIZE_DOCUMENT,
+			itemKey,
+			libraryKey,
+		});
+		try {
+			const originalItemKey = state.recognize.lookup[`${libraryKey}-${itemKey}`];
+			if(!originalItemKey) {
+				throw new Error('Original item not found');
+			}
+			const item = state.libraries[libraryKey].items?.[itemKey];
+			if(!item) {
+				throw new Error('Item not found');
+			}
+
+			const collections = item.collections;
+			await dispatch(updateItem(originalItemKey, { parentItem: null, collections }, libraryKey));
+			await dispatch(deleteItem(item));
+			dispatch({
+				type: COMPLETE_UNRECOGNIZE_DOCUMENT,
+				itemKey,
+				libraryKey,
+				originalItemKey,
+			});
+		} catch (error) {
+			dispatch({
+				type: ERROR_UNRECOGNIZE_DOCUMENT,
+				itemKey,
+				libraryKey,
+				error: error?.message ?? 'Failed to undo retrieve metadata'
+			});
+		}
+	}
+}
+
+export { retrieveMetadata, undoRetrieveMetadata };
