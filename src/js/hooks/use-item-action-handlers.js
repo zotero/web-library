@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-	currentAddToCollectionModal, currentCiteModal, currentRemoveItemFromCollection,
-	currentMoveToTrash, currentDeletePermanently, currentRecoverFromTrash, triggerSelectMode,
-	currentBibliographyModal, currentDuplicateItem, currentExportItemsModal, currentCreateItemOfType,
-	navigate, triggerEditingItem, toggleModal, toggleItemsSortingDirection, currentNewItemModal
+	currentAddToCollectionModal, currentBibliographyModal, currentCiteModal,
+	currentCreateItemOfType, currentDeletePermanently, currentDuplicateItem, currentExportItemsModal,
+	currentMoveToTrash, currentNewItemModal, currentRecoverFromTrash, currentRemoveItemFromCollection,
+	currentUndoRetrieveMetadata, navigate, toggleItemsSortingDirection, toggleModal, triggerEditingItem,
+	triggerSelectMode
 } from '../actions';
 import { ADD_BY_IDENTIFIER, METADATA_RETRIEVAL, SORT_ITEMS } from '../constants/modals';
 
@@ -83,12 +84,17 @@ const useItemActionHandlers = () => {
 		dispatch(toggleModal(METADATA_RETRIEVAL, true));
 	}, [dispatch]);
 
+	const handleUnrecognize = useCallback(() => {
+		dispatch(currentUndoRetrieveMetadata());
+		setTimeout(() => dispatch(navigate({ items: [] }), 0));
+	}, [dispatch]);
+
 	return {
 		handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
 		handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
 		handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
 		handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
-		handleExportModalOpen, handleRetrieveMetadata
+		handleExportModalOpen, handleRetrieveMetadata, handleUnrecognize
 	};
 }
 

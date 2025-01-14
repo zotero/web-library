@@ -6,7 +6,7 @@ import { usePrevious } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
-import { currentRetrieveMetadata, toggleModal } from '../../actions';
+import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
 
 
 const MetadataRetrievalModal = () => {
@@ -22,18 +22,20 @@ const MetadataRetrievalModal = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if(isOpen && !wasOpen) {
+		if (isOpen && !wasOpen) {
 			dispatch(currentRetrieveMetadata());
+			// unselect items to be recognized. If recognition is successful, the items will become child items and thus disappear from the list
+			setTimeout(() => { dispatch(navigate({ items: [] })); }, 0);
 		}
 	}, [dispatch, isOpen, wasOpen]);
 
 	return (
-        <Modal
-			className={ "recognize-modal" }
+		<Modal
+			className={"recognize-modal"}
 			contentLabel="Metadata Retrieval"
-			isOpen={ isOpen }
-			onRequestClose={ handleCancel }
-			overlayClassName={ cx({ 'modal-centered modal-slide': isTouchOrSmall }) }
+			isOpen={isOpen}
+			onRequestClose={handleCancel}
+			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
 			<div className="modal-header">
 				{
@@ -47,7 +49,7 @@ const MetadataRetrievalModal = () => {
 							<div className="modal-header-right">
 								<Button
 									className="btn-link"
-									onClick={ handleCancel }
+									onClick={handleCancel}
 								>
 									Close
 								</Button>
@@ -61,9 +63,9 @@ const MetadataRetrievalModal = () => {
 							<Button
 								icon
 								className="close"
-								onClick={ handleCancel }
+								onClick={handleCancel}
 							>
-								<Icon type={ '16/close' } width="16" height="16" />
+								<Icon type={'16/close'} width="16" height="16" />
 							</Button>
 						</Fragment>
 					)
@@ -71,10 +73,10 @@ const MetadataRetrievalModal = () => {
 			</div>
 			<div
 				className="modal-body"
-				tabIndex={ !isTouchOrSmall ? 0 : null }
+				tabIndex={!isTouchOrSmall ? 0 : null}
 			>
 				<div className="recognize-progress">
-					<progress value={ recognizeProgress } max="1" />
+					<progress value={recognizeProgress} max="1" />
 				</div>
 				<div className="recognize-table">
 					{recognizeEntries.map(recognize => {
@@ -83,14 +85,14 @@ const MetadataRetrievalModal = () => {
 
 						return (
 							<div
-								key={ key }
-								className={ cx('recognize-row') }
+								key={key}
+								className={cx('recognize-row')}
 							>
 								<div className="recognize-row-left">
-									{itemTitle }
+									{itemTitle}
 								</div>
 								<div className="recognize-row-right">
-									{completed ? parentItemTitle : error ? `Error: ${error}` : "Processing" }
+									{completed ? parentItemTitle : error ? `Error: ${error}` : "Processing"}
 								</div>
 							</div>
 						);
@@ -98,7 +100,7 @@ const MetadataRetrievalModal = () => {
 				</div>
 			</div>
 		</Modal>
-    );
+	);
 }
 
 export default memo(MetadataRetrievalModal);
