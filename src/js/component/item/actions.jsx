@@ -205,7 +205,7 @@ const ItemActionsDesktop = memo(props => {
 										tabIndex={-2}
 										title="Retrieve Metadata"
 									>
-										<Icon type="20/input-dual" width="20" height="20" />
+										<Icon type="16/retrieve-metadata" width="16" height="16" />
 									</Button>
 								<Button
 									disabled={selectedItemsCount === 0}
