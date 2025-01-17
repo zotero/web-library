@@ -23,10 +23,9 @@ navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange
 	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
-import ScrollEffectComponent, { SCROLL_BUFFER } from './scroll-effect';
+import ScrollEffectComponent from './scroll-effect';
+import { ROW_HEIGHT, SCROLL_BUFFER } from '../../../constants/constants';
 
-
-const ROWHEIGHT = 26;
 
 const getColumnCssVars = (columns, width, scrollbarWidth) =>
 	Object.fromEntries(columns.map((c, i) => [
@@ -68,7 +67,7 @@ TableFocus.propTypes = {
 TableFocus.displayName = "TableFocus";
 
 
-
+// TODO: This should be a wrapper around common/table.jsx
 const Table = () => {
 	const containerDom = useRef(null);
 	const headerRef = useRef(null);
@@ -323,11 +322,11 @@ const Table = () => {
 			dispatch(selectLastItem());
 		} else if(ev.key === 'PageUp' && outerRef.current) {
 			direction = -1;
-			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT)
+			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROW_HEIGHT)
 			ev.preventDefault();
 		} else if(ev.key === 'PageDown' && outerRef.current) {
 			direction = 1;
-			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROWHEIGHT);
+			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROW_HEIGHT);
 			ev.preventDefault();
 		} else if(Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
 			dispatch(currentToggleTagByIndex(parseInt(ev.key) - 1));
@@ -489,7 +488,7 @@ const Table = () => {
 								onBlur={ handleTableBlur }
 								onKeyDown={ handleKeyDown }
 								ref={ tableRef }
-								className="items-table"
+								className="items-table striped"
 								style={ getColumnCssVars(columns, width, scrollbarWidth) }
 								role="grid"
 								aria-multiselectable="true"
@@ -509,13 +508,13 @@ const Table = () => {
 									reorderTarget= { reorderTarget }
 								/>
 								<List
-									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROWHEIGHT}
+									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROW_HEIGHT}
 									outerElementType={ TableBody }
 									className="items-table-body"
-									height={ height - ROWHEIGHT } // add margin for HeaderRow
+									height={ height - ROW_HEIGHT } // add margin for HeaderRow
 									itemCount={ hasChecked ? totalResults : 0 }
 									itemData={ rowData }
-									itemSize={ ROWHEIGHT }
+									itemSize={ ROW_HEIGHT }
 									onItemsRendered={ onItemsRendered }
 									ref={ r => { ref(r); listRef.current = r } }
 									outerRef={ outerRef }

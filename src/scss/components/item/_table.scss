@@ -199,12 +199,14 @@
 		user-select: none;
 		width: 100%;
 
-		&.odd:not(.active) {
-			background-color: var(--material-stripe);
-		}
+		@include state(".items-table.striped") {
+			&.odd:not(.active) {
+				background-color: var(--material-stripe);
+			}
 
-		&.even:not(.active) {
-			background-color: var(--material-background);
+			&.even:not(.active) {
+				background-color: var(--material-background);
+			}
 		}
 
 		&.active {

@@ -12,9 +12,9 @@ import ListRow from './list-row';
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
 import { useSourceData } from '../../../hooks';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
-import ScrollEffectComponent, { SCROLL_BUFFER } from './scroll-effect';
+import ScrollEffectComponent from './scroll-effect';
+import { SCROLL_BUFFER, LIST_ROW_HEIGHT } from '../../../constants/constants';
 
-const ROWHEIGHT = 61;
 
 const ItemsList = memo(props => {
 	const { isSearchModeTransitioning } = props;
@@ -136,11 +136,11 @@ const ItemsList = memo(props => {
 								aria-rowcount={ totalResults }
 							>
 								<List
-									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROWHEIGHT}
+									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * LIST_ROW_HEIGHT}
 									height={ height }
 									itemCount={ hasChecked && !isSearchModeHack ? totalResults : 0 }
 									itemData={ { keys } }
-									itemSize={ ROWHEIGHT }
+									itemSize={ LIST_ROW_HEIGHT }
 									onItemsRendered={ onItemsRendered }
 									ref={ r => { ref(r); listRef.current = r; } }
 									width={ width }

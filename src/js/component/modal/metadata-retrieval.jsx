@@ -7,6 +7,7 @@ import { usePrevious } from 'web-common/hooks';
 import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
 import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
+import Table from '../common/table';
 
 
 const MetadataRetrievalModal = () => {
@@ -16,6 +17,32 @@ const MetadataRetrievalModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const recognizeProgress = useSelector(state => state.recognize.progress);
 	const recognizeEntries = useSelector(state => state.recognize.entries, shallowEqual);
+	const columns = [
+		{
+			field: 'title',
+			label: 'Attachment Name',
+			fraction: 0.3,
+			minFraction: 0.1,
+			isSortable: false,
+			isResizable: true
+		},
+		{
+			field: 'parentItemTitle',
+			label: 'Item Name',
+			fraction: 0.7,
+			minFraction: 0.1,
+			isSortable: false,
+			isResizable: true
+		}
+	];
+
+	const getItemData = useCallback((index) => {
+		const item = recognizeEntries[index] ?? {};
+		return {
+			title: item.itemTitle,
+			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing'
+		}
+	}, [recognizeEntries]);
 
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal());
@@ -78,26 +105,13 @@ const MetadataRetrievalModal = () => {
 				<div className="recognize-progress">
 					<progress value={recognizeProgress} max="1" />
 				</div>
-				<div className="recognize-table">
-					{recognizeEntries.map(recognize => {
-						const { itemKey, libraryKey, error, completed, itemTitle, parentItemTitle } = recognize; //error, completed, parentItemKey
-						const key = `${itemKey}-${libraryKey}`;
-
-						return (
-							<div
-								key={key}
-								className={cx('recognize-row')}
-							>
-								<div className="recognize-row-left">
-									{itemTitle}
-								</div>
-								<div className="recognize-row-right">
-									{completed ? parentItemTitle : error ? `Error: ${error}` : "Processing"}
-								</div>
-							</div>
-						);
-					})}
-				</div>
+				<Table
+					containerClassName="recognize-table"
+					columns={columns}
+					totalResults={recognizeEntries.length}
+					itemCount={recognizeEntries.length}
+					getItemData={getItemData}
+				/>
 			</div>
 		</Modal>
 	);

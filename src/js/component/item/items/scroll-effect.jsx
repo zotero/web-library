@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 
 import { findRowIndexInSource } from '../../../actions';
 import { useSourceData } from '../../../hooks';
+import { SCROLL_BUFFER } from '../../../constants/constants';
 
-export const SCROLL_BUFFER = 5;
 
 const ScrollEffectComponent = memo(({ listRef, setScrollToRow }) => {
 	const dispatch = useDispatch();
