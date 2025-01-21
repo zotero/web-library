@@ -25,27 +25,29 @@ const getColumnCssVars = (columns, width, scrollbarWidth) =>
 const Table = props => {
 	const {
 		ariaLabel = "items",
+		bodyClassName = null,
 		columns,
 		containerClassName = null,
-		tableClassName = null,
-		bodyClassName = null,
-		handleKeyDown,
-		scrollToRow = 0,
-		totalResults,
-		onIsItemLoaded = alwaysTrue,
-		itemCount,
-		onLoadMore = noop,
-		onReceiveFocus = noop,
-		onReceiveBlur = noop,
 		getItemData,
-		selectedIndexes = [],
-		onColumnsResized = noop,
-		onColumnsReordered = noop,
-		onSelect = noop,
-		onDoubleClick = noop,
+		handleKeyDown,
+		itemCount,
 		onChangeSortOrder = noop,
+		onColumnsReordered = noop,
+		onColumnsResized = noop,
+		onDoubleClick = noop,
+		onIsItemLoaded = alwaysTrue,
+		onLoadMore = noop,
+		onReceiveBlur = noop,
+		onReceiveFocus = noop,
+		onSelect = noop,
+		rowComponent = null,
+		scrollToRow = 0,
+		selectedIndexes = [],
+		tableClassName = null,
+		totalResults,
 	} = props;
 
+	const RowComponent = rowComponent || TableRow;
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
 
 	if (process.env.NODE_ENV === 'development') {
@@ -278,7 +280,7 @@ const Table = props => {
 									innerRef={innerRef}
 									width={width - 16}
 								>
-									{TableRow}
+									{RowComponent}
 								</ReactWindowList>
 							</div>
 						)}
@@ -290,30 +292,31 @@ const Table = props => {
 }
 
 Table.propTypes = {
-	ariaLabel: PropTypes.string,
-	columns: PropTypes.arrayOf(PropTypes.shape({
-		field: PropTypes.string.isRequired,
-		fraction: PropTypes.number.isRequired,
-		minFraction: PropTypes.number,
-	})).isRequired,
-	containerClassName: PropTypes.string,
-	tableClassName: PropTypes.string,
-	bodyClassName: PropTypes.string,
-	handleKeyDown: PropTypes.func,
-	scrollToRow: PropTypes.number,
-	totalResults: PropTypes.number.isRequired,
-	onIsItemLoaded: PropTypes.func,
-	itemCount: PropTypes.number.isRequired,
-	onLoadMore: PropTypes.func,
-	onReceiveFocus: PropTypes.func,
-	onReceiveBlur: PropTypes.func,
-	getItemData: PropTypes.func.isRequired,
-	selectedIndexes: PropTypes.arrayOf(PropTypes.number),
-	onColumnsResized: PropTypes.func,
-	onColumnsReordered: PropTypes.func,
-	onSelect: PropTypes.func,
-	onDoubleClick: PropTypes.func,
-	onChangeSortOrder: PropTypes.func,
+    ariaLabel: PropTypes.string,
+    bodyClassName: PropTypes.string,
+    columns: PropTypes.arrayOf(PropTypes.shape({
+        field: PropTypes.string.isRequired,
+        fraction: PropTypes.number.isRequired,
+        minFraction: PropTypes.number
+    })).isRequired,
+    containerClassName: PropTypes.string,
+    getItemData: PropTypes.func.isRequired,
+    handleKeyDown: PropTypes.func,
+    itemCount: PropTypes.number.isRequired,
+    onChangeSortOrder: PropTypes.func,
+    onColumnsReordered: PropTypes.func,
+    onColumnsResized: PropTypes.func,
+    onDoubleClick: PropTypes.func,
+    onIsItemLoaded: PropTypes.func,
+    onLoadMore: PropTypes.func,
+    onReceiveBlur: PropTypes.func,
+    onReceiveFocus: PropTypes.func,
+    onSelect: PropTypes.func,
+    rowComponent: PropTypes.elementType,
+    scrollToRow: PropTypes.number,
+    selectedIndexes: PropTypes.arrayOf(PropTypes.number),
+    tableClassName: PropTypes.string,
+    totalResults: PropTypes.number.isRequired
 };
 
 export default memo(Table);

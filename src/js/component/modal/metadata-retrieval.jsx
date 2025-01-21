@@ -1,20 +1,23 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { Fragment, useCallback, memo, useEffect } from 'react';
+import { Fragment, useCallback, memo, useEffect, useId } from 'react';
 import { Button, Icon } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
+import { pick } from 'web-common/utils';
 
 import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
 import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
 import Table from '../common/table';
 import List from '../common/list';
+import { GenericDataCell, default as Cell } from '../common/table-cell';
 
 const MetadataRetrievalListItem = props => {
 	const { data, index, style, className } = props;
 	const { getItemData } = data;
 	const itemData = getItemData(index);
+	const { parentItemTitle, title, iconName, } = itemData;
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
 	return (
@@ -25,29 +28,31 @@ const MetadataRetrievalListItem = props => {
 			style={style}
 			role="listitem"
 		>
-			{itemData !== null ?
-				<Icon
-					type={`28/item-type/attachment-pdf`}
-					symbol="attachment-pdf"
-					useColorScheme={true}
-					colorScheme={colorScheme}
-					width="28"
-					height="28"
-					className="item-type hidden-xs-down"
-				/> :
-				<Icon
-					type={'28/item-type'}
-					width="28"
-					height="28"
-					className="item-type hidden-xs-down"
-				/>
-			}
+			<Icon
+				type={`28/item-type/attachment-pdf`}
+				symbol="attachment-pdf"
+				useColorScheme={true}
+				colorScheme={colorScheme}
+				width="28"
+				height="28"
+				className="item-type"
+			/>
 			<div className="flex-column">
 				<div className="metadata title">
-					{itemData.title}
+					{title}
 				</div>
-				<div className="metadata creator-year">
-					{itemData.parentItemTitle}
+				<div className="metadata parent-item-title-container">
+					<Icon
+						type={`16/${iconName}`}
+						symbol={iconName}
+						color={iconName === 'tick' ? 'var(--accent-green)' : iconName === 'cross' ? 'var(--accent-red)' : 'var(--fill-secondary)'}
+						width="16"
+						height="16"
+						className={cx('metadata-status-icon', { 'spin': iconName === 'refresh' })}
+					/>
+					<span className="parent-item-title">
+						{parentItemTitle}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -61,6 +66,96 @@ MetadataRetrievalListItem.propTypes = {
 	className: PropTypes.string
 };
 
+
+const MetadataRetrievalTitleCell = memo(props => {
+	const { columnName, itemData, labelledById } = props;
+	const { title, iconName, } = itemData;
+	return (
+		<Cell
+			columnName={columnName}
+			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
+		>
+			<Icon
+				label={`${iconName} icon`}
+				type={`16/${iconName}`}
+				symbol={iconName}
+				color={iconName === 'tick' ? 'var(--accent-green)' : iconName === 'cross' ? 'var(--accent-red)' : 'var(--fill-secondary)'}
+				width="16"
+				height="16"
+				className="metadata-status-icon"
+			/>
+			<div className="truncate" id={labelledById}>
+				{title}
+			</div>
+		</Cell>
+	);
+});
+
+MetadataRetrievalTitleCell.displayName = 'MetadataRetrievalTitleCell';
+
+MetadataRetrievalTitleCell.propTypes = {
+	columnName: PropTypes.string.isRequired,
+	itemData: PropTypes.shape({
+		title: PropTypes.string,
+		iconName: PropTypes.string
+	}).isRequired,
+	labelledById: PropTypes.string,
+	colIndex: PropTypes.number,
+	width: PropTypes.string,
+	isFirstColumn: PropTypes.bool,
+	isLastColumn: PropTypes.bool
+}
+
+const MetadataRetrievalTableRow = memo(props => {
+	const { data, index, style } = props;
+	const id = useId();
+	const labelledById = `${id}-title`;
+
+	const { columns, getItemData } = data;
+	const itemData = getItemData(index);
+
+	return (
+		<div
+			aria-rowindex={index + 1}
+			aria-labelledby={labelledById}
+			className="item"
+			style={style}
+			data-index={index}
+			role="row"
+			tabIndex={-2}
+		>
+			{columns.map((c, colIndex) => c.field === "title" ? (
+				<MetadataRetrievalTitleCell
+					key={c.field}
+					colIndex={colIndex}
+					isFirstColumn={colIndex === 0}
+					isLastColumn={colIndex === columns.length - 1}
+					labelledById={labelledById}
+					columnName={c.field}
+					itemData={itemData}
+					width={`var(--col-${colIndex}-width)`}
+				/>
+			) : (
+				<GenericDataCell
+					key={c.field}
+					colIndex={colIndex}
+					isFirstColumn={colIndex === 0}
+					isLastColumn={colIndex === columns.length - 1}
+					columnName={c.field}
+					itemData={itemData}
+					width={`var(--col-${colIndex}-width)`}
+				/>
+			))}
+		</div>
+	)
+});
+
+MetadataRetrievalTableRow.displayName = 'MetadataRetrievalTableRow';
+MetadataRetrievalTableRow.propTypes = {
+	data: PropTypes.object.isRequired,
+	index: PropTypes.number.isRequired,
+	style: PropTypes.object.isRequired
+}
 
 
 const MetadataRetrievalModal = () => {
@@ -91,9 +186,12 @@ const MetadataRetrievalModal = () => {
 
 	const getItemData = useCallback((index) => {
 		const item = recognizeEntries[index] ?? {};
+		const iconName = item.completed ? 'tick' : item.error ? 'cross' : 'refresh';
+
 		return {
 			title: item.itemTitle,
-			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing'
+			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing',
+			iconName
 		}
 	}, [recognizeEntries]);
 
@@ -171,6 +269,7 @@ const MetadataRetrievalModal = () => {
 				) : (
 					<Table
 						containerClassName="recognize-list"
+						rowComponent={MetadataRetrievalTableRow}
 						{...sharedProps}
 					/>
 				)}

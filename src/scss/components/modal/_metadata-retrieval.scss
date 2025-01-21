@@ -2,22 +2,40 @@
 	@include mouse-and-bp-up(md) {
 		width: 550px;
 	}
-}
 
-.recognize-progress {
-	progress {
-		width: 100%;
+	.recognize-progress {
+		progress {
+			width: 100%;
+		}
 	}
-}
 
-.recognize-table {
-	margin-top: 1em;
-	height: 200px;
-	margin-left: -16px;
-	margin-right: -16px;
-}
+	.recognize-table {
+		margin-top: 1em;
+		height: 200px;
+		margin-left: -16px;
+		margin-right: -16px;
+	}
 
-.recognize-list {
-	margin-top: 1em;
-	height: 200px;
+	.recognize-list {
+		margin-top: 1em;
+		height: 200px;
+
+		.parent-item-title-container {
+			color: $item-creator-date-color;
+			display: flex;
+			align-items: center;
+		}
+
+		.parent-item-title {
+			@include text-truncate;
+		}
+
+		.metadata-status-icon {
+			margin-right: 8px;
+
+			&.spin {
+				animation: spin 2s linear infinite;
+			}
+		}
+	}
 }
