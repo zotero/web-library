@@ -554,7 +554,10 @@ function maxByKey(arrOfObjects, key) {
 	return arrOfObjects.reduce((max, obj) => obj[key] > max[key] ? obj : max, arrOfObjects[0]);
 }
 
+const alwaysTrue = () => true;
+
 export {
+	alwaysTrue,
     applyChangesToVisibleColumns,
 	binarySearch,
     cede,

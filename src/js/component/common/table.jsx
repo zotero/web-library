@@ -1,21 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from "react-window-infinite-loader";
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList as ReactWindowList } from 'react-window';
 import { noop } from 'web-common/utils';
 
-import { resizeVisibleColumns } from '../../utils';
+import { alwaysTrue, resizeVisibleColumns } from '../../utils';
 import { useThrottledCallback } from 'use-debounce';
 import HeaderRow from './table-header-row';
 import TableBody from './table-body';
 import TableRow from './table-row';
 import { ROW_HEIGHT, SCROLL_BUFFER } from '../../constants/constants';
 
-
-const alwaysTrue = () => true;
 
 const getColumnCssVars = (columns, width, scrollbarWidth) =>
 	Object.fromEntries(columns.map((c, i) => [
@@ -221,7 +219,6 @@ const Table = props => {
 		getItemData,
 		onSelect,
 		onDoubleClick,
-
 	};
 
 	return (
@@ -267,7 +264,7 @@ const Table = props => {
 									reorderTarget={reorderTarget}
 									onChangeSortOrder={onChangeSortOrder}
 								/>
-								<List
+								<ReactWindowList
 									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROW_HEIGHT}
 									outerElementType={TableBody}
 									className={cx("items-table-body", bodyClassName)}
@@ -282,7 +279,7 @@ const Table = props => {
 									width={width - 16}
 								>
 									{TableRow}
-								</List>
+								</ReactWindowList>
 							</div>
 						)}
 					</InfiniteLoader>
@@ -319,4 +316,4 @@ Table.propTypes = {
 	onChangeSortOrder: PropTypes.func,
 };
 
-export default Table;
+export default memo(Table);

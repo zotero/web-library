@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import { Fragment, useCallback, memo, useEffect } from 'react';
 import { Button, Icon } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -8,6 +9,58 @@ import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
 import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
 import Table from '../common/table';
+import List from '../common/list';
+
+const MetadataRetrievalListItem = props => {
+	const { data, index, style, className } = props;
+	const { getItemData } = data;
+	const itemData = getItemData(index);
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+
+	return (
+		<div
+			className={cx('item', className, {
+				odd: (index + 1) % 2 === 1
+			})}
+			style={style}
+			role="listitem"
+		>
+			{itemData !== null ?
+				<Icon
+					type={`28/item-type/attachment-pdf`}
+					symbol="attachment-pdf"
+					useColorScheme={true}
+					colorScheme={colorScheme}
+					width="28"
+					height="28"
+					className="item-type hidden-xs-down"
+				/> :
+				<Icon
+					type={'28/item-type'}
+					width="28"
+					height="28"
+					className="item-type hidden-xs-down"
+				/>
+			}
+			<div className="flex-column">
+				<div className="metadata title">
+					{itemData.title}
+				</div>
+				<div className="metadata creator-year">
+					{itemData.parentItemTitle}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+MetadataRetrievalListItem.propTypes = {
+	data: PropTypes.object.isRequired,
+	index: PropTypes.number.isRequired,
+	style: PropTypes.object.isRequired,
+	className: PropTypes.string
+};
+
 
 
 const MetadataRetrievalModal = () => {
@@ -55,6 +108,10 @@ const MetadataRetrievalModal = () => {
 			setTimeout(() => { dispatch(navigate({ items: [] })); }, 0);
 		}
 	}, [dispatch, isOpen, wasOpen]);
+
+	const sharedProps = {
+		columns, totalResults: recognizeEntries.length, itemCount: recognizeEntries.length, getItemData
+	};
 
 	return (
 		<Modal
@@ -105,13 +162,18 @@ const MetadataRetrievalModal = () => {
 				<div className="recognize-progress">
 					<progress value={recognizeProgress} max="1" />
 				</div>
-				<Table
-					containerClassName="recognize-table"
-					columns={columns}
-					totalResults={recognizeEntries.length}
-					itemCount={recognizeEntries.length}
-					getItemData={getItemData}
-				/>
+				{isTouchOrSmall ? (
+					<List
+						containerClassName="recognize-list"
+						rowComponent={MetadataRetrievalListItem}
+						{...sharedProps}
+					/>
+				) : (
+					<Table
+						containerClassName="recognize-list"
+						{...sharedProps}
+					/>
+				)}
 			</div>
 		</Modal>
 	);
