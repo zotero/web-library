@@ -27,9 +27,9 @@ const getItemFromIdentifier = identifier => {
 	}
 }
 
-const retrieveMetadata = (itemKey, libraryKey) => {
+const retrieveMetadata = (itemKey, libraryKey, backgroundTaskId) => {
 	return async (dispatch, getState) => {
-		dispatch({ type: BEGIN_RECOGNIZE_DOCUMENT, itemKey, libraryKey });
+		dispatch({ type: BEGIN_RECOGNIZE_DOCUMENT, itemKey, libraryKey, backgroundTaskId });
 		const state = getState();
 		const attachmentItem = state.libraries[state.current.libraryKey]?.items?.[itemKey];
 		try {

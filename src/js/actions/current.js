@@ -1,13 +1,17 @@
 import { omit } from 'web-common/utils';
 
 import { getApiForItems, splitItemAndCollectionKeys } from '../common/actions';
-import { exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
+import {
+	exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
 	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
 	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem,
-	createItemOfType, toggleModal, navigate, retrieveMetadata, undoRetrieveMetadata } from '.';
+	createItemOfType, toggleModal, navigate, retrieveMetadata, undoRetrieveMetadata
+} from '.';
 import columnProperties from '../constants/column-properties';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
+import { BEGIN_ONGOING, COMPLETE_ONGOING, CLEAR_ONGOING } from '../constants/actions';
+import { getUniqueId } from '../utils';
 
 const currentDuplicateItem = () => {
 	return async (dispatch, getState) => {
@@ -173,7 +177,7 @@ const currentToggleTagByIndex = (tagPosition) => {
 		const { libraryKey, itemKeys } = state.current;
 		const items = state.libraries[libraryKey].items;
 		const tagColors = state.libraries[libraryKey].tagColors?.value;
-		if(!tagColors[tagPosition]) {
+		if (!tagColors[tagPosition]) {
 			return;
 		}
 		const tagToToggle = tagColors[tagPosition].name;
@@ -202,12 +206,12 @@ const currentGoToSubscribeUrl = () => {
 		const sortAndDirection = { sort, direction };
 		var pretendedResponse;
 
-		switch(itemsSource) {
+		switch (itemsSource) {
 			case 'query':
 				pretendedResponse = await getApiForItems(
 					{ config, libraryKey }, 'ITEMS_BY_QUERY', { collectionKey, isTrash, isMyPublications }
 				).pretend('get', null, { q, tag, qmode, ...sortAndDirection, format: 'atom' });
-			break;
+				break;
 			case 'top':
 				pretendedResponse = await getApiForItems(
 					{ config, libraryKey }, 'TOP_ITEMS', {}
@@ -232,14 +236,14 @@ const currentGoToSubscribeUrl = () => {
 
 		const redirectUrl = pretendedResponse.getData().url;
 
-		if(isPublic) {
+		if (isPublic) {
 			window.open(redirectUrl);
 			return;
 		}
 
 		const apiKeyBase = websiteUrl + 'settings/keys/new';
 		const qparams = { 'name': 'Private Feed' };
-		if(isGroupLibrary){
+		if (isGroupLibrary) {
 			qparams['library_access'] = 0;
 			qparams['group_' + libraryId] = 'read';
 			qparams['redirect'] = redirectUrl;
@@ -263,8 +267,37 @@ const currentRetrieveMetadata = () => {
 		const state = getState();
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
-		const promises = itemKeys.map(key => dispatch(retrieveMetadata(key, libraryKey)));
-		return await Promise.all(promises);
+		const backgroundTasks = state.ongoing.filter(p => p.kind === 'metadata-retrieval') ?? [];
+
+		// Reset any ongoing metadata retrieval background tasks. We will still account for any items that were already being retrieved.
+		backgroundTasks.forEach(task => {
+			dispatch({ id: task.id, type: CLEAR_ONGOING });
+		});
+
+
+		const id = getUniqueId();
+		dispatch({
+			id,
+			data: {
+				// count previously recognized items and new items, but only count each item once
+				count: new Set([...state.recognize.entries.map(e => e.itemKey), ...itemKeys]).size,
+			},
+			kind: 'metadata-retrieval',
+			skipUI: true, // skip displaying the "ongoing". This will be toggled when modal is closed.
+			libraryKey,
+			type: BEGIN_ONGOING,
+		});
+		const promises = itemKeys.map(key => dispatch(retrieveMetadata(key, libraryKey, id )));
+
+		Promise.all(promises)
+			.finally(() => {
+				dispatch({
+					id,
+					kind: 'metadata-retrieval',
+					type: COMPLETE_ONGOING,
+				});
+			});
+		return promises;
 	}
 }
 

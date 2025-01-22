@@ -17,17 +17,19 @@ const updateProgressInState = (state) => {
 	};
 }
 
-const defaultState = {
+const getDefaultState = () => ({
+	backgroundTaskId: null, // id of the background task for all recognition processes, can only be updated by BEGIN_RECOGNIZE_DOCUMENT action
 	progress: 0,
 	entries: [], // items being recognized: { itemKey, itemTitle, libraryKey, stage, error, completed },
 	lookup: {}, // items previously recognized: { libraryKey-itemKey: parentItemKey }
-}
+});
 
-const recognize = (state = defaultState, action, globalState) => {
+const recognize = (state = getDefaultState(), action, globalState) => {
 	switch (action.type) {
 		case BEGIN_RECOGNIZE_DOCUMENT:
 			return updateProgressInState({
 				...state,
+				backgroundTaskId: action.backgroundTaskId,
 				entries: [
 					...state.entries.filter(entry => !(entry.itemKey === action.itemKey && entry.libraryKey === action.libraryKey)),
 					{
@@ -111,12 +113,7 @@ const recognize = (state = defaultState, action, globalState) => {
 				lookup: omit(state.lookup, `${action.libraryKey}-${action.itemKey}`),
 			});
 		case CLEAR_RECOGNIZE_DOCUMENTS:
-			return {
-				...state,
-				progress: 0,
-				entries: [],
-				lookup: {},
-			}
+			return getDefaultState();
 		default:
 			return state;
 	}

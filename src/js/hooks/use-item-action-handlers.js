@@ -81,7 +81,7 @@ const useItemActionHandlers = () => {
 	}, [dispatch]);
 
 	const handleRetrieveMetadata = useCallback(() => {
-		dispatch(toggleModal(METADATA_RETRIEVAL, true));
+		dispatch(toggleModal(METADATA_RETRIEVAL, true, { recognizeSelected: true }));
 	}, [dispatch]);
 
 	const handleUnrecognize = useCallback(() => {

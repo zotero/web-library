@@ -162,8 +162,10 @@ const MetadataRetrievalModal = () => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isOpen = useSelector(state => state.modal.id === METADATA_RETRIEVAL);
+	const recognizeSelected = useSelector(state => state.modal?.recognizeSelected);
 	const wasOpen = usePrevious(isOpen);
 	const recognizeProgress = useSelector(state => state.recognize.progress);
+	const backgroundTaskId = useSelector(state => state.recognize.backgroundTaskId);
 	const recognizeEntries = useSelector(state => state.recognize.entries, shallowEqual);
 	const isDone = recognizeProgress === 1;
 	const columns = [
@@ -200,16 +202,29 @@ const MetadataRetrievalModal = () => {
 		if(isTouchOrSmall && !isDone) {
 			return;
 		}
+		// if recognition is done, clear the modal and the recognition state when closing
+		if ((isDone || recognizeEntries.length === 0) && backgroundTaskId) {
+			dispatch({ type: 'CLEAR_ONGOING', id: backgroundTaskId });
+		}
 		dispatch(toggleModal());
-	}, [dispatch, isDone, isTouchOrSmall]);
+	}, [backgroundTaskId, dispatch, isDone, isTouchOrSmall, recognizeEntries]);
 
 	useEffect(() => {
 		if (isOpen && !wasOpen) {
-			dispatch(currentRetrieveMetadata());
-			// unselect items to be recognized. If recognition is successful, the items will become child items and thus disappear from the list
-			setTimeout(() => { dispatch(navigate({ items: [] })); }, 0);
+			if (backgroundTaskId) {
+				dispatch({ type: 'UPDATE_ONGOING', id: backgroundTaskId, skipUI: true });
+			}
+			if (recognizeSelected) {
+				dispatch(currentRetrieveMetadata());
+				// unselect items to be recognized. If recognition is successful, the items will become child items and thus disappear from the list
+				setTimeout(() => { dispatch(navigate({ items: [] })); }, 0);
+			}
+		} else if (!isOpen && wasOpen) {
+			if (backgroundTaskId) {
+				dispatch({ type: 'UPDATE_ONGOING', id: backgroundTaskId, skipUI: false });
+			}
 		}
-	}, [dispatch, isOpen, wasOpen]);
+	}, [backgroundTaskId, dispatch, isOpen, recognizeSelected, wasOpen]);
 
 	const sharedProps = {
 		columns, totalResults: recognizeEntries.length, itemCount: recognizeEntries.length, getItemData

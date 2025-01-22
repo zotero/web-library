@@ -8,12 +8,19 @@ import { usePrevious } from 'web-common/hooks';
 
 import Modal from './ui/modal';
 import { maxByKey } from '../utils';
-import { navigate } from '../actions';
+import { navigate, toggleModal } from '../actions';
+import { METADATA_RETRIEVAL } from '../constants/modals';
+
+const defaultAction = (process, dispatch) => {
+	dispatch({ type: 'CLEAR_ONGOING', id: process.id });
+};
+
 
 const PROCESSES = {
 	'upload': {
 		title: 'File Upload',
 		action: (process, dispatch) => {
+			dispatch({ type: 'CLEAR_ONGOING', id: process.id });
 			dispatch(navigate({
 				library: process.data.libraryKey,
 				collection: process.data?.collectionKey,
@@ -28,30 +35,38 @@ const PROCESSES = {
 		title: 'Copying Items',
 		getMessage: process => `${process.completed ? 'Copied' : 'Copying'} ${process.data.count} ${pluralize('item', process.data.count)}`,
 	},
+	'metadata-retrieval': {
+		title: 'Retrieving Metadata',
+		skipSpinner: true,
+		getMessage: process => `${process.completed ? 'Retrieved' : 'Retrieving'} metadata for ${process.data.count} ${pluralize('item', process.data.count)}`,
+		action: (process, dispatch) => {
+			dispatch(toggleModal(METADATA_RETRIEVAL, true));
+		},
+		getActionLabel: () => 'View',
+	},
 };
 
 const OngoingProcessDescription = ({ process }) => {
 	const dispatch = useDispatch();
 	const handleActionClick = useCallback(() => {
-		dispatch({ type: 'CLEAR_ONGOING', id: process.id });
-		PROCESSES[process.kind]?.action(process, dispatch);
+		(PROCESSES[process.kind]?.action ?? defaultAction)(process, dispatch);
 	}, [dispatch, process]);
 
 	return (
 		<li className="process">
 			<div className="ongoing-text">
-				{ PROCESSES[process.kind].getMessage(process) }
+				{PROCESSES[process.kind].getMessage(process)}
 			</div>
 			<span className="process-status">
-				{ process.completed ? (
+				{(PROCESSES[process.kind].skipSpinner || process.completed) ? (
 					<Button
-						onClick={ handleActionClick }
+						onClick={handleActionClick}
 						className="btn-link"
 					>
-						{ PROCESSES[process.kind]?.getActionLabel?.(process) ?? 'Dismiss' }
+						{PROCESSES[process.kind]?.getActionLabel?.(process) ?? 'Dismiss'}
 					</Button>
 				) :
-					<Spinner className="small" /> }
+					<Spinner className="small" />}
 			</span>
 		</li>
 	);
@@ -68,7 +83,7 @@ OngoingProcessDescription.propTypes = {
 
 const Ongoing = () => {
 	const dispatch = useDispatch();
-	const processes = useSelector(state => state.ongoing);
+	const processes = useSelector(state => state.ongoing).filter(p => !p.skipUI);
 	const activeProcesses = processes.filter(p => !p.completed);
 	const prevActiveProcesses = usePrevious(activeProcesses);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -128,7 +143,7 @@ const Ongoing = () => {
 
 	return (
 		<>
-			{ modalOpen && (
+			{modalOpen && (
 				<Modal
 					className="modal-touch ongoing-modal"
 					contentLabel="Upload files"
@@ -138,16 +153,16 @@ const Ongoing = () => {
 					overlayClassName="modal-centered modal-slide"
 				>
 				</Modal>
-		) }
-		<ul
-			style={ processes.length > 0 ? { height: `${6 + 37 * processes.length}px` } : {} }
-			className={ cx("ongoing-pane hidden-touch hidden-sm-down", { flash }) }
-		>
-			{ (processes || []).map(process => (
-				<OngoingProcessDescription key={process.id} process={process} />
-			)) }
-		</ul>
-	</>
+			)}
+			<ul
+				style={processes.length > 0 ? { height: `${6 + 37 * processes.length}px` } : {}}
+				className={cx("ongoing-pane hidden-touch hidden-sm-down", { flash })}
+			>
+				{(processes || []).map(process => (
+					<OngoingProcessDescription key={process.id} process={process} />
+				))}
+			</ul>
+		</>
 	);
 }
 
