@@ -165,6 +165,7 @@ const MetadataRetrievalModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const recognizeProgress = useSelector(state => state.recognize.progress);
 	const recognizeEntries = useSelector(state => state.recognize.entries, shallowEqual);
+	const isDone = recognizeProgress === 1;
 	const columns = [
 		{
 			field: 'title',
@@ -196,8 +197,11 @@ const MetadataRetrievalModal = () => {
 	}, [recognizeEntries]);
 
 	const handleCancel = useCallback(() => {
+		if(isTouchOrSmall && !isDone) {
+			return;
+		}
 		dispatch(toggleModal());
-	}, [dispatch]);
+	}, [dispatch, isDone, isTouchOrSmall]);
 
 	useEffect(() => {
 		if (isOpen && !wasOpen) {
@@ -229,12 +233,14 @@ const MetadataRetrievalModal = () => {
 								</h4>
 							</div>
 							<div className="modal-header-right">
+								{ isDone && (
 								<Button
 									className="btn-link"
 									onClick={handleCancel}
 								>
 									Close
 								</Button>
+								)}
 							</div>
 						</Fragment>
 					) : (
