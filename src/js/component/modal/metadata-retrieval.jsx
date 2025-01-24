@@ -76,13 +76,14 @@ const MetadataRetrievalTitleCell = memo(props => {
 			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
 		>
 			<Icon
-				label={`${iconName} icon`}
-				type={`16/${iconName}`}
-				symbol={iconName}
-				color={iconName === 'tick' ? 'var(--accent-green)' : iconName === 'cross' ? 'var(--accent-red)' : 'var(--fill-secondary)'}
-				width="16"
-				height="16"
 				className="metadata-status-icon"
+				color={iconName === 'tick' ? 'var(--accent-green)' : iconName === 'cross' ? 'var(--accent-red)' : 'var(--fill-secondary)'}
+				height="16"
+				label={iconName === 'tick' ? 'Completed' : iconName === 'cross' ? 'Error' : 'Processing'}
+				role="status"
+				symbol={iconName}
+				type={`16/${iconName}`}
+				width="16"
 			/>
 			<div className="truncate" id={labelledById}>
 				{title}
@@ -194,7 +195,9 @@ const MetadataRetrievalModal = () => {
 		return {
 			title: item.itemTitle,
 			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing',
-			iconName
+			iconName,
+			completed: item.completed,
+			error: item.error
 		}
 	}, [recognizeEntries]);
 
@@ -267,6 +270,7 @@ const MetadataRetrievalModal = () => {
 								icon
 								className="close"
 								onClick={handleCancel}
+								title="Close Dialog"
 							>
 								<Icon type={'16/close'} width="16" height="16" />
 							</Button>
@@ -279,7 +283,14 @@ const MetadataRetrievalModal = () => {
 				tabIndex={!isTouchOrSmall ? 0 : null}
 			>
 				<div className="recognize-progress">
-					<progress value={recognizeProgress} max="1" />
+					<progress
+						aria-label="Metadata retrieval progress"
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-valuenow={recognizeProgress * 100}
+						value={recognizeProgress}
+						max="1"
+					/>
 				</div>
 				{isTouchOrSmall ? (
 					<List

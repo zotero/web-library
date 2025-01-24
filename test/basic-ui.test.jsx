@@ -60,7 +60,7 @@ describe('Basic UI', () => {
 		expect(screen.getByRole('button', { name: 'Tag Selector Options' })).toBeInTheDocument();
 		expect(screen.getByRole('toolbar', { name: 'items toolbar' })).toBeInTheDocument();
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
-		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('82 items in this view')).toBeInTheDocument();
 	});
 
 
@@ -96,7 +96,7 @@ describe('Basic UI', () => {
 		await user.click(clearSearchButton);
 
 		await waitFor(() => expect(searchBox).toHaveValue(''));
-		await waitFor(() => expect(screen.getByText('81 items in this view')).toBeInTheDocument());
+		await waitFor(() => expect(screen.getByText('82 items in this view')).toBeInTheDocument());
 		expect(await screen.findByRole('row', { name: 'Border Collie' })).toBeInTheDocument();
 		expect(screen.queryByRole('row', { name: 'Summary of pathfinding algorithms used in game development' })).not.toBeInTheDocument();
 	});
@@ -203,7 +203,7 @@ describe('Basic UI', () => {
 		const tagSelector = screen.getByRole('navigation', { name: 'tag selector' });
 		const tagButton = getByRole(tagSelector, 'button', { name: 'to read', pressed: false });
 
-		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('82 items in this view')).toBeInTheDocument();
 
 		await userEvent.click(tagButton);
 		await waitForPosition();
@@ -227,7 +227,7 @@ describe('Basic UI', () => {
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
 
-		expect(screen.getByText('81 items in this view')).toBeInTheDocument();
+		expect(screen.getByText('82 items in this view')).toBeInTheDocument();
 		expect(screen.queryByRole('tablist', { name: 'Item Details' })).not.toBeInTheDocument();
 
 		const item = screen.getByRole('row',
@@ -240,7 +240,7 @@ describe('Basic UI', () => {
 			{ name: 'A comparison of sequential Delaunay triangulation algorithms' })
 		).toHaveAttribute('aria-selected', 'true');
 
-		expect(screen.queryByRole('81 items in this view')).not.toBeInTheDocument();
+		expect(screen.queryByRole('82 items in this view')).not.toBeInTheDocument();
 		expect(screen.getByRole('tablist', { name: 'Item Details' })).toBeInTheDocument();
 		expect(screen.getByRole('tab', { name: 'Info', selected: true })).toBeInTheDocument();
 	});

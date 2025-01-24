@@ -37,7 +37,7 @@ describe('Mobile Snapshots', () => {
 			await page.goto(`http://localhost:${port}/testuser/collections/WTTJ2J56/item-list`);
 			await waitForLoad(page);
 			const itemsList = page.getByRole('list', { name: 'items' });
-			expect(await itemsList.getByRole('listitem').count()).toBe(7);
+			await expect(itemsList.getByRole('listitem')).toHaveCount(7);
 			expect(await screenshot(page, `mobile-items-list-${browserName}`)).toBeTruthy();
 
 			if (singleColumnContexts.includes(browserName)) {

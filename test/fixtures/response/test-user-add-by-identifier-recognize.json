@@ -1,0 +1,123 @@
+{
+    "successful": {
+        "0": {
+            "key": "S8CIV6VJ",
+            "version": 250,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/S8CIV6VJ",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/S8CIV6VJ",
+                    "type": "text/html"
+                }
+            },
+            "meta": {
+                "creatorSummary": "Vaswani et al.",
+                "parsedDate": "2023-08-02",
+                "numChildren": 0
+            },
+            "data": {
+                "key": "S8CIV6VJ",
+                "version": 250,
+                "itemType": "preprint",
+                "title": "Attention Is All You Need",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Ashish",
+                        "lastName": "Vaswani"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Noam",
+                        "lastName": "Shazeer"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Niki",
+                        "lastName": "Parmar"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Jakob",
+                        "lastName": "Uszkoreit"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Llion",
+                        "lastName": "Jones"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Aidan N.",
+                        "lastName": "Gomez"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Lukasz",
+                        "lastName": "Kaiser"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Illia",
+                        "lastName": "Polosukhin"
+                    }
+                ],
+                "abstractNote": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.",
+                "genre": "",
+                "repository": "arXiv",
+                "archiveID": "arXiv:1706.03762",
+                "place": "",
+                "date": "2023-08-02",
+                "series": "",
+                "seriesNumber": "",
+                "DOI": "10.48550/arXiv.1706.03762",
+                "citationKey": "",
+                "url": "http://arxiv.org/abs/1706.03762",
+                "accessDate": "2025-01-24T16:42:30Z",
+                "archive": "",
+                "archiveLocation": "",
+                "shortTitle": "",
+                "language": "en",
+                "libraryCatalog": "arXiv.org",
+                "callNumber": "",
+                "rights": "",
+                "extra": "arXiv:1706.03762",
+                "tags": [
+                    {
+                        "tag": "Computer Science - Computation and Language",
+                        "type": 1
+                    },
+                    {
+                        "tag": "Computer Science - Machine Learning",
+                        "type": 1
+                    }
+                ],
+                "collections": [
+                    "CSB4KZUU"
+                ],
+                "relations": {},
+                "dateAdded": "2025-01-24T16:42:31Z",
+                "dateModified": "2025-01-24T16:42:31Z"
+            }
+        }
+    },
+    "success": {
+        "0": "S8CIV6VJ"
+    },
+    "unchanged": {},
+    "failed": {}
+}

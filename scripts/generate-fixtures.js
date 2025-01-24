@@ -15,7 +15,8 @@ import psTree from 'ps-tree';
 // 	"apiKey": "",
 // 	"userName": "",
 // 	"userId": "",
-// 	"translateServerURL": ""
+// 	"translateServerUrl": "",
+// 	"recognizerServerUrl": ""
 // }
 
 const URL = 'http://localhost:8001/';
@@ -42,7 +43,8 @@ const fixtures = [
 ];
 
 const config = JSON.stringify({
-	translateUrl: secret.translateServerURL,
+	translateUrl: secret.translateServerUrl,
+	recognizerUrl: secret.recognizerServerUrl,
 	libraries: {
 		include: [{
 			key: "g5119976",
@@ -206,7 +208,6 @@ async function makeFixture(stateURL, name) {
 	state = state.replaceAll(secret.apiKey, 'zzzzzzzzzzzzzzzzzzzzzzzz');
 	state = state.replaceAll(secret.userName, 'testuser');
 	state = state.replaceAll(secret.userId, '1');
-	state = state.replaceAll(secret.translateServerURL, 'https://translate-server.zotero.org/Prod');
 	let stateJSON = JSON.parse(state);
 	try {
 		stateJSON.config.libraries.find(l => l.key === 'g5119976').isReadOnly = false;
