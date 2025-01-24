@@ -287,7 +287,7 @@ const currentRetrieveMetadata = () => {
 			libraryKey,
 			type: BEGIN_ONGOING,
 		});
-		const promises = itemKeys.map(key => dispatch(retrieveMetadata(key, libraryKey, id )));
+		const promises = itemKeys.map(key => dispatch(retrieveMetadata(key, libraryKey, id)));
 
 		Promise.all(promises)
 			.finally(() => {
@@ -306,8 +306,20 @@ const currentUndoRetrieveMetadata = () => {
 		const state = getState();
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const id = getUniqueId();
+		dispatch({
+			id,
+			data: { count: itemKeys.length, },
+			kind: 'undo-metadata-retrieval',
+			libraryKey,
+			type: BEGIN_ONGOING,
+		});
 		const promises = itemKeys.map(key => dispatch(undoRetrieveMetadata(key, libraryKey)));
-		return await Promise.all(promises);
+		Promise.all(promises)
+			.finally(() => {
+				dispatch({ id, type: CLEAR_ONGOING }); // auto-dismiss
+			});
+		return promises;
 	}
 }
 

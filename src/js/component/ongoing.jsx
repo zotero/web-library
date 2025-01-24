@@ -44,6 +44,10 @@ const PROCESSES = {
 		},
 		getActionLabel: () => 'View',
 	},
+	'undo-metadata-retrieval': {
+		title: 'Undoing',
+		getMessage: process => `${process.completed ? 'Undone' : 'Undoing'} for ${process.data.count} ${pluralize('item', process.data.count)}`,
+	}
 };
 
 const OngoingProcessDescription = ({ process }) => {
@@ -55,10 +59,10 @@ const OngoingProcessDescription = ({ process }) => {
 	return (
 		<li className="process">
 			<div className="ongoing-text">
-				{PROCESSES[process.kind].getMessage(process)}
+				{ PROCESSES[process.kind]?.getMessage(process) ?? "Processing" }
 			</div>
 			<span className="process-status">
-				{(PROCESSES[process.kind].skipSpinner || process.completed) ? (
+				{(PROCESSES[process.kind]?.skipSpinner || process.completed) ? (
 					<Button
 						onClick={handleActionClick}
 						className="btn-link"
@@ -146,11 +150,10 @@ const Ongoing = () => {
 			{modalOpen && (
 				<Modal
 					className="modal-touch ongoing-modal"
-					contentLabel="Upload files"
+					contentLabel="Please wait"
 					isBusy={true}
 					isOpen={false}
 					shouldCloseOnEsc={false}
-					overlayClassName="modal-centered modal-slide"
 				>
 				</Modal>
 			)}

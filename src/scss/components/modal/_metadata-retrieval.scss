@@ -18,7 +18,11 @@
 
 	.recognize-list {
 		margin-top: 1em;
-		height: 200px;
+		height: 250px;
+
+		@include bp-down(xs) {
+			height: 100%; // single column, popup takes up full height
+		}
 
 		.parent-item-title-container {
 			color: $item-creator-date-color;
