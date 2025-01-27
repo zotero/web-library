@@ -7,7 +7,6 @@ import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks } from './utils/common';
 import minState from './fixtures/state/minimal.json';
-import schema from './fixtures/response/schema';
 
 const minStateWithApiAuthorityPart = {
 	...minState,
@@ -44,16 +43,11 @@ describe('config', () => {
 	afterAll(() => server.close());
 
 	test(`Use apiAuthorityPart from config`, async () => {
-		let schemaRequested = false;
 		let settingsRequested = false;
 		let collectionsRequested = false;
 		let itemsRequested = false;
 		let tagsRequested = false;
 		server.use(
-			http.get('https://bazinga.zotero.org/schema', () => {
-				schemaRequested = true;
-				return HttpResponse.json(schema);
-			}),
 			http.get('https://bazinga.zotero.org/users/475425/settings/tagColors', () => {
 				settingsRequested = true;
 				return HttpResponse.json({});
@@ -79,7 +73,6 @@ describe('config', () => {
 		);
 		renderWithProviders(<MainZotero />, { preloadedState: minStateWithApiAuthorityPart });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
-		await waitFor(() => expect(schemaRequested).toBe(true));
 		await waitFor(() => expect(settingsRequested).toBe(true));
 		await waitFor(() => expect(collectionsRequested).toBe(true));
 		await waitFor(() => expect(itemsRequested).toBe(true));
