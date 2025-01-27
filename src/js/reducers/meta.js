@@ -22,7 +22,8 @@ const defaultState = {
 	itemTypeCreatorTypes: {},
 	itemTypeFields: {},
 	itemTemplates: {},
-	invalidated: false
+	invalidated: false,
+	isUsingEmbeddedSchema: null,
 }
 
 // TODO: localization
@@ -34,6 +35,7 @@ const meta = (state = { ...defaultState }, action) => {
 		case RECEIVE_SCHEMA:
 			return {
 				...state,
+				isUsingEmbeddedSchema: !!action?.embedded,
 				itemTypes: action.schema.itemTypes
 					.filter(({ itemType }) => !ignoredItemTypes.includes(itemType))
 					.map(({ itemType }) => ({

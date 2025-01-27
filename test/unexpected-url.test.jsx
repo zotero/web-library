@@ -11,7 +11,6 @@ import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks } from './utils/common';
 import minState from './fixtures/state/minimal.json';
-import schema from './fixtures/response/schema';
 // import searchResults from './fixtures/response/zotero-user-search-results.json';
 // import searchResultsTags from './fixtures/response/zotero-user-search-results-tags.json';
 import groups from './fixtures/response/min-user-groups.json';
@@ -22,9 +21,6 @@ applyAdditionalJestTweaks();
 
 describe('Unexpected URL', () => {
 	const handlers = [
-		http.get('https://api.zotero.org/schema', () => {
-			return HttpResponse.json(schema);
-		}),
 		http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 			return HttpResponse.json({});
 		}),

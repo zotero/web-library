@@ -8,7 +8,6 @@ import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks } from './utils/common';
 import minState from './fixtures/state/minimal.json';
-import schema from './fixtures/response/schema';
 import annotationItems from './fixtures/response/annotation-item.json';
 
 applyAdditionalJestTweaks();
@@ -30,9 +29,6 @@ describe('Unexpected Item Types', () => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
 		server.use(
-			http.get('https://api.zotero.org/schema', () => {
-				return HttpResponse.json(schema);
-			}),
 			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				return HttpResponse.json({});
 			}),

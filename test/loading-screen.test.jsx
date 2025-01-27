@@ -7,22 +7,16 @@ import { renderWithProviders } from './utils/render';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks } from './utils/common';
 import minState from './fixtures/state/minimal.json';
-import schema from './fixtures/response/schema';
 
 applyAdditionalJestTweaks();
 
 describe('Loading Screen', () => {
-	let schemaRequested = false;
 	let settingsRequested = false;
 	let collectionsRequestCounter = 0;
 	let server;
 
 	beforeAll(() => {
 		const handlers = [
-			http.get('https://api.zotero.org/schema', () => {
-				schemaRequested = true;
-				return HttpResponse.json(schema);
-			}),
 			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				settingsRequested = true;
 				return HttpResponse.json({});
@@ -65,7 +59,6 @@ describe('Loading Screen', () => {
 	beforeEach(() => {
 		delete window.location;
 		window.location = new URL('http://localhost/');
-		schemaRequested = false;
 		settingsRequested = false;
 		collectionsRequestCounter = 0;
 	});
@@ -77,7 +70,6 @@ describe('Loading Screen', () => {
 	test('Shows Z while fetching data', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: minState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
-		await waitFor(() => expect(schemaRequested).toBe(true));
 		await waitFor(() => expect(settingsRequested).toBe(true));
 	});
 
