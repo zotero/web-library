@@ -18,18 +18,21 @@ const MoreActionsItems = ({ divider = false }) => {
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
 			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
 	));
+	const selectedItemsAreAllAttachments = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
+		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
+	));
 	const selectedItemsCanBeUnrecognized = useSelector(state =>
 		state.current.itemKeys.every(
 			key => !!state.recognize.lookup[`${state.current.libraryKey}-${key}`]
 		));
-	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize } = useItemActionHandlers();
+	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem } = useItemActionHandlers();
 
 	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
 	const isViewFile = attachment !== null;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = !isReadOnly && item && (itemsSource === 'collection' || itemsSource === 'top');
+	const canDuplicate = !isReadOnly && item && item.itemType !== 'attachment' && (itemsSource === 'collection' || itemsSource === 'top');
 
 	const handleViewFileClick = useCallback(() => {
 		dispatch(pickBestItemAction(item.key));
@@ -55,11 +58,6 @@ const MoreActionsItems = ({ divider = false }) => {
 					View Online
 				</DropdownItem>
 			)}
-			{canDuplicate && (
-				<DropdownItem onClick={handleDuplicate}>
-					Duplicate Item
-				</DropdownItem>
-			)}
 			{(isTouchOrSmall && selectedItemsCanBeRecognized) && (
 				<>
 					{(canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider />}
@@ -67,6 +65,11 @@ const MoreActionsItems = ({ divider = false }) => {
 						Retrieve Metadata
 					</DropdownItem>
 				</>
+			)}
+			{ selectedItemsAreAllAttachments && (
+				<DropdownItem onClick={handleCreateParentItem}>
+					{ item ? "Create Parent Item" : "Create Parent Items" }
+				</DropdownItem>
 			)}
 			{selectedItemsCanBeUnrecognized && (
 				<>
@@ -76,7 +79,12 @@ const MoreActionsItems = ({ divider = false }) => {
 					</DropdownItem>
 				</>
 			)}
-			{divider && (canDuplicate || isViewFile || isViewOnline || selectedItemsCanBeUnrecognized) && <DropdownItem divider />}
+			{canDuplicate && (
+				<DropdownItem onClick={handleDuplicate}>
+					Duplicate Item
+				</DropdownItem>
+			)}
+			{divider && (isViewFile || isViewOnline || selectedItemsAreAllAttachments || selectedItemsCanBeUnrecognized || canDuplicate) && <DropdownItem divider />}
 		</Fragment>
 	);
 }
@@ -159,7 +167,7 @@ const MoreActionsDropdownTouch = memo(() => {
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = !isReadOnly && item && (itemsSource === 'collection' || itemsSource === 'top');
+	const canDuplicate = !isReadOnly && item && item.itemType !== 'attachment' && (itemsSource === 'collection' || itemsSource === 'top');
 	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
 			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'

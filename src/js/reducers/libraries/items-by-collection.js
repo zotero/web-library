@@ -9,7 +9,7 @@ import {
 	RECEIVE_COLLECTIONS_IN_LIBRARY, RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS, RECEIVE_DELETED_CONTENT, RECEIVE_FETCH_ITEMS, RECEIVE_ITEMS_IN_COLLECTION,
 	RECEIVE_MOVE_ITEMS_TRASH, RECEIVE_RECOVER_ITEMS_TRASH, RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
-	RECEIVE_UPDATE_ITEM, REQUEST_ITEMS_IN_COLLECTION, SORT_ITEMS,
+	RECEIVE_UPDATE_ITEM, REQUEST_ITEMS_IN_COLLECTION, SORT_ITEMS, RECEIVE_UPDATE_MULTIPLE_ITEMS
 } from '../../constants/actions.js';
 
 const detectChangesInMembership = (mappings, state, action, items) => {
@@ -175,6 +175,24 @@ const itemsByCollection = (state = {}, action, { items, meta }) => {
 					return [colKey, filterItemKeys(itemKeys, action.item.key)];
 				}
 			});
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
+			const changes = action.multiPatch.filter(patch => 'collections' in patch).map(patch => [patch.key, patch.collections]);
+			return mapObject(state, (colKey, itemKeys) => {
+				for (let [modifiedItemKey, newCollections] of changes) {
+					if(newCollections.includes(colKey)) {
+						itemKeys = injectExtraItemKeys(
+							meta.mappings,
+							itemKeys,
+							modifiedItemKey,
+							{ ...items, [modifiedItemKey]: action.items.find(i => i.key === modifiedItemKey) }
+						);
+					} else {
+						itemKeys = filterItemKeys(itemKeys, modifiedItemKey);
+					}
+				}
+				return [colKey, itemKeys];
+			});
+		}
 		case SORT_ITEMS:
 			return Object.entries(state).reduce((aggr, [collectionKey, itemKeys]) => {
 				aggr[collectionKey] = sortItemKeysOrClear(

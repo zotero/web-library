@@ -97,6 +97,10 @@ const dismissError = errorId => {
 	return { type: DISMISS_ERROR, errorId };
 }
 
+const dismissErrorByTag = tag => {
+	return { type: DISMISS_ERROR, errorTag: tag };
+}
+
 const triggerFocus = (section, isOn) => {
 	return { type: TRIGGER_FOCUS, section, isOn }	;
 }
@@ -147,7 +151,8 @@ const currentTriggerSearchMode = () => {
 	}
 }
 
-export { currentTriggerSearchMode, dismissError, resetQuery, toggleAdvancedSearch,
+export {
+	currentTriggerSearchMode, dismissError, dismissErrorByTag, resetQuery, toggleAdvancedSearch,
 	toggleHideAutomaticTags, toggleModal, toggleNavbar, toggleSelectMode, toggleTagSelector,
 	toggleTouchTagSelector, toggleTransitions, triggerEditingItem, triggerFocus,
 	triggerHighlightedCollections, triggerResizeViewport, triggerSearchMode, triggerSelectMode,

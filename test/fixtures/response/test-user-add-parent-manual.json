@@ -1,0 +1,64 @@
+{
+    "successful": {
+        "0": {
+            "key": "AUPETCJW",
+            "version": 250,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/AUPETCJW",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/AUPETCJW",
+                    "type": "text/html"
+                }
+            },
+            "meta": {
+                "numChildren": 0
+            },
+            "data": {
+                "key": "AUPETCJW",
+                "version": 250,
+                "itemType": "document",
+                "title": "attention-is-all-you-need",
+                "creators": [],
+                "abstractNote": "",
+                "publisher": "",
+                "date": "",
+                "language": "",
+                "shortTitle": "",
+                "url": "",
+                "accessDate": "",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "",
+                "callNumber": "",
+                "rights": "",
+                "extra": "",
+                "tags": [],
+                "collections": [
+                    "CSB4KZUU"
+                ],
+                "relations": {},
+                "dateAdded": "2025-01-29T12:23:41Z",
+                "dateModified": "2025-01-29T12:23:41Z"
+            }
+        }
+    },
+    "success": {
+        "0": "AUPETCJW"
+    },
+    "unchanged": {},
+    "failed": {}
+}

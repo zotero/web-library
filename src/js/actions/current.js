@@ -2,10 +2,10 @@ import { omit } from 'web-common/utils';
 
 import { getApiForItems, splitItemAndCollectionKeys } from '../common/actions';
 import {
-	exportItems, chunkedToggleTagsOnItems, chunkedAddToCollection, chunkedCopyToLibrary,
-	chunkedDeleteItems, chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash,
-	chunkedRemoveFromCollection, chunkedUpdateCollectionsTrash, chunkedDeleteCollections, createItem,
-	createItemOfType, toggleModal, navigate, retrieveMetadata, undoRetrieveMetadata
+	chunkedAddToCollection, chunkedCopyToLibrary, chunkedDeleteCollections, chunkedDeleteItems,
+	chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash, chunkedRemoveFromCollection,
+	chunkedToggleTagsOnItems, chunkedUpdateCollectionsTrash, createItem, createItemOfType,
+	exportItems, navigate, retrieveMetadata, toggleModal, undoRetrieveMetadata
 } from '.';
 import columnProperties from '../constants/column-properties';
 import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
@@ -344,5 +344,5 @@ export {
 	currentRetrieveMetadata,
 	currentToggleTagByIndex,
 	currentTrashOrDelete,
-	currentUndoRetrieveMetadata,
+	currentUndoRetrieveMetadata
 }

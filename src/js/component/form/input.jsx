@@ -10,8 +10,14 @@ import AutoResizer from './auto-resizer';
 import { PortalContext } from '../portal';
 import { useFloating, shift, flip, size } from '@floating-ui/react-dom';
 
-const NATIVE_INPUT_PROPS = ['autoFocus', 'form', 'id', 'inputMode', 'max', 'maxLength',
-'min', 'minLength', 'name', 'placeholder', 'required', 'type', 'spellCheck', 'step', 'tabIndex'];
+const NATIVE_INPUT_PROPS = [
+	"accept", "alt", "autoComplete", "autoFocus", "capture", "children", "dirname", "disabled",
+	"form", "formAction", "formEnctype", "formMethod", "formNoValidate", "formTarget", "height",
+	"id", "inputMode", "list", "max", "maxLength", "min", "minLength", "multiple", "name",
+	"onChange", "onChangeCapture", "onInput", "onInputCapture", "onInvalid", "onInvalidCapture",
+	"onSelect", "onSelectCapture", "pattern", "placeholder", "readOnly", "required", "size",
+	"spellCheck", "src", "step", "tabIndex", "type", "width"
+];
 
 const AutoResizerInput = memo(forwardRef((props, ref) => props.resize ? (
 	<AutoResizer
@@ -245,7 +251,7 @@ const Input = memo(forwardRef((props, ref) => {
 				{ ...pick(rest, NATIVE_INPUT_PROPS) }
 				{ ...pick(rest, key => key.match(/^(aria-|data-|on[A-Z]).*/)) }
 				aria-autocomplete={suggestions ? 'list' : null}
-				aria-controls={ `${id}-suggestions}` }
+				aria-controls={ suggestions ? `${id}-suggestions}` : null }
 			/>
 			{suggestions && (portalRef?.current ? createPortal(suggestionsEl, portalRef.current) : suggestionsEl) }
 			{ isBusy ? <Spinner /> : null }

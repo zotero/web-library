@@ -17,10 +17,12 @@ import NewItemModal from './modal/new-item';
 import RenameCollectionModal from './modal/rename-collection';
 import SettingsModal from './modal/settings';
 import StyleInstallerModal from './modal/style-installer';
+import CreateParentItemModal from './modal/create-parent-item';
 
 import { ADD_LINKED_URL_TOUCH, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
 	EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, METADATA_RETRIEVAL, MOVE_COLLECTION, NEW_ITEM, SETTINGS,
-	SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, } from '../constants/modals';
+	SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER,
+	CREATE_PARENT_ITEM, } from '../constants/modals';
 
 const lookup = {
 	[ADD_BY_IDENTIFIER]: AddByIdentifierModal,
@@ -38,6 +40,7 @@ const lookup = {
 	[SORT_ITEMS]: ItemsSortModal,
 	[STYLE_INSTALLER]: StyleInstallerModal,
 	[METADATA_RETRIEVAL]: metadataRetrieval,
+	[CREATE_PARENT_ITEM]: CreateParentItemModal,
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

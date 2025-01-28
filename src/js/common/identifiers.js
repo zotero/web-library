@@ -10,31 +10,31 @@ const cleanISBN = (isbnStr, dontValidate) => {
 		isbnMatch;
 
 	// eslint-disable-next-line no-cond-assign
-	while(isbnMatch = isbnRE.exec(isbnStr)) {
+	while (isbnMatch = isbnRE.exec(isbnStr)) {
 		var isbn = isbnMatch[0].replace(/\s+/g, '');
 
 		if (dontValidate) {
 			return isbn;
 		}
 
-		if(isbn.length == 10) {
+		if (isbn.length == 10) {
 			// Verify ISBN-10 checksum
 			let sum = 0;
 			for (let i = 0; i < 9; i++) {
-				sum += isbn[i] * (10-i);
+				sum += isbn[i] * (10 - i);
 			}
 			//check digit might be 'X'
-			sum += (isbn[9] == 'X')? 10 : isbn[9]*1;
+			sum += (isbn[9] == 'X') ? 10 : isbn[9] * 1;
 
 			if (sum % 11 == 0) return isbn;
 		} else {
 			// Verify ISBN 13 checksum
 			let sum = 0;
-			for (let i = 0; i < 12; i+=2) sum += isbn[i]*1;	//to make sure it's int
-			for (let i = 1; i < 12; i+=2) sum += isbn[i]*3;
-			sum += isbn[12]*1; //add the check digit
+			for (let i = 0; i < 12; i += 2) sum += isbn[i] * 1;	//to make sure it's int
+			for (let i = 1; i < 12; i += 2) sum += isbn[i] * 3;
+			sum += isbn[12] * 1; //add the check digit
 
-			if (sum % 10 == 0 ) return isbn;
+			if (sum % 10 == 0) return isbn;
 		}
 
 		isbnRE.lastIndex = isbnMatch.index + 1; // Retry the same spot + 1
@@ -86,7 +86,7 @@ const extractIdentifiers = text => {
 			// eslint-disable-next-line no-cond-assign
 			while (isbn = ISBN_RE.exec(ids)) {
 				isbn = cleanISBN(isbn[1]);
-				if(isbn && !foundIDs.has(isbn)) {
+				if (isbn && !foundIDs.has(isbn)) {
 					identifiers.push({
 						ISBN: isbn
 					});
@@ -106,7 +106,7 @@ const extractIdentifiers = text => {
 		while ((m = arXiv_RE.exec(text))) {
 			let arXiv = m[2] || m[5];
 			if (arXiv && !foundIDs.has(arXiv)) {
-				identifiers.push({arXiv: arXiv});
+				identifiers.push({ arXiv: arXiv });
 				foundIDs.add(arXiv);
 			}
 		}
@@ -129,4 +129,21 @@ const extractIdentifiers = text => {
 	return identifiers;
 }
 
-export { cleanISBN, cleanDOI, extractIdentifiers };
+// TODO: This and `searchIdentifier` action should be merged (but we don't want to dispatch idenfitier actions here)
+const getItemFromIdentifier = async (identifier, translateUrl) => {
+	const url = `${translateUrl}/search`;
+	const response = await fetch(url, {
+		method: 'POST',
+		mode: 'cors',
+		headers: { 'Content-Type': 'text/plain', },
+		body: identifier
+	});
+	if (response.ok) {
+		const translatorResponse = await response.json();
+		return translatorResponse?.[0]
+	} else {
+		throw new Error('Failed to get item from identifier');
+	}
+}
+
+export { cleanISBN, cleanDOI, extractIdentifiers, getItemFromIdentifier };

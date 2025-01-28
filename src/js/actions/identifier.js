@@ -282,6 +282,7 @@ const reportIdentifierNoResults = (message = 'Zotero could not find any identifi
 	type: ERROR_IDENTIFIER_NO_RESULT,
 	error: message,
 	errorType: 'info',
+	errorTag: 'identifier'
 });
 
 export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, importFromFile, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };

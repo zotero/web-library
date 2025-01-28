@@ -7,7 +7,7 @@ import {
 	currentUndoRetrieveMetadata, navigate, toggleItemsSortingDirection, toggleModal, triggerEditingItem,
 	triggerSelectMode
 } from '../actions';
-import { ADD_BY_IDENTIFIER, METADATA_RETRIEVAL, SORT_ITEMS } from '../constants/modals';
+import { ADD_BY_IDENTIFIER, CREATE_PARENT_ITEM, METADATA_RETRIEVAL, SORT_ITEMS } from '../constants/modals';
 
 const useItemActionHandlers = () => {
 	const dispatch = useDispatch();
@@ -84,18 +84,21 @@ const useItemActionHandlers = () => {
 		dispatch(toggleModal(METADATA_RETRIEVAL, true, { recognizeSelected: true }));
 	}, [dispatch]);
 
+	const handleCreateParentItem = useCallback(() => {
+		dispatch(toggleModal(CREATE_PARENT_ITEM, true, { createParentItem: true }));
+	}, [dispatch]);
+
 	const handleUnrecognize = useCallback(() => {
 		dispatch(currentUndoRetrieveMetadata());
 		setTimeout(() => dispatch(navigate({ items: [] }), 0));
 	}, [dispatch]);
 
-	return {
-		handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleCiteModalOpen,
-		handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote,
-		handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleSortModalOpen,
-		handleSortOrderToggle, handleUndelete, handleBibliographyModalOpen, handleDuplicate,
-		handleExportModalOpen, handleRetrieveMetadata, handleUnrecognize
-	};
+	return { handleAddByIdentifierModalOpen, handleAddToCollectionModalOpen, handleBibliographyModalOpen,
+		handleCiteModalOpen, handleCreateParentItem, handleDuplicate, handleExportModalOpen,
+		handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote, handlePermanentlyDelete,
+		handleRemoveFromCollection, handleRetrieveMetadata, handleSortModalOpen, handleSortOrderToggle,
+		handleTrash, handleUndelete, handleUnrecognize
+    };
 }
 
 export { useItemActionHandlers }

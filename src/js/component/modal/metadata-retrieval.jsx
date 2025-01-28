@@ -239,7 +239,7 @@ const MetadataRetrievalModal = () => {
 			contentLabel="Metadata Retrieval"
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
-			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
+			overlayClassName={cx('modal-centered', { 'modal-slide': isTouchOrSmall })}
 		>
 			<div className="modal-header">
 				{

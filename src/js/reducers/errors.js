@@ -9,7 +9,7 @@ const isDuplicate = (error, prevError) =>
 	error && prevError && error.message === prevError.message &&
 	error.type === prevError.type && !prevError.isDismissed;
 
-const processError = ({ type, error, errorType }, meta) => {
+const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 	var message, cta;
 
 	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.startsWith('NetworkError'))) {
@@ -60,13 +60,20 @@ const processError = ({ type, error, errorType }, meta) => {
 		raw: JSON.stringify(error),
 		timesOccurred: 1,
 		timestamp: Date.now(),
-		type: errorType || 'error'
+		type: errorType || 'error',
+		errorTag
 	}
 }
 
 const errors = (state = [], action, { meta } = {}) => {
 	if(action.type === DISMISS_ERROR) {
-		return state.filter(error => error.id !== action.errorId);
+		return state.filter(error => {
+			if(action.errorTag) {
+				// leave errors that do not match this tag
+				return error.errorTag !== action.errorTag;
+			}
+			return error.id !== action.errorId;
+		});
 	} else if(action.type && action.type.startsWith('ERROR_')) {
 		if(action.silent) {
 			return state;

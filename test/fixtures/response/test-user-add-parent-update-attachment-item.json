@@ -1,0 +1,67 @@
+{
+    "successful": {
+        "0": {
+            "key": "UMPPCXU4",
+            "version": 250,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/vexling",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/UMPPCXU4",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/vexling/items/UMPPCXU4",
+                    "type": "text/html"
+                },
+                "up": {
+                    "href": "https://api.zotero.org/users/1/items/AUPETCJW",
+                    "type": "application/json"
+                },
+                "enclosure": {
+                    "type": "application/pdf",
+                    "href": "https://api.zotero.org/users/1/items/UMPPCXU4/file/view",
+                    "title": "attention-is-all-you-need.pdf",
+                    "length": 2215244
+                }
+            },
+            "meta": {
+                "numChildren": 0
+            },
+            "data": {
+                "key": "UMPPCXU4",
+                "version": 250,
+                "parentItem": "AUPETCJW",
+                "itemType": "attachment",
+                "linkMode": "imported_file",
+                "title": "attention-is-all-you-need",
+                "accessDate": "",
+                "url": "",
+                "note": "",
+                "contentType": "application/pdf",
+                "charset": "",
+                "filename": "attention-is-all-you-need.pdf",
+                "md5": "18e1b007a1dab45b30cc861ba2dfda25",
+                "mtime": 1737642826534,
+                "tags": [],
+                "relations": {},
+                "dateAdded": "2025-01-23T14:33:37Z",
+                "dateModified": "2025-01-29T12:23:41Z"
+            }
+        }
+    },
+    "success": {
+        "0": "UMPPCXU4"
+    },
+    "unchanged": {},
+    "failed": {}
+}

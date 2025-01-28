@@ -83,7 +83,6 @@ describe('Metadata Retrieval', () => {
 				expect(inputData.fileName).toBe('attention-is-all-you-need.pdf');
 				expect(inputData.totalPages).toBe(15);
 				hasPostedToRecognizeService = true;
-				version++;
 				await delay(100);
 				return HttpResponse.json({
 					"type": "journal-article",
@@ -95,7 +94,6 @@ describe('Metadata Retrieval', () => {
 				const identifier = await request.text();
 				expect(identifier).toMatch(/arxiv:\s+1706.03762/i);
 				hasBeenSearched = true;
-				version++;
 				await delay(100);
 				return HttpResponse.json(searchByIdentifier);
 			}),

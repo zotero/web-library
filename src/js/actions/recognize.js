@@ -4,28 +4,7 @@ import { BEGIN_RECOGNIZE_DOCUMENT, COMPLETE_RECOGNIZE_DOCUMENT, ERROR_RECOGNIZE_
 	ERROR_UNRECOGNIZE_DOCUMENT, } from '../constants/actions';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { pick } from 'web-common/utils';
-
-// TODO: This and `searchIdentifier` should be merged (but we don't want to dispatch idenfitier actions here)
-const getItemFromIdentifier = identifier => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const { translateUrl } = state.config;
-		const url = `${translateUrl}/search`;
-		const response = await fetch(url, {
-			method: 'POST',
-			mode: 'cors',
-			headers: { 'Content-Type': 'text/plain', },
-			body: identifier
-		});
-		if (response.ok) {
-			const translatorResponse = await response.json();
-			return translatorResponse?.[0]
-		} else {
-			//TODO
-			throw new Error('Failed to get item from identifier');
-		}
-	}
-}
+import { getItemFromIdentifier } from '../common/identifiers';
 
 const retrieveMetadata = (itemKey, libraryKey, backgroundTaskId) => {
 	return async (dispatch, getState) => {
@@ -110,7 +89,9 @@ const getRecognizerData = itemKey => {
 // create item based on data returned from recognizer
 // based on https://github.com/zotero/zotero/blob/5fd94e22dff87318aa3a84e735e1fdece488f5e3/chrome/content/zotero/xpcom/recognizeDocument.js#L411
 const recognizePDF = (recognizerData) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { translateUrl } = state.config;
 		let identifierPrefix = '';
 		let idenfitierValue = '';
 		if (recognizerData.arxiv) {
@@ -126,7 +107,9 @@ const recognizePDF = (recognizerData) => {
 
 		if (identifierPrefix && idenfitierValue) {
 			try {
-				const translatedItem = await dispatch(getItemFromIdentifier(`${identifierPrefix}: ${idenfitierValue}`));
+				const translatedItem = await getItemFromIdentifier(
+					`${identifierPrefix}: ${idenfitierValue}`, translateUrl
+				);
 				if (translatedItem) {
 					if (!translatedItem.abstractNote && recognizerData.abstract) {
 						translatedItem.abstractNote = recognizerData.abstract;
