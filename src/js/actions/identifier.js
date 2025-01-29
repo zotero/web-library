@@ -90,8 +90,11 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 					response
 				});
 				return items;
+			} else if (response.status === 500 && response.headers.get('content-type').startsWith('text/plain')) {
+				const message = await response.text();
+				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else if(response.status !== 200) {
-				const message = 'Unexpected response from the server.';
+				const message = `Unexpected response from the server (${response.status}).`;
 				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
 			} else if (!response.headers.get('content-type').startsWith('application/json')) {
 				const message = 'Unexpected response from the server.';
