@@ -97,6 +97,10 @@
 		border-bottom: $border-width solid $attachment-details-border-color;
 		z-index: 2;
 
+		.toolbar {
+			background: unset;
+		}
+
 		.btn {
 			margin-left: $space-min;
 		}
