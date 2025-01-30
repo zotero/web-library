@@ -20,7 +20,7 @@
 		height: 100%; // Fix rich-editor height in Safari
 	}
 
-	&.dnd-target {
+	&.dnd-target .scroll-container-mouse {
 		position: relative;
 		color: var(--material-background);
 		background: var(--fill-secondary);

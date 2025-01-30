@@ -236,7 +236,7 @@
 			}
 		}
 
-		&.dnd-target:not(.specifity) {
+		&.dnd-target:not(.specifity):not(.specifity) {
 			color: var(--material-background);
 			background: var(--fill-secondary);
 		}
