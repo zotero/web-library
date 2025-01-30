@@ -1,7 +1,7 @@
 #{$scope} {
 	.embedded-collection-tree {
 			@include same(top, bottom, left, 0);
-			background: white;
+			background: var(--color-background);
 			border: 1px solid black;
 			height: 100%;
 			padding: $space-xs;

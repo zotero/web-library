@@ -346,7 +346,7 @@
 
 .table-cover {
 	align-items: center;
-	background: white;
+	background: var(--color-background);
 	display: flex;
 	height: 100%;
 	height: calc(100% - $item-table-row-height);
