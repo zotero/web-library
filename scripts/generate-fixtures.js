@@ -105,7 +105,8 @@ async function checkOrStartServer() {
 		throw new MisconfiguredServer("Server is running, but not with correct config. Either change the config or stop the server and run this script again.");
 	} catch (e) {
 		if (e instanceof MisconfiguredServer) {
-			throw e;
+			console.error(e.message);
+			process.exit(1);
 		}
 		console.log('Server does not seem to be running, running "npm start"');
 		subprocess = child_process.spawn("sh", ["-c", "npm start"], { cwd: ROOT });
@@ -239,15 +240,17 @@ async function makeFixture(stateURL, name) {
 	} finally {
 		await restoreIndex();
 		console.log('cleaning up');
-		psTree(subprocess.pid, (err, children) => {
-			children.forEach(function (p) {
-				try {
-					process.kill(p.PID, 'SIGINT');
-				} catch (e) {
-					// ignore
-				}
+		if (subprocess) {
+			psTree(subprocess.pid, (err, children) => {
+				children.forEach(function (p) {
+					try {
+						process.kill(p.PID, 'SIGINT');
+					} catch (e) {
+						// ignore
+					}
+				});
 			});
-		});
-		subprocess.kill('SIGINT');
+			subprocess.kill('SIGINT');
+		}
 	}
 })();
