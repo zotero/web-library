@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { findAllByRole, getByRole, screen, queryByRole, waitFor } from '@testing-library/react'
+import { findAllByRole, getByRole, screen, queryByRole, waitFor, getAllByRole } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -318,5 +318,47 @@ describe('Basic UI', () => {
 		await waitForPosition();
 
 		expect(queryByRole(grid, 'columnheader', { name: 'Creator' })).not.toBeInTheDocument();
+	});
+
+	test('New item dropdown includes sorted primary and secondary options', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
+		await waitForPosition();
+
+		const plusBtn = screen.getByRole('button', { name: 'New Item' });
+		await userEvent.click(plusBtn);
+		await waitForPosition();
+
+		expect(screen.getByRole('button',{ name: 'New Item', expanded: true })).toBeInTheDocument();
+		const itemTypePicker = screen.getByRole('menu', { name: 'New Item Type Picker' });
+		const bookTypeBtn = getByRole(itemTypePicker, 'menuitem', { name: 'Book' });
+		const journalTypeBtn = getByRole(itemTypePicker, 'menuitem', { name: 'Journal Article' });
+		expect(bookTypeBtn).toBeInTheDocument();
+		expect(journalTypeBtn).toBeInTheDocument();
+		expect(bookTypeBtn.compareDocumentPosition(journalTypeBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'Artwork' })).not.toBeInTheDocument();
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'Patent' })).not.toBeInTheDocument();
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'Software' })).not.toBeInTheDocument();
+
+		await userEvent.click(getByRole(itemTypePicker, 'menuitem', { name: 'More' }));
+		await waitForPosition();
+
+		const artworkTypeBtn = getByRole(itemTypePicker, 'menuitem', { name: 'Artwork' });
+		const patentTypeBtn = getByRole(itemTypePicker, 'menuitem', { name: 'Patent' });
+		const softwareTypeBtn = getByRole(itemTypePicker, 'menuitem', { name: 'Software' });
+		expect(artworkTypeBtn).toBeInTheDocument();
+		expect(patentTypeBtn).toBeInTheDocument();
+		expect(softwareTypeBtn).toBeInTheDocument();
+		// ignored item types must not be shown
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'Attachment' })).not.toBeInTheDocument();
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'attachment' })).not.toBeInTheDocument();
+		expect(queryByRole(itemTypePicker, 'menuitem', { name: 'note' })).not.toBeInTheDocument();
+
+		// primary options must not be repeated
+		expect(getAllByRole(itemTypePicker, 'menuitem', { name: 'Book' })).toHaveLength(1);
+
+		// options must be sorted by the localized name (software) not the itemType (computerProgram)
+		expect(artworkTypeBtn.compareDocumentPosition(patentTypeBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+		expect(patentTypeBtn.compareDocumentPosition(softwareTypeBtn) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
 	});
 });

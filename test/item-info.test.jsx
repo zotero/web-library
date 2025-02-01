@@ -199,6 +199,26 @@ describe('Item info', () => {
 		expect(hasBeenPosted).toBe(true);
 	});
 
+	test('It should display valid item types, sorted by label', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		const itemTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
+		await user.click(itemTypeCombo);
+		const bookOpt = getByRole(itemTypeCombo, 'option', { name: 'Book' });
+		const journalArticleOpt = getByRole(itemTypeCombo, 'option', { name: 'Journal Article' });
+		const patentOpt = getByRole(itemTypeCombo, 'option', { name: 'Patent' });
+		const softwareOpt = getByRole(itemTypeCombo, 'option', { name: 'Software' });
+		expect(bookOpt).toBeInTheDocument();
+		expect(journalArticleOpt).toBeInTheDocument();
+		expect(patentOpt).toBeInTheDocument();
+		expect(softwareOpt).toBeInTheDocument();
+		expect(bookOpt.compareDocumentPosition(journalArticleOpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+		expect(journalArticleOpt.compareDocumentPosition(patentOpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+		expect(patentOpt.compareDocumentPosition(softwareOpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+	});
+
 	test('It should use base-type-mappings when changing item types', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
@@ -298,9 +318,9 @@ describe('Item info', () => {
 			'Move Down'
 		]));
 
-		const inputTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
-		await user.click(inputTypeCombo);
-		await user.selectOptions(getByRole(inputTypeCombo, 'listbox'), 'Radio Broadcast');
+		const itemTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
+		await user.click(itemTypeCombo);
+		await user.selectOptions(getByRole(itemTypeCombo, 'listbox'), 'Radio Broadcast');
 
 		await waitFor(() => expect(screen.getByRole('textbox', { name: 'Program Title' })).toBeInTheDocument());
 		const expectedAuthorTypes = ['Director','Scriptwriter','Producer','Cast Member','Contributor','Guest',];

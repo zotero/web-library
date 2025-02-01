@@ -4,47 +4,44 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-
 import { useSelector } from 'react-redux';
 import { noop } from 'web-common/utils';
 
-import primaryItemTypes from '../../../constants/primary-item-types';
+import { primaryItemTypes } from '../../../constants/item-types';
 import { getPrevSibling } from '../../../utils';
 import UploadAction from './upload';
 
 const DropdownItemType = props => {
-	const { itemTypeSpec, onNewItemCreate } = props;
-	const { itemType, localized } = itemTypeSpec;
+	const { itemTypeOption, onNewItemCreate } = props;
+	const { value, label } = itemTypeOption;
 
 	const handleSelect = useCallback(() => {
-		onNewItemCreate(itemType);
-	}, [itemType, onNewItemCreate]);
+		onNewItemCreate(value);
+	}, [onNewItemCreate, value]);
 
 	return (
 		<DropdownItem onClick={ handleSelect }>
-			{ localized }
+			{ label }
 		</DropdownItem>
 	);
 }
+
+DropdownItemType.propTypes = {
+	itemTypeOption: PropTypes.object,
+	onNewItemCreate: PropTypes.func,
+};
 
 const NewItemSelector = props => {
 	const { disabled, onFocusNext = noop, onFocusPrev = noop, onNewItemCreate = noop, tabIndex } = props;
 	const [isOpen, setIsOpen] = useState(false);
 	const [isSecondaryVisible, setIsSecondaryVisible] = useState(false);
-	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const itemTypeOptions = useSelector(state => state.meta.itemTypeOptions);
 	const isFileUploadAllowed = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isFileUploadAllowed);
 
-	const primaryItemTypesDesc = useMemo(() => {
-		const primaryTypes = itemTypes.filter(
-			it => primaryItemTypes.includes(it.itemType)
-		);
-		primaryTypes.sort((a, b) => a.localized.localeCompare(b.localized));
-		return primaryTypes;
+	const primaryItemTypesDesc = useMemo(
+		() => itemTypeOptions.filter(it => primaryItemTypes.includes(it.value)), [itemTypeOptions]
+	);
 
-	}, [itemTypes]);
-	const secondaryItemTypesDesc = useMemo(() => {
-		const secondaryTypes = itemTypes.filter(
-			it => it.itemType !== 'note' && !primaryItemTypes.includes(it.itemType)
-		);
-		secondaryTypes.sort((a, b) => a.localized.localeCompare(b.localized));
-		return secondaryTypes;
-	}, [itemTypes]);
+	const secondaryItemTypesDesc = useMemo(
+		() => itemTypeOptions.filter(it => !primaryItemTypes.includes(it.value)), [itemTypeOptions]
+	);
 
 	const handleToggleDropdown = useCallback(() => {
 		if(disabled) {
@@ -93,12 +90,11 @@ const NewItemSelector = props => {
 			>
 				<Icon type={ '16/plus' } width="16" height="16" />
 			</DropdownToggle>
-			<DropdownMenu>
-
-			{ primaryItemTypesDesc.map(itemTypeSpec => (
+			<DropdownMenu aria-label="New Item Type Picker">
+			{ primaryItemTypesDesc.map(itemTypeOption => (
 				<DropdownItemType
-					itemTypeSpec={ itemTypeSpec }
-					key={ itemTypeSpec.itemType }
+					itemTypeOption={ itemTypeOption }
+					key={ itemTypeOption.value }
 					onNewItemCreate={ onNewItemCreate }
 				/>
 			)) }
@@ -110,10 +106,10 @@ const NewItemSelector = props => {
 			)}
 			<DropdownItem divider />
 			{ isSecondaryVisible ?
-				secondaryItemTypesDesc.map(itemTypeSpec => (
+				secondaryItemTypesDesc.map(itemTypeOption => (
 					<DropdownItemType
-						itemTypeSpec={ itemTypeSpec }
-						key={ itemTypeSpec.itemType }
+						itemTypeOption={ itemTypeOption }
+						key={ itemTypeOption.value }
 						onNewItemCreate={ onNewItemCreate }
 					/>
 				)) : (

@@ -44,12 +44,6 @@ const noteAsTitle = text => {
 const creator = creator => 'lastName' in creator ?
 	[creator.lastName, creator.firstName].filter(s => s.trim().length).join(', ') : creator.name;
 
-const itemTypeLocalized = (item, itemTypes) => {
-	const { itemType } = item;
-	if(itemType === 'note') { return "Note" }
-	if(itemType === 'attachment') { return "Attachment" }
-	return (itemTypes.find(it => it.itemType === itemType) || {}).localized || itemType;
-}
 const dateLocalized = date => (date instanceof Date && !isNaN(date)) ?
 	date.toLocaleString(navigator.language || navigator.userLanguage) : '';
 
@@ -211,7 +205,6 @@ export {
 	formatDate,
 	formatDateTime,
 	itemsSourceLabel,
-	itemTypeLocalized,
 	noteSummary,
 	noteAsTitle,
 	parseDescriptiveString,

@@ -1,11 +1,13 @@
 import {
 	INVALIDATE_META_CACHE,
 	RECEIVE_SCHEMA,
-    RECEIVE_ITEM_TEMPLATE,
+	RECEIVE_ITEM_TEMPLATE,
 } from '../constants/actions.js';
+import { ignoredItemTypes } from '../constants/item-types.js';
+import { sortByKey } from '../utils.js';
 
 const itemTemplates = (state = {}, action) => {
-	switch(action.type) {
+	switch (action.type) {
 		case RECEIVE_ITEM_TEMPLATE:
 			return {
 				...state,
@@ -28,19 +30,24 @@ const defaultState = {
 
 // TODO: localization
 const locale = 'en-US';
-const ignoredItemTypes = ['note', 'attachment', 'annotation'];
+const getSortedByLabel = (entries) => { sortByKey(entries, 'label'); return entries; }
 
 const meta = (state = { ...defaultState }, action) => {
-	switch(action.type) {
+	switch (action.type) {
 		case RECEIVE_SCHEMA:
 			return {
 				...state,
 				isUsingEmbeddedSchema: !!action?.embedded,
-				itemTypes: action.schema.itemTypes
-					.filter(({ itemType }) => !ignoredItemTypes.includes(itemType))
-					.map(({ itemType }) => ({
-						itemType, localized: action.schema.locales?.[locale]?.itemTypes?.[itemType] ?? itemType
+				itemTypes: action.schema.itemTypes.map(({ itemType }) => ({
+					itemType, localized: action.schema.locales?.[locale]?.itemTypes?.[itemType] ?? itemType
 				})),
+				itemTypeOptions: getSortedByLabel(
+					action.schema.itemTypes
+						.filter(({ itemType }) => !ignoredItemTypes.includes(itemType))
+						.map(({ itemType }) => ({
+							value: itemType, label: action.schema.locales?.[locale]?.itemTypes?.[itemType] ?? itemType
+						}))
+				),
 				itemTypeFields: action.schema.itemTypes.reduce((acc, { itemType, fields }) => {
 					acc[itemType] = fields.map(({ field }) => ({
 						field, localized: action.schema.locales?.[locale]?.fields?.[field] ?? field
@@ -50,6 +57,12 @@ const meta = (state = { ...defaultState }, action) => {
 				itemTypeCreatorTypes: action.schema.itemTypes.reduce((acc, { itemType, creatorTypes }) => {
 					acc[itemType] = creatorTypes.map(({ creatorType, primary }) => ({
 						creatorType, localized: action.schema.locales?.[locale]?.creatorTypes?.[creatorType] ?? creatorType, primary
+					}));
+					return acc;
+				}, {}),
+				itemTypeCreatorTypeOptions: action.schema.itemTypes.reduce((acc, { itemType, creatorTypes }) => {
+					acc[itemType] = creatorTypes.map(({ creatorType }) => ({
+						value: creatorType, label: action.schema.locales?.[locale]?.creatorTypes?.[creatorType] ?? creatorType
 					}));
 					return acc;
 				}, {}),

@@ -1,10 +1,9 @@
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Button } from 'web-common/components';
 
 import Modal from '../ui/modal';
 import Select from '../form/select';
-import { get } from '../../utils';
 import { getUniqueId } from '../../utils';
 import { NEW_ITEM } from '../../constants/modals';
 import { toggleModal, createItem, fetchItemTemplate, navigate, triggerEditingItem } from '../../actions';
@@ -17,7 +16,7 @@ const NewItemModal = () => {
 	const collection = useSelector(
 		state => state.libraries[state.current.libraryKey]?.dataObjects[state.modal.collectionKey], shallowEqual
 	);
-	const itemTypes = useSelector(state => state.meta.itemTypes, shallowEqual);
+	const itemTypeOptions = useSelector(state => state.meta.itemTypeOptions);
 	const inputId = useRef(getUniqueId());
 	const [isBusy, setIsBusy] = useState(false);
 	const [itemType, setItemType] = useState('book');
@@ -37,19 +36,11 @@ const NewItemModal = () => {
 		setIsBusy(false);
 	}, [collection, dispatch, itemsSource, itemType, libraryKey]);
 
-	const itemTypeOptions = useMemo(() => {
-		const options = itemTypes.map(({ itemType, localized }) => (
-			{ value: itemType, label: localized }
-		));
-		options.sort((a, b) => a.label.localeCompare(b.label));
-		return options;
-	}, [itemTypes]);
-
 	const handleChange = useCallback(() => true, []);
 	const handleCancel = useCallback(() => dispatch(toggleModal(NEW_ITEM, false)), [dispatch]);
 
 	const handleSelect = useCallback((newItemType, hasChanged) => {
-		if(hasChanged) {
+		if (hasChanged) {
 			setItemType(newItemType);
 		}
 	}, []);
@@ -58,16 +49,16 @@ const NewItemModal = () => {
 		<Modal
 			className="modal-touch"
 			contentLabel="Create a New Item"
-			isBusy={ isBusy }
-			isOpen={ isOpen }
-			onRequestClose={ handleCancel }
+			isBusy={isBusy}
+			isOpen={isOpen}
+			onRequestClose={handleCancel}
 			overlayClassName="modal-centered modal-slide"
 		>
 			<div className="modal-header">
 				<div className="modal-header-left">
 					<Button
 						className="btn-link"
-						onClick={ handleCancel }
+						onClick={handleCancel}
 					>
 						Cancel
 					</Button>
@@ -84,7 +75,7 @@ const NewItemModal = () => {
 				<div className="modal-header-right">
 					<Button
 						className="btn-link"
-						onClick={ handleNewItemCreate }
+						onClick={handleNewItemCreate}
 					>
 						Create
 					</Button>
@@ -93,17 +84,17 @@ const NewItemModal = () => {
 			<div className="modal-body">
 				<div className="form">
 					<div className="form-group">
-						<label htmlFor={ inputId.current }>
+						<label htmlFor={inputId.current}>
 							Item Type
 						</label>
 						<Select
-							id={ inputId.current }
+							id={inputId.current}
 							className="form-control form-control-sm"
-							onChange={ handleChange }
-							onCommit={ handleSelect }
-							options={ itemTypeOptions }
-							value={ itemType }
-							searchable={ true }
+							onChange={handleChange}
+							onCommit={handleSelect}
+							options={itemTypeOptions}
+							value={itemType}
+							searchable={true}
 						/>
 					</div>
 				</div>

@@ -46,27 +46,15 @@ const ItemBox = ({ isReadOnly }) => {
 	const item = useSelector(state =>
 		get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey])
 	);
-	const creatorTypes = useSelector(state=> state.meta.itemTypeCreatorTypes[item.itemType]);
+
 	const itemTypeFields = useSelector(state=> state.meta.itemTypeFields);
-	const itemTypes = useSelector(state => state.meta.itemTypes);
+	const itemTypeOptions = useSelector(state => state.meta.itemTypeOptions);
 	const mappings = useSelector(state => state.meta.mappings);
 	const pendingChanges = useSelector(state =>
 		get(state, ['libraries', state.current.libraryKey, 'updating', 'items', state.current.itemKey])
 	);
 
 	const isForm = !!(shouldUseEditMode && isEditing && item);
-
-	//@TODO: mapping should be handled by <Creators />
-	//@TODO: even better, we should store this mapped already
-	const creatorTypeOptions = useMemo(() => (creatorTypes || []).map(ct => ({
-		value: ct.creatorType,
-		label: ct.localized
-	})), [creatorTypes]);
-	const itemTypeOptions = useMemo(() => itemTypes.map(it => ({
-		value: it.itemType,
-		label: it.localized
-	})).filter(it => it.value !== 'note'), [itemTypes]);
-
 	const fields = useMemo(
 		() => makeFields(item, pendingChanges, itemTypeOptions, itemTypeFields, mappings, isReadOnly),
 		[item, pendingChanges, itemTypeOptions, itemTypeFields, mappings, isReadOnly]
@@ -138,7 +126,7 @@ const ItemBox = ({ isReadOnly }) => {
 			{ fields.map(field =>
 				field.key === 'creators' ? (
 					<Creators
-						creatorTypes = { creatorTypeOptions }
+						itemType = { item.itemType }
 						isForm = { isForm }
 						isReadOnly = { field.isReadOnly }
 						key = { field.key }

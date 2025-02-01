@@ -13,15 +13,15 @@ import { enumerateObjects, splice } from '../../utils';
 import { useEditMode } from '../../hooks';
 
 const Creators = props => {
-	const { creatorTypes, onSave, name, value = [], isForm, onDragStatusChange, isReadOnly } = props;
-
+	const { onSave, name, value = [], isForm, itemType, onDragStatusChange, isReadOnly } = props;
+	const creatorTypeOptions = useSelector(state => state.meta.itemTypeCreatorTypeOptions[itemType]);
 	const virtualCreators = useMemo(() => [{
 		id: 0,
-		creatorType: creatorTypes?.[0]?.value ?? '',
+		creatorType: creatorTypeOptions?.[0]?.value ?? '',
 		firstName: '',
 		lastName: '',
 		[Symbol.for('isVirtual')]: true
-	}], [creatorTypes]);
+	}], [creatorTypeOptions]);
 
 	const [creators, setCreators] = useState(
 		value.length ? enumerateObjects(value) : virtualCreators
@@ -34,7 +34,7 @@ const Creators = props => {
 	const animateAppearOnNextRender = useRef(null);
 	const prevValue = usePrevious(value);
 	const prevCreators = usePrevious(creators);
-	const prevCreatorTypes = usePrevious(creatorTypes);
+	const prevItemType = usePrevious(itemType);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const [isEditing, ] = useEditMode();
 
@@ -150,14 +150,14 @@ const Creators = props => {
 	}, [value, virtualCreators, prevValue]);
 
 	useEffect(() => {
-		if(typeof(prevCreatorTypes) !== 'undefined' && !deepEqual(creatorTypes, prevCreatorTypes)) {
-			const validCreatorTypes = creatorTypes.map(ct => ct.value);
+		if (typeof (prevItemType) !== 'undefined' && prevItemType !== itemType) {
+			const validCreatorTypes = creatorTypeOptions.map(ct => ct.value);
 			setCreators(enumerateObjects(creators.map(creator => ({
 				...creator,
 				creatorType: validCreatorTypes.includes(creator.creatorType) ? creator.creatorType : validCreatorTypes[0]
 			}))));
 		}
-	}, [creators, creatorTypes, prevCreatorTypes]);
+	}, [creatorTypeOptions, creators, itemType, prevItemType]);
 
 	useEffect(() => {
 		if(creators && prevCreators && creators.length > prevCreators.length) {
@@ -187,7 +187,7 @@ const Creators = props => {
 		animateAppearOnNextRender.current = null;
 	}
 
-	if (!creatorTypes || !creatorTypes.length) {
+	if (!creatorTypeOptions || !creatorTypeOptions.length) {
 		return null;
 	}
 
@@ -210,7 +210,7 @@ const Creators = props => {
 						}) }
 						creator={ creator }
 						creatorsCount={ creators.length }
-						creatorTypes={ creatorTypes }
+						creatorTypes={ creatorTypeOptions }
 						index={ index }
 						isCreateAllowed={ !hasVirtual }
 						isDeleteAllowed={ !hasVirtual || creators.length > 1 }
@@ -250,9 +250,9 @@ const Creators = props => {
 }
 
 Creators.propTypes = {
-	creatorTypes: PropTypes.array.isRequired,
 	isForm: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
+	itemType: PropTypes.string.isRequired,
 	name: PropTypes.string,
 	onDragStatusChange: PropTypes.func,
 	onSave: PropTypes.func,
