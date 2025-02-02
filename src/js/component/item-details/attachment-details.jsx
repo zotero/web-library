@@ -6,12 +6,12 @@ import { noop } from 'web-common/utils';
 import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 
 import RichEditor from 'component/rich-editor';
-import { dateLocalized } from 'common/format';
 import { isReaderCompatibleBrowser, get } from 'utils';
 import { getAttachmentUrl, updateItem, exportAttachmentWithAnnotations } from 'actions';
 import { makePath }from '../../common/navigation';
 import { READER_CONTENT_TYPES } from '../../constants/reader';
-
+import { extraFields } from '../../constants/item';
+import Boxfields from './boxfields';
 
 const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -52,11 +52,18 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const isPDF = attachment.contentType === 'application/pdf';
 	const hasURL = !!attachment[Symbol.for('links')]?.enclosure;
 	const urlIsFresh = url && Date.now() - timestamp < 60000;
-
 	const forceRerender = useForceUpdate();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
 	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(downloadOptionsRef);
+
+	const itemTypeFields = useSelector(state => state.meta.itemTypeFields);
+	const fields = [
+		itemTypeFields.attachment.find(f => f.field === 'title'),
+		...(attachment.url ? [itemTypeFields.attachment.find(f => f.field === 'url')] : []),
+		...(attachment.filename && attachment.linkMode.startsWith('imported') ? [{ field: 'filename', localized: 'Filename' }] : []),
+		...(itemTypeFields.attachment.filter(f => !['title', 'url', 'filename', 'accessDate'].includes(f.field))), // hide accessDate and fields already included
+		extraFields.find(f => f.field === 'dateModified'),
+	];
 
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
@@ -99,68 +106,11 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 
 	return (
         <Fragment>
-		<ol className="metadata-list">
-			{ attachment.url && (
-				<li className="metadata">
-					<div className="key">
-						<label>
-							<a target="_blank" rel="nofollow noopener noreferrer" href={ attachment.url }>
-								<span className="truncate">Original URL</span>
-								<Icon type={ '16/open-link' } className="mouse" width="12" height="12"/>
-								<Icon type={ '16/open-link' } className="touch" width="16" height="16"/>
-							</a>
-						</label>
-					</div>
-					<div className="value">
-						<span className="truncate" title={ attachment.url }>
-							{ attachment.url }
-						</span>
-					</div>
-				</li>
-			) }
-			{ attachment.filename && attachment.linkMode.startsWith('imported') && (
-				<Fragment>
-				<li className="metadata interactable">
-					<div className="key">
-						<label>
-							<span className="truncate">Filename</span>
-						</label>
-					</div>
-					<div className="value">
-						<span className="truncate no-link" title={ attachment.filename }>
-							<span className="truncate">{ attachment.filename }</span>
-						</span>
-					</div>
-				</li>
-				</Fragment>
-			) }
-			{ attachment.accessDate && (
-				<li className="metadata">
-					<div className="key">
-						<label>
-							<div className="truncate">
-								Access Time
-							</div>
-						</label>
-					</div>
-					<div className="value">
-						<div className="truncate">{ dateLocalized(new Date((attachment.accessDate))) }</div>
-					</div>
-				</li>
-			) }
-			{ attachment.dateModified && (
-				<li className="metadata">
-					<div className="key">
-						<label>
-							<div className="truncate">Modified Time</div>
-						</label>
-					</div>
-					<div className="value">
-						<div className="truncate">{ dateLocalized(new Date((attachment.dateModified))) }</div>
-					</div>
-				</li>
-			) }
-		</ol>
+		<Boxfields
+			fields={ fields }
+			item={ attachment }
+			isReadOnly={ isReadOnly }
+		/>
 		{ hasURL && (
 			<div
 				tabIndex={ isTouchOrSmall ? null : 0 }

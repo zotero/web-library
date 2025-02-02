@@ -23,7 +23,6 @@ export const noEditFields = [
 	'createdByUser',
 	'dateAdded',
 	'dateModified',
-	'filename',
 	'lastModifiedByUser',
 	'modified',
 ];

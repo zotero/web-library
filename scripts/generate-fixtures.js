@@ -25,7 +25,6 @@ const NPMST_TIMEOUT = 120000; // allow for the worst-case scenario where submodu
 
 const fixtures = [
 	[`${URL}groups/5119976/animals/items/X9WEHDAN/item-list`, 'desktop-test-group-item-view'],
-	[`${URL}testuser/items/3JCLFUG4/attachment/37V7V4NT/library`, 'desktop-test-user-attachment-view'],
 	[`${URL}testuser/collections/5PB9WKTC/items/MNRM7HER/collection`, 'desktop-test-user-formatting-collection'],
 	[`${URL}testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`, 'desktop-test-user-item-view'],
 	[`${URL}testuser`, 'desktop-test-user-library-view'],
@@ -34,6 +33,7 @@ const fixtures = [
 	[`${URL}testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader`, 'desktop-test-user-reader-view'],
 	[`${URL}testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list`, 'desktop-test-user-search-phrase-selected'],
 	[`${URL}testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list`, 'desktop-test-user-search-selected'],
+	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/K24TUDDL/item-details`, 'desktop-test-user-pdf-attachment-view-in-collection-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
 	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/UMPPCXU4`, 'desktop-test-user-top-level-attachment-view'],

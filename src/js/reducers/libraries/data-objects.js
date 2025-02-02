@@ -10,7 +10,8 @@ import {
 	RECEIVE_UPDATE_ITEM, RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_UPLOAD_ATTACHMENT,
 	RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS, RECEIVE_PATCH_ATTACHMENT,
 	RECEIVE_UPDATE_COLLECTION, RECEIVE_CREATE_COLLECTIONS, RECEIVE_COLLECTIONS_IN_LIBRARY,
-	RECEIVE_DELETE_COLLECTION, RECEIVE_DELETED_CONTENT
+	RECEIVE_DELETE_COLLECTION, RECEIVE_DELETED_CONTENT,
+	RECEIVE_RENAME_ATTACHMENT
 } from '../../constants/actions.js';
 
 import { get, indexByKey } from '../../utils';
@@ -73,6 +74,15 @@ const dataObjects = (state = {}, action, { meta, tagColors }) => {
 					...action.item
 				}, { meta, tagColors })
 			};
+		case RECEIVE_RENAME_ATTACHMENT:
+			return {
+				...state,
+				[action.itemKey]: processItem({
+					...state?.[action.itemKey] ?? {},
+					version: action.response.getVersion() || state[action.itemKey].version,
+					filename: action.filename
+				})
+			}
 		case RECEIVE_UPDATE_COLLECTIONS_TRASH:
 			return {
 				...state,

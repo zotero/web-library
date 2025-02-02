@@ -8,7 +8,7 @@ import Creators from '../form/creators';
 import { get } from '../../utils';
 import { getFieldDisplayValue } from '../../common/item';
 import { hideIfEmptyFields, noEditFields } from '../../constants/item';
-import { updateItemWithMapping } from '../../actions';
+import { renameAttachment, updateItemWithMapping } from '../../actions';
 
 const makeFields = ({fields, item, pendingChanges, itemTypeOptions, isReadOnly}) => {
 	const aggregatedPatch = (pendingChanges || []).reduce(
@@ -81,8 +81,12 @@ const BoxFields = ({ className, fields, isReadOnly, item }) => {
 	const handleCommit = useCallback((newValue, isChanged, ev) => {
 		const key = ev.currentTarget.closest('[data-key]').dataset.key;
 		if (isChanged) {
-			// trim & normalize value, similar to https://github.com/zotero/zotero/blob/e9afd153e9a368e71a29f22982578750e6983ae9/chrome/content/zotero/xpcom/data/item.js#L619
-			dispatch(updateItemWithMapping(item, key, newValue.trim().normalize()));
+			if (key === 'filename') {
+				dispatch(renameAttachment(item.key, newValue));
+			} else {
+				// trim & normalize value, similar to https://github.com/zotero/zotero/blob/e9afd153e9a368e71a29f22982578750e6983ae9/chrome/content/zotero/xpcom/data/item.js#L619
+				dispatch(updateItemWithMapping(item, key, newValue.trim().normalize()));
+			}
 		}
 
 		if (key === activeEntry) {

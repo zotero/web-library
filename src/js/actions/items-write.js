@@ -72,6 +72,10 @@ import {
 	REQUEST_UPDATE_ITEM,
 	REQUEST_UPDATE_MULTIPLE_ITEMS,
 	REQUEST_UPLOAD_ATTACHMENT,
+	PRE_RENAME_ATTACHMENT,
+	REQUEST_RENAME_ATTACHMENT,
+	RECEIVE_RENAME_ATTACHMENT,
+	ERROR_RENAME_ATTACHMENT,
 } from '../constants/actions';
 
 
@@ -661,6 +665,83 @@ const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => 
 		}
 	};
 }
+
+const renameAttachment = (itemKey, filename, libraryKey) => {
+	return async (dispatch, getState) => {
+		libraryKey = libraryKey ?? getState().current.libraryKey;
+		const id = requestTracker.id++;
+
+		return new Promise((resolve, reject) => {
+			dispatch({
+				type: PRE_RENAME_ATTACHMENT,
+				itemKey,
+				filename,
+				libraryKey,
+				id
+			});
+
+			dispatch(
+				queueRenameAttachment(itemKey, filename, libraryKey, { resolve, reject, id })
+			);
+		});
+
+	};
+}
+
+const queueRenameAttachment = (itemKey, filename, libraryKey, { resolve, reject, id }) => {
+	return {
+		queue: libraryKey,
+		callback: async (next, dispatch, getState) => {
+			const state = getState();
+			const item = state.libraries[libraryKey]?.items[itemKey];
+			const md5 = item?.md5;
+			const fileSize = item?.[Symbol.for('links')]?.enclosure?.length;
+			const mtime = Date.now();
+			const config = state.config;
+			dispatch({
+				type: REQUEST_RENAME_ATTACHMENT,
+				libraryKey,
+				itemKey,
+				md5,
+				filename,
+				id
+			});
+
+			try {
+				let response = await api(config.apiKey, config.apiConfig)
+					.library(libraryKey)
+					.items(itemKey)
+					.registerAttachment(filename, fileSize, mtime, md5)
+					.post();
+
+				dispatch({
+					type: RECEIVE_RENAME_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					response,
+					md5,
+					filename,
+					id
+				});
+				resolve();
+			} catch (error) {
+				dispatch({
+					type: ERROR_RENAME_ATTACHMENT,
+					libraryKey,
+					itemKey,
+					error,
+					md5,
+					filename,
+					id
+				});
+				reject(error);
+			} finally {
+				next();
+			}
+		}
+	};
+}
+
 
 // TODO: Merge `moveItemsToTrash` and `recoverItemsFromTrash` into `updateItemsTrash` (+ matching queue fn). See `updateCollectionsTrash` for reference.
 const moveItemsToTrash = itemKeys => {
@@ -1569,31 +1650,32 @@ const createItemOfType = (itemType, { collection = null } = {}) => {
 }
 
 export {
-	addToCollection,
-	chunkedAddToCollection,
-	chunkedCopyToLibrary,
-	chunkedDeleteItems,
-	chunkedMoveItemsToTrash,
-	chunkedRecoverItemsFromTrash,
-	chunkedRemoveFromCollection,
-	chunkedToggleTagsOnItems,
-	copyToLibrary,
-	createAttachments,
-	createAttachmentsFromDropped,
-	createItem,
-	createItemOfType,
-	createItems,
-	createLinkedUrlAttachments,
-	deleteItem,
-	deleteItems,
-	moveItemsToTrash,
-	patchAttachment,
-	recoverItemsFromTrash,
-	removeFromCollection,
-	removeRelatedItem,
-	toggleTagsOnItems,
-	updateItem,
-	updateItemWithMapping,
-	updateMultipleItems,
-	uploadAttachment,
+    addToCollection,
+    chunkedAddToCollection,
+    chunkedCopyToLibrary,
+    chunkedDeleteItems,
+    chunkedMoveItemsToTrash,
+    chunkedRecoverItemsFromTrash,
+    chunkedRemoveFromCollection,
+    chunkedToggleTagsOnItems,
+    copyToLibrary,
+    createAttachments,
+    createAttachmentsFromDropped,
+    createItem,
+    createItemOfType,
+    createItems,
+    createLinkedUrlAttachments,
+    deleteItem,
+    deleteItems,
+    moveItemsToTrash,
+    patchAttachment,
+    recoverItemsFromTrash,
+    removeFromCollection,
+    removeRelatedItem,
+    renameAttachment,
+    toggleTagsOnItems,
+    updateItem,
+    updateItemWithMapping,
+    updateMultipleItems,
+    uploadAttachment
 };

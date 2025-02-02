@@ -179,7 +179,7 @@ describe('Read-only', () => {
 		await userEvent.click(getByRole(attachmentsList, 'listitem', { name: 'Full Text' }));
 		await findByRole(attachmentsList, 'listitem', { name: 'Full Text', current: true });
 
-		expect(await screen.findByRole('link', { name: 'Original URL' })).toBeInTheDocument();
+		expect(await screen.findByRole('link', { name: 'URL' })).toBeInTheDocument();
 
 		global.open = jest.fn();
 

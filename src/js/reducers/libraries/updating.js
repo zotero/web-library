@@ -2,7 +2,11 @@ import {
 	ERROR_UPLOAD_ATTACHMENT, RECEIVE_UPLOAD_ATTACHMENT, ERROR_UPDATE_COLLECTION, ERROR_UPDATE_ITEM,
 	PRE_UPDATE_COLLECTION, PRE_UPDATE_ITEM, RECEIVE_UPDATE_COLLECTION, RECEIVE_UPDATE_ITEM,
 	REQUEST_UPDATE_COLLECTION, REQUEST_UPDATE_ITEM, REQUEST_UPLOAD_ATTACHMENT, PRE_UPDATE_MULTIPLE_ITEMS,
-	REQUEST_UPDATE_MULTIPLE_ITEMS, RECEIVE_UPDATE_MULTIPLE_ITEMS, ERROR_UPDATE_MULTIPLE_ITEMS
+	REQUEST_UPDATE_MULTIPLE_ITEMS, RECEIVE_UPDATE_MULTIPLE_ITEMS, ERROR_UPDATE_MULTIPLE_ITEMS,
+	PRE_RENAME_ATTACHMENT,
+	REQUEST_RENAME_ATTACHMENT,
+	RECEIVE_RENAME_ATTACHMENT,
+	ERROR_RENAME_ATTACHMENT
 } from '../../constants/actions';
 import { mapObject } from 'web-common/utils';
 
@@ -23,6 +27,21 @@ const updating = (state = stateDefault, action) => {
 						...(action.itemKey in state.items ? state.items[action.itemKey] : []),
 						{
 							patch: action.patch,
+							id: action.id,
+							isRequested: false
+						}
+					]
+				}
+			};
+		case PRE_RENAME_ATTACHMENT:
+			return {
+				...state,
+				items: {
+					...state.items,
+					[action.itemKey]: [
+						...(action.itemKey in state.items ? state.items[action.itemKey] : []),
+						{
+							patch: { filename: action.filename },
 							id: action.id,
 							isRequested: false
 						}
@@ -64,6 +83,7 @@ const updating = (state = stateDefault, action) => {
 				}
 			};
 		case REQUEST_UPDATE_ITEM:
+		case REQUEST_RENAME_ATTACHMENT:
 			return {
 				...state,
 				items: {
@@ -102,7 +122,9 @@ const updating = (state = stateDefault, action) => {
 				}
 			};
 		case RECEIVE_UPDATE_ITEM:
-		case ERROR_UPDATE_ITEM: {
+		case ERROR_UPDATE_ITEM:
+		case RECEIVE_RENAME_ATTACHMENT:
+		case ERROR_RENAME_ATTACHMENT: {
 			let newState = {
 				...state,
 				items: {
