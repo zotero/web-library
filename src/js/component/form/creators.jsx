@@ -13,7 +13,7 @@ import { enumerateObjects, splice } from '../../utils';
 import { useEditMode } from '../../hooks';
 
 const Creators = props => {
-	const { onSave, name, value = [], isForm, itemType, onDragStatusChange, isReadOnly } = props;
+	const { onSave, name, value = [], isForm, itemType, isReadOnly } = props;
 	const creatorTypeOptions = useSelector(state => state.meta.itemTypeCreatorTypeOptions[itemType]);
 	const virtualCreators = useMemo(() => [{
 		id: 0,
@@ -223,7 +223,6 @@ const Creators = props => {
 						onCreatorAdd={ handleCreatorAdd }
 						onCreatorRemove={ handleCreatorRemove }
 						onCreatorTypeSwitch={ handleCreatorTypeSwitch }
-						onDragStatusChange={ onDragStatusChange }
 						onAddMany={ handleAddMany }
 						onReorder={ handleReorder }
 						onReorderCancel={ handleReorderCancel }
@@ -254,7 +253,6 @@ Creators.propTypes = {
 	isReadOnly: PropTypes.bool,
 	itemType: PropTypes.string.isRequired,
 	name: PropTypes.string,
-	onDragStatusChange: PropTypes.func,
 	onSave: PropTypes.func,
 	value: PropTypes.array,
 };

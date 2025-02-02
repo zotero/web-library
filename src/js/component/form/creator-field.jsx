@@ -305,8 +305,8 @@ CreatorFieldInputWrap.propTypes = {
 const CreatorField = forwardRef((props, outerRef) => {
 	const { className, creator, creatorsCount, creatorTypes, index, isCreateAllowed,
 		isDeleteAllowed, isForm, isReadOnly, isSingle, isVirtual, onAddMany, onChange,
-		onCreatorAdd, onCreatorRemove, onCreatorTypeSwitch, onDragStatusChange, onReorder,
-		onReorderCancel, onReorderCommit, shouldPreOpenModal } = props;
+		onCreatorAdd, onCreatorRemove, onCreatorTypeSwitch, onReorder, onReorderCancel,
+		onReorderCommit, shouldPreOpenModal } = props;
 
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const shouldUseModalCreatorField = useSelector(state => state.device.shouldUseModalCreatorField);
@@ -441,7 +441,6 @@ const CreatorField = forwardRef((props, outerRef) => {
 			onReorder={ onReorder }
 			onReorderCancel={ onReorderCancel }
 			onReorderCommit={ onReorderCommit }
-			onDragStatusChange={ onDragStatusChange }
 			raw={ raw }
 			tabIndex = { isEditing ? 0 : null }
 			ref={ innerRef }
@@ -576,7 +575,6 @@ CreatorField.propTypes = {
 	onCreatorAdd: PropTypes.func,
 	onCreatorRemove: PropTypes.func,
 	onCreatorTypeSwitch: PropTypes.func,
-	onDragStatusChange: PropTypes.func,
 	onReorder: PropTypes.func,
 	onReorderCancel: PropTypes.func,
 	onReorderCommit: PropTypes.func,
