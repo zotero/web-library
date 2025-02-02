@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import { Button, Icon, Spinner, TabPane } from 'web-common/components';
 import { useFocusManager, useForceUpdate } from 'web-common/hooks';
-import { noop, isTriggerEvent } from 'web-common/utils';
+import { noop, isTriggerEvent, pick } from 'web-common/utils';
 
 import AddLinkedUrlForm from './add-linked-url-form';
 import AttachmentDetails from './attachment-details';
@@ -380,7 +380,7 @@ AttachmentDetailsWrap.propTypes = {
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ id, isActive, isReadOnly }) => {
+const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -514,6 +514,7 @@ const Attachments = ({ id, isActive, isReadOnly }) => {
 			isActive={ isActive }
 			isLoading={ !isReady }
 			ref={ drop }
+			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<CSSTransition
 				classNames="slide-down"

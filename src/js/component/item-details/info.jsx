@@ -3,13 +3,14 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { TabPane } from 'web-common/components';
+import { pick } from 'web-common/utils';
 
 import ItemBox from './box';
 import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
 import { get } from '../../utils';
 
-const Info = ({ isActive, isReadOnly, id }) => {
+const Info = ({ isActive, isReadOnly, id, ...rest }) => {
 	const isLibraryReadOnly = useSelector(
 		state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
 	);
@@ -30,6 +31,7 @@ const Info = ({ isActive, isReadOnly, id }) => {
 			className="info"
 			isActive={ isActive }
 			isLoading={ false }
+			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<div className="scroll-container-mouse">
 				<div className="row">

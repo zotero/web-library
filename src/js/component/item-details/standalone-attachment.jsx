@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { TabPane } from 'web-common/components';
+import { pick } from 'web-common/utils';
 
 import AttachmentDetails from './attachment-details';
 
-const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly }) => {
+const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly, ...rest }) => {
 	const itemKey = useSelector(state => state.current.itemKey);
 
 	return (
@@ -12,6 +13,7 @@ const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly }) => {
 			id={ id }
 			className="standalone-attachment"
 			isActive={ isActive }
+			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<AttachmentDetails
 				attachmentKey={ itemKey }
@@ -22,6 +24,7 @@ const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly }) => {
 }
 
 StandaloneAttachmentTabPane.propTypes = {
+	id: PropTypes.string,
 	isActive: PropTypes.bool,
 	isReadOnly: PropTypes.bool,
 }

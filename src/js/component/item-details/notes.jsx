@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
-import { isTriggerEvent, noop, scrollIntoViewIfNeeded } from 'web-common/utils';
+import { isTriggerEvent, noop, pick, scrollIntoViewIfNeeded } from 'web-common/utils';
 
 
 import RichEditor from 'component/rich-editor';
@@ -170,7 +170,7 @@ Note.propTypes = {
 	onSelect: PropTypes.func,
 }
 
-const Notes = ({ id, isActive, isReadOnly }) => {
+const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const noteKey = useSelector(state => state.current.noteKey);
@@ -347,6 +347,7 @@ const Notes = ({ id, isActive, isReadOnly }) => {
 			className="notes"
 			isActive={ isActive }
 			isLoading={ !isReady }
+			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Notes</h5>
 			{ !isTouchOrSmall && (

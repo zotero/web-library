@@ -159,6 +159,7 @@ const ItemDetailsTabs = () => {
 					{
 						item.itemType === 'note' && (
 							<Tab
+								id={`${id}-standalone-note-tab`}
 								aria-controls={ `${id}-standalone-note` }
 								data-tab-name="standalone-note"
 								isActive={ activeTab === 'standalone-note' }
@@ -171,6 +172,7 @@ const ItemDetailsTabs = () => {
 					{
 						item.itemType === 'attachment' && (
 							<Tab
+								id={`${id}-standalone-attachment-tab`}
 								aria-controls={`${id}-standalone-attachment`}
 								data-tab-name="standalone-attachment"
 								isActive={ activeTab === 'standalone-attachment' }
@@ -184,6 +186,7 @@ const ItemDetailsTabs = () => {
 						!['attachment', 'note'].includes(item.itemType) && (
 							<Fragment>
 								<Tab
+									id={`${id}-info-tab`}
 									aria-controls={`${id}-info`}
 									data-tab-name="info"
 									isActive={ activeTab === 'info' }
@@ -193,6 +196,7 @@ const ItemDetailsTabs = () => {
 								</Tab>
 								{ shouldShowNotesTab && (
 									<Tab
+										id={`${id}-notes-tab`}
 										aria-controls={`${id}-notes`}
 										data-tab-name="notes"
 										isActive={ activeTab === 'notes' }
@@ -207,6 +211,7 @@ const ItemDetailsTabs = () => {
 
 					{ shouldShowTagsTab && (
 							<Tab
+								id={`${id}-tags-tab`}
 								aria-controls={`${id}-tags`}
 								data-tab-name="tags"
 								isActive={ activeTab === 'tags' }
@@ -218,6 +223,7 @@ const ItemDetailsTabs = () => {
 					{
 						shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 							<Tab
+								id={`${id}-attachments-tab`}
 								aria-controls={`${id}-attachments`}
 								data-tab-name="attachments"
 								isActive={ activeTab === 'attachments' }
@@ -230,6 +236,7 @@ const ItemDetailsTabs = () => {
 
 					{ shouldShowRelatedTab && (
 						<Tab
+							id={`${id}-related-tab`}
 							aria-controls={`${id}-related`}
 							data-tab-name="related"
 							isActive={ activeTab === 'related' }
@@ -256,12 +263,14 @@ const ItemDetailsTabs = () => {
 							!['attachment', 'note'].includes(item.itemType) && (
 								<Fragment>
 									<Info
+										aria-labelledby={ `${id}-info-tab` }
 										key={ 'info-' + item.key }
 										id={ `${id}-info` }
 										isActive={ activeTab === 'info' }
 										isReadOnly={ isReadOnly }
 									/>
 									{ shouldShowNotesTab && ( <Notes
+										aria-labelledby={ `${id}-notes-tab` }
 										key={ 'notes-' + item.key }
 										id={ `${id}-notes` }
 										isActive={ activeTab === 'notes' }
@@ -275,6 +284,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'note' && (
 								<StandaloneNote
+									aria-labelledby={`${id}-standalone-note-tab`}
 									key={ 'standalone-note-' + item.key }
 									id={`${id}-standalone-note` }
 									isActive={ activeTab === 'standalone-note' }
@@ -285,6 +295,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
+									aria-labelledby={`${id}-standalone-attachment-tab`}
 									key={ 'standalone-attachment-' + item.key }
 									id={`${id}-standalone-attachment` }
 									isActive={ activeTab === 'standalone-attachment' }
@@ -294,6 +305,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowTagsTab && (
 							<Tags
+								aria-labelledby={ `${id}-tags-tab` }
 								key={ 'tags-' + item.key }
 								id={ `${id}-tags` }
 								isActive={ activeTab === 'tags' }
@@ -303,6 +315,7 @@ const ItemDetailsTabs = () => {
 						{
 							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 								<Attachments
+									aria-labelledby={ `${id}-attachments-tab` }
 									key={ 'attachments-' + item.key }
 									id={ `${id}-attachments` }
 									isActive={ activeTab === 'attachments' }
@@ -312,6 +325,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowRelatedTab && (
 							<Related
+								aria-labelledby={`${id}-related-tab`}
 								key={ 'related-' + item.key }
 								id={ `${id}-related` }
 								isActive={ activeTab === 'related' }

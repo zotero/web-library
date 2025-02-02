@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, TabPane } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
-import { isTriggerEvent, noop } from 'web-common/utils';
+import { isTriggerEvent, noop, pick } from 'web-common/utils';
 
 import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
 import { getItemTitle } from '../../common/item';
@@ -94,7 +94,7 @@ RelatedItem.propTypes = {
 	onKeyDown: PropTypes.func,
 }
 
-const Related = ({ id, isActive }) => {
+const Related = ({ id, isActive, ...rest }) => {
 	const dispatch = useDispatch();
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -155,6 +155,7 @@ const Related = ({ id, isActive }) => {
 			id={ id }
 			isActive={ isActive }
 			isLoading={ shouldUseTabs && !isFetched }
+			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
 			<div

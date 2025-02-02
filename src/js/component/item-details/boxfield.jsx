@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Icon } from 'web-common/components';
 
@@ -20,8 +20,8 @@ const pickInputComponent = field => {
 	}
 };
 
-const BoxFieldLabel = memo(({ field }) => {
-	const id = `label-${ field.key }`;
+const BoxFieldLabel = memo(({ field, id }) => {
+	const labelId = `label-${id}`;
 	let label = field.label;
 
 	if(field.key === 'url' && field.value) {
@@ -53,8 +53,8 @@ const BoxFieldLabel = memo(({ field }) => {
 	return (
 		<label
 			aria-label={ field.label }
-			id={ id }
-			htmlFor={ field.key }
+			id={ labelId }
+			htmlFor={ id }
 		>
 			{ label }
 		</label>
@@ -65,19 +65,20 @@ BoxFieldLabel.displayName = 'BoxFieldLabel';
 
 BoxFieldLabel.propTypes = {
 	field: PropTypes.object,
+	id: PropTypes.string,
 };
 
 const BoxFieldInputEditable = memo(props => {
-	const { field, isEditing, isForm, onClick, isActive, onFocus, onBlur } = props;
+	const { field, id, isEditing, isForm, onClick, isActive, onFocus, onBlur } = props;
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
 	const isSelect = pickInputComponent(field) === SelectInput;
 	const isTextArea = pickInputComponent(field) === TextAreaInput;
 	const isPseudoEditable = !isForm && isSelect;
 	const isDisabled = (shouldUseEditMode && !isEditing) || isPseudoEditable || field.isReadOnly;
 	const input = <BoxFieldInput { ...props } field={ field } />;
-	const editableProps = { display: field.display, id: field.key, isActive,
+	const editableProps = { display: field.display, id, isActive,
 		isSelect, isTextArea, input, isBusy: field.processing || false, isDisabled,
-		labelId: `label-${field.key}`, onBlur, onClick, onFocus, title: field.title,
+		labelId: `label-${id}`, onBlur, onClick, onFocus, title: field.title,
 		value: field.value };
 
 	var url = null;
@@ -116,6 +117,7 @@ BoxFieldInputEditable.displayName = 'BoxFieldInputEditable';
 
 BoxFieldInputEditable.propTypes = {
 	field: PropTypes.object,
+	id: PropTypes.string,
 	isActive: PropTypes.bool,
 	isEditing: PropTypes.bool,
 	isForm: PropTypes.bool,
@@ -125,7 +127,7 @@ BoxFieldInputEditable.propTypes = {
 };
 
 const BoxFieldInput = memo(props => {
-	const { field, isForm, onCancel, onCommit, onClick, onFocus, onBlur, onKeyDown, onKeyUp } = props;
+	const { field, id, isForm, onCancel, onCommit, onClick, onFocus, onBlur, onKeyDown, onKeyUp } = props;
 	const display = field.key === 'itemType' ?
 		field.options.find(o => o.value === field.value) :
 		null;
@@ -147,7 +149,7 @@ const BoxFieldInput = memo(props => {
 		placeholder: field.placeholder || null,
 		selectOnFocus: !isForm,
 		value: field.value || '',
-		id: field.key,
+		id,
 		className: cx({
 			'form-control': isForm,
 			'form-control-sm': isForm,
@@ -190,6 +192,7 @@ BoxFieldInput.displayName = 'BoxFieldInput';
 
 BoxFieldInput.propTypes = {
 	field: PropTypes.object,
+	id: PropTypes.string,
 	isEditing: PropTypes.bool,
 	isForm: PropTypes.bool,
 	onBlur: PropTypes.func,
@@ -203,11 +206,12 @@ BoxFieldInput.propTypes = {
 
 const BoxField = props => {
 	const { field, isActive, isForm } = props;
+	const id = useId();
 	const InputComponent = pickInputComponent(field);
 	const isSelect = InputComponent === SelectInput;
 	const isPseudoEditable = !isForm && isSelect;
 	const shouldUseEditable = !isForm &&!isPseudoEditable;
-	const boxFieldProps = { ...props };
+	const boxFieldProps = { ...props, id };
 	const [dateFormatHint, setDateFormatHint] = useState(() => field.key === 'date' ? strToDate(field.value)?.order : null)
 
 	const handleDateKeyUp = useCallback((ev) => {
@@ -230,11 +234,11 @@ const BoxField = props => {
 
 	return (
 		<Field
-			aria-labelledby={ `label-${field.key}` }
+			aria-labelledby={ `label-${id}` }
 			data-key={ field.key }
 			className={ cx(className) }
 		>
-			<BoxFieldLabel field={ field } />
+			<BoxFieldLabel field={ field } id={ id } />
 			{ shouldUseEditable ?
 				<BoxFieldInputEditable { ...boxFieldProps } /> :
 				<BoxFieldInput { ...boxFieldProps } />
