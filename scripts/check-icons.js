@@ -1,14 +1,11 @@
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
-import apiLib from 'zotero-api-client'; //TODO improt api from 'zotero-api-client' should work
-
-const api = apiLib.default;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
+const schemaPath = join(ROOT, 'modules', 'zotero-schema', 'schema.json');
 const targetJSONPath = join(ROOT, 'data', 'item-types-with-icons.json');
-
 const ignoredItemTypes = ['annotation', 'attachment'];
 
 const iconsPaths = {
@@ -16,12 +13,7 @@ const iconsPaths = {
 	mobile: join(ROOT, 'src', 'static', 'icons', '28', 'item-type'),
 };
 
-const knownItemTypes = await api().schema().get()
-	.then(response => response
-		.getData()
-		.itemTypes
-		.map(({ itemType }) => itemType)
-	);
+const knownItemTypes = (await fs.readJson(schemaPath)).itemTypes.map(({ itemType }) => itemType);
 
 for(let [iconTypeName, iconDir] of Object.entries(iconsPaths)) {
 	const foundItemTypes = (await fs.readdir(iconDir, { withFileTypes: true }))
