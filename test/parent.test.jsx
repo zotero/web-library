@@ -101,8 +101,8 @@ describe('Create Parent Item', () => {
 		await waitForPosition();
 		await user.click(screen.getByRole('menuitem', { name: 'Create Parent Item' }));
 		const dialog = await screen.findByRole('dialog', { name: 'Create Parent Item' });
-		await waitFor(() => expect(getByRole(dialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, or arXiv IDs to identify this file' })).toHaveFocus());
-		const input = getByRole(dialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, or arXiv IDs to identify this file' });
+		await waitFor(() => expect(getByRole(dialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, arXiv ID, or ADS Bibcode to identify this file:' })).toHaveFocus());
+		const input = getByRole(dialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, arXiv ID, or ADS Bibcode to identify this file:' });
 		await user.type(input, '1706.03762{enter}', { skipClick: true });
 
 		expect(await screen.findByRole('row', { name: 'Attention Is All You Need' })).toBeInTheDocument();

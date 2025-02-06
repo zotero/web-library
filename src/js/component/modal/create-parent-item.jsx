@@ -200,7 +200,7 @@ const CreateParentItemModal = () => {
 			>
 				<h3>
 					<label htmlFor={`${id}-input`}>
-						Enter a DOI, ISBN, PMID, or arXiv IDs to identify this file
+						Enter a DOI, ISBN, PMID, arXiv ID, or ADS Bibcode to identify this file:
 					</label>
 				</h3>
 				<div className="form">

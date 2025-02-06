@@ -139,7 +139,7 @@ describe('Items', () => {
 		);
 
 		const input = screen.getByRole('textbox',
-			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, or arXiv IDs' }
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
 		);
 
 		await userEvent.type(

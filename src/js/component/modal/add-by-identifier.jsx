@@ -149,7 +149,7 @@ const AddByIdentifierModal = () => {
 							onChange={ handleInputChange }
 							onCommit={ handleInputCommit }
 							onPaste={ handlePaste }
-							placeholder="URL, ISBNs, DOIs, PMIDs, or arXiv IDs"
+							placeholder="URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes"
 							ref={ inputEl }
 							tabIndex={ 0 }
 							value={ identifier }

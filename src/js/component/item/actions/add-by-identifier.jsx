@@ -194,7 +194,7 @@ const AddByIdentifier = props => {
 				<div className="popover-inner" role="tooltip">
 					<h3 className="popover-header">
 						<label htmlFor={ `${id.current}-input` }>
-							Enter a URL, ISBNs, DOIs, PMIDs, or arXiv IDs
+							Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:
 						</label>
 					</h3>
 					<div className="popover-body">
