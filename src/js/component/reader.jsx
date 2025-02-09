@@ -185,7 +185,8 @@ const Reader = () => {
 	// TODO: this should be entry-sepcific, but works for now because there is only one entry being fetched by the reader
 	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
-	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
+	const lightTheme = useSelector(state => state.preferences?.readerLightTheme ?? false);
+	const darkTheme = useSelector(state => state.preferences?.readerDarkTheme ?? false);
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL }), [pdfReaderCMapsURL, pdfReaderStandardFontsURL, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
@@ -301,8 +302,9 @@ const Reader = () => {
 				baseURI: new URL('/', window.location).toString()
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
-			useDarkModeForContent,
 			colorScheme,
+			lightTheme,
+			darkTheme,
 			primaryViewState: readerState,
 			secondaryViewState: null,
 			location,
@@ -347,14 +349,20 @@ const Reader = () => {
 				dispatchState({ type: 'ROTATE_PAGES', pageIndexes, degrees });
 			},
 			onSetDataTransferAnnotations: noop, // n/a in web library, noop prevents errors printed on console from reader
-			// onDeletePages: handleDeletePages
+			// onDeletePages: handleDeletePages,
+			onSetLightTheme: (themeName) => {
+				dispatch(preferenceChange('readerLightTheme', themeName || false));
+			},
+			onSetDarkTheme: (themeName) => {
+				dispatch(preferenceChange('readerDarkTheme', themeName || false));
+			}
 		});
-	}, [annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug,
-		dispatch, getProcessedAnnotations, handleChangeViewState, handleResizeSidebar,
-		handleToggleSidebar, isGroup, isReadOnly, isReaderSidebarOpen, location,
-		locationValue, readerSidebarWidth, state.data, state.importedAnnotations,
-		useDarkModeForContent]
-	);
+	}, [
+		annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug, darkTheme, dispatch,
+		getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup,
+		isReadOnly, isReaderSidebarOpen, lightTheme, location, locationValue, readerSidebarWidth, state.data,
+		state.importedAnnotations
+	]);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
@@ -364,9 +372,20 @@ const Reader = () => {
 	useEffect(() => {
 		if(reader.current) {
 			reader.current.setColorScheme(colorScheme);
-			reader.current.useDarkModeForContent(useDarkModeForContent);
 		}
-	}, [colorScheme, useDarkModeForContent]);
+	}, [colorScheme]);
+
+	useEffect(() => {
+		if (reader.current) {
+			reader.current.setLightTheme(lightTheme);
+		}
+	}, [lightTheme]);
+
+	useEffect(() => {
+		if (reader.current) {
+			reader.current.setDarkTheme(darkTheme);
+		}
+	}, [darkTheme]);
 
 	// fetch attachment item details or redirect if invalid URL
 	useEffect(() => {

@@ -26,12 +26,10 @@ const SettingsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const colorScheme = useSelector(state => state.preferences.colorScheme ?? '');
 	const density = useSelector(state => state.preferences.density ?? '');
-	const useDarkModeForContent = useSelector(state => colorScheme !== 'light' && (state.preferences.useDarkModeForContent ?? true));
 	const isSmall = useSelector(state => state.device.xxs || state.device.xs || state.device.sm);
 	const isOpen = useSelector(state => state.modal.id === SETTINGS);
 	const colorSchemeInputId = useRef(getUniqueId());
 	const densityInputId = useRef(getUniqueId());
-	const useDarkModeForContentInputId = useRef(getUniqueId());
 
 	const handleChange = useCallback(() => true, []);
 
@@ -41,10 +39,6 @@ const SettingsModal = () => {
 
 	const handleSelectDensity = useCallback((newDensity) => {
 		dispatch(preferenceChange('density', newDensity));
-	}, [dispatch]);
-
-	const handleUseDarkModeForContentChange = useCallback((ev) => {
-		dispatch(preferenceChange('useDarkModeForContent', ev.target.checked));
 	}, [dispatch]);
 
 	const handleClose = useCallback(
@@ -122,19 +116,6 @@ const SettingsModal = () => {
 								searchable={false}
 							/>
 						</div>
-					</div>
-					<div className={cx("form-group checkbox", { disabled: colorScheme === 'light' })}>
-						<input
-							checked={colorScheme !== 'light' && useDarkModeForContent}
-							className="col-form-label"
-							disabled={colorScheme === 'light'}
-							id={useDarkModeForContentInputId.current}
-							onChange={handleUseDarkModeForContentChange}
-							type="checkbox"
-						/>
-						<label htmlFor={useDarkModeForContentInputId.current}>
-							Use Dark Mode for Content
-						</label>
 					</div>
 				</div>
 			</div>
