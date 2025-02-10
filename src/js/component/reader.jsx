@@ -8,27 +8,29 @@ import { getLastPageIndexSettingKey } from '../common/item';
 import { Spinner } from 'web-common/components';
 import { useFloating, flip, shift } from '@floating-ui/react-dom';
 import PropTypes from 'prop-types';
-import strings from "pdf-reader/src/en-us.strings.js";
+import strings from "pdf-reader/src/en-us.strings";
 
-import { annotationItemToJSON } from '../common/annotations.js';
+import { annotationItemToJSON } from '../common/annotations';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
-	deleteItems, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, tryGetAttachmentURL,
-	patchAttachment, postAnnotationsFromReader,  uploadAttachment, updateLibrarySettings, preferenceChange
+	deleteItems, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, patchAttachment,
+	postAnnotationsFromReader, preferenceChange, tryGetAttachmentURL, updateLibrarySettings, uploadAttachment
 } from '../actions';
-import { PDFWorker } from '../common/pdf-worker.js';
+import { PDFWorker } from '../common/pdf-worker';
+import { getItemViewState, updateItemViewState } from '../common/viewstate'
 import { useFetchingState } from '../hooks';
-import TagPicker from './item-details/tag-picker.jsx';
-import { READER_CONTENT_TYPES } from '../constants/reader.js';
+import TagPicker from './item-details/tag-picker';
+import { READER_CONTENT_TYPES } from '../constants/reader';
 import Portal from './portal';
 import { getItemFromApiUrl, isReaderCompatibleBrowser } from '../utils';
-import { forumsUrl } from '../constants/defaults.js';
+import { forumsUrl } from '../constants/defaults';
 
 const PAGE_SIZE = 100;
 
-const UNFETCHED = 0, NOT_IMPORTED = 0;
-const FETCHING = 1, IMPORTING = 1;
-const FETCHED = 2, IMPORTED = 2;
+const NOT_READY = 0;
+const RUNNING = 1;
+const READY = 2;
+const ERROR = 3;
 
 const PAGE_INDEX_KEY_LOOKUP = {
 	'application/pdf': 'pageIndex',
@@ -107,24 +109,30 @@ const readerReducer = (state, action) => {
 			return { ...state, isRouteConfirmed: true }
 		case 'COMPLETE_FETCH_SETTINGS':
 			return { ...state, isSettingsFetched: true }
-		case 'BEGIN_PUSH_SETTINGS':
-			return { ...state, isSettingPushRequired: true, newSettings: action.value }
-		case 'COMPLETE_PUSH_SETTINGS':
-			return { ...state, isSettingPushRequired: false, newSettings: null }
+		case 'BEGIN_VIEW_STATE_CHANGED':
+			return { ...state, newState: action.value }
+		case 'COMPLETE_VIEW_STATE_CHANGED':
+			return { ...state, newState: null }
 		case 'BEGIN_FETCH_DATA':
-			return { ...state, dataState: FETCHING };
+			return { ...state, dataState: RUNNING };
 		case 'COMPLETE_FETCH_DATA':
-			return { ...state, dataState: FETCHED, data: action.data };
+			return { ...state, dataState: READY, data: action.data };
 		case 'ERROR_FETCH_DATA':
-			return { ...state, dataState: UNFETCHED, error: action.error };
+			return { ...state, dataState: NOT_READY, error: action.error };
+		case 'BEGIN_READ_VIEWSTATE':
+			return { ...state, viewStateStatus: RUNNING }
+		case 'COMPLETE_READ_VIEWSTATE':
+			return { ...state, viewStateStatus: READY, viewState: action.viewState }
+		case 'ERROR_READ_VIEWSTATE':
+			return { ...state, viewStateStatus: ERROR, viewState: null }
 		case 'BEGIN_IMPORT_ANNOTATIONS':
-			return { ...state, annotationsState: IMPORTING };
+			return { ...state, annotationsState: RUNNING };
 		case 'COMPLETE_IMPORT_ANNOTATIONS':
-			return { ...state, annotationsState: IMPORTED, importedAnnotations: action.importedAnnotations };
+			return { ...state, annotationsState: READY, importedAnnotations: action.importedAnnotations };
 		case 'ERROR_IMPORT_ANNOTATIONS':
-			return { ...state, annotationsState: IMPORTED, error: action.error };
+			return { ...state, annotationsState: READY, error: action.error };
 		case 'SKIP_IMPORT_ANNOTATIONS':
-			return { ...state, annotationsState: IMPORTED };
+			return { ...state, annotationsState: READY };
 		case 'READY':
 			return { ...state, isReady: true };
 		case 'ROTATE_PAGES':
@@ -190,17 +198,18 @@ const Reader = () => {
 	const pdfWorker = useMemo(() => new PDFWorker({ pdfWorkerURL, pdfReaderCMapsURL, pdfReaderStandardFontsURL }), [pdfReaderCMapsURL, pdfReaderStandardFontsURL, pdfWorkerURL]);
 
 	const [state, dispatchState] = useReducer(readerReducer, {
-		action: null,
-		isReady: false,
-		isRouteConfirmed: false,
-		isSettingsFetched: false,
-		isSettingPushRequired: false,
-		newSettings: null,
-		data: null,
-		dataState: UNFETCHED,
-		annotationsState: NOT_IMPORTED,
-		importedAnnotations: []
-	});
+        action: null,
+        annotationsState: NOT_READY,
+        data: null,
+        dataState: NOT_READY,
+        importedAnnotations: [],
+        isReady: false,
+        isRouteConfirmed: false,
+        isSettingsFetched: false,
+        viewStateStatus: NOT_READY,
+        newState: null,
+        viewState: null
+    });
 
 	const [tagPicker, setTagPicker] = useState(null);
 	const anchor = tagPicker ? pick(tagPicker, ['x', 'y']) : null;
@@ -271,11 +280,10 @@ const Reader = () => {
 
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
-		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
-		if (isPrimary && userLibraryKey && pageIndexKey && (newViewState?.[pageIndexKey] ?? null) !== null && newViewState[pageIndexKey] !== '') {
-			dispatchState({ type: 'BEGIN_PUSH_SETTINGS', value: newViewState[pageIndexKey] });
+		if(isPrimary) {
+			dispatchState({ type: 'BEGIN_VIEW_STATE_CHANGED', value: newViewState});
 		}
-	}, [attachmentItem, userLibraryKey]), 1000);
+	}, []), 1000);
 
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleToggleSidebar = useDebouncedCallback(useCallback((isOpen) => {
@@ -292,7 +300,8 @@ const Reader = () => {
 		const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
 		const readerState = {
 			fileName: attachmentItem.filename,
-			[pageIndexKey]: locationValue
+			[pageIndexKey]: locationValue,
+			...(state.viewState ?? {})
 		};
 
 		reader.current = iframeRef.current.contentWindow.createReader({
@@ -361,13 +370,32 @@ const Reader = () => {
 		annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug, darkTheme, dispatch,
 		getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup,
 		isReadOnly, isReaderSidebarOpen, lightTheme, location, locationValue, readerSidebarWidth, state.data,
-		state.importedAnnotations
+		state.importedAnnotations, state.viewState
 	]);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
 		localStorage.removeItem('pdfjs.history');
 	}, []);
+
+	useEffect(() => {
+		if(!attachmentKey) {
+			return;
+		}
+
+		const checkViewState = async () => {
+			dispatchState({ type: 'BEGIN_READ_VIEWSTATE' });
+			try {
+				const viewState = await getItemViewState(attachmentKey, libraryKey);
+				dispatchState({ type: 'COMPLETE_READ_VIEWSTATE', viewState });
+			} catch (e) {
+				dispatchState({ type: 'ERROR_READ_VIEWSTATE'});
+			}
+		};
+		if (state.viewStateStatus === NOT_READY) {
+			checkViewState();
+		}
+	}, [attachmentKey, libraryKey, state.viewStateStatus]);
 
 	useEffect(() => {
 		if(reader.current) {
@@ -425,7 +453,7 @@ const Reader = () => {
 
 	// Fetch attachment binary data
 	useEffect(() => {
-		if (urlIsFresh && state.dataState === UNFETCHED) {
+		if (urlIsFresh && state.dataState === NOT_READY) {
 			(async () => {
 				dispatchState({ type: 'BEGIN_FETCH_DATA' });
 				try {
@@ -440,7 +468,7 @@ const Reader = () => {
 
 	// import external annotations
 	useEffect(() => {
-		if (attachmentItem && state.dataState === FETCHED && state.annotationsState === NOT_IMPORTED) {
+		if (attachmentItem && state.dataState === READY && state.annotationsState === NOT_READY) {
 			(async () => {
 				dispatchState({ type: 'BEGIN_IMPORT_ANNOTATIONS' });
 				if (attachmentItem.contentType !== 'application/pdf') {
@@ -462,10 +490,11 @@ const Reader = () => {
 	}, [attachmentItem, pdfWorker, state.annotationsState, state.data, state.dataState]);
 
 	useEffect(() => {
-		if (!state.isReady && isFetched && state.data && state.annotationsState == IMPORTED && state.isSettingsFetched && !isFetchingUserLibrarySettings) {
+		const viewStateReadyOrError = [READY, ERROR].includes(state.viewStateStatus);
+		if (!state.isReady && isFetched && state.data && state.annotationsState === READY && viewStateReadyOrError && state.isSettingsFetched && !isFetchingUserLibrarySettings) {
 			dispatchState({ type: 'READY' });
 		}
-	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady, state.isSettingsFetched]);
+	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady, state.isSettingsFetched, state.viewStateStatus]);
 
 	useEffect(() => {
 		if (state.isRouteConfirmed && !state.isSettingsFetched && !isFetchingUserLibrarySettings) {
@@ -529,11 +558,19 @@ const Reader = () => {
 	}, [rotatePages, state.action, state.data, state.isReady]);
 
 	useEffect(() => {
-		if (state.isSettingsFetched && state.isSettingPushRequired) {
-			dispatch(updateLibrarySettings(pageIndexSettingKey, state.newSettings, userLibraryKey, { ignore: true }));
-			dispatchState({ type: 'COMPLETE_PUSH_SETTINGS' });
+		if (attachmentItem && state.newState !== null) {
+			const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
+			if (userLibraryKey && pageIndexKey && (state.newState?.[pageIndexKey] ?? null) !== null && state.newState[pageIndexKey] !== '') {
+				dispatch(updateLibrarySettings(pageIndexSettingKey, state.newState[pageIndexKey], userLibraryKey, { ignore: true }));
+			}
+			try {
+				updateItemViewState(attachmentItem.key, libraryKey, state.newState);
+			} catch (e) {
+				console.error(e); // unable to write to indexedDB, which means viewState won't be saved
+			}
+			dispatchState({ type: 'COMPLETE_VIEW_STATE_CHANGED' });
 		}
-	}, [dispatch, pageIndexSettingKey, state.isSettingPushRequired, state.isSettingsFetched, state.newSettings, userLibraryKey]);
+	}, [attachmentItem, dispatch, libraryKey, pageIndexSettingKey, state.newState, userLibraryKey]);
 
 	return (
     <section className="reader-wrapper" onKeyDown={handleKeyDown} tabIndex="0">
