@@ -152,6 +152,7 @@ const Reader = () => {
 	const iframeRef = useRef(null);
 	const reader = useRef(null);
 	const editedAnnotations = useRef(new Set());
+	const pendingViewState = useRef(null);
 	const userLibraryKey = useSelector(state => state.current.userLibraryKey);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const attachmentKey = useSelector(state => {
@@ -278,12 +279,18 @@ const Reader = () => {
 		}
 	}, []);
 
-	// NOTE: handler can't be updated once it has been passed to Reader
-	const handleChangeViewState = useDebouncedCallback(useCallback((newViewState, isPrimary) => {
-		if(isPrimary) {
-			dispatchState({ type: 'BEGIN_VIEW_STATE_CHANGED', value: newViewState});
-		}
+
+	const handleChangeViewStateDebounced = useDebouncedCallback(useCallback((newViewState) => {
+		dispatchState({ type: 'BEGIN_VIEW_STATE_CHANGED', value: newViewState});
 	}, []), 1000);
+
+	// NOTE: handler can't be updated once it has been passed to Reader
+	const handleChangeViewState = useCallback((newViewState, isPrimary) => {
+		if (isPrimary) {
+			pendingViewState.current = newViewState;
+			handleChangeViewStateDebounced(newViewState, isPrimary);
+		}
+	}, [handleChangeViewStateDebounced]);
 
 	// NOTE: handler can't be updated once it has been passed to Reader
 	const handleToggleSidebar = useDebouncedCallback(useCallback((isOpen) => {
@@ -373,10 +380,23 @@ const Reader = () => {
 		state.importedAnnotations, state.viewState
 	]);
 
+	const handleOnBeforeUnload = useCallback(async () => {
+		if (pendingViewState.current) {
+			await updateItemViewState(attachmentItem.key, libraryKey, pendingViewState.current);
+		}
+	}, [attachmentItem, libraryKey]);
+
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
 		localStorage.removeItem('pdfjs.history');
 	}, []);
+
+	useEffect(() => {
+		window.addEventListener("beforeunload", handleOnBeforeUnload);
+		return () => {
+			window.removeEventListener("beforeunload", handleOnBeforeUnload);
+		}
+	}, [handleOnBeforeUnload]);
 
 	useEffect(() => {
 		if(!attachmentKey) {
@@ -560,15 +580,23 @@ const Reader = () => {
 	useEffect(() => {
 		if (attachmentItem && state.newState !== null) {
 			const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem?.contentType];
+			let promises = [];
 			if (userLibraryKey && pageIndexKey && (state.newState?.[pageIndexKey] ?? null) !== null && state.newState[pageIndexKey] !== '') {
-				dispatch(updateLibrarySettings(pageIndexSettingKey, state.newState[pageIndexKey], userLibraryKey, { ignore: true }));
+				promises.push(
+					dispatch(updateLibrarySettings(pageIndexSettingKey, state.newState[pageIndexKey], userLibraryKey, { ignore: true }))
+				);
 			}
 			try {
-				updateItemViewState(attachmentItem.key, libraryKey, state.newState);
+				promises.push(
+					updateItemViewState(attachmentItem.key, libraryKey, state.newState)
+				);
 			} catch (e) {
 				console.error(e); // unable to write to indexedDB, which means viewState won't be saved
 			}
-			dispatchState({ type: 'COMPLETE_VIEW_STATE_CHANGED' });
+			Promise.allSettled(promises).then(() => {
+				pendingViewState.current = null;
+				dispatchState({ type: 'COMPLETE_VIEW_STATE_CHANGED' });
+			});
 		}
 	}, [attachmentItem, dispatch, libraryKey, pageIndexSettingKey, state.newState, userLibraryKey]);
 
