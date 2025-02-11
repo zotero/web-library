@@ -4,3 +4,4 @@ export * from './use-navigation-state';
 export * from './state';
 export * from './use-item-action-handlers';
 export * from './use-items-count';
+export * from './use-tracked-settings-key';

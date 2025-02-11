@@ -102,7 +102,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-thunk": "^3.1.0",
     "use-debounce": "^10.0.4",
-    "zotero-api-client": "^0.46.0"
+    "zotero-api-client": "^0.47.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

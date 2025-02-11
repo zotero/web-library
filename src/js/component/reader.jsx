@@ -18,7 +18,7 @@ import {
 } from '../actions';
 import { PDFWorker } from '../common/pdf-worker';
 import { getItemViewState, updateItemViewState } from '../common/viewstate'
-import { useFetchingState } from '../hooks';
+import { useFetchingState, useTrackedSettingsKey } from '../hooks';
 import TagPicker from './item-details/tag-picker';
 import { READER_CONTENT_TYPES } from '../constants/reader';
 import Portal from './portal';
@@ -166,7 +166,7 @@ const Reader = () => {
 	});
 	const location = useSelector(state => state.current.location);
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
-	const locationValue = useSelector(state => state.libraries[userLibraryKey]?.settings?.entries?.[pageIndexSettingKey]?.value ?? null);
+	const { value: locationValue, update: updateLocationValueSync } = useTrackedSettingsKey(pageIndexSettingKey, userLibraryKey);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -380,11 +380,13 @@ const Reader = () => {
 		state.importedAnnotations, state.viewState
 	]);
 
-	const handleOnBeforeUnload = useCallback(async () => {
+	const handleOnBeforeUnload = useCallback(() => {
 		if (pendingViewState.current) {
-			await updateItemViewState(attachmentItem.key, libraryKey, pendingViewState.current);
+			const pageIndexKey = PAGE_INDEX_KEY_LOOKUP[attachmentItem.contentType];
+			updateItemViewState(attachmentItem.key, libraryKey, pendingViewState.current);
+			updateLocationValueSync(pendingViewState.current[pageIndexKey]);
 		}
-	}, [attachmentItem, libraryKey]);
+	}, [attachmentItem, libraryKey, updateLocationValueSync]);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
