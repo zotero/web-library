@@ -3,9 +3,9 @@
 */
 
 import '@testing-library/jest-dom';
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node';
-import { getByRole, screen, waitFor } from '@testing-library/react';
+import { act, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -111,5 +111,53 @@ describe('Attachment Details', () => {
 			getByRole(attachmentsTabPanel, 'textbox', { name: 'Filename' })
 		).toHaveTextContent('Updated.pdf'));
 		expect(hasBeenPosted).toBe(true);
+	});
+
+	test('Upload new attachment file', async () => {
+		let hasBeenUploaded = false;
+		let hasBeenPatched = false;
+
+		server.use(
+			http.post('https://api.zotero.org/users/1/items/K24TUDDL/file', async ({ request }) => {
+				const bodyParams = (await request.text()).split('&');
+				expect(bodyParams).toContain('filename=hello.pdf');
+				expect(bodyParams).toContain('md5=b59c67bf196a4758191e42f76670ceba');
+				await delay(100); // ensure "ongoing" state is shown
+				hasBeenUploaded = true;
+				return HttpResponse.json({ 'exists': 1 });
+			})
+		);
+
+		server.use(
+			http.patch('https://api.zotero.org/users/1/items/K24TUDDL', async ({ request }) => {
+				const item = await request.json();
+				expect(item.filename).toBe('hello.pdf');
+				hasBeenPatched = true;
+				return new HttpResponse(null, { status: 204 });
+			}),
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const attachmentsTabPanel = await screen.findByRole('tabpanel', { name: 'Attachments' });
+
+		expect(getByRole(attachmentsTabPanel, 'textbox', { name: 'Filename' }))
+			.toHaveTextContent('Silver - 2005 - Cooperative pathfinding.pdf');
+
+
+		const input = screen.getByLabelText('Upload New', { selector: 'input' });
+		const file = new File([1, 1, 1, 1], 'hello.pdf', { type: 'application/pdf' })
+		act(() => {
+			userEvent.upload(input, file);
+		});
+
+		expect(await screen.findByText('Uploading')).toBeInTheDocument();
+		await waitFor(() => expect(screen.queryByText('Uploading')).not.toBeInTheDocument());
+
+		expect(getByRole(attachmentsTabPanel, 'textbox', { name: 'Filename' }))
+			.toHaveTextContent('hello.pdf');
+
+			expect(hasBeenUploaded).toBe(true);
+		expect(hasBeenPatched).toBe(true);
 	});
 });

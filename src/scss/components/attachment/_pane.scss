@@ -131,21 +131,16 @@
 			.export-pdf {
 				min-width: 80px; // prevent button shrinking when showing spinner
 				display: flex;
-				justify-content: center;
 				align-items: center;
-
-				// ensure no extra border when using <a> in .btn-group
-				border-top-right-radius: 0;
-				border-bottom-right-radius: 0;
+				text-decoration: none;
 
 				@include touch-or-bp-down(sm) {
 					min-width: 106px; // prevent button shrinking when showing spinner
 				}
-			}
 
-			// ensure no extra border when using <a> in .btn-group
-			.export-pdf + .btn {
-				margin-left: -1px;
+				> .icon {
+					margin-left: $space-xs;
+				}
 			}
 
 			.btn-icon .icon {
@@ -153,7 +148,8 @@
 			}
 
 			> .btn + .btn-group,
-			> .btn + .btn {
+			> .btn + .btn,
+			> .btn-group + .btn {
 				margin-left: $space-xs;
 			}
 		}

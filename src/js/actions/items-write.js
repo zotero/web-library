@@ -15,6 +15,7 @@ import { READER_CONTENT_TYPES } from '../constants/reader';
 import {
 	BEGIN_ONGOING,
 	COMPLETE_ONGOING,
+	CLEAR_ONGOING,
 	ERROR_ADD_ITEMS_TO_COLLECTION,
 	ERROR_ADD_TAGS_TO_ITEMS,
 	ERROR_CREATE_ITEM,
@@ -1636,6 +1637,38 @@ const createLinkedUrlAttachments = (linkedUrlItems, { collection = null, parentI
 	}
 }
 
+// uploads new file and updates the attachment item with the new file's metadata
+const updateAttachment = (attachmentKey, fd, libraryKey) => {
+	return async (dispatch) => {
+		const patch = {
+			contentType: sniffForMIMEType(fd.file) || fd.contentType,
+			filename: fd.fileName,
+			title: fd.fileName,
+		};
+
+		const id = getUniqueId();
+		dispatch({
+			id,
+			data: { count: 1 },
+			kind: 'upload-new',
+			libraryKey,
+			type: BEGIN_ONGOING,
+		});
+
+		const updatePromise = dispatch(updateItem(attachmentKey, patch, libraryKey));
+		const uploadPromise = dispatch(uploadAttachment(attachmentKey, fd, libraryKey));
+		await Promise.allSettled([updatePromise, uploadPromise]);
+
+		dispatch({
+			id,
+			data: { count: 1 },
+			kind: 'upload-new',
+			libraryKey,
+			type: CLEAR_ONGOING, // auto-clear ongoing
+		});
+	}
+}
+
 const createItemOfType = (itemType, { collection = null } = {}) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -1677,5 +1710,6 @@ export {
     updateItem,
     updateItemWithMapping,
     updateMultipleItems,
-    uploadAttachment
+    uploadAttachment,
+	updateAttachment,
 };

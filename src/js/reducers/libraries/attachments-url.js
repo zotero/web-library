@@ -1,6 +1,7 @@
-import {
-	REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL
+import { ERROR_ATTACHMENT_URL, ERROR_UPLOAD_ATTACHMENT, RECEIVE_ATTACHMENT_URL,
+	RECEIVE_UPLOAD_ATTACHMENT, REQUEST_ATTACHMENT_URL, REQUEST_UPLOAD_ATTACHMENT
 } from '../../constants/actions';
+import { omit } from 'web-common/utils';
 
 const settings = (state = {}, action) => {
 	switch(action.type) {
@@ -30,6 +31,17 @@ const settings = (state = {}, action) => {
 					isFetching: false,
 				}
 			}
+		case REQUEST_UPLOAD_ATTACHMENT:
+			return {
+				...state,
+				[action.itemKey]: {
+					...(state[action.itemKey] || {}),
+					isUploading: true,
+				}
+			}
+		case RECEIVE_UPLOAD_ATTACHMENT:
+		case ERROR_UPLOAD_ATTACHMENT:
+			return omit(state, action.itemKey);
 		default:
 			return state;
 	}

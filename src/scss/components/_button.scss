@@ -284,12 +284,12 @@
 			z-index: 1;
 		}
 
-		&:not(:last-of-type) {
+		&:not(:last-child) {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
 
-		&:not(:first-of-type) {
+		&:not(:first-child) {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 			margin-left: -$input-border-width;
@@ -303,6 +303,7 @@
 	}
 
 	> .dropdown-toggle {
+
 		&.btn-lg {
 			padding-left: $input-btn-padding-x-lg - 3px; // Square button
 			padding-right: $input-btn-padding-x-lg - 3px;

@@ -194,12 +194,14 @@ describe('Read-only', () => {
 			})
 		);
 
-		await userEvent.click(screen.getByRole('button', { name: 'Download' }));
+		await userEvent.click(screen.getByRole('button', { name: 'Download Options' }));
+		await waitForPosition();
+		await userEvent.click(screen.getByRole('listitem', { name: 'Download' }));
 
 		await waitFor(() => expect(PDFWorker.mock.instances[0].export).toHaveBeenCalledTimes(1));
 		await waitFor(() => expect(fileSaver.saveAs).toHaveBeenCalledTimes(1));
 
-		await userEvent.click(screen.getByRole('button', { name: 'More Download Options' }));
+		await userEvent.click(screen.getByRole('button', { name: 'Download Options' }));
 		expect(screen.getByRole('listitem', { name: 'Download (no annotations)' }))
 			.toHaveAttribute('href', 'https://files.zotero.net/qwertyuiopasdfghjklzxcvbnm/Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf')
 	});

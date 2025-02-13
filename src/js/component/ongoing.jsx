@@ -47,6 +47,10 @@ const PROCESSES = {
 	'undo-metadata-retrieval': {
 		title: 'Undoing',
 		getMessage: process => `${process.completed ? 'Undone' : 'Undoing'} for ${process.data.count} ${pluralize('item', process.data.count)}`,
+	},
+	'upload-new': { // when uploading a new file for an existing attachment
+		title: 'Uploading',
+		getMessage: process => `${process.completed ? 'Uploaded' : 'Uploading'}`,
 	}
 };
 
