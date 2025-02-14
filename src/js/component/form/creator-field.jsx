@@ -285,6 +285,7 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 		formField;
 }));
 
+
 CreatorFieldInputWrap.displayName = 'CreatorFieldInputWrap';
 CreatorFieldInputWrap.propTypes = {
 	active: PropTypes.string,
@@ -355,7 +356,14 @@ const CreatorField = forwardRef((props, outerRef) => {
 	const handleEditableCommit = useCallback((newValue, hasChanged, srcEvent) => {
 		const { fieldName } = srcEvent.currentTarget.dataset;
 		if(hasChanged) {
-			onChange(index, fieldName, newValue);
+			// Ensure the blur/focus event is handled before `onChange` is
+			// triggered. Otherwise, when adding a new creator—which remains in
+			// a virtual state until the first name is committed—pressing Tab to
+			// navigate to the last name field causes focus to be lost
+			// completely (because the component is re-rendered as non-virtual).
+			setTimeout(() => {
+				onChange(index, fieldName, newValue);
+			}, 0);
 		}
 		if(isForm && srcEvent) {
 			if(srcEvent.type == 'keydown' && srcEvent.key == 'Enter') {
