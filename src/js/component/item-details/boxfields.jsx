@@ -98,6 +98,11 @@ const BoxFields = ({ className, fields, isReadOnly, item }) => {
 				ev.target.blur();
 			}
 		}
+
+		if (!isForm && ev.target.nodeName === 'TEXTAREA' && (ev.type === 'keydown' && ev.key === 'Enter')) {
+			ev.preventDefault();
+		}
+
 	}, [dispatch, activeEntry, isForm, item]);
 
 	const handleSaveCreators = useCallback((newValue, isChanged) => {
