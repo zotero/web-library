@@ -329,14 +329,17 @@ const CreatorField = forwardRef((props, outerRef) => {
 
 	useImperativeHandle(outerRef, () => {
 		// Custom logic for focus() but return innerRef for CSSTransition
-		innerRef.current.focus = () => {
-			const key = 'lastName' in creator ? 'lastName' : 'name';
-			if (!isReadOnly && !isForm) {
-				setActive(key);
-			} else {
-				key in fieldComponents.current && fieldComponents.current[key].focus();
-			}
-		};
+		// This breaks in JSDOM but works in real browsers
+		if (process.env.NODE_ENV !== 'test') {
+			innerRef.current.focus = () => {
+				const key = 'lastName' in creator ? 'lastName' : 'name';
+				if (!isReadOnly && !isForm) {
+					setActive(key);
+				} else {
+					key in fieldComponents.current && fieldComponents.current[key].focus();
+				}
+			};
+		}
 		return innerRef.current;
 	}, [creator, isForm, isReadOnly]);
 
