@@ -24,10 +24,11 @@ const PROCESSES = {
 			dispatch(navigate({
 				library: process.data.libraryKey,
 				collection: process.data?.collectionKey,
-				items: process.data?.createdItemsKeys
+				// Selecting multiple attachments is not supported in the web library, so if uploaded as child items, select the first one. For top-level items, select all uploaded items.
+				items: process.data?.createdItemsKeys ? process.data?.parentItemKey ? [process.data?.createdItemsKeys[0]] : process.data?.createdItemsKeys : [],
 			}, true));
 		},
-		getActionLabel: process => `Select ${pluralize('File', process.data.count)}`,
+		getActionLabel: process => process.data?.parentItemKey ? `See Attachments` : `Select ${pluralize('File', process.data.count)}`,
 		getMessage: process => `${process.completed ? 'Uploaded' : 'Uploading'} ${process.data.count} ${pluralize('file', process.data.count)}`,
 		getHasAction: process => process.completed && process.data.createdItemsKeys?.length > 0,
 	},

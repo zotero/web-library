@@ -1544,6 +1544,7 @@ const createAttachments = (filesData, { linkMode = 'imported_file', collection =
 		const data = {
 			count: filesData.length,
 			collectionKey: collection,
+			parentItemKey: parentItem,
 			libraryKey
 		};
 
