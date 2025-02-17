@@ -188,6 +188,7 @@ const Libraries = forwardRef((props, ref) => {
 	const firstCollectionKey = useSelector(state => state.current.firstCollectionKey);
 	const firstIsTrash = useSelector(state => state.current.firstIsTrash);
 	const treeRef = useRef();
+	const mouseDownTracker = useRef(false);
 	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
 	const { focusBySelector, focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(treeRef);
 
@@ -272,7 +273,9 @@ const Libraries = forwardRef((props, ref) => {
 
 
 	const handleFocus = useCallback(ev => {
-		const hasChangedFocused = receiveFocus(ev);
+		// fix #335: prevent scrollbar "jumping" to the top when using scrollbar handle to scroll
+		let preventScroll = mouseDownTracker.current;
+		const hasChangedFocused = receiveFocus(ev, { preventScroll });
 		if (hasChangedFocused) {
 			dispatch(triggerFocus('collections-tree', true));
 		}
@@ -286,6 +289,14 @@ const Libraries = forwardRef((props, ref) => {
 			dispatch(triggerFocus('collections-tree', false));
 		}
 	}, [dispatch, receiveBlur]);
+
+	const handleGlobalMouseDown = useCallback(() => {
+		mouseDownTracker.current = true;
+	}, []);
+
+	const handleGlobalMouseUp = useCallback(() => {
+		mouseDownTracker.current = false;
+	}, []);
 
 	useEffect(() => {
 		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
@@ -304,6 +315,16 @@ const Libraries = forwardRef((props, ref) => {
 			setTimeout(() => selectedLibraryNode?.scrollIntoView?.(), 0);
 		}
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	useEffect(() => {
+		document.addEventListener('mousedown', handleGlobalMouseDown);
+		document.addEventListener('mouseup', handleGlobalMouseUp);
+
+		return () => {
+			document.removeEventListener('mousedown', handleGlobalMouseDown);
+			document.removeEventListener('mouseup', handleGlobalMouseUp);
+		}
+	}, [handleGlobalMouseDown, handleGlobalMouseUp]);
 
 	const getNodeProps = libraryData => {
 		const { key, ...rest } = libraryData;
