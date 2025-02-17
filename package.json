@@ -73,7 +73,6 @@
     "@babel/runtime-corejs3": "^7.26.9",
     "@floating-ui/react-dom": "^2.1.2",
     "@reduxjs/toolkit": "^2.5.1",
-    "bootstrap-sass": "^3.4.3",
     "classnames": "^2.5.1",
     "connected-react-router": "^6.9.3",
     "copy-to-clipboard": "^3.3.3",
