@@ -40,7 +40,7 @@ describe('Metadata Retrieval', () => {
 		}),
 		http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top/tags', () => {
 			return HttpResponse.json([], { headers: { 'Total-Results': '0' } });
-			}),
+		}),
 	];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();
@@ -114,7 +114,7 @@ describe('Metadata Retrieval', () => {
 					expect(item.parentItem).toBe('S8CIV6VJ');
 					expect(item.collections).toEqual([]);
 				} else {
-					expect(item.parentItem).toBeNull();
+					expect(item.parentItem).toBe(false);
 					expect(item.collections).toEqual(['CSB4KZUU']);
 				}
 				hasPatchedAttachmentItem = true;
@@ -135,7 +135,7 @@ describe('Metadata Retrieval', () => {
 			return { getRecognizerData: mockedGetRecognizerData };
 		});
 
-		expect(screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' }) ).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' })).toHaveAttribute('aria-selected', 'true');
 		const recognizeBtn = screen.getByRole('button',
 			{ name: 'Retrieve Metadata' }
 		);

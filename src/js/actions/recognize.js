@@ -182,7 +182,7 @@ const undoRetrieveMetadata = (itemKey, libraryKey) => {
 			}
 
 			const collections = item.collections;
-			await dispatch(updateItem(originalItemKey, { parentItem: null, collections }, libraryKey));
+			await dispatch(updateItem(originalItemKey, { parentItem: false, collections }, libraryKey));
 			await dispatch(deleteItem(item));
 			dispatch({
 				type: COMPLETE_UNRECOGNIZE_DOCUMENT,
