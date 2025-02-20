@@ -3,36 +3,17 @@ import { Fragment, memo, useCallback, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { cleanDOI, cleanURL, get, getDOIURL } from '../../../utils';
+import { getDOIURL } from '../../../utils';
 import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
-import { useItemActionHandlers } from '../../../hooks';
+import { useItemActionHandlers, useItemsActions } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 
 const MoreActionsItems = ({ divider = false }) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
-	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.every(
-		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
-			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
-	));
-	const selectedItemsAreAllAttachments = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
-		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
-	));
-	const selectedItemsCanBeUnrecognized = useSelector(state =>
-		state.current.itemKeys.every(
-			key => !!state.recognize.lookup[`${state.current.libraryKey}-${key}`]
-		));
 	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem } = useItemActionHandlers();
-
-	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
-	const isViewFile = attachment !== null;
-	const url = item && item.url ? cleanURL(item.url, true) : null;
-	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
-	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = !isReadOnly && item && item.itemType !== 'attachment' && (itemsSource === 'collection' || itemsSource === 'top');
+	const { attachment, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, isViewFile,
+		isViewOnline, item, selectedCount, url } = useItemsActions();
 
 	const handleViewFileClick = useCallback(() => {
 		dispatch(pickBestItemAction(item.key));
@@ -58,33 +39,33 @@ const MoreActionsItems = ({ divider = false }) => {
 					View Online
 				</DropdownItem>
 			)}
-			{(isTouchOrSmall && selectedItemsCanBeRecognized) && (
-				<>
-					{(canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider />}
-					<DropdownItem onClick={handleRetrieveMetadata}>
-						Retrieve Metadata
-					</DropdownItem>
-				</>
-			)}
-			{ selectedItemsAreAllAttachments && (
-				<DropdownItem onClick={handleCreateParentItem}>
-					{ item ? "Create Parent Item" : "Create Parent Items" }
-				</DropdownItem>
-			)}
-			{selectedItemsCanBeUnrecognized && (
-				<>
-					{(canDuplicate || isViewFile || isViewOnline) && <DropdownItem divider />}
-					<DropdownItem onClick={handleUnrecognize}>
-						Undo Retrieve Metadata
-					</DropdownItem>
-				</>
-			)}
+
+			{((isViewFile || isViewOnline)) && (canDuplicate) && <DropdownItem divider />}
+
 			{canDuplicate && (
 				<DropdownItem onClick={handleDuplicate}>
 					Duplicate Item
 				</DropdownItem>
 			)}
-			{divider && (isViewFile || isViewOnline || selectedItemsAreAllAttachments || selectedItemsCanBeUnrecognized || canDuplicate) && <DropdownItem divider />}
+
+			{canDuplicate && (canRecognize || canHaveParent || canUnregonize) && <DropdownItem divider />}
+
+			{(isTouchOrSmall && canRecognize) && (
+				<DropdownItem onClick={handleRetrieveMetadata}>
+					Retrieve Metadata
+				</DropdownItem>
+			)}
+			{canHaveParent && (
+				<DropdownItem onClick={handleCreateParentItem}>
+					{selectedCount === 1 ? "Create Parent Item" : "Create Parent Items"}
+				</DropdownItem>
+			)}
+			{canUnregonize && (
+				<DropdownItem onClick={handleUnrecognize}>
+					Undo Retrieve Metadata
+				</DropdownItem>
+			)}
+			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && canRecognize) || canHaveParent || canUnregonize) && <DropdownItem divider />}
 		</Fragment>
 	);
 }
@@ -158,27 +139,7 @@ MoreActionsDropdownDesktop.propTypes = {
 MoreActionsDropdownDesktop.displayName = 'MoreActionsDropdownDesktop';
 
 const MoreActionsDropdownTouch = memo(() => {
-	const item = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', state.current.itemKey]));
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
-
-	const attachment = get(item, [Symbol.for('links'), 'attachment'], null);
-	const isViewFile = attachment !== null;
-	const url = item && item.url ? cleanURL(item.url, true) : null;
-	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
-	const isViewOnline = !isViewFile && (url || doi);
-	const canDuplicate = !isReadOnly && item && item.itemType !== 'attachment' && (itemsSource === 'collection' || itemsSource === 'top');
-	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
-		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
-			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
-	));
-	const selectedItemsCanBeUnrecognized = useSelector(state =>
-		state.current.itemKeys.length > 0 && state.current.itemKeys.every(
-			key => !!state.recognize.lookup[`${state.current.libraryKey}-${key}`]
-		));
-	const canRecognize = !isReadOnly && selectedItemsCanBeRecognized;
-	const canUnregonize = !isReadOnly && selectedItemsCanBeUnrecognized;
-	const hasAnyAction = isViewFile || isViewOnline || canDuplicate || canRecognize || canUnregonize;
+	const { hasAnyAction } = useItemsActions();
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleDropdownToggle = useCallback(() => {

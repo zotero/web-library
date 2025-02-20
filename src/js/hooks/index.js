@@ -5,3 +5,4 @@ export * from './state';
 export * from './use-item-action-handlers';
 export * from './use-items-count';
 export * from './use-tracked-settings-key';
+export * from './use-items-actions';

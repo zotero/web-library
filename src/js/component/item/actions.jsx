@@ -1,4 +1,5 @@
 import { Fragment, memo, useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
@@ -9,7 +10,7 @@ import ExportActions from 'component/item/actions/export';
 import UploadAction from 'component/item/actions/upload';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from 'component/item/actions/add-by-identifier';
-import { useItemActionHandlers } from '../../hooks';
+import { useCanRecognize, useItemActionHandlers } from '../../hooks';
 import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
 import { MoreActionsDropdownDesktop } from 'component/item/actions/more-actions';
 
@@ -125,18 +126,16 @@ ItemActionsTouch.displayName = 'ItemActionsTouch';
 const ItemActionsDesktop = memo(props => {
 	const { onFocusNext, onFocusPrev } = props;
 	const itemsSource = useSelector(state => state.current.itemsSource);
-	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
+	const selectedCount = useSelector(state => state.current.itemKeys.length);
+	const canRecognize = useCanRecognize();
+
 	const selectedContainsCollection = useSelector(
 		state => state.current.itemKeys.some(
 			key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'
 		));
-	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.every(
-		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
-			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
-	));
 
 	const collectionKey = useSelector(state => state.current.collectionKey);
 
@@ -148,7 +147,6 @@ const ItemActionsDesktop = memo(props => {
 		if (ev.target !== ev.currentTarget) {
 			return;
 		}
-
 		if (ev.key === 'ArrowRight') {
 			onFocusNext(ev);
 		} else if (ev.key === 'ArrowLeft') {
@@ -199,7 +197,7 @@ const ItemActionsDesktop = memo(props => {
 						{!(isTrash || isMyPublications) && (
 							<Fragment>
 								<Button
-									disabled={selectedItemsCount === 0 || !selectedItemsCanBeRecognized}
+									disabled={!canRecognize}
 									icon
 									onClick={handleRetrieveMetadata}
 									onKeyDown={handleKeyDown}
@@ -209,7 +207,7 @@ const ItemActionsDesktop = memo(props => {
 									<Icon type="16/retrieve-metadata" width="16" height="16" />
 								</Button>
 								<Button
-									disabled={selectedItemsCount === 0}
+									disabled={selectedCount === 0}
 									icon
 									onClick={handleAddToCollectionModalOpen}
 									onKeyDown={handleKeyDown}
@@ -220,7 +218,7 @@ const ItemActionsDesktop = memo(props => {
 								</Button>
 								{(itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
 									<Button
-										disabled={selectedItemsCount === 0}
+										disabled={selectedCount === 0}
 										icon
 										onClick={handleRemoveFromCollection}
 										onKeyDown={handleKeyDown}
@@ -234,7 +232,7 @@ const ItemActionsDesktop = memo(props => {
 						)}
 						{!isTrash && (
 							<Button
-								disabled={selectedItemsCount === 0}
+								disabled={selectedCount === 0}
 								icon
 								onClick={handleTrash}
 								onKeyDown={handleKeyDown}
@@ -247,7 +245,7 @@ const ItemActionsDesktop = memo(props => {
 						{isTrash && (
 							<Fragment>
 								<Button
-									disabled={selectedItemsCount === 0}
+									disabled={selectedCount === 0}
 									icon
 									onClick={handlePermanentlyDelete}
 									onKeyDown={handleKeyDown}
@@ -257,7 +255,7 @@ const ItemActionsDesktop = memo(props => {
 									<Icon type="16/empty-trash" width="16" height="16" />
 								</Button>
 								<Button
-									disabled={selectedItemsCount === 0}
+									disabled={selectedCount === 0}
 									icon
 									onClick={handleUndelete}
 									onKeyDown={handleKeyDown}
@@ -273,13 +271,13 @@ const ItemActionsDesktop = memo(props => {
 			)}
 			<ToolGroup>
 				<ExportActions
-					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
+					disabled={selectedContainsCollection || selectedCount === 0 || selectedCount > 100}
 					tabIndex={-2}
 					onFocusNext={onFocusNext}
 					onFocusPrev={onFocusPrev}
 				/>
 				<Button
-					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
+					disabled={selectedContainsCollection || selectedCount === 0 || selectedCount > 100}
 					icon
 					onClick={handleCiteModalOpen}
 					onKeyDown={handleKeyDown}
@@ -289,7 +287,7 @@ const ItemActionsDesktop = memo(props => {
 					<Icon type="16/cite" width="16" height="16" />
 				</Button>
 				<Button
-					disabled={selectedContainsCollection || selectedItemsCount === 0 || selectedItemsCount > 100}
+					disabled={selectedContainsCollection || selectedCount === 0 || selectedCount > 100}
 					icon
 					onClick={handleBibliographyModalOpen}
 					onKeyDown={handleKeyDown}
@@ -310,6 +308,10 @@ const ItemActionsDesktop = memo(props => {
 	);
 });
 
+ItemActionsDesktop.propTypes = {
+	onFocusNext: PropTypes.func.isRequired,
+	onFocusPrev: PropTypes.func.isRequired
+};
 ItemActionsDesktop.displayName = 'ItemActionsDesktop';
 
 const ItemsActions = ({ onFocusNext, onFocusPrev }) => {
@@ -320,6 +322,11 @@ const ItemsActions = ({ onFocusNext, onFocusPrev }) => {
 			<ItemActionsDesktop onFocusNext={onFocusNext} onFocusPrev={onFocusPrev} />
 	);
 }
+
+ItemsActions.propTypes = {
+	onFocusNext: PropTypes.func.isRequired,
+	onFocusPrev: PropTypes.func.isRequired
+};
 
 export { ItemActionsTouch, ItemActionsDesktop };
 export default memo(ItemsActions);
