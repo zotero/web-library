@@ -128,10 +128,11 @@ const ItemActionsDesktop = memo(props => {
 	const selectedItemsCount = useSelector(state => state.current.itemKeys.length);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedContainsCollection = useSelector(
 		state => state.current.itemKeys.some(
 			key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.[Symbol.for('type')] === 'collection'
-	));
+		));
 	const selectedItemsCanBeRecognized = useSelector(state => state.current.itemKeys.every(
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
 			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
@@ -195,18 +196,18 @@ const ItemActionsDesktop = memo(props => {
 						)}
 					</ToolGroup>
 					<ToolGroup>
-						{!isTrash && (
+						{!(isTrash || isMyPublications) && (
 							<Fragment>
-									<Button
-										disabled={selectedItemsCount === 0 || !selectedItemsCanBeRecognized}
-										icon
-										onClick={handleRetrieveMetadata}
-										onKeyDown={handleKeyDown}
-										tabIndex={-2}
-										title="Retrieve Metadata"
-									>
-										<Icon type="16/retrieve-metadata" width="16" height="16" />
-									</Button>
+								<Button
+									disabled={selectedItemsCount === 0 || !selectedItemsCanBeRecognized}
+									icon
+									onClick={handleRetrieveMetadata}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Retrieve Metadata"
+								>
+									<Icon type="16/retrieve-metadata" width="16" height="16" />
+								</Button>
 								<Button
 									disabled={selectedItemsCount === 0}
 									icon
@@ -229,17 +230,19 @@ const ItemActionsDesktop = memo(props => {
 										<Icon type="20/remove-from-collection" width="20" height="20" />
 									</Button>
 								)}
-								<Button
-									disabled={selectedItemsCount === 0}
-									icon
-									onClick={handleTrash}
-									onKeyDown={handleKeyDown}
-									tabIndex={-2}
-									title="Move To Trash"
-								>
-									<Icon type={'16/trash'} width="16" height="16" />
-								</Button>
 							</Fragment>
+						)}
+						{!isTrash && (
+							<Button
+								disabled={selectedItemsCount === 0}
+								icon
+								onClick={handleTrash}
+								onKeyDown={handleKeyDown}
+								tabIndex={-2}
+								title="Move To Trash"
+							>
+								<Icon type={'16/trash'} width="16" height="16" />
+							</Button>
 						)}
 						{isTrash && (
 							<Fragment>
