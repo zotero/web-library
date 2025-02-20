@@ -314,19 +314,4 @@ ItemActionsDesktop.propTypes = {
 };
 ItemActionsDesktop.displayName = 'ItemActionsDesktop';
 
-const ItemsActions = ({ onFocusNext, onFocusPrev }) => {
-	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	return (
-		isTouchOrSmall ?
-			<ItemActionsTouch /> :
-			<ItemActionsDesktop onFocusNext={onFocusNext} onFocusPrev={onFocusPrev} />
-	);
-}
-
-ItemsActions.propTypes = {
-	onFocusNext: PropTypes.func.isRequired,
-	onFocusPrev: PropTypes.func.isRequired
-};
-
 export { ItemActionsTouch, ItemActionsDesktop };
-export default memo(ItemsActions);

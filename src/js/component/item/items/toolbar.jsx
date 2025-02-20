@@ -2,7 +2,7 @@ import { memo, useRef } from 'react';
 import { useFocusManager } from 'web-common/hooks';
 
 import ColumnSelector from './column-selector';
-import ItemsActions from './../actions';
+import { ItemActionsDesktop } from './../actions';
 import { Toolbar } from '../../ui/toolbars';
 
 const ItemsTableToolbar = () => {
@@ -14,16 +14,16 @@ const ItemsTableToolbar = () => {
 			<Toolbar
 				aria-label="items toolbar"
 				className="hidden-touch hidden-sm-down"
-				onFocus={ receiveFocus }
-				onBlur={ receiveBlur }
-				tabIndex={ 0 }
-				ref={ ref }
+				onFocus={receiveFocus}
+				onBlur={receiveBlur}
+				tabIndex={0}
+				ref={ref}
 			>
 				<div className="toolbar-left">
-					<ItemsActions onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
+					<ItemActionsDesktop onFocusNext={focusNext} onFocusPrev={focusPrev} />
 				</div>
 				<div className="toolbar-right">
-				<ColumnSelector tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
+					<ColumnSelector tabIndex={-2} onFocusNext={focusNext} onFocusPrev={focusPrev} />
 				</div>
 			</Toolbar>
 		</header>

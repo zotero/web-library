@@ -6,7 +6,7 @@ import { Button } from 'web-common/components';
 
 import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
-import ItemsActions from './item/actions';
+import { ItemActionsTouch } from './item/actions';
 import Searchbar from './touch-header/searchbar';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pluralize } from '../common/format';
@@ -64,7 +64,7 @@ const TouchHeader = props => {
 					shouldIncludeItemListOptions && (
 						<div className="toolbar-right">
 							<ToolGroup>
-								<ItemsActions />
+								<ItemActionsTouch />
 							</ToolGroup>
 						</div>
 					)
