@@ -1,28 +1,35 @@
-import { createItem, deleteItem, getAttachmentUrl, updateItem } from '.';
+import { createItem, deleteItem, getAttachmentUrl, updateItem, renameAttachment } from '.';
 import { BEGIN_RECOGNIZE_DOCUMENT, COMPLETE_RECOGNIZE_DOCUMENT, ERROR_RECOGNIZE_DOCUMENT,
 	UPDATE_RECOGNIZE_DOCUMENT, BEGIN_UNRECOGNIZE_DOCUMENT, COMPLETE_UNRECOGNIZE_DOCUMENT,
 	ERROR_UNRECOGNIZE_DOCUMENT, } from '../constants/actions';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { pick } from 'web-common/utils';
 import { getItemFromIdentifier } from '../common/identifiers';
+import { getFileBaseNameFromItem } from '../common/format';
 
 const retrieveMetadata = (itemKey, libraryKey, backgroundTaskId) => {
 	return async (dispatch, getState) => {
 		dispatch({ type: BEGIN_RECOGNIZE_DOCUMENT, itemKey, libraryKey, backgroundTaskId });
 		const state = getState();
 		const attachmentItem = state.libraries[state.current.libraryKey]?.items?.[itemKey];
+		const originalFilename = attachmentItem.filename;
+		const originalTitle = attachmentItem.title;
 		try {
 			const recognizerData = await dispatch(getRecognizerData(itemKey));
 			dispatch({ type: UPDATE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, stage: 1 });
 			const recognizedItem = await dispatch(recognizePDF(recognizerData));
+
 			dispatch({ type: UPDATE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, stage: 2 });
 			delete recognizedItem.key;
 			delete recognizedItem.version;
 			recognizedItem.collections = [...attachmentItem.collections];
 			const item = await dispatch(createItem(recognizedItem, libraryKey));
+
 			dispatch({ type: UPDATE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, stage: 3 });
-			await dispatch(updateItem(itemKey, { parentItem: item.key, collections: [] }, libraryKey));
-			dispatch({ type: COMPLETE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, parentItemKey: item.key });
+			await dispatch(updateItem(itemKey, { parentItem: item.key, title: 'PDF', collections: [] }, libraryKey));
+			const newFileName = `${getFileBaseNameFromItem(item, state.meta.mappings)}.pdf`;
+			await dispatch(renameAttachment(itemKey, newFileName, libraryKey));
+			dispatch({ type: COMPLETE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, parentItemKey: item.key, originalFilename, originalTitle });
 		} catch (error) {
 			dispatch({
 				type: ERROR_RECOGNIZE_DOCUMENT,
@@ -164,6 +171,7 @@ const recognizePDF = (recognizerData) => {
 }
 
 const undoRetrieveMetadata = (itemKey, libraryKey) => {
+	// itemKey is the recognized item, that needs to be deleted; originalItemKey is the attachment item, that needs to be restored as top-level item
 	return async (dispatch, getState) => {
 		const state = getState();
 		dispatch({
@@ -172,17 +180,19 @@ const undoRetrieveMetadata = (itemKey, libraryKey) => {
 			libraryKey,
 		});
 		try {
-			const originalItemKey = state.recognize.lookup[`${libraryKey}-${itemKey}`];
-			if(!originalItemKey) {
+			const originalItemData = state.recognize.lookup[`${libraryKey}-${itemKey}`];
+			if(!originalItemData) {
 				throw new Error('Original item not found');
 			}
+			const { originalItemKey, originalFilename, originalTitle } = originalItemData;
 			const item = state.libraries[libraryKey].items?.[itemKey];
 			if(!item) {
 				throw new Error('Item not found');
 			}
 
 			const collections = item.collections;
-			await dispatch(updateItem(originalItemKey, { parentItem: false, collections }, libraryKey));
+			await dispatch(updateItem(originalItemKey, { parentItem: false, title: originalTitle, collections }, libraryKey));
+			await dispatch(renameAttachment(originalItemKey, originalFilename, libraryKey));
 			await dispatch(deleteItem(item));
 			dispatch({
 				type: COMPLETE_UNRECOGNIZE_DOCUMENT,

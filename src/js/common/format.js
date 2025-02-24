@@ -1,4 +1,5 @@
 import { unescapeHTML } from '../utils';
+import { getItemTitle } from './item';
 
 const entityToChar = str => {
 	const textarea = document.createElement('textarea');
@@ -13,7 +14,7 @@ const noteSummary = note => {
 		note
 			.replace(/<\s*\/?br\s*[/]?>/gi, ' ') // replace <br /> to spaces
 			.replace(/<(?:.|\n)*?>/gm, '') // remove html tags. This is still going to be sanitized by React.
-		).replace(/[\u202F\u00A0]/g, ' ') // replace no-break spaces to normal spaces
+	).replace(/[\u202F\u00A0]/g, ' ') // replace no-break spaces to normal spaces
 		.replace(/ +/g, " ") // remove series of spaces with just one
 		.substring(0, 180); // truncate to 180 chars
 };
@@ -49,7 +50,7 @@ const dateLocalized = date => (date instanceof Date && !isNaN(date)) ?
 
 //@TODO: figure out better place for this
 const itemsSourceLabel = itemsSource => {
-	switch(itemsSource) {
+	switch (itemsSource) {
 		case 'trash':
 			return "Trash";
 		case 'publications':
@@ -69,14 +70,14 @@ const pluralize = (word, count) => count === 1 ? word : `${word}s`;
 
 //@NOTE: should only be used for trusted/sanitized input
 const stripTagsUsingDOM = html => {
-   const tmp = document.createElement("DIV");
-   tmp.innerHTML = html;
-   return tmp.textContent || tmp.innerText || "";
+	const tmp = document.createElement("DIV");
+	tmp.innerHTML = html;
+	return tmp.textContent || tmp.innerText || "";
 }
 
 const lpad = (string, pad, length) => {
 	string = string ? string + '' : '';
-	while(string.length < length) {
+	while (string.length < length) {
 		string = pad + string;
 	}
 	return string;
@@ -94,7 +95,7 @@ const formatDateTime = date =>
 
 const parseDescriptiveString = str => {
 	var lc = str.toLowerCase().trim();
-	switch(lc) {
+	switch (lc) {
 		case 'yesterday':
 			return formatDate(new Date(new Date().getTime() - 86400000));
 		case 'today':
@@ -199,16 +200,31 @@ const renderItemTitle = (title, targetNode) => {
 	return textContent;
 }
 
+// {{ firstCreator suffix=" - " }}{{ year suffix=" - " }}{{ title truncate="100" }}
+const getFileBaseNameFromItem = (item, mappings) => {
+	const title = getItemTitle(mappings, item);
+	const date = item[Symbol.for('meta')] && item[Symbol.for('meta')].parsedDate ?
+		item[Symbol.for('meta')].parsedDate :
+		'';
+	const creator = item[Symbol.for('meta')] && item[Symbol.for('meta')].creatorSummary ?
+		item[Symbol.for('meta')].creatorSummary :
+		'';
+	const year = date.substr(0, 4);
+
+	return `${creator}${creator ? ' - ' : ''}${year}${year ? ' - ' : ''}${title.substring(0, 100)}`;
+}
+
 export {
-	creator,
-	dateLocalized,
-	formatDate,
-	formatDateTime,
-	itemsSourceLabel,
-	noteSummary,
-	noteAsTitle,
-	parseDescriptiveString,
-	pluralize,
-	renderItemTitle,
-	stripTagsUsingDOM,
+    creator,
+    dateLocalized,
+    formatDate,
+    formatDateTime,
+	getFileBaseNameFromItem,
+    itemsSourceLabel,
+    noteAsTitle,
+    noteSummary,
+    parseDescriptiveString,
+    pluralize,
+    renderItemTitle,
+    stripTagsUsingDOM
 };

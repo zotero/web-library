@@ -75,6 +75,7 @@ describe('Metadata Retrieval', () => {
 		let hasPatchedAttachmentItem = false;
 		let hasDeleted = false;
 		let patchCounter = 0;
+		let renameCounter = 0;
 		let version = state.libraries.u1.sync.version;
 
 		server.use(
@@ -112,9 +113,11 @@ describe('Metadata Retrieval', () => {
 				const item = await request.json();
 				if (patchCounter === 0) {
 					expect(item.parentItem).toBe('S8CIV6VJ');
+					expect(item.title).toBe('PDF');
 					expect(item.collections).toEqual([]);
 				} else {
 					expect(item.parentItem).toBe(false);
+					expect(item.title).toBe('attention-is-all-you-need.pdf');
 					expect(item.collections).toEqual(['CSB4KZUU']);
 				}
 				hasPatchedAttachmentItem = true;
@@ -122,6 +125,19 @@ describe('Metadata Retrieval', () => {
 				patchCounter++;
 				await delay(100);
 				return new HttpResponse(null, { status: 204, headers: { 'Last-Modified-Version': version } });
+			}),
+			// rename attachment file
+			http.post('https://api.zotero.org/users/1/items/UMPPCXU4/file', async ({ request }) => {
+				const bodyParams = (await request.text()).split('&');
+				if(renameCounter === 0) {
+					expect(bodyParams).toContain('filename=Vaswani et al. - 2023 - Attention Is All You Need.pdf');
+					expect(bodyParams).toContain('md5=18e1b007a1dab45b30cc861ba2dfda25');
+				} else {
+					expect(bodyParams).toContain('filename=attention-is-all-you-need.pdf');
+					expect(bodyParams).toContain('md5=18e1b007a1dab45b30cc861ba2dfda25');
+				}
+				renameCounter++;
+				return HttpResponse.json({ 'exists': 1 });
 			}),
 			http.delete('https://api.zotero.org/users/1/items/S8CIV6VJ', async () => {
 				hasDeleted = true;
@@ -187,6 +203,8 @@ describe('Metadata Retrieval', () => {
 		expect(screen.queryByRole('row', { name: 'attention-is-all-you-need.pdf' })).not.toBeInTheDocument();
 
 		await user.click(screen.getByRole('row', { name: 'Attention Is All You Need' }));
+		expect(patchCounter).toBe(1);
+		expect(renameCounter).toBe(1);
 
 		// unregonize
 		const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
@@ -200,6 +218,8 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(screen.queryByRole('row', { name: 'Attention Is All You Need' })).not.toBeInTheDocument();
 		});
+		expect(patchCounter).toBe(2);
+		expect(renameCounter).toBe(2);
 		expect(hasDeleted).toBe(true);
 	});
 });

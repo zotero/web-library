@@ -238,7 +238,7 @@ const createItem = (properties, libraryKey) => {
 				otherItems: state.libraries[libraryKey].items,
 				response
 			});
-			return response.getEntityByIndex(0);
+			return item;
 		} catch(error) {
 			dispatch({
 					type: ERROR_CREATE_ITEM,

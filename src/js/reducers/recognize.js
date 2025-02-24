@@ -1,5 +1,5 @@
 import { getBaseMappedValue } from '../common/item';
-import { omit } from 'web-common/utils';
+import { omit, pick } from 'web-common/utils';
 import { BEGIN_RECOGNIZE_DOCUMENT, CLEAR_RECOGNIZE_DOCUMENT, CLEAR_RECOGNIZE_DOCUMENTS, COMPLETE_RECOGNIZE_DOCUMENT,
 	ERROR_RECOGNIZE_DOCUMENT, UPDATE_RECOGNIZE_DOCUMENT, COMPLETE_UNRECOGNIZE_DOCUMENT, ERROR_UNRECOGNIZE_DOCUMENT } from '../constants/actions';
 
@@ -21,7 +21,7 @@ const getDefaultState = () => ({
 	backgroundTaskId: null, // id of the background task for all recognition processes, can only be updated by BEGIN_RECOGNIZE_DOCUMENT action
 	progress: 0,
 	entries: [], // items being recognized: { itemKey, itemTitle, libraryKey, stage, error, completed },
-	lookup: {}, // items previously recognized: { libraryKey-itemKey: parentItemKey }
+	lookup: {}, // items previously recognized: { libraryKey-itemKey: { originalItemKey, originalTitle, originalFilename }
 });
 
 const recognize = (state = getDefaultState(), action, globalState) => {
@@ -75,7 +75,7 @@ const recognize = (state = getDefaultState(), action, globalState) => {
 				}),
 				lookup: {
 					...state.lookup,
-					[`${action.libraryKey}-${action.parentItemKey}`]: action.itemKey,
+					[`${action.libraryKey}-${action.parentItemKey}`]: { originalItemKey: action.itemKey, ...pick(action, ['originalTitle', 'originalFilename']) },
 				}
 			});
 		case ERROR_RECOGNIZE_DOCUMENT:
