@@ -32,10 +32,6 @@ const maxMemory = 2048 * 1024 * 1024;
 var needsMoreMemory = false;
 var xdelta3;
 
-const init = async () => {
-	xdelta3 = await WebAssembly.instantiateStreaming(fetch(`${self.location.origin}/static/xdelta3.wasm`), info);
-};
-
 const encode = (inputBytes, sourceBytes, outputSizeMax) => {
 	const { malloc, free, xd3_encode_memory, memory } = xdelta3.instance.exports;
 
@@ -55,8 +51,8 @@ const encode = (inputBytes, sourceBytes, outputSizeMax) => {
 	writeToMemoryAt(memory, sourcePtr, sourceBytes);
 
 	const ret = xd3_encode_memory(inputPtr, inputBytes.byteLength, sourcePtr, sourceBytes.byteLength, outputPtr, outputSizePtr, outputSizeMax, eflags);
-	if(needsMoreMemory && memory.buffer.byteLength < maxMemory) {
-		self.postMessage(['LOG', `DiffWorker needs more memory ${requiredBytes * 2} bytes`]);
+	if (needsMoreMemory && memory.buffer.byteLength < maxMemory) {
+		self.postMessage(['LOG', `DiffWorker needs more memory. Requesting ${requiredBytes * 2} bytes`]);
 		needsMoreMemory = false;
 		free(inputPtr);
 		free(sourcePtr);
@@ -65,7 +61,7 @@ const encode = (inputBytes, sourceBytes, outputSizeMax) => {
 		ensureMemory(memory, requiredBytes * 2);
 		return encode(inputBytes, sourceBytes, outputSizeMax);
 	}
-	if(needsMoreMemory) {
+	if (needsMoreMemory) {
 		throw new Error(`Not enough memory to compute diff`);
 	}
 
@@ -80,7 +76,7 @@ const encode = (inputBytes, sourceBytes, outputSizeMax) => {
 	free(outputPtr);
 	free(outputSizePtr);
 
-	if(ret !== 0) {
+	if (ret !== 0) {
 		throw new Error(`Computing diff failed with error code ${ret}`);
 	}
 
@@ -94,11 +90,23 @@ self.addEventListener('message', function (ev) {
 	const [command, payload] = ev.data;
 	switch (command) {
 		case 'LOAD':
+			for (const param of ['xdelta3Url', 'oldFile', 'newFile']) {
+				if (!(param in payload)) {
+					self.postMessage(['ERROR', `Missing required parameter: ${param}`]);
+					return;
+				}
+			}
 			oldFile = payload.oldFile;
 			newFile = payload.newFile;
-			init().then(() => {
-				self.postMessage(['READY', null]);
-			});
+			WebAssembly.instantiateStreaming(fetch(payload.xdelta3Url), info)
+				.then((xdelta3WASM) => {
+					xdelta3 = xdelta3WASM;
+					self.postMessage(['READY', null]);
+				})
+				.catch((e) => {
+					self.postMessage(['ERROR', e]);
+				}
+			);
 			break;
 		case 'DIFF': {
 			const oldFileView = new Uint8Array(oldFile);
@@ -106,9 +114,8 @@ self.addEventListener('message', function (ev) {
 			try {
 				const output = encode(newFileView, oldFileView, oldFileView.byteLength);
 				self.postMessage(['DIFF_COMPLETE', output]);
-			}
-			catch(e) {
-				self.postMessage(['DIFF_ERROR', e]);
+			} catch (e) {
+				self.postMessage(['ERROR', e]);
 			}
 			break;
 		}

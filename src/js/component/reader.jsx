@@ -42,10 +42,10 @@ import DiffWorker from 'web-worker:../diff.worker';
 
 const cloneData = (data) => typeof structuredClone === 'function' ? structuredClone(data) : data.slice(0);
 
-const computeDiffUsingWorker = (oldFile, newFile) => {
+const computeDiffUsingWorker = (oldFile, newFile, xdelta3Url) => {
 	return new Promise((resolve, reject) => {
 		const dataWorker = new DiffWorker();
-		dataWorker.postMessage(['LOAD', { oldFile: cloneData(oldFile), newFile: cloneData(newFile) }]);
+		dataWorker.postMessage(['LOAD', { oldFile: cloneData(oldFile), newFile: cloneData(newFile), xdelta3Url }]);
 		dataWorker.addEventListener('message', function (ev) {
 			const [command, payload] = ev.data;
 			switch (command) {
@@ -55,7 +55,8 @@ const computeDiffUsingWorker = (oldFile, newFile) => {
 				case 'DIFF_COMPLETE':
 					resolve(payload);
 					break;
-				case 'DIFF_ERROR':
+				case 'ERROR':
+					console.error('DiffWorker error', payload);
 					reject(payload);
 					break;
 				case 'LOG':
@@ -178,6 +179,7 @@ const Reader = () => {
 	const pdfWorkerURL = useSelector(state => state.config.pdfWorkerURL);
 	const pdfReaderCMapsURL = useSelector(state => state.config.pdfReaderCMapsURL);
 	const pdfReaderStandardFontsURL = useSelector(state => state.config.pdfReaderStandardFontsURL);
+	const xdelta3Url = useSelector(state => state.config.xdelta3Url);
 	const tagColors = useSelector(state => state.libraries[libraryKey]?.tagColors?.value ?? []);
 	const { isGroupLibrary: isGroup, isReadOnly } = useSelector(state => state.config.libraries.find(l => l.key === libraryKey));
 	const pdfReaderURL = useSelector(state => state.config.pdfReaderURL);
@@ -263,14 +265,15 @@ const Reader = () => {
 		reader.current.unfreeze();
 		dispatchState({ type: 'ROTATED_PAGES', data: cloneData(modifiedBuf) });
 		try {
-			const diff = await computeDiffUsingWorker(oldBuf, modifiedBuf);
+			const diff = await computeDiffUsingWorker(oldBuf, modifiedBuf, xdelta3Url);
 			dispatch(patchAttachment(attachmentItem.key, modifiedBuf, diff));
 		} catch(e) {
+			console.warn("Failed to compute diff. Falling back to uploading the entire file.", e);
 			dispatch(uploadAttachment(
 				attachmentItem.key, { fileName: attachmentItem.filename, file: cloneData(modifiedBuf) })
 			);
 		}
-	}, [attachmentItem, dispatch, pdfWorker, url]);
+	}, [attachmentItem, dispatch, pdfWorker, url, xdelta3Url]);
 
 	const handleKeyDown = useCallback((ev) => {
 		if (ev.key === 'Escape') {
