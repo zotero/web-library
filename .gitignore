@@ -4,6 +4,7 @@ node_modules
 /build
 /data
 /cert
+/tmp
 /_*
 .DS_Store
 coverage

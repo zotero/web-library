@@ -2,7 +2,7 @@
 // Asset URLs
 // --------------------------------------------------
 
-$staticPath: '/static';
+$staticPath: '/static/web-library';
 
 @function asset-url($type, $path) {
 	@return url($staticPath + unquote("/#{$type}/#{$path}"));

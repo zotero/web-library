@@ -31,7 +31,7 @@ const config = {
 		'cross-fetch/polyfill'
 	],
 	output: {
-		file: `./build/static/zotero-web-library.js` ,
+		file: `./build/static/web-library/zotero-web-library.js` ,
 		format: 'iife',
 		sourcemap: !isProduction,
 		compact: isProduction
@@ -124,7 +124,7 @@ if(isProduction) {
 const embeddedTargetConfig = {
 	...config,
 	input: './src/js/embedded.jsx',
-	output: { ...config.output, file: './build/static/zotero-web-library-embedded.js' },
+	output: { ...config.output, file: './build/static/web-library/zotero-web-library-embedded.js' },
 	plugins: [
 		alias({ entries: [...commonAliases, ...libraryAliases] }),
 		virtual({ 'react-dnd': stubdnd }),
@@ -143,7 +143,7 @@ const testingTargetConfig = {
 	input: './test/utils/main-with-state.jsx',
 	output: {
 		...config.output,
-		file: './build/static/zotero-web-library-testing.js',
+		file: './build/static/web-library/zotero-web-library-testing.js',
 		exports: 'named',
 		name: 'window',
 		extend: true,

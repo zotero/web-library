@@ -50,11 +50,11 @@
   font-family: 'AvenirNextLTPro';
   font-weight: 400;
   font-style: normal;
-  src: url('/static/fonts/36AC02_5_0.eot');
+  src: font-url('36AC02_5_0.eot');
   src:
-    url('/static/fonts/36AC02_5_0.eot?#iefix') format('embedded-opentype'),
-    url('/static/fonts/36AC02_5_0.woff2') format('woff2'),
-    url('/static/fonts/36AC02_5_0.woff') format('woff'),
-    url('/static/fonts/36AC02_5_0.ttf') format('truetype'),
-    url('/static/fonts/36AC02_5_0.svg#wf') format('svg');
+    font-url('36AC02_5_0.eot?#iefix') format('embedded-opentype'),
+    font-url('36AC02_5_0.woff2') format('woff2'),
+    font-url('36AC02_5_0.woff') format('woff'),
+    font-url('36AC02_5_0.ttf') format('truetype'),
+    font-url('36AC02_5_0.svg#wf') format('svg');
 }

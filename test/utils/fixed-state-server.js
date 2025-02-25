@@ -18,12 +18,12 @@ export async function getServer(stateName, port) {
 			resp.end(`<!doctype html><html lang=en>
 			<head>
 			<meta charset="utf-8">
-				<link rel="stylesheet" href="/static/zotero-web-library.css">
+				<link rel="stylesheet" href="/static/web-library/zotero-web-library.css">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 			</head>
 			<body>
 			<div id="zotero-web-library" class="zotero-wl"></div>
-			<script src='/static/zotero-web-library-testing.js'></script>
+			<script src='/static/web-library/zotero-web-library-testing.js'></script>
 			<script>
 				var root = createRoot(document.getElementById('zotero-web-library'));
 				var state = ${JSON.stringify(zoteroUserStateRaw)};

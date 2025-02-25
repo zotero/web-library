@@ -121,7 +121,7 @@ async function checkOrStartServer() {
 			process.stdout.clearLine(1);
 			process.stdout.cursorTo(0);
 
-			if (!(await fs.pathExists(join(ROOT, 'build', 'static', 'zotero-web-library.js')))) {
+			if (!(await fs.pathExists(join(ROOT, 'build', 'static', 'web-library', 'zotero-web-library.js')))) {
 				continue;
 			}
 			jsFileFound = true;

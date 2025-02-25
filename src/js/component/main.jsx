@@ -1,38 +1,40 @@
-import PropTypes from 'prop-types';
-import { Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import { Provider } from 'react-redux';
+import { StaticContext } from 'web-common/components';
+import PropTypes from 'prop-types';
 
+import { routes, redirects } from '../routes';
 import ErrorBoundary from './error-boundry'
 import Loader from './loader';
 import UserTypeDetector from './user-type-detector';
 import ViewPortDetector from './viewport-detector';
-import { routes, redirects } from '../routes';
 
 
 export const MainEmbedded = () => {
 	return (
-        <Fragment>
+		<StaticContext.Provider value="/static/web-library">
 			<UserTypeDetector />
 			<ViewPortDetector />
 			<Loader />
-		</Fragment>
+		</StaticContext.Provider>
     );
 }
 
-export const MainZotero = (history) => (
-	<BrowserRouter>
-		<Switch>
-			{redirects.map(redirect =>
-				<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
-			)}
-			{routes.map(route =>
-				<Route key={route} path={route} component={MainEmbedded} exact />
-			)}
-			<Redirect from="/*" to="/" />
-		</Switch>
-	</BrowserRouter>
+export const MainZotero = () => (
+	<StaticContext.Provider value="/static/web-library">
+		<BrowserRouter>
+			<Switch>
+				{redirects.map(redirect =>
+					<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
+				)}
+				{routes.map(route =>
+					<Route key={route} path={route} component={MainEmbedded} exact />
+				)}
+				<Redirect from="/*" to="/" />
+			</Switch>
+		</BrowserRouter>
+	</StaticContext.Provider>
 );
 
 const Main = ({ store, history }) => {

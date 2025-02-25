@@ -15,12 +15,12 @@ export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json'
 export const streamingApiUrl = 'wss://stream.zotero.org/';
 export const translateUrl = 'location' in window ? window.location.origin : '';
 export const recognizerUrl = 'location' in window ? window.location.origin : '';
-export const xdelta3Url = 'location' in window ? `${window.location.origin}/static/xdelta3.wasm` : '';
-export const pdfReaderURL = '/static/pdf-reader/reader.html';
-export const pdfReaderCMapsURL = '/static/pdf-reader/pdf/web/cmaps/';
-export const pdfReaderStandardFontsURL = '/static/pdf-reader/pdf/web/standard_fonts/';
-export const pdfWorkerURL = '/static/pdf-worker/worker.js';
-export const noteEditorURL = '/static/note-editor/editor.html';
+export const xdelta3Url = 'location' in window ? `${window.location.origin}/static/web-library/xdelta3.wasm` : '';
+export const pdfReaderURL = '/static/web-library/pdf-reader/reader.html';
+export const pdfReaderCMapsURL = '/static/web-library/pdf-reader/pdf/web/cmaps/';
+export const pdfReaderStandardFontsURL = '/static/web-library/pdf-reader/pdf/web/standard_fonts/';
+export const pdfWorkerURL = '/static/web-library/pdf-worker/worker.js';
+export const noteEditorURL = '/static/web-library/note-editor/editor.html';
 
 
 export const libraries = {
