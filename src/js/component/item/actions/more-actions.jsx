@@ -4,7 +4,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getDOIURL } from '../../../utils';
-import { currentGoToSubscribeUrl, pickBestItemAction } from '../../../actions';
+import { currentGoToSubscribeUrl, pickBestItemAction, pickBestAttachmentItemAction } from '../../../actions';
 import { useItemActionHandlers, useItemsActions } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 
@@ -12,11 +12,15 @@ const MoreActionsItems = ({ divider = false }) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem } = useItemActionHandlers();
-	const { attachment, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, isViewFile,
+	const { attachmentContentType, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, isViewFile,
 		isViewOnline, item, selectedCount, url } = useItemsActions();
 
 	const handleViewFileClick = useCallback(() => {
-		dispatch(pickBestItemAction(item.key));
+		if (item.itemType === 'attachment') {
+			dispatch(pickBestAttachmentItemAction(item.key));
+		} else {
+			dispatch(pickBestItemAction(item.key));
+		}
 	}, [dispatch, item]);
 
 	const handleViewOnlineClick = useCallback(() => {
@@ -31,7 +35,7 @@ const MoreActionsItems = ({ divider = false }) => {
 		<Fragment>
 			{isViewFile && (
 				<DropdownItem onClick={handleViewFileClick}>
-					View {Object.keys(READER_CONTENT_TYPES).includes(attachment.attachmentType) ? READER_CONTENT_TYPES_HUMAN_READABLE[attachment.attachmentType] : 'File'}
+					View {Object.keys(READER_CONTENT_TYPES).includes(attachmentContentType) ? READER_CONTENT_TYPES_HUMAN_READABLE[attachmentContentType] : 'File'}
 				</DropdownItem>
 			)}
 			{isViewOnline && (

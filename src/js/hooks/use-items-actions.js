@@ -45,8 +45,8 @@ const useItemsActions = () => {
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedCount = useSelector(state => state.current.itemKeys.length);
 
-	const attachment = item?.[Symbol.for('links')]?.attachment ?? null;
-	const isViewFile = attachment !== null;
+	const attachmentContentType = item?.itemType === 'attachment' ? item.contentType : item?.[Symbol.for('links')]?.attachment?.attachmentType ?? null;
+	const isViewFile = attachmentContentType !== null;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
@@ -57,8 +57,10 @@ const useItemsActions = () => {
 	const canUnregonize = useCanUnrecognize();
 
 	const hasAnyAction = isViewFile || isViewOnline || canDuplicate || canRecognize || canUnregonize || canHaveParent;
-	return { attachment, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, hasAnyAction,
-		isReadOnly, isViewFile, isTrash, isMyPublications, isViewOnline, item, selectedCount, url };
+	return {
+		attachmentContentType, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, hasAnyAction,
+		isReadOnly, isViewFile, isTrash, isMyPublications, isViewOnline, item, selectedCount, url
+	};
 };
 
 export { useItemsActions, useCanRecognize, useCanHaveParent, useCanUnrecognize };
