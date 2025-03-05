@@ -38,7 +38,49 @@ const process = (kind, dataObject, ...args) => {
 const processCollection = process.bind(null, 'collection');
 const processItem = process.bind(null, 'item');
 
-const dataObjects = (state = {}, action, { meta, tagColors }) => {
+// Executed on RECEIVE_UPDATE_ITEM. Checks the patch for a change of contentType or parentItem and updates parentItem accordingly.
+// NOTE: For parentItem change, this function only checks if the best attachment was removed from its parent item because attaching
+//       an existing attachment to an item is not yet implemented (see #454). Once it's implemented, this function might need an overhaul.
+const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup) => {
+	const updatedItem = state[action.item.key];
+	const parentItemKey = bestAttachmentReverseLookup[action.item.key];
+	if (!updatedItem || !updatedItem.contentType) {
+		return state;
+	}
+
+	if(!parentItemKey) {
+		return state;
+	}
+
+	if (state[parentItemKey]?.[Symbol.for('links')]?.attachment) {
+		if (action.patch.contentType) {
+			return {
+				...state,
+				[parentItemKey]: processItem({
+					...state[parentItemKey],
+					[Symbol.for('links')]: {
+						...state[parentItemKey][Symbol.for('links')],
+						attachment: {
+							...state[parentItemKey][Symbol.for('links')].attachment,
+							attachmentType: action.patch.contentType
+						}
+					}
+				})
+			}
+		}
+		if ('parentItem' in action.patch && (!action.patch.parentItem || action.patch.parentItem !== parentItemKey)) {
+			return {
+				...state,
+				[parentItemKey]: processItem({
+					...state[parentItemKey],
+					[Symbol.for('links')]: omit(state[parentItemKey][Symbol.for('links')], 'attachment')
+				})
+			}
+		}
+	}
+}
+
+const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, tagColors }) => {
 	switch (action.type) {
 		case RECEIVE_COLLECTIONS_IN_LIBRARY:
 		case RECEIVE_CREATE_COLLECTIONS:
@@ -67,13 +109,13 @@ const dataObjects = (state = {}, action, { meta, tagColors }) => {
 				[action.collection.key]: processCollection(action.collection)
 			}
 		case RECEIVE_UPDATE_ITEM:
-			return {
+			return updateBestAttachmentsParent({
 				...state,
 				[action.itemKey]: processItem({
 					...get(state, action.itemKey, {}),
 					...action.item
 				}, { meta, tagColors })
-			};
+			}, action, bestAttachmentReverseLookup);
 		case RECEIVE_RENAME_ATTACHMENT:
 			return {
 				...state,

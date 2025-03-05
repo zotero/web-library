@@ -2,6 +2,7 @@ import { omit } from 'web-common/utils';
 
 import attachmentsExportPDF from './attachments-export-pdf';
 import attachmentsUrl from './attachments-url';
+import bestAttachmentReverseLookup from './best-attachment-reverse-lookup';
 import dataObjects from './data-objects';
 import collections from './collections';
 import itemsAndCollectionsTrash from './items-and-collections-trash';
@@ -32,13 +33,14 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 			items: (state[action.libraryKey] || {}).items, meta
 		});
 		const dataObjectsState = dataObjects(get(state, [action.libraryKey, 'dataObjects']), action, {
-			tagColors: state[action.libraryKey]?.tagColors, meta
+			tagColors: state[action.libraryKey]?.tagColors, meta, bestAttachmentReverseLookup: state[action.libraryKey]?.bestAttachmentReverseLookup
 		});
 		return {
 			...state,
 			[action.libraryKey]: {
 				attachmentsExportPDF: attachmentsExportPDF(state[action.libraryKey]?.attachmentsExportPDF, action),
 				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
+				bestAttachmentReverseLookup: bestAttachmentReverseLookup(state[action.libraryKey]?.bestAttachmentReverseLookup, action),
 				collections: collectionsState,
 				creating: creating(state[action.libraryKey]?.creating, action),
 				dataObjects: dataObjectsState,
