@@ -68,3 +68,27 @@ export const waitForLoad = async page => {
 		// ignore as there is a good chance that everything required for the screenshot has actually loaded.
 	}
 }
+
+
+// A minimal, crude version for most common cases to obtain the value of an accessible label.
+export const getAccessibleLabel = (element) => {
+	const label = element.getAttribute('aria-label');
+	if (label) {
+		return label;
+	}
+
+	const id = element.getAttribute('aria-labelledby');
+	if (id) {
+		const labelElement = document.getElementById(id);
+		if (labelElement) {
+			return labelElement.textContent;
+		}
+	}
+
+	const title = element.getAttribute('title');
+	if (title) {
+		return title;
+	}
+
+	return element.textContent;
+}
