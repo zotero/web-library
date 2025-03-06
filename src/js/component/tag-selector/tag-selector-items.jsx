@@ -69,10 +69,11 @@ const TagSelectorItems = () => {
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
 	const tagFocusNext = useRef({ tag: null, isQueryChanged: false });
-	const { hasMoreItems, isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
+	const { duplicatesCount, hasMoreItems, isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const prevTagColors = usePrevious(tagColors);
+	const prevHasChecked = usePrevious(hasChecked);
 	const sourceSignature = useSourceSignature();
 	const errorCount = useSelector(state => {
 		switch(state.current.itemsSource) {
@@ -141,6 +142,16 @@ const TagSelectorItems = () => {
 			dispatch(fetchTags(0, PAGE_SIZE - 1));
 		}
 	}, [dispatch, sourceSignature, hasChecked, isFetching]);
+
+	useEffect(() => {
+		if (hasChecked && !prevHasChecked && !isFetching) {
+			if(duplicatesCount > PAGE_SIZE / 2 ) {
+				// this is a workaround for https://github.com/zotero/web-library/issues/605
+				console.warn('Excessive duplicate tags detected, fetching second page of tags');
+				dispatch(fetchTags(PAGE_SIZE, PAGE_SIZE * 2 - 1));
+			}
+		}
+	}, [dispatch, duplicatesCount, hasChecked, isFetching, prevHasChecked]);
 
 	useEffect(() => {
 		if(!isFetchingColoredTags && typeof(prevTagColors) !== 'undefined' && !shallowEqual(tagColors, prevTagColors)) {
