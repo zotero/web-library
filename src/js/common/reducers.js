@@ -3,6 +3,8 @@ import { omit } from 'web-common/utils';
 import { sortItemsByKey, compareItem, binarySearch } from '../utils';
 import { getFieldNameFromSortKey } from '../utils';
 
+
+// using splice condenses the array, deleting leaves holes
 const replaceDuplicates = (entries, comparer = null, useSplice = false) => {
 	const seen = [];
 	const compareFn = comparer ? a => seen.some(b => comparer(a,b)) : a => seen.includes(a);
@@ -134,7 +136,7 @@ const filterTags = (state, removedTags) => {
 
 	const newRawTags = state.rawTags.filter(rt => rt ? !removedTags.includes(rt.tag) : true);
 	const removedCount = state.rawTags.length - newRawTags.length;
-	const tags = replaceDuplicates(newRawTags.map(t => typeof(t) === 'undefined' ? undefined : t.tag), null, true);
+	const tags = replaceDuplicates(newRawTags.map(t => t.tag), null, true);
 
 	return {
 		...state,
@@ -147,12 +149,12 @@ const filterTags = (state, removedTags) => {
 	}
 }
 
-const populate = (state, newItems, action, keyName, comparer = null) => {
+const populate = (state, newItems, action, keyName, processor = items => replaceDuplicates(items)) => {
 	const { [keyName]: prevItems = [] } = state;
 	const { queryOptions, totalResults } = action;
 	const { start, limit, sort, direction } = queryOptions;
 
-	const items = [...prevItems];
+	const items = prevItems.slice(); // copy sparse array preserving empty slots
 	items.length = totalResults;
 
 	for(let i = 0; i < newItems.length; i++) {
@@ -161,7 +163,7 @@ const populate = (state, newItems, action, keyName, comparer = null) => {
 
 	return {
 		...state,
-		[keyName]: replaceDuplicates(items, comparer),
+		[keyName]: processor(items),
 		totalResults,
 		sortBy: sort ? getFieldNameFromSortKey(sort) : undefined,
 		sortDirection: direction,
@@ -176,12 +178,13 @@ const populateItemKeys = (state, newKeys, action) => {
 }
 
 const populateGroups = (state, newGroups, action) => {
-	return populate(state, newGroups, action, 'groups', (a, b) => a && b && a.id === b.id);
+	return populate(state, newGroups, action, 'groups', items => replaceDuplicates(items, (a, b) => a && b && a.id === b.id));
 }
 
 const populateTags = (state, newTags, action) => {
-	const data = populate(state, newTags, action, 'rawTags', (a, b) => a && b && a.tag === b.tag && a.type === b.type);
-	const tags = replaceDuplicates(data.rawTags.map(t => typeof(t) === 'undefined' ? undefined : t.tag), null, true);
+	const data = populate(state, newTags, action, 'rawTags', items => items); // keep duplicate tags in `rawTags`
+	const tags = replaceDuplicates(data.rawTags.map(t => t.tag), null, true);
+
 	const duplicatesCount = data.rawTags.length - tags.length;
 	const pointer =('start' in action.queryOptions && 'limit' in action.queryOptions && !('tag' in action.queryOptions)) ?
 		data.pointer : state.pointer;

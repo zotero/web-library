@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from './utils/render';
 import { getPatchedState, JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
+import { applyAdditionalJestTweaks, waitForPosition, getAccessibleLabel } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import testUserTagsSuggestions from './fixtures/response/test-user-tags-suggestions.json';
 import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.json';
@@ -266,5 +266,33 @@ describe('Tags', () => {
 		const moreButton = getByRole(tagItem, 'button', { name: 'More' });
 		await user.click(moreButton);
 		expect(await screen.findByRole('menuitem', { name: 'Assign Color' })).toBeDisabled();
+	});
+
+	test('Duplicate tags are omitted in the tag manager', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		const tagsWithDuplicates = [
+			...testUserManageTags,
+			{ ...testUserManageTags.find(t => t.tag === 'coding') }
+		];
+		server.use(
+			http.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(tagsWithDuplicates, {
+					headers: { 'Total-Results': '9' }
+				});
+			}),
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		const allListItems = await findAllByRole(list, 'listitem');
+
+		// Even though the response contains 9 tags, duplicates should be ignored, so there should be 8 rows in the list with no empty rows.
+		expect(allListItems).toHaveLength(8);
+		expect(allListItems.map(getAccessibleLabel).filter(label => label.length === 0)).toHaveLength(0);
 	});
 });
