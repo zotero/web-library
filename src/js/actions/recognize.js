@@ -5,7 +5,7 @@ import { BEGIN_RECOGNIZE_DOCUMENT, COMPLETE_RECOGNIZE_DOCUMENT, ERROR_RECOGNIZE_
 import { PDFWorker } from '../common/pdf-worker.js';
 import { pick } from 'web-common/utils';
 import { getItemFromIdentifier } from '../common/identifiers';
-import { getFileBaseNameFromItem } from '../common/format';
+import { getFileBaseNameFromItem, getValidFileName } from '../common/format';
 
 const retrieveMetadata = (itemKey, libraryKey, backgroundTaskId) => {
 	return async (dispatch, getState) => {
@@ -27,7 +27,7 @@ const retrieveMetadata = (itemKey, libraryKey, backgroundTaskId) => {
 
 			dispatch({ type: UPDATE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, stage: 3 });
 			await dispatch(updateItem(itemKey, { parentItem: item.key, title: 'PDF', collections: [] }, libraryKey));
-			const newFileName = `${getFileBaseNameFromItem(item, state.meta.mappings)}.pdf`;
+			const newFileName = getValidFileName(`${getFileBaseNameFromItem(item, state.meta.mappings)}.pdf`);
 			await dispatch(renameAttachment(itemKey, newFileName, libraryKey));
 			dispatch({ type: COMPLETE_RECOGNIZE_DOCUMENT, itemKey, libraryKey, parentItemKey: item.key, originalFilename, originalTitle });
 		} catch (error) {

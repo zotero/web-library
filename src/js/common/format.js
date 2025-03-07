@@ -200,6 +200,45 @@ const renderItemTitle = (title, targetNode) => {
 	return textContent;
 }
 
+/**
+ * Copied from https://github.com/zotero/zotero/blob/8a06edab49f07b84d07056ccd594c87920ef2c5e/chrome/content/zotero/xpcom/file.js#L1286
+ * Strip potentially invalid characters
+ * See http://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+ *
+ * @param	{String}	fileName
+ * @param	{Boolean}	[skipXML=false]		Don't strip characters invalid in XML
+ */
+function getValidFileName(fileName, skipXML) {
+	// TODO: use space instead, and figure out what's doing extra
+	// URL encode when saving attachments that trigger this
+	fileName = fileName.replace(/[\/\\\?\*:|"<>]/g, '');
+	// Replace newlines and tabs (which shouldn't be in the string in the first place) with spaces
+	fileName = fileName.replace(/[\r\n\t]+/g, ' ');
+	// Replace various thin spaces
+	fileName = fileName.replace(/[\u2000-\u200A]/g, ' ');
+	// Replace zero-width spaces
+	fileName = fileName.replace(/[\u200B-\u200E]/g, '');
+	// Replace line and paragraph separators
+	fileName = fileName.replace(/[\u2028-\u2029]/g, ' ');
+	if (!skipXML) {
+		// Strip characters not valid in XML, since they won't sync and they're probably unwanted
+		// eslint-disable-next-line no-control-regex
+		fileName = fileName.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\ud800-\udfff\ufffe\uffff]/g, '');
+
+		// Normalize to NFC
+		fileName = fileName.normalize();
+	}
+	// Replace bidi isolation control characters
+	fileName = fileName.replace(/[\u2068\u2069]/g, '');
+	// Don't allow hidden files
+	fileName = fileName.replace(/^\./, '');
+	// Don't allow blank or illegal filenames
+	if (!fileName || fileName == '.' || fileName == '..') {
+		fileName = '_';
+	}
+	return fileName;
+}
+
 // {{ firstCreator suffix=" - " }}{{ year suffix=" - " }}{{ title truncate="100" }}
 const getFileBaseNameFromItem = (item, mappings) => {
 	const title = getItemTitle(mappings, item);
@@ -219,7 +258,8 @@ export {
     dateLocalized,
     formatDate,
     formatDateTime,
-	getFileBaseNameFromItem,
+    getFileBaseNameFromItem,
+    getValidFileName,
     itemsSourceLabel,
     noteAsTitle,
     noteSummary,
