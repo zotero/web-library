@@ -1,10 +1,12 @@
 import api from 'zotero-api-client';
 
 import { requestTracker } from '.';
-import { REQUEST_LIBRARY_SETTINGS, RECEIVE_LIBRARY_SETTINGS, ERROR_LIBRARY_SETTINGS, RESET_LIBRARY,
+import {
+	REQUEST_LIBRARY_SETTINGS, RECEIVE_LIBRARY_SETTINGS, ERROR_LIBRARY_SETTINGS, RESET_LIBRARY,
 	REQUEST_UPDATE_LIBRARY_SETTINGS, RECEIVE_UPDATE_LIBRARY_SETTINGS, ERROR_UPDATE_LIBRARY_SETTINGS,
 	REQUEST_DELETE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, ERROR_DELETE_LIBRARY_SETTINGS,
-	PRE_UPDATE_LIBRARY_SETTINGS, CANCEL_UPDATE_LIBRARY_SETTINGS } from '../constants/actions';
+	PRE_UPDATE_LIBRARY_SETTINGS, CANCEL_UPDATE_LIBRARY_SETTINGS
+} from '../constants/actions';
 
 const fetchLibrarySettings = (libraryKey, settingsKey) => {
 	return async (dispatch, getState) => {
@@ -18,38 +20,34 @@ const fetchLibrarySettings = (libraryKey, settingsKey) => {
 		});
 
 		try {
-			try {
-				const response = await api(config.apiKey, config.apiConfig)
-					.library(libraryKey)
-					.settings(settingsKey)
-					.get();
+			const response = await api(config.apiKey, config.apiConfig)
+				.library(libraryKey)
+				.settings(settingsKey)
+				.get();
 
-				const { value, version } = response.getData();
+			const { value, version } = response.getData();
+			dispatch({
+				type: RECEIVE_LIBRARY_SETTINGS,
+				libraryKey,
+				settingsKey,
+				value,
+				version,
+				response
+			});
+			return value;
+		} catch (error) {
+			// 404 is a valid response for a library that has no settingsKey
+			if (error?.response?.status === 404) {
 				dispatch({
 					type: RECEIVE_LIBRARY_SETTINGS,
 					libraryKey,
 					settingsKey,
-					value,
-					version,
-					response
+					value: null,
+					version: 0,
+					response: error.response
 				});
-				return value;
-			} catch(error) {
-				// 404 is a valid response for a library that has no settingsKey
-				if(error?.response?.status === 404) {
-					dispatch({
-						type: RECEIVE_LIBRARY_SETTINGS,
-						libraryKey,
-						settingsKey,
-						value: null,
-						version: 0,
-						response: error.response
-					});
-					return null;
-				}
-				throw error;
+				return null;
 			}
-		} catch(error) {
 			dispatch({
 				type: ERROR_LIBRARY_SETTINGS,
 				libraryKey,
@@ -91,7 +89,7 @@ const queueUpdateLibrarySettings = (settingsKey, value, libraryKey, options, { r
 			const oldValue = state.libraries?.[libraryKey].settings?.entries?.[settingsKey];
 			const version = options?.version ?? oldValue?.version ?? 0;
 
-			if(oldValue?.value === value) {
+			if (oldValue?.value === value) {
 				dispatch({
 					type: CANCEL_UPDATE_LIBRARY_SETTINGS,
 					reason: 'no-change',
@@ -130,7 +128,7 @@ const queueUpdateLibrarySettings = (settingsKey, value, libraryKey, options, { r
 					id
 				});
 				resolve();
-			} catch(error) {
+			} catch (error) {
 				if (error?.response?.status === 412 && (options.force || options.ignore)) {
 					// remote version is newer, but we've been asked to force or ignore conflict
 					let serverVersion = error.getVersion();
@@ -190,7 +188,7 @@ const deleteLibrarySettings = (settingsKey, libraryKey) => {
 				libraryKey,
 				response
 			});
-		} catch(error) {
+		} catch (error) {
 			dispatch({
 				type: ERROR_DELETE_LIBRARY_SETTINGS,
 				settingsKey,

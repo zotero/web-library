@@ -62,6 +62,9 @@ describe('Reader', () => {
 		http.get('https://api.zotero.org/users/1/settings/lastPageIndex_u_N2PJUHD6', async () => {
 			return HttpResponse.json({ value: 0, version: 0 });
 		}),
+		http.get('https://api.zotero.org/users/1/settings/readerCustomThemes', async () => {
+			return HttpResponse.json({ value: [], version: 0 });
+		}),
 	];
 	const server = setupServer(...handlers)
 	applyAdditionalJestTweaks();

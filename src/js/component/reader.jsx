@@ -108,8 +108,10 @@ const readerReducer = (state, action) => {
 	switch (action.type) {
 		case 'ROUTE_CONFIRMED':
 			return { ...state, isRouteConfirmed: true }
+		case 'BEGIN_FETCH_SETTINGS':
+			return { ...state, settingsStatus: RUNNING }
 		case 'COMPLETE_FETCH_SETTINGS':
-			return { ...state, isSettingsFetched: true }
+			return { ...state, settingsStatus: READY }
 		case 'BEGIN_VIEW_STATE_CHANGED':
 			return { ...state, newState: action.value }
 		case 'COMPLETE_VIEW_STATE_CHANGED':
@@ -168,6 +170,7 @@ const Reader = () => {
 	const location = useSelector(state => state.current.location);
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
 	const { value: locationValue, update: updateLocationValueSync } = useTrackedSettingsKey(pageIndexSettingKey, userLibraryKey);
+	const customThemes = useSelector(state => state.libraries[libraryKey]?.settings?.entries?.readerCustomThemes?.value ?? null);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -193,8 +196,6 @@ const Reader = () => {
 	});
 	const isReaderSidebarOpen = useSelector(state => state.preferences?.isReaderSidebarOpen);
 	const readerSidebarWidth = useSelector(state => state.preferences?.readerSidebarWidth);
-	// TODO: this should be entry-sepcific, but works for now because there is only one entry being fetched by the reader
-	const isFetchingUserLibrarySettings = useSelector(state => state.libraries[userLibraryKey]?.settings?.isFetching);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const lightTheme = useSelector(state => state.preferences?.readerLightTheme ?? false);
 	const darkTheme = useSelector(state => state.preferences?.readerDarkTheme ?? false);
@@ -208,7 +209,7 @@ const Reader = () => {
         importedAnnotations: [],
         isReady: false,
         isRouteConfirmed: false,
-        isSettingsFetched: false,
+		settingsStatus: NOT_READY,
         viewStateStatus: NOT_READY,
         newState: null,
         viewState: null
@@ -322,6 +323,7 @@ const Reader = () => {
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
 			colorScheme,
+			customThemes,
 			lightTheme,
 			darkTheme,
 			primaryViewState: readerState,
@@ -380,7 +382,7 @@ const Reader = () => {
 		annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug, darkTheme, dispatch,
 		getProcessedAnnotations, handleChangeViewState, handleResizeSidebar, handleToggleSidebar, isGroup,
 		isReadOnly, isReaderSidebarOpen, lightTheme, location, locationValue, readerSidebarWidth, state.data,
-		state.importedAnnotations, state.viewState
+		state.importedAnnotations, state.viewState, customThemes
 	]);
 
 	const handleOnBeforeUnload = useCallback(() => {
@@ -390,6 +392,18 @@ const Reader = () => {
 			updateLocationValueSync(pendingViewState.current[pageIndexKey]);
 		}
 	}, [attachmentItem, libraryKey, updateLocationValueSync]);
+
+	const fetchSettings = useCallback(async () => {
+		dispatchState({ type: 'BEGIN_FETCH_SETTINGS' });
+		try {
+			await Promise.all([
+				dispatch(fetchLibrarySettings(userLibraryKey, pageIndexSettingKey)),
+				dispatch(fetchLibrarySettings(userLibraryKey, 'readerCustomThemes'))
+			]);
+		} finally {
+			dispatchState({ type: 'COMPLETE_FETCH_SETTINGS' });
+		}
+	}, [dispatch, pageIndexSettingKey, userLibraryKey]);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
@@ -516,17 +530,16 @@ const Reader = () => {
 
 	useEffect(() => {
 		const viewStateReadyOrError = [READY, ERROR].includes(state.viewStateStatus);
-		if (!state.isReady && isFetched && state.data && state.annotationsState === READY && viewStateReadyOrError && state.isSettingsFetched && !isFetchingUserLibrarySettings) {
+		if (!state.isReady && isFetched && state.data && state.annotationsState === READY && viewStateReadyOrError && state.settingsStatus === READY) {
 			dispatchState({ type: 'READY' });
 		}
-	}, [isFetched, isFetchingUserLibrarySettings, state.annotationsState, state.data, state.isReady, state.isSettingsFetched, state.viewStateStatus]);
+	}, [isFetched, state.annotationsState, state.data, state.isReady, state.settingsStatus, state.viewStateStatus]);
 
 	useEffect(() => {
-		if (state.isRouteConfirmed && !state.isSettingsFetched && !isFetchingUserLibrarySettings) {
-			dispatch(fetchLibrarySettings(userLibraryKey, pageIndexSettingKey));
-			dispatchState({ type: 'COMPLETE_FETCH_SETTINGS' });
+		if (state.isRouteConfirmed && state.settingsStatus === NOT_READY) {
+			fetchSettings();
 		}
-	}, [dispatch, isFetchingUserLibrarySettings, pageIndexSettingKey, state.isRouteConfirmed, state.isSettingsFetched, userLibraryKey]);
+	}, [fetchSettings, state.isRouteConfirmed, state.settingsStatus]);
 
 	useEffect(() => {
 		const isCompatible = (attachmentItem?.itemType === 'attachment' && Object.keys(READER_CONTENT_TYPES).includes(attachmentItem?.contentType));
