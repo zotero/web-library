@@ -13,9 +13,13 @@ const remoteLibraryUpdate = (libraryKey, version) => {
 			dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } }));
 			dispatch(fetchAllCollectionsSince(oldVersion, libraryKey));
 			dispatch(fetchDeletedContentSince(oldVersion, libraryKey));
-			if (state.current.view === 'reader' && state.current.attachmentKey) {
-				const pageIndexSettingKey = getLastPageIndexSettingKey(state.current.attachmentKey, state.current.libraryKey);
-				dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
+			if (state.current.view === 'reader') {
+				dispatch(fetchLibrarySettings(libraryKey, 'readerCustomThemes'));
+				const readerItemKey = state.current.attachmentKey || state.current.itemKey;
+				if(readerItemKey) {
+					const pageIndexSettingKey = getLastPageIndexSettingKey(readerItemKey, state.current.libraryKey);
+					dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
+				}
 			}
 		}
 	}

@@ -8,17 +8,21 @@ const settings = (state = {}, action) => {
 	switch(action.type) {
 		case REQUEST_LIBRARY_SETTINGS:
 			return {
-				isFetching: true, //TODO: isFetching should be maintained per-entry
-				entries: omit(state.entries ?? {}, action.settingsKey)
+				entries: {
+					...state.entries,
+					[action.settingsKey]: {
+						isFetching: true
+					}
+				}
 			}
 		case RECEIVE_LIBRARY_SETTINGS:
 			return {
-				isFetching: false,
 				entries: {
 					...state.entries,
 					[action.settingsKey]: {
 						value: action.value,
-						version: action.version
+						version: action.version,
+						isFetching: false
 					}
 				}
 			}
@@ -28,6 +32,7 @@ const settings = (state = {}, action) => {
 				entries: {
 					...state.entries,
 					[action.settingsKey]: {
+						...state.entries[action.settingsKey],
 						value: action.value,
 						version: action.version
 					}

@@ -13,7 +13,7 @@ import strings from "pdf-reader/src/en-us.strings";
 import { annotationItemToJSON } from '../common/annotations';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
 import {
-	deleteItems, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, patchAttachment,
+	deleteItems, deleteLibrarySettings, fetchChildItems, fetchItemDetails, fetchLibrarySettings, navigate, patchAttachment,
 	postAnnotationsFromReader, preferenceChange, tryGetAttachmentURL, updateLibrarySettings, uploadAttachment
 } from '../actions';
 import { PDFWorker } from '../common/pdf-worker';
@@ -144,6 +144,12 @@ const readerReducer = (state, action) => {
 			return { ...state, action: null };
 		case 'ROTATED_PAGES':
 			return { ...state, action: null, data: action.data };
+		case 'SAVE_CUSTOM_THEMES':
+			return { ...state, updateCustomThemesState: NOT_READY, nextCustomThemes: action.themes };
+		case 'SAVING_CUSTOM_THEMES':
+			return { ...state, updateCustomThemesState: RUNNING };
+		case 'SAVED_CUSTOM_THEMES':
+			return { ...state, updateCustomThemesState: READY, nextCustomThemes: null };
 		default:
 			return state;
 	}
@@ -170,7 +176,8 @@ const Reader = () => {
 	const location = useSelector(state => state.current.location);
 	const pageIndexSettingKey = getLastPageIndexSettingKey(attachmentKey, libraryKey);
 	const { value: locationValue, update: updateLocationValueSync } = useTrackedSettingsKey(pageIndexSettingKey, userLibraryKey);
-	const customThemes = useSelector(state => state.libraries[libraryKey]?.settings?.entries?.readerCustomThemes?.value ?? null);
+	const customThemes = useSelector(state => state.libraries[libraryKey]?.settings?.entries?.readerCustomThemes?.value);
+	const isFetchingCustomThemes = useSelector(state => state.libraries[libraryKey]?.settings?.entries?.readerCustomThemes?.isFetching ?? false);
 	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.items[attachmentKey]);
 	const isFetchingUrl = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.isFetching ?? false);
 	const url = useSelector(state => state.libraries[libraryKey]?.attachmentsUrl[attachmentKey]?.url);
@@ -212,7 +219,9 @@ const Reader = () => {
 		settingsStatus: NOT_READY,
         viewStateStatus: NOT_READY,
         newState: null,
-        viewState: null
+        viewState: null,
+		updateCustomThemesState: READY,
+		nextCustomThemes: null
     });
 
 	const [tagPicker, setTagPicker] = useState(null);
@@ -323,9 +332,9 @@ const Reader = () => {
 			},
 			annotations: [...processedAnnotations, ...state.importedAnnotations],
 			colorScheme,
-			customThemes,
-			lightTheme,
-			darkTheme,
+			customThemes: customThemes ?? [],
+			lightTheme: lightTheme || undefined, // reader compares to undefined to determine if it should pick the default theme
+			darkTheme: darkTheme || undefined,	// https://github.com/zotero/reader/blob/4f74ec4d14277ed10d8a805052e822d0a4d50762/src/common/reader.js#L134
 			primaryViewState: readerState,
 			secondaryViewState: null,
 			location,
@@ -376,7 +385,10 @@ const Reader = () => {
 			},
 			onSetDarkTheme: (themeName) => {
 				dispatch(preferenceChange('readerDarkTheme', themeName || false));
-			}
+			},
+			onSaveCustomThemes: async (themes) => {
+				dispatchState({ type: 'SAVE_CUSTOM_THEMES', themes });
+			},
 		});
 	}, [
 		annotations, attachmentItem, attachmentKey, colorScheme, currentUserSlug, darkTheme, dispatch,
@@ -404,6 +416,30 @@ const Reader = () => {
 			dispatchState({ type: 'COMPLETE_FETCH_SETTINGS' });
 		}
 	}, [dispatch, pageIndexSettingKey, userLibraryKey]);
+
+	const updateCustomThemes = useCallback(async () => {
+		const themes = state.nextCustomThemes;
+		dispatchState({ type: 'SAVING_CUSTOM_THEMES' });
+		try {
+			if (lightTheme && lightTheme.startsWith('custom') && !themes?.some(theme => theme.id === lightTheme)) {
+				await dispatch(preferenceChange('readerLightTheme', false));
+			}
+
+			if (darkTheme && darkTheme.startsWith('custom') && !themes?.some(theme => theme.id === darkTheme)) {
+				await dispatch(preferenceChange('readerDarkTheme', false));
+			}
+
+			if (themes.length) {
+				await dispatch(updateLibrarySettings('readerCustomThemes', themes, userLibraryKey));
+			} else {
+				await dispatch(deleteLibrarySettings('readerCustomThemes', userLibraryKey));
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			dispatchState({ type: 'SAVED_CUSTOM_THEMES' });
+		}
+	}, [darkTheme, dispatch, lightTheme, state.nextCustomThemes, userLibraryKey]);
 
 	useEffect(() => {
 		// pdf js stores last page in localStorage but we want to use one from user library settings instead
@@ -444,15 +480,21 @@ const Reader = () => {
 
 	useEffect(() => {
 		if (reader.current) {
-			reader.current.setLightTheme(lightTheme);
+			reader.current.setLightTheme(lightTheme || undefined);
 		}
 	}, [lightTheme]);
 
 	useEffect(() => {
 		if (reader.current) {
-			reader.current.setDarkTheme(darkTheme);
+			reader.current.setDarkTheme(darkTheme || undefined);
 		}
 	}, [darkTheme]);
+
+	useEffect(() => {
+		if (!isFetchingCustomThemes && reader.current) {
+			reader.current.setCustomThemes(customThemes ?? []);
+		}
+	}, [customThemes, isFetchingCustomThemes]);
 
 	// fetch attachment item details or redirect if invalid URL
 	useEffect(() => {
@@ -594,6 +636,12 @@ const Reader = () => {
 			rotatePages(state.data, state.action.pageIndexes, state.action.degrees);
 		}
 	}, [rotatePages, state.action, state.data, state.isReady]);
+
+	useEffect(() => {
+		if (state.updateCustomThemesState === NOT_READY) {
+			updateCustomThemes();
+		}
+	}, [state.updateCustomThemesState, updateCustomThemes])
 
 	useEffect(() => {
 		if (attachmentItem && state.newState !== null) {
