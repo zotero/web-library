@@ -1,11 +1,11 @@
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs-extra';
+import { readFileSync } from 'fs';
 import EnvWithFetch from './env-with-fetch.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const scssPath = join(__dirname, '..', '..', 'data', 'layout-only.css');
-const css = await fs.readFile(scssPath, 'utf8');
+const css = readFileSync(scssPath, 'utf8');
 
 class ZoteroCssEnvironment extends EnvWithFetch {
 	constructor(config, context) {
