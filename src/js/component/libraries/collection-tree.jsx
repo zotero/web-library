@@ -572,12 +572,15 @@ const CollectionNode = memo(props => {
 	const isDisabled = disabledCollections && disabledCollections.includes(collection.key);
 
 	const handleSelect = useCallback(() => {
-		if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
-			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
-		} else if(!isDisabled) {
+		// TODO: Revisit picker mode
+		// if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
+		// 	pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
+		// } else
+		if(!isDisabled) {
 			selectNode({ collection: collection.key });
 		}
-	}, [collection, isDisabled, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
+	}, [collection, isDisabled, selectNode]);
+	// }, [collection, isDisabled, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
 		if(isTouchOrSmall || isReadOnly || isPickerMode) {
@@ -921,6 +924,7 @@ const CollectionTree = props => {
 	}, [toggleOpen]);
 
 	const selectNode = useCallback(partialPath => {
+		console.log('selectNode');
 		const path = { ...partialPath, library: parentLibraryKey };
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 		onNodeSelected(path);
