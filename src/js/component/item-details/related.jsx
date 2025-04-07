@@ -5,9 +5,12 @@ import { Button, Icon, TabPane } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 import { isTriggerEvent, noop, pick } from 'web-common/utils';
 
-import { fetchRelatedItems, navigate, removeRelatedItem } from '../../actions';
+import { fetchRelatedItems, navigate, removeRelatedItem, toggleModal } from '../../actions';
 import { getItemTitle } from '../../common/item';
+import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { get, getScrollContainerPageCount, getUniqueId, mapRelationsToItemKeys, sortItemsByKey, } from '../../utils';
+import { ADD_RELATED } from '../../constants/modals';
+import { pluralize } from '../../common/format';
 
 
 const RelatedItem = memo(props => {
@@ -94,7 +97,7 @@ RelatedItem.propTypes = {
 	onKeyDown: PropTypes.func,
 }
 
-const Related = ({ id, isActive, ...rest }) => {
+const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -114,8 +117,13 @@ const Related = ({ id, isActive, ...rest }) => {
 	const sortedRelatedItems = [...relatedItems];
 	sortItemsByKey(mappings, sortedRelatedItems, 'title');
 
+	const addRelatedRef = useRef(null);
 	const scrollContainerRef = useRef(null);
-	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(scrollContainerRef, { isCarousel: false });
+	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector } = useFocusManager(scrollContainerRef, { isCarousel: false });
+
+	const handleAddRelated = useCallback(async () => {
+		await dispatch(toggleModal(ADD_RELATED, true));
+	}, [dispatch]);
 
 	const handleKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown') {
@@ -123,7 +131,7 @@ const Related = ({ id, isActive, ...rest }) => {
 		} else if(ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev);
 		} else if(ev.key === 'Home' && scrollContainerRef.current) {
-			focusPrev(ev, { offset: Infinity });
+			addRelatedRef.current.focus();
 			ev.preventDefault();
 		} else if(ev.key === 'End' && scrollContainerRef.current) {
 			focusNext(ev, { offset: Infinity });
@@ -144,7 +152,18 @@ const Related = ({ id, isActive, ...rest }) => {
 		}
 	}, [focusNext, focusPrev]);
 
-		useEffect(() => {
+	const handleButtonKeyDown = useCallback(ev => {
+		if (ev.key === 'ArrowDown') {
+			scrollContainerRef.current.focus();
+			ev.preventDefault();
+		} else if (ev.key === 'End') {
+			focusBySelector('.related:last-child');
+			ev.preventDefault();
+		}
+	}, [focusBySelector]);
+
+
+	useEffect(() => {
 		if(!isFetching && !isFetched) {
 			dispatch(fetchRelatedItems(itemKey));
 		}
@@ -158,6 +177,29 @@ const Related = ({ id, isActive, ...rest }) => {
 			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Related</h5>
+			{!isTouchOrSmall && (
+				<Toolbar>
+					<div className="toolbar-left">
+						<div className="counter">
+							{`${sortedRelatedItems.length} related ${pluralize('item', sortedRelatedItems.length)}`}
+						</div>
+						{!isReadOnly && (
+							<ToolGroup>
+								<Button
+									className="btn-default"
+									disabled={isReadOnly}
+									onClick={handleAddRelated}
+									onKeyDown={handleButtonKeyDown}
+									ref={addRelatedRef}
+									tabIndex="0"
+								>
+									Add Related Item
+								</Button>
+							</ToolGroup>
+						)}
+					</div>
+				</Toolbar>
+			)}
 			<div
 				className="scroll-container-mouse"
 				onBlur={ isTouchOrSmall ? noop : receiveBlur }

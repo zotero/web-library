@@ -35,16 +35,17 @@ const LibraryNode = props => {
 
 	const handleSelect = useCallback(() => {
 		const path = { library: libraryKey, view: 'library' };
-		if(isTouchOrSmall && isPickerMode && !isPickerSkip) {
+		if(isPickerMode && !isPickerSkip) {
 			pickerNavigate(path);
-		} else if(isPickerMode && pickerAllowRoot && !isPickerSkip && !isTouchOrSmall) {
-			pickerPick({ libraryKey });
+		// TODO: fix picker mode for collections
+		// } else if(isPickerMode && pickerAllowRoot && !isPickerSkip && !isTouchOrSmall) {
+		// 	pickerPick({ libraryKey });
+		// }
 		} else if(!isPickerMode) {
 			dispatch(navigate(path, true));
 		}
 		onNodeSelected(path);
-	}, [dispatch, isPickerMode, isTouchOrSmall, isPickerSkip, libraryKey, onNodeSelected,
-	pickerAllowRoot, pickerNavigate, pickerPick]);
+	}, [dispatch, isPickerMode, isPickerSkip, libraryKey, onNodeSelected, pickerNavigate]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -90,14 +91,14 @@ const LibraryNode = props => {
 				'library-node': true, // using .library risks conflicting css rules
 				'my-library': isMyLibrary,
 				'open': isOpen && !shouldShowSpinner,
-				'selected': isSelected && !isPickerMode,
-				'focused': isFocusedAndSelected && !isPickerMode,
+				'selected': isSelected,
+				'focused': isFocusedAndSelected,
 				'picked': isPickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
 			}) }
 			aria-labelledby={ id.current }
-			aria-selected={ isSelected && !isPickerMode }
+			aria-selected={ isSelected }
 			aria-level={ 1 }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isFileUploadAllowed={ isFileUploadAllowed }

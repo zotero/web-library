@@ -572,12 +572,15 @@ const CollectionNode = memo(props => {
 	const isDisabled = disabledCollections && disabledCollections.includes(collection.key);
 
 	const handleSelect = useCallback(() => {
-		if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
-			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
-		} else if(!isDisabled) {
+		// TODO: Revisit picker mode
+		// if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
+		// 	pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
+		// } else
+		if(!isDisabled) {
 			selectNode({ collection: collection.key });
 		}
-	}, [collection, isDisabled, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
+	}, [collection, isDisabled, selectNode]);
+	// }, [collection, isDisabled, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
 		if(isTouchOrSmall || isReadOnly || isPickerMode) {
@@ -688,8 +691,8 @@ const CollectionNode = memo(props => {
         <Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
-				'selected': !isPickerMode && isSelected,
-				'focused': !isPickerMode && isFocusedAndSelected,
+				'selected': isSelected,
+				'focused': isFocusedAndSelected,
 				'picked': isPickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'disabled': isDisabled,
@@ -697,7 +700,7 @@ const CollectionNode = memo(props => {
 				'collection': true,
 			})}
 			aria-labelledby={ id.current }
-			aria-selected={!isPickerMode && isSelected }
+			aria-selected={ isSelected }
 			aria-level={ level }
 			data-collection-key={ collection.key }
 			aria-disabled={ isPickerMode && (isPickerSkip || isDisabled) }
@@ -921,6 +924,7 @@ const CollectionTree = props => {
 	}, [toggleOpen]);
 
 	const selectNode = useCallback(partialPath => {
+		console.log('selectNode');
 		const path = { ...partialPath, library: parentLibraryKey };
 		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 		onNodeSelected(path);

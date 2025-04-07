@@ -82,7 +82,7 @@ const deduplicateByHash = (array, hasher) => {
 };
 
 const getItemCanonicalUrl = ({ libraryKey, itemKey }) =>
-	`http://zotero.org/${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
+	`http://zotero.org/${libraryKey.startsWith('u') ? 'users' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
 
 const getItemFromCanonicalUrl = url => {
 	const match = url.match('https?://zotero.org/(users|groups)/([0-9]+)/items/([A-Z0-9]{8})');
@@ -102,7 +102,37 @@ const getItemFromApiUrl = url => {
 	return null;
 }
 
-const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true) => {
+
+/**
+ * Merges new related item keys with existing relations and returns updated relations.
+ *
+ * @param {Object} relations - The current object of relations (i.e., key is relation type, value is a canonical URL (or an array of)).
+ * @param {Array<string>} newRelatedItemsKeys - Array of new related item keys to add.
+ * @param {string} libraryKey - The key identifying the library context.
+ * @param {string} [relationType='dc:relation'] - The type of relation to use
+ * @returns {Object} The updated relation object
+ */
+const mergeItemKeysRelations = (relations, newRelatedItemsKeys, libraryKey, relationType = 'dc:relation', shouldRemoveEmpty = true, allowCrossLibraryRelations = false) => {
+	const oldRelatedItemKeys = mapRelationsToItemKeys(relations, libraryKey, relationType, shouldRemoveEmpty, allowCrossLibraryRelations);
+	const mergedRelatedItemKeys = deduplicate([...oldRelatedItemKeys, ...newRelatedItemsKeys]);
+
+	return {
+		...relations,
+		...mapItemKeysToRelations(mergedRelatedItemKeys, libraryKey, relationType)
+	}
+}
+
+const mapItemKeysToRelations = (itemKeys, libraryKey, relationType='dc:relation') => {
+	const relatedUrls = itemKeys.map(itemKey => getItemCanonicalUrl({ libraryKey, itemKey }));
+	if(relatedUrls.length === 0) {
+		return {};
+	}
+	return {
+		[relationType]: relatedUrls.length > 1 ? relatedUrls : relatedUrls[0]
+	};
+}
+
+const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true, allowCrossLibraryRelations = false) => {
 	if (!(relationType in relations)) {
 		return [];
 	}
@@ -111,7 +141,7 @@ const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation
 	const relatedItemKeys = relatedUrls.map(relatedUrl => {
 		const itemData = getItemFromCanonicalUrl(relatedUrl)
 		// cannot relate items in different libraries https://github.com/zotero/zotero/blob/f0a8c9ada38bae33593f331b36384d900e7f4d63/chrome/content/zotero/bindings/relatedbox.xml#L219-L225
-		return itemData && itemData.libraryKey === libraryKey ? itemData.itemKey : null;
+		return itemData && (itemData.libraryKey === libraryKey || allowCrossLibraryRelations) ? itemData.itemKey : null;
 	});
 
 	return shouldRemoveEmpty ? relatedItemKeys.filter(Boolean) : relatedItemKeys;
@@ -593,7 +623,9 @@ export {
     JSONTryParse,
     localStorageWrapper,
 	makeRequestsUpTo,
+	mapItemKeysToRelations,
     mapRelationsToItemKeys,
+	mergeItemKeysRelations,
 	maxByKey,
     openDelayedURL,
     parseBase64File,
