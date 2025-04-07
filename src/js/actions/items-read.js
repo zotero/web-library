@@ -257,7 +257,7 @@ const getAttachmentUrl = (itemKey, forceFresh = false) => {
 }
 
 const PAGE_SIZE = 100;
-const fetchSource = (startIndex, stopIndex) => {
+const fetchSource = ({ startIndex, stopIndex, ...rest }) => {
 	let start = startIndex;
 	let limit = (stopIndex - startIndex) + 1;
 	// when filling in holes, fetch PAGE_SIZE around it. Fixes rare
@@ -270,8 +270,8 @@ const fetchSource = (startIndex, stopIndex) => {
 
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { collectionKey, isTrash, isMyPublications, itemsSource, search: q, qmode,
-			tags: tag = [] } = state.current;
+		const { collectionKey, isTrash, isMyPublications, itemsSource, libraryKey, search: q, qmode,
+			tags: tag = [] } = {...state.current, ...rest};
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
 			column => 'sort' in column) || { field: 'title', sort: 'asc' };
 
@@ -282,15 +282,15 @@ const fetchSource = (startIndex, stopIndex) => {
 		switch(itemsSource) {
 			case 'query':
 				return await dispatch(fetchItemsQuery({ collectionKey, isMyPublications,
-					isTrash, q, tag, qmode }, sortAndDirection));
+					isTrash, q, tag, qmode }, sortAndDirection, { current: { libraryKey }}));
 			case 'top':
-				return await dispatch(fetchTopItems(sortAndDirection));
+				return await dispatch(fetchTopItems(sortAndDirection, { current: { libraryKey } }));
 			case 'trash':
-				return await dispatch(fetchTrashItems(sortAndDirection));
+				return await dispatch(fetchTrashItems(sortAndDirection, { current: { libraryKey } }));
 			case 'publications':
-				return await dispatch(fetchPublicationsItems(sortAndDirection));
-			case 'collection':
-				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection));
+				return await dispatch(fetchPublicationsItems(sortAndDirection, { current: { libraryKey } }));
+				case 'collection':
+				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection, { current: { libraryKey } }));
 		}
 	}
 }

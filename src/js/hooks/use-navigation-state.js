@@ -6,23 +6,25 @@ const defaultNavState = {
 	path: [],
 	collectionKey: null,
 	libraryKey: null,
+	itemKeys: [],
 	view: 'libraries'
 };
 
-const useNavigationState = () => {
-	const [navState, setNavState] = useState(defaultNavState);
+const useNavigationState = (baseState = {}) => {
+	const [navState, setNavState] = useState({ ...defaultNavState, ...baseState });
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
 
 	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey]?.collections.keys) ?? [];
 	const dataObjects = useSelector(state => state.libraries[navState.libraryKey]?.dataObjects) ?? {};
 	const collectionsDataInSelectedLibrary = Object.fromEntries(collectionKeys.map(key => [key, dataObjects[key]]));
 
-	const handleNavigation = useCallback(({ library = null, collection = null, view = null } = {}) => {
+	const handleNavigation = useCallback(({ library = null, collection = null, view = null, items = [] } = {}) => {
 		if(view === 'library') {
 			setNavState({
 				path: [],
 				collectionKey: null,
 				libraryKey: library,
+				itemKeys: items,
 				view
 			});
 		} else if(view === 'libraries') {
@@ -30,6 +32,7 @@ const useNavigationState = () => {
 				path: [],
 				collectionKey: null,
 				libraryKey: null,
+				itemKeys: [],
 				view
 			});
 		} else if(library) {
@@ -52,6 +55,7 @@ const useNavigationState = () => {
 					path: newPath,
 					libraryKey: library,
 					collectionKey: collection,
+					itemKeys: items,
 					view: 'collection'
 				});
 			} else {
@@ -59,6 +63,7 @@ const useNavigationState = () => {
 					path: [],
 					libraryKey: library,
 					collectionKey: null,
+					itemKeys: items,
 					view
 				});
 			}

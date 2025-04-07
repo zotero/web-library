@@ -14,7 +14,7 @@ import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource } from
 import { ATTACHMENT } from '../../../constants/dnd';
 import {
 	abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
-	navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
+	navigate, navigateSelectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting
 } from '../../../actions';
 import { useItemsState } from '../../../hooks';
@@ -26,7 +26,7 @@ import TableFocusEffectComponent from './table-focus-effect';
 
 
 const ItemsTable = props => {
-	const { libraryKey, collectionKey, itemsSource, isAdvancedSearch = false, selectedItemKeys = [] } = props
+	const { libraryKey, collectionKey, itemsSource, isPickerMode = false, pickerNavigate = noop, pickerPick = noop, picked = [], isAdvancedSearch = false, selectedItemKeys = [] } = props
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
@@ -131,9 +131,9 @@ const ItemsTable = props => {
 				offset++;
 			}
 		}
-		dispatch(fetchSource(Math.max(startIndex - offset, 0), stopIndex))
+		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex, itemsSource, libraryKey, collectionKey }))
 		lastRequest.current = { startIndex, stopIndex };
-	}, [dispatch, injectPoints]);
+	}, [collectionKey, dispatch, injectPoints, itemsSource, libraryKey]);
 
 	const handleFileHoverOnRow = useCallback((isOverRow, dropZone) => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
@@ -187,7 +187,7 @@ const ItemsTable = props => {
 
 		ev.preventDefault();
 
-		const cursorIndex = await dispatch(selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
+		const cursorIndex = await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
 		if (cursorIndex === -1 && document.activeElement?.closest('.items-table-head') !== headerRef.current) {
 			focusBySelector('.items-table-head');
@@ -239,10 +239,10 @@ const ItemsTable = props => {
 		if (scrollToRow !== null && !hasChecked && !isFetching) {
 			let startIndex = Math.max(scrollToRow - 20, 0);
 			let stopIndex = scrollToRow + 50;
-			dispatch(fetchSource(startIndex, stopIndex));
+			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey }));
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey]);
 
 	useEffect(() => {
 		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
@@ -260,11 +260,11 @@ const ItemsTable = props => {
 			setTimeout(() => {
 				const { startIndex, stopIndex } = lastRequest.current;
 				if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-					dispatch(fetchSource(startIndex, stopIndex));
+					dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey }));
 				}
 			}, 0)
 		}
-	}, [dispatch, isFetching, prevSortBy, prevSortDirection, requestType, sortBy, sortDirection, totalResults]);
+	}, [collectionKey, dispatch, isFetching, itemsSource, libraryKey, prevSortBy, prevSortDirection, requestType, sortBy, sortDirection, totalResults]);
 
 	useEffect(() => {
 		document.addEventListener('keyup', handleKeyUp);
@@ -277,7 +277,7 @@ const ItemsTable = props => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
 			const { startIndex, stopIndex } = lastRequest.current;
 			if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-				dispatch(fetchSource(startIndex, stopIndex));
+				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey }));
 			}
 		}
 		if (errorCount > 3 && prevErrorCount === 3) {
@@ -285,13 +285,13 @@ const ItemsTable = props => {
 		} else if (errorCount === 0 && prevErrorCount > 0) {
 			dispatch(connectionIssues(true));
 		}
-	}, [dispatch, errorCount, prevErrorCount]);
+	}, [collectionKey, dispatch, errorCount, itemsSource, libraryKey, prevErrorCount]);
 
 	return <Table
 			columns={columns}
 			containerClassName={cx({ 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows })}
 			drop={drop}
-			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource }}
+			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, pickerNavigate, pickerPick }}
 			getItemData={noop}
 			headerRef={headerRef}
 			isReady={hasChecked}
@@ -314,19 +314,23 @@ const ItemsTable = props => {
 			sortBy={sortByPreference}
 			sortDirection={sortDirectionPreference}
 		>
-			<TableFocusEffectComponent
-				tableRef={tableRef}
-				focusBySelector={focusBySelector}
-				resetLastFocused={resetLastFocused}
-			/>
-			<ScrollEffectComponent
-				listRef={listRef}
-				setScrollToRow={setScrollToRow}
-				libraryKey={libraryKey}
-				collectionKey={collectionKey}
-				itemsSource={itemsSource}
-				selectedItemKeys={selectedItemKeys}
-			/>
+			{ !isPickerMode && (
+				<>
+					<TableFocusEffectComponent
+						tableRef={tableRef}
+						focusBySelector={focusBySelector}
+						resetLastFocused={resetLastFocused}
+					/>
+					<ScrollEffectComponent
+						listRef={listRef}
+						setScrollToRow={setScrollToRow}
+						libraryKey={libraryKey}
+						collectionKey={collectionKey}
+						itemsSource={itemsSource}
+						selectedItemKeys={selectedItemKeys}
+					/>
+				</>
+			)}
 			{!hasChecked && !isModalOpen && <Spinner className="large" />}
 			{isAdvancedSearch && (
 				<div className="table-cover">

@@ -4,7 +4,7 @@ import { omit, pick } from 'web-common/utils';
 import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
 import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
-import { get, getItemCanonicalUrl, getUniqueId, removeRelationByItemKey, reverseMap } from '../utils';
+import { get, getItemCanonicalUrl, getUniqueId, mergeItemKeysRelations, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
 import { parseDescriptiveString } from '../common/format';
@@ -1366,6 +1366,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	};
 }
 
+// TODO: Migrate to `updateMultipleItems` to avoid multiple requests
 const removeRelatedItem = (itemKey, relatedItemKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -1409,6 +1410,38 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 			dispatch(updateItem(itemKey, patch1)),
 			dispatch(updateItem(relatedItemKey, patch2)),
 		]);
+	};
+}
+
+const addRelatedItems = (itemKey, relatedItemKeys) => {
+	return async (dispatch, getState) => {
+		let state = getState();
+		const { libraryKey } = state.current;
+		const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
+		const newRelations = mergeItemKeysRelations(item.relations, relatedItemKeys, libraryKey, 'dc:relation');
+		const unfetchedRelatedItemsKeys = relatedItemKeys.filter(relatedItemKey => {
+			return !!state.libraries[libraryKey]?.items?.[relatedItemKey];
+		});
+
+		if(unfetchedRelatedItemsKeys.length > 0) {
+			await dispatch(fetchItemsByKeys(unfetchedRelatedItemsKeys));
+			state = getState();
+		}
+
+		const relatedItemsPatches = unfetchedRelatedItemsKeys.map(relatedItemKey => {
+			const relatedItem = state.libraries[libraryKey]?.items?.[relatedItemKey];
+			return {
+				key: relatedItemKey,
+				relations: mergeItemKeysRelations(relatedItem.relations, [itemKey], libraryKey, 'dc:relation')
+			};
+		});
+
+		const multiItemPatch = [
+			...relatedItemsPatches,
+			{ key: itemKey, relations: newRelations },
+		];
+
+		return await dispatch(updateMultipleItems(multiItemPatch, libraryKey));
 	};
 }
 
@@ -1685,6 +1718,7 @@ const createItemOfType = (itemType, { collection = null } = {}) => {
 
 export {
     addToCollection,
+	addRelatedItems,
     chunkedAddToCollection,
     chunkedCopyToLibrary,
     chunkedDeleteItems,

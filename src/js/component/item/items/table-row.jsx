@@ -7,20 +7,15 @@ import { useDrag, useDrop } from 'react-dnd'
 import memoize from 'memoize-one';
 
 import { AttachmentCell, TitleCell, GenericDataCell, PlaceholderCell } from '../../common/table-cell';
+import { selectItemsMouse } from '../../../common/selection';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
 import {
 	currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
-	pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse
+	pickBestAttachmentItemAction, pickBestItemAction, navigateSelectItemsMouse
 } from '../../../actions';
 import { useItemsKeys } from '../../../hooks';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
-
-const selectItem = (itemKey, ev, dispatch) => {
-	const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
-	const isShiftModifier = ev.getModifierState('Shift');
-	dispatch(selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));
-}
 
 const getSelectedIndexes = memoize((selectedItemKeys, keys) => {
 	const selectedIndexes = selectedItemKeys.map(k => keys.indexOf(k));
@@ -36,13 +31,12 @@ const TableRow = props => {
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource } = data;
+	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, pickerNavigate, pickerPick, picked } = data;
 	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const itemKey = keys && keys[index] ? keys[index] : null;
-	const selectedItemKeys = useSelector(state => state.current.itemKeys);
 	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
-			l => l.key === state.current.libraryKey
+			l => l.key === libraryKey
 		) || {}).isFileUploadAllowed
 	);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
@@ -59,7 +53,7 @@ const TableRow = props => {
 
 	const selectedIndexes = getSelectedIndexes(selectedItemKeys, keys);
 	const selectedItemKeysLength = selectedItemKeys.length;
-	const isSelected = useSelector(state => itemKey && state.current.itemKeys.includes(itemKey));
+	const isSelected = selectedItemKeys.includes(itemKey);
 	const isFirstRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index - 1);
 	const isLastRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index + 1);
 
@@ -147,6 +141,17 @@ const TableRow = props => {
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
 	});
 
+	const selectItem = useCallback((itemKey, ev) => {
+		const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
+		const isShiftModifier = ev.getModifierState('Shift');
+		if (isPickerMode) {
+			const nextKeys = selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier, { keys, selectedItemKeys });
+			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, view: 'item-list' })
+		} else {
+			dispatch(navigateSelectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));
+		}
+	}, [collectionKey, dispatch, isPickerMode, keys, libraryKey, pickerNavigate, selectedItemKeys]);
+
 	//@NOTE: In order to allow item selection on "mousedown" (#161)
 	//		 this event fires twice, once on "mousedown", once on "click".
 	//		 Click events are discarded unless "mousedown" could
@@ -187,7 +192,7 @@ const TableRow = props => {
 				}
 			}
 		}
-	}, [dispatch, isSelected, itemData, itemKey, selectedItemKeysLength]);
+	}, [dispatch, isSelected, itemData, itemKey, selectItem, selectedItemKeysLength]);
 
 	useEffect(() => {
 		preview(getEmptyImage(), { captureDraggingState: true })
