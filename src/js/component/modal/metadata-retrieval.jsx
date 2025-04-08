@@ -9,8 +9,7 @@ import { pick } from 'web-common/utils';
 import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
 import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
-import Table from '../common/table';
-import List from '../common/list';
+import Items from '../common/items';
 import { GenericDataCell, default as Cell } from '../common/table-cell';
 
 const MetadataRetrievalListItem = props => {
@@ -292,19 +291,12 @@ const MetadataRetrievalModal = () => {
 						max="1"
 					/>
 				</div>
-				{isTouchOrSmall ? (
-					<List
-						containerClassName="recognize-list"
-						rowComponent={MetadataRetrievalListItem}
-						{...sharedProps}
-					/>
-				) : (
-					<Table
-						containerClassName="recognize-list"
-						rowComponent={MetadataRetrievalTableRow}
-						{...sharedProps}
-					/>
-				)}
+				<Items
+					containerClassName="recognize-list"
+					listItemComponent={MetadataRetrievalListItem}
+					rowComponent={MetadataRetrievalTableRow}
+					{ ...sharedProps }
+				/>
 			</div>
 		</Modal>
 	);

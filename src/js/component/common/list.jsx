@@ -24,13 +24,13 @@ const List = props => {
 		onLoadMore = noop,
 		onSelect = noop,
 		role = 'list',
-		rowComponent = null,
+		listItemComponent = null,
 		scrollToRow = 0,
 		selectedIndexes = [],
 		totalResults,
 	} = props;
 
-	const RowComponent = rowComponent || ListRow;
+	const ListItemComponent = listItemComponent || ListRow;
 	const loader = useRef(null);
 	const listRef = useRef(null);
 
@@ -70,7 +70,7 @@ const List = props => {
 									ref={r => { ref(r); listRef.current = r; }}
 									width={width}
 								>
-									{ RowComponent }
+									{ ListItemComponent }
 								</ReactWindowList>
 							</div>
 						)}
@@ -88,12 +88,12 @@ List.propTypes = {
 	getItemData: PropTypes.func.isRequired,
 	itemCount: PropTypes.number.isRequired,
 	listClassName: PropTypes.string,
+	listItemComponent: PropTypes.elementType,
 	onDoubleClick: PropTypes.func,
 	onIsItemLoaded: PropTypes.func,
 	onLoadMore: PropTypes.func,
 	onSelect: PropTypes.func,
 	role: PropTypes.string,
-	rowComponent: PropTypes.elementType,
 	scrollToRow: PropTypes.number,
 	selectedIndexes: PropTypes.array,
 	totalResults: PropTypes.number.isRequired,
