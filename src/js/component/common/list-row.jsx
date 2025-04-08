@@ -174,7 +174,6 @@ ListRow.displayName = 'ListRow';
 ListRow.propTypes = {
 	data: PropTypes.shape({
 			isSelectMode: PropTypes.bool,
-			columns: PropTypes.array,
 			isFocusedAndSelected: PropTypes.bool,
 			selectedIndexes: PropTypes.arrayOf(PropTypes.number),
 			getItemData: PropTypes.func.isRequired,

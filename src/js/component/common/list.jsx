@@ -14,13 +14,16 @@ import { SCROLL_BUFFER, LIST_ROW_HEIGHT } from '../../constants/constants';
 const List = props => {
 	const {
 		ariaLabel = "items",
-		columns,
+		children,
 		containerClassName = null,
+		extraItemData = {},
 		getItemData,
+		isReady = true,
 		itemCount,
 		listClassName = null,
+		loaderRef = null,
 		onDoubleClick = noop,
-		onIsItemLoaded = alwaysTrue,
+		isItemLoaded = alwaysTrue,
 		onLoadMore = noop,
 		onSelect = noop,
 		role = 'list',
@@ -31,66 +34,77 @@ const List = props => {
 	} = props;
 
 	const ListItemComponent = listItemComponent || ListRow;
-	const loader = useRef(null);
 	const listRef = useRef(null);
 
 	const itemData = {
-		columns,
 		selectedIndexes,
 		getItemData,
 		onSelect,
-		onDoubleClick
+		onDoubleClick,
+		extraItemData
 	};
 
 	return (
 		<div className={cx("items-list-wrap", containerClassName)}>
-			<AutoSizer>
-				{({ height, width }) => (
-					<InfiniteLoader
-						ref={loader}
-						listRef={listRef}
-						isItemLoaded={onIsItemLoaded}
-						itemCount={itemCount}
-						loadMoreItems={onLoadMore}
-					>
-						{({ onItemsRendered, ref }) => (
-							<div
-								aria-label={ariaLabel}
-								className={cx('items-list', listClassName)}
-								role={role}
-								aria-rowcount={totalResults}
-							>
-								<ReactWindowList
-									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * LIST_ROW_HEIGHT}
-									height={height}
-									itemCount={itemCount}
-									itemData={itemData}
-									itemSize={LIST_ROW_HEIGHT}
-									onItemsRendered={onItemsRendered}
-									ref={r => { ref(r); listRef.current = r; }}
-									width={width}
+			{ isReady && (
+				<AutoSizer>
+					{({ height, width }) => (
+						<InfiniteLoader
+							ref={loaderRef}
+							listRef={listRef}
+							isItemLoaded={isItemLoaded}
+							itemCount={itemCount}
+							loadMoreItems={onLoadMore}
+						>
+							{({ onItemsRendered, ref }) => (
+								<div
+									aria-label={ariaLabel}
+									className={cx('items-list', listClassName)}
+									role={role}
+									aria-rowcount={totalResults}
 								>
-									{ ListItemComponent }
-								</ReactWindowList>
-							</div>
-						)}
-					</InfiniteLoader>
-				)}
-			</AutoSizer>
+									<ReactWindowList
+										initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * LIST_ROW_HEIGHT}
+										height={height}
+										itemCount={itemCount}
+										itemData={itemData}
+										itemSize={LIST_ROW_HEIGHT}
+										onItemsRendered={onItemsRendered}
+										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
+
+										width={width}
+									>
+										{ ListItemComponent }
+									</ReactWindowList>
+								</div>
+							)}
+						</InfiniteLoader>
+					)}
+				</AutoSizer>
+			) }
+			{ children }
 		</div>
 	);
 }
 
 List.propTypes = {
 	ariaLabel: PropTypes.string,
-	columns: PropTypes.array.isRequired,
+	children: PropTypes.node,
 	containerClassName: PropTypes.string,
+	extraItemData: PropTypes.object,
 	getItemData: PropTypes.func.isRequired,
+	isItemLoaded: PropTypes.func,
+	isReady: PropTypes.bool,
 	itemCount: PropTypes.number.isRequired,
 	listClassName: PropTypes.string,
 	listItemComponent: PropTypes.elementType,
+	listRef: PropTypes.shape({
+		current: PropTypes.object,
+	}),
+	loaderRef: PropTypes.shape({
+		current: PropTypes.object,
+	}),
 	onDoubleClick: PropTypes.func,
-	onIsItemLoaded: PropTypes.func,
 	onLoadMore: PropTypes.func,
 	onSelect: PropTypes.func,
 	role: PropTypes.string,

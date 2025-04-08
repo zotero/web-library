@@ -4,17 +4,15 @@ import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from '
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd'
-import { Icon } from 'web-common/components';
 import memoize from 'memoize-one';
-import { pick } from 'web-common/utils';
 
-import Cell from './table-cell';
+import { AttachmentCell, TitleCell, GenericDataCell, PlaceholderCell } from '../../common/table-cell';
 import { ATTACHMENT, ITEM } from '../../../constants/dnd';
-import colorNames from '../../../constants/color-names';
-import { currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
-pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse } from '../../../actions';
+import {
+	currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
+	pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse
+} from '../../../actions';
 import { useSourceKeys } from '../../../hooks';
-import { renderItemTitle } from '../../../common/format';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -23,131 +21,6 @@ const selectItem = (itemKey, ev, dispatch) => {
 	const isShiftModifier = ev.getModifierState('Shift');
 	dispatch(selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));
 }
-
-const TitleCell = memo(props => {
-	const { columnName, isFocused, isSelected, labelledById, itemData, ...rest } = props;
-	const formattedSpan = document.createElement('span');
-	renderItemTitle(itemData[columnName], formattedSpan);
-
-	const colorScheme = useSelector(state => state.preferences.colorScheme);
-
-	return (
-		<Cell
-			columnName={ columnName }
-			{ ...pick(rest, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
-		>
-			<Icon
-				label={ `${itemData.itemType} icon` }
-				type={ `16/item-type/${itemData.iconName}` }
-				symbol={ isFocused && isSelected ? `${itemData.iconName}-white` : itemData.iconName }
-				usePixelRatio={ true }
-				useColorScheme={ isFocused && isSelected ? false : true }
-				colorScheme={ colorScheme }
-				width="16"
-				height="16"
-			/>
-			<div className="truncate" id={labelledById} dangerouslySetInnerHTML={ { __html: formattedSpan.outerHTML } } />
-			<div className="tag-colors">
-				{ itemData.emojis.map(emoji => {
-					return <span key={ emoji } className="emoji">{ emoji }</span>
-				}) }
-				<span className="tag-circles">
-					{ itemData.colors.map((color, index) => (
-						<Icon
-							label={ `${colorNames[color] || ''} circle icon` }
-							key={ index }
-							type={ index === 0 ? '12/circle' : '12/crescent-circle' }
-							symbol={ index === 0 ?
-								(isFocused && isSelected ? 'circle-active' : 'circle') :
-								(isFocused && isSelected ? 'crescent-circle-active' : 'crescent-circle')
-							}
-							width="12"
-							height="12"
-							data-color={ color.toLowerCase() }
-							style={ { color } }
-						/>
-					)) }
-				</span>
-			</div>
-		</Cell>
-	);
-});
-
-TitleCell.displayName = 'TitleCell';
-
-const AttachmentCell = memo(props => {
-	const { columnName, isFocused, isSelected, itemData } = props;
-
-	const colorScheme = useSelector(state => state.preferences.colorScheme);
-
-	return (
-		<Cell
-			columnName={ columnName }
-			{ ...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
-		>
-			<div className="truncate">
-				{ itemData[columnName] }
-			</div>
-			{ itemData.attachmentIconName && (
-				<Icon
-					type={ `12/item-type/${itemData.attachmentIconName}` }
-					symbol={ isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName }
-					useColorScheme={ isFocused && isSelected ? false : true }
-					colorScheme={ colorScheme }
-					width="12"
-					height="12"
-				/>
-			) }
-		</Cell>
-	);
-})
-
-AttachmentCell.displayName = 'AttachmentCell';
-
-const GenericDataCell = memo(props => {
-	const { columnName, itemData } = props;
-
-	return (
-		<Cell
-			columnName={ columnName }
-			{ ...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn']) }
-		>
-			<div className="truncate">
-				{ itemData[columnName] }
-			</div>
-		</Cell>
-	);
-});
-
-GenericDataCell.displayName = 'GenericDataCell';
-
-GenericDataCell.propTypes = {
-	colIndex: PropTypes.number,
-	columnName: PropTypes.string,
-	isSelected: PropTypes.bool,
-	isFocused: PropTypes.bool,
-	itemData: PropTypes.object,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
-
-
-const PlaceholderCell = props => {
-	const { columnName } = props;
-	return (
-		<Cell
-			{ ...pick(props, ['colIndex', 'columnName', 'width', 'isFirstColumn', 'isLastColumn']) }
-		>
-			{ columnName === 'title' && <div className="placeholder-icon" /> }
-			<div className="placeholder" />
-		</Cell>
-	);
-}
-
-PlaceholderCell.propTypes = {
-	colIndex: PropTypes.number,
-	columnName: PropTypes.string,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
 
 const getSelectedIndexes = memoize((selectedItemKeys, keys) => {
 	const selectedIndexes = selectedItemKeys.map(k => keys.indexOf(k));
@@ -163,7 +36,7 @@ const TableRow = props => {
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { onFileHoverOnRow, columns } = data;
+	const { columns, onFileHoverOnRow } = data;
 	const keys = useSourceKeys();
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const selectedItemKeys = useSelector(state => state.current.itemKeys);
@@ -209,14 +82,14 @@ const TableRow = props => {
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
 
-			if(dropResult && dropResult.targetType) {
-				if(dropResult.targetType === 'tag') {
+			if (dropResult && dropResult.targetType) {
+				if (dropResult.targetType === 'tag') {
 					dispatch(currentAddTags([dropResult.tag]));
-				} else if(dropResult.targetType === 'library' || dropResult.targetType === 'collection') {
+				} else if (dropResult.targetType === 'library' || dropResult.targetType === 'collection') {
 					const { targetType, collectionKey: targetCollectionKey, libraryKey: targetLibraryKey } = dropResult;
-					if(targetLibraryKey && targetLibraryKey !== libraryKey) {
+					if (targetLibraryKey && targetLibraryKey !== libraryKey) {
 						dispatch(currentCopyToLibrary(targetLibraryKey, targetType === 'collection' ? targetCollectionKey : null));
-					} else if(targetCollectionKey) {
+					} else if (targetCollectionKey) {
 						dispatch(currentAddToCollection(targetCollectionKey));
 					}
 				}
@@ -233,29 +106,29 @@ const TableRow = props => {
 		}),
 		drop: (item, monitor) => {
 			const itemType = monitor.getItemType();
-			if(itemType === NativeTypes.FILE) {
+			if (itemType === NativeTypes.FILE) {
 				const parentItem = dropZone === null ? itemKey : null;
 				const collection = parentItem === null ? collectionKey : null;
 				const shouldIgnoreDrop = parentItem !== null && ['attachment', 'note'].includes(itemData.itemTypeRaw);
-				if(!shouldIgnoreDrop && item.files && item.files.length) {
+				if (!shouldIgnoreDrop && item.files && item.files.length) {
 					dispatch(createAttachmentsFromDropped(item.files, { collection, parentItem }));
 				}
 			}
-			if(itemType === ATTACHMENT) {
+			if (itemType === ATTACHMENT) {
 				return dropZone === null ? { item: itemKey } : { collection: collectionKey };
 			}
 		},
 		hover: (item, monitor) => {
-			if(ref.current && monitor.getClientOffset()) {
+			if (ref.current && monitor.getClientOffset()) {
 				const cursor = monitor.getClientOffset();
 				const rect = ref.current.getBoundingClientRect();
 				const offsetTop = cursor.y - rect.y;
 				const offsetBottom = (rect.y + rect.height) - cursor.y;
 				const margin = ['attachment', 'note'].includes(itemData.itemTypeRaw) ? Math.floor(rect.height / 2) : DROP_MARGIN_EDGE;
 
-				if(offsetTop < margin) {
+				if (offsetTop < margin) {
 					setDropZone('top');
-				} else if(offsetBottom < margin) {
+				} else if (offsetBottom < margin) {
 					setDropZone('bottom');
 				} else {
 					setDropZone(null);
@@ -283,34 +156,34 @@ const TableRow = props => {
 	//		 have been triggered as a drag event in which case "mousedown"
 	//		 is ignored and "click" is used instead, if occurs.
 	const handleMouseEvent = useCallback(event => {
-		if(itemData) {
-			if(selectedItemKeysLength > 1 && isSelected && event.type === 'mousedown') {
+		if (itemData) {
+			if (selectedItemKeysLength > 1 && isSelected && event.type === 'mousedown') {
 				// ignore a "mousedown" when user might want to drag items
 				return;
 			} else {
-				if(selectedItemKeysLength > 1 && isSelected && event.type === 'click') {
+				if (selectedItemKeysLength > 1 && isSelected && event.type === 'click') {
 					const isFollowUp = itemKey in ignoreClicks.current &&
 						Date.now() - ignoreClicks.current[itemKey] < 500;
 
-					if(isFollowUp) {
+					if (isFollowUp) {
 						// ignore a follow-up click, it has been handled as "mousedown"
 						return;
 					} else {
 						// handle a "click" event that has been missed by "mousedown" handler
 						// in anticipation of potential drag that has never happened
-						selectItem(itemKey, event,  dispatch);
+						selectItem(itemKey, event, dispatch);
 						delete ignoreClicks.current[itemKey];
 						return
 					}
 				}
 			}
-			if(event.type === 'mousedown') {
+			if (event.type === 'mousedown') {
 				// finally handle mousedowns as select events
 				ignoreClicks.current[itemKey] = Date.now();
 				selectItem(itemKey, event, dispatch);
 			}
-			if(event.type === 'dblclick' && itemData.itemTypeRaw !== 'note' && itemData.attachmentIconName !== null) {
-				if(itemData.itemTypeRaw === 'attachment') {
+			if (event.type === 'dblclick' && itemData.itemTypeRaw !== 'note' && itemData.attachmentIconName !== null) {
+				if (itemData.itemTypeRaw === 'attachment') {
 					dispatch(pickBestAttachmentItemAction(itemData.key));
 				} else {
 					dispatch(pickBestItemAction(itemKey));
@@ -329,65 +202,65 @@ const TableRow = props => {
 
 	return drag(drop(
 		<div
-			aria-selected={ isSelected }
-			aria-rowindex={ index + 1 }
-			aria-labelledby={ labelledById }
-			className={ className }
-			style={ style }
-			data-index={ index }
-			data-key={ itemKey }
-			onClick={ handleMouseEvent }
-			onDoubleClick={ handleMouseEvent }
-			onMouseDown={ handleMouseEvent }
+			aria-selected={isSelected}
+			aria-rowindex={index + 1}
+			aria-labelledby={labelledById}
+			className={className}
+			style={style}
+			data-index={index}
+			data-key={itemKey}
+			onClick={handleMouseEvent}
+			onDoubleClick={handleMouseEvent}
+			onMouseDown={handleMouseEvent}
 			role="row"
-			ref={ ref }
-			tabIndex={ -2 }
+			ref={ref}
+			tabIndex={-2}
 		>
-			{ columns.map((c, colIndex) => itemData ? (
+			{columns.map((c, colIndex) => itemData ? (
 				c.field === 'title' ? (
 					<TitleCell
-						labelledById={ labelledById }
-						key={ c.field }
-						colIndex={ colIndex }
-						isFirstColumn={ colIndex === 0 }
-						isLastColumn={ colIndex === columns.length - 1 }
-						columnName={ c.field }
-						isSelected={ isSelected }
-						isFocused={ isFocusedAndSelected }
-						itemData={ itemData }
-						width={ `var(--col-${colIndex}-width)` }
+						labelledById={labelledById}
+						key={c.field}
+						colIndex={colIndex}
+						isFirstColumn={colIndex === 0}
+						isLastColumn={colIndex === columns.length - 1}
+						columnName={c.field}
+						isSelected={isSelected}
+						isFocused={isFocusedAndSelected}
+						itemData={itemData}
+						width={`var(--col-${colIndex}-width)`}
 					/>
 				) : c.field === 'attachment' ? (
 					<AttachmentCell
-						key={ c.field }
-						colIndex={ colIndex }
+						key={c.field}
+						colIndex={colIndex}
 						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
-						columnName={ c.field }
-						isSelected={ isSelected }
-						isFocused={ isFocusedAndSelected }
-						itemData={ itemData }
-						width={ `var(--col-${colIndex}-width)` }
+						columnName={c.field}
+						isSelected={isSelected}
+						isFocused={isFocusedAndSelected}
+						itemData={itemData}
+						width={`var(--col-${colIndex}-width)`}
 					/>
 				) : (
 					<GenericDataCell
-						key={ c.field }
-						colIndex={ colIndex }
+						key={c.field}
+						colIndex={colIndex}
 						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
-						columnName={ c.field }
-						itemData={ itemData }
-						width={ `var(--col-${colIndex}-width)` }
+						columnName={c.field}
+						itemData={itemData}
+						width={`var(--col-${colIndex}-width)`}
 					/>
 				)
 			) : <PlaceholderCell
-				key={ c.field }
-				width={ `var(--col-${colIndex}-width)` }
-				colIndex={ colIndex }
+				key={c.field}
+				width={`var(--col-${colIndex}-width)`}
+				colIndex={colIndex}
 				isFirstColumn={colIndex === 0}
 				isLastColumn={colIndex === columns.length - 1}
-				columnName={ c.field }
-			/> ) }
+				columnName={c.field}
+			/>)}
 		</div>
 	));
 };

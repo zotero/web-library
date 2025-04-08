@@ -26,16 +26,23 @@ const Table = props => {
 	const {
 		ariaLabel = "items",
 		bodyClassName = null,
+		children,
 		columns,
 		containerClassName = null,
+		drop = null,
+		extraItemData = {},
 		getItemData,
-		handleKeyDown,
+		headerRef = null,
+		innerRef = null,
+		isReady = true,
+		isItemLoaded = alwaysTrue,
 		itemCount,
+		loaderRef = null,
 		onChangeSortOrder = noop,
-		onColumnsReordered = noop,
-		onColumnsResized = noop,
+		onColumnsReorder = noop,
+		onColumnsResize = noop,
 		onDoubleClick = noop,
-		onIsItemLoaded = alwaysTrue,
+		onKeyDown = noop,
 		onLoadMore = noop,
 		onReceiveBlur = noop,
 		onReceiveFocus = noop,
@@ -43,6 +50,8 @@ const Table = props => {
 		rowComponent = null,
 		scrollToRow = 0,
 		selectedIndexes = [],
+		sortBy = null,
+		sortDirection = null,
 		tableClassName = null,
 		totalResults,
 	} = props;
@@ -54,18 +63,15 @@ const Table = props => {
 		if (!columns.find(c => c.field === 'title')) {
 			console.error('Table component requires a column with field "title"');
 		}
-		if (totalResults !== itemCount && (onIsItemLoaded === alwaysTrue || onLoadMore === noop)) {
+		if (totalResults !== itemCount && (isItemLoaded === alwaysTrue || onLoadMore === noop)) {
 			console.warn('For dynamic row loading onIsItemLoaded and onLoadMore must be provided. Otherwise itemCount must equal totalResults');
 		}
 	}
 
 	const containerRef = useRef(null);
 	const tableRef = useRef(null);
-	const headerRef = useRef(null);
 	const listRef = useRef(null);
-	const innerRef = useRef(null);
 	const outerRef = useRef(null);
-	const loader = useRef(null);
 
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -162,10 +168,10 @@ const Table = props => {
 	const handleMouseUp = useCallback(ev => {
 		if (resizing.current !== null && resizing.current.newColumns) {
 			ev.preventDefault();
-			onColumnsResized(resizing.current.newColumns);
+			onColumnsResize(resizing.current.newColumns);
 		} else if (reordering.current !== null && reordering.current && typeof (reordering.current.targetIndex) === 'number' && typeof (reordering.current.index) === 'number') {
 			ev.preventDefault();
-			onColumnsReordered(reordering.current.index, reordering.current.targetIndex);
+			onColumnsReorder(reordering.current.index, reordering.current.targetIndex);
 		}
 
 		resizing.current = null;
@@ -176,7 +182,7 @@ const Table = props => {
 			setIsReordering(false);
 			setReorderTarget(null)
 		});
-	}, [onColumnsReordered, onColumnsResized]);
+	}, [onColumnsReorder, onColumnsResize]);
 
 	const handleMouseLeave = useCallback(() => {
 		setIsReordering(false);
@@ -221,102 +227,121 @@ const Table = props => {
 		getItemData,
 		onSelect,
 		onDoubleClick,
+		...extraItemData
 	};
 
 	return (
 		<div
-			ref={containerRef}
+			ref={ r => {containerRef.current = r; drop && (drop(r));} }
 			className={cx('items-table-wrap', containerClassName, {
 				resizing: isResizing,
 				reordering: isReordering,
 			})}
 		>
-			<AutoSizer>
-				{({ height, width }) => (
-					<InfiniteLoader
-						isItemLoaded={onIsItemLoaded}
-						itemCount={itemCount}
-						loadMoreItems={onLoadMore}
-						ref={loader}
-					>
-						{({ onItemsRendered, ref }) => (
-							<div
-								tabIndex={0}
-								onFocus={handleTableFocus}
-								onBlur={onReceiveBlur}
-								onKeyDown={handleKeyDown}
-								ref={tableRef}
-								className={cx('items-table', tableClassName)}
-								style={getColumnCssVars(columns, width, scrollbarWidth)}
-								role="grid"
-								aria-multiselectable="true"
-								aria-readonly="true"
-								aria-label={ariaLabel}
-								data-width={width}
-								aria-rowcount={totalResults}
-							>
-								<HeaderRow
-									ref={headerRef}
-									columns={columns}
-									width={width}
-									onResize={handleResize}
-									onReorder={handleReorder}
-									isResizing={isResizing}
-									isReordering={isReordering}
-									reorderTarget={reorderTarget}
-									onChangeSortOrder={onChangeSortOrder}
-								/>
-								<ReactWindowList
-									initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROW_HEIGHT}
-									outerElementType={TableBody}
-									className={cx("items-table-body", bodyClassName)}
-									height={height - ROW_HEIGHT} // add margin for HeaderRow
-									itemCount={itemCount}
-									itemData={itemData}
-									itemSize={ROW_HEIGHT}
-									onItemsRendered={onItemsRendered}
-									ref={r => { ref(r); listRef.current = r }}
-									outerRef={outerRef}
-									innerRef={innerRef}
-									width={width - 16}
+			{isReady && (
+				<AutoSizer>
+					{({ height, width }) => (
+						<InfiniteLoader
+							isItemLoaded={isItemLoaded}
+							itemCount={itemCount}
+							loadMoreItems={onLoadMore}
+							ref={loaderRef}
+						>
+							{({ onItemsRendered, ref }) => (
+								<div
+									tabIndex={0}
+									onFocus={handleTableFocus}
+									onBlur={onReceiveBlur}
+									onKeyDown={onKeyDown}
+									ref={ r => { tableRef.current = r; props.tableRef && (props.tableRef.current = r); } }
+									className={cx('items-table', tableClassName)}
+									style={getColumnCssVars(columns, width, scrollbarWidth)}
+									role="grid"
+									aria-multiselectable="true"
+									aria-readonly="true"
+									aria-label={ariaLabel}
+									data-width={width}
+									aria-rowcount={totalResults}
 								>
-									{RowComponent}
-								</ReactWindowList>
-							</div>
-						)}
-					</InfiniteLoader>
-				)}
-			</AutoSizer>
+									<HeaderRow
+										ref={headerRef}
+										columns={columns}
+										width={width}
+										onResize={handleResize}
+										onReorder={handleReorder}
+										sortBy={sortBy}
+										sortDirection={sortDirection}
+										isResizing={isResizing}
+										isReordering={isReordering}
+										reorderTarget={reorderTarget}
+										onChangeSortOrder={onChangeSortOrder}
+									/>
+									<ReactWindowList
+										initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROW_HEIGHT}
+										outerElementType={TableBody}
+										className={cx("items-table-body", bodyClassName)}
+										height={height - ROW_HEIGHT} // add margin for HeaderRow
+										itemCount={itemCount}
+										itemData={itemData}
+										itemSize={ROW_HEIGHT}
+										onItemsRendered={onItemsRendered}
+										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
+										outerRef={r => { outerRef.current = r; props.outerRef && (props.outerRef.current = r); } }
+										innerRef={innerRef}
+										width={width - 16}
+									>
+										{RowComponent}
+									</ReactWindowList>
+								</div>
+							)}
+						</InfiniteLoader>
+					)}
+				</AutoSizer>
+			)}
+			{children}
 		</div>
 	)
 }
 
 Table.propTypes = {
-    ariaLabel: PropTypes.string,
-    bodyClassName: PropTypes.string,
-    columns: PropTypes.arrayOf(PropTypes.shape({
-        field: PropTypes.string.isRequired,
-        fraction: PropTypes.number.isRequired,
-        minFraction: PropTypes.number
-    })).isRequired,
-    containerClassName: PropTypes.string,
-    getItemData: PropTypes.func.isRequired,
-    handleKeyDown: PropTypes.func,
-    itemCount: PropTypes.number.isRequired,
-    onChangeSortOrder: PropTypes.func,
-    onColumnsReordered: PropTypes.func,
-    onColumnsResized: PropTypes.func,
-    onDoubleClick: PropTypes.func,
-    onIsItemLoaded: PropTypes.func,
-    onLoadMore: PropTypes.func,
-    onReceiveBlur: PropTypes.func,
-    onReceiveFocus: PropTypes.func,
-    onSelect: PropTypes.func,
-    rowComponent: PropTypes.elementType,
-    scrollToRow: PropTypes.number,
-    selectedIndexes: PropTypes.arrayOf(PropTypes.number),
-    tableClassName: PropTypes.string,
-    totalResults: PropTypes.number.isRequired
+	ariaLabel: PropTypes.string,
+	bodyClassName: PropTypes.string,
+	children: PropTypes.node,
+	columns: PropTypes.arrayOf(PropTypes.shape({
+		field: PropTypes.string.isRequired,
+		fraction: PropTypes.number.isRequired,
+		minFraction: PropTypes.number
+	})).isRequired,
+	containerClassName: PropTypes.string,
+	drop: PropTypes.func,
+	extraItemData: PropTypes.object,
+	getItemData: PropTypes.func.isRequired,
+	handleKeyDown: PropTypes.func,
+	headerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+	innerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+	isItemLoaded: PropTypes.func,
+	isReady: PropTypes.bool,
+	itemCount: PropTypes.number.isRequired,
+	listRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+	loaderRef: PropTypes.shape({ current: PropTypes.instanceOf(Object) }),
+	outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+	onChangeSortOrder: PropTypes.func,
+	onColumnsReorder: PropTypes.func,
+	onColumnsResize: PropTypes.func,
+	onDoubleClick: PropTypes.func,
+	onKeyDown: PropTypes.func,
+	onLoadMore: PropTypes.func,
+	onReceiveBlur: PropTypes.func,
+	onReceiveFocus: PropTypes.func,
+	onSelect: PropTypes.func,
+	rowComponent: PropTypes.elementType,
+	sortBy: PropTypes.string,
+	sortDirection: PropTypes.oneOf(['asc', 'desc', null]),
+	scrollToRow: PropTypes.number,
+	selectedIndexes: PropTypes.arrayOf(PropTypes.number),
+	tableClassName: PropTypes.string,
+	tableRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+	totalResults: PropTypes.number.isRequired,
 };
 
 export default memo(Table);

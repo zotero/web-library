@@ -24,8 +24,8 @@ const selectItem = (itemKey, selectedItemKeys, isSelectMode, dispatch) => {
 
 const ListRow = memo(props => {
 	const { data, index, style } = props;
-	const { keys } = data;
-	const itemKey = keys && keys[index] ? keys[index] : null;
+	const { getItemData } = data;
+	const itemKey = getItemData(index);
 	const dispatch = useDispatch();
 	const itemData = useSelector(
 		state => itemKey ?
@@ -63,13 +63,11 @@ const ListRow = memo(props => {
 	}, [dispatch, isSelectMode, itemKey, selectedItemKeys]);
 
 	const handleKeyDown = useCallback(ev => {
-		const index = ev.currentTarget.dataset.index;
-
-		if((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && keys[index]) {
-			selectItem(keys[index], selectedItemKeys, isSelectMode, dispatch);
+		if ((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && itemKey) {
+			selectItem(itemKey, selectedItemKeys, isSelectMode, dispatch);
 			ev.preventDefault();
 		}
-	}, [dispatch, isSelectMode, keys, selectedItemKeys]);
+	}, [dispatch, isSelectMode, itemKey, selectedItemKeys]);
 
 	const startSelectMode = useCallback(itemKey => {
 		triggerSelectTimeout.current = null;
@@ -82,13 +80,12 @@ const ListRow = memo(props => {
 	}, [dispatch, isSelectMode]);
 
 	const handleTouchStart = useCallback(ev => {
-		const itemKey = ev.currentTarget.dataset.key;
 		if(!isSelectMode && !triggerSelectTimeout.current) {
 			triggerSelectTimeout.current = setTimeout(() => startSelectMode(itemKey), SELECT_MODE_DELAY);
 			tiggerSelectPosStart.current = [ev.touches[0]?.clientX, ev.touches[0]?.clientY];
 			tiggerSelectPosLatest.current = [ev.touches[0]?.clientX, ev.touches[0]?.clientY];
 		}
-	}, [isSelectMode, startSelectMode]);
+	}, [isSelectMode, itemKey, startSelectMode]);
 
 	const handleTouchEnd = useCallback(() => {
 		if(triggerSelectTimeout.current) {
@@ -204,9 +201,7 @@ ListRow.displayName = 'ListRow';
 
 ListRow.propTypes = {
 	data: PropTypes.shape({
-		handleBlur: PropTypes.func,
-		handleFocus: PropTypes.func,
-		keys: PropTypes.array,
+		getItemData: PropTypes.func.isRequired,
 	}),
 	index: PropTypes.number,
 	style: PropTypes.object,
