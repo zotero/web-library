@@ -74,7 +74,7 @@ export class PDFWorker {
 						const response = await fetch(this.config.pdfReaderCMapsURL + message.data + '.bcmap');
 						const arrayBuffer = await response.arrayBuffer();
 						respData = {
-							compressionType: 1,
+							isCompressed: true,
 							cMapData: new Uint8Array(arrayBuffer)
 						};
 					}
