@@ -3,10 +3,9 @@ import { Fragment, memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 
-import Items from './item/items';
+import CurrentItems from './item/current-items';
 import ItemDetails from './item/details';
 import ZoteroStreamingClient from './zotero-streaming-client';
-import { getSerializedQuery } from '../common/state';
 import { get } from '../utils';
 import EmbeddedHeader from './embedded/header';
 import EmbeddedFooter from './embedded/footer';
@@ -28,14 +27,12 @@ const Library = () => {
 	const isTouchUser = useSelector(state => state.device.isTouchUser);
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
-	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isNavBarOpen = useSelector(state => state.current.isNavBarOpen);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const noteKey = useSelector(state => state.current.noteKey);
-	const qmode = useSelector(state => state.current.qmode);
 	const search = useSelector(state => state.current.search);
 	const searchState = useSelector(state => state.current.searchState);
 	const tags = useSelector(state => state.current.tags);
@@ -88,19 +85,6 @@ const Library = () => {
 		}
 	}, [dispatch, libraryKey, isSynced, wasSynced])
 
-
-	//@TODO: use `useSourceSignature` hook inside components instead
-	var key;
-	if(itemsSource == 'collection') {
-		key = `${libraryKey}-${collectionKey}`;
-	} else if(itemsSource == 'query') {
-		key = `${libraryKey}-query-${getSerializedQuery(
-			{ collection: collectionKey, tag: tags, q: search, qmode }
-		)}`;
-	} else {
-		key = `${libraryKey}-${itemsSource}`;
-	}
-
 	return (
         <Fragment>
 			<div className={ cx('library-container', 'library-embedded', {
@@ -131,7 +115,7 @@ const Library = () => {
 										'active': view === 'item-list',
 										'read-only': true,
 									})}>
-										<Items key={ key } />
+										<CurrentItems />
 										{ view === 'item-details' && (
 											<ItemDetails active={ view === 'item-details' } />
 										) }
@@ -148,7 +132,7 @@ const Library = () => {
 									'select-mode': isTouchOrSmall && isSelectMode,
 									'read-only': true,
 								})}>
-									{ view === 'item-details' ? <ItemDetails  /> : <Items key={ key } /> }
+										{view === 'item-details' ? <ItemDetails /> : <CurrentItems /> }
 								</section>
 							</main>
 						<EmbeddedFooter />

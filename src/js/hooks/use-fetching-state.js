@@ -4,7 +4,11 @@ import { get } from '../utils';
 import { getItemKeysPath } from '../common/state';
 import { MANAGE_TAGS } from '../constants/modals';
 
+// TODO: rename
 const useFetchingState = path => {
+	if(typeof path === 'object' && 'libraryKey' in path && 'collectionKey' in path && 'itemsSource' in path) {
+		path = getItemKeysPath(path);
+	}
 	const { isFetching, keys, pointer, totalResults, sortBy, sortDirection, injectPoints = [], requests = [] } = useSelector(state => get(state, path, {}), shallowEqual);
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
@@ -16,6 +20,16 @@ const useFetchingState = path => {
 
 	return fetchingState;
 };
+
+// TODO: rename
+const useFetchingKeys = path => {
+	if(typeof path === 'object' && 'libraryKey' in path && 'collectionKey' in path && 'itemsSource' in path) {
+		path = getItemKeysPath(path);
+	}
+	const keys = useSelector(state => get(state, [...path, 'keys'], []), shallowEqual);
+
+	return keys;
+}
 
 const useSourcePath = () => {
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -175,4 +189,4 @@ const useSourceSignature = () => {
 	}
 }
 
-export { useFetchingState, useSourceSignature, useSourceData, useSourceKeys, useSourcePath, useTags };
+export { useFetchingState, useFetchingKeys, useSourceSignature, useSourceData, useSourceKeys, useSourcePath, useTags };

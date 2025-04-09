@@ -12,7 +12,7 @@ import {
 	currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
 	pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse
 } from '../../../actions';
-import { useSourceKeys } from '../../../hooks';
+import { useFetchingKeys } from '../../../hooks';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -36,19 +36,16 @@ const TableRow = props => {
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { columns, onFileHoverOnRow } = data;
-	const keys = useSourceKeys();
+	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource } = data;
+	const keys = useFetchingKeys({ libraryKey, collectionKey, itemsSource });
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const selectedItemKeys = useSelector(state => state.current.itemKeys);
-	const libraryKey = useSelector(state => state.current.libraryKey);
-	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
-	const collectionKey = useSelector(state => state.current.collectionKey);
 
 	const itemData = useSelector(
 		state => itemKey

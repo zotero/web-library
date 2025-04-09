@@ -1,14 +1,16 @@
-import cx from 'classnames';
 import { DndProvider } from 'react-dnd-multi-backend';
-import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { Fragment, memo, useCallback, useEffect, useState, useRef } from 'react';
-import CSSTransition from 'react-transition-group/cjs/CSSTransition';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
+import CSSTransition from 'react-transition-group/cjs/CSSTransition';
+import cx from 'classnames';
 
+import { get } from '../utils';
+import { toggleNavbar, resetLibrary, fetchLibrarySettings } from '../actions';
 import CustomDragLayer from '../component/drag-layer';
 import ItemDetails from '../component/item/details';
-import Items from '../component/item/items';
+import CurrentItems from '../component/item/current-items';
 import Libraries from '../component/libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
@@ -26,9 +28,6 @@ import TouchSideFooter from '../component/touch-side-footer';
 import TouchTagSelector from '../component/touch-tag-selector';
 import ZoteroConnectorNotifier from './zotero-connector-notifier';
 import ZoteroStreamingClient from './zotero-streaming-client';
-import { getSerializedQuery } from '../common/state';
-import { get } from '../utils';
-import{ toggleNavbar, resetLibrary, fetchLibrarySettings } from '../actions';
 
 
 const Library = () => {
@@ -42,14 +41,12 @@ const Library = () => {
 	const isTouchUser = useSelector(state => state.device.isTouchUser);
 	const scrollbarWidth = useSelector(state => state.device.scrollbarWidth);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
-	const collectionKey = useSelector(state => state.current.collectionKey);
 	const isNavBarOpen = useSelector(state => state.current.isNavBarOpen);
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const noteKey = useSelector(state => state.current.noteKey);
-	const qmode = useSelector(state => state.current.qmode);
 	const search = useSelector(state => state.current.search);
 	const searchState = useSelector(state => state.current.searchState);
 	const tags = useSelector(state => state.current.tags);
@@ -117,18 +114,6 @@ const Library = () => {
 
 
 	const handleNavbarToggle = useCallback(() => dispatch(toggleNavbar()), [dispatch]);
-
-	//@TODO: use `useSourceSignature` hook inside components instead
-	var key;
-	if(itemsSource == 'collection') {
-		key = `${libraryKey}-${collectionKey}`;
-	} else if(itemsSource == 'query') {
-		key = `${libraryKey}-query-${getSerializedQuery(
-			{ collection: collectionKey, tag: tags, q: search, qmode }
-		)}`;
-	} else {
-		key = `${libraryKey}-${itemsSource}`;
-	}
 
 	return (
         <Fragment>
@@ -198,7 +183,7 @@ const Library = () => {
 												variant={ TouchHeaderWrap.variants.SOURCE_AND_ITEM }
 											/>
 										) }
-										<Items key={ key } isSearchModeTransitioning={ isSearchModeTransitioning } />
+										<CurrentItems isSearchModeTransitioning={ isSearchModeTransitioning } />
 										<ItemDetails active={ view === 'item-details' } />
 										{ isTouchOrSmall && <TouchDrilldown /> }
 										<CSSTransition

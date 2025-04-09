@@ -1,36 +1,35 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Spinner } from 'web-common/components';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
-import { useSourceData } from '../../../hooks';
+import { useFetchingState } from '../../../hooks';
 import List from '../../common/list';
 import ListRow from './list-row';
 import ScrollEffectComponent from './scroll-effect';
 
 
 const ItemsList = memo(props => {
-	const { isSearchModeTransitioning } = props;
+	const { isSearchModeTransitioning, libraryKey, collectionKey, itemsSource, isSearchMode, isSelectMode, view, selectedItemKeys = [] } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
 	const dispatch = useDispatch();
-	const { injectPoints, hasChecked, isFetching, keys, requests, totalResults, sortBy, sortDirection } = useSourceData();
+	const {
+		injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests
+	} = useFetchingState({ libraryKey, collectionKey, itemsSource });
+	const requestType = getRequestTypeFromItemsSource(itemsSource);
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isModalOpen = useSelector(state => state.modal.id);
+	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
-	const isSearchMode = useSelector(state => state.current.isSearchMode);
-	const isSelectMode = useSelector(state => state.current.isSelectMode);
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const view = useSelector(state => state.current.view);
-	const isSearchModeTransitioningOut = !isSearchMode && isSearchModeTransitioning;
-	const requestType = getRequestTypeFromItemsSource(itemsSource);
-	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const prevErrorCount = usePrevious(errorCount);
+	const isSearchModeTransitioningOut = !isSearchMode && isSearchModeTransitioning;
 	const [scrollToRow, setScrollToRow] = useState(null);
 
 	//@NOTE: On mobiles (single-column) we have a dedicated search mode where. To prevent visual glitches
@@ -38,8 +37,6 @@ const ItemsList = memo(props => {
 	const isSearchModeHack = isSingleColumn && (isSearchMode || isSearchModeTransitioningOut) &&
 		itemsSource !== 'query' && view !== 'item-list';
 
-	const selectedItemKeys = useSelector(state => state.current.itemKeys, shallowEqual);
-	const isModalOpen = useSelector(state => state.modal.id);
 	const itemCount = hasChecked && !isSearchModeHack ? totalResults : 0;
 
 	const isItemLoaded = useCallback(index => {
@@ -107,14 +104,6 @@ const ItemsList = memo(props => {
 		}
 	}, [dispatch, isFetching, prevSortBy, prevSortDirection, requestType, sortBy, sortDirection, totalResults]);
 
-	useEffect(() => {
-		if (listRef.current && selectedItemKeys.length && keys) {
-			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
-			const itemKeyIndex = keys.findIndex(k => k === itemKey);
-			listRef.current.scrollToItem(itemKeyIndex);
-		}
-	}, [keys, selectedItemKeys]);
-
 	return (
 		<List
 			isReady={hasChecked}
@@ -131,7 +120,14 @@ const ItemsList = memo(props => {
 			totalResults={totalResults}
 		>
 			<>
-				<ScrollEffectComponent listRef={listRef} setScrollToRow={setScrollToRow} />
+				<ScrollEffectComponent
+					listRef={listRef}
+					setScrollToRow={setScrollToRow}
+					libraryKey={libraryKey}
+					collectionKey={collectionKey}
+					itemsSource={itemsSource}
+					selectedItemKeys={selectedItemKeys}
+				/>
 				{!hasChecked && !isModalOpen && !isSearchModeHack && <Spinner className="large" />}
 				{hasChecked && totalResults === 0 && (
 					<div className="item-list-empty">
@@ -146,7 +142,14 @@ const ItemsList = memo(props => {
 ItemsList.displayName = 'ItemsList';
 
 ItemsList.propTypes = {
+	collectionKey: PropTypes.string.isRequired,
+	isSearchMode: PropTypes.bool,
 	isSearchModeTransitioning: PropTypes.bool,
-}
+	isSelectMode: PropTypes.bool,
+	itemsSource: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string.isRequired,
+	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
+	view: PropTypes.string,
+};
 
 export default memo(ItemsList);

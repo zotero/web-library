@@ -4,14 +4,13 @@ import { usePrevious } from 'web-common/hooks';
 import PropTypes from 'prop-types';
 
 import { findRowIndexInSource } from '../../../actions';
-import { useSourceData } from '../../../hooks';
+import { useFetchingState } from '../../../hooks';
 import { SCROLL_BUFFER } from '../../../constants/constants';
 
 
-const ScrollEffectComponent = memo(({ listRef, setScrollToRow }) => {
+const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, collectionKey, itemsSource, selectedItemKeys }) => {
 	const dispatch = useDispatch();
-	const selectedItemKeys = useSelector(state => state.current.itemKeys);
-	const { keys } = useSourceData();
+	const { keys } = useFetchingState({ libraryKey, collectionKey, itemsSource });
 	const previousSelectedItemKeys = usePrevious(selectedItemKeys);
 	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
 
@@ -61,10 +60,14 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow }) => {
 });
 
 ScrollEffectComponent.propTypes = {
+	collectionKey: PropTypes.string.isRequired,
+	itemsSource: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string.isRequired,
 	listRef: PropTypes.object.isRequired,
 	setScrollToRow: PropTypes.func.isRequired,
+	selectedItemKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-ScrollEffectComponent.displayName = "TableScroll";
+ScrollEffectComponent.displayName = "ScrollEffectComponent";
 
 export default ScrollEffectComponent;

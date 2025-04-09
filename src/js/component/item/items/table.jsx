@@ -6,6 +6,7 @@ import { useDrop } from 'react-dnd';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
+import PropTypes from 'prop-types';
 
 import columnProperties from '../../../constants/column-properties';
 import TableRow from './table-row';
@@ -16,7 +17,7 @@ import {
 	navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting
 } from '../../../actions';
-import { useSourceData } from '../../../hooks';
+import { useFetchingState } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
@@ -24,7 +25,8 @@ import Table from '../../common/table';
 import TableFocusEffectComponent from './table-focus-effect';
 
 
-const ItemsTable = () => {
+const ItemsTable = props => {
+	const { libraryKey, collectionKey, itemsSource, isAdvancedSearch = false, selectedItemKeys = [] } = props
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
@@ -32,30 +34,28 @@ const ItemsTable = () => {
 	const loader = useRef(null);
 	const lastRequest = useRef({});
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
-	const { injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests } = useSourceData();
+	const {
+		injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests
+	} = useFetchingState({ libraryKey, collectionKey, itemsSource });
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
-	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
-	const collectionKey = useSelector(state => state.current.collectionKey);
-	const libraryKey = useSelector(state => state.current.libraryKey);
-	const itemsSource = useSelector(state => state.current.itemsSource);
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const { field: sortByPreference, sort: sortDirectionPreference } = useSelector(state => state.preferences.columns.find(c => c.sort) || {}, shallowEqual);
-	const prevErrorCount = usePrevious(errorCount);
 	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
-	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
-	const [scrollToRow, setScrollToRow] = useState(null);
 	const columnsData = useSelector(state => state.preferences.columns);
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
 	const isModalOpen = useSelector(state => state.modal.id);
+	const prevErrorCount = usePrevious(errorCount);
+	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
+	const [scrollToRow, setScrollToRow] = useState(null);
 	const itemCount = hasChecked ? totalResults : 0;
 
 	const columns = useMemo(() => {
@@ -291,7 +291,7 @@ const ItemsTable = () => {
 			columns={columns}
 			containerClassName={cx({ 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows })}
 			drop={drop}
-			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow }}
+			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource }}
 			getItemData={noop}
 			headerRef={headerRef}
 			isReady={hasChecked}
@@ -319,7 +319,14 @@ const ItemsTable = () => {
 				focusBySelector={focusBySelector}
 				resetLastFocused={resetLastFocused}
 			/>
-			<ScrollEffectComponent listRef={listRef} setScrollToRow={setScrollToRow} />
+			<ScrollEffectComponent
+				listRef={listRef}
+				setScrollToRow={setScrollToRow}
+				libraryKey={libraryKey}
+				collectionKey={collectionKey}
+				itemsSource={itemsSource}
+				selectedItemKeys={selectedItemKeys}
+			/>
 			{!hasChecked && !isModalOpen && <Spinner className="large" />}
 			{isAdvancedSearch && (
 				<div className="table-cover">
@@ -327,6 +334,14 @@ const ItemsTable = () => {
 				</div>
 			)}
 	</Table>
+};
+
+ItemsTable.propTypes = {
+	collectionKey: PropTypes.string.isRequired,
+	isAdvancedSearch: PropTypes.bool,
+	itemsSource: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string.isRequired,
+	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default memo(ItemsTable);
