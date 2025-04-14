@@ -4,13 +4,13 @@ import { usePrevious } from 'web-common/hooks';
 import PropTypes from 'prop-types';
 
 import { findRowIndexInSource } from '../../../actions';
-import { useFetchingState } from '../../../hooks';
+import { useItemsKeys } from '../../../hooks';
 import { SCROLL_BUFFER } from '../../../constants/constants';
 
 
 const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, collectionKey, itemsSource, selectedItemKeys }) => {
 	const dispatch = useDispatch();
-	const { keys } = useFetchingState({ libraryKey, collectionKey, itemsSource });
+	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const previousSelectedItemKeys = usePrevious(selectedItemKeys);
 	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
 
@@ -60,9 +60,9 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 });
 
 ScrollEffectComponent.propTypes = {
-	collectionKey: PropTypes.string.isRequired,
+	collectionKey: PropTypes.string,
 	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string,
 	listRef: PropTypes.object.isRequired,
 	setScrollToRow: PropTypes.func.isRequired,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string).isRequired,

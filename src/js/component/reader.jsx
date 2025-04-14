@@ -18,7 +18,7 @@ import {
 } from '../actions';
 import { PDFWorker } from '../common/pdf-worker';
 import { getItemViewState, updateItemViewState } from '../common/viewstate'
-import { useFetchingState, useTrackedSettingsKey } from '../hooks';
+import { useItemsState, useTrackedSettingsKey } from '../hooks';
 import TagPicker from './item-details/tag-picker';
 import { READER_CONTENT_TYPES } from '../constants/reader';
 import Portal from './portal';
@@ -227,7 +227,7 @@ const Reader = () => {
 	const [tagPicker, setTagPicker] = useState(null);
 	const anchor = tagPicker ? pick(tagPicker, ['x', 'y']) : null;
 
-	const { isFetching, isFetched, pointer, keys } = useFetchingState(
+	const { isFetching, isFetched, pointer, keys } = useItemsState(
 		['libraries', libraryKey, 'itemsByParent', attachmentKey]
 	);
 	const urlIsFresh = !!(url && (Date.now() - timestamp) < 60000);

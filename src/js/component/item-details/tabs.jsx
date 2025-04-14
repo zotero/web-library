@@ -13,7 +13,7 @@ import Related from '../../component/item-details/related';
 import StandaloneAttachmentTabPane from '../../component/item-details/standalone-attachment';
 import StandaloneNote from '../../component/item-details/standalone-note';
 import Tags from '../../component/item-details/tags';
-import { useEditMode, useFetchingState } from '../../hooks';
+import { useEditMode, useItemsState } from '../../hooks';
 import { get, mapRelationsToItemKeys } from '../../utils';
 import { fetchChildItems, fetchRelatedItems, } from '../../actions';
 
@@ -42,7 +42,7 @@ const ItemDetailsTabs = () => {
 	const items = useSelector(state => get(state, ['libraries', libraryKey, 'items'], {}), shallowEqual);
 	// collections are prefetched so if item is null, it's not a collection
 	const isCollection = item?.[Symbol.for('type')] === 'collection';
-	const childItemsState = useFetchingState(['libraries', libraryKey, 'itemsByParent', itemKey]);
+	const childItemsState = useItemsState(['libraries', libraryKey, 'itemsByParent', itemKey]);
 	const relatedItemsState = useSelector(state => get(state, ['libraries', libraryKey, 'itemsRelated', itemKey], {}), shallowEqual);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);

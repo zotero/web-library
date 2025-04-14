@@ -26,14 +26,25 @@ const getItemKeysPath = ({ itemsSource, libraryKey, collectionKey }) => {
 	switch(itemsSource) {
 		case 'query':
 			return ['queryAndCollectionsTrash'];
-		case 'top':
-			return ['libraries', libraryKey, 'itemsTop'];
 		case 'trash':
+			if(!libraryKey) {
+				throw new Error('Library key is required for the trash items source');
+			}
 			return ['libraries', libraryKey, 'itemsAndCollectionsTrash'];
 		case 'publications':
 			return ['itemsPublications'];
 		case 'collection':
+			if(!libraryKey || !collectionKey) {
+				throw new Error('Library and collection keys are required for the collection items source');
+			}
 			return ['libraries', libraryKey, 'itemsByCollection', collectionKey];
+		case 'top':
+			if(!libraryKey) {
+				throw new Error('Library key is required for the top items source');
+			}
+			return ['libraries', libraryKey, 'itemsTop'];
+		default:
+			throw new Error(`Invalid itemsSource: ${itemsSource}`);
 	}
 }
 

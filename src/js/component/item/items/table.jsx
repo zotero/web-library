@@ -17,7 +17,7 @@ import {
 	navigate, selectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
 	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting
 } from '../../../actions';
-import { useFetchingState } from '../../../hooks';
+import { useItemsState } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
@@ -36,7 +36,7 @@ const ItemsTable = props => {
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const {
 		injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests
-	} = useFetchingState({ libraryKey, collectionKey, itemsSource });
+	} = useItemsState({ libraryKey, collectionKey, itemsSource });
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
@@ -337,10 +337,10 @@ const ItemsTable = props => {
 };
 
 ItemsTable.propTypes = {
-	collectionKey: PropTypes.string.isRequired,
+	collectionKey: PropTypes.string,
 	isAdvancedSearch: PropTypes.bool,
 	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
 };
 

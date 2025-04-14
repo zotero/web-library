@@ -21,7 +21,7 @@ import { getFileData } from '../../common/event';
 import { pluralize } from '../../common/format';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { makePath } from '../../common/navigation';
-import { useFetchingState } from '../../hooks';
+import { useItemsState } from '../../hooks';
 
 const AttachmentIcon = memo(({ isActive, item, size }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -385,7 +385,7 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemKey = useSelector(state => state.current.itemKey);
-	const { isFetching, isFetched, pointer, keys } = useFetchingState(
+	const { isFetching, isFetched, pointer, keys } = useItemsState(
 		['libraries', libraryKey, 'itemsByParent', itemKey]
 	);
 

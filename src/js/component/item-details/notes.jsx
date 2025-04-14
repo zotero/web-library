@@ -12,7 +12,7 @@ import { get } from 'utils';
 import { noteSummary, pluralize } from 'common/format';
 import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
-import { useFetchingState, usePrepForUnmount } from 'hooks';
+import { useItemsState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
 	fetchItemTemplate, moveItemsToTrash, navigate } from 'actions';
 
@@ -176,7 +176,7 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 	const noteKey = useSelector(state => state.current.noteKey);
 	const prevNoteKey = usePrevious(noteKey);
 	const itemKey = useSelector(state => state.current.itemKey);
-	const { isFetching, isFetched, pointer, keys } = useFetchingState(
+	const { isFetching, isFetched, pointer, keys } = useItemsState(
 		['libraries', libraryKey, 'itemsByParent', itemKey]
 	);
 

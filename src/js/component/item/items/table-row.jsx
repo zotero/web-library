@@ -12,7 +12,7 @@ import {
 	currentAddTags, currentAddToCollection, createAttachmentsFromDropped, currentCopyToLibrary,
 	pickBestAttachmentItemAction, pickBestItemAction, selectItemsMouse
 } from '../../../actions';
-import { useFetchingKeys } from '../../../hooks';
+import { useItemsKeys } from '../../../hooks';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -37,7 +37,7 @@ const TableRow = props => {
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
 	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource } = data;
-	const keys = useFetchingKeys({ libraryKey, collectionKey, itemsSource });
+	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const selectedItemKeys = useSelector(state => state.current.itemKeys);
 	const isFileUploadAllowedInLibrary = useSelector(

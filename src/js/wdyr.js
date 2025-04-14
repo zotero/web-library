@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 		trackExtraHooks: [
 			// [ReactRedux, 'useSelector'],
 			// [FocusManagerHooks, 'useFocusManager'],
-			// [FetchingStateHooks, 'useFetchingState', 'useSourceSignature', 'useSourceData', 'useTags'],
+			// [FetchingStateHooks, 'useItemsState', 'useSourceSignature', 'useSourceData', 'useTags'],
 		]
 	});
 	console.warn('whyDidYouRender installed');

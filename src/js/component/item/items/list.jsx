@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
-import { useFetchingState } from '../../../hooks';
+import { useItemsState } from '../../../hooks';
 import List from '../../common/list';
 import ListRow from './list-row';
 import ScrollEffectComponent from './scroll-effect';
@@ -21,7 +21,7 @@ const ItemsList = memo(props => {
 	const dispatch = useDispatch();
 	const {
 		injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests
-	} = useFetchingState({ libraryKey, collectionKey, itemsSource });
+	} = useItemsState({ libraryKey, collectionKey, itemsSource });
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isModalOpen = useSelector(state => state.modal.id);
@@ -142,12 +142,12 @@ const ItemsList = memo(props => {
 ItemsList.displayName = 'ItemsList';
 
 ItemsList.propTypes = {
-	collectionKey: PropTypes.string.isRequired,
+	collectionKey: PropTypes.string,
 	isSearchMode: PropTypes.bool,
 	isSearchModeTransitioning: PropTypes.bool,
 	isSelectMode: PropTypes.bool,
 	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string.isRequired,
+	libraryKey: PropTypes.string,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
 	view: PropTypes.string,
 };
