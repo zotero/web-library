@@ -288,7 +288,7 @@ const Table = props => {
 										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
 										outerRef={r => { outerRef.current = r; props.outerRef && (props.outerRef.current = r); } }
 										innerRef={innerRef}
-										width={width - 16}
+										width={width - 8}
 									>
 										{RowComponent}
 									</ReactWindowList>
