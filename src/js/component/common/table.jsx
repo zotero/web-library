@@ -33,7 +33,6 @@ const Table = props => {
 		extraItemData = {},
 		getItemData,
 		headerRef = null,
-		innerRef = null,
 		isReady = true,
 		isItemLoaded = alwaysTrue,
 		itemCount,
@@ -72,6 +71,7 @@ const Table = props => {
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
 	const outerRef = useRef(null);
+	const innerRef = useRef(null);
 
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -287,8 +287,8 @@ const Table = props => {
 										onItemsRendered={onItemsRendered}
 										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
 										outerRef={r => { outerRef.current = r; props.outerRef && (props.outerRef.current = r); } }
-										innerRef={innerRef}
-										width={width - 8}
+										innerRef={r => { innerRef.current = r; props.innerRef && (props.innerRef.current = r); } }
+										width={width}
 									>
 										{RowComponent}
 									</ReactWindowList>
