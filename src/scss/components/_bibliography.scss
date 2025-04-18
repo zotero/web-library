@@ -16,3 +16,12 @@
 .csl-left-margin {
 	word-wrap: normal;
 }
+
+.bibliography {
+	// Revert global base styles that should not apply to the bibliography
+	// (https://github.com/zotero/dataserver/issues/114)
+
+	ul, ol {
+		list-style: revert;
+	}
+}
