@@ -9,8 +9,8 @@ const defaultNavState = {
 	view: 'libraries'
 };
 
-const useNavigationState = () => {
-	const [navState, setNavState] = useState(defaultNavState);
+const useNavigationState = (baseState = {}) => {
+	const [navState, setNavState] = useState({ ...defaultNavState, ...baseState });
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
 
 	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey]?.collections.keys) ?? [];
