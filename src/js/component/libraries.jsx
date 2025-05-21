@@ -14,7 +14,7 @@ import { get, stopPropagation, getUniqueId } from '../utils';
 
 const LibraryNode = props => {
 	const { addVirtual, isOpen, isFileUploadAllowed, isMyLibrary, isPickerMode, isReadOnly, isSelected, libraryKey, name,
-		pickerNavigate, pickerPick, pickerRequireFileUpload, pickerState, picked = [], pickerAllowRoot, onNodeSelected =
+		pickerNavigate, pickerPick, pickerRequireFileUpload, picked = [], pickerAllowRoot, onNodeSelected =
 		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
@@ -79,9 +79,9 @@ const LibraryNode = props => {
 
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
-			'focusBySelector', 'onFocusNext', 'onFocusPrev', 'pickerSkipCollections']),
+				'focusBySelector', 'onFocusNext', 'onFocusPrev', 'pickerSkipCollections', 'collectionKey', 'itemsSource', 'view']),
 			isPickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
-			pickerState, virtual: isVirtualInThisTree ? virtual : null,
+			virtual: isVirtualInThisTree ? virtual : null, libraryKey
 		}
 	}
 
@@ -176,21 +176,13 @@ LibraryNode.propTypes = {
 };
 
 const Libraries = forwardRef((props, ref) => {
-	const { excludeLibraries, includeLibraries, isPickerMode, pickerState } = props;
+	const { excludeLibraries, includeLibraries, isPickerMode, libraryKey, collectionKey, itemsSource, view } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
-	const stateSelectedCollectionKey = useSelector(state => state.current.collectionKey);
-	const selectedLibraryKey = isPickerMode ? pickerState.libraryKey : stateSelectedLibraryKey;
-	const stateView = useSelector(state => state.current.view);
-	const view = isPickerMode ? pickerState.view : stateView;
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const firstCollectionKey = useSelector(state => state.current.firstCollectionKey);
-	const firstIsTrash = useSelector(state => state.current.firstIsTrash);
 	const treeRef = useRef();
 	const mouseDownTracker = useRef(false);
-	const prevSelectedLibraryKey = usePrevious(selectedLibraryKey);
+	const prevLibraryKey = usePrevious(libraryKey);
 	const { focusBySelector, focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(treeRef);
 
 	const filteredLibraries = useMemo(
@@ -300,22 +292,16 @@ const Libraries = forwardRef((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if(selectedLibraryKey && selectedLibraryKey !== prevSelectedLibraryKey) {
-			toggleOpen(selectedLibraryKey, true);
-			if(typeof(prevSelectedLibraryKey) !== 'undefined') {
+		if(libraryKey && libraryKey !== prevLibraryKey) {
+			toggleOpen(libraryKey, true);
+			if(typeof(prevLibraryKey) !== 'undefined') {
 				//@TODO: Minor opitimisation: only fetch library settings if needed
-				dispatch(fetchLibrarySettings(selectedLibraryKey, 'tagColors'));
+				dispatch(fetchLibrarySettings(libraryKey, 'tagColors'));
 			}
 		}
-	}, [dispatch, prevSelectedLibraryKey, selectedLibraryKey, toggleOpen]);
+	}, [dispatch, libraryKey, prevLibraryKey, toggleOpen]);
 
-	useEffect(() => {
-		const selectedLibraryNode = treeRef?.current?.querySelector(`[data-key="${selectedLibraryKey}"]`);
-		if(selectedLibraryNode && !isTouchOrSmall && !isPickerMode && !firstCollectionKey && !firstIsTrash) {
-			// wait for other effect to dispatch and process toggleOpen, then scroll on next frame
-			setTimeout(() => selectedLibraryNode?.scrollIntoView?.(), 0);
-		}
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 
 	useEffect(() => {
 		document.addEventListener('mousedown', handleGlobalMouseDown);
@@ -332,9 +318,9 @@ const Libraries = forwardRef((props, ref) => {
 		const shouldBeTabbableOnTouch = view === 'libraries';
 		const shouldBeTabbable = shouldBeTabbableOnTouch || !isTouchOrSmall;
 		const isOpen = (!isTouchOrSmall && opened.includes(key)) ||
-			(isTouchOrSmall && view !== 'libraries' && selectedLibraryKey == key);
-		const isSelected = !isTouchOrSmall && selectedLibraryKey === key &&
-			!stateSelectedCollectionKey && ['top', 'query'].includes(itemsSource);
+			(isTouchOrSmall && view !== 'libraries' && libraryKey == key);
+		const isSelected = !isTouchOrSmall && libraryKey === key &&
+			!collectionKey && ['top', 'query'].includes(itemsSource);
 
 		return {
 			libraryKey: key, shouldBeTabbableOnTouch, shouldBeTabbable, isOpen, isSelected,
@@ -344,8 +330,8 @@ const Libraries = forwardRef((props, ref) => {
 			onFocusPrev: focusPrev,
 			focusBySelector,
 			...pick(props, ['isPickerMode', 'disabledCollections', 'onNodeSelected', 'picked',
-				'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerRequireFileUpload', 'pickerState',
-				'pickerSkipCollections' ])
+				'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerRequireFileUpload',
+				'pickerSkipCollections', 'collectionKey', 'itemsSource', 'view'])
 		}
 	}
 

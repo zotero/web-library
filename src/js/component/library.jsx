@@ -11,7 +11,7 @@ import { toggleNavbar, resetLibrary, fetchLibrarySettings } from '../actions';
 import CustomDragLayer from '../component/drag-layer';
 import ItemDetails from '../component/item/details';
 import CurrentItems from '../component/item/current-items';
-import Libraries from '../component/libraries';
+import CurrentLibraries from '../component/current-libraries';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
 import ModalManager from './modal-manager';
@@ -154,7 +154,7 @@ const Library = () => {
 											className="hidden-xs-down hidden-mouse-md-up darker"
 										/>
 									) }
-									<Libraries />
+									<CurrentLibraries />
 									{ isTouchOrSmall ? (
 										<Fragment>
 											<TouchTagSelector />

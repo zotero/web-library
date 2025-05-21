@@ -1,5 +1,6 @@
 import { Button, Icon } from 'web-common/components';
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useState } from 'react';
+import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
@@ -32,10 +33,8 @@ const AddRelatedModal = () => {
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 
 	const sharedProps = {
-		libraryKey: navState.libraryKey,
-		collectionKey: navState.collectionKey,
-		selectedItemKeys: navState.itemKeys || [],
-		itemsSource: navState.collectionKey ? 'collection' : 'top',
+		...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']),
+		selectedItemKeys: navState.itemKeys || [], // or itemKeys?
 		isPickerMode: true,
 		pickerNavigate: handleNavigation
 	};
@@ -100,13 +99,7 @@ const AddRelatedModal = () => {
 			</div>
 			<div className="modal-body">
 				<div className="collection-tree">
-					<Libraries
-						isPickerMode={true}
-						includeLibraries={[ libraryKey ]}
-						pickerAllowRoot={true}
-						pickerNavigate={handleNavigation}
-						pickerState={ navState }
-					/>
+					<Libraries { ...sharedProps } includeLibraries={[ libraryKey ]} pickerAllowRoot={true} />
 				</div>
 				<div className={ cx('items-container') }>
 					{isTouchOrSmall ? <ItemsList {...sharedProps} /> : <ItemsTable { ...sharedProps } /> }

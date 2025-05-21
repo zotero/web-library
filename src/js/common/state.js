@@ -74,5 +74,21 @@ const getParamsFromRoute = memoize(state => {
 	return {};
 }, deepEqual);
 
+const getItemsSource = navStateLikeObject => {
+	let itemsSource;
+	if (navStateLikeObject.tags?.length || navStateLikeObject.search?.length) {
+		itemsSource = 'query';
+	} else if (navStateLikeObject.collectionKey) {
+		itemsSource = 'collection';
+	} else if (navStateLikeObject.isTrash) {
+		itemsSource = 'trash';
+	} else if (navStateLikeObject.isMyPublications) {
+		itemsSource = 'publications';
+	} else {
+		itemsSource = 'top';
+	}
+	return itemsSource;
+}
 
-export { getCollectionsPath, getItemKeysPath, getSerializedQuery, getParamsFromRoute };
+
+export { getItemsSource, getCollectionsPath, getItemKeysPath, getSerializedQuery, getParamsFromRoute };

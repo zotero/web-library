@@ -271,7 +271,7 @@ const fetchSource = ({ startIndex, stopIndex, ...rest }) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, isTrash, isMyPublications, itemsSource, libraryKey, search: q, qmode,
-			tags: tag = [] } = {...state.current, ...rest};
+			tags: tag = [] } = rest;
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
 			column => 'sort' in column) || { field: 'title', sort: 'asc' };
 

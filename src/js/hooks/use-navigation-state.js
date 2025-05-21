@@ -1,17 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeChildMap } from '../common/collection';
+import { getItemsSource } from '../common/state';
 
 const defaultNavState = {
 	path: [],
 	collectionKey: null,
 	libraryKey: null,
 	itemKeys: [],
+	itemsSource: 'top',
 	view: 'libraries'
 };
 
 const useNavigationState = (baseState = {}) => {
-	const [navState, setNavState] = useState({ ...defaultNavState, ...baseState });
+	const [navState, setNavState] = useState({ ...defaultNavState, ...baseState, itemsSource: getItemsSource({ ...defaultNavState, ...baseState }) });
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
 
 	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey]?.collections.keys) ?? [];
@@ -19,22 +21,23 @@ const useNavigationState = (baseState = {}) => {
 	const collectionsDataInSelectedLibrary = Object.fromEntries(collectionKeys.map(key => [key, dataObjects[key]]));
 
 	const handleNavigation = useCallback(({ library = null, collection = null, view = null, items = [] } = {}) => {
+		let nextNavState;
 		if(view === 'library') {
-			setNavState({
+			nextNavState = {
 				path: [],
 				collectionKey: null,
 				libraryKey: library,
 				itemKeys: items,
 				view
-			});
+			};
 		} else if(view === 'libraries') {
-			setNavState({
+			nextNavState = {
 				path: [],
 				collectionKey: null,
 				libraryKey: null,
 				itemKeys: [],
 				view
-			});
+			};
 		} else if(library) {
 			if(collection) {
 				const targetIndex = navState.path.indexOf(collection);
@@ -51,23 +54,24 @@ const useNavigationState = (baseState = {}) => {
 						newPath.push(collection);
 					}
 				}
-				setNavState({
+				nextNavState = {
 					path: newPath,
 					libraryKey: library,
 					collectionKey: collection,
 					itemKeys: items,
 					view: 'collection'
-				});
+				};
 			} else {
-				setNavState({
+				nextNavState = {
 					path: [],
 					libraryKey: library,
 					collectionKey: null,
 					itemKeys: items,
 					view
-				});
+				};
 			}
 		}
+		setNavState({ ...nextNavState, itemsSource: getItemsSource({ ...nextNavState}) });
 	}, [collectionsDataInSelectedLibrary, navState.path]);
 
 	const resetNavState = useCallback(() => setNavState(defaultNavState), []);
