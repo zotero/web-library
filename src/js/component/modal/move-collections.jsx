@@ -1,6 +1,7 @@
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
+import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { pick } from 'web-common/utils';
+import { useDispatch, useSelector } from 'react-redux';
 
 import deepEqual from 'deep-equal';
 import Libraries from '../libraries';
@@ -97,12 +98,12 @@ const MoveCollectionsModal = () => {
 				</Fragment>
 			) }
 				<Libraries
+					{...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view'])}
 					pickerAllowRoot={ currentParentCollectionKey !== false }
 					isPickerMode={ true }
 					pickerPick={ handlePick }
 					picked={ picked }
 					pickerNavigate={ handleNavigation }
-					pickerState= { navState }
 					includeLibraries={ [libraryKey] } // TODO #227
 					disabledCollections={ [collectionKey] }
 					pickerSkipCollections={ [collectionKey, currentParentCollectionKey] }

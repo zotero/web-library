@@ -8,7 +8,7 @@ import { CONFIGURE, FILTER_TAGS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HID
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
-import { getParamsFromRoute } from '../common/state';
+import { getItemsSource, getParamsFromRoute } from '../common/state';
 
 const stateDefault = {
 	collectionKey: null,
@@ -95,25 +95,12 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 			var isSelectMode = itemKeys.length > 1 ? true : state.isSelectMode;
 			var view = params.view;
 			var libraryKey = getLibraryKey(params, config);
-			var itemsSource;
+			var itemsSource = getItemsSource({ tags, search, collectionKey, isTrash, isMyPublications });
 			var searchState = state.searchState;
 			var itemKey = itemKeys && itemKeys.length === 1 ? itemKeys[0] : null
 			var location = params.locationType && params.locationValue ? {
 				[params.locationType]: params.locationType === 'position' ? tryParse(decodeURIComponent(params.locationValue)) : decodeURIComponent(params.locationValue)
 			} : null;
-
-			if(tags.length || search.length) {
-				itemsSource = 'query';
-			} else if(collectionKey) {
-				itemsSource = 'collection';
-			} else if(isTrash) {
-				itemsSource = 'trash';
-			} else if(isMyPublications) {
-				itemsSource = 'publications';
-			} else {
-				itemsSource = 'top';
-			}
-
 
 			if(!view) {
 				//@TODO: Refactor
