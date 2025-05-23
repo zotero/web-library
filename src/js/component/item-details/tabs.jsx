@@ -74,7 +74,7 @@ const ItemDetailsTabs = () => {
 
 	const shouldShowAttachmentsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || attachments.length > 0));
 	const shouldShowNotesTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || notes.length > 0));
-	const shouldShowRelatedTab = shouldUseTabs || (!shouldUseTabs && (relatedKeys.length > 0));
+	const shouldShowRelatedTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || relatedKeys.length > 0));
 	const shouldShowTagsTab = shouldUseTabs || (!shouldUseTabs && (!isReadOnly || !!item.tags?.length));
 
 	useEffect(() => {

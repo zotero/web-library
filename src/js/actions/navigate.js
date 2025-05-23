@@ -2,7 +2,8 @@ import { makePath } from '../common/navigation';
 import { getItemKeysPath } from '../common/state';
 import { LOCATION_CHANGE, push } from 'connected-react-router';
 import { TRIGGER_VIEWPORT_CHANGE } from '../constants/actions';
-import { clamp, get } from '../utils';
+import { get } from '../utils';
+import { selectItemsKeyboard, selectItemsMouse } from '../common/selection';
 
 const pushEmbedded = (path) => ({
 	type: LOCATION_CHANGE,
@@ -79,72 +80,32 @@ const openInReader = (path) => {
 	}
 };
 
-const selectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
+const navigateSelectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
+		const { isEmbedded } = state.config;
+		const path = [...getItemKeysPath({ itemsSource, libraryKey, collectionKey }), 'keys'];
+		const keys = get(state, path, []);
+
+		if (isEmbedded) {
+			dispatch(navigate({ items: [targetItemKey], view: 'item-details' }));
+			return;
+		}
+
+		const nextKeys = selectItemsMouse(targetItemKey, isShiftModifer, isCtrlModifer, { keys, selectedItemKeys });
+		dispatch(navigate({ items: nextKeys, noteKey: null, attachmentKey: null }));
+	}
+}
+
+const navigateSelectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
 		const path = [...getItemKeysPath({ itemsSource, libraryKey, collectionKey }), 'keys'];
-
 		const keys = get(state, path, []);
 
-		const vector = direction * magnitude;
-		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
-		const index = keys.findIndex(key => key && key === lastItemKey);
-
-		var nextKeys;
-		var cursorIndex;
-
-		if(direction === -1 && magnitude === 1 && index + vector < 0 && !isMultiSelect) {
-			nextKeys = [];
-			cursorIndex = -1;
-		} else {
-			const nextIndex = clamp(index + vector, 0, keys.length -1);
-			cursorIndex = nextIndex;
-			if(isMultiSelect) {
-				let counter = 1;
-				let alreadySelectedCounter = 0;
-				let newKeys = [];
-
-				while(index + counter * direction !== nextIndex + direction) {
-					const nextKey = keys[index + counter * direction];
-					newKeys.push(nextKey);
-					if(selectedItemKeys.includes(nextKey)) {
-						alreadySelectedCounter++;
-					}
-					counter++;
-				}
-
-				const shouldUnselect = alreadySelectedCounter === magnitude;
-
-				if(shouldUnselect) {
-					nextKeys = selectedItemKeys.filter(k => k === keys[nextIndex] || (!newKeys.includes(k) && k !== keys[index]));
-				} else {
-					var invertedDirection = direction * -1;
-					var consecutiveSelectedItemKeys = [];
-					var reverseCounter = 0;
-					var boundry = invertedDirection > 0 ? keys.length : -1;
-
-					while(index + reverseCounter * invertedDirection !== boundry) {
-						const nextKey = keys[index + reverseCounter * invertedDirection];
-						if(selectedItemKeys.includes(nextKey)) {
-							consecutiveSelectedItemKeys.push(nextKey);
-							reverseCounter++;
-						} else {
-							break;
-						}
-					}
-					consecutiveSelectedItemKeys.reverse();
-					nextKeys = [...consecutiveSelectedItemKeys, ...newKeys];
-				}
-
-				if(nextKeys.length === 0) {
-					nextKeys = [keys[nextIndex]];
-				}
-			} else {
-				nextKeys = [keys[nextIndex]];
-				cursorIndex = nextIndex;
-			}
-		}
+		const { nextKeys, cursorIndex } = selectItemsKeyboard(direction, magnitude, isMultiSelect, { keys, selectedItemKeys });
 
 		if(typeof nextKeys === 'undefined') {
 			return cursorIndex;
@@ -189,47 +150,6 @@ const selectLastItem = () => {
 	}
 }
 
-const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer) => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const { collectionKey, libraryKey, itemKeys: selectedItemKeys, itemsSource } = state.current;
-		const { isEmbedded } = state.config;
-		const path = [...getItemKeysPath({ itemsSource, libraryKey, collectionKey }), 'keys'];
-		const keys = get(state, path, []);
-		var newKeys;
-
-		if(isEmbedded) {
-			dispatch(navigate({ items: [targetItemKey ], view: 'item-details' }));
-			return;
-		}
-
-		if(isShiftModifer) {
-			let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
-			let endIndex = keys.findIndex(key => key && key === targetItemKey);
-			let isFlipped = false;
-			if(startIndex > endIndex) {
-				[startIndex, endIndex] = [endIndex, startIndex];
-				isFlipped = true;
-			}
-
-			endIndex++;
-			newKeys = keys.slice(startIndex, endIndex);
-			if(isFlipped) {
-				newKeys.reverse();
-			}
-		} else if(isCtrlModifer) {
-			if(selectedItemKeys.includes(targetItemKey)) {
-				newKeys = selectedItemKeys.filter(key => key !== targetItemKey);
-			} else {
-				newKeys = [...(new Set([...selectedItemKeys, targetItemKey]))];
-			}
-		} else {
-			newKeys = [targetItemKey];
-		}
-		dispatch(navigate({ items: newKeys, noteKey: null, attachmentKey: null }));
-	}
-}
-
 const navigateExitSearch = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -268,4 +188,4 @@ const redirectIfCollectionNotFound = () => {
 	}
 }
 
-export { navigate, navigateExitSearch, openInReader, redirectIfCollectionNotFound, selectFirstItem, selectItemsKeyboard, selectItemsMouse, selectLastItem };
+export { navigate, navigateExitSearch, openInReader, redirectIfCollectionNotFound, selectFirstItem, navigateSelectItemsKeyboard, navigateSelectItemsMouse, selectLastItem };

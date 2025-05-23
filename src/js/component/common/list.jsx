@@ -41,7 +41,7 @@ const List = props => {
 		getItemData,
 		onSelect,
 		onDoubleClick,
-		extraItemData
+		...extraItemData
 	};
 
 	return (

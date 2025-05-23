@@ -10,7 +10,7 @@ import { get } from '../utils';
 import EmbeddedHeader from './embedded/header';
 import EmbeddedFooter from './embedded/footer';
 import EmbeddedLibrariesTreeModal from './embedded/libraries-tree'
-import Libraries from './libraries';
+import CurrentLibraries from './current-libraries';
 import TouchHeaderWrap from './touch-header-wrap';
 import ItemsSortModal from './modal/items-sort';
 import TouchTagSelector from './touch-tag-selector';
@@ -109,7 +109,7 @@ const Library = () => {
 							<main>
 								<section className={ `library ${ view === 'library' ? 'active' : '' }` }>
 									<div className="libraries-container">
-										<Libraries />
+										<CurrentLibraries />
 									</div>
 									<section className={ cx('items', {
 										'active': view === 'item-list',

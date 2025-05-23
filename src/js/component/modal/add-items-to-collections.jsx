@@ -4,6 +4,7 @@ import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 import { usePrevious } from 'web-common/hooks';
+import { pick } from 'web-common/utils';
 
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
@@ -134,6 +135,7 @@ const AddItemsToCollectionsModal = () => {
 					</Fragment>
 				) }
 				<Libraries
+					{ ...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']) }
 					isPickerMode={ true }
 					picked={ picked }
 					pickerAllowRoot={ true }
@@ -141,7 +143,6 @@ const AddItemsToCollectionsModal = () => {
 					pickerPick={ pickerPick }
 					pickerSkipCollections={ pickerSkipCollections }
 					pickerRequireFileUpload={ hasAttachment }
-					pickerState= { { ...navState, picked } }
 				/>
 				</Fragment>
 			</div>

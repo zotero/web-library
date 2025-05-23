@@ -218,6 +218,19 @@
 	}
 }
 
+.modal-has-touch-nav {
+	.modal-header {
+		@include touch-or-bp-down(sm) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.touch-header {
+			width: 100%;
+		}
+	}
+}
+
 .modal-slide {
 	&.ReactModal {
 		&__Overlay {

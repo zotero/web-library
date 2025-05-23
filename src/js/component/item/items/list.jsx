@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { noop } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -14,7 +15,9 @@ import ScrollEffectComponent from './scroll-effect';
 
 
 const ItemsList = memo(props => {
-	const { isSearchModeTransitioning, libraryKey, collectionKey, itemsSource, isSearchMode, isSelectMode, view, selectedItemKeys = [] } = props
+	const {
+		isPickerMode, isSearchModeTransitioning, libraryKey, collectionKey, itemsSource,
+		isSearchMode, isSelectMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -53,28 +56,28 @@ const ItemsList = memo(props => {
 				offset++;
 			}
 		}
-		dispatch(fetchSource(Math.max(startIndex - offset, 0), stopIndex))
+		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }))
 		lastRequest.current = { startIndex, stopIndex };
-	}, [dispatch, injectPoints]);
+	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, search, tags]);
 
 	const getItemData = useCallback((index) => {
 		return keys && keys[index] ? keys[index] : null;
 	}, [keys]);
 
 	useEffect(() => {
-		if (scrollToRow !== null && !hasChecked && !isFetching) {
-			let startIndex = Math.max(scrollToRow - 20, 0);
-			let stopIndex = scrollToRow + 50;
-			dispatch(fetchSource(startIndex, stopIndex));
+		if ((scrollToRow !== null || isPickerMode) && !hasChecked && !isFetching) {
+			let startIndex = isPickerMode ? 0 : Math.max(scrollToRow - 20, 0);
+			let stopIndex = isPickerMode ? 50 : scrollToRow + 50;
+			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, isPickerMode]);
 
 	useEffect(() => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
 			const { startIndex, stopIndex } = lastRequest.current;
 			if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-				dispatch(fetchSource(startIndex, stopIndex));
+				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 			}
 		}
 		if (errorCount > 3 && prevErrorCount === 3) {
@@ -82,7 +85,7 @@ const ItemsList = memo(props => {
 		} else if (errorCount === 0 && prevErrorCount > 0) {
 			dispatch(connectionIssues(true));
 		}
-	}, [dispatch, errorCount, prevErrorCount]);
+	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, search, tags]);
 
 	useEffect(() => {
 		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
@@ -98,15 +101,16 @@ const ItemsList = memo(props => {
 			setTimeout(() => {
 				const { startIndex, stopIndex } = lastRequest.current;
 				if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-					dispatch(fetchSource(startIndex, stopIndex));
+					dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 				}
 			}, 0)
 		}
-	}, [dispatch, isFetching, prevSortBy, prevSortDirection, requestType, sortBy, sortDirection, totalResults]);
+	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortBy, prevSortDirection, qmode, requestType, search, sortBy, sortDirection, tags, totalResults]);
 
 	return (
 		<List
 			isReady={hasChecked}
+			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
 			getItemData={getItemData}
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}
@@ -119,15 +123,20 @@ const ItemsList = memo(props => {
 			scrollToRow={scrollToRow}
 			totalResults={totalResults}
 		>
+			{
+				!isPickerMode && (
+					<ScrollEffectComponent
+						listRef={listRef}
+						setScrollToRow={setScrollToRow}
+						libraryKey={libraryKey}
+						collectionKey={collectionKey}
+						itemsSource={itemsSource}
+						selectedItemKeys={selectedItemKeys}
+					/>
+				)
+			}
 			<>
-				<ScrollEffectComponent
-					listRef={listRef}
-					setScrollToRow={setScrollToRow}
-					libraryKey={libraryKey}
-					collectionKey={collectionKey}
-					itemsSource={itemsSource}
-					selectedItemKeys={selectedItemKeys}
-				/>
+
 				{!hasChecked && !isModalOpen && !isSearchModeHack && <Spinner className="large" />}
 				{hasChecked && totalResults === 0 && (
 					<div className="item-list-empty">

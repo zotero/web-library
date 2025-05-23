@@ -25,7 +25,14 @@ const CurrentItems = props => {
 	const isSearchMode = useSelector(state => state.current.isSearchMode);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const view = useSelector(state => state.current.view);
-	const sharedProps = { libraryKey, collectionKey, itemsSource, selectedItemKeys, isAdvancedSearch, isSearchMode, isSelectMode, view };
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
+	const search = useSelector(state => state.current.search);
+	const qmode = useSelector(state => state.current.qmode);
+	const tags = useSelector(state => state.current.tags);
+	const sharedProps = {
+		libraryKey, collectionKey, itemsSource, selectedItemKeys, isAdvancedSearch, isSearchMode, isSelectMode, view, isTrash, isMyPublications, search, qmode, tags
+	};
 
 	return (
 		<div className={

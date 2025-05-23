@@ -12,10 +12,11 @@ const useItemsState = path => {
 	const hasMoreItems = totalResults > 0 && (typeof(pointer) === 'undefined' || pointer < totalResults);
 	const hasChecked = typeof(totalResults) !== 'undefined';
 	const isFetched = hasChecked && !isFetching && !hasMoreItems;
+	const adjustedTotalResults = typeof (totalResults) === 'undefined' ? Infinity : totalResults + injectPoints.length;
 
 	const fetchingState = useMemo(() =>
-		({ isFetching, isFetched, keys, hasChecked, hasMoreItems, injectPoints, pointer, sortBy, sortDirection, totalResults: totalResults + injectPoints.length, requests }),
-		[isFetching, isFetched, keys, hasChecked, hasMoreItems, injectPoints, pointer, sortBy, sortDirection, totalResults, requests]);
+		({ isFetching, isFetched, keys, hasChecked, hasMoreItems, injectPoints, pointer, sortBy, sortDirection, totalResults: adjustedTotalResults, requests }),
+		[isFetching, isFetched, keys, hasChecked, hasMoreItems, injectPoints, pointer, sortBy, sortDirection, adjustedTotalResults, requests]);
 
 	return fetchingState;
 };
