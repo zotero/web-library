@@ -105,7 +105,8 @@ const ItemsNode = memo(props => {
 		});
 	}, [parentCollectionKey, selectNode]);
 
-	if(isPickerMode || !isTouchOrSmall) {
+	// if(isPickerMode || !isTouchOrSmall) {
+	if(!isTouchOrSmall) {
 		return null;
 	}
 
@@ -641,7 +642,7 @@ const CollectionNode = memo(props => {
 		return onOpen(ev);
 	}, [isDisabled, onOpen])
 
-	const usesItemsNode = isSingleColumn && !isPickerMode;
+	const usesItemsNode = isSingleColumn; //&& !isPickerMode;
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = collections.length > 0;
@@ -879,7 +880,7 @@ const CollectionTree = props => {
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
 	const isCurrentLibrary = parentLibraryKey === currentLibraryKey;
-	const usesItemsNode = isSingleColumn && !isPickerMode;
+	const usesItemsNode = isSingleColumn;// && !isPickerMode;
 	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
 	const path = useMemo(

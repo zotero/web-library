@@ -27,4 +27,14 @@ const getDescendants = (collectionKey, childMap, keys = []) => {
 	return keys;
 }
 
-export { makeChildMap, getDescendants };
+const getAncestors = (collectionKey, childMap, keys = []) => {
+	keys.unshift(collectionKey);
+	for(let parentKey of Object.keys(childMap)) {
+		if(childMap[parentKey].includes(collectionKey)) {
+			getAncestors(parentKey, childMap, keys);
+		}
+	}
+	return keys;
+}
+
+export { makeChildMap, getAncestors, getDescendants };

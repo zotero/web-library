@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { makeChildMap } from '../common/collection';
+import { getAncestors, makeChildMap } from '../common/collection';
 import { getItemsSource } from '../common/state';
 
 const defaultNavState = {
@@ -13,12 +13,17 @@ const defaultNavState = {
 };
 
 const useNavigationState = (baseState = {}) => {
-	const [navState, setNavState] = useState({ ...defaultNavState, ...baseState, itemsSource: getItemsSource({ ...defaultNavState, ...baseState }) });
+	const [navState, setNavState] = useState({
+		...defaultNavState,
+		...baseState,
+		itemsSource: getItemsSource({ ...defaultNavState, ...baseState })
+	});
 	const libraries = useSelector(state => state.config.libraries, shallowEqual);
 
 	const collectionKeys = useSelector(state => state.libraries[navState.libraryKey]?.collections.keys) ?? [];
 	const dataObjects = useSelector(state => state.libraries[navState.libraryKey]?.dataObjects) ?? {};
 	const collectionsDataInSelectedLibrary = Object.fromEntries(collectionKeys.map(key => [key, dataObjects[key]]));
+	const childMap = makeChildMap(Object.values(collectionsDataInSelectedLibrary));
 
 	const handleNavigation = useCallback(({ library = null, collection = null, view = null, items = [] } = {}) => {
 		let nextNavState;
@@ -47,7 +52,6 @@ const useNavigationState = (baseState = {}) => {
 					newPath = navState.path.slice(0, targetIndex + 1);
 				} else {
 					// target collection not in the path so append
-					const childMap = makeChildMap(Object.values(collectionsDataInSelectedLibrary));
 					const hasChildren = collection in childMap;
 					newPath = [...navState.path];
 					if(hasChildren) {
@@ -59,7 +63,7 @@ const useNavigationState = (baseState = {}) => {
 					libraryKey: library,
 					collectionKey: collection,
 					itemKeys: items,
-					view: 'collection'
+					view
 				};
 			} else {
 				nextNavState = {
@@ -72,7 +76,7 @@ const useNavigationState = (baseState = {}) => {
 			}
 		}
 		setNavState({ ...nextNavState, itemsSource: getItemsSource({ ...nextNavState}) });
-	}, [collectionsDataInSelectedLibrary, navState.path]);
+	}, [childMap, navState.path]);
 
 	const resetNavState = useCallback(() => setNavState(defaultNavState), []);
 
@@ -103,6 +107,14 @@ const useNavigationState = (baseState = {}) => {
 
 		return thp;
 	}, [collectionsDataInSelectedLibrary, libraries, navState.path, navState.view, navState.libraryKey]);
+
+	// generate path from collectionKey for the initial state
+	useEffect(() => {
+		if (baseState.collectionKey) {
+			let path = getAncestors(baseState.collectionKey, childMap);
+			setNavState(prevState => ({ ...prevState, path }));
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return {navState, touchHeaderPath, handleNavigation, resetNavState};
 }

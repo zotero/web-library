@@ -223,6 +223,16 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 						</ul>
 					</nav>
 				) }
+				{ isTouchOrSmall && !isReadOnly && (
+					<Button
+						onClick={ handleAddRelated }
+						className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+						tabIndex={ -1 }
+					>
+						<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+						Add Related Item
+					</Button>
+				)}
 			</div>
 		</TabPane>
 	);
