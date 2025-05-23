@@ -17,7 +17,7 @@ import ScrollEffectComponent from './scroll-effect';
 const ItemsList = memo(props => {
 	const {
 		isPickerMode, isSearchModeTransitioning, libraryKey, collectionKey, itemsSource,
-		isSearchMode, isSelectMode, pickerNavigate = noop, pickerPick = noop, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
+		isSearchMode, isSelectMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -65,13 +65,13 @@ const ItemsList = memo(props => {
 	}, [keys]);
 
 	useEffect(() => {
-		if (scrollToRow !== null && !hasChecked && !isFetching) {
-			let startIndex = Math.max(scrollToRow - 20, 0);
-			let stopIndex = scrollToRow + 50;
+		if ((scrollToRow !== null || isPickerMode) && !hasChecked && !isFetching) {
+			let startIndex = isPickerMode ? 0 : Math.max(scrollToRow - 20, 0);
+			let stopIndex = isPickerMode ? 50 : scrollToRow + 50;
 			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, isPickerMode]);
 
 	useEffect(() => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
@@ -110,7 +110,7 @@ const ItemsList = memo(props => {
 	return (
 		<List
 			isReady={hasChecked}
-			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, pickerNavigate, pickerPick }}
+			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
 			getItemData={getItemData}
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}

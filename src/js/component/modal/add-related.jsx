@@ -14,6 +14,7 @@ import { ADD_RELATED } from '../../constants/modals';
 import { useNavigationState } from '../../hooks';
 import ItemsTable from '../item/items/table';
 import ItemsList from '../item/items/list';
+import { PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
 
 const AddRelatedModal = () => {
 	const dispatch = useDispatch();
@@ -28,7 +29,8 @@ const AddRelatedModal = () => {
 	const wasItemsReady = usePrevious(isItemsReady);
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState({ libraryKey, collectionKey });
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState({ libraryKey, collectionKey, view: 'item-list' });
 
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 
@@ -36,6 +38,7 @@ const AddRelatedModal = () => {
 		...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']),
 		selectedItemKeys: navState.itemKeys || [], // or itemKeys?
 		isPickerMode: true,
+		pickerMode: PICKS_MULTIPLE_ITEMS,
 		pickerNavigate: handleNavigation
 	};
 
@@ -71,9 +74,9 @@ const AddRelatedModal = () => {
 			isBusy={isBusy}
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
-			overlayClassName="modal-slide modal-centered"
+			overlayClassName="modal-slide modal-full-height modal-centered modal-has-touch-nav"
 		>
-			<div className='modal-header'>
+			<div className="modal-header">
 				{isTouchOrSmall ? (
 					<TouchHeader
 						isModal={true}
@@ -97,12 +100,14 @@ const AddRelatedModal = () => {
 					</Fragment>
 				)}
 			</div>
-			<div className="modal-body">
-				<div className="collection-tree">
-					<Libraries { ...sharedProps } includeLibraries={[ libraryKey ]} pickerAllowRoot={true} />
+			<div className={cx('modal-body', { [`view-${navState.view}-active`]: true }) }>
+				<div className="sidebar">
+					<Libraries {...sharedProps} includeLibraries={[libraryKey]} pickerAllowRoot={true} />
 				</div>
-				<div className={ cx('items-container') }>
-					{isTouchOrSmall ? <ItemsList {...sharedProps} /> : <ItemsTable { ...sharedProps } /> }
+				<div className={ cx('items', {
+					'active': navState.view === 'item-list',
+				})}>
+					{ navState.libraryKey && (isTouchOrSmall ? <ItemsList {...sharedProps} /> : <ItemsTable {...sharedProps} />) }
 				</div>
 			</div>
 			{isTouchOrSmall ? (

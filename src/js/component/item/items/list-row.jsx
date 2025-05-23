@@ -6,47 +6,31 @@ import { Icon } from 'web-common/components';
 
 import { triggerSelectMode, navigate } from '../../../actions';
 import { vec2dist } from '../../../utils';
+import { PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers select mode
 const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
 
-const selectItem = (itemKey, selectedItemKeys, isSelectMode, dispatch) => {
-	if(isSelectMode) {
-		if(selectedItemKeys.includes(itemKey)) {
-			dispatch(navigate({ items: selectedItemKeys.filter(key => key !== itemKey), noteKey: null, attachmentKey: null }));
-		} else {
-			dispatch(navigate({ items: [...selectedItemKeys, itemKey], noteKey: null, attachmentKey: null }));
-		}
-	} else {
-		dispatch(navigate({ items: [itemKey], view: 'item-details', noteKey: null, attachmentKey: null }));
-	}
-}
 
 const ListRow = memo(props => {
 	const { data, index, style } = props;
-	const { getItemData } = data;
+	const { getItemData, isPickerMode, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey } = data;
 	const itemKey = getItemData(index);
 	const dispatch = useDispatch();
 	const itemData = useSelector(
 		state => itemKey ?
-			state.libraries[state.current.libraryKey].items[itemKey][Symbol.for('derived')]
+			state.libraries[libraryKey].items[itemKey][Symbol.for('derived')]
 			: null
 	);
 
-	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const view = useSelector(state => state.current.view);
-	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
-
+	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isSelectMode = data.isSelectMode || pickerMode === PICKS_MULTIPLE_ITEMS;
 	const triggerSelectTimeout = useRef(null);
 	const tiggerSelectPosStart = useRef(null);
 	const tiggerSelectPosLatest = useRef(null);
 
 	const shouldBeTabbable = (isSingleColumn && view === 'item-list') || !isSingleColumn;
-	const selectedItemKeys = useSelector(state => state.current.itemKey ?
-		[state.current.itemKey] : state.current.itemKeys,
-		shallowEqual
-	);
 
 	const { title = '', creator = '', year = '', iconName = '', colors = [], emojis = [], attachmentIconName = '' } = itemData || {};
 	const isActive = itemKey && selectedItemKeys.includes(itemKey);
@@ -58,16 +42,35 @@ const ListRow = memo(props => {
 		placeholder: itemKey === null
 	});
 
-	const handleClick = useCallback(() => {
-		selectItem(itemKey, selectedItemKeys, isSelectMode, dispatch);
-	}, [dispatch, isSelectMode, itemKey, selectedItemKeys]);
+	const selectItem = useCallback(() => {
+		if(!itemKey) {
+			return;
+		}
+		let nextState = {};
+		if (isSelectMode) {
+			if (selectedItemKeys.includes(itemKey)) {
+				nextState = { items: selectedItemKeys.filter(key => key !== itemKey) };
+			} else {
+				nextState = { items: [...selectedItemKeys, itemKey] };
+			}
+
+		} else {
+			nextState = { items: [itemKey], view: 'item-details' };
+		}
+
+		if (isPickerMode) {
+			pickerNavigate({ library: libraryKey, collection: collectionKey, view: 'item-list', ...nextState });
+		} else {
+			dispatch(navigate({ ...nextState, noteKey: null, attachmentKey: null }));
+		}
+	}, [collectionKey, dispatch, isPickerMode, isSelectMode, itemKey, libraryKey, pickerNavigate, selectedItemKeys]);
 
 	const handleKeyDown = useCallback(ev => {
-		if ((ev.key === 'Enter' || (isSelectMode && ev.key === " ")) && itemKey) {
-			selectItem(itemKey, selectedItemKeys, isSelectMode, dispatch);
+		if ((ev.key === 'Enter' || (isSelectMode && ev.key === " "))) {
+			selectItem();
 			ev.preventDefault();
 		}
-	}, [dispatch, isSelectMode, itemKey, selectedItemKeys]);
+	}, [isSelectMode, selectItem]);
 
 	const startSelectMode = useCallback(itemKey => {
 		triggerSelectTimeout.current = null;
@@ -112,7 +115,7 @@ const ListRow = memo(props => {
 			data-key={ itemKey }
 			className={ className }
 			style={ style }
-			onClick={ handleClick }
+			onClick={ selectItem }
 			onKeyDown={ handleKeyDown }
 			onTouchStart={ handleTouchStart }
 			onTouchEnd={ handleTouchEnd }
