@@ -74,7 +74,7 @@ const AddRelatedModal = () => {
 			isBusy={isBusy}
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
-			overlayClassName="modal-slide modal-full-height modal-centered modal-has-touch-nav"
+			overlayClassName="modal-slide modal-full-height modal-centered modal-contains-picker"
 		>
 			<div className="modal-header">
 				{isTouchOrSmall ? (

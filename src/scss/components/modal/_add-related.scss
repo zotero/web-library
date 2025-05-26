@@ -1,7 +1,9 @@
 .add-related-modal {
-	max-height: calc(100vh - 96px);
-	width: 900px;
-	max-width: 90vw;
+	@include mouse-and-bp-up(md) {
+		max-height: calc(100vh - 96px);
+		width: 900px;
+		max-width: 90vw;
+	}
 
 	.modal-body {
 		overflow: hidden;
@@ -9,6 +11,7 @@
 		@include mouse-and-bp-up(md) {
 			display: flex;
 			flex-direction: row;
+			padding: 0;
 		}
 	}
 
@@ -18,7 +21,6 @@
 			overflow: auto;
 			line-height: $line-height-large;
 			z-index: 1; // Fix #531
-			flex: 0 0 280px;
 		}
 	}
 }
