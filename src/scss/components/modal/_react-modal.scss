@@ -42,6 +42,10 @@
 .modal {
 	border: var(--material-border-quarternary);
 
+	@include bp-down(xs) {
+		border: none;
+	}
+
 	@include bp-up(sm) {
 		width: $modal-md;
 		margin: $space-xl auto;
@@ -157,6 +161,7 @@
 .modal-body {
 	padding: $modal-inner-padding;
 	background-color: $modal-content-bg; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
+	flex: 1;
 
 	@include bp-down(xs) {
 		height: calc(100% - #{$modal-header-height});
@@ -214,11 +219,12 @@
 	min-height: 100%;
 
 	@include bp-up(sm) {
-		min-height: calc(100% - #{2 * $space-xl});
+		min-height: unset;
+		height: calc(100% - #{2 * $space-xl});
 	}
 }
 
-.modal-has-touch-nav {
+.modal-contains-picker {
 	.modal-header {
 		@include touch-or-bp-down(sm) {
 			padding-left: 0;
@@ -227,6 +233,38 @@
 
 		.touch-header {
 			width: 100%;
+		}
+	}
+
+	.modal-body {
+		padding: 0;
+
+		// On touch devices, the picker inside the modal uses the small-screen behavior at all screen sizes
+		@include touch-or-bp-down(sm) {
+			.sidebar {
+				bottom: 0;
+				height: 100%;
+				left: 0;
+				overflow: visible;
+				position: absolute;
+				right: 0;
+				top: 44px;
+			}
+
+			.items {
+				background-color: var(--color-shade-0);
+				bottom: 0;
+				left: 0;
+				position: absolute;
+				right: 0;
+				top: 44px;
+				transform: translate3d(100%, 0, 0);
+				transition: transform $nav-transition;
+			}
+
+			&.view-item-list-active .items {
+				transform: translate3d(0, 0, 0);
+			}
 		}
 	}
 }
