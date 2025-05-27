@@ -503,4 +503,12 @@
 			margin-right: $space-sm;
 		}
 	}
+
+	input[type=checkbox] {
+		margin-right: $space-sm;
+	}
+
+	.picker-checkbox-placeholder {
+		width: $space-lg + $space-sm; // width of checkbox + margin
+	}
 }

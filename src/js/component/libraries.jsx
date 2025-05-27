@@ -114,6 +114,15 @@ const LibraryNode = props => {
 			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
 			{ ...pick(props, ['onFocusNext', 'onFocusPrev'])}
 		>
+			{pickerPicksCollection && pickerAllowRoot && !isPickerSkip && !isReadOnly && isTouchOrSmall ? (
+				<input
+					type="checkbox"
+					checked={isPicked}
+					onChange={handlePickerPick}
+					onMouseDown={stopPropagation}
+					onClick={stopPropagation}
+				/>
+			) : pickerPicksCollection ? <div className="picker-checkbox-placeholder" /> : null}
 			{ isReadOnly ? (
 				<Fragment>
 					<Icon type="32/library-read-only" className="touch" width="32" height="32" />
@@ -127,15 +136,6 @@ const LibraryNode = props => {
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
-			{pickerPicksCollection && pickerAllowRoot && !isPickerSkip && !isReadOnly && isTouchOrSmall && (
-				<input
-					type="checkbox"
-					checked={ isPicked }
-					onChange={ handlePickerPick }
-					onMouseDown={ stopPropagation }
-					onClick={ stopPropagation }
-				/>
-			)}
 			{
 				!shouldShowSpinner && !isReadOnly && !pickerMode && (
 					<Button
