@@ -11,7 +11,6 @@ import { PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../../constants/pick
 const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers select mode
 const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
 
-
 const ListRow = memo(props => {
 	const { data, index, style } = props;
 	const { getItemData, isPickerMode, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey } = data;
@@ -195,7 +194,7 @@ const ListRow = memo(props => {
 					</div>
 				</div>
 			</div>
-			<Icon type={ '16/chevron-13' } width="16" height="16" />
+			{ !isPickerMode && <Icon type={ '16/chevron-13' } width="16" height="16" /> }
 		</div>
     );
 });

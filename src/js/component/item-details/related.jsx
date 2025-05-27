@@ -172,6 +172,7 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 	return (
 		<TabPane
 			id={ id }
+			className="related"
 			isActive={ isActive }
 			isLoading={ shouldUseTabs && !isFetched }
 			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}

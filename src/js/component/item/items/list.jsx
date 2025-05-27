@@ -12,12 +12,13 @@ import { useItemsState } from '../../../hooks';
 import List from '../../common/list';
 import ListRow from './list-row';
 import ScrollEffectComponent from './scroll-effect';
+import { PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM } from '../../../constants/picker-modes';
 
 
 const ItemsList = memo(props => {
 	const {
 		isPickerMode, isSearchModeTransitioning, libraryKey, collectionKey, itemsSource,
-		isSearchMode, isSelectMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
+		isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -28,6 +29,7 @@ const ItemsList = memo(props => {
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isModalOpen = useSelector(state => state.modal.id);
+	const isSelectMode = props.isSelectMode || pickerMode === PICKS_MULTIPLE_ITEMS;
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const prevSortBy = usePrevious(sortBy);
 	const prevSortDirection = usePrevious(sortDirection);
@@ -115,7 +117,7 @@ const ItemsList = memo(props => {
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}
 			loaderRef={loader}
-			listClassName={cx({ 'editing': isSelectMode })}
+			listClassName={cx({ 'select-mode': isSelectMode })}
 			onLoadMore={handleLoadMore}
 			setScrollToRow={setScrollToRow}
 			listRef={listRef}
