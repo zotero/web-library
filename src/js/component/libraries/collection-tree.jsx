@@ -11,6 +11,7 @@ import Node from './node';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate, triggerFocus } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
+import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS } from '../../constants/picker-modes';
 
 const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
@@ -86,7 +87,7 @@ const makeCollectionsPath = (collectionKey, allCollections, isCurrentLibrary) =>
 }
 
 const ItemsNode = memo(props => {
-	const { isPickerMode, level, parentCollectionKey, selectedCollectionKey, itemsSource,
+	const { pickerMode, level, parentCollectionKey, selectedCollectionKey, itemsSource,
 		selectNode, shouldBeTabbable, ...rest } = props;
 	const id = useRef(getUniqueId());
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -105,8 +106,7 @@ const ItemsNode = memo(props => {
 		});
 	}, [parentCollectionKey, selectNode]);
 
-	// if(isPickerMode || !isTouchOrSmall) {
-	if(!isTouchOrSmall) {
+	if ([PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode) || !isTouchOrSmall) {
 		return null;
 	}
 
@@ -138,7 +138,7 @@ const ItemsNode = memo(props => {
 });
 
 ItemsNode.propTypes = {
-    isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
     itemsSource: PropTypes.string,
     level: PropTypes.number,
     parentCollectionKey: PropTypes.string,
@@ -151,7 +151,7 @@ ItemsNode.displayName = 'ItemsNode';
 
 
 const VirtualCollectionNode = memo(props => {
-	const {  cancelAdd, commitAdd, focusBySelector, isPickerMode, level, parentCollectionKey,
+	const { cancelAdd, commitAdd, focusBySelector, pickerMode, level, parentCollectionKey,
 	parentLibraryKey, virtual, } = props;
 	const shouldIgnoreNextBlur = useRef(false);
 
@@ -171,7 +171,7 @@ const VirtualCollectionNode = memo(props => {
 		return shouldIgnoreNextBlur.current;
 	}, []);
 
-	if(isPickerMode || !virtual) {
+	if (pickerMode || !virtual) {
 		return null;
 	}
 
@@ -204,7 +204,7 @@ VirtualCollectionNode.propTypes = {
 	cancelAdd: PropTypes.func,
 	commitAdd: PropTypes.func,
 	focusBySelector: PropTypes.func,
-	isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
 	level: PropTypes.number,
 	parentCollectionKey: PropTypes.string,
 	parentLibraryKey: PropTypes.string,
@@ -213,7 +213,7 @@ VirtualCollectionNode.propTypes = {
 
 VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 
-const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const PublicationsNode = memo(({ isMyLibrary, pickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
@@ -221,7 +221,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, s
 		selectNode({ publications: true });
 	}, [selectNode]);
 
-	if(!isMyLibrary || isPickerMode) {
+	if (!isMyLibrary || pickerMode) {
 		return null;
 	}
 
@@ -257,7 +257,7 @@ const PublicationsNode = memo(({ isMyLibrary, isPickerMode, isSelected, level, s
 
 PublicationsNode.propTypes = {
     isMyLibrary: PropTypes.bool,
-    isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
     isSelected: PropTypes.bool,
     level: PropTypes.number,
     parentLibraryKey: PropTypes.string,
@@ -267,7 +267,7 @@ PublicationsNode.propTypes = {
 
 PublicationsNode.displayName = 'PublicationsNode';
 
-const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
+const TrashNode = memo(({ pickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
@@ -275,7 +275,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeT
 		selectNode({ trash: true });
 	}, [selectNode]);
 
-	if(isReadOnly || isPickerMode) {
+	if (isReadOnly || pickerMode) {
 		return null;
 	}
 
@@ -304,7 +304,7 @@ const TrashNode = memo(({ isPickerMode, isReadOnly, isSelected, level, shouldBeT
 });
 
 TrashNode.propTypes = {
-    isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
     isReadOnly: PropTypes.bool,
     isSelected: PropTypes.bool,
     level: PropTypes.number,
@@ -552,8 +552,8 @@ PickerCheckbox.displayName = 'PickerCheckbox';
 const CollectionNode = memo(props => {
 	const { allCollections, disabledCollections, derivedData, collection, level, getParents,
 		selectedCollectionKey, isCurrentLibrary, parentLibraryKey, renaming, selectNode, setRenaming,
-		virtual, isFileUploadAllowed, isPickerMode, isReadOnly, onOpen, shouldBeTabbable, picked = [],
-		pickerPick, pickerSkipCollections, ...rest }  = props;
+		virtual, isFileUploadAllowed, isReadOnly, onOpen, shouldBeTabbable, picked = [],
+		pickerMode, pickerPick, pickerSkipCollections, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
@@ -563,32 +563,36 @@ const CollectionNode = memo(props => {
 	const isHighlighted = highlightedCollections.includes(collection.key);
 	const prevRenaming = usePrevious(renaming);
 	const inputRef = useRef(null);
-	const isSelected = derivedData[collection.key].isSelected;
+	const pickerPicksCollection = [PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_COLLECTION].includes(pickerMode);
+	// in picker mode, collection should not be selectable, except on desktop devices where selection = picked
+	const isSelected = derivedData[collection.key].isSelected && (!isTouchOrSmall || (isTouchOrSmall && !pickerMode));
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	// cannot be picked if isPickerSkip
-	const isPickerSkip = isPickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
+	const isPickerSkip = pickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
 
 	// cannot be opened if isDisabled
 	const isDisabled = disabledCollections && disabledCollections.includes(collection.key);
 
 	const handleSelect = useCallback(() => {
-		// TODO: Revisit picker mode
-		// if(isPickerMode && !isPickerSkip && !isTouchOrSmall) {
-		// 	pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
-		// } else
-		if(!isDisabled) {
+		if(pickerPicksCollection && !isPickerSkip && !isTouchOrSmall) {
+			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
+			// On touch devices, users can select a node even if it's in
+			// `pickerSkip`. This allows navigation into unpickable collections
+			// (such as a parent of a node being moved). On desktop, where
+			// selection means picking, users should not be able to select a
+			// `pickerSkip` collection in picker mode.
+		} else if (!isDisabled && (isTouchOrSmall || (!isTouchOrSmall && !pickerMode) || (!isTouchOrSmall && pickerMode && !isPickerSkip) )) {
 			selectNode({ collection: collection.key });
 		}
-	}, [collection, isDisabled, selectNode]);
-	// }, [collection, isDisabled, isTouchOrSmall, isPickerMode, isPickerSkip, parentLibraryKey, pickerPick, selectNode]);
+	}, [pickerPicksCollection, isPickerSkip, isTouchOrSmall, isDisabled, pickerMode, pickerPick, collection.key, parentLibraryKey, selectNode]);
 
 	const handleRenameTrigger = useCallback(() => {
-		if(isTouchOrSmall || isReadOnly || isPickerMode) {
+		if (isTouchOrSmall || isReadOnly || pickerMode) {
 			return;
 		}
 		setRenaming(collection.key);
-	}, [collection, isPickerMode, isReadOnly, isTouchOrSmall, setRenaming]);
+	}, [collection, pickerMode, isReadOnly, isTouchOrSmall, setRenaming]);
 
 	const handleRenameCancel = useCallback(() => {
 		setRenaming(null);
@@ -629,11 +633,11 @@ const CollectionNode = memo(props => {
 	}, [collection, dispatch, parentLibraryKey]);
 
 	const handleNodeKeyDown = useCallback(ev => {
-		if(isPickerMode && !isPickerSkip && isTriggerEvent(ev)) {
+		if (pickerMode && !isPickerSkip && isTriggerEvent(ev)) {
 			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
 			ev.preventDefault();
 		}
-	}, [collection, pickerPick, isPickerMode, isPickerSkip, parentLibraryKey]);
+	}, [collection, pickerPick, pickerMode, isPickerSkip, parentLibraryKey]);
 
 	const handleOpen = useCallback(ev => {
 		if(isDisabled) {
@@ -642,7 +646,7 @@ const CollectionNode = memo(props => {
 		return onOpen(ev);
 	}, [isDisabled, onOpen])
 
-	const usesItemsNode = isSingleColumn; //&& !isPickerMode;
+	const usesItemsNode = isSingleColumn && ![PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode);
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = collections.length > 0;
@@ -694,7 +698,7 @@ const CollectionNode = memo(props => {
 				'open': derivedData[collection.key].isOpen,
 				'selected': isSelected,
 				'focused': isFocusedAndSelected,
-				'picked': isPickerMode && isPicked,
+				'picked': pickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'disabled': isDisabled,
 				'highlighted': isHighlighted,
@@ -704,7 +708,7 @@ const CollectionNode = memo(props => {
 			aria-selected={ isSelected }
 			aria-level={ level }
 			data-collection-key={ collection.key }
-			aria-disabled={ isPickerMode && (isPickerSkip || isDisabled) }
+			aria-disabled={pickerMode && (isPickerSkip || isDisabled) }
 			dndData={{ 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents, isFileUploadAllowed } }
 			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ derivedData[collection.key].isOpen }
@@ -716,7 +720,7 @@ const CollectionNode = memo(props => {
 			onRename={ isTouchOrSmall ? null : handleRenameTrigger }
 			onRenameCancel={ isTouchOrSmall ? null : handleRenameCancel }
 			onKeyDown={ handleNodeKeyDown }
-			shouldBeDraggable={ !isPickerMode && renaming !== collection.key }
+			shouldBeDraggable={!pickerMode && renaming !== collection.key }
 			showTwisty={ hasSubCollections && !isDisabled }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
@@ -761,14 +765,14 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{ (isPickerMode && !isReadOnly && !isPickerSkip && isTouchOrSmall) ? (
+						{(pickerPicksCollection && !isReadOnly && !isPickerSkip && isTouchOrSmall) ? (
 							<PickerCheckbox
 								collectionKey = { collection.key }
 								parentLibraryKey = { parentLibraryKey }
 								pickerPick = { pickerPick }
 								picked={ picked }
 							/>
-						) : (!isReadOnly && !isPickerMode) ? (
+						) : (!isReadOnly && !pickerMode) ? (
 							<DotMenu
 								collection = { collection }
 								setRenaming = { setRenaming }
@@ -793,7 +797,7 @@ CollectionNode.propTypes = {
 	getParents: PropTypes.func,
 	isCurrentLibrary: PropTypes.bool,
 	isFileUploadAllowed: PropTypes.bool,
-	isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
 	isReadOnly: PropTypes.bool,
 	level: PropTypes.number,
 	onOpen: PropTypes.func,
@@ -825,7 +829,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
         <Fragment>
 			<ItemsNode
 				parentCollectionKey={ parentCollectionKey }
-				{  ...pick(rest, ['isPickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
+				{...pick(rest, ['pickerMode', 'itemsSource', 'onFocusNext', 'onFocusPrev',
 				'level', 'parentCollectionKey', 'selectedCollectionKey', 'selectNode', 'shouldBeTabbable']) }
 			/>
 			{ sortedFilteredCollections.map(c =>
@@ -835,7 +839,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 					parentCollectionKey={ parentCollectionKey }
 					{ ...pick(rest, [ 'addVirtual', 'allCollections', 'cancelAdd', 'collection',
 					'commitAdd', 'derivedData', 'dotMenuFor', 'disabledCollections',
-					'focusBySelector', 'getParents', 'isCurrentLibrary', 'isPickerMode',
+						'focusBySelector', 'getParents', 'isCurrentLibrary', 'pickerMode',
 					'isFileUploadAllowed', 'isReadOnly', 'level', 'onFocusNext', 'onFocusPrev', 'onOpen',
 					'opened', 'parentLibraryKey', 'pickerSkipCollections', 'picked', 'pickerPick', 'renaming',
 					'selectedCollectionKey', 'selectNode', 'setDotMenuFor', 'setOpened', 'setRenaming',
@@ -845,7 +849,7 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 			<VirtualCollectionNode
 				parentCollectionKey= { parentCollectionKey }
 				{ ...pick(rest, ['virtual', 'cancelAdd', 'commitAdd', 'focusBySelector',
-				'level', 'parentLibraryKey', 'isPickerMode'] )}
+					'level', 'parentLibraryKey', 'pickerMode'] )}
 			/>
 		</Fragment>
     );
@@ -859,7 +863,7 @@ CollectionsNodeList.propTypes = {
 CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
-	const { onNodeSelected = noop, parentLibraryKey, libraryKey: currentLibraryKey, collectionKey: currentCollectionKey, itemsSource, isTrash, isMyPublications, isPickerMode, pickerNavigate = noop, ...rest } = props;
+	const { onNodeSelected = noop, parentLibraryKey, libraryKey: currentLibraryKey, collectionKey: currentCollectionKey, itemsSource, isTrash, isMyPublications, pickerMode, pickerNavigate = noop, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
 	const dataObjects = useSelector(state => state.libraries[parentLibraryKey]?.dataObjects);
@@ -880,7 +884,7 @@ const CollectionTree = props => {
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
 	const isCurrentLibrary = parentLibraryKey === currentLibraryKey;
-	const usesItemsNode = isSingleColumn;// && !isPickerMode;
+	const usesItemsNode = isSingleColumn && ![PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode);
 	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
 	const path = useMemo(
@@ -919,9 +923,9 @@ const CollectionTree = props => {
 
 	const selectNode = useCallback(partialPath => {
 		const path = { ...partialPath, library: parentLibraryKey };
-		isPickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
+		pickerMode ? pickerNavigate(path) : dispatch(navigate(path, true));
 		onNodeSelected(path);
-	}, [dispatch, isPickerMode, onNodeSelected, parentLibraryKey, pickerNavigate]);
+	}, [dispatch, pickerMode, onNodeSelected, parentLibraryKey, pickerNavigate]);
 
 	const ensurePathToSelectedIsOpened = useCallback(() => {
 		setOpened([...opened, ...path.slice(0, -1)]);
@@ -977,7 +981,7 @@ const CollectionTree = props => {
 	}, [ensurePathToSelectedIsOpened, prevCollection, currentCollection, currentCollectionKey, prevCollectionKey]);
 
 	useEffect(() => {
-		if(isFirstRendering && !isPickerMode && !isTouchOrSmall) {
+		if (isFirstRendering && !pickerMode && !isTouchOrSmall) {
 			let targetEl = null;
 
 			if(currentCollectionKey) {
@@ -1015,7 +1019,7 @@ const CollectionTree = props => {
 				dotMenuFor={ dotMenuFor }
 				isCurrentLibrary = { isCurrentLibrary }
 				isFileUploadAllowed={ isFileUploadAllowed }
-				isPickerMode={ isPickerMode }
+				pickerMode={ pickerMode }
 				isReadOnly={ isReadOnly }
 				itemsSource={ itemsSource }
 				level={ 2 }
@@ -1037,7 +1041,7 @@ const CollectionTree = props => {
 			<PublicationsNode
 				level={ 2 }
 				isMyLibrary = { isMyLibrary }
-				isPickerMode={ isPickerMode }
+				pickerMode={pickerMode }
 				isSelected = { isCurrentLibrary && isMyPublications }
 				parentLibraryKey = { parentLibraryKey }
 				selectNode = { selectNode }
@@ -1046,7 +1050,7 @@ const CollectionTree = props => {
 			/>
 			<TrashNode
 				level={ 2 }
-				isPickerMode={ isPickerMode }
+				pickerMode={pickerMode }
 				isReadOnly = { isReadOnly }
 				isSelected = { isCurrentLibrary && isTrash }
 				parentLibraryKey = { parentLibraryKey }
@@ -1059,7 +1063,7 @@ const CollectionTree = props => {
 };
 
 CollectionTree.propTypes = {
-	isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
 	onNodeSelected: PropTypes.func,
 	parentLibraryKey: PropTypes.string,
 	pickerNavigate: PropTypes.func,
