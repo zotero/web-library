@@ -37,7 +37,7 @@
 			@include hairline(top, "color-shade-4", $start: $item-list-padding-x);
 		}
 
-		@include state(".items-list:not(.editing)") {
+		@include state(".items-list:not(.select-mode)") {
 			padding-right: $item-list-padding-right;
 
 			&.active {
@@ -51,7 +51,7 @@
 			}
 		}
 
-		@include state(".items-list.editing") {
+		@include state(".items-list.select-mode") {
 			padding-left: 2 * $item-list-padding-x + $space-lg;
 			padding-right: $item-list-padding-x;
 			@include hairline(top, "color-shade-4", $start: (3 * $item-list-padding-x + $space-lg + 28px));
@@ -67,13 +67,13 @@
 				@include hairline-disabled(top);
 
 				&.active {
-					@include state(".items-list:not(.editing)") {
+					@include state(".items-list:not(.select-mode)") {
 						outline-color: var(--primary-on-accent);
 					}
 				}
 
 				& + .item {
-					@include state(".items-list:not(.editing)") {
+					@include state(".items-list:not(.select-mode)") {
 						@include hairline-disabled(top);
 					}
 				}
@@ -83,7 +83,7 @@
 		&:first-child {
 			@include hairline-disabled(top);
 
-			@include state(".items-list.editing") {
+			@include state(".items-list.select-mode") {
 				@include hairline-disabled(top);
 			}
 		}
@@ -111,7 +111,7 @@
 					left: $item-list-padding-x;
 				}
 
-				@include state(".items-list.editing") {
+				@include state(".items-list.select-mode") {
 					left: 3 * $item-list-padding-x + $space-lg + 28px;
 
 					@include bp-down(xs) {
@@ -180,7 +180,7 @@
 			.year {
 				@include text-truncate;
 
-				@include state(".items-list:not(.editing) .item.active") {
+				@include state(".items-list:not(.select-mode) .item.active") {
 					color: var(--primary-on-accent);
 					opacity: 0.67;
 				}
@@ -240,7 +240,7 @@
 				.icon-note-sm {
 					margin-right: $space-min;
 
-					@include state(".items-list:not(.editing) .item.active") {
+					@include state(".items-list:not(.select-mode) .item.active") {
 						color: var(--primary-on-accent);
 					}
 				}
@@ -258,7 +258,7 @@
 				color: var(--primary-on-accent);
 			}
 
-			@include state(".items-list.editing") {
+			@include state(".items-list.select-mode") {
 				display: none;
 			}
 		}

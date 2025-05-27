@@ -1,0 +1,17 @@
+.tab-pane.related {
+	> .toolbar {
+		height: $toolbar-height-touch;
+
+		.counter {
+			margin-right: $space-xs;
+		}
+	}
+}
+
+.related-list {
+	margin-top: $space-xs;
+
+	li a {
+		color: inherit;
+	}
+}

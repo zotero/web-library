@@ -87,7 +87,7 @@ const AddRelatedModal = () => {
 				) : (
 					<Fragment>
 						<h4 className="modal-title truncate">
-							Select items
+							Add Related Items
 						</h4>
 						<Button
 							icon
@@ -132,7 +132,7 @@ const AddRelatedModal = () => {
 								className="btn-link"
 								onClick={handleSelectItems}
 							>
-								Select Items
+								Select
 							</Button>
 						</div>
 					</div>
