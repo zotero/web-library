@@ -736,6 +736,14 @@ const CollectionNode = memo(props => {
 				</LevelWrapper>
 			) : null }
 		>
+			{(pickerPicksCollection && !isReadOnly && !isPickerSkip && isTouchOrSmall) ? (
+				<PickerCheckbox
+					collectionKey={collection.key}
+					parentLibraryKey={parentLibraryKey}
+					pickerPick={pickerPick}
+					picked={picked}
+				/>
+			) : pickerPicksCollection ? <div className="picker-checkbox-placeholder" /> : null}
 			<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } className="touch" width="28" height="28" />
 			<Icon
 				type={ '16/folder' }
@@ -765,14 +773,7 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{(pickerPicksCollection && !isReadOnly && !isPickerSkip && isTouchOrSmall) ? (
-							<PickerCheckbox
-								collectionKey = { collection.key }
-								parentLibraryKey = { parentLibraryKey }
-								pickerPick = { pickerPick }
-								picked={ picked }
-							/>
-						) : (!isReadOnly && !pickerMode) ? (
+						{(!isReadOnly && !pickerMode) ? (
 							<DotMenu
 								collection = { collection }
 								setRenaming = { setRenaming }
