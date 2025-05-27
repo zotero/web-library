@@ -16,9 +16,7 @@ import { PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM } from '../../../constants/pick
 
 
 const ItemsList = memo(props => {
-	const {
-		isPickerMode, isSearchModeTransitioning, libraryKey, collectionKey, itemsSource,
-		isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
+	const { isSearchModeTransitioning, libraryKey, collectionKey, itemsSource, isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -67,13 +65,13 @@ const ItemsList = memo(props => {
 	}, [keys]);
 
 	useEffect(() => {
-		if ((scrollToRow !== null || isPickerMode) && !hasChecked && !isFetching) {
-			let startIndex = isPickerMode ? 0 : Math.max(scrollToRow - 20, 0);
-			let stopIndex = isPickerMode ? 50 : scrollToRow + 50;
+		if ((scrollToRow !== null || pickerMode) && !hasChecked && !isFetching) {
+			let startIndex = pickerMode ? 0 : Math.max(scrollToRow - 20, 0);
+			let stopIndex = pickerMode ? 50 : scrollToRow + 50;
 			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, isPickerMode]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode]);
 
 	useEffect(() => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
@@ -112,7 +110,7 @@ const ItemsList = memo(props => {
 	return (
 		<List
 			isReady={hasChecked}
-			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
+			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
 			getItemData={getItemData}
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}
@@ -126,7 +124,7 @@ const ItemsList = memo(props => {
 			totalResults={totalResults}
 		>
 			{
-				!isPickerMode && (
+				!pickerMode && (
 					<ScrollEffectComponent
 						listRef={listRef}
 						setScrollToRow={setScrollToRow}

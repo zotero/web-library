@@ -26,7 +26,7 @@ import TableFocusEffectComponent from './table-focus-effect';
 
 
 const ItemsTable = props => {
-	const { libraryKey, collectionKey, itemsSource, isPickerMode = false, pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
+	const { libraryKey, collectionKey, itemsSource, pickerMode = false, pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
@@ -241,13 +241,13 @@ const ItemsTable = props => {
 		// My Publications). In these scenarios, we either scroll to the item
 		// from the URL (for the main items table) or, if this is a picker,
 		// fetch the first page of results.
-		if ((scrollToRow !== null || isPickerMode) && !hasChecked && !isFetching) {
-			let startIndex = isPickerMode ? 0 : Math.max(scrollToRow - 20, 0);
-			let stopIndex = isPickerMode ? 50 : scrollToRow + 50;
+		if ((scrollToRow !== null || pickerMode) && !hasChecked && !isFetching) {
+			let startIndex = pickerMode ? 0 : Math.max(scrollToRow - 20, 0);
+			let stopIndex = pickerMode ? 50 : scrollToRow + 50;
 			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, isPickerMode]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode]);
 
 	useEffect(() => {
 		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
@@ -296,7 +296,7 @@ const ItemsTable = props => {
 			columns={columns}
 			containerClassName={cx({ 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows })}
 			drop={drop}
-			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, isPickerMode, pickerNavigate, pickerPick }}
+		extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, pickerPick }}
 			getItemData={noop}
 			headerRef={headerRef}
 			isReady={hasChecked}
@@ -319,7 +319,7 @@ const ItemsTable = props => {
 			sortBy={sortByPreference}
 			sortDirection={sortDirectionPreference}
 		>
-			{ !isPickerMode && (
+		{!pickerMode && (
 				<>
 					<TableFocusEffectComponent
 						tableRef={tableRef}

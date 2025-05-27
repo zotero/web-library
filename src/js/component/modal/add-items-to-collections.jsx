@@ -12,6 +12,7 @@ import TouchHeader from '../touch-header.jsx';
 import { chunkedCopyToLibrary, chunkedAddToCollection, toggleModal, triggerSelectMode } from '../../actions';
 import { COLLECTION_SELECT } from '../../constants/modals';
 import { useNavigationState } from '../../hooks';
+import { PICKS_SINGLE_COLLECTION } from '../../constants/picker-modes';
 
 const AddItemsToCollectionsModal = () => {
 	const dispatch = useDispatch();
@@ -136,12 +137,13 @@ const AddItemsToCollectionsModal = () => {
 				) }
 				<Libraries
 					{ ...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']) }
-					isPickerMode={ true }
 					picked={ picked }
 					pickerAllowRoot={ true }
 					pickerNavigate={ handleNavigation }
+					pickerMode={ PICKS_SINGLE_COLLECTION }
 					pickerPick={ pickerPick }
 					pickerSkipCollections={ pickerSkipCollections }
+					pickerSkipLibraries={ [libraryKey] }
 					pickerRequireFileUpload={ hasAttachment }
 				/>
 				</Fragment>

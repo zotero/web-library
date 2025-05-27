@@ -11,10 +11,11 @@ import cx from 'classnames';
 import Node from './libraries/node';
 import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate, triggerFocus } from '../actions';
 import { get, stopPropagation, getUniqueId } from '../utils';
+import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS } from '../constants/picker-modes';
 
 const LibraryNode = props => {
-	const { addVirtual, isOpen, isFileUploadAllowed, isMyLibrary, isPickerMode, isReadOnly, isSelected, libraryKey, name,
-		pickerNavigate, pickerPick, pickerRequireFileUpload, picked = [], pickerAllowRoot, onNodeSelected =
+	const { addVirtual, isOpen, isFileUploadAllowed, isMyLibrary, isReadOnly, isSelected, libraryKey, name,
+		pickerMode, pickerNavigate, pickerPick, pickerSkipLibraries = [], pickerRequireFileUpload, picked = [], pickerAllowRoot, onNodeSelected =
 		noop, shouldBeTabbable, toggleOpen, virtual } = props;
 	const dispatch = useDispatch();
 	const isFetchingAll = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'isFetchingAll'], false));
@@ -26,26 +27,26 @@ const LibraryNode = props => {
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c);
 	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
-
+	const pickerPicksCollection = [PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_COLLECTION].includes(pickerMode);
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
 	// trash) and has no collections
 	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
-	const isPickerSkip = isPickerMode && (isReadOnly || (pickerRequireFileUpload && !isFileUploadAllowed));
+	const isPickerSkip = pickerMode && (isReadOnly || pickerSkipLibraries.includes(libraryKey) || (pickerRequireFileUpload && !isFileUploadAllowed));
 
 	const handleSelect = useCallback(() => {
 		const path = { library: libraryKey, view: 'library' };
-		if(isPickerMode && !isPickerSkip) {
+
+		if (pickerPicksCollection && !isPickerSkip && !isTouchOrSmall) {
+			pickerPick({ libraryKey });
+		} else if (pickerMode && isTouchOrSmall) {
 			pickerNavigate(path);
-		// TODO: fix picker mode for collections
-		// } else if(isPickerMode && pickerAllowRoot && !isPickerSkip && !isTouchOrSmall) {
-		// 	pickerPick({ libraryKey });
-		// }
-		} else if(!isPickerMode) {
+		} else if(!pickerMode) {
 			dispatch(navigate(path, true));
 		}
+
 		onNodeSelected(path);
-	}, [dispatch, isPickerMode, isPickerSkip, libraryKey, onNodeSelected, pickerNavigate]);
+	}, [libraryKey, pickerPicksCollection, isPickerSkip, isTouchOrSmall, pickerMode, onNodeSelected, pickerPick, pickerNavigate, dispatch]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -56,10 +57,10 @@ const LibraryNode = props => {
 	}, [addVirtual, libraryKey]);
 
 	const handleOpenToggle = useCallback((ev, shouldOpen = null) => {
-		if(!(isConfirmedEmpty || isPickerSkip)) {
+		if(!isConfirmedEmpty) {
 			toggleOpen(libraryKey, shouldOpen);
 		}
-	}, [isConfirmedEmpty, isPickerSkip, libraryKey, toggleOpen]);
+	}, [isConfirmedEmpty, libraryKey, toggleOpen]);
 
 	const handleFileDrop = useCallback(async droppedFiles => {
 		await dispatch(createAttachmentsFromDropped(droppedFiles, { libraryKey: libraryKey }));
@@ -80,7 +81,7 @@ const LibraryNode = props => {
 		return {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
 				'focusBySelector', 'onFocusNext', 'onFocusPrev', 'pickerSkipCollections', 'collectionKey', 'itemsSource', 'view']),
-			isPickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
+				pickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
 			virtual: isVirtualInThisTree ? virtual : null, libraryKey
 		}
 	}
@@ -93,7 +94,7 @@ const LibraryNode = props => {
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected,
 				'focused': isFocusedAndSelected,
-				'picked': isPickerMode && isPicked,
+				'picked': pickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
 			}) }
@@ -107,8 +108,8 @@ const LibraryNode = props => {
 			onOpen={ handleOpenToggle }
 			onSelect={ handleSelect }
 			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
-			showTwisty={ !(isConfirmedEmpty || isPickerSkip) }
-			subtree={ (isConfirmedEmpty || isPickerSkip) ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
+			showTwisty={ !isConfirmedEmpty }
+			subtree={ isConfirmedEmpty ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
 			data-key={ libraryKey }
 			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
 			{ ...pick(props, ['onFocusNext', 'onFocusPrev'])}
@@ -126,7 +127,7 @@ const LibraryNode = props => {
 			) }
 			<div className="truncate" id={ id.current } title={ name }>{ name }</div>
 			{ shouldShowSpinner && <Spinner className="small mouse" /> }
-			{ isPickerMode && pickerAllowRoot && !isReadOnly && isTouchOrSmall && (
+			{pickerPicksCollection && pickerAllowRoot && !isPickerSkip && !isReadOnly && isTouchOrSmall && (
 				<input
 					type="checkbox"
 					checked={ isPicked }
@@ -136,7 +137,7 @@ const LibraryNode = props => {
 				/>
 			)}
 			{
-				!shouldShowSpinner && !isReadOnly && !isPickerMode && (
+				!shouldShowSpinner && !isReadOnly && !pickerMode && (
 					<Button
 						className="mouse btn-icon-plus"
 						icon
@@ -158,7 +159,7 @@ LibraryNode.propTypes = {
 	isFileUploadAllowed: PropTypes.bool,
 	isMyLibrary: PropTypes.bool,
 	isOpen: PropTypes.bool,
-	isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
 	isReadOnly: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	libraryKey: PropTypes.string,
@@ -167,6 +168,7 @@ LibraryNode.propTypes = {
 	picked: PropTypes.array,
 	pickerAllowRoot: PropTypes.bool,
 	pickerNavigate: PropTypes.func,
+	pickerSkipLibraries: PropTypes.array,
 	pickerPick: PropTypes.func,
 	pickerRequireFileUpload: PropTypes.bool,
 	pickerState: PropTypes.object,
@@ -176,7 +178,7 @@ LibraryNode.propTypes = {
 };
 
 const Libraries = forwardRef((props, ref) => {
-	const { excludeLibraries, includeLibraries, isPickerMode, libraryKey, collectionKey, itemsSource, view } = props;
+	const { excludeLibraries, includeLibraries, pickerMode, libraryKey, collectionKey, itemsSource, view } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -329,16 +331,16 @@ const Libraries = forwardRef((props, ref) => {
 			onFocusNext: focusNext,
 			onFocusPrev: focusPrev,
 			focusBySelector,
-			...pick(props, ['isPickerMode', 'disabledCollections', 'onNodeSelected', 'picked',
-				'pickerAllowRoot', 'pickerNavigate', 'pickerPick', 'pickerRequireFileUpload',
-				'pickerSkipCollections', 'collectionKey', 'itemsSource', 'view'])
+			...pick(props, ['disabledCollections', 'onNodeSelected', 'picked',
+				'pickerAllowRoot', 'pickerMode', 'pickerNavigate', 'pickerPick', 'pickerRequireFileUpload',
+				'pickerSkipCollections', 'pickerSkipLibraries', 'collectionKey', 'itemsSource', 'view'])
 		}
 	}
 
 	return (
         <nav
 			aria-label="collection tree"
-			className={ cx('collection-tree', { 'picker-mode': isPickerMode }) }
+			className={cx('collection-tree', { 'picker-mode': pickerMode }) }
 			onFocus={ isTouchOrSmall ? noop : handleFocus }
 			onBlur={ isTouchOrSmall ? noop : handleBlur }
 			tabIndex={ 0 }
@@ -404,7 +406,7 @@ Libraries.displayName = 'Libraries';
 Libraries.propTypes = {
 	excludeLibraries: PropTypes.array,
 	includeLibraries: PropTypes.array,
-	isPickerMode: PropTypes.bool,
+	pickerMode: PropTypes.number,
 	pickerState: PropTypes.object,
 }
 

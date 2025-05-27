@@ -6,14 +6,14 @@ import { Icon } from 'web-common/components';
 
 import { triggerSelectMode, navigate } from '../../../actions';
 import { vec2dist } from '../../../utils';
-import { PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
+import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers select mode
 const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
 
 const ListRow = memo(props => {
 	const { data, index, style } = props;
-	const { getItemData, isPickerMode, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey } = data;
+	const { getItemData, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey } = data;
 	const itemKey = getItemData(index);
 	const dispatch = useDispatch();
 	const itemData = useSelector(
@@ -57,12 +57,12 @@ const ListRow = memo(props => {
 			nextState = { items: [itemKey], view: 'item-details' };
 		}
 
-		if (isPickerMode) {
+		if (pickerMode) {
 			pickerNavigate({ library: libraryKey, collection: collectionKey, view: 'item-list', ...nextState });
 		} else {
 			dispatch(navigate({ ...nextState, noteKey: null, attachmentKey: null }));
 		}
-	}, [collectionKey, dispatch, isPickerMode, isSelectMode, itemKey, libraryKey, pickerNavigate, selectedItemKeys]);
+	}, [collectionKey, dispatch, isSelectMode, itemKey, libraryKey, pickerMode, pickerNavigate, selectedItemKeys]);
 
 	const handleKeyDown = useCallback(ev => {
 		if ((ev.key === 'Enter' || (isSelectMode && ev.key === " "))) {
@@ -194,7 +194,7 @@ const ListRow = memo(props => {
 					</div>
 				</div>
 			</div>
-			{ !isPickerMode && <Icon type={ '16/chevron-13' } width="16" height="16" /> }
+			{ !pickerMode && <Icon type={ '16/chevron-13' } width="16" height="16" /> }
 		</div>
     );
 });

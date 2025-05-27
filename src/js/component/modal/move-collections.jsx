@@ -10,6 +10,7 @@ import TouchHeader from '../touch-header.jsx';
 import { MOVE_COLLECTION } from '../../constants/modals';
 import { toggleModal, updateCollection } from '../../actions';
 import { useNavigationState } from '../../hooks';
+import { PICKS_SINGLE_COLLECTION } from '../../constants/picker-modes.js';
 
 const MoveCollectionsModal = () => {
 	const dispatch = useDispatch();
@@ -99,14 +100,15 @@ const MoveCollectionsModal = () => {
 			) }
 				<Libraries
 					{...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view'])}
-					pickerAllowRoot={ currentParentCollectionKey !== false }
-					isPickerMode={ true }
+					pickerAllowRoot={ true }
+					pickerMode={ PICKS_SINGLE_COLLECTION }
 					pickerPick={ handlePick }
 					picked={ picked }
 					pickerNavigate={ handleNavigation }
 					includeLibraries={ [libraryKey] } // TODO #227
 					disabledCollections={ [collectionKey] }
 					pickerSkipCollections={ [collectionKey, currentParentCollectionKey] }
+					pickerSkipLibraries={ currentParentCollectionKey === false ? [libraryKey] : [] }
 				/>
 			</div>
 			{ isTouchOrSmall ? (
