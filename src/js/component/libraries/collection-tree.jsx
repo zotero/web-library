@@ -11,7 +11,7 @@ import Node from './node';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
-import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS } from '../../constants/picker-modes';
+import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
 
 const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) => {
 	const selectedParentKey = path[path.length - 2];
@@ -573,7 +573,7 @@ const CollectionNode = memo(props => {
 			// selection means picking, users should not be able to select a
 			// `pickerSkip` collection in picker mode.
 		} else if (!isDisabled && (isTouchOrSmall || (!isTouchOrSmall && !pickerMode) || (!isTouchOrSmall && pickerMode && !isPickerSkip) )) {
-			selectNode({ collection: collection.key });
+			selectNode({ collection: collection.key, view: 'collection' });
 		}
 	}, [pickerPicksCollection, isPickerSkip, isTouchOrSmall, isDisabled, pickerMode, pickerPick, collection.key, parentLibraryKey, selectNode]);
 
@@ -636,7 +636,7 @@ const CollectionNode = memo(props => {
 		return onOpen(ev);
 	}, [isDisabled, onOpen])
 
-	const usesItemsNode = isSingleColumn && ![PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode);
+	const usesItemsNode = isSingleColumn || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = collections.length > 0;
@@ -647,7 +647,7 @@ const CollectionNode = memo(props => {
 
 	// if isSelected is a nested child, hasOpen is true
 	// if isSelected is a direct child, hasOpen is only true if
-	// either selected is not a leaf node or we're in singleColumn mode (where there is always estra "Items" node)
+	// either selected is not a leaf node or we're in singleColumn mode (where there is always extra "Items" node)
 	const hasOpen = selectedDepth > 0 && !(selectedDepth === 1 && (!selectedHasChildren && !usesItemsNode));
 
 	// at least one collection contains subcollections
@@ -874,7 +874,7 @@ const CollectionTree = props => {
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
 	const isCurrentLibrary = parentLibraryKey === currentLibraryKey;
-	const usesItemsNode = isSingleColumn && ![PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode);
+	const usesItemsNode = isSingleColumn || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
 	const path = useMemo(
