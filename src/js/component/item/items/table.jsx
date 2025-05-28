@@ -332,7 +332,7 @@ const ItemsTable = props => {
 					selectedItemKeys={selectedItemKeys}
 				/>
 			)}
-			{!hasChecked && !isModalOpen && <Spinner className="large" />}
+			{!hasChecked && (pickerMode || !isModalOpen) && <Spinner className="large" />}
 			{isAdvancedSearch && (
 				<div className="table-cover">
 					Advanced search mode — press Enter to search.

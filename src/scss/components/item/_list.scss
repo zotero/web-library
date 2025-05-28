@@ -7,14 +7,11 @@
 	flex: 1 1 auto;
 	flex-direction: column;
 
-	@include scopedVariant(".loading") {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	.icon-spin {
 		color: var(--color-accent);
+		position: absolute;
+		left: calc(50% - #{$icon-spin-size-lg * 0.5});
+		top: calc(50% - #{$icon-spin-size-lg * 0.5} + #{$line-height-large * 0.5});
 	}
 }
 
