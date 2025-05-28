@@ -227,7 +227,7 @@
 		&.active {
 			background-color: $item-table-active-bg;
 
-			&.focused {
+			@include state(".items-table:focus-within") {
 				color: var(--primary-on-accent);
 				background-color: var(--color-accent);
 			}
@@ -255,6 +255,22 @@
 				width: 80px;
 				left: 10px;
 				height: 2px;
+			}
+		}
+
+		.focused-selected-icon,
+		.focused-selected-tag-circles {
+			display: none;
+			@include state(".items-table:focus-within .item.active") {
+				display: block;
+			}
+		}
+
+		.unfocused-icon,
+		.unfocused-tag-circles {
+			display: block;
+			@include state(".items-table:focus-within .item.active") {
+				display: none;
 			}
 		}
 

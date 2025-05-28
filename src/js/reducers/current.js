@@ -3,7 +3,7 @@ import { shallowEqual } from 'react-redux';
 
 import { CONFIGURE, FILTER_TAGS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
 	TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
-	TRIGGER_EDITING_ITEM, TRIGGER_FOCUS, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_SEARCH_MODE,
+	TRIGGER_EDITING_ITEM, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_SEARCH_MODE,
 	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, TRIGGER_VIEWPORT_CHANGE
 } from '../constants/actions';
 
@@ -207,12 +207,6 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 				...state,
 				editingItemKey: (preferences.density ? preferences.density : action.userType) === 'mouse' && !device.xxs && !device.xs &&
 					!device.sm && !device.md ? null : state.editingItemKey
-			}
-		case TRIGGER_FOCUS:
-			return {
-				...state,
-				isItemsTableFocused: action.section === 'items-table' ? action.isOn : state.isItemsTableFocused,
-				isCollectionsTreeFocused: action.section === 'collections-tree' ? action.isOn : state.isCollectionsTreeFocused,
 			}
 		case TRIGGER_HIGHLIGHTED_COLLECTIONS:
 			return {

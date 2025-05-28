@@ -14,7 +14,7 @@ import { get, applyChangesToVisibleColumns, getRequestTypeFromItemsSource } from
 import { ATTACHMENT } from '../../../constants/dnd';
 import {
 	abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
-	navigate, navigateSelectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange, triggerFocus,
+	navigate, navigateSelectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange,
 	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting
 } from '../../../actions';
 import { useItemsState } from '../../../hooks';
@@ -22,7 +22,6 @@ import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
 import Table from '../../common/table';
-import TableFocusEffectComponent from './table-focus-effect';
 
 
 const ItemsTable = props => {
@@ -87,7 +86,7 @@ const ItemsTable = props => {
 		return columns;
 	}, [columnsData, isMyLibrary]);
 
-	const { receiveFocus, receiveBlur, focusBySelector, resetLastFocused } = useFocusManager(
+	const { receiveFocus, receiveBlur, focusBySelector } = useFocusManager(
 		tableRef, { initialQuerySelector: ['[aria-selected="true"]', '[data-index="0"]'] }
 	);
 
@@ -196,19 +195,23 @@ const ItemsTable = props => {
 		}
 	}, [dispatch, isEmbedded, focusBySelector]);
 
-	const handleTableFocus = useCallback(ev => {
+	const handleTableFocus = useCallback(async ev => {
 		const hasChangedFocused = receiveFocus(ev);
 		if (hasChangedFocused) {
-			dispatch(triggerFocus('items-table', true));
+			if (pickerMode && selectedItemKeys.length === 0 && keys.length && tableRef.current) {
+				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], view: 'item-list' });
+			} else if(!pickerMode) {
+				const index = await dispatch(selectFirstItem(true));
+				if (index !== null && tableRef.current) {
+					focusBySelector('[data-index="0"]');
+				}
+			}
 		}
-	}, [dispatch, receiveFocus]);
+	}, [collectionKey, dispatch, focusBySelector, keys, libraryKey, pickerMode, pickerNavigate, receiveFocus, selectedItemKeys]);
 
 	const handleTableBlur = useCallback(ev => {
-		const hasChangedFocused = receiveBlur(ev);
-		if (hasChangedFocused) {
-			dispatch(triggerFocus('items-table', false));
-		}
-	}, [dispatch, receiveBlur]);
+		receiveBlur(ev);
+	}, [receiveBlur]);
 
 	const handleColumnsResize = useCallback(newVisibleColumns => {
 		const newColumnsData = columnsData.map(c => ({ ...c }));
@@ -296,7 +299,7 @@ const ItemsTable = props => {
 			columns={columns}
 			containerClassName={cx({ 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows })}
 			drop={drop}
-		extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, pickerPick }}
+			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, pickerPick }}
 			getItemData={noop}
 			headerRef={headerRef}
 			isReady={hasChecked}
@@ -319,22 +322,15 @@ const ItemsTable = props => {
 			sortBy={sortByPreference}
 			sortDirection={sortDirectionPreference}
 		>
-		{!pickerMode && (
-				<>
-					<TableFocusEffectComponent
-						tableRef={tableRef}
-						focusBySelector={focusBySelector}
-						resetLastFocused={resetLastFocused}
-					/>
-					<ScrollEffectComponent
-						listRef={listRef}
-						setScrollToRow={setScrollToRow}
-						libraryKey={libraryKey}
-						collectionKey={collectionKey}
-						itemsSource={itemsSource}
-						selectedItemKeys={selectedItemKeys}
-					/>
-				</>
+			{!pickerMode && (
+				<ScrollEffectComponent
+					listRef={listRef}
+					setScrollToRow={setScrollToRow}
+					libraryKey={libraryKey}
+					collectionKey={collectionKey}
+					itemsSource={itemsSource}
+					selectedItemKeys={selectedItemKeys}
+				/>
 			)}
 			{!hasChecked && !isModalOpen && <Spinner className="large" />}
 			{isAdvancedSearch && (

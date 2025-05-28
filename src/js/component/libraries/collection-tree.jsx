@@ -9,7 +9,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 import Editable from '../editable';
 import Node from './node';
 import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
-import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate, triggerFocus } from '../../actions';
+import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS } from '../../constants/picker-modes';
 
@@ -97,7 +97,6 @@ const ItemsNode = memo(props => {
 	const isSelected = !isSingleColumn && !['trash', 'publications', 'query'].includes(itemsSource) && (
 		parentCollectionKey === selectedCollectionKey || (!parentCollectionKey && !selectedCollectionKey)
 	);
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({
@@ -118,7 +117,6 @@ const ItemsNode = memo(props => {
 			className={ cx({
 				'items-node': true,
 				'selected': isSelected,
-				'focused': isFocusedAndSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -215,7 +213,6 @@ VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 
 const PublicationsNode = memo(({ isMyLibrary, pickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({ publications: true });
@@ -233,7 +230,6 @@ const PublicationsNode = memo(({ isMyLibrary, pickerMode, isSelected, level, sho
 			className={ cx({
 				'publications': true,
 				'selected': isSelected,
-				'focused': isFocusedAndSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -269,7 +265,6 @@ PublicationsNode.displayName = 'PublicationsNode';
 
 const TrashNode = memo(({ pickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
 	const id = useRef(getUniqueId());
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	const handleSelect = useCallback(() => {
 		selectNode({ trash: true });
@@ -287,7 +282,6 @@ const TrashNode = memo(({ pickerMode, isReadOnly, isSelected, level, shouldBeTab
 			className={ cx({
 				'trash': true,
 				'selected': isSelected,
-				'focused': isFocusedAndSelected
 			})}
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			onSelect={ handleSelect }
@@ -357,13 +351,10 @@ const DotMenu = memo(props => {
 
 	const handleToggle = useCallback(ev => {
 		setDotMenuFor(isOpen ? null : collection.key);
-		if(!isOpen) {
-			dispatch(triggerFocus('collections-tree', true));
-		}
 		if(ev.type === 'click') {
 			ev.stopPropagation();
 		}
-	}, [collection.key, dispatch, isOpen, setDotMenuFor]);
+	}, [collection.key, isOpen, setDotMenuFor]);
 
 	const handleRenameClick = useCallback(ev => {
 		if(closeOnXArrowKey(ev)) {
@@ -566,7 +557,6 @@ const CollectionNode = memo(props => {
 	const pickerPicksCollection = [PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_COLLECTION].includes(pickerMode);
 	// in picker mode, collection should not be selectable, except on desktop devices where selection = picked
 	const isSelected = derivedData[collection.key].isSelected && (!isTouchOrSmall || (isTouchOrSmall && !pickerMode));
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 
 	// cannot be picked if isPickerSkip
 	const isPickerSkip = pickerMode && pickerSkipCollections && pickerSkipCollections.includes(collection.key);
@@ -697,7 +687,6 @@ const CollectionNode = memo(props => {
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
 				'selected': isSelected,
-				'focused': isFocusedAndSelected,
 				'picked': pickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'disabled': isDisabled,

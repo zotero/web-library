@@ -12,7 +12,7 @@ const TableRow = props => {
 	const ref = useRef();
 	const ignoreClicks = useRef({});
 
-	const { columns, isFocusedAndSelected, selectedIndexes, getItemData, onSelect = noop, onDoubleClick = noop } = data;
+	const { columns, selectedIndexes, getItemData, onSelect = noop, onDoubleClick = noop } = data;
 	const itemData = getItemData(index);
 	const isSelected = selectedIndexes.includes(index);
 	const selectedItemKeysLength = selectedIndexes.length;
@@ -68,7 +68,6 @@ const TableRow = props => {
 				'active': isSelected,
 				'first-active': isFirstRowOfSelectionBlock,
 				'last-active': isLastRowOfSelectionBlock,
-				'focused': isFocusedAndSelected,
 			})}
 			style={style}
 			data-index={index}
@@ -89,7 +88,6 @@ const TableRow = props => {
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
 						isSelected={isSelected}
-						isFocused={isFocusedAndSelected}
 						itemData={itemData}
 						width={`var(--col-${colIndex}-width)`}
 					/>
@@ -101,7 +99,6 @@ const TableRow = props => {
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
 						isSelected={isSelected}
-						isFocused={isFocusedAndSelected}
 						itemData={itemData}
 						width={`var(--col-${colIndex}-width)`}
 					/>
@@ -133,7 +130,6 @@ TableRow.propTypes = {
 		columns: PropTypes.arrayOf(PropTypes.shape({
 			field: PropTypes.string.isRequired
 		})).isRequired,
-		isFocusedAndSelected: PropTypes.bool,
 		selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
 		getItemData: PropTypes.func.isRequired,
 		onSelect: PropTypes.func,

@@ -57,9 +57,6 @@ const TableRow = props => {
 	const isFirstRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index - 1);
 	const isLastRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index + 1);
 
-	//@NOTE: to avoid re-rendering unselected rows on focus change, we only check isFocused if isSelected
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isItemsTableFocused);
-
 	// useDrag options must not be recreated or it will reset drag preview (which we set for empty image)
 	// causing two "ghosts" to appear - the native one (which we don't want) and the one web library renders
 	const useDragOptions = useMemo(() => ({ dropEffect: 'copy' }), []);
@@ -135,7 +132,6 @@ const TableRow = props => {
 		'active': isSelected,
 		'first-active': isFirstRowOfSelectionBlock,
 		'last-active': isLastRowOfSelectionBlock,
-		'focused': isFocusedAndSelected,
 		'dnd-target': canDrop && itemData && !(['attachment', 'note'].includes(itemData.itemTypeRaw)) && isOver && dropZone === null,
 		'dnd-target-top': canDrop && isOver && dropZone === 'top',
 		'dnd-target-bottom': canDrop && isOver && dropZone === 'bottom',
@@ -227,8 +223,6 @@ const TableRow = props => {
 						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
-						isSelected={isSelected}
-						isFocused={isFocusedAndSelected}
 						itemData={itemData}
 						width={`var(--col-${colIndex}-width)`}
 					/>
@@ -239,8 +233,6 @@ const TableRow = props => {
 						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
-						isSelected={isSelected}
-						isFocused={isFocusedAndSelected}
 						itemData={itemData}
 						width={`var(--col-${colIndex}-width)`}
 					/>
