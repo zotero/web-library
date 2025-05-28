@@ -8,11 +8,10 @@ import ItemsTable from './items/table';
 import ItemsList from './items/list';
 import TouchHeaderWrap from '../../component/touch-header-wrap';
 import TouchFooter from '../../component/touch-footer';
-import { useSourceData, useSourceSignature } from '../../hooks';
+import { useSourceSignature } from '../../hooks';
 
 const CurrentItems = props => {
 	const { isSearchModeTransitioning } = props;
-	const { isFetching, hasChecked } = useSourceData();
 	const sourceSignature = useSourceSignature();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isLarge = useSelector(state => state.device.lg);
@@ -35,9 +34,7 @@ const CurrentItems = props => {
 	};
 
 	return (
-		<div className={
-			cx('items-container', { loading: isFetching && !hasChecked })
-		}>
+		<div className="items-container">
 			{isTouchOrSmall ? (
 				<Fragment>
 					{(isLarge && !isEmbedded) && <TouchHeaderWrap

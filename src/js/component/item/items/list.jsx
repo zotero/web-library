@@ -12,7 +12,7 @@ import { useItemsState } from '../../../hooks';
 import List from '../../common/list';
 import ListRow from './list-row';
 import ScrollEffectComponent from './scroll-effect';
-import { PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM } from '../../../constants/picker-modes';
+import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 
 const ItemsList = memo(props => {
@@ -136,8 +136,7 @@ const ItemsList = memo(props => {
 				)
 			}
 			<>
-
-				{!hasChecked && !isModalOpen && !isSearchModeHack && <Spinner className="large" />}
+				{!hasChecked && (pickerMode || (!isModalOpen && !isSearchModeHack)) && <Spinner className="large" />}
 				{hasChecked && totalResults === 0 && (
 					<div className="item-list-empty">
 						No items in this view
