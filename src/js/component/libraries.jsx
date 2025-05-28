@@ -38,7 +38,7 @@ const LibraryNode = props => {
 
 		if (pickerPicksCollection && !isPickerSkip && !isTouchOrSmall) {
 			pickerPick({ libraryKey });
-		} else if (pickerMode && isTouchOrSmall) {
+		} else if (pickerMode) {
 			pickerNavigate(path);
 		} else if(!pickerMode) {
 			dispatch(navigate(path, true));
