@@ -38,8 +38,67 @@ Cell.propTypes = {
 	style: PropTypes.object,
 };
 
+
+const TableCellIcon = ({ iconName, suffix = "white", ...rest }) => {
+	// Render two icons: one for the focused+selected state and one for the
+	// unfocused state. Visibility is controlled via CSS.
+	return (
+		<>
+			<Icon
+				{...rest}
+				className="focused-selected-icon"
+				symbol={`${iconName}-${suffix}`}
+				useColorScheme={false}
+			/>
+			<Icon
+				{...rest}
+				className="unfocused-icon"
+				symbol={iconName}
+				useColorScheme={true}
+			/>
+		</>
+	);
+}
+
+TableCellIcon.propTypes = {
+	iconName: PropTypes.string.isRequired,
+	suffix: PropTypes.string,
+}
+
+const TableCellTagCircles = ({ itemData }) => {
+	// Render two sets of tag circles: one for the focused+selected state and one
+	// for the unfocused state. Visibility is controlled via CSS.
+	return (
+		<>
+			{[true, false].map(isFocused => (
+				<span key={isFocused ? 'focused' : 'unfocused'} className={cx('tag-circles', { 'focused-selected-tag-circles': isFocused, 'unfocused-tag-circles': !isFocused })}>
+					{(itemData?.colors ?? []).map((color, index) => (
+						<Icon
+							label={`${colorNames[color] || ''} circle icon`}
+							key={index}
+							type={index === 0 ? '12/circle' : '12/crescent-circle'}
+							symbol={index === 0 ?
+								(isFocused ? 'circle-active' : 'circle') :
+								(isFocused ? 'crescent-circle-active' : 'crescent-circle')
+							}
+							width="12"
+							height="12"
+							data-color={color.toLowerCase()}
+							style={{ color }}
+						/>
+					))}
+				</span>
+			))}
+		</>
+	)
+}
+
+TableCellTagCircles.propTypes = {
+	itemData: PropTypes.object.isRequired,
+};
+
 export const TitleCell = memo(props => {
-	const { columnName, isFocused, isSelected, labelledById, itemData, ...rest } = props;
+	const { columnName, labelledById, itemData, ...rest } = props;
 	const formattedSpan = document.createElement('span');
 	renderItemTitle(itemData[columnName], formattedSpan);
 
@@ -50,12 +109,11 @@ export const TitleCell = memo(props => {
 			columnName={columnName}
 			{...pick(rest, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
 		>
-			<Icon
+			<TableCellIcon
+				iconName={itemData.iconName}
 				label={`${itemData.itemType} icon`}
 				type={`16/item-type/${itemData.iconName}`}
-				symbol={isFocused && isSelected ? `${itemData.iconName}-white` : itemData.iconName}
 				usePixelRatio={true}
-				useColorScheme={isFocused && isSelected ? false : true}
 				colorScheme={colorScheme}
 				width="16"
 				height="16"
@@ -65,23 +123,7 @@ export const TitleCell = memo(props => {
 				{(itemData?.emojis ?? []).map(emoji => {
 					return <span key={emoji} className="emoji">{emoji}</span>
 				})}
-				<span className="tag-circles">
-					{(itemData?.colors ?? []).map((color, index) => (
-						<Icon
-							label={`${colorNames[color] || ''} circle icon`}
-							key={index}
-							type={index === 0 ? '12/circle' : '12/crescent-circle'}
-							symbol={index === 0 ?
-								(isFocused && isSelected ? 'circle-active' : 'circle') :
-								(isFocused && isSelected ? 'crescent-circle-active' : 'crescent-circle')
-							}
-							width="12"
-							height="12"
-							data-color={color.toLowerCase()}
-							style={{ color }}
-						/>
-					))}
-				</span>
+				<TableCellTagCircles itemData={itemData} />
 			</div>
 		</Cell>
 	);
@@ -93,7 +135,6 @@ TitleCell.propTypes = {
 	colIndex: PropTypes.number,
 	columnName: PropTypes.string.isRequired,
 	isFirstColumn: PropTypes.bool,
-	isFocused: PropTypes.bool,
 	isLastColumn: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	itemData: PropTypes.object,
@@ -102,7 +143,7 @@ TitleCell.propTypes = {
 };
 
 export const AttachmentCell = memo(props => {
-	const { columnName, isFocused, isSelected, itemData } = props;
+	const { columnName, itemData } = props;
 
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
@@ -115,10 +156,9 @@ export const AttachmentCell = memo(props => {
 				{itemData[columnName]}
 			</div>
 			{itemData.attachmentIconName && (
-				<Icon
+				<TableCellIcon
+					iconName={itemData.attachmentIconName}
 					type={`12/item-type/${itemData.attachmentIconName}`}
-					symbol={isFocused && isSelected ? `${itemData.attachmentIconName}-white` : itemData.attachmentIconName}
-					useColorScheme={isFocused && isSelected ? false : true}
 					colorScheme={colorScheme}
 					width="12"
 					height="12"
@@ -132,8 +172,6 @@ AttachmentCell.displayName = 'AttachmentCell';
 
 AttachmentCell.propTypes = {
 	columnName: PropTypes.string.isRequired,
-	isFocused: PropTypes.bool,
-	isSelected: PropTypes.bool,
 	itemData: PropTypes.object,
 	colIndex: PropTypes.number,
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -161,8 +199,6 @@ GenericDataCell.displayName = 'GenericDataCell';
 GenericDataCell.propTypes = {
 	colIndex: PropTypes.number,
 	columnName: PropTypes.string,
-	isFocused: PropTypes.bool,
-	isSelected: PropTypes.bool,
 	itemData: PropTypes.object,
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

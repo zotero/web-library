@@ -113,7 +113,7 @@
 			}
 		}
 
-		@include state("li.selected.focused > .item-container") {
+		@include state(".collection-tree:focus-within li.selected > .item-container") {
 			@include mouse-and-bp-up(md) {
 				background-color: var(--color-accent);
 			}
@@ -212,7 +212,7 @@
 
 			@include mouse-and-bp-up(md) {
 				&:not(.icon-spin) {
-					@include state("li.selected.focused > .item-container") {
+					@include state(".collection-tree:focus-within li.selected > .item-container") {
 						color: var(--primary-on-accent);
 					}
 
@@ -266,7 +266,7 @@
 				}
 			}
 
-			@include state("li.selected.focused > .item-container") {
+			@include state(".collection-tree:focus-within li.selected > .item-container") {
 				@include mouse-and-bp-up(md) {
 					color: var(--primary-on-accent);
 				}

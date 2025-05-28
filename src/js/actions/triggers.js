@@ -2,7 +2,7 @@ import { shallowEqual } from 'react-redux';
 
 import { DISMISS_ERROR, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
 	TOGGLE_MODAL, TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
-	TRIGGER_EDITING_ITEM, TRIGGER_FOCUS, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_RESIZE_VIEWPORT,
+	TRIGGER_EDITING_ITEM, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_RESIZE_VIEWPORT,
 	TRIGGER_SEARCH_MODE, TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, } from
 	'../constants/actions';
 import { navigate, navigateExitSearch } from './';
@@ -101,10 +101,6 @@ const dismissErrorByTag = tag => {
 	return { type: DISMISS_ERROR, errorTag: tag };
 }
 
-const triggerFocus = (section, isOn) => {
-	return { type: TRIGGER_FOCUS, section, isOn }	;
-}
-
 const triggerHighlightedCollections = isOn => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -154,6 +150,5 @@ const currentTriggerSearchMode = () => {
 export {
 	currentTriggerSearchMode, dismissError, dismissErrorByTag, resetQuery, toggleAdvancedSearch,
 	toggleHideAutomaticTags, toggleModal, toggleNavbar, toggleSelectMode, toggleTagSelector,
-	toggleTouchTagSelector, toggleTransitions, triggerEditingItem, triggerFocus,
-	triggerHighlightedCollections, triggerResizeViewport, triggerSearchMode, triggerSelectMode,
-	triggerUserTypeChange, };
+	toggleTouchTagSelector, toggleTransitions, triggerEditingItem, triggerHighlightedCollections,
+	triggerResizeViewport, triggerSearchMode, triggerSelectMode, triggerUserTypeChange, };

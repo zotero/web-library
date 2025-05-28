@@ -9,7 +9,7 @@ import { noop, pick } from 'web-common/utils';
 import CollectionTree from '../component/libraries/collection-tree';
 import cx from 'classnames';
 import Node from './libraries/node';
-import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate, triggerFocus } from '../actions';
+import { createAttachmentsFromDropped, createCollection, fetchAllCollections, fetchLibrarySettings, navigate } from '../actions';
 import { get, stopPropagation, getUniqueId } from '../utils';
 import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS } from '../constants/picker-modes';
 
@@ -26,7 +26,6 @@ const LibraryNode = props => {
 	const hasChecked = totalResults !== null;
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c);
-	const isFocusedAndSelected = useSelector(state => isSelected && state.current.isCollectionsTreeFocused);
 	const pickerPicksCollection = [PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_COLLECTION].includes(pickerMode);
 
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
@@ -93,7 +92,6 @@ const LibraryNode = props => {
 				'my-library': isMyLibrary,
 				'open': isOpen && !shouldShowSpinner,
 				'selected': isSelected,
-				'focused': isFocusedAndSelected,
 				'picked': pickerMode && isPicked,
 				'picker-skip': isPickerSkip,
 				'busy': shouldShowSpinner
@@ -270,20 +268,12 @@ const Libraries = forwardRef((props, ref) => {
 	const handleFocus = useCallback(ev => {
 		// fix #335: prevent scrollbar "jumping" to the top when using scrollbar handle to scroll
 		let preventScroll = mouseDownTracker.current;
-		const hasChangedFocused = receiveFocus(ev, { preventScroll });
-		if (hasChangedFocused) {
-			dispatch(triggerFocus('collections-tree', true));
-		}
-	}, [dispatch, receiveFocus]);
+		receiveFocus(ev, { preventScroll });
+	}, [receiveFocus]);
 
 	const handleBlur = useCallback(ev => {
-		const hasChangedFocused = receiveBlur(ev);
-		const closestRootSkipDropdown = ev?.relatedTarget?.closest?.('[data-focus-root]:not(.dropdown-menu)');
-		// ignore blur within or to the "three dots" menu
-		if (hasChangedFocused && closestRootSkipDropdown !== treeRef.current) {
-			dispatch(triggerFocus('collections-tree', false));
-		}
-	}, [dispatch, receiveBlur]);
+		receiveBlur(ev);
+	}, [receiveBlur]);
 
 	const handleGlobalMouseDown = useCallback(() => {
 		mouseDownTracker.current = true;

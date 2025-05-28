@@ -12,7 +12,6 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 	const dispatch = useDispatch();
 	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const previousSelectedItemKeys = usePrevious(selectedItemKeys);
-	const isItemsTableFocused = useSelector(state => state.current.isItemsTableFocused);
 
 	const viewportCount = useSelector(state => state.current.viewportCount);
 	const prevViewportCount = usePrevious(viewportCount);
@@ -55,7 +54,7 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 				listRef.current.scrollToItem(itemKeyIndex, 'smart');
 			}
 		}
-	}, [selectedItemKeys, isItemsTableFocused, keys, listRef, previousSelectedItemKeys]);
+	}, [selectedItemKeys, keys, listRef, previousSelectedItemKeys]);
 	return null;
 });
 
