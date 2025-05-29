@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { getAncestors, makeChildMap } from '../common/collection';
 import { getItemsSource } from '../common/state';
+import { itemsSourceLabel } from '../common/format';
+import { PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../constants/picker-modes';
 
 const defaultNavState = {
 	path: [],
@@ -12,7 +14,7 @@ const defaultNavState = {
 	view: 'libraries'
 };
 
-const useNavigationState = (baseState = {}) => {
+const useNavigationState = (pickerMode, baseState = {}) => {
 	const [navState, setNavState] = useState({
 		...defaultNavState,
 		...baseState,
@@ -54,7 +56,8 @@ const useNavigationState = (baseState = {}) => {
 					// target collection not in the path so append
 					const hasChildren = collection in childMap;
 					newPath = [...navState.path];
-					if(hasChildren) {
+					// Picker opens a colection if it has children or it uses "Items" node (when picking items)
+					if (hasChildren || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode)) {
 						newPath.push(collection);
 					}
 				}
@@ -76,7 +79,7 @@ const useNavigationState = (baseState = {}) => {
 			}
 		}
 		setNavState({ ...nextNavState, itemsSource: getItemsSource({ ...nextNavState}) });
-	}, [childMap, navState.path]);
+	}, [childMap, navState.path, pickerMode]);
 
 	const resetNavState = useCallback(() => setNavState(defaultNavState), []);
 
@@ -87,6 +90,15 @@ const useNavigationState = (baseState = {}) => {
 			label: collectionsDataInSelectedLibrary[key].name,
 			path: { library: navState.libraryKey, collection: key },
 		}));
+
+		if (navState.view === 'item-list') {
+			thp.push({
+				key: 'items',
+				type: 'items',
+				path: { library: navState.libraryKey, collection: navState.collectionKey, view: 'item-list' },
+				label: itemsSourceLabel(navState.itemsSource)
+			});
+		}
 
 		if(navState.view !== 'libraries') {
 			const libraryConfig = libraries.find(l => l.key === navState.libraryKey) || {};
@@ -106,7 +118,7 @@ const useNavigationState = (baseState = {}) => {
 		});
 
 		return thp;
-	}, [collectionsDataInSelectedLibrary, libraries, navState.path, navState.view, navState.libraryKey]);
+	}, [navState, collectionsDataInSelectedLibrary, libraries]);
 
 	// generate path from collectionKey for the initial state
 	useEffect(() => {

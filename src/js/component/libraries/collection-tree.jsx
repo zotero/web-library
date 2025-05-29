@@ -636,7 +636,7 @@ const CollectionNode = memo(props => {
 		return onOpen(ev);
 	}, [isDisabled, onOpen])
 
-	const usesItemsNode = isSingleColumn || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
+	const usesItemsNode = (!pickerMode && isSingleColumn) || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 
 	const collections = allCollections.filter(c => c.parentCollection === collection.key );
 	const hasSubCollections = collections.length > 0;
@@ -732,7 +732,7 @@ const CollectionNode = memo(props => {
 					pickerPick={pickerPick}
 					picked={picked}
 				/>
-			) : pickerPicksCollection ? <div className="picker-checkbox-placeholder" /> : null}
+			) : (pickerPicksCollection && isTouchOrSmall) ? <div className="picker-checkbox-placeholder" /> : null}
 			<Icon type={ hasSubCollections ? '28/folders' : '28/folder' } className="touch" width="28" height="28" />
 			<Icon
 				type={ '16/folder' }
@@ -874,7 +874,7 @@ const CollectionTree = props => {
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
 	const isCurrentLibrary = parentLibraryKey === currentLibraryKey;
-	const usesItemsNode = isSingleColumn || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
+	const usesItemsNode = (!pickerMode && isSingleColumn) || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
 	const path = useMemo(

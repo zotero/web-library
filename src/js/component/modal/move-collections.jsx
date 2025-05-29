@@ -24,7 +24,7 @@ const MoveCollectionsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [isBusy, setIsBusy] = useState(false);
 	const [picked, setPicked] = useState([]);
-	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
+	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_SINGLE_COLLECTION);
 
 	// @TODO: to prevent re-renders we memoize as much of a "device" as TouchHeader requires.
 	// 		  remove this once TouchHeader is rewritten to use useSelector instead
