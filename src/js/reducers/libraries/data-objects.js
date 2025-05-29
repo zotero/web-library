@@ -143,7 +143,8 @@ const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, ta
 				...state,
 				...indexByKey(Object.values(action.items), 'key', item => (processItem({
 					...state[item.key],
-					...item
+					...item,
+					version: action.response.getVersion() || state[item.key].version,
 				}, { meta, tagColors })))
 			}
 		case RECEIVE_CHILD_ITEMS:
