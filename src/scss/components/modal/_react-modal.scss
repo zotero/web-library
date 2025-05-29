@@ -242,8 +242,8 @@
 		// On touch devices, the picker inside the modal uses the small-screen behavior at all screen sizes
 		@include touch-or-bp-down(sm) {
 			.sidebar {
-				bottom: 0;
-				height: 100%;
+				bottom: 44px;
+				height: calc(100% - 88px);
 				left: 0;
 				overflow: visible;
 				position: absolute;
@@ -252,8 +252,9 @@
 			}
 
 			.items {
+				height: calc(100% - 88px);
 				background-color: var(--color-shade-0);
-				bottom: 0;
+				bottom: 44px;
 				left: 0;
 				position: absolute;
 				right: 0;
