@@ -16,7 +16,9 @@ import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 
 const ItemsList = memo(props => {
-	const { isSearchModeTransitioning, libraryKey, collectionKey, itemsSource, isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
+	const { isSearchModeTransitioning, libraryKey, collectionKey, itemsSource,
+		isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode,
+		selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -158,6 +160,14 @@ ItemsList.propTypes = {
 	libraryKey: PropTypes.string,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
 	view: PropTypes.string,
+	pickerNavigate: PropTypes.func,
+	pickerPick: PropTypes.func,
+	pickerMode: PropTypes.string,
+	isTrash: PropTypes.bool,
+	isMyPublications: PropTypes.bool,
+	search: PropTypes.string,
+	qmode: PropTypes.string,
+	tags: PropTypes.array
 };
 
 export default memo(ItemsList);

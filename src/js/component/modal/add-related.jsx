@@ -137,9 +137,9 @@ const AddRelatedModal = () => {
 				<Fragment>
 					<div className="modal-footer justify-content-end">
 						<Button
-								disabled={navState.itemKeys.length === 0}
+							disabled={navState.itemKeys.length === 0}
 							className="btn-link"
-								onClick={handleSelectItems}
+							onClick={handleSelectItems}
 						>
 							Add
 						</Button>

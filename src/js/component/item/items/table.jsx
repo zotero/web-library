@@ -26,7 +26,9 @@ import Table from '../../common/table';
 
 
 const ItemsTable = props => {
-	const { libraryKey, collectionKey, itemsSource, pickerMode = false, pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false, selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
+	const { libraryKey, collectionKey, itemsSource, pickerMode = false,
+		pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false,
+		selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
@@ -361,9 +363,17 @@ const ItemsTable = props => {
 ItemsTable.propTypes = {
 	collectionKey: PropTypes.string,
 	isAdvancedSearch: PropTypes.bool,
+	isMyPublications: PropTypes.bool,
+	isTrash: PropTypes.bool,
 	itemsSource: PropTypes.string.isRequired,
 	libraryKey: PropTypes.string,
+	pickerMode: PropTypes.number,
+	pickerNavigate: PropTypes.func,
+	pickerPick: PropTypes.func,
+	qmode: PropTypes.string,
+	search: PropTypes.string,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
+	tags: PropTypes.array,
 };
 
 export default memo(ItemsTable);

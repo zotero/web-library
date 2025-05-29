@@ -1,6 +1,5 @@
 import { Fragment, memo } from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import { useSelector } from 'react-redux';
 
 import ItemsTableToolbar from 'component/item/items/toolbar';
