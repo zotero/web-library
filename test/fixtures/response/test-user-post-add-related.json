@@ -1,0 +1,175 @@
+{
+    "successful": {
+        "0": {
+            "key": "66LW9WRP",
+            "version": 366,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                    "type": "text/html"
+                },
+                "attachment": {
+                    "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                    "type": "application/json",
+                    "attachmentType": "text/html"
+                }
+            },
+            "meta": {
+                "creatorSummary": "Sanders",
+                "parsedDate": "1999",
+                "numChildren": 1
+            },
+            "data": {
+                "key": "66LW9WRP",
+                "version": 366,
+                "itemType": "book",
+                "title": "Understanding dogs",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Clinton",
+                        "lastName": "Sanders"
+                    }
+                ],
+                "abstractNote": "",
+                "series": "",
+                "seriesNumber": "",
+                "volume": "39",
+                "numberOfVolumes": "",
+                "edition": "",
+                "place": "",
+                "publisher": "Temple University Press",
+                "date": "1999",
+                "numPages": "",
+                "language": "",
+                "ISBN": "",
+                "shortTitle": "",
+                "url": "",
+                "accessDate": "",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Google Scholar",
+                "callNumber": "",
+                "rights": "",
+                "extra": "",
+                "tags": [],
+                "collections": [
+                    "WTTJ2J56"
+                ],
+                "relations": {
+                    "dc:relation": "http://zotero.org/users/1/items/VR82JUX8"
+                },
+                "dateAdded": "2023-01-13T10:52:40Z",
+                "dateModified": "2023-01-13T10:52:40Z"
+            }
+        },
+        "1": {
+            "key": "PEZF7SPI",
+            "version": 366,
+            "library": {
+                "type": "user",
+                "id": 1,
+                "name": "testuser",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/testuser",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "links": {
+                "self": {
+                    "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                    "type": "application/json"
+                },
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                    "type": "text/html"
+                },
+                "attachment": {
+                    "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                    "type": "application/json",
+                    "attachmentType": "application/pdf",
+                    "attachmentSize": 3221470
+                }
+            },
+            "meta": {
+                "creatorSummary": "Miller and Murphy",
+                "parsedDate": "1995",
+                "numChildren": 1
+            },
+            "data": {
+                "key": "PEZF7SPI",
+                "version": 366,
+                "itemType": "journalArticle",
+                "title": "Vision in dogs",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "Paul E.",
+                        "lastName": "Miller"
+                    },
+                    {
+                        "creatorType": "author",
+                        "firstName": "Christopher J.",
+                        "lastName": "Murphy"
+                    }
+                ],
+                "abstractNote": "",
+                "publicationTitle": "Journal-American Veterinary Medical Association",
+                "volume": "207",
+                "issue": "",
+                "pages": "1623–1634",
+                "date": "1995",
+                "series": "",
+                "seriesTitle": "",
+                "seriesText": "",
+                "journalAbbreviation": "",
+                "language": "",
+                "DOI": "",
+                "ISSN": "",
+                "shortTitle": "",
+                "url": "",
+                "accessDate": "",
+                "archive": "",
+                "archiveLocation": "",
+                "libraryCatalog": "Google Scholar",
+                "callNumber": "",
+                "rights": "",
+                "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+                "tags": [],
+                "collections": [
+                    "WTTJ2J56"
+                ],
+                "relations": {
+                    "dc:relation": "http://zotero.org/users/1/items/VR82JUX8"
+                },
+                "dateAdded": "2023-01-13T10:52:40Z",
+                "dateModified": "2023-01-13T10:52:40Z"
+            }
+        }
+    },
+    "success": {
+        "0": "66LW9WRP",
+        "1": "PEZF7SPI"
+    },
+    "unchanged": {
+        "2": "VR82JUX8"
+    },
+    "failed": {}
+}
