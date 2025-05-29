@@ -112,7 +112,7 @@ const navigateSelectItemsKeyboard = (direction, magnitude, isMultiSelect) => {
 		}
 
 		dispatch(navigate({ items: nextKeys, noteKey: null, attachmentKey: null }));
-		return cursorIndex;
+		return { nextKeys, cursorIndex };
 	}
 }
 

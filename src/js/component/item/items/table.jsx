@@ -21,6 +21,7 @@ import { useItemsState } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
+import { selectItemsKeyboard } from '../../../common/selection';
 import Table from '../../common/table';
 
 
@@ -147,20 +148,30 @@ const ItemsTable = props => {
 	const handleKeyDown = useCallback(async ev => {
 		var direction, magnitude = 1;
 		if (isEmbedded && isTriggerEvent(ev)) {
-			dispatch(navigate({ view: 'item-details ' }));
+			dispatch(navigate({ view: 'item-details' }));
 			return;
 		} else if (ev.key === 'ArrowUp') {
 			direction = -1;
 		} else if (ev.key === 'ArrowDown') {
 			direction = 1;
-		} else if (isDelKeyDown(ev)) {
+		} else if (!pickerMode && isDelKeyDown(ev)) {
 			dispatch(currentTrashOrDelete());
 			dispatch(navigate({ items: [], noteKey: null, attachmentKey: null }));
 			return;
 		} else if (ev.key === 'Home') {
-			dispatch(selectFirstItem());
+			if(pickerMode && keys.length) {
+				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], view: 'item-list' });
+			} else {
+				dispatch(selectFirstItem());
+			}
+			return;
 		} else if (ev.key === 'End') {
-			dispatch(selectLastItem());
+			if(pickerMode && keys.length) {
+				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[keys.length - 1]], view: 'item-list' });
+			} else {
+				dispatch(selectLastItem());
+			}
+			return;
 		} else if (ev.key === 'PageUp' && outerRef.current) {
 			direction = -1;
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROW_HEIGHT)
@@ -169,13 +180,13 @@ const ItemsTable = props => {
 			direction = 1;
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROW_HEIGHT);
 			ev.preventDefault();
-		} else if (Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
+		} else if (!pickerMode && Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
 			dispatch(currentToggleTagByIndex(parseInt(ev.key) - 1));
 			return;
-		} else if (ev.key === '0') {
+		} else if (!pickerMode && ev.key === '0') {
 			dispatch(currentRemoveColoredTags());
 			return;
-		} else if (isHighlightKeyDown(ev)) {
+		} else if (!pickerMode && isHighlightKeyDown(ev)) {
 			dispatch(triggerHighlightedCollections(true));
 			return;
 		}
@@ -186,19 +197,25 @@ const ItemsTable = props => {
 
 		ev.preventDefault();
 
-		const cursorIndex = await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
+		const { nextKeys, cursorIndex } = pickerMode ?
+			selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift'), { keys, selectedItemKeys }) :
+			await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
+
+		if (pickerMode) {
+			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, view: 'item-list' });
+		}
 
 		if (cursorIndex === -1 && document.activeElement?.closest('.items-table-head') !== headerRef.current) {
 			focusBySelector('.items-table-head');
 		} else {
 			focusBySelector(`[data-index="${cursorIndex}"]`);
 		}
-	}, [dispatch, isEmbedded, focusBySelector]);
+	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, focusBySelector]);
 
 	const handleTableFocus = useCallback(async ev => {
 		const hasChangedFocused = receiveFocus(ev);
 		if (hasChangedFocused) {
-			if (pickerMode && selectedItemKeys.length === 0 && keys.length && tableRef.current) {
+			if (pickerMode && !selectedItemKeys?.length && keys?.length && tableRef.current) {
 				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], view: 'item-list' });
 			} else if(!pickerMode) {
 				const index = await dispatch(selectFirstItem(true));
