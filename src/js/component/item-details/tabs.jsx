@@ -329,6 +329,7 @@ const ItemDetailsTabs = () => {
 								key={ 'related-' + item.key }
 								id={ `${id}-related` }
 								isActive={ activeTab === 'related' }
+								isReadOnly={ isReadOnly }
 							/>
 						) }
 					</Fragment>
