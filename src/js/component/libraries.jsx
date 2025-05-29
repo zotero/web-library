@@ -120,7 +120,7 @@ const LibraryNode = props => {
 					onMouseDown={stopPropagation}
 					onClick={stopPropagation}
 				/>
-			) : pickerPicksCollection ? <div className="picker-checkbox-placeholder" /> : null}
+			) : (pickerPicksCollection && pickerAllowRoot && isTouchOrSmall) ? <div className="picker-checkbox-placeholder" /> : null}
 			{ isReadOnly ? (
 				<Fragment>
 					<Icon type="32/library-read-only" className="touch" width="32" height="32" />

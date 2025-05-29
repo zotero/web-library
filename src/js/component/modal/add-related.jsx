@@ -28,7 +28,7 @@ const AddRelatedModal = () => {
 	);
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState({ libraryKey, collectionKey, view: 'item-list' });
+	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_MULTIPLE_ITEMS, { libraryKey, collectionKey, view: 'item-list' });
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 
 	const sharedProps = {

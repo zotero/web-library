@@ -32,7 +32,7 @@ const AddItemsToCollectionsModal = () => {
 	}) : false;
 
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const {navState, touchHeaderPath, handleNavigation, resetNavState} = useNavigationState();
+	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_SINGLE_COLLECTION);
 
 	const [isBusy, setBusy] = useState(!isItemsReady);
 	const [picked, setPicked] = useState([]);
