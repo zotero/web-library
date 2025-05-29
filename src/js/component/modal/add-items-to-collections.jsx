@@ -117,6 +117,7 @@ const AddItemsToCollectionsModal = () => {
 						className="darker"
 						path={ touchHeaderPath }
 						onNavigate={ handleNavigation }
+						navigationName="Picker"
 					/>
 				) : (
 					<Fragment>

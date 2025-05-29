@@ -81,6 +81,7 @@ const MoveCollectionsModal = () => {
 					device={ device }
 					path={ touchHeaderPath }
 					onNavigate={ handleNavigation }
+					navigationName="Picker"
 				/>
 			) : (
 			<Fragment>

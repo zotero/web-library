@@ -14,7 +14,7 @@ import CollectionTrashOptions from './touch-header/collection-trash-options';
 import { Toolbar, ToolGroup } from './ui/toolbars';
 
 const TouchHeader = props => {
-	const { className, collectionKey, collectionHasChildren, isModal, isSelectMode,
+	const { className, collectionKey, collectionHasChildren, isModal, isSelectMode, navigationName,
 		onNavigate, onSelectModeToggle, path = [], shouldHideNav, shouldIncludeEditButton,
 		shouldIncludeItemListOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
 		shouldIncludeCollectionTrashOptions, selectedItemsCount } = props;
@@ -44,6 +44,7 @@ const TouchHeader = props => {
 							<TouchNavigation
 								path={ path }
 								onNavigate={ onNavigate }
+								navigationName={ navigationName }
 							/>
 						</div>
 					)
@@ -118,6 +119,7 @@ TouchHeader.propTypes = {
 	isEditing: PropTypes.bool,
 	isModal: PropTypes.bool,
 	isSelectMode: PropTypes.bool,
+	navigationName: PropTypes.string,
 	onNavigate: PropTypes.func,
 	onSelectModeToggle: PropTypes.func,
 	path: PropTypes.array,

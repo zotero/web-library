@@ -79,6 +79,7 @@ const AddRelatedModal = () => {
 						className="darker"
 						path={touchHeaderPath}
 						onNavigate={handleNavigation}
+						navigationName="Picker"
 					/>
 				) : (
 					<Fragment>
