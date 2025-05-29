@@ -141,6 +141,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 
 	var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode, shouldIncludeCollectionTrashOptions = false;
+	let navigationName = '';
 
 	switch(variant) {
 		case TouchHeaderWrap.variants.MOBILE:
@@ -159,6 +160,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 				!shouldIncludeItemListOptions && !shouldHandleSelectMode &&
 				!isCollection; // collection options (e.g. "New Collection") are displayed at library and collection level. `isCollection` is true when current view is data object details and data object is a collection
 			shouldIncludeCollectionTrashOptions = isCollection && !isReadOnly && !isSelectMode && isTrash;
+			navigationName = 'Main';
 		break;
 		case TouchHeaderWrap.variants.NAVIGATION:
 			touchHeaderPath = [ROOT_NODE, ...path];
@@ -166,11 +168,13 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 				touchHeaderPath.pop();
 			}
 			shouldIncludeCollectionOptions = !isReadOnly;
+			navigationName = 'Collections';
 		break;
 		case TouchHeaderWrap.variants.SOURCE:
 			touchHeaderPath = [ selectedNode ];
 			shouldIncludeItemListOptions = !isSelectMode;
 			shouldHandleSelectMode = true;
+			navigationName = 'Items';
 		break;
 		case TouchHeaderWrap.variants.SOURCE_AND_ITEM:
 			touchHeaderPath = [ selectedNode, itemNode, drilldownNode ];
@@ -178,11 +182,13 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 			shouldHandleSelectMode = true;
 			shouldIncludeEditButton = !isCollection && !isReadOnly && !isSelectMode && !!item;
 			shouldIncludeCollectionTrashOptions = isCollection && !isReadOnly && !isSelectMode && isTrash;
+			navigationName = 'Items';
 		break;
 		case TouchHeaderWrap.variants.ITEM:
 			touchHeaderPath = [ itemNode, drilldownNode ];
 			shouldIncludeEditButton = !isCollection && !isReadOnly && !isSelectMode && !!item;
 			shouldIncludeCollectionTrashOptions = isCollection && !isReadOnly && !isSelectMode && isTrash;
+			navigationName = 'Item Details';
 		break;
 	}
 
@@ -213,6 +219,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 			isEditing={ isEditing }
 			isModal={ false }
 			isSelectMode={ isSelectMode }
+			navigationName={ navigationName }
 			onNavigate={ onNavigate }
 			onSelectModeToggle={ onSelectModeToggle }
 			shouldIncludeEditButton={ shouldIncludeEditButton }

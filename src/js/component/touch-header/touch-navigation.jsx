@@ -56,7 +56,7 @@ const mapPathToHeaders = (path, previous) => {
 }
 
 const TouchNavigation = props => {
-	const { onNavigate = noop, path } = props;
+	const { navigationName = "Touch Navigation", onNavigate = noop, path } = props;
 	const iconRef = useRef(null);
 	const prevPath = usePrevious(path);
 	const [headers, setHeaders] = useState(mapPathToHeaders(path, EMPTY));
@@ -88,7 +88,7 @@ const TouchNavigation = props => {
 	}, [headers, path, prevPath]);
 
 	return (
-		<nav className="touch-nav">
+		<nav className="touch-nav" aria-label={ navigationName }>
 			<CSSTransition
 				in={ hasPrevious }
 				timeout={ 250 }
@@ -129,6 +129,7 @@ const TouchNavigation = props => {
 }
 
 TouchNavigation.propTypes = {
+	navigationName: PropTypes.string,
 	onNavigate: PropTypes.func,
 	path: PropTypes.array,
 }
