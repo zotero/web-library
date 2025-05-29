@@ -623,7 +623,7 @@ const CollectionNode = memo(props => {
 	}, [collection, dispatch, parentLibraryKey]);
 
 	const handleNodeKeyDown = useCallback(ev => {
-		if (pickerMode && !isPickerSkip && isTriggerEvent(ev)) {
+		if ([PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS].includes(pickerMode) && !isPickerSkip && isTriggerEvent(ev)) {
 			pickerPick({ collectionKey: collection.key, libraryKey: parentLibraryKey });
 			ev.preventDefault();
 		}
