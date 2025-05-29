@@ -853,7 +853,9 @@ CollectionsNodeList.propTypes = {
 CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
-	const { onNodeSelected = noop, parentLibraryKey, libraryKey: currentLibraryKey, collectionKey: currentCollectionKey, itemsSource, isTrash, isMyPublications, pickerMode, pickerNavigate = noop, ...rest } = props;
+	const { onNodeSelected = noop, parentLibraryKey, libraryKey: currentLibraryKey,
+		collectionKey: currentCollectionKey, itemsSource, isTrash, isMyPublications,
+		pickerMode, pickerNavigate = noop, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
 	const dataObjects = useSelector(state => state.libraries[parentLibraryKey]?.dataObjects);
@@ -1053,9 +1055,14 @@ const CollectionTree = props => {
 };
 
 CollectionTree.propTypes = {
-	pickerMode: PropTypes.number,
+	collectionKey: PropTypes.string,
+	isMyPublications: PropTypes.bool,
+	isTrash: PropTypes.bool,
+	itemsSource: PropTypes.string,
+	libraryKey: PropTypes.string,
 	onNodeSelected: PropTypes.func,
 	parentLibraryKey: PropTypes.string,
+	pickerMode: PropTypes.number,
 	pickerNavigate: PropTypes.func,
 };
 

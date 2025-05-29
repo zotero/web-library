@@ -176,7 +176,8 @@ LibraryNode.propTypes = {
 };
 
 const Libraries = forwardRef((props, ref) => {
-	const { excludeLibraries, includeLibraries, pickerMode, libraryKey, collectionKey, itemsSource, view } = props;
+	const { excludeLibraries, includeLibraries, pickerMode, libraryKey,
+		collectionKey, itemsSource, view } = props;
 	const dispatch = useDispatch();
 	const libraries = useSelector(state => state.config.libraries);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -394,10 +395,14 @@ const Libraries = forwardRef((props, ref) => {
 Libraries.displayName = 'Libraries';
 
 Libraries.propTypes = {
+	collectionKey: PropTypes.string,
 	excludeLibraries: PropTypes.array,
 	includeLibraries: PropTypes.array,
+	itemsSource: PropTypes.string,
+	libraryKey: PropTypes.string,
 	pickerMode: PropTypes.number,
 	pickerState: PropTypes.object,
+	view: PropTypes.string,
 }
 
 export default memo(Libraries);
