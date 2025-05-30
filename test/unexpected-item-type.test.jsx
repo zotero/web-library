@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { findByRole, getByRole, screen, waitFor } from '@testing-library/react'
+import { findByRole, getAllByRole, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -93,7 +93,7 @@ describe('Unexpected Item Types', () => {
 		await waitFor(() => expect(itemsRequested).toBe(true));
 		const grid = await screen.findByRole('grid', { name: 'items' });
 		const row = await findByRole(grid, 'row', { name: '' });
-		const icon = getByRole(row, 'img');
+		const icon = getAllByRole(row, 'img')[0];
 
 		expect(icon).toHaveClass('icon icon-document');
 

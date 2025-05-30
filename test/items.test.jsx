@@ -380,8 +380,8 @@ describe('Items', () => {
 		await waitFor(() => expect(searchBox).toHaveValue('pathfinding'));
 
 		const row = screen.getByRole('row', { name: 'A*-based pathfinding in modern computer games' });
-		const violetSwatch = getByRole(row, 'img', { name: 'violet circle icon' }); // position 1
-		const greenSwatch = getByRole(row, 'img', { name: 'green circle icon' }); // position 2
+		const violetSwatch = getAllByRole(row, 'img', { name: 'violet circle icon' })[0]; // position 1
+		const greenSwatch = getAllByRole(row, 'img', { name: 'green circle icon' })[0]; // position 2
 
 		// https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition#node.document_position_following
 		// otherNode follows the node, i.e. greenSwatch follows violetSwatch

@@ -114,9 +114,17 @@ const contexts = {
 	},
 };
 
-export const singleColumnContexts = [
+export const singleColumnMobileContexts = [
 	'iphone-emulator',
 	'pixel-7-chrome',
+];
+
+export const twoColumnMobileContexts = [
+	'ipad-emulator',
+];
+
+export const threeColumnMobileContexts = [
+	'ipad-pro-landscape-emulator',
 ];
 
 export const mobileContexts = [

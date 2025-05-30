@@ -92,3 +92,7 @@ export const getAccessibleLabel = (element) => {
 
 	return element.textContent;
 }
+
+export const wait = (ms = 0) => new Promise(resolve => {
+	setTimeout(resolve, ms);
+});

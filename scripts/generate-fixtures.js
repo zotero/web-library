@@ -23,6 +23,11 @@ const URL = 'http://localhost:8001/';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const NPMST_TIMEOUT = 120000; // allow for the worst-case scenario where submodules must be built
 
+const clickEditBtn = async (page) => {
+	const editBtn = page.getByRole('button', { name: 'Edit' });
+	await editBtn.click();
+};
+
 const fixtures = [
 	[`${URL}groups/5119976/animals/items/X9WEHDAN/item-list`, 'desktop-test-group-item-view'],
 	[`${URL}testuser/collections/5PB9WKTC/items/MNRM7HER/collection`, 'desktop-test-user-formatting-collection'],
@@ -38,6 +43,7 @@ const fixtures = [
 	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/UMPPCXU4`, 'desktop-test-user-top-level-attachment-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
+	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view-edit', clickEditBtn],
 	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view'],
 	[`${URL}testuser/trash/items/Z7B4P73I/item-details`, 'mobile-test-user-trash-collection-details-view'],
 ];
@@ -148,7 +154,7 @@ async function checkOrStartServer() {
 	}
 }
 
-async function makeFixture(stateURL, name) {
+async function makeFixture(stateURL, name, callback) {
 	console.log(`Generating state fixture for "${name}"`);
 	const browser = await chromium.launch();
 	const contextConfig = name.startsWith('mobile') ?
@@ -197,6 +203,9 @@ async function makeFixture(stateURL, name) {
 		process.stdout.cursorTo(0);
 	}
 
+	if(callback) {
+		await callback(page);
+	}
 
 	const stateProcessSymbolsString = stateProcessSymbols.toString();
 	const stateToJSONString = stateToJSON.toString();
@@ -228,9 +237,9 @@ async function makeFixture(stateURL, name) {
 	var currentFixtureName;
 	try {
 		await checkOrStartServer();
-		for (const [url, name] of fixtures) {
+		for (const [url, name, ...rest] of fixtures) {
 			currentFixtureName = name;
-			await makeFixture(url, name);
+			await makeFixture(url, name, rest.length > 0 ? rest[0] : undefined);
 		}
 	} catch (e) {
 		if (currentFixtureName) {
