@@ -78,6 +78,7 @@ const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup)
 			}
 		}
 	}
+	return state;
 }
 
 const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, tagColors }) => {
