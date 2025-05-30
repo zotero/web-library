@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import { get, unescapeHTML } from '../utils';
+import { unescapeHTML } from '../utils';
 
 const TitleUpdater = () => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -9,11 +9,11 @@ const TitleUpdater = () => {
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
-	const collectionName = useSelector(state => get(state.libraries, [libraryKey, 'collections', collectionKey], {}).name);
+	const collectionName = useSelector(state => state.libraries?.dataObjects?.[collectionKey]?.name);
 	const selectedItemKey = useSelector(state => state.current.itemKey);
 	const selectedItemsKeys = useSelector(state => state.current.itemKeys, shallowEqual);
-	const item = useSelector(state => get(state, ['libraries', libraryKey, 'items', selectedItemKey], null));
-	const attachmentItem = useSelector(state => get(state, ['libraries', libraryKey, 'items', attachmentKey], null));
+	const item = useSelector(state => state.libraries[libraryKey]?.dataObjects?.[selectedItemKey]);
+	const attachmentItem = useSelector(state => state.libraries[libraryKey]?.dataObjects?.[attachmentKey]);
 
 	const debouncedNotify = useDebouncedCallback(() => {
 		var title = ['Zotero'];
