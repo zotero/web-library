@@ -73,7 +73,7 @@ const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 				ref={fileInputRef}
 				tabIndex={-1}
 				type="file"
-				title="Import From a File (BiBTeX, RIS, etc.)"
+				title="Import from a File (BibTeX, RIS, etc.)"
 			/>
 			<Button
 				disabled={disabled}
@@ -81,7 +81,7 @@ const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 				onClick={handleImportClick}
 				onKeyDown={handleKeyDown}
 				tabIndex={tabIndex}
-				title="Import From a File (BiBTeX, RIS, etc.)"
+				title="Import from a File (BibTeX, RIS, etc.)"
 			>
 				<Icon type="16/import" width="16" height="16" />
 			</Button>
