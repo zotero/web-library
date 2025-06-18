@@ -14,7 +14,7 @@ const modes = {
 	everything: "Title, Creator, Year + Full-Text Content"
 };
 
-const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
+const SearchDropdown = memo(({ currentMode, modes, onKeyDown, onSelectMode }) => (
 	<UncontrolledDropdown>
 		<DropdownToggle
 			color={ null }
@@ -30,12 +30,14 @@ const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
 				data-qmode="titleCreatorYear"
 				onClick={ onSelectMode }
 			>
+				<span aria-hidden="true" role="presentation" className="tick">{currentMode === 'titleCreatorYear' ? "✓" : ""}</span>
 				{ modes['titleCreatorYear'] }
 			</DropdownItem>
 			<DropdownItem
 				data-qmode="everything"
 				onClick={ onSelectMode }
 			>
+				<span aria-hidden="true" role="presentation" className="tick">{currentMode === 'everything' ? "✓" : ""}</span>
 				{ modes['everything'] }
 			</DropdownItem>
 		</DropdownMenu>
@@ -45,6 +47,7 @@ const SearchDropdown = memo(({ modes, onKeyDown, onSelectMode }) => (
 SearchDropdown.displayName = 'SearchDropdown';
 
 SearchDropdown.propTypes = {
+	currentMode: PropTypes.string.isRequired,
 	modes: PropTypes.object,
 	onSelectMode: PropTypes.func,
 	onKeyDown: PropTypes.func,
@@ -189,6 +192,7 @@ const Search = props => {
 	return (
 		<div className="search input-group">
 			<SearchDropdown
+				currentMode={ qmodeValue }
 				modes={ modes }
 				onKeyDown={ handleKeyDown }
 				onSelectMode={ handleSelectMode }
