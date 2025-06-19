@@ -23,6 +23,10 @@
 		background: $navbar-bg;
 	}
 
+	.nav-link {
+		white-space: nowrap;
+	}
+
 	.navbar-brand,
 	.search-toggle,
 	.search,
@@ -56,6 +60,7 @@
 
 	.main-nav {
 		display: none;
+		padding-left: $space-sm;
 
 		@media (min-width: $navbar-breakpoint) {
 			display: flex;
@@ -100,9 +105,9 @@
 	}
 
 	.input-group.search {
-		flex: 0 0 auto;
+		flex: 1 1 auto;
 		align-self: center;
-		width: $search-width;
+		max-width: $search-width;
 		font-size: 14px;
 		line-height: 20px; // Special height, like Upgrade button on zotero.org
 		margin-left: $navbar-padding-x;
