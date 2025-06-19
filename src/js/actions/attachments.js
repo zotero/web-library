@@ -111,9 +111,8 @@ const pickBestAttachmentItemAction = attachmentItemKey => {
 
 		const isFile = item && item.linkMode && item.linkMode.startsWith('imported') && item[Symbol.for('links')].enclosure;
 		const isLink = item && item.linkMode && item.linkMode === 'linked_url';
-		const hasLink = isFile || isLink;
 
-		if(hasLink) {
+		if (isFile) {
 			if (Object.keys(READER_CONTENT_TYPES).includes(item.contentType)) {
 				const readerPath = makePath(state.config, {
 					attachmentKey: null,
@@ -131,6 +130,13 @@ const pickBestAttachmentItemAction = attachmentItemKey => {
 				return window.open(readerPath);
 			} else {
 				return openDelayedURL(dispatch(getAttachmentUrl(attachmentItemKey)));
+			}
+		}
+
+		if(isLink) {
+			const url = cleanURL(item.url, true);
+			if (url) {
+				window.open(url);
 			}
 		}
 

@@ -46,7 +46,7 @@ const useItemsActions = () => {
 	const selectedCount = useSelector(state => state.current.itemKeys.length);
 
 	const attachmentContentType = item?.itemType === 'attachment' ? item.contentType : item?.[Symbol.for('links')]?.attachment?.attachmentType ?? null;
-	const isViewFile = attachmentContentType !== null;
+	const isViewFile = !!attachmentContentType;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
 	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
