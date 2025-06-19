@@ -584,9 +584,10 @@ const Reader = () => {
 	}, [fetchSettings, state.isRouteConfirmed, state.settingsStatus]);
 
 	useEffect(() => {
-		const isCompatible = (attachmentItem?.itemType === 'attachment' && Object.keys(READER_CONTENT_TYPES).includes(attachmentItem?.contentType));
+		// item is reader compatible if it is an attachment, has a supported content type, and has an enclosure link
+		const isCompatible = (attachmentItem?.itemType === 'attachment' && Object.keys(READER_CONTENT_TYPES).includes(attachmentItem?.contentType) && attachmentItem?.[Symbol.for('links')]?.enclosure);
 		if (attachmentItem && !prevAttachmentItem && !isCompatible) {
-			// item the URL points to is not an attachment or is of an unsupported type. We can try to navigate to the best attachment
+			// item the URL points to is not a compatible attachment. We can try to navigate to the best attachment
 			const bestAttachment = attachmentItem?.[Symbol.for('links')]?.attachment;
 			const bestAttachmentKey = bestAttachment ? getItemFromApiUrl(bestAttachment.href) : null;
 			if (bestAttachmentKey) {
