@@ -60,7 +60,8 @@ const ColumnSelector = props => {
 	}, [onFocusNext, onFocusPrev]);
 
 	const handleRestoreClick = useCallback(() => {
-		dispatch(restoreColumnsOrder())
+		// currently only itemsTable includes the ColumnSelector so we can hardcode the table name
+		dispatch(restoreColumnsOrder('itemsTableColumns'));
 	}, [dispatch]);
 
 	const handleToggleMore = useCallback(ev => {
