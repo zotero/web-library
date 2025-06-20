@@ -16,6 +16,7 @@ import preferences from './preferences';
 import recognize from './recognize';
 import query from './query';
 import queryAndCollectionsTrash from './query-and-collections-trash';
+import secondary from './secondary';
 import sources from './sources'
 import styles from './styles';
 import traffic from './traffic';
@@ -38,6 +39,7 @@ const createReducers = (extraReducers = {}) => (state, action) => {
 		preferences: preferences(state?.preferences, action, state),
 		recognize: recognize(state?.recognize, action, state),
 		query: query(state?.query, action, state),
+		secondary: secondary(state?.secondary, action, state),
 		sources: sources(state?.sources, action, state),
 		styles: styles(state?.styles, action, state),
 		traffic: traffic(state?.traffic, action, state),

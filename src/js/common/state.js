@@ -24,6 +24,8 @@ const getCollectionsPath = (libraryKey, collectionKey, collectionsData = {}) => 
 
 const getItemKeysPath = ({ itemsSource, libraryKey, collectionKey }) => {
 	switch(itemsSource) {
+		case 'secondary':
+			return ['secondary'];
 		case 'query':
 			return ['queryAndCollectionsTrash'];
 		case 'trash':

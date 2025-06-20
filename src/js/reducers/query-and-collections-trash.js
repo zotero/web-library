@@ -31,6 +31,7 @@ import {
 	RECEIVE_DELETE_COLLECTION,
 	RECEIVE_DELETE_COLLECTIONS,
 	RECEIVE_UPDATE_COLLECTIONS_TRASH,
+	RECEIVE_ITEMS_SECONDARY,
 } from '../constants/actions.js';
 import { injectTrashedCollections } from '../common/reducers';
 
@@ -96,6 +97,7 @@ const queryAndCollectionsTrash = (state = defaultState, action, nextState) => {
 		case RECEIVE_DELETE_COLLECTION:
 		case RECEIVE_DELETE_COLLECTIONS:
 		case RECEIVE_UPDATE_COLLECTIONS_TRASH:
+		case RECEIVE_ITEMS_SECONDARY:
 			return {
 				...state,
 				...injectTrashedCollections(queryState, collectionsState, dataObjectsState, meta, config)

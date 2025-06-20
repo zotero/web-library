@@ -89,6 +89,7 @@ const getApiForItems = ({ config, libraryKey }, requestType, queryConfig) => {
 				.publications()
 				.top()
 		case 'ITEMS_BY_QUERY':
+		case 'ITEMS_SECONDARY':
 			var configuredApi = api(config.apiKey, config.apiConfig)
 				.library(libraryKey)
 				.items()

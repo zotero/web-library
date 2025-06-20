@@ -2,10 +2,10 @@ import { omit } from 'web-common/utils';
 
 import { preferenceChange } from '.';
 
-const updateItemsSorting = (sortBy, sortDirection) => {
+const updateItemsSorting = (columnsKey, sortBy, sortDirection) => {
 	return (dispatch, getState) => {
-		const { columns } = getState().preferences;
-		dispatch(preferenceChange('columns', columns.map(column => {
+		const columns = getState().preferences[columnsKey];
+		dispatch(preferenceChange(columnsKey, columns.map(column => {
 			if(column.field === sortBy) {
 				return { ...column, sort: sortDirection }
 			} else {
@@ -15,11 +15,11 @@ const updateItemsSorting = (sortBy, sortDirection) => {
 	}
 };
 
-const toggleItemsSortingDirection = () => {
+const toggleItemsSortingDirection = (columnsKey) => {
 	return (dispatch, getState) => {
-		const { columns } = getState().preferences;
+		const columns = getState().preferences[columnsKey];
 		const sortColumn = columns.find(c => c.sort);
-		return dispatch(updateItemsSorting(sortColumn.field, sortColumn.sort === 'desc' ? 'asc' : 'desc'));
+		return dispatch(updateItemsSorting(columnsKey, sortColumn.field, sortColumn.sort === 'desc' ? 'asc' : 'desc'));
 	}
 }
 

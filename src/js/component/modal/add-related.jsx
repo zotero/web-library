@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';
-import { addRelatedItems, toggleModal } from '../../actions';
+import { addRelatedItems, toggleModal, querySecondary } from '../../actions';
 import { ADD_RELATED } from '../../constants/modals';
 import { useNavigationState } from '../../hooks';
 import ItemsTable from '../item/items/table';
@@ -26,17 +26,33 @@ const AddRelatedModal = () => {
 	const isItemsReady = useSelector(state => state.current.itemKeys
 		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
 	);
+	const columnsKey = 'addRelatedColumns';
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_MULTIPLE_ITEMS, { libraryKey, collectionKey, view: 'item-list' });
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 
 	const sharedProps = {
-		...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']),
+		columnsKey,
+		...pick(navState, ['libraryKey', 'collectionKey', 'view']),
+		itemsSource: 'secondary',
 		selectedItemKeys: navState.itemKeys || [], // or itemKeys?
 		pickerMode: PICKS_MULTIPLE_ITEMS,
 		pickerNavigate: handleNavigation
 	};
+
+	const handleSelectItems = useCallback(async () => {
+		for (const sourceItemKey of itemKeys) {
+			setIsBusy(true);
+			await dispatch(addRelatedItems(sourceItemKey, navState.itemKeys));
+			setIsBusy(false);
+			dispatch(toggleModal(null, false));
+		}
+	}, [dispatch, itemKeys, navState.itemKeys]);
+
+	const handleCancel = useCallback(() => {
+		dispatch(toggleModal(null, false));
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (!wasItemsReady && isItemsReady) {
@@ -50,18 +66,10 @@ const AddRelatedModal = () => {
 		}
 	}, [resetNavState, isOpen]);
 
-	const handleSelectItems = useCallback(async () => {
-		for(const sourceItemKey of itemKeys) {
-			setIsBusy(true);
-			await dispatch(addRelatedItems(sourceItemKey, navState.itemKeys));
-			setIsBusy(false);
-			dispatch(toggleModal(null, false));
-		}
-	}, [dispatch, itemKeys, navState.itemKeys]);
-
-	const handleCancel = useCallback(() => {
-		dispatch(toggleModal(null, false));
-	}, [dispatch]);
+	useEffect(() => {
+		const { libraryKey, collectionKey = null, isTrash = false, isMyPublications = false, q = '', qmode = 'titleCreatorYear', tags = [] } = navState;
+		dispatch(querySecondary({ libraryKey, collectionKey, isTrash, isMyPublications, q, qmode, tag: tags }));
+	}, [dispatch, navState]);
 
 	return (
 		<Modal
@@ -113,7 +121,7 @@ const AddRelatedModal = () => {
 						<div className="modal-footer-left">
 							<Button
 								className="btn-link"
-								onClick={() => dispatch(toggleModal(null, false))}
+								onClick={ handleCancel }
 							>
 								Cancel
 							</Button>

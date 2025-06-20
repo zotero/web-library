@@ -15,7 +15,8 @@ import { ATTACHMENT } from '../../../constants/dnd';
 import {
 	abortAllRequests, currentTrashOrDelete, createAttachmentsFromDropped, connectionIssues, fetchSource,
 	navigate, navigateSelectItemsKeyboard, selectFirstItem, selectLastItem, preferenceChange,
-	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting
+	triggerHighlightedCollections, currentRemoveColoredTags, currentToggleTagByIndex, updateItemsSorting,
+	sortItemsSecondary
 } from '../../../actions';
 import { useItemsState } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
@@ -26,7 +27,7 @@ import Table from '../../common/table';
 
 
 const ItemsTable = props => {
-	const { libraryKey, collectionKey, itemsSource, pickerMode = false,
+	const { libraryKey, collectionKey, columnsKey, itemsSource, pickerMode = false,
 		pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false,
 		selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
 	const headerRef = useRef(null);
@@ -39,18 +40,19 @@ const ItemsTable = props => {
 	const {
 		injectPoints, isFetching, keys, hasChecked, totalResults, sortBy, sortDirection, requests
 	} = useItemsState({ libraryKey, collectionKey, itemsSource });
-	const prevSortBy = usePrevious(sortBy);
-	const prevSortDirection = usePrevious(sortDirection);
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
-	const { field: sortByPreference, sort: sortDirectionPreference } = useSelector(state => state.preferences.columns.find(c => c.sort) || {}, shallowEqual);
+	const columnsData = useSelector(state => state.preferences[columnsKey]);
+	const { field: sortByPreference, sort: sortDirectionPreference } = useSelector(state => state.preferences[columnsKey].find(c => c.sort) || {}, shallowEqual);
+	const prevSortByPreference = usePrevious(sortByPreference);
+	const prevSortDirectionPreference = usePrevious(sortDirectionPreference);
 	const isFileUploadAllowedInLibrary = useSelector(
 		state => (state.config.libraries.find(
 			l => l.key === state.current.libraryKey
 		) || {}).isFileUploadAllowed
 	);
-	const columnsData = useSelector(state => state.preferences.columns);
+
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
@@ -133,9 +135,13 @@ const ItemsTable = props => {
 				offset++;
 			}
 		}
-		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }))
+		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex, itemsSource,
+			libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags,
+			sortBy: sortByPreference, sortDirection: sortDirectionPreference })
+		);
+
 		lastRequest.current = { startIndex, stopIndex };
-	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, search, tags]);
+	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, search, sortByPreference, sortDirectionPreference, tags]);
 
 	const handleFileHoverOnRow = useCallback((isOverRow, dropZone) => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
@@ -234,8 +240,8 @@ const ItemsTable = props => {
 
 	const handleColumnsResize = useCallback(newVisibleColumns => {
 		const newColumnsData = columnsData.map(c => ({ ...c }));
-		dispatch(preferenceChange('columns', applyChangesToVisibleColumns(newVisibleColumns, newColumnsData)));
-	}, [columnsData, dispatch]);
+		dispatch(preferenceChange(columnsKey, applyChangesToVisibleColumns(newVisibleColumns, newColumnsData)));
+	}, [columnsData, columnsKey, dispatch]);
 
 	const handleColumnsReorder = useCallback((reorderCurrentIndex, reorderTargetIndex) => {
 		const fieldFrom = columns[reorderCurrentIndex].field;
@@ -246,16 +252,18 @@ const ItemsTable = props => {
 		if (indexFrom > -1 && indexTo > -1) {
 			const newColumns = columnsData.map(c => ({ ...c }));
 			newColumns.splice(indexTo, 0, newColumns.splice(indexFrom, 1)[0]);
-			dispatch(preferenceChange('columns', newColumns));
+			dispatch(preferenceChange(columnsKey, newColumns));
 		}
-	}, [columns, columnsData, dispatch]);
+	}, [columns, columnsData, columnsKey, dispatch]);
 
 	const handleSortOrderChange = useCallback((columnName) => {
-		dispatch(updateItemsSorting(
-			columnName,
-			columnName === sortByPreference ? sortDirectionPreference === 'asc' ? 'desc' : 'asc' : 'asc'
-		));
-	}, [dispatch, sortByPreference, sortDirectionPreference]);
+		const newDirection = columnName === sortByPreference ? sortDirectionPreference === 'asc' ? 'desc' : 'asc' : 'asc'
+		if (itemsSource === 'secondary') {
+			dispatch(sortItemsSecondary(columnName, newDirection));
+		}
+		// primary sorting will be dispatched by the preference observer
+		dispatch(updateItemsSorting(columnsKey, columnName, newDirection));
+	}, [columnsKey, dispatch, itemsSource, sortByPreference, sortDirectionPreference]);
 
 	useEffect(() => {
 		// Initial fetch for cases where loadMore does not trigger (e.g., when
@@ -266,19 +274,17 @@ const ItemsTable = props => {
 		if ((scrollToRow !== null || pickerMode) && !hasChecked && !isFetching) {
 			let startIndex = pickerMode ? 0 : Math.max(scrollToRow - 20, 0);
 			let stopIndex = pickerMode ? 50 : scrollToRow + 50;
-			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
+			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey,
+				isTrash, isMyPublications, search, qmode, tags,
+				sortBy: sortByPreference, sortDirection: sortDirectionPreference })
+			);
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode, sortByPreference, sortDirectionPreference]);
 
 	useEffect(() => {
-		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
+		if ((typeof prevSortByPreference === 'undefined' && typeof prevSortDirectionPreference === 'undefined') || (prevSortByPreference === sortByPreference && prevSortDirectionPreference === sortDirectionPreference)) {
 			return;
-		}
-
-		if (loader.current) {
-			// this will trigger `loadMoreItems` which in turn will call `handleLoadMore`
-			loader.current.resetloadMoreItemsCache(true);
 		}
 
 		// if we were fetching when sort changed, we need to abort the current request and re-fetch
@@ -287,11 +293,21 @@ const ItemsTable = props => {
 			setTimeout(() => {
 				const { startIndex, stopIndex } = lastRequest.current;
 				if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-					dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
+					dispatch(fetchSource({
+						startIndex, stopIndex, itemsSource, libraryKey,
+						collectionKey, isTrash, isMyPublications, search, qmode, tags,
+						sortBy: sortByPreference, sortDirection: sortDirectionPreference
+					})
+					);
 				}
 			}, 0)
+		} else if (loader.current) {
+			// if we are not fetching, we can reset the loader cache and have InfiniteLoader trigger `loadMoreItems`
+			setTimeout(() => {
+				loader.current.resetloadMoreItemsCache(true)
+			}, 0);
 		}
-	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortBy, prevSortDirection, qmode, requestType, search, sortBy, sortDirection, tags]);
+	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortByPreference, prevSortDirectionPreference, qmode, requestType, search, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags]);
 
 	useEffect(() => {
 		document.addEventListener('keyup', handleKeyUp);
@@ -304,7 +320,10 @@ const ItemsTable = props => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
 			const { startIndex, stopIndex } = lastRequest.current;
 			if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
-				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags }));
+				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey,
+					collectionKey, isTrash, isMyPublications, search, qmode, tags,
+					sortBy: sortByPreference, sortDirection: sortDirectionPreference })
+				);
 			}
 		}
 		if (errorCount > 3 && prevErrorCount === 3) {
@@ -312,7 +331,7 @@ const ItemsTable = props => {
 		} else if (errorCount === 0 && prevErrorCount > 0) {
 			dispatch(connectionIssues(true));
 		}
-	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, search, tags]);
+	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, search, sortByPreference, sortDirectionPreference, tags]);
 
 	return <Table
 			columns={columns}
@@ -362,6 +381,7 @@ const ItemsTable = props => {
 
 ItemsTable.propTypes = {
 	collectionKey: PropTypes.string,
+	columnsKey: PropTypes.string.isRequired,
 	isAdvancedSearch: PropTypes.bool,
 	isMyPublications: PropTypes.bool,
 	isTrash: PropTypes.bool,

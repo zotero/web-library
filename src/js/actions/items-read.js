@@ -1,4 +1,4 @@
-import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL } from '../constants/actions';
+import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL, QUERY_SECONDARY, SORT_ITEMS_SECONDARY } from '../constants/actions';
 import api from 'zotero-api-client';
 import { escapeBooleanSearches, extractItems, getApiForItems } from '../common/actions';
 import { getItemKeysPath } from '../common/state';
@@ -20,7 +20,6 @@ const fetchItems = (
 		const api = getApiForItems({ config, libraryKey }, type, queryConfig);
 		const id = requestId || requestTracker.id++;
 		const abortController = getAbortController();
-
 
 		dispatch({
 			type: `REQUEST_${type}`, id,
@@ -71,6 +70,15 @@ const fetchItemsQuery = (query, queryOptions, overrides) => {
 	const queryConfig = { collectionKey, isTrash, isMyPublications };
 	return fetchItems(
 		'ITEMS_BY_QUERY', queryConfig, { ...queryOptions, tag, q, qmode }, overrides
+	);
+}
+
+const fetchItemsSecondary = (query, queryOptions, overrides) => {
+	const { collectionKey = null, tag = null, q = null, qmode = null, isTrash,
+		isMyPublications } = query;
+	const queryConfig = { collectionKey, isTrash, isMyPublications };
+	return fetchItems(
+		'ITEMS_SECONDARY', queryConfig, { ...queryOptions, tag, q, qmode }, overrides
 	);
 }
 
@@ -210,6 +218,14 @@ const sortItems = (sortBy, sortDirection) => {
 	}
 };
 
+const sortItemsSecondary = (sortBy, sortDirection) => {
+	return {
+		type: SORT_ITEMS_SECONDARY,
+		sortBy,
+		sortDirection,
+	}
+};
+
 const getAttachmentUrl = (itemKey, forceFresh = false) => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -268,18 +284,17 @@ const fetchSource = ({ startIndex, stopIndex, ...rest }) => {
 		limit = PAGE_SIZE;
 	}
 
-	return async (dispatch, getState) => {
-		const state = getState();
+	return async (dispatch) => {
 		const { collectionKey, isTrash, isMyPublications, itemsSource, libraryKey, search: q, qmode,
-			tags: tag = [] } = rest;
-		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
-			column => 'sort' in column) || { field: 'title', sort: 'asc' };
-
+			tags: tag = [], sortBy, sortDirection } = rest;
 		const direction = sortDirection.toLowerCase();
 		const sort = (sortBy in columnProperties && columnProperties[sortBy].sortKey) || 'title';
 		const sortAndDirection = { start, limit, sort, direction };
 
 		switch(itemsSource) {
+			case 'secondary':
+				return await dispatch(fetchItemsSecondary({ collectionKey, isMyPublications,
+					isTrash, q, tag, qmode }, sortAndDirection, { current: { libraryKey } }));
 			case 'query':
 				return await dispatch(fetchItemsQuery({ collectionKey, isMyPublications,
 					isTrash, q, tag, qmode }, sortAndDirection, { current: { libraryKey }}));
@@ -289,7 +304,7 @@ const fetchSource = ({ startIndex, stopIndex, ...rest }) => {
 				return await dispatch(fetchTrashItems(sortAndDirection, { current: { libraryKey } }));
 			case 'publications':
 				return await dispatch(fetchPublicationsItems(sortAndDirection, { current: { libraryKey } }));
-				case 'collection':
+			case 'collection':
 				return await dispatch(fetchItemsInCollection(collectionKey, sortAndDirection, { current: { libraryKey } }));
 		}
 	}
@@ -387,6 +402,13 @@ const findRowIndexInSource = () => {
 	}
 }
 
+const querySecondary = ({ libraryKey, collectionKey, isTrash, isMyPublications, q, tag, qmode }) => {
+	return {
+		type: QUERY_SECONDARY,
+		query: { libraryKey, collectionKey, isTrash, isMyPublications, q, tag, qmode },
+	}
+}
+
 export {
 	fetchAllChildItems,
 	fetchAllItemsSince,
@@ -403,4 +425,6 @@ export {
 	findRowIndexInSource,
 	getAttachmentUrl,
 	sortItems,
+	sortItemsSecondary,
+	querySecondary
 };
