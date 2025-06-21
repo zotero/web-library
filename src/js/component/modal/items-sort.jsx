@@ -25,7 +25,7 @@ const ItemsSortModal = () => {
 	const handleSortChange = useCallback(newSortField => setSelectedSortField(newSortField), []);
 
 	const handleConfirmChange = useCallback(() => {
-		dispatch(updateItemsSorting(selectedSortField, 'asc'));
+		dispatch(updateItemsSorting('columns', selectedSortField, 'asc')); // currently `ItemsSortModal` is only used in the main items list
 		dispatch(toggleModal(SORT_ITEMS, false));
 	}, [dispatch, selectedSortField]);
 
@@ -33,7 +33,7 @@ const ItemsSortModal = () => {
 
 	useEffect(() => {
 		if(!isKeyboardUser && selectedSortField !== prevSelectedSortField.current) {
-			dispatch(updateItemsSorting(selectedSortField, 'asc'));
+			dispatch(updateItemsSorting('columns', selectedSortField, 'asc')); // currently `ItemsSortModal` is only used in the main items list
 			dispatch(toggleModal(SORT_ITEMS, false));
 		}
 	}, [dispatch, selectedSortField, isKeyboardUser]);

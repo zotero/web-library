@@ -69,7 +69,8 @@ const useItemActionHandlers = () => {
 	}, [dispatch]);
 
 	const handleSortOrderToggle = useCallback(() => {
-		dispatch(toggleItemsSortingDirection());
+		// currently, item actions are only supported for the main items table, hence 'columns' can be hardcoded
+		dispatch(toggleItemsSortingDirection('columns'));
 	}, [dispatch]);
 
 	const handleNewItemModalOpen = useCallback(() => {

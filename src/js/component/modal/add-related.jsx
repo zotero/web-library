@@ -26,12 +26,14 @@ const AddRelatedModal = () => {
 	const isItemsReady = useSelector(state => state.current.itemKeys
 		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
 	);
+	const columnsKey = 'addRelatedColumns';
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_MULTIPLE_ITEMS, { libraryKey, collectionKey, view: 'item-list' });
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 
 	const sharedProps = {
+		columnsKey,
 		...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']),
 		selectedItemKeys: navState.itemKeys || [], // or itemKeys?
 		pickerMode: PICKS_MULTIPLE_ITEMS,

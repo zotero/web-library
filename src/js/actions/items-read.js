@@ -268,13 +268,9 @@ const fetchSource = ({ startIndex, stopIndex, ...rest }) => {
 		limit = PAGE_SIZE;
 	}
 
-	return async (dispatch, getState) => {
-		const state = getState();
+	return async (dispatch) => {
 		const { collectionKey, isTrash, isMyPublications, itemsSource, libraryKey, search: q, qmode,
-			tags: tag = [] } = rest;
-		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
-			column => 'sort' in column) || { field: 'title', sort: 'asc' };
-
+			tags: tag = [], sortBy, sortDirection } = rest;
 		const direction = sortDirection.toLowerCase();
 		const sort = (sortBy in columnProperties && columnProperties[sortBy].sortKey) || 'title';
 		const sortAndDirection = { start, limit, sort, direction };
