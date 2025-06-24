@@ -1,8 +1,9 @@
-import { getPort, getServer } from '../utils/fixed-state-server.js';
+import { getPort, getServer, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { BrowserStackManager, mobileContexts, singleColumnMobileContexts } from '../utils/browserstack.js';
 import { screenshot } from '../utils/screenshot.js';
 import { expect } from '@playwright/test';
 import { waitForLoad, wait } from '../utils/common.js';
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json';
 
 jest.setTimeout(60000);
 
@@ -86,7 +87,9 @@ describe('Mobile Snapshots', () => {
 		});
 
 		test(`should render "Add Related" modal on "${browserName}"`, async () => {
-			server = await getServer('mobile-test-user-item-details-view-edit', port);
+			expect(itemsInCollectionAlgorithms.length).toBe(22);
+			const customHandler = makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms);
+			server = await getServer('mobile-test-user-item-details-view-edit', port, customHandler);
 			context = await browsers.getBrowserContext(browserName);
 			const page = await context.newPage();
 			await page.goto(`http://localhost:${port}/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`);
@@ -95,8 +98,8 @@ describe('Mobile Snapshots', () => {
 			const addRelatedButton = await page.getByRole('button', { name: 'Add Related Item' });
 			await addRelatedButton.dispatchEvent('click'); // Use dispatchEvent to avoid switching to desktop mode on ipad-pro-landscape-emulator
 
-			await page.getByRole('dialog', { name: 'Add Related Items' });
 			await page.waitForFunction(() => document.querySelector('.add-related-modal').classList.contains('ReactModal__Content--after-open'));
+			await page.waitForFunction(() => document.querySelector('.add-related-modal').querySelectorAll('.item').length > 0); // 22 items is enough to trigger virtual scrolling so we cannot check for exact count
 			await wait(500); // ensure animation has settled and icons are loaded
 			expect(await screenshot(page, `mobile-item-add-related-${browserName}`)).toBeTruthy();
 			await page.close();

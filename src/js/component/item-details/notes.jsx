@@ -360,7 +360,6 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 						<ToolGroup>
 							<Button
 								className="btn-default"
-								disabled={ isReadOnly }
 								onClick={ handleAddNote }
 								onKeyDown={ handleButtonKeyDown }
 								ref={ addNoteRef }

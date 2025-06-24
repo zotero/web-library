@@ -188,7 +188,6 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 							<ToolGroup>
 								<Button
 									className="btn-default"
-									disabled={isReadOnly}
 									onClick={handleAddRelated}
 									onKeyDown={handleButtonKeyDown}
 									ref={addRelatedRef}

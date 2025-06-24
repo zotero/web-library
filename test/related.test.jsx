@@ -15,6 +15,7 @@ import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import getRelatedItemsResponse from './fixtures/response/test-user-get-item-by-key-66LW9WRP-PEZF7SPI.json';
 import postAddRelatedItemsResponse from './fixtures/response/test-user-post-add-related.json';
+import getItemsInCollectionDogResponse from './fixtures/response/test-user-get-items-in-collection-dogs.json';
 
 const state = JSONtoState(stateRaw);
 
@@ -52,6 +53,13 @@ describe('Item info', () => {
 					headers: { 'Total-Results': '2' }
 				});
 			}),
+
+			http.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top', async () => {
+				return HttpResponse.json(getItemsInCollectionDogResponse, {
+					headers: { 'Total-Results': '7' }
+				});
+			}),
+
 			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
 				const items = await request.json();
 				const mainItem = items.find(item => item.key === 'VR82JUX8');

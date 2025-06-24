@@ -1,0 +1,530 @@
+[
+    {
+        "key": "HHVQTHFT",
+        "version": 239,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/HHVQTHFT",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/HHVQTHFT",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/D532CISN",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "HHVQTHFT",
+            "version": 239,
+            "itemType": "webpage",
+            "title": "Breed differences in social cognition, inhibitory control, and spatial problem-solving ability in the domestic dog (Canis familiaris) | Scientific Reports",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "https://www.nature.com/articles/s41598-022-26991-5",
+            "accessDate": "2023-01-13T11:38:38Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "⭐️"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T11:38:38Z",
+            "dateModified": "2023-01-13T11:38:42Z"
+        }
+    },
+    {
+        "key": "VR82JUX8",
+        "version": 374,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/VR82JUX8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/VR82JUX8",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/VG79HDDM",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 248058
+            }
+        },
+        "meta": {
+            "creatorSummary": "Kealy et al.",
+            "parsedDate": "2002",
+            "numChildren": 2
+        },
+        "data": {
+            "key": "VR82JUX8",
+            "version": 374,
+            "itemType": "journalArticle",
+            "title": "Effects of diet restriction on life span and age-related changes in dogs",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Richard D.",
+                    "lastName": "Kealy"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Dennis F.",
+                    "lastName": "Lawler"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Joan M.",
+                    "lastName": "Ballam"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sandra L.",
+                    "lastName": "Mantz"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Darryl N.",
+                    "lastName": "Biery"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Elizabeth H.",
+                    "lastName": "Greeley"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "George",
+                    "lastName": "Lust"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mariangela",
+                    "lastName": "Segre"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Gail K.",
+                    "lastName": "Smith"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Howard D.",
+                    "lastName": "Stowe"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Journal of the American Veterinary Medical Association",
+            "volume": "220",
+            "issue": "9",
+            "pages": "1315–1320",
+            "date": "2002",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: Am Vet Med Assoc",
+            "tags": [],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:40Z",
+            "dateModified": "2025-05-29T14:12:30Z"
+        }
+    },
+    {
+        "key": "J2NYHR6N",
+        "version": 338,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/J2NYHR6N",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/J2NYHR6N",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/EF42MTQM",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "J2NYHR6N",
+            "version": 338,
+            "itemType": "webpage",
+            "title": "Genius of Dogs: Discovering The Unique Intelligence Of Man's Best Friend: Amazon.co.uk: Hare, Brian, Woods, Vanessa: 9781780743684: Books",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "https://www.amazon.co.uk/Genius-Dogs-Discovering-Unique-Intelligence/dp/1780743688/ref=sr_1_1?crid=32VFAV2X9WUJH&keywords=genius+of+dogs&qid=1673607243&sprefix=genius+of+dogs%2Caps%2C98&sr=8-1",
+            "accessDate": "2023-01-13T10:54:08Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "Animal Cognition"
+                },
+                {
+                    "tag": "Animal-Human Bond"
+                },
+                {
+                    "tag": "Canine Intelligence"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:54:08Z",
+            "dateModified": "2024-09-13T23:26:19Z"
+        }
+    },
+    {
+        "key": "Z6HA62VJ",
+        "version": 310,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/Z6HA62VJ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/Z6HA62VJ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 3
+        },
+        "data": {
+            "key": "Z6HA62VJ",
+            "version": 310,
+            "itemType": "note",
+            "note": "<div data-schema-version=\"8\"><p>Puppies!</p>\n<p></p>\n<p><img alt=\"\" data-attachment-key=\"P83K4HI5\" width=\"5184\" height=\"3456\"><img alt=\"\" data-attachment-key=\"W3YSPZJI\" width=\"4000\" height=\"5000\"><img alt=\"\" data-attachment-key=\"LKHPM44D\" width=\"5394\" height=\"6743\"></p>\n</div>",
+            "tags": [
+                {
+                    "tag": "cute"
+                },
+                {
+                    "tag": "dogs 🐕"
+                },
+                {
+                    "tag": "⭐️"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:54:44Z",
+            "dateModified": "2024-08-08T15:20:25Z"
+        }
+    },
+    {
+        "key": "66LW9WRP",
+        "version": 373,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/66LW9WRP",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/66LW9WRP",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/HX4R8R94",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "creatorSummary": "Sanders",
+            "parsedDate": "1999",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "66LW9WRP",
+            "version": 373,
+            "itemType": "book",
+            "title": "Understanding dogs",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Clinton",
+                    "lastName": "Sanders"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "39",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "Temple University Press",
+            "date": "1999",
+            "numPages": "",
+            "language": "",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "tags": [],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:40Z",
+            "dateModified": "2025-05-29T14:12:30Z"
+        }
+    },
+    {
+        "key": "PEZF7SPI",
+        "version": 375,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/PEZF7SPI",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/PEZF7SPI",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/9MS9DQLJ",
+                "type": "application/json",
+                "attachmentType": "application/pdf",
+                "attachmentSize": 3221470
+            }
+        },
+        "meta": {
+            "creatorSummary": "Miller and Murphy",
+            "parsedDate": "1995",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "PEZF7SPI",
+            "version": 375,
+            "itemType": "journalArticle",
+            "title": "Vision in dogs",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Paul E.",
+                    "lastName": "Miller"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Christopher J.",
+                    "lastName": "Murphy"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Journal-American Veterinary Medical Association",
+            "volume": "207",
+            "issue": "",
+            "pages": "1623–1634",
+            "date": "1995",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Google Scholar",
+            "callNumber": "",
+            "rights": "",
+            "extra": "Publisher: AVMA AMERICAN VETERINARY MEDICAL ASSOCIATION",
+            "tags": [],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:52:40Z",
+            "dateModified": "2025-05-29T14:12:31Z"
+        }
+    },
+    {
+        "key": "WRCN45PC",
+        "version": 241,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/WRCN45PC",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/WRCN45PC",
+                "type": "text/html"
+            },
+            "attachment": {
+                "href": "https://api.zotero.org/users/1/items/U28ZLTP5",
+                "type": "application/json",
+                "attachmentType": "text/html"
+            }
+        },
+        "meta": {
+            "numChildren": 1
+        },
+        "data": {
+            "key": "WRCN45PC",
+            "version": 241,
+            "itemType": "webpage",
+            "title": "Wonder Dogs: Inspirational True Stories of Real-Life Dog Heroes That Will Melt Your Heart: Amazon.co.uk: Holt, Ben: 9781800071803: Books",
+            "creators": [],
+            "abstractNote": "",
+            "websiteTitle": "",
+            "websiteType": "",
+            "date": "",
+            "shortTitle": "",
+            "url": "https://www.amazon.co.uk/Wonder-Dogs-Inspirational-Stories-Real-Life/dp/1800071809/ref=sr_1_10?crid=LA5CXU5OLKO4&keywords=dog+book&qid=1673607191&sprefix=dog+book%2Caps%2C95&sr=8-10",
+            "accessDate": "2023-01-13T10:53:25Z",
+            "language": "",
+            "rights": "",
+            "extra": "",
+            "tags": [
+                {
+                    "tag": "cute"
+                },
+                {
+                    "tag": "to read"
+                }
+            ],
+            "collections": [
+                "WTTJ2J56"
+            ],
+            "relations": {},
+            "dateAdded": "2023-01-13T10:53:25Z",
+            "dateModified": "2023-01-13T10:53:25Z"
+        }
+    }
+]

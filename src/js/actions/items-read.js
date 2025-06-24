@@ -39,7 +39,7 @@ const fetchItems = (
 				throw new Error('aborted');
 			}
 			const items = extractItems(response, state);
-			const totalResults = parseInt(response.response.headers.get('Total-Results'), 10);
+			const totalResults = response.getTotalResults();
 			return { items, response, totalResults };
 		}
 

@@ -39,6 +39,9 @@ const bsDescriptors = {
 			'os_version': 'ventura',
 			'browser': 'playwright-webkit',
 			'browser_version': 'latest',
+			// 'browserstack.debug': 'true',  // enabling visual logs
+			// 'browserstack.console': 'verbose',  // Enabling Console logs for the test
+			// 'browserstack.networkLogs': 'true',  // Enabling network logs for the test
 		}
 	}
 }

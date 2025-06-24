@@ -16,7 +16,7 @@ const serve = serveStatic(path.join(__dirname, '..', 'build'), { 'index': false 
 const proxy = httpProxy.createProxyServer();
 
 const handler = (req, resp) => {
-const fallback = () => {
+	const fallback = () => {
 		fs.readFile(path.join(__dirname, '..', 'build', htmlFile), (err, buf) => {
 			resp.setHeader('Content-Type', 'text/html');
 			resp.end(buf);

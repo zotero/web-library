@@ -21,5 +21,8 @@ export const MainWithState = ({ state = {} }) => {
 }
 
 MainWithState.propTypes = {
-	state: PropTypes.object
+	state: PropTypes.oneOfType([
+		PropTypes.object,
+		PropTypes.string
+	])
 };
