@@ -2,27 +2,6 @@ import { _android, chromium, webkit } from 'playwright';
 const android = _android;
 
 const bsDescriptors = {
-	'pixel-7': {
-		browser: android,
-		caps: {
-			'deviceName': 'Pixel 7',
-			'realMobile': 'true',
-			'browser': 'chrome',
-			'os': 'android',
-			'os_version': '13.0',
-			'browser_version': 'latest',
-		}
-	},
-	'ios-emulator': {
-		browser: webkit,
-		caps: {
-			'browser': 'playwright-webkit',
-			'browser_version': 'latest',
-			'os': 'os x',
-			'os_version': 'ventura',
-			'resolution': '2560x1440' // so that entire emulated device screen is captured
-		}
-	},
 	'windows-chromium': {
 		browser: chromium,
 		caps: {
@@ -39,6 +18,7 @@ const bsDescriptors = {
 			'os_version': 'ventura',
 			'browser': 'playwright-webkit',
 			'browser_version': 'latest',
+			'resolution': '2560x1440' // so that entire emulated device screen is captured
 			// 'browserstack.debug': 'true',  // enabling visual logs
 			// 'browserstack.console': 'verbose',  // Enabling Console logs for the test
 			// 'browserstack.networkLogs': 'true',  // Enabling network logs for the test
@@ -60,12 +40,6 @@ const contexts = {
 			viewport: { width: 1280, height: 720 }
 		}
 	},
-	['windows-firefox']: {
-		device: 'windows-firefox',
-		context: {
-			viewport: { width: 1280, height: 720 }
-		}
-	},
 	['windows-chrome-small-desktop']: {
 		device: 'windows-chromium',
 		context: {
@@ -79,7 +53,7 @@ const contexts = {
 		},
 	},
 	['iphone-emulator']: {
-		device: 'ios-emulator',
+		device: 'macos-webkit',
 		context: {
 			isMobile: true,
 			deviceScaleFactor: 3,
@@ -90,7 +64,7 @@ const contexts = {
 		}
 	},
 	['ipad-emulator']: {
-		device: 'ios-emulator',
+		device: 'macos-webkit',
 		context: {
 			isMobile: true,
 			deviceScaleFactor: 2,
@@ -100,7 +74,7 @@ const contexts = {
 		}
 	},
 	['ipad-pro-landscape-emulator']: {
-		device: 'ios-emulator',
+		device: 'macos-webkit',
 		context: {
 			isMobile: true,
 			deviceScaleFactor: 2,
@@ -109,17 +83,22 @@ const contexts = {
 			userAgent: 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
 		}
 	},
-	['pixel-7-chrome']: {
-		device: 'pixel-7',
+	['android-emulator']: {
+		device: 'windows-chromium',
 		context: {
-			viewport: null
+			isMobile: true,
+			deviceScaleFactor: 2, // real device has 2.625
+			hasTouch: true,
+			screen: { width: 412, height: 915 },
+			viewport: { width: 412, height: 915 },
+			userAgent: 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0.0.0.0 Mobile Safari/537.36',
 		}
 	},
 };
 
 export const singleColumnMobileContexts = [
 	'iphone-emulator',
-	'pixel-7-chrome',
+	'android-emulator',
 ];
 
 export const twoColumnMobileContexts = [
@@ -134,7 +113,7 @@ export const mobileContexts = [
 	'iphone-emulator',
 	'ipad-emulator',
 	'ipad-pro-landscape-emulator',
-	'pixel-7-chrome',
+	'android-emulator',
 ];
 
 export const desktopContexts = [
