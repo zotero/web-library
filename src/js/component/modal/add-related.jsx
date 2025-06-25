@@ -30,7 +30,8 @@ const AddRelatedModal = () => {
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_MULTIPLE_ITEMS, { libraryKey, collectionKey, view: 'item-list' });
-	const [isBusy, setIsBusy] = useState(!isItemsReady);
+	const [isBusy, setIsBusy] = useState(!isItemsReady);handleNavigation
+	const wasOpen = usePrevious(isOpen);
 
 	const sharedProps = {
 		columnsKey,
@@ -61,15 +62,20 @@ const AddRelatedModal = () => {
 	}, [wasItemsReady, isItemsReady]);
 
 	useEffect(() => {
-		if (!isOpen) {
-			resetNavState();
+		if (wasOpen && !isOpen) {
+			// Reset the navigation state to the current library and collection. This ensures
+			// consistency if the modal is closed and reopened quickly (before the modal manager
+			// unmounts it).
+			handleNavigation({ library: libraryKey, collection: collectionKey, view: 'item-list' });
 		}
-	}, [resetNavState, isOpen]);
+	}, [resetNavState, isOpen, handleNavigation, libraryKey, wasOpen, collectionKey]);
 
 	useEffect(() => {
 		const { libraryKey, collectionKey = null, isTrash = false, isMyPublications = false, q = '', qmode = 'titleCreatorYear', tags = [] } = navState;
-		dispatch(querySecondary({ libraryKey, collectionKey, isTrash, isMyPublications, q, qmode, tag: tags }));
-	}, [dispatch, navState]);
+		if(isOpen) {
+			dispatch(querySecondary({ libraryKey, collectionKey, isTrash, isMyPublications, q, qmode, tag: tags }));
+		}
+	}, [dispatch, isOpen, navState]);
 
 	return (
 		<Modal
