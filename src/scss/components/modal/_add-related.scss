@@ -15,6 +15,34 @@
 		}
 	}
 
+	.modal-header {
+		.right {
+			@include mouse-and-bp-up(md) {
+				display: flex;
+
+				.search {
+					margin-right: $space-md;
+				}
+			}
+		}
+	}
+
+	.searchbar {
+		// in modal, searchbar takes the entire width of the header (normally a space for "..." button behind is left)
+		position: absolute;
+	}
+
+	.touch-modal-searchbar-toggle {
+		background: transparent;
+		border: none;
+		position: absolute;
+		right: $space-md;
+
+		&.hidden {
+			display: none;
+		}
+	}
+
 	.collection-tree {
 			@include mouse-and-bp-up(md) {
 			padding: 8px;

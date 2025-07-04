@@ -7,7 +7,7 @@ import { Button } from 'web-common/components';
 import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
 import { ItemActionsTouch } from './item/actions';
-import Searchbar from './touch-header/searchbar';
+import { MainSearchBar } from './touch-header/searchbar';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pluralize } from '../common/format';
 import CollectionTrashOptions from './touch-header/collection-trash-options';
@@ -17,7 +17,7 @@ const TouchHeader = props => {
 	const { className, collectionKey, collectionHasChildren, isModal, isSelectMode, navigationName,
 		onNavigate, onSelectModeToggle, path = [], shouldHideNav, shouldIncludeEditButton,
 		shouldIncludeItemListOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
-		shouldIncludeCollectionTrashOptions, selectedItemsCount } = props;
+		shouldIncludeCollectionTrashOptions, searchBar, selectedItemsCount } = props;
 
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 
@@ -35,8 +35,8 @@ const TouchHeader = props => {
 	return (
         <header className={ cx('touch-header', { 'select-mode': isSelectMode }, className) }>
 			<Toolbar>
-				{ isSingleColumn && !isModal && !isSelectMode && (
-					<Searchbar />
+				{ ((isSingleColumn && !isModal && !isSelectMode) || searchBar) && (
+					searchBar ? searchBar : <MainSearchBar />
 				)}
 				{
 					!shouldHideNav && (
@@ -123,6 +123,7 @@ TouchHeader.propTypes = {
 	onNavigate: PropTypes.func,
 	onSelectModeToggle: PropTypes.func,
 	path: PropTypes.array,
+	searchBar: PropTypes.node,
 	selectedItemsCount: PropTypes.number,
 	shouldHideNav: PropTypes.bool,
 	shouldHandleSelectMode: PropTypes.bool,

@@ -36,15 +36,15 @@ const useNavigationState = (pickerMode, baseState = {}) => {
 
 	const [navState, setNavState] = useState(initialNavState);
 
-	const handleNavigation = useCallback(({ library = null, collection = null, view = null, items = [] } = {}) => {
+	const handleNavigation = useCallback(({ library = null, collection = null, view = null, items = [], search = null, qmode = null } = {}) => {
 		let nextNavState;
+		const sharedProps = { view, q: search, qmode };
 		if(view === 'library') {
 			nextNavState = {
 				path: [],
 				collectionKey: null,
 				libraryKey: library,
 				itemKeys: items,
-				view
 			};
 		} else if(view === 'libraries') {
 			nextNavState = {
@@ -52,7 +52,6 @@ const useNavigationState = (pickerMode, baseState = {}) => {
 				collectionKey: null,
 				libraryKey: null,
 				itemKeys: [],
-				view
 			};
 		} else if(library) {
 			if(collection) {
@@ -75,7 +74,6 @@ const useNavigationState = (pickerMode, baseState = {}) => {
 					libraryKey: library,
 					collectionKey: collection,
 					itemKeys: items,
-					view
 				};
 			} else {
 				nextNavState = {
@@ -83,11 +81,10 @@ const useNavigationState = (pickerMode, baseState = {}) => {
 					libraryKey: library,
 					collectionKey: null,
 					itemKeys: items,
-					view
 				};
 			}
 		}
-		setNavState({ ...nextNavState, itemsSource: getItemsSource({ ...nextNavState}) });
+		setNavState({ ...nextNavState, ...sharedProps, itemsSource: getItemsSource({ ...nextNavState}) });
 	}, [childMap, navState.path, pickerMode]);
 
 	const resetNavState = useCallback(() => setNavState(defaultNavState), []);

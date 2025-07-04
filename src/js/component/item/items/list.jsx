@@ -18,7 +18,7 @@ import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 const ItemsList = memo(props => {
 	const { isSearchModeTransitioning, columnsKey, libraryKey, collectionKey, itemsSource,
 		isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode,
-		selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags, view } = props
+		selectedItemKeys = [], isTrash, isMyPublications, q, qmode, tags, view } = props
 	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
@@ -61,11 +61,11 @@ const ItemsList = memo(props => {
 			}
 		}
 		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex,
-			itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags,
+			itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 			sortBy: sortByPreference, sortDirection: sortDirectionPreference }))
 
 		lastRequest.current = { startIndex, stopIndex };
-	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, search, sortByPreference, sortDirectionPreference, tags]);
+	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, q, sortByPreference, sortDirectionPreference, tags]);
 
 	const getItemData = useCallback((index) => {
 		return keys && keys[index] ? keys[index] : null;
@@ -76,20 +76,20 @@ const ItemsList = memo(props => {
 			let startIndex = pickerMode ? 0 : Math.max(scrollToRow - 20, 0);
 			let stopIndex = pickerMode ? 50 : scrollToRow + 50;
 			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey,
-				isTrash, isMyPublications, search, qmode, tags, sortBy: sortByPreference,
+				isTrash, isMyPublications, search: q, qmode, tags, sortBy: sortByPreference,
 				sortDirection: sortDirectionPreference })
 			);
 
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode, sortByPreference, sortDirectionPreference]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, q, qmode, tags, pickerMode, sortByPreference, sortDirectionPreference]);
 
 	useEffect(() => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {
 			const { startIndex, stopIndex } = lastRequest.current;
 			if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
 				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey,
-					collectionKey, isTrash, isMyPublications, search, qmode, tags,
+					collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 					sortBy: sortByPreference, sortDirection: sortDirectionPreference })
 				);
 			}
@@ -99,7 +99,7 @@ const ItemsList = memo(props => {
 		} else if (errorCount === 0 && prevErrorCount > 0) {
 			dispatch(connectionIssues(true));
 		}
-	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, search, sortByPreference, sortDirectionPreference, tags]);
+	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, q, sortByPreference, sortDirectionPreference, tags]);
 
 	useEffect(() => {
 		if ((typeof prevSortBy === 'undefined' && typeof prevSortDirection === 'undefined') || (prevSortBy === sortBy && prevSortDirection === sortDirection)) {
@@ -116,18 +116,18 @@ const ItemsList = memo(props => {
 				const { startIndex, stopIndex } = lastRequest.current;
 				if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
 					dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey,
-						collectionKey, isTrash, isMyPublications, search, qmode, tags,
+						collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 						sortBy: sortByPreference, sortDirection: sortDirectionPreference })
 					);
 				}
 			}, 0)
 		}
-	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortBy, prevSortDirection, qmode, requestType, search, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags, totalResults]);
+	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortBy, prevSortDirection, qmode, requestType, q, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags, totalResults]);
 
 	return (
 		<List
 			isReady={hasChecked}
-			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
+			extraItemData={{ libraryKey, collectionKey, itemsSource, selectedItemKeys, q, qmode, isSelectMode, pickerNavigate, pickerPick, pickerMode }}
 			getItemData={getItemData}
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}
@@ -181,7 +181,7 @@ ItemsList.propTypes = {
 	pickerMode: PropTypes.number,
 	isTrash: PropTypes.bool,
 	isMyPublications: PropTypes.bool,
-	search: PropTypes.string,
+	q: PropTypes.string,
 	qmode: PropTypes.string,
 	tags: PropTypes.array
 };

@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 .searchbar {
-	position: absolute;
+	position: relative;
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -13,7 +13,6 @@
 	padding: 0 $default-padding-x-touch;
 	background: var(--color-toolbar);
 	z-index: $z-index-search-bar;
-	position: relative;
 
 	.input-group.search {
 		margin: 0 $default-padding-x-touch 0 (-$default-padding-x-touch + $space-min);

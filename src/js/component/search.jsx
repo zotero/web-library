@@ -217,12 +217,7 @@ Search.propTypes = {
 	autoFocus: PropTypes.bool,
 	registerAutoFocus: PropTypes.func,
 	search: PropTypes.string,
-	searchState: PropTypes.shape({
-		triggerView: PropTypes.string,
-		triggerItem: PropTypes.object,
-		attachmentKey: PropTypes.string,
-		noteKey: PropTypes.string,
-	}),
+	searchState: PropTypes.object,
 	qmode: PropTypes.string,
 	isAdvancedSearch: PropTypes.bool,
 	onSearch: PropTypes.func,

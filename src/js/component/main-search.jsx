@@ -49,7 +49,6 @@ const MainSearch = props => {
 	}, [collection, prevCollection]);
 
 	return <Search
-		debounce={ 300 }
 		isAdvancedSearch={ isAdvancedSearch }
 		onResetQuery={ handleResetQuery }
 		onSearch={ handleSearch }

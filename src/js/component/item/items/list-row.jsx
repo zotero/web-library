@@ -1,5 +1,5 @@
 import { Fragment, memo, useCallback, useRef } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Icon } from 'web-common/components';
@@ -13,7 +13,7 @@ const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger sel
 
 const ListRow = memo(props => {
 	const { data, index, style } = props;
-	const { getItemData, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey } = data;
+	const { getItemData, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey, q, qmode } = data;
 	const itemKey = getItemData(index);
 	const dispatch = useDispatch();
 	const itemData = useSelector(
@@ -58,11 +58,11 @@ const ListRow = memo(props => {
 		}
 
 		if (pickerMode) {
-			pickerNavigate({ library: libraryKey, collection: collectionKey, view: 'item-list', ...nextState });
+			pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode,  view: 'item-list', ...nextState });
 		} else {
 			dispatch(navigate({ ...nextState, noteKey: null, attachmentKey: null }));
 		}
-	}, [collectionKey, dispatch, isSelectMode, itemKey, libraryKey, pickerMode, pickerNavigate, selectedItemKeys]);
+	}, [collectionKey, dispatch, isSelectMode, itemKey, libraryKey, pickerMode, pickerNavigate, q, qmode, selectedItemKeys]);
 
 	const handleKeyDown = useCallback(ev => {
 		if ((ev.key === 'Enter' || (isSelectMode && ev.key === " "))) {
@@ -202,9 +202,7 @@ const ListRow = memo(props => {
 ListRow.displayName = 'ListRow';
 
 ListRow.propTypes = {
-	data: PropTypes.shape({
-		getItemData: PropTypes.func.isRequired,
-	}),
+	data: PropTypes.object,
 	index: PropTypes.number,
 	style: PropTypes.object,
 };

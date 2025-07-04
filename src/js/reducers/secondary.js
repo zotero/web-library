@@ -16,26 +16,15 @@ import {
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 
 const isMatchingQuery = (action, state) => {
-	for (const key of ['libraryKey', 'collectionKey']) {
-		if (action[key] !== state.current[key]) {
-			return false;
-		}
-	}
+	const sameLibraryKey = action?.libraryKey === state.current?.libraryKey;
+	const sameCollectionKey = action?.collectionKey === state.current?.collectionKey;
+	const sameIsTrash = !!action?.isTrash === !!state.current?.isTrash;
+	const sameIsMyPublications = !!action?.isMyPublications === !!state.current?.isMyPublications;
+	const sameQuery = state.current?.q === action.queryOptions?.q && state.current.qmode === action.queryOptions?.qmode;
+	const sameTags = shallowEqual(action.queryOptions.tag, state.current.tag);
 
-	// check if the query options match the current state, but use defaults instead of null or undefined
-	const defaults = { isTrash: false, isMyPublications: false, q: '', qmode: 'titleCreatorYear', tag: [] };
-	for (const key of ['isTrash', 'isMyPublications', 'q', 'qmode']) {
-		if (action.queryOptions[key] === null || typeof action.queryOptions[key] === 'undefined') {
-			if (state.current[key] !== defaults[key]) {
-				return false;
-			}
-		} else if (action.queryOptions[key] !== state.current[key]) {
-			return false;
-		}
-	}
-
-	// finally shallow compare the tag array
-	return shallowEqual(action.queryOptions.tag, state.current.tag);
+	return sameLibraryKey && sameCollectionKey && sameIsTrash &&
+		sameIsMyPublications && sameQuery && sameTags;
 }
 
 const defaultState = {

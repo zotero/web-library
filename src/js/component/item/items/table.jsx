@@ -29,7 +29,7 @@ import Table from '../../common/table';
 const ItemsTable = props => {
 	const { libraryKey, collectionKey, columnsKey, itemsSource, pickerMode = false,
 		pickerNavigate = noop, pickerPick = noop, isAdvancedSearch = false,
-		selectedItemKeys = [], isTrash, isMyPublications, search, qmode, tags } = props
+		selectedItemKeys = [], isTrash, isMyPublications, q, qmode, tags } = props;
 	const headerRef = useRef(null);
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
@@ -136,12 +136,12 @@ const ItemsTable = props => {
 			}
 		}
 		dispatch(fetchSource({ startIndex: Math.max(startIndex - offset, 0), stopIndex, itemsSource,
-			libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags,
+			libraryKey, collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 			sortBy: sortByPreference, sortDirection: sortDirectionPreference })
 		);
 
 		lastRequest.current = { startIndex, stopIndex };
-	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, search, sortByPreference, sortDirectionPreference, tags]);
+	}, [collectionKey, dispatch, injectPoints, isMyPublications, isTrash, itemsSource, libraryKey, qmode, q, sortByPreference, sortDirectionPreference, tags]);
 
 	const handleFileHoverOnRow = useCallback((isOverRow, dropZone) => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
@@ -168,14 +168,14 @@ const ItemsTable = props => {
 			return;
 		} else if (ev.key === 'Home') {
 			if(pickerMode && keys.length) {
-				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], view: 'item-list' });
+				pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode, items: [keys[0]], view: 'item-list' });
 			} else {
 				dispatch(selectFirstItem());
 			}
 			return;
 		} else if (ev.key === 'End') {
 			if(pickerMode && keys.length) {
-				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[keys.length - 1]], view: 'item-list' });
+				pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode, items: [keys[keys.length - 1]], view: 'item-list' });
 			} else {
 				dispatch(selectLastItem());
 			}
@@ -210,7 +210,7 @@ const ItemsTable = props => {
 			await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
 		if (pickerMode) {
-			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, view: 'item-list' });
+			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, search: q, qmode, view: 'item-list' });
 		}
 
 		if (cursorIndex === -1 && document.activeElement?.closest('.items-table-head') !== headerRef.current) {
@@ -218,13 +218,13 @@ const ItemsTable = props => {
 		} else {
 			focusBySelector(`[data-index="${cursorIndex}"]`);
 		}
-	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, focusBySelector]);
+	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, q, qmode, focusBySelector]);
 
 	const handleTableFocus = useCallback(async ev => {
 		const hasChangedFocused = receiveFocus(ev);
 		if (hasChangedFocused) {
 			if (pickerMode && !selectedItemKeys?.length && keys?.length && tableRef.current) {
-				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], view: 'item-list' });
+				pickerNavigate({ library: libraryKey, collection: collectionKey, items: [keys[0]], search: q, qmode, view: 'item-list' });
 			} else if(!pickerMode) {
 				const index = await dispatch(selectFirstItem(true));
 				if (index !== null && tableRef.current) {
@@ -232,7 +232,7 @@ const ItemsTable = props => {
 				}
 			}
 		}
-	}, [collectionKey, dispatch, focusBySelector, keys, libraryKey, pickerMode, pickerNavigate, receiveFocus, selectedItemKeys]);
+	}, [collectionKey, dispatch, focusBySelector, keys, libraryKey, pickerMode, pickerNavigate, q, qmode, receiveFocus, selectedItemKeys?.length]);
 
 	const handleTableBlur = useCallback(ev => {
 		receiveBlur(ev);
@@ -275,12 +275,12 @@ const ItemsTable = props => {
 			let startIndex = pickerMode ? 0 : Math.max(scrollToRow - 20, 0);
 			let stopIndex = pickerMode ? 50 : scrollToRow + 50;
 			dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey, collectionKey,
-				isTrash, isMyPublications, search, qmode, tags,
+				isTrash, isMyPublications, search: q, qmode, tags,
 				sortBy: sortByPreference, sortDirection: sortDirectionPreference })
 			);
 			lastRequest.current = { startIndex, stopIndex };
 		}
-	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, search, qmode, tags, pickerMode, sortByPreference, sortDirectionPreference]);
+	}, [dispatch, isFetching, hasChecked, scrollToRow, itemsSource, libraryKey, collectionKey, isTrash, isMyPublications, q, qmode, tags, pickerMode, sortByPreference, sortDirectionPreference]);
 
 	useEffect(() => {
 		if ((typeof prevSortByPreference === 'undefined' && typeof prevSortDirectionPreference === 'undefined') || (prevSortByPreference === sortByPreference && prevSortDirectionPreference === sortDirectionPreference)) {
@@ -295,7 +295,7 @@ const ItemsTable = props => {
 				if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
 					dispatch(fetchSource({
 						startIndex, stopIndex, itemsSource, libraryKey,
-						collectionKey, isTrash, isMyPublications, search, qmode, tags,
+						collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 						sortBy: sortByPreference, sortDirection: sortDirectionPreference
 					})
 					);
@@ -307,7 +307,7 @@ const ItemsTable = props => {
 				loader.current.resetloadMoreItemsCache(true)
 			}, 0);
 		}
-	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortByPreference, prevSortDirectionPreference, qmode, requestType, search, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags]);
+	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortByPreference, prevSortDirectionPreference, qmode, requestType, q, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags]);
 
 	useEffect(() => {
 		document.addEventListener('keyup', handleKeyUp);
@@ -321,7 +321,7 @@ const ItemsTable = props => {
 			const { startIndex, stopIndex } = lastRequest.current;
 			if (typeof (startIndex) === 'number' && typeof (stopIndex) === 'number') {
 				dispatch(fetchSource({ startIndex, stopIndex, itemsSource, libraryKey,
-					collectionKey, isTrash, isMyPublications, search, qmode, tags,
+					collectionKey, isTrash, isMyPublications, search: q, qmode, tags,
 					sortBy: sortByPreference, sortDirection: sortDirectionPreference })
 				);
 			}
@@ -331,13 +331,13 @@ const ItemsTable = props => {
 		} else if (errorCount === 0 && prevErrorCount > 0) {
 			dispatch(connectionIssues(true));
 		}
-	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, search, sortByPreference, sortDirectionPreference, tags]);
+	}, [collectionKey, dispatch, errorCount, isMyPublications, isTrash, itemsSource, libraryKey, prevErrorCount, qmode, q, sortByPreference, sortDirectionPreference, tags]);
 
 	return <Table
 			columns={columns}
 			containerClassName={cx({ 'dnd-target': (isOver && canDrop) || isHoveringBetweenRows })}
 			drop={drop}
-			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, pickerPick }}
+			extraItemData={{ onFileHoverOnRow: handleFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, pickerPick, q, qmode }}
 			getItemData={noop}
 			headerRef={headerRef}
 			isReady={hasChecked}
@@ -390,8 +390,8 @@ ItemsTable.propTypes = {
 	pickerMode: PropTypes.number,
 	pickerNavigate: PropTypes.func,
 	pickerPick: PropTypes.func,
+	q: PropTypes.string,
 	qmode: PropTypes.string,
-	search: PropTypes.string,
 	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
 	tags: PropTypes.array,
 };

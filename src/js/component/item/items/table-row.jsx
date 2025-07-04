@@ -31,7 +31,7 @@ const TableRow = props => {
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
 	const { data, index, style } = props;
-	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate } = data;
+	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, q, qmode } = data;
 	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const isFileUploadAllowedInLibrary = useSelector(
@@ -142,11 +142,11 @@ const TableRow = props => {
 		const isShiftModifier = ev.getModifierState('Shift');
 		if (pickerMode) {
 			const nextKeys = selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier, { keys, selectedItemKeys });
-			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, view: 'item-list' })
+			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, search: q, qmode, view: 'item-list' })
 		} else {
 			dispatch(navigateSelectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));
 		}
-	}, [collectionKey, dispatch, pickerMode, keys, libraryKey, pickerNavigate, selectedItemKeys]);
+	}, [pickerMode, keys, selectedItemKeys, pickerNavigate, libraryKey, collectionKey, q, qmode, dispatch]);
 
 	//@NOTE: In order to allow item selection on "mousedown" (#161)
 	//		 this event fires twice, once on "mousedown", once on "click".
