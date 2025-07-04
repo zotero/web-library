@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { Button } from 'web-common/components';
 
-import Search from '../../component/search';
+import MainSearch from '../../component/main-search';
 import { navigateExitSearch, triggerSearchMode, } from '../../actions';
 
 const SearchBar = () => {
@@ -28,7 +28,7 @@ const SearchBar = () => {
 			nodeRef={ searchBarRef }
 		>
 			<div ref={ searchBarRef } className="searchbar">
-				<Search autoFocus />
+				<MainSearch autoFocus />
 				<Button onClick={ handleCancelSearchClick } className="btn-link">
 					Cancel
 				</Button>

@@ -6,7 +6,7 @@ import { useFocusManager } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import MenuEntry from './menu-entry';
-import Search from './../../component/search';
+import MainSearch from './../../component/main-search';
 import { SETTINGS } from '../../constants/modals';
 import { currentTriggerSearchMode, toggleModal,
 	toggleNavbar, toggleTouchTagSelector } from '../../actions';
@@ -88,7 +88,7 @@ const Navbar = memo(({ entries = [] }) => {
 					)) }
 				</ul>
 			</nav>
-			<Search
+			<MainSearch
 				autoFocus
 				onFocusNext={ focusNext }
 				onFocusPrev={ focusPrev }

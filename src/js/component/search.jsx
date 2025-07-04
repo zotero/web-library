@@ -1,14 +1,10 @@
 import PropTypes from 'prop-types';
-import { memo, useEffect, useCallback, useRef, useState } from 'react';
+import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
-import { usePrevious } from 'web-common/hooks';
 import { noop } from 'web-common/utils';
 
-import { navigate, resetQuery, toggleAdvancedSearch } from '../actions';
-
-const SEARCH_INPUT_DEBOUNCE_DELAY = 300; //ms
 const modes = {
 	titleCreatorYear: "Title, Creator, Year",
 	everything: "Title, Creator, Year + Full-Text Content"
@@ -53,28 +49,32 @@ SearchDropdown.propTypes = {
 	onKeyDown: PropTypes.func,
 };
 
-const Search = props => {
-	const { onFocusNext = noop, onFocusPrev = noop, autoFocus, registerAutoFocus = noop } = props;
-	const dispatch = useDispatch();
-	const search = useSelector(state => state.current.search);
-	const searchState = useSelector(state => state.current.searchState);
-	const qmode = useSelector(state => state.current.qmode);
-	const itemsSource = useSelector(state => state.current.itemsSource);
-	const prevItemsSource = usePrevious(itemsSource);
-	const collection = useSelector(state => state.current.collectionKey)
-	const prevCollection = usePrevious(collection);
+const Search = memo(forwardRef((props, ref) => {
+	const { debounce = 300, onFocusNext = noop, onFocusPrev = noop, autoFocus, registerAutoFocus = noop,
+		search = '', searchState = {}, qmode, isAdvancedSearch, onSearch = noop,
+		onToggleAdvancedSearch = noop, onResetQuery = noop
+	} = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const isAdvancedSearch = useSelector(state => state.current.isAdvancedSearch);
-
 	const inputRef = useRef(null);
-
 	// on single-column devices allow re-querying after initial mount because search input is being
 	// unmounted when navigating into an item and remounted back when on the list
 	const hasBlurredSinceLastSearch = useRef(isSingleColumn);
 
 	const [searchValue, setSearchValue] = useState(search);
 	const [qmodeValue, setQmodeValue] = useState(qmode || 'titleCreatorYear');
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if (inputRef.current) {
+				inputRef.current.focus();
+			}
+		},
+		reset: () => {
+			setSearchValue('');
+			performSearchDebounce.cancel();
+		}
+	}));
 
 	const performSearch = useCallback((newSearchValue, newQmodeValue) => {
 		var view, items, attachmentKey, noteKey;
@@ -91,11 +91,11 @@ const Search = props => {
 			attachmentKey = searchState.attachmentKey || null;
 			noteKey = searchState.noteKey || null;
 		}
-		dispatch(navigate(({ attachmentKey, view, noteKey, items, search: newSearchValue, qmode: newQmodeValue })));
-	}, [dispatch, isSingleColumn, searchState]);
+		onSearch(({ attachmentKey, view, noteKey, items, search: newSearchValue, qmode: newQmodeValue }));
+	}, [isSingleColumn, onSearch, searchState]);
 
 	const performSearchDebounce =
-		useDebouncedCallback(performSearch, SEARCH_INPUT_DEBOUNCE_DELAY);
+		useDebouncedCallback(performSearch, debounce);
 
 	const handleSearchChange = useCallback(ev => {
 		const newValue = ev.currentTarget.value;
@@ -103,23 +103,23 @@ const Search = props => {
 		hasBlurredSinceLastSearch.current = false;
 
 		if(newValue.includes('"') && !isAdvancedSearch && !isTouchOrSmall) {
-			dispatch(toggleAdvancedSearch(true));
+			onToggleAdvancedSearch(true);
 		} else if(isAdvancedSearch && newValue.length === 0) {
-			dispatch(toggleAdvancedSearch(false));
+			onToggleAdvancedSearch(false);
 		}
 
 		if(isTouchOrSmall || (!isAdvancedSearch && !newValue.includes('"'))) {
 			performSearchDebounce(newValue, qmodeValue);
 		}
-	}, [dispatch, isTouchOrSmall, isAdvancedSearch, performSearchDebounce, qmodeValue]);
+	}, [isAdvancedSearch, isTouchOrSmall, onToggleAdvancedSearch, performSearchDebounce, qmodeValue]);
 
 	const handleSearchClear = useCallback(() => {
 		performSearchDebounce.cancel();
 		setSearchValue('');
-		dispatch(toggleAdvancedSearch(false));
+		onToggleAdvancedSearch(false);
 		performSearchDebounce('', qmodeValue);
 		inputRef.current.focus();
-	}, [dispatch, performSearchDebounce, qmodeValue]);
+	}, [onToggleAdvancedSearch, performSearchDebounce, qmodeValue]);
 
 	const handleSelectMode = useCallback(ev => {
 		setQmodeValue(ev.currentTarget.dataset.qmode);
@@ -159,35 +159,17 @@ const Search = props => {
 				if(performSearchDebounce.isPending()) {
 					performSearchDebounce.flush();
 				}
-				dispatch(resetQuery());
-				dispatch(toggleAdvancedSearch(false));
+				onResetQuery();
+				onToggleAdvancedSearch(false);
 				performSearch(searchValue, qmodeValue);
 				hasBlurredSinceLastSearch.current = false;
 			}
 		}
-	}, [isAdvancedSearch, dispatch, onFocusNext, onFocusPrev, performSearch, performSearchDebounce, searchValue, qmodeValue]);
+	}, [onFocusNext, onFocusPrev, isAdvancedSearch, performSearchDebounce, onResetQuery, onToggleAdvancedSearch, performSearch, searchValue, qmodeValue]);
 
 	const handleBlur = useCallback(() => {
 		hasBlurredSinceLastSearch.current = true;
 	}, []);
-
-	useEffect(() => {
-		if(!prevItemsSource) {
-			return;
-		}
-		if(itemsSource !== prevItemsSource && itemsSource !== 'query') {
-			setSearchValue('');
-		}
-	}, [itemsSource, prevItemsSource]);
-
-	useEffect(() => {
-		if(!prevCollection) {
-			return;
-		}
-		if(collection !== prevCollection) {
-			setSearchValue('');
-		}
-	}, [collection, prevCollection]);
 
 	return (
 		<div className="search input-group">
@@ -224,13 +206,28 @@ const Search = props => {
 			)}
 		</div>
 	);
-}
+}));
+
+Search.displayName = 'Search';
 
 Search.propTypes = {
-	autoFocus: PropTypes.bool,
+	debounce: PropTypes.number,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,
+	autoFocus: PropTypes.bool,
 	registerAutoFocus: PropTypes.func,
+	search: PropTypes.string,
+	searchState: PropTypes.shape({
+		triggerView: PropTypes.string,
+		triggerItem: PropTypes.object,
+		attachmentKey: PropTypes.string,
+		noteKey: PropTypes.string,
+	}),
+	qmode: PropTypes.string,
+	isAdvancedSearch: PropTypes.bool,
+	onSearch: PropTypes.func,
+	onToggleAdvancedSearch: PropTypes.func,
+	onResetQuery: PropTypes.func,
 }
 
-export default memo(Search);
+export default Search;

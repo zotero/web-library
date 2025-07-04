@@ -7,7 +7,7 @@ import { isTriggerEvent } from 'web-common/utils';
 import { pluralize } from '../../common/format';
 import { useItemsCount } from '../../hooks';
 import ColumnSelector from '../item/items/column-selector';
-import Search from '../search';
+import MainSearch from '../main-search';
 import { navigate, toggleModal } from '../../actions';
 import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 
@@ -107,7 +107,7 @@ const EmbeddedHeader = () => {
 				<Fragment>
 					<EmbeddedCollectionPicker tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 					<EmbeddedInfoView />
-					<Search onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
+					<MainSearch onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 					<ColumnSelector tabIndex={ -2 } onFocusNext={ focusNext } onFocusPrev={ focusPrev } />
 				</Fragment>
 			)}
