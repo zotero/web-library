@@ -11,8 +11,8 @@ import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../..
 const MoreActionsItems = ({ divider = false }) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem } = useItemActionHandlers();
-	const { attachmentContentType, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, isViewFile,
+	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem, handleChangeParentItemModalOpen } = useItemActionHandlers();
+	const { attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi, isViewFile,
 		isViewOnline, item, selectedCount, url } = useItemsActions();
 
 	const handleViewFileClick = useCallback(() => {
@@ -52,16 +52,21 @@ const MoreActionsItems = ({ divider = false }) => {
 				</DropdownItem>
 			)}
 
-			{canDuplicate && (canRecognize || canHaveParent || canUnregonize) && <DropdownItem divider />}
+			{canDuplicate && (canRecognize || canCreateParent || canUnregonize) && <DropdownItem divider />}
 
 			{(isTouchOrSmall && canRecognize) && (
 				<DropdownItem onClick={handleRetrieveMetadata}>
 					Retrieve Metadata
 				</DropdownItem>
 			)}
-			{canHaveParent && (
+			{canCreateParent && (
 				<DropdownItem onClick={handleCreateParentItem}>
 					{selectedCount === 1 ? "Create Parent Item" : "Create Parent Items"}
+				</DropdownItem>
+			)}
+			{ canReparent && (
+				<DropdownItem onClick={handleChangeParentItemModalOpen}>
+					Change Parent Item
 				</DropdownItem>
 			)}
 			{canUnregonize && (
@@ -69,7 +74,7 @@ const MoreActionsItems = ({ divider = false }) => {
 					Undo Retrieve Metadata
 				</DropdownItem>
 			)}
-			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && canRecognize) || canHaveParent || canUnregonize) && <DropdownItem divider />}
+			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && canRecognize) || canCreateParent || canUnregonize) && <DropdownItem divider />}
 		</Fragment>
 	);
 }

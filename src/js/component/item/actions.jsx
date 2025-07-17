@@ -10,7 +10,7 @@ import ExportActions from 'component/item/actions/export';
 import UploadAction from 'component/item/actions/upload';
 import columnProperties from '../../constants/column-properties';
 import AddByIdentifier from 'component/item/actions/add-by-identifier';
-import { useCanRecognize, useItemActionHandlers } from '../../hooks';
+import { useCanRecognize, useCanReparent, useItemActionHandlers } from '../../hooks';
 import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
 import { MoreActionsDropdownDesktop } from 'component/item/actions/more-actions';
 
@@ -131,6 +131,7 @@ const ItemActionsDesktop = memo(props => {
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedCount = useSelector(state => state.current.itemKeys.length);
 	const canRecognize = useCanRecognize();
+	const canReparent = useCanReparent();
 
 	const selectedContainsCollection = useSelector(
 		state => state.current.itemKeys.some(
@@ -141,7 +142,7 @@ const ItemActionsDesktop = memo(props => {
 
 	const { handleCiteModalOpen, handleNewItemCreate, handleNewStandaloneNote, handleAddToCollectionModalOpen,
 		handleRemoveFromCollection, handleTrash, handlePermanentlyDelete, handleUndelete,
-		handleBibliographyModalOpen, handleRetrieveMetadata } = useItemActionHandlers();
+		handleBibliographyModalOpen, handleRetrieveMetadata, handleChangeParentItemModalOpen } = useItemActionHandlers();
 
 	const handleKeyDown = useCallback(ev => {
 		if (ev.target !== ev.currentTarget) {
@@ -215,6 +216,16 @@ const ItemActionsDesktop = memo(props => {
 									title="Add To Collection"
 								>
 									<Icon type="20/add-collection" width="20" height="20" />
+								</Button>
+								<Button
+									disabled={!canReparent}
+									icon
+									onClick={handleChangeParentItemModalOpen}
+									onKeyDown={handleKeyDown}
+									tabIndex={-2}
+									title="Change Parent Item"
+								>
+									<Icon type="16/change-top-level-item" width="16" height="16" />
 								</Button>
 								{(itemsSource === 'collection' || (itemsSource === 'query' && collectionKey)) && (
 									<Button
