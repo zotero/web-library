@@ -19,12 +19,12 @@ import SettingsModal from './modal/settings';
 import StyleInstallerModal from './modal/style-installer';
 import CreateParentItemModal from './modal/create-parent-item';
 import AddRelatedModal from './modal/add-related';
+import ChangeParentItem from './modal/change-parent-item';
 
 import {
 	ADD_LINKED_URL_TOUCH, ADD_RELATED, BIBLIOGRAPHY, COLLECTION_ADD, COLLECTION_RENAME, COLLECTION_SELECT,
 	EXPORT, IDENTIFIER_PICKER, MANAGE_TAGS, METADATA_RETRIEVAL, MOVE_COLLECTION, NEW_ITEM, SETTINGS,
-	SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER,
-	CREATE_PARENT_ITEM
+	SORT_ITEMS, STYLE_INSTALLER, ADD_BY_IDENTIFIER, CREATE_PARENT_ITEM, CHANGE_PARENT_ITEM
 } from '../constants/modals';
 
 const lookup = {
@@ -45,6 +45,7 @@ const lookup = {
 	[STYLE_INSTALLER]: StyleInstallerModal,
 	[METADATA_RETRIEVAL]: metadataRetrieval,
 	[CREATE_PARENT_ITEM]: CreateParentItemModal,
+	[CHANGE_PARENT_ITEM]: ChangeParentItem
 };
 
 const UNMOUNT_DELAY = 500; // to allow outro animatons (delay in ms)

@@ -6,9 +6,9 @@ import { usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
-import { ADD_RELATED } from '../../constants/modals';
-import { addRelatedItems, toggleModal, querySecondary } from '../../actions';
-import { PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
+import { CHANGE_PARENT_ITEM } from '../../constants/modals';
+import { toggleModal, querySecondary, updateMultipleItems } from '../../actions';
+import { PICKS_SINGLE_ITEM } from '../../constants/picker-modes';
 import { useNavigationState } from '../../hooks';
 import ItemsList from '../item/items/list';
 import ItemsTable from '../item/items/table';
@@ -18,20 +18,20 @@ import Search from '../search';
 import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
 
-const AddRelatedModal = () => {
+const ChangeParentItemModal = () => {
 	const dispatch = useDispatch();
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const itemKeys = useSelector(state => state.current.itemKeys);
-	const isOpen = useSelector(state => state.modal.id === ADD_RELATED);
+	const isOpen = useSelector(state => state.modal.id === CHANGE_PARENT_ITEM);
 	const isItemsReady = useSelector(state => state.current.itemKeys
 		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
 	);
-	const columnsKey = 'addRelatedColumns';
+	const columnsKey = 'changeParentItemColumns';
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_MULTIPLE_ITEMS, { libraryKey, collectionKey, view: 'item-list' });
+	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_SINGLE_ITEM, { libraryKey, collectionKey, view: 'item-list' });
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 	const [isSearchMode, setIsSearchMode] = useState(false); // on mobile need to toggle search mode on/off
 	const wasOpen = usePrevious(isOpen);
@@ -44,19 +44,19 @@ const AddRelatedModal = () => {
 		...pick(navState, ['libraryKey', 'collectionKey', 'view', 'q', 'qmode']),
 		itemsSource: 'secondary',
 		selectedItemKeys: navState.itemKeys || [], // or itemKeys?
-		pickerMode: PICKS_MULTIPLE_ITEMS,
+		pickerMode: PICKS_SINGLE_ITEM,
 		pickerNavigate: handleNavigation
 	};
 
 	const handleSelectItems = useCallback(async () => {
-		for (const sourceItemKey of itemKeys) {
-			setIsBusy(true);
-			await dispatch(addRelatedItems(sourceItemKey, navState.itemKeys));
-			setIsBusy(false);
-			dispatch(toggleModal(null, false));
-		}
-	}, [dispatch, itemKeys, navState.itemKeys]);
-
+		const multiPatch = itemKeys.map(key => ({
+			key, parentItem: navState.itemKeys[0]
+		}));
+		setIsBusy(true);
+		await dispatch(updateMultipleItems(multiPatch, libraryKey));
+		setIsBusy(false);
+		dispatch(toggleModal(null, false));
+	}, [itemKeys, dispatch, libraryKey, navState.itemKeys]);
 
 	const handleSearch = useCallback((searchNavObject) => {
 		handleNavigation({
@@ -116,8 +116,8 @@ const AddRelatedModal = () => {
 
 	return (
 		<Modal
-			className="modal-touch modal-item-picker add-related-modal"
-			contentLabel="Add Related Items"
+			className="modal-touch modal-item-picker change-parent-item-modal"
+			contentLabel="Change Parent Item"
 			isBusy={isBusy}
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
@@ -160,7 +160,7 @@ const AddRelatedModal = () => {
 				) : (
 					<Fragment>
 						<h4 className="modal-title truncate">
-							Add Related Items
+							Change Parent Item
 						</h4>
 						<div className="right">
 							<Search
@@ -226,7 +226,7 @@ const AddRelatedModal = () => {
 							className="btn-link"
 							onClick={handleSelectItems}
 						>
-							Add
+							Select
 						</Button>
 					</div>
 				</Fragment>
@@ -235,8 +235,8 @@ const AddRelatedModal = () => {
 	);
 }
 
-AddRelatedModal.propTypes = {
+ChangeParentItemModal.propTypes = {
 	items: PropTypes.array,
 }
 
-export default memo(AddRelatedModal);
+export default memo(ChangeParentItemModal);

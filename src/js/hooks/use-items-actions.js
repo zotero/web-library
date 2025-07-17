@@ -15,15 +15,25 @@ const useCanRecognize = () => {
 	return canRecognize;
 };
 
-const useCanHaveParent = () => {
+const useCanCreateParent = () => {
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedItemsAreAllAttachments = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
 	));
-	const canHaveParent = !isTrash && !isMyPublications && selectedItemsAreAllAttachments;
-	return canHaveParent;
+	const canCreateParent = !isTrash && !isMyPublications && selectedItemsAreAllAttachments;
+	return canCreateParent;
 };
+
+const useCanReparent = () => {
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
+	const selectedItemsAreAllParentable = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
+		key => ['attachment', 'note'].includes(state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType)
+	));
+	const canReparent = !isTrash && !isMyPublications && selectedItemsAreAllParentable;
+	return canReparent;
+}
 
 const useCanUnrecognize = () => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
@@ -52,15 +62,16 @@ const useItemsActions = () => {
 	const isViewOnline = !isViewFile && (url || doi);
 
 	const canDuplicate = !isTrash && !isMyPublications && !isReadOnly && item && item.itemType !== 'attachment';
-	const canHaveParent = useCanHaveParent();
+	const canReparent = useCanReparent();
+	const canCreateParent = useCanCreateParent();
 	const canRecognize = useCanRecognize();
 	const canUnregonize = useCanUnrecognize();
 
-	const hasAnyAction = isViewFile || isViewOnline || canDuplicate || canRecognize || canUnregonize || canHaveParent;
+	const hasAnyAction = isViewFile || isViewOnline || canDuplicate || canRecognize || canUnregonize || canCreateParent;
 	return {
-		attachmentContentType, canDuplicate, canHaveParent, canRecognize, canUnregonize, doi, hasAnyAction,
+		attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi, hasAnyAction,
 		isReadOnly, isViewFile, isTrash, isMyPublications, isViewOnline, item, selectedCount, url
 	};
 };
 
-export { useItemsActions, useCanRecognize, useCanHaveParent, useCanUnrecognize };
+export { useItemsActions, useCanRecognize, useCanCreateParent, useCanReparent, useCanUnrecognize };

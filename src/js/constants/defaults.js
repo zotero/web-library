@@ -146,5 +146,6 @@ export const preferences = {
 	citationLocale: 'en-US',
 	installedCitationStyles: [],
 	columns: [...defaultColumns], // itemsTableColumns
-	addRelatedColumns: [...defaultColumns]
+	addRelatedColumns: [...defaultColumns],
+	changeParentItemColumns: [...defaultColumns],
 };
