@@ -11,7 +11,7 @@ import { noop, isTriggerEvent, pick } from 'web-common/utils';
 
 import AddLinkedUrlForm from './add-linked-url-form';
 import AttachmentDetails from './attachment-details';
-import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
+import { ADD_LINKED_URL_TOUCH, CHANGE_PARENT_ITEM } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
 import { READER_CONTENT_TYPES } from '../../constants/reader.js';
 import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveItemsToTrash, fetchChildItems, navigate,
@@ -52,12 +52,14 @@ AttachmentIcon.propTypes = {
 };
 
 const AttachmentActions = memo(props => {
-	const { attachment, itemKey, isUploading } = props;
+	const { attachment, itemKey, isReadOnly, isUploading } = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const parentItemKey = useSelector(state => state.current.itemKey);
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'timestamp'], 0));
@@ -72,6 +74,7 @@ const AttachmentActions = memo(props => {
 	const search = useSelector(state => state.current.search);
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
+	const canReparent = !isReadOnly && !isTrash && !isMyPublications;
 	const isReaderCompatible = Object.keys(READER_CONTENT_TYPES).includes(attachment.contentType);
 	const isPDF = attachment.contentType === 'application/pdf';
 
@@ -105,6 +108,11 @@ const AttachmentActions = memo(props => {
 		dispatch(exportAttachmentWithAnnotations(key));
 	}, [dispatch]);
 
+	const handleChangeParentItem = useCallback(ev => {
+		dispatch(toggleModal(CHANGE_PARENT_ITEM, true, { keys: [attachment.key] }));
+		ev.stopPropagation();
+	}, [dispatch, attachment]);
+
 	useEffect(() => {
 		if(urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
@@ -115,87 +123,103 @@ const AttachmentActions = memo(props => {
 		}
 	}, [forceRerender, url, timestamp]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	return attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading ? (
-        <Fragment>
-			{ isReaderCompatibleBrowser() && isReaderCompatible && (
-				<a
-					className="btn btn-icon"
-					href={ openInReaderPath }
-					onClick={ stopPropagation }
-					rel="noreferrer"
-					role="button"
-					tabIndex={ -3 }
-					target="_blank"
-					title="Open In Reader"
-				>
-					<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
-				</a>
-			) }
-			{ isReaderCompatibleBrowser() && isPDF ? (
-				isPreppingPDF ? <Spinner className="small" /> :
-					preppedPDFURL ? (
+	return (
+		<Fragment>
+			{(attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading) ? (
+				<Fragment>
+					{ isReaderCompatibleBrowser() && isReaderCompatible && (
 						<a
 							className="btn btn-icon"
+							href={ openInReaderPath }
 							onClick={ stopPropagation }
-							href={ preppedPDFURL }
 							rel="noreferrer"
 							role="button"
 							tabIndex={ -3 }
-							download={ preppedPDFFileName }
-							title="Export Attachment With Annotations"
+							target="_blank"
+							title="Open In Reader"
 						>
-							<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
 						</a>
+					) }
+					{ isReaderCompatibleBrowser() && isPDF ? (
+						isPreppingPDF ? <Spinner className="small" /> :
+							preppedPDFURL ? (
+								<a
+									className="btn btn-icon"
+									onClick={ stopPropagation }
+									href={ preppedPDFURL }
+									rel="noreferrer"
+									role="button"
+									tabIndex={ -3 }
+									download={ preppedPDFFileName }
+									title="Export Attachment With Annotations"
+								>
+									<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+								</a>
+							) : (
+								<a
+									className="btn btn-icon"
+									onClick={ handleExportClick }
+									role="button"
+									tabIndex={ -3 }
+									title="Export Attachment With Annotations"
+								>
+									<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+								</a>
+							)
+					) : urlIsFresh ? (
+					<a
+						className="btn btn-icon"
+						href={ url }
+						onClick={ stopPropagation }
+						rel="noreferrer"
+						role="button"
+						tabIndex={ -3 }
+						target="_blank"
+						title={ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
+					>
+						<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+					</a>
 					) : (
-						<a
-							className="btn btn-icon"
-							onClick={ handleExportClick }
-							role="button"
-							tabIndex={ -3 }
-							title="Export Attachment With Annotations"
-						>
-							<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-						</a>
-					)
-            ) : urlIsFresh ? (
-            <a
-                className="btn btn-icon"
-                href={ url }
-                onClick={ stopPropagation }
-                rel="noreferrer"
-                role="button"
-                tabIndex={ -3 }
-                target="_blank"
-                title={ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
-            >
-                <Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-            </a>
-            ) : (
-            <a
-                className="btn btn-icon"
-                onClick={ handleClick }
-                role="button"
-                tabIndex={ -3 }
-				title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
-            >
-                <Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-            </a>
-            ) }
-        </Fragment>
-    ) : attachment.linkMode === 'linked_url' ? (
-        <a
-            title="Open Linked Attachment"
-            className="btn btn-icon"
-            href={ attachment.url }
-            onClick={ stopPropagation }
-            rel="nofollow noopener noreferrer"
-            role="button"
-            tabIndex={ -3 }
-            target="_blank"
-        >
-            <Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-        </a>
-    ) : null;
+					<a
+						className="btn btn-icon"
+						onClick={ handleClick }
+						role="button"
+						tabIndex={ -3 }
+						title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
+					>
+						<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+					</a>
+					) }
+				</Fragment>
+			) : attachment.linkMode === 'linked_url' ? (
+				<a
+					title="Open Linked Attachment"
+					className="btn btn-icon"
+					href={ attachment.url }
+					onClick={ stopPropagation }
+					rel="nofollow noopener noreferrer"
+					role="button"
+					tabIndex={ -3 }
+					target="_blank"
+				>
+					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+				</a>
+			) : null
+		}
+		{canReparent && (
+			<a
+				className="btn btn-icon"
+				onClick={handleChangeParentItem}
+				role="button"
+				tabIndex={-3}
+				title="Change Parent Item"
+			>
+				<Icon type={`${iconSize}/change-top-level-item`} width={iconSize} height={iconSize} />
+			</a>
+		)}
+	</Fragment>
+	);
 });
 
 AttachmentActions.displayName = 'AttachmentDownloadIcon';
@@ -321,6 +345,7 @@ const Attachment = memo(props => {
 			</div>
 			{ isUploading && <Spinner className="small" /> }
 			<AttachmentActions
+				isReadOnly={isReadOnly}
 				itemKey={ itemKey }
 				attachment={ attachment }
 				isUploading={ isUploading }

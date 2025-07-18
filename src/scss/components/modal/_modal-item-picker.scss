@@ -1,4 +1,5 @@
-.add-related-modal {
+// .modal-item-picker used for Add Related and Change Parent Item modals
+.modal-item-picker {
 	@include mouse-and-bp-up(md) {
 		max-height: calc(100vh - 96px);
 		width: 900px;
@@ -44,7 +45,7 @@
 	}
 
 	.collection-tree {
-			@include mouse-and-bp-up(md) {
+		@include mouse-and-bp-up(md) {
 			padding: 8px;
 			overflow: auto;
 			line-height: $line-height-large;
