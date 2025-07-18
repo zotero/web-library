@@ -14,7 +14,8 @@ import { getScrollContainerPageCount, sortByKey, stopPropagation } from 'utils';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { useItemsState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
-	fetchItemTemplate, moveItemsToTrash, navigate } from 'actions';
+	fetchItemTemplate, moveItemsToTrash, navigate, toggleModal } from 'actions';
+import { CHANGE_PARENT_ITEM } from 'constants/modals';
 
 const PAGE_SIZE = 100;
 
@@ -28,6 +29,9 @@ const Note = memo(props => {
 	const isUpdating = useSelector(state => noteKey in get(state, ['libraries', state.current.libraryKey, 'updating', 'items'], {}));
 	const wasSelected = usePrevious(isSelected);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
+	const canReparent = !isReadOnly && !isTrash && !isMyPublications;
 	const ignoreNextFocus = useRef(false);
 	const noteRef = useRef(null);
 	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(
@@ -57,6 +61,11 @@ const Note = memo(props => {
 		onDuplicate(note);
 		ev.stopPropagation();
 	}, [note, onDuplicate]);
+
+	const handleChangeParentItem = useCallback(ev => {
+		dispatch(toggleModal(CHANGE_PARENT_ITEM, true, { keys: [note.key] }));
+		ev.stopPropagation();
+	}, [dispatch, note]);
 
 	const handleFocus = useCallback(ev => {
 		receiveFocus(ev);
@@ -147,6 +156,12 @@ const Note = memo(props => {
 						<DropdownItem onClick={ handleDuplicate }>
 							Duplicate
 						</DropdownItem>
+						{canReparent && (
+							<DropdownItem onClick={handleChangeParentItem}>
+								Change Parent Item
+							</DropdownItem>
+						)}
+						<DropdownItem divider />
 						<DropdownItem onClick={ handleDelete }>
 							Delete
 						</DropdownItem>
