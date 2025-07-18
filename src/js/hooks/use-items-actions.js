@@ -26,12 +26,13 @@ const useCanCreateParent = () => {
 };
 
 const useCanReparent = () => {
+	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedItemsAreAllParentable = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
 		key => ['attachment', 'note'].includes(state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType)
 	));
-	const canReparent = !isTrash && !isMyPublications && selectedItemsAreAllParentable;
+	const canReparent = !isReadOnly && !isTrash && !isMyPublications && selectedItemsAreAllParentable;
 	return canReparent;
 }
 

@@ -23,7 +23,7 @@ const ChangeParentItemModal = () => {
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
-	const itemKeys = useSelector(state => state.current.itemKeys);
+	const affectedItemKeys = useSelector(state => state.modal.keys ?? state.current.itemKeys);
 	const isOpen = useSelector(state => state.modal.id === CHANGE_PARENT_ITEM);
 	const isItemsReady = useSelector(state => state.current.itemKeys
 		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
@@ -49,14 +49,14 @@ const ChangeParentItemModal = () => {
 	};
 
 	const handleSelectItems = useCallback(async () => {
-		const multiPatch = itemKeys.map(key => ({
+		const multiPatch = affectedItemKeys.map(key => ({
 			key, parentItem: navState.itemKeys[0]
 		}));
 		setIsBusy(true);
 		await dispatch(updateMultipleItems(multiPatch, libraryKey));
 		setIsBusy(false);
 		dispatch(toggleModal(null, false));
-	}, [itemKeys, dispatch, libraryKey, navState.itemKeys]);
+	}, [affectedItemKeys, dispatch, libraryKey, navState.itemKeys]);
 
 	const handleSearch = useCallback((searchNavObject) => {
 		handleNavigation({

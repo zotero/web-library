@@ -7,7 +7,7 @@ import {
 	RECEIVE_RECOVER_ITEMS_TRASH, DROP_CHILD_ITEMS, ERROR_CHILD_ITEMS, RECEIVE_CHILD_ITEMS,
 	RECEIVE_CREATE_ITEM, RECEIVE_CREATE_ITEMS, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
 	RECEIVE_DELETED_CONTENT, RECEIVE_FETCH_ITEMS, RECEIVE_MOVE_ITEMS_TRASH, RECEIVE_UPDATE_ITEM,
-	REQUEST_CHILD_ITEMS,
+	REQUEST_CHILD_ITEMS, RECEIVE_UPDATE_MULTIPLE_ITEMS,
 } from '../../constants/actions.js';
 
 const detectChangesInParent = (mappings, state, action, items) => {
@@ -20,7 +20,7 @@ const detectChangesInParent = (mappings, state, action, items) => {
 		}
 
 		Object.entries(newState).forEach(([parentKey, itemKeysData]) => {
-			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && (!item.parentItem === parentKey || item.deleted)) {
+			if('keys' in itemKeysData && itemKeysData.keys.includes(item.key) && (item.parentItem !== parentKey || item.deleted)) {
 				newState[parentKey] = filterItemKeys(itemKeysData, item.key);
 			}
 		});
@@ -132,6 +132,7 @@ const itemsByParent = (state = {}, action, { items, meta }) => {
 				}
 			});
 		case RECEIVE_FETCH_ITEMS:
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS:
 			return {
 				...state,
 				...detectChangesInParent(meta.mappings, state, action, items)
