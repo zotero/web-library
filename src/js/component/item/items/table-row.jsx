@@ -14,6 +14,7 @@ import {
 	pickBestAttachmentItemAction, pickBestItemAction, navigateSelectItemsMouse
 } from '../../../actions';
 import { useItemsKeys } from '../../../hooks';
+import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
@@ -141,7 +142,8 @@ const TableRow = props => {
 		const isCtrlModifier = ev.getModifierState('Control') || ev.getModifierState('Meta');
 		const isShiftModifier = ev.getModifierState('Shift');
 		if (pickerMode) {
-			const nextKeys = selectItemsMouse(itemKey, isShiftModifier, isCtrlModifier, { keys, selectedItemKeys });
+			const allowMultiple = pickerMode === PICKS_MULTIPLE_ITEMS;
+			const nextKeys = selectItemsMouse(itemKey, allowMultiple && isShiftModifier, allowMultiple && isCtrlModifier, { keys, selectedItemKeys });
 			pickerNavigate({ library: libraryKey, collection: collectionKey, items: nextKeys, search: q, qmode, view: 'item-list' })
 		} else {
 			dispatch(navigateSelectItemsMouse(itemKey, isShiftModifier, isCtrlModifier));

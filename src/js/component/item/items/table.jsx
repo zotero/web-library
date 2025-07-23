@@ -24,6 +24,7 @@ import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
 import { selectItemsKeyboard } from '../../../common/selection';
 import Table from '../../common/table';
+import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 
 const ItemsTable = props => {
@@ -206,7 +207,7 @@ const ItemsTable = props => {
 		ev.preventDefault();
 
 		const { nextKeys, cursorIndex } = pickerMode ?
-			selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift'), { keys, selectedItemKeys }) :
+			selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift') && pickerMode === PICKS_MULTIPLE_ITEMS, { keys, selectedItemKeys }) :
 			await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
 		if (pickerMode) {
