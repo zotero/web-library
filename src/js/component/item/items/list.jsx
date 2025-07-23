@@ -12,7 +12,7 @@ import { useItemsState } from '../../../hooks';
 import List from '../../common/list';
 import ListRow from './list-row';
 import ScrollEffectComponent from './scroll-effect';
-import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
+import { PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM } from '../../../constants/picker-modes';
 
 
 const ItemsList = memo(props => {
@@ -29,7 +29,7 @@ const ItemsList = memo(props => {
 	const requestType = getRequestTypeFromItemsSource(itemsSource);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
 	const isModalOpen = useSelector(state => state.modal.id);
-	const isSelectMode = props.isSelectMode || pickerMode === PICKS_MULTIPLE_ITEMS;
+	const isSelectMode = props.isSelectMode || [PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM].includes(pickerMode);
 	const columnsData = useSelector(state => state.preferences[columnsKey]);
 	const errorCount = useSelector(state => get(state, ['traffic', requestType, 'errorCount'], 0));
 	const { field: sortByPreference, sort: sortDirectionPreference } = columnsData.find(c => c.sort) || {};

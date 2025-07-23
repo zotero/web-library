@@ -6,7 +6,7 @@ import { Icon } from 'web-common/components';
 
 import { triggerSelectMode, navigate } from '../../../actions';
 import { vec2dist } from '../../../utils';
-import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
+import { PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM } from '../../../constants/picker-modes';
 
 const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers select mode
 const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
@@ -24,7 +24,7 @@ const ListRow = memo(props => {
 
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const isSelectMode = data.isSelectMode || pickerMode === PICKS_MULTIPLE_ITEMS;
+	const isSelectMode = data.isSelectMode || [PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM].includes(pickerMode);
 	const triggerSelectTimeout = useRef(null);
 	const tiggerSelectPosStart = useRef(null);
 	const tiggerSelectPosLatest = useRef(null);
@@ -50,7 +50,11 @@ const ListRow = memo(props => {
 			if (selectedItemKeys.includes(itemKey)) {
 				nextState = { items: selectedItemKeys.filter(key => key !== itemKey) };
 			} else {
-				nextState = { items: [...selectedItemKeys, itemKey] };
+				if(pickerMode === PICKS_SINGLE_ITEM) {
+					nextState = { items: [itemKey] };
+				} else {
+					nextState = { items: [...selectedItemKeys, itemKey] };
+				}
 			}
 
 		} else {
