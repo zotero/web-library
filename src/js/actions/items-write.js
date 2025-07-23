@@ -1445,6 +1445,25 @@ const addRelatedItems = (itemKey, relatedItemKeys) => {
 	};
 }
 
+const changeParentItem = (itemKeys, newParentItem) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const { libraryKey } = state.current;
+		const multiPatch = itemKeys.map(key => {
+			const patch = { key, parentItem: newParentItem };
+			if (newParentItem === false) {
+				const item = state.libraries[libraryKey].items?.[key];
+				const parentItem = state.libraries[libraryKey].items?.[item?.parentItem];
+				// When clearing the parentItem, assign the attachment to the same collections as the previous parent item
+				patch.collections = parentItem?.collections ?? [];
+			}
+			return patch;
+		});
+
+		return await dispatch(updateMultipleItems(multiPatch, libraryKey));
+	}
+}
+
 const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
 const chunkedToggleTagsOnItems = (itemKeys, ...args) => chunkedAction(toggleTagsOnItems, itemKeys, ...args);
@@ -1456,6 +1475,8 @@ const chunkedMoveItemsToTrash = (itemKeys, ...args) => chunkedAction(moveItemsTo
 const chunkedRecoverItemsFromTrash = (itemKeys, ...args) => chunkedAction(recoverItemsFromTrash, itemKeys, ...args);
 
 const chunkedRemoveFromCollection = (itemKeys, ...args) => chunkedAction(removeFromCollection, itemKeys, ...args);
+
+const chunkedChangeParentItem = (itemKeys, ...args) => chunkedAction(changeParentItem, itemKeys, ...args);
 
 const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 	return async dispatch => {
@@ -1726,6 +1747,8 @@ export {
     chunkedRecoverItemsFromTrash,
     chunkedRemoveFromCollection,
     chunkedToggleTagsOnItems,
+	chunkedChangeParentItem,
+	changeParentItem,
     copyToLibrary,
     createAttachments,
     createAttachmentsFromDropped,

@@ -176,7 +176,9 @@ const itemsByCollection = (state = {}, action, { items, meta }) => {
 				}
 			});
 		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
-			const changes = action.multiPatch.filter(patch => 'collections' in patch).map(patch => [patch.key, patch.collections]);
+			const changes = action.multiPatch
+				.filter(patch => 'collections' in patch)
+				.map(patch => [patch.key, patch.collections]);
 			return mapObject(state, (colKey, itemKeys) => {
 				for (let [modifiedItemKey, newCollections] of changes) {
 					if(newCollections.includes(colKey)) {

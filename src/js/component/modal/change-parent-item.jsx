@@ -7,7 +7,7 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 
 import { CHANGE_PARENT_ITEM } from '../../constants/modals';
-import { toggleModal, querySecondary, updateMultipleItems } from '../../actions';
+import { toggleModal, querySecondary, chunkedChangeParentItem } from '../../actions';
 import { PICKS_SINGLE_ITEM } from '../../constants/picker-modes';
 import { useNavigationState } from '../../hooks';
 import ItemsList from '../item/items/list';
@@ -17,6 +17,8 @@ import Modal from '../ui/modal';
 import Search from '../search';
 import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
+import { isEPUBAttachment, isPDFAttachment, isWebAttachment } from '../../common/item.js';
+import { pluralize } from '../../common/format.js';
 
 const ChangeParentItemModal = () => {
 	const dispatch = useDispatch();
@@ -28,6 +30,18 @@ const ChangeParentItemModal = () => {
 	const isItemsReady = useSelector(state => state.current.itemKeys
 		.every(key => state.libraries[state.current.libraryKey]?.dataObjects?.[key])
 	);
+	const canBeMovedOutOfParent = useSelector(state => !affectedItemKeys.some(key => {
+		const item = state.libraries[libraryKey].items[key];
+		if(!item.parentItem) {
+			// Prevent moving out if at least one item does not have a parent
+			return true;
+		}
+		// Prevent moving out if any item is a web attachment that is neither a PDF nor an EPUB
+		// https://github.com/zotero/zotero/blob/8041d7d4df89d7c174f9aae1b371cc0d20823872/chrome/content/zotero/zoteroPane.js#L5258
+		return isWebAttachment(item) && !isPDFAttachment(item) && !isEPUBAttachment(item);
+	}));
+	const allNotes = useSelector(state => affectedItemKeys.every(key => state.libraries[libraryKey].items[key].itemType === 'note'));
+	const allAttachments = useSelector(state => affectedItemKeys.every(key => state.libraries[libraryKey].items[key].itemType === 'attachment'));
 	const columnsKey = 'changeParentItemColumns';
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
@@ -38,6 +52,9 @@ const ChangeParentItemModal = () => {
 	const searchRef = useRef(null);
 	const beforeSearchView = useRef(null);
 	const prevNavState = usePrevious(navState);
+	const unparentLabel = `Convert to Standalone ${(!isTouchOrSmall && allNotes) ?
+		pluralize('Note', affectedItemKeys.length) : (!isTouchOrSmall && allAttachments) ?
+		pluralize('Attachment', affectedItemKeys.length) : '' }`;
 
 	const sharedProps = {
 		columnsKey,
@@ -48,15 +65,20 @@ const ChangeParentItemModal = () => {
 		pickerNavigate: handleNavigation
 	};
 
-	const handleSelectItems = useCallback(async () => {
-		const multiPatch = affectedItemKeys.map(key => ({
-			key, parentItem: navState.itemKeys[0]
-		}));
+	const changeParentItem = useCallback(async (newParentItem) => {
 		setIsBusy(true);
-		await dispatch(updateMultipleItems(multiPatch, libraryKey));
+		await dispatch(chunkedChangeParentItem(affectedItemKeys, newParentItem))
 		setIsBusy(false);
 		dispatch(toggleModal(null, false));
-	}, [affectedItemKeys, dispatch, libraryKey, navState.itemKeys]);
+	}, [affectedItemKeys, dispatch]);
+
+	const handleSelectItems = useCallback(async () => {
+		await changeParentItem(navState.itemKeys[0])
+	}, [changeParentItem, navState.itemKeys]);
+
+	const handleUnparent = useCallback(async () => {
+		await changeParentItem(false)
+	}, [changeParentItem]);
 
 	const handleSearch = useCallback((searchNavObject) => {
 		handleNavigation({
@@ -203,9 +225,14 @@ const ChangeParentItemModal = () => {
 							</Button>
 						</div>
 						<div className="modal-footer-center">
-							<h4 className="modal-title truncate">
-
-							</h4>
+							{canBeMovedOutOfParent && (
+								<Button
+									className="btn-link"
+									onClick={handleUnparent}
+								>
+									{unparentLabel}
+								</Button>
+							)}
 						</div>
 						<div className="modal-footer-right">
 							<Button
@@ -220,14 +247,26 @@ const ChangeParentItemModal = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-					<div className="modal-footer justify-content-end">
-						<Button
-							disabled={navState.itemKeys.length === 0}
-							className="btn-link"
-							onClick={handleSelectItems}
-						>
-							Select
-						</Button>
+					<div className="modal-footer">
+						<div className="modal-footer-left">
+						{canBeMovedOutOfParent && (
+							<Button
+								className="btn-link"
+								onClick={handleUnparent}
+							>
+								{unparentLabel}
+							</Button>
+						)}
+						</div>
+						<div className="modal-footer-right">
+							<Button
+								disabled={navState.itemKeys.length === 0}
+								className="btn-link"
+								onClick={handleSelectItems}
+							>
+								Select
+							</Button>
+						</div>
 					</div>
 				</Fragment>
 			)}

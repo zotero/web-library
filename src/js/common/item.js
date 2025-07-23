@@ -191,4 +191,9 @@ const getFieldDisplayValue = (item, field) => {
 const getLastPageIndexSettingKey = (itemKey, libraryKey) =>
 	`lastPageIndex_${libraryKey[0] === 'u' ? 'u' : libraryKey}_${itemKey}`;
 
-export { calculateDerivedData, getBaseMappedValue, getDerivedData, getFieldDisplayValue, getItemTitle, getLastPageIndexSettingKey };
+const isWebAttachment = item => item.itemType === 'attachment' && !(item.linkMode === 'imported_file' || item.linkMode === 'linked_file');
+const isFileAttachment = item => item.itemType === 'attachment' && item.linkMode !== 'linked_url';
+const isPDFAttachment = item => isFileAttachment(item) && item.contentType === 'application/pdf';
+const isEPUBAttachment = item => isFileAttachment(item) && item.contentType === 'application/epub+zip';
+
+export { calculateDerivedData, getBaseMappedValue, getDerivedData, getFieldDisplayValue, getItemTitle, getLastPageIndexSettingKey, isWebAttachment, isFileAttachment, isPDFAttachment, isEPUBAttachment };
