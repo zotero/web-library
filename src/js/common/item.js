@@ -195,5 +195,8 @@ const isWebAttachment = item => item.itemType === 'attachment' && !(item.linkMod
 const isFileAttachment = item => item.itemType === 'attachment' && item.linkMode !== 'linked_url';
 const isPDFAttachment = item => isFileAttachment(item) && item.contentType === 'application/pdf';
 const isEPUBAttachment = item => isFileAttachment(item) && item.contentType === 'application/epub+zip';
+const isRegularItem = item => item?.itemType && !(item.itemType === 'note' || item.itemType === 'attachment' || item.itemType === 'annotation');
 
-export { calculateDerivedData, getBaseMappedValue, getDerivedData, getFieldDisplayValue, getItemTitle, getLastPageIndexSettingKey, isWebAttachment, isFileAttachment, isPDFAttachment, isEPUBAttachment };
+export { calculateDerivedData, getBaseMappedValue, getDerivedData, getFieldDisplayValue,
+	getItemTitle, getLastPageIndexSettingKey, isWebAttachment, isFileAttachment, isPDFAttachment,
+	isEPUBAttachment, isRegularItem };

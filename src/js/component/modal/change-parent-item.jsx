@@ -17,7 +17,7 @@ import Modal from '../ui/modal';
 import Search from '../search';
 import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
-import { isEPUBAttachment, isPDFAttachment, isWebAttachment } from '../../common/item.js';
+import { isEPUBAttachment, isPDFAttachment, isRegularItem, isWebAttachment } from '../../common/item.js';
 import { pluralize } from '../../common/format.js';
 
 const ChangeParentItemModal = () => {
@@ -46,6 +46,9 @@ const ChangeParentItemModal = () => {
 	const wasItemsReady = usePrevious(isItemsReady);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_SINGLE_ITEM, { libraryKey, collectionKey, view: 'item-list' });
+	const isValidTarget = useSelector(state => navState.itemKeys.length > 0 && isRegularItem(
+		state.libraries[navState.libraryKey]?.dataObjects?.[navState.itemKeys[0]])
+	);
 	const [isBusy, setIsBusy] = useState(!isItemsReady);
 	const [isSearchMode, setIsSearchMode] = useState(false); // on mobile need to toggle search mode on/off
 	const wasOpen = usePrevious(isOpen);
@@ -236,7 +239,7 @@ const ChangeParentItemModal = () => {
 						</div>
 						<div className="modal-footer-right">
 							<Button
-								disabled={navState.itemKeys.length === 0}
+								disabled={!isValidTarget}
 								className="btn-link"
 								onClick={handleSelectItems}
 							>
@@ -260,7 +263,7 @@ const ChangeParentItemModal = () => {
 						</div>
 						<div className="modal-footer-right">
 							<Button
-								disabled={navState.itemKeys.length === 0}
+								disabled={!isValidTarget}
 								className="btn-link"
 								onClick={handleSelectItems}
 							>

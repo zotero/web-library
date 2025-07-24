@@ -1456,6 +1456,9 @@ const changeParentItem = (itemKeys, newParentItem) => {
 				const parentItem = state.libraries[libraryKey].items?.[item?.parentItem];
 				// When clearing the parentItem, assign the attachment to the same collections as the previous parent item
 				patch.collections = parentItem?.collections ?? [];
+			} else {
+				// If the new parent item is set, ensure the collections are cleared
+				patch.collections = [];
 			}
 			return patch;
 		});

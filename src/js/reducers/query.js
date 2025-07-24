@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal';
 import { shallowEqual } from 'react-redux';
 import { LOCATION_CHANGE } from 'connected-react-router'
-import { omit } from 'web-common/utils';
+import { omit, pick } from 'web-common/utils';
 
 import { ERROR_ITEMS_BY_QUERY, ERROR_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_ADD_TAGS_TO_ITEMS,
 RECEIVE_COLORED_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_DELETE_ITEM, RECEIVE_DELETE_ITEMS,
@@ -128,7 +128,7 @@ const query = (state = defaultState, action, entireState) => {
 		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
 			const shouldInvalidate = action.multiPatch.some(patch => 'parentItem' in patch || 'deleted' in patch);
 			if(shouldInvalidate) {
-				return omit(state, ['keys', 'totalResults', 'requests', 'isFetching']);
+				return { ...state, ...pick(defaultState, ['keys', 'totalResults', 'requests', 'isFetching']) };
 			}
 			return state;
 		}
