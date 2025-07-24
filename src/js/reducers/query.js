@@ -10,7 +10,7 @@ RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_UP
 REQUEST_ITEMS_BY_QUERY, REQUEST_TAGS_IN_ITEMS_BY_QUERY, SORT_ITEMS, RESET_QUERY,
 DROP_TAGS_IN_ITEMS_BY_QUERY, DROP_ITEMS_BY_QUERY, REQUEST_COLORED_TAGS_IN_ITEMS_BY_QUERY,
 ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY, DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_LIBRARY_SETTINGS,
-RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS } from '../constants/actions.js';
+RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS } from '../constants/actions.js';
 
 import { getParamsFromRoute } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
@@ -125,6 +125,13 @@ const query = (state = defaultState, action, entireState) => {
 			};
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? { ...state, tags: {} } : state;
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
+			const shouldInvalidate = action.multiPatch.some(patch => 'parentItem' in patch || 'deleted' in patch);
+			if(shouldInvalidate) {
+				return omit(state, ['keys', 'totalResults', 'requests', 'isFetching']);
+			}
+			return state;
+		}
 		case RECEIVE_DELETE_ITEM:
 			return filterItemKeys(state, action.item.key);
 		case RECEIVE_DELETE_ITEMS:

@@ -160,39 +160,54 @@ const itemsByCollection = (state = {}, action, { items, meta }) => {
 				}, {}))
 			};
 		case RECEIVE_UPDATE_ITEM:
-			if(!('collections' in action.patch)) {
+			if(!('collections' in action.patch) && !('parentItem' in action.patch)) {
 				return state;
 			}
-			return mapObject(state, (colKey, itemKeys) => {
+			return mapObject(state, (colKey, itemKeysState) => {
 				if(action.item.collections.includes(colKey)) {
-					return [colKey, injectExtraItemKeys(
+					itemKeysState = injectExtraItemKeys(
 						meta.mappings,
-						itemKeys,
+						itemKeysState,
 						action.item.key,
 						{ ...action.otherItems, [action.item.key]: action.item }
-					)];
+					);
 				} else {
-					return [colKey, filterItemKeys(itemKeys, action.item.key)];
+					itemKeysState = filterItemKeys(itemKeysState, action.item.key);
 				}
+				if(action.item.parentItem) {
+					// item now has a parent, so it is not in this collection anymore
+					itemKeysState = filterItemKeys(itemKeysState, action.item.key);
+				}
+				return [colKey, itemKeysState];
 			});
 		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
 			const changes = action.multiPatch
 				.filter(patch => 'collections' in patch)
 				.map(patch => [patch.key, patch.collections]);
-			return mapObject(state, (colKey, itemKeys) => {
+
+			// we only care if item has a new parent, removing parentItem is irrelevant for collection membership
+			const itemKeysWithParentChanged = action.multiPatch
+				.filter(patch => 'parentItem' in patch && !!patch.parentItem)
+				.map(patch => patch.key);
+
+			return mapObject(state, (colKey, itemKeysState) => {
+				// Any item that now has a parentItem should no longer be considered a member of a collection
+				itemKeysState = filterItemKeys(itemKeysState, itemKeysWithParentChanged);
+
 				for (let [modifiedItemKey, newCollections] of changes) {
 					if(newCollections.includes(colKey)) {
-						itemKeys = injectExtraItemKeys(
+						itemKeysState = injectExtraItemKeys(
 							meta.mappings,
-							itemKeys,
+							itemKeysState,
 							modifiedItemKey,
 							{ ...items, [modifiedItemKey]: action.items.find(i => i.key === modifiedItemKey) }
 						);
 					} else {
-						itemKeys = filterItemKeys(itemKeys, modifiedItemKey);
+						itemKeysState = filterItemKeys(itemKeysState, modifiedItemKey);
 					}
 				}
-				return [colKey, itemKeys];
+
+				return [colKey, itemKeysState];
 			});
 		}
 		case SORT_ITEMS:
