@@ -30,7 +30,7 @@ const defaultState = {
 	keys: [],
 	requests: [],
 	tags: {},
-	totalResults: null,
+	totalResults: undefined,
 };
 
 const query = (state = defaultState, action, entireState) => {

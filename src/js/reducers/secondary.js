@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal';
 import { shallowEqual } from 'react-redux';
-import { omit } from 'web-common/utils';
+import { omit, pick } from 'web-common/utils';
 
 import {
 	DROP_COLORED_TAGS_IN_ITEMS_SECONDARY, DROP_ITEMS_SECONDARY, DROP_TAGS_IN_ITEMS_SECONDARY,
@@ -10,7 +10,7 @@ import {
 	RECEIVE_LIBRARY_SETTINGS, RECEIVE_MOVE_ITEMS_TRASH, RECEIVE_RECOVER_ITEMS_TRASH,
 	RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TAGS_IN_ITEMS_SECONDARY, RECEIVE_UPDATE_ITEM,
 	RECEIVE_UPDATE_LIBRARY_SETTINGS, REQUEST_COLORED_TAGS_IN_ITEMS_SECONDARY, REQUEST_ITEMS_SECONDARY,
-	REQUEST_TAGS_IN_ITEMS_SECONDARY, SORT_ITEMS_SECONDARY, QUERY_SECONDARY
+	REQUEST_TAGS_IN_ITEMS_SECONDARY, SORT_ITEMS_SECONDARY, QUERY_SECONDARY, RECEIVE_UPDATE_MULTIPLE_ITEMS
 } from '../constants/actions.js';
 
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
@@ -33,7 +33,7 @@ const defaultState = {
 	keys: [],
 	requests: [],
 	tags: {},
-	totalResults: null,
+	totalResults: undefined,
 };
 
 const secondary = (state = defaultState, action, entireState) => {
@@ -130,6 +130,13 @@ const secondary = (state = defaultState, action, entireState) => {
 			};
 		case RECEIVE_UPDATE_ITEM:
 			return 'tags' in action.patch ? { ...state, tags: {} } : state;
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS: {
+				const shouldInvalidate = action.multiPatch.some(patch => 'parentItem' in patch || 'deleted' in patch);
+				if(shouldInvalidate) {
+					return { ...state, ...pick(defaultState, ['keys', 'totalResults', 'requests', 'isFetching']) };
+				}
+				return state;
+			}
 		case RECEIVE_DELETE_ITEM:
 			return filterItemKeys(state, action.item.key);
 		case RECEIVE_DELETE_ITEMS:
