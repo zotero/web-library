@@ -5,7 +5,7 @@ import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
-import { Button, Icon, Spinner, TabPane } from 'web-common/components';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner, TabPane } from 'web-common/components';
 import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 import { noop, isTriggerEvent, pick } from 'web-common/utils';
 
@@ -14,8 +14,10 @@ import AttachmentDetails from './attachment-details';
 import { ADD_LINKED_URL_TOUCH, CHANGE_PARENT_ITEM } from '../../constants/modals';
 import { ATTACHMENT } from '../../constants/dnd';
 import { READER_CONTENT_TYPES } from '../../constants/reader.js';
-import { createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveItemsToTrash, fetchChildItems, navigate,
-tryGetAttachmentURL, toggleModal, updateItem } from '../../actions';
+import {
+	createAttachments, createAttachmentsFromDropped, exportAttachmentWithAnnotations, moveItemsToTrash, fetchChildItems, navigate,
+	tryGetAttachmentURL, toggleModal, updateItem
+} from '../../actions';
 import { get, getScrollContainerPageCount, getUniqueId, isReaderCompatibleBrowser, openDelayedURL, stopPropagation, sortByKey } from '../../utils';
 import { getFileData } from '../../common/event';
 import { pluralize } from '../../common/format';
@@ -38,8 +40,8 @@ const AttachmentIcon = memo(({ isActive, item, size }) => {
 		width={size}
 		height={size}
 		usePixelRatio={!isTouchOrSmall}
-		useColorScheme={ isActive ? false : true }
-		colorScheme={ colorScheme }
+		useColorScheme={isActive ? false : true}
+		colorScheme={colorScheme}
 	/>
 });
 
@@ -52,12 +54,13 @@ AttachmentIcon.propTypes = {
 };
 
 const AttachmentActions = memo(props => {
-	const { attachment, itemKey, isReadOnly, isUploading } = props;
+	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading } = props;
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
 	const parentItemKey = useSelector(state => state.current.itemKey);
+	const currentAttachmentKey = useSelector(state => state.current.attachmentKey);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', itemKey, 'isFetching'], false));
@@ -74,9 +77,11 @@ const AttachmentActions = memo(props => {
 	const search = useSelector(state => state.current.search);
 	const tags = useSelector(state => state.current.tags);
 	const config = useSelector(state => state.config);
+	const [isDropdownOpen, setDropdownOpen] = useState(false);
 	const canReparent = !isReadOnly && !isTrash && !isMyPublications;
 	const isReaderCompatible = Object.keys(READER_CONTENT_TYPES).includes(attachment.contentType);
 	const isPDF = attachment.contentType === 'application/pdf';
+	const canDownload = attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading;
 
 	const openInReaderPath = makePath(config, {
 		library: libraryKey,
@@ -89,13 +94,15 @@ const AttachmentActions = memo(props => {
 		tags: tags,
 	});
 
+	const handleToggleDropdown = useCallback(() => setDropdownOpen(prevIsOpen => !prevIsOpen), []);
+
 	const handleClick = useCallback(ev => {
 		const { key } = ev.currentTarget.closest('[data-key]').dataset;
 
 		ev.stopPropagation();
 		ev.preventDefault();
 
-		if(isFetchingUrl) {
+		if (isFetchingUrl) {
 			return;
 		}
 
@@ -104,7 +111,7 @@ const AttachmentActions = memo(props => {
 
 	const handleExportClick = useCallback(ev => {
 		ev.stopPropagation();
-		const { key } = ev.currentTarget.closest('[data-key]').dataset;
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
 		dispatch(exportAttachmentWithAnnotations(key));
 	}, [dispatch]);
 
@@ -113,8 +120,18 @@ const AttachmentActions = memo(props => {
 		ev.stopPropagation();
 	}, [dispatch, attachment]);
 
+	const handleDelete = useCallback(ev => {
+		ev.stopPropagation();
+		const key = ev.currentTarget.closest('[data-key]').dataset.key;
+		dispatch(moveItemsToTrash([key]));
+		if (currentAttachmentKey === key) {
+			dispatch(navigate({ attachmentKey: null, noteKey: null }));
+		}
+		focusBySelector(`.attachment:first-child:not([data-key="${key}"]), .attachment:nth-child(2)`);
+	}, [currentAttachmentKey, dispatch, focusBySelector]);
+
 	useEffect(() => {
-		if(urlIsFresh) {
+		if (urlIsFresh) {
 			const urlExpiresTimestamp = timestamp + 60000;
 			const urlExpriesFromNow = urlExpiresTimestamp - Date.now();
 			clearTimeout(timeout.current);
@@ -125,33 +142,33 @@ const AttachmentActions = memo(props => {
 
 	return (
 		<Fragment>
-			{(attachment.linkMode.startsWith('imported') && attachment[Symbol.for('links')].enclosure && !isUploading) ? (
+			{canDownload && (
 				<Fragment>
-					{ isReaderCompatibleBrowser() && isReaderCompatible && (
+					{isReaderCompatibleBrowser() && isReaderCompatible && (
 						<a
 							className="btn btn-icon"
-							href={ openInReaderPath }
-							onClick={ stopPropagation }
+							href={openInReaderPath}
+							onClick={stopPropagation}
 							rel="noreferrer"
 							role="button"
-							tabIndex={ -3 }
+							tabIndex={-3}
 							target="_blank"
 							title="Open In Reader"
 						>
-							<Icon type={ `${iconSize}/reader` } width={ iconSize } height={ iconSize } />
+							<Icon type={`${iconSize}/reader`} width={iconSize} height={iconSize} />
 						</a>
-					) }
-					{ isReaderCompatibleBrowser() && isPDF ? (
+					)}
+					{isReaderCompatibleBrowser() && isPDF ? (
 						isPreppingPDF ? <Spinner className="small" /> :
 							preppedPDFURL ? (
 								<a
 									className="btn btn-icon"
-									onClick={ stopPropagation }
-									href={ preppedPDFURL }
+									onClick={stopPropagation}
+									href={preppedPDFURL}
 									rel="noreferrer"
 									role="button"
-									tabIndex={ -3 }
-									download={ preppedPDFFileName }
+									tabIndex={-3}
+									download={preppedPDFFileName}
 									title="Export Attachment With Annotations"
 								>
 									<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
@@ -159,66 +176,76 @@ const AttachmentActions = memo(props => {
 							) : (
 								<a
 									className="btn btn-icon"
-									onClick={ handleExportClick }
+									onClick={handleExportClick}
 									role="button"
-									tabIndex={ -3 }
+									tabIndex={-3}
 									title="Export Attachment With Annotations"
 								>
-									<Icon type={`${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
+									<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
 								</a>
 							)
 					) : urlIsFresh ? (
-					<a
-						className="btn btn-icon"
-						href={ url }
-						onClick={ stopPropagation }
-						rel="noreferrer"
-						role="button"
-						tabIndex={ -3 }
-						target="_blank"
-						title={ isReaderCompatible ? "Download (no annotations)" : "Download Attachment" }
-					>
-						<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-					</a>
+						<a
+							className="btn btn-icon"
+							href={url}
+							onClick={stopPropagation}
+							rel="noreferrer"
+							role="button"
+							tabIndex={-3}
+							target="_blank"
+							title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
+						>
+							<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+						</a>
 					) : (
-					<a
-						className="btn btn-icon"
-						onClick={ handleClick }
-						role="button"
-						tabIndex={ -3 }
-						title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
-					>
-						<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-					</a>
-					) }
+						<a
+							className="btn btn-icon"
+							onClick={handleClick}
+							role="button"
+							tabIndex={-3}
+							title={isReaderCompatible ? "Download (no annotations)" : "Download Attachment"}
+						>
+							<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+						</a>
+					)}
 				</Fragment>
-			) : attachment.linkMode === 'linked_url' ? (
-				<a
-					title="Open Linked Attachment"
-					className="btn btn-icon"
-					href={ attachment.url }
-					onClick={ stopPropagation }
-					rel="nofollow noopener noreferrer"
-					role="button"
-					tabIndex={ -3 }
-					target="_blank"
+			)}
+			{!isReadOnly && (
+				<Dropdown
+					isOpen={isDropdownOpen}
+					onToggle={handleToggleDropdown}
+					placement="bottom-end"
 				>
-					<Icon type={ `${iconSize}/open-link` } width={ iconSize } height={ iconSize } />
-				</a>
-			) : null
-		}
-		{canReparent && (
-			<a
-				className="btn btn-icon"
-				onClick={handleChangeParentItem}
-				role="button"
-				tabIndex={-3}
-				title="Change Parent Item"
-			>
-				<Icon type={`${iconSize}/change-top-level-item`} width={iconSize} height={iconSize} />
-			</a>
-		)}
-	</Fragment>
+					<DropdownToggle
+						tabIndex={-3}
+						onClick={stopPropagation}
+						className={cx('dropdown-toggle', {
+							'btn-circle btn-secondary': isTouchOrSmall,
+							'btn-icon': !isTouchOrSmall,
+						})}
+					>
+						<Icon
+							type={'16/options-strong'}
+							width="16"
+							height="16"
+							className="touch"
+						/>
+						<Icon type={'16/options'} width="16" height="16" className="mouse" />
+					</DropdownToggle>
+					<DropdownMenu>
+						{canReparent && (
+							<DropdownItem onClick={handleChangeParentItem}>
+								Change Parent Item
+							</DropdownItem>
+						)}
+						<DropdownItem divider />
+						<DropdownItem onClick={handleDelete}>
+							Delete
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+			)}
+		</Fragment>
 	);
 });
 
@@ -248,7 +275,7 @@ const Attachment = memo(props => {
 		item: { itemKey, libraryKey },
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
-			if(dropResult) {
+			if (dropResult) {
 				const patch = dropResult.item ?
 					{ parentItem: dropResult.item } : dropResult.collection ?
 						{ parentItem: false, collections: [dropResult.collection] } :
@@ -265,19 +292,10 @@ const Attachment = memo(props => {
 	const isLink = attachment.linkMode === 'linked_url';
 	const hasLink = isFile || isLink;
 
-	const handleDelete = useCallback(ev => {
-		ev.stopPropagation();
-		dispatch(moveItemsToTrash([attachment.key]));
-		if(attachmentKey === attachment.key) {
-			dispatch(navigate({ attachmentKey: null, noteKey: null }));
-		}
-		focusBySelector(`.attachment:first-child:not([data-key="${attachment.key}"]), .attachment:nth-child(2)`);
-	}, [attachment, attachmentKey, focusBySelector, dispatch]);
-
 	const handleKeyDown = useCallback(ev => {
-		if(ev.key === 'ArrowRight') {
+		if (ev.key === 'ArrowRight') {
 			focusNext(ev, { useCurrentTarget: false });
-		} else if(ev.key === 'ArrowLeft') {
+		} else if (ev.key === 'ArrowLeft') {
 			focusPrev(ev, { useCurrentTarget: false });
 		} else {
 			onKeyDown(ev)
@@ -291,10 +309,10 @@ const Attachment = memo(props => {
 
 	const handleFocus = useCallback(ev => {
 		receiveFocus(ev);
-		if(ev.target !== ev.currentTarget) {
+		if (ev.target !== ev.currentTarget) {
 			return;
 		}
-		if(isTouchOrSmall) {
+		if (isTouchOrSmall) {
 			return;
 		}
 		dispatch(navigate({ attachmentKey: attachment.key, noteKey: null }));
@@ -303,7 +321,7 @@ const Attachment = memo(props => {
 
 	const handleBlur = useCallback(ev => {
 		receiveBlur(ev);
-		if(isTouchOrSmall) {
+		if (isTouchOrSmall) {
 			return;
 		}
 		setIsFocused(false);
@@ -311,56 +329,35 @@ const Attachment = memo(props => {
 
 	return drag(
 		<li
-			aria-labelledby={ id.current }
-			aria-current={ isSelected }
-			className={ cx('attachment', { 'selected': isSelected, 'no-link': !hasLink }) }
-			data-key={ attachment.key }
-			onBlur={ handleBlur }
-			onClick={ handleAttachmentSelect }
-			onFocus={ handleFocus }
-			onKeyDown={ handleKeyDown }
-			tabIndex={ -2 }
-			ref={ ref }
+			aria-labelledby={id.current}
+			aria-current={isSelected}
+			className={cx('attachment', { 'selected': isSelected, 'no-link': !hasLink })}
+			data-key={attachment.key}
+			onBlur={handleBlur}
+			onClick={handleAttachmentSelect}
+			onFocus={handleFocus}
+			onKeyDown={handleKeyDown}
+			tabIndex={-2}
+			ref={ref}
 		>
-			{ (isTouchOrSmall && !isReadOnly) && (
-				<Button
-					title="Delete Attachment"
-					className="btn-circle btn-primary"
-					onClick={ handleDelete }
-					tabIndex={ -1 }
-
-				>
-					<Icon type="16/minus-strong" width="16" height="16" />
-				</Button>
-			) }
 			<AttachmentIcon
-				item={ attachment }
-				size={ iconSize }
-				isActive={ (isFocused || isTouchOrSmall) && isSelected }
+				item={attachment}
+				size={iconSize}
+				isActive={(isFocused || isTouchOrSmall) && isSelected}
 			/>
-			<div className="truncate" id={ id.current }>
-				{ attachment.title ||
+			<div className="truncate" id={id.current}>
+				{attachment.title ||
 					(attachment.linkMode === 'linked_url' ? attachment.url : attachment.filename)
 				}
 			</div>
-			{ isUploading && <Spinner className="small" /> }
+			{isUploading && <Spinner className="small" />}
 			<AttachmentActions
 				isReadOnly={isReadOnly}
-				itemKey={ itemKey }
-				attachment={ attachment }
-				isUploading={ isUploading }
+				focusBySelector={focusBySelector}
+				itemKey={itemKey}
+				attachment={attachment}
+				isUploading={isUploading}
 			/>
-
-			{ (!isTouchOrSmall && !isReadOnly) && (
-				<Button
-					title="Delete Attachment"
-					icon
-					onClick={ handleDelete }
-					tabIndex={ -3 }
-				>
-					<Icon type={ '16/minus-circle' } width="16" height="16" />
-				</Button>
-			)}
 		</li>
 	);
 });
@@ -379,12 +376,12 @@ Attachment.displayName = 'Attachment';
 const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 
-	if(attachmentKey) {
+	if (attachmentKey) {
 		return (
 			<div className="attachment-details">
 				<AttachmentDetails
-					isReadOnly={ isReadOnly }
-					attachmentKey={ attachmentKey }
+					isReadOnly={isReadOnly}
+					attachmentKey={attachmentKey}
 				/>
 			</div>
 		);
@@ -462,50 +459,50 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 	}, [dispatch, itemKey]);
 
 	const handleKeyDown = useCallback(ev => {
-		if(ev.key === 'ArrowDown') {
+		if (ev.key === 'ArrowDown') {
 			ev.target === ev.currentTarget && focusNext(ev);
-		} else if(ev.key === 'ArrowUp') {
+		} else if (ev.key === 'ArrowUp') {
 			ev.target === ev.currentTarget && focusPrev(ev, { targetEnd: fileInput.current || addLinkedUrlButtonRef.current });
-		} else if(ev.key === 'Home') {
+		} else if (ev.key === 'Home') {
 			fileInput.current.focus();
 			ev.preventDefault();
-		} else if(ev.key === 'End') {
+		} else if (ev.key === 'End') {
 			focusBySelector('.attachment:last-child');
 			ev.preventDefault();
-		} else if(ev.key === 'PageDown' && scrollContainerRef.current) {
+		} else if (ev.key === 'PageDown' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.attachment');
 			focusNext(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
-		} else if(ev.key === 'PageUp' && scrollContainerRef.current) {
+		} else if (ev.key === 'PageUp' && scrollContainerRef.current) {
 			const containerEl = scrollContainerRef.current;
 			const itemEl = containerEl.querySelector('.attachment');
 			focusPrev(ev, { offset: getScrollContainerPageCount(itemEl, containerEl) });
 			ev.preventDefault();
-		} else if(ev.key === 'Tab') {
+		} else if (ev.key === 'Tab') {
 			const isFileInput = ev.currentTarget === fileInput.current;
 			const isShift = ev.getModifierState('Shift');
-			if(isFileInput && !isShift) {
+			if (isFileInput && !isShift) {
 				ev.target === ev.currentTarget && focusNext(ev);
 			}
-		} else if(isTriggerEvent(ev)) {
+		} else if (isTriggerEvent(ev)) {
 			ev.target.click();
 			ev.preventDefault();
 		}
 	}, [focusBySelector, focusNext, focusPrev]);
 
 	const handleFileInputKeyDown = useCallback(ev => {
-		if(ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
+		if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
 			ev.currentTarget === fileInput.current ?
 				addLinkedUrlButtonRef.current?.focus() :
 				fileInput.current?.focus();
-		} else if(ev.key === 'ArrowDown') {
+		} else if (ev.key === 'ArrowDown') {
 			scrollContainerRef.current?.focus();
 			ev.preventDefault();
-		} else if(ev.key === 'End') {
+		} else if (ev.key === 'End') {
 			focusBySelector('.attachment:last-child');
 			ev.preventDefault();
-		} else if(ev.key === 'Tab' && ev.getModifierState('Shift')) {
+		} else if (ev.key === 'Tab' && ev.getModifierState('Shift')) {
 			//@TODO: do this in a more elegant way
 			document.querySelector('[aria-label="Item Details"]').focus();
 			ev.preventDefault();
@@ -525,7 +522,7 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 	}, []);
 
 	useEffect(() => {
-		if(isActive && !isFetching && !isFetched) {
+		if (isActive && !isFetching && !isFetched) {
 			const start = pointer || 0;
 			const limit = PAGE_SIZE;
 			dispatch(fetchChildItems(itemKey, { start, limit }));
@@ -533,74 +530,74 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 	}, [dispatch, itemKey, isActive, isFetching, isFetched, pointer]);
 
 	return (
-        <TabPane
-			id={ id }
-			className={ cx("attachments", { 'dnd-target': canDrop && isOver }) }
-			isActive={ isActive }
-			isLoading={ !isReady }
-			ref={ drop }
+		<TabPane
+			id={id}
+			className={cx("attachments", { 'dnd-target': canDrop && isOver })}
+			isActive={isActive}
+			isLoading={!isReady}
+			ref={drop}
 			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
 			<CSSTransition
 				classNames="slide-down"
-				enter={ !isTouchOrSmall }
-				exit={ !isTouchOrSmall }
-				in={ !isTouchOrSmall && isAddingLinkedUrl }
-				nodeRef={ addLinkUrlFormRef }
-				timeout={ 500 }
+				enter={!isTouchOrSmall}
+				exit={!isTouchOrSmall}
+				in={!isTouchOrSmall && isAddingLinkedUrl}
+				nodeRef={addLinkUrlFormRef}
+				timeout={500}
 				mountOnEnter
 				unmountOnExit
 			>
-				<AddLinkedUrlForm ref={ addLinkUrlFormRef } onClose={ handleLinkedFileCancel } />
+				<AddLinkedUrlForm ref={addLinkUrlFormRef} onClose={handleLinkedFileCancel} />
 			</CSSTransition>
 			<h5 className="h2 tab-pane-heading hidden-mouse">Attachments</h5>
-			{ !isTouchOrSmall && (
+			{!isTouchOrSmall && (
 				<Toolbar>
 					<div className="toolbar-left">
 						<div className="counter">
-							{ `${attachments.length} ${pluralize('attachment', attachments.length)}` }
+							{`${attachments.length} ${pluralize('attachment', attachments.length)}`}
 						</div>
-						{ !isReadOnly && (
-						<ToolGroup>
-							{ isFileUploadAllowed && (
-								<div className="btn-file">
-									<input
-										aria-labelledby={ `${id}-add-file` }
-										disabled={ isAddingLinkedUrl }
-										className="add-attachment toolbar-focusable"
-										onChange={ handleFileInputChange }
-										onKeyDown={ handleFileInputKeyDown }
-										ref={ fileInput }
-										tabIndex={ 0 }
-										type="file"
-									/>
-									<Button
-										id={ `${id}-add-file` }
-										disabled={ isAddingLinkedUrl }
-										className="btn-default"
-										tabIndex={ -1 }
-									>
-										Add File
-									</Button>
-								</div>
-							) }
-							<Button
-								className="btn-default toolbar-focusable"
-								disabled={ isReadOnly }
-								onClick={ handleLinkedFileClick }
-								onKeyDown={ handleFileInputKeyDown }
-								tabIndex={isFileUploadAllowed ? -3 : 0 }
-								ref={ addLinkedUrlButtonRef }
-							>
-								Add Linked URL
-							</Button>
-						</ToolGroup>
-						) }
+						{!isReadOnly && (
+							<ToolGroup>
+								{isFileUploadAllowed && (
+									<div className="btn-file">
+										<input
+											aria-labelledby={`${id}-add-file`}
+											disabled={isAddingLinkedUrl}
+											className="add-attachment toolbar-focusable"
+											onChange={handleFileInputChange}
+											onKeyDown={handleFileInputKeyDown}
+											ref={fileInput}
+											tabIndex={0}
+											type="file"
+										/>
+										<Button
+											id={`${id}-add-file`}
+											disabled={isAddingLinkedUrl}
+											className="btn-default"
+											tabIndex={-1}
+										>
+											Add File
+										</Button>
+									</div>
+								)}
+								<Button
+									className="btn-default toolbar-focusable"
+									disabled={isReadOnly}
+									onClick={handleLinkedFileClick}
+									onKeyDown={handleFileInputKeyDown}
+									tabIndex={isFileUploadAllowed ? -3 : 0}
+									ref={addLinkedUrlButtonRef}
+								>
+									Add Linked URL
+								</Button>
+							</ToolGroup>
+						)}
 					</div>
 				</Toolbar>
-			) }
+			)}
 			<div className="scroll-container-mouse">
-				{ attachments.length > 0 && (
+				{attachments.length > 0 && (
 					<nav>
 						<ul
 							aria-label="Attachments"
@@ -613,45 +610,45 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 								attachments.map(attachment => {
 									const isUploading = uploads.includes(attachment.key);
 									return <Attachment
-										attachment={ attachment }
-										isReadOnly={ isReadOnly }
-										isUploading={ isUploading }
-										itemKey={ attachment.key }
-										key={ attachment.key }
-										libraryKey={ libraryKey }
-										onKeyDown={ handleKeyDown }
-										focusBySelector={ focusBySelector }
+										attachment={attachment}
+										isReadOnly={isReadOnly}
+										isUploading={isUploading}
+										itemKey={attachment.key}
+										key={attachment.key}
+										libraryKey={libraryKey}
+										onKeyDown={handleKeyDown}
+										focusBySelector={focusBySelector}
 									/>
 								})
 							}
 						</ul>
 					</nav>
-				) }
-				{ isTouchOrSmall && !isReadOnly && (
+				)}
+				{isTouchOrSmall && !isReadOnly && (
 					<Fragment>
-						{ isFileUploadAllowed && (
-						<div className="btn-file">
-							<input
-								aria-labelledby={`${id}-add-file`}
-								onChange={ handleFileInputChange }
-								type="file"
-							/>
-							<Button
-								id={ `${id}-add-file` }
-								className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
-								tabIndex={ -1 }
-							>
-								<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
-								Add File Attachment
-							</Button>
-						</div>
+						{isFileUploadAllowed && (
+							<div className="btn-file">
+								<input
+									aria-labelledby={`${id}-add-file`}
+									onChange={handleFileInputChange}
+									type="file"
+								/>
+								<Button
+									id={`${id}-add-file`}
+									className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
+									tabIndex={-1}
+								>
+									<Icon type={'24/plus-circle-strong'} width="24" height="24" />
+									Add File Attachment
+								</Button>
+							</div>
 						)}
 						<Button
-							onClick={ handleAddLinkedUrlTouchClick }
+							onClick={handleAddLinkedUrlTouchClick}
 							className="btn-block text-left hairline-top hairline-start-icon-28 btn-transparent-secondary"
-							tabIndex={ -1 }
+							tabIndex={-1}
 						>
-							<Icon type={ '24/plus-circle-strong' } width="24" height="24" />
+							<Icon type={'24/plus-circle-strong'} width="24" height="24" />
 							Add Linked URL
 						</Button>
 					</Fragment>
@@ -659,11 +656,11 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 			</div>
 			{
 				(!isTouchOrSmall && attachments.length > 0) && (
-					<AttachmentDetailsWrap isReadOnly={ isReadOnly } />
+					<AttachmentDetailsWrap isReadOnly={isReadOnly} />
 				)
 			}
 		</TabPane>
-    );
+	);
 };
 
 Attachments.propTypes = {

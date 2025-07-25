@@ -18,6 +18,13 @@
 			}
 		}
 
+		> .btn-icon {
+			@include touch-or-bp-down(sm) {
+				padding: $space-min;
+			}
+		}
+
+
 		> .btn-icon .icon {
 			@include touch-or-bp-down(sm) {
 				@include variant(".attachment:not(.selected)") {

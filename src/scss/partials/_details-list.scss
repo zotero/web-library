@@ -80,8 +80,13 @@
 			}
 		}
 
+		> .dropdown {
+			display: flex;
+		}
+
 		> .btn,
-		> .icon-spin {
+		> .icon-spin,
+		> .dropdown > .btn {
 			flex: 0 0 auto;
 
 			@include mouse-and-bp-up(md) {
@@ -110,8 +115,9 @@
 			}
 
 			&.btn-circle {
-				margin-left: 2px;
-				margin-right: $default-padding-x-touch + 2px;
+				@include touch-or-bp-down(sm) {
+					margin-left: 2 * $space-min;
+				}
 			}
 		}
 
