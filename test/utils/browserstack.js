@@ -8,7 +8,7 @@ const bsDescriptors = {
 			'os': 'windows',
 			'os_version': '11',
 			'browser': 'playwright-chromium',
-			'browser_version': 'latest',
+			'browser_version': '133.0',
 		}
 	},
 	'macos-webkit': {
@@ -17,7 +17,7 @@ const bsDescriptors = {
 			'os': 'os x',
 			'os_version': 'ventura',
 			'browser': 'playwright-webkit',
-			'browser_version': 'latest',
+			'browser_version': '18',
 			'resolution': '2560x1440' // so that entire emulated device screen is captured
 			// 'browserstack.debug': 'true',  // enabling visual logs
 			// 'browserstack.console': 'verbose',  // Enabling Console logs for the test
