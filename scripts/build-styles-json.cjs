@@ -7,9 +7,9 @@ const stylesCacheTime = process.env.STYLES_CACHE_TIME ?? 86400000;
 
 const styles = [
 	'apa',
-	'chicago-note-bibliography',
+	'chicago-shortened-notes-bibliography',
 	'modern-language-association',
-	'turabian-fullnote-bibliography'
+	'turabian-notes-bibliography'
 ];
 const defaultStyle = 'modern-language-association';
 

@@ -142,7 +142,7 @@ const AttachmentActions = memo(props => {
 
 	return (
 		<Fragment>
-			{canDownload && (
+			{canDownload ? (
 				<Fragment>
 					{isReaderCompatibleBrowser() && isReaderCompatible && (
 						<a
@@ -209,7 +209,20 @@ const AttachmentActions = memo(props => {
 						</a>
 					)}
 				</Fragment>
-			)}
+			) : attachment.linkMode === 'linked_url' ? (
+				<a
+					title="Open Linked Attachment"
+					className="btn btn-icon"
+					href={attachment.url}
+					onClick={stopPropagation}
+					rel="nofollow noopener noreferrer"
+					role="button"
+					tabIndex={-3}
+					target="_blank"
+				>
+					<Icon type={`${iconSize}/open-link`} width={iconSize} height={iconSize} />
+				</a>
+			) : null }
 			{!isReadOnly && (
 				<Dropdown
 					isOpen={isDropdownOpen}
@@ -223,6 +236,7 @@ const AttachmentActions = memo(props => {
 							'btn-circle btn-secondary': isTouchOrSmall,
 							'btn-icon': !isTouchOrSmall,
 						})}
+						title="Attachment Options"
 					>
 						<Icon
 							type={'16/options-strong'}

@@ -109,7 +109,7 @@ describe('Attachments', () => {
 
 		expect(await findByRole(listitem, 'button', { name: 'Open In Reader' })).toBeInTheDocument();
 		expect(getByRole(listitem, 'button', { name: 'Export Attachment With Annotations' })).toBeInTheDocument();
-		expect(getByRole(listitem, 'button', { name: 'Delete Attachment' })).toBeInTheDocument();
+		expect(getByRole(listitem, 'button', { name: 'Attachment Options' })).toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
 		expect(hasBeenUploaded).toBe(true);
 	});
@@ -169,7 +169,7 @@ describe('Attachments', () => {
 		const listitem = await screen.findByRole('listitem', { name: 'Example' });
 		expect(listitem).toBeInTheDocument();
 		expect(getByRole(listitem, 'button', { name: 'Open Linked Attachment' })).toHaveAttribute('href', 'http://example.com/');
-		expect(getByRole(listitem, 'button', { name: 'Delete Attachment' })).toBeInTheDocument();
+		expect(getByRole(listitem, 'button', { name: 'Attachment Options' })).toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
 	});
 

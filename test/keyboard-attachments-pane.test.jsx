@@ -85,6 +85,6 @@ describe('', () => {
 		expect(getByRole(listItem, 'button', { name: 'Export Attachment With Annotations' })).toHaveFocus();
 
 		await user.keyboard('{arrowright}');
-		expect(getByRole(listItem, 'button', { name: 'Delete Attachment' })).toHaveFocus();
+		expect(getByRole(listItem, 'button', { name: 'Attachment Options' })).toHaveFocus();
 	});
 });

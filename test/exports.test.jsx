@@ -127,7 +127,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 				const locale = url.searchParams.get('locale');
 				requestsCounter++;
 
-				expect(style).toBe(requestsCounter === 1 ? 'modern-language-association' : 'turabian-fullnote-bibliography');
+				expect(style).toBe(requestsCounter === 1 ? 'modern-language-association' : 'turabian-notes-bibliography');
 				expect(locale).toBe(requestsCounter <= 2 ? 'en-US' : 'pl-PL');
 
 				return HttpResponse.xml(style === 'modern-language-association' ? testUserBibliographyMLA : testUserBibliographyTurabian);

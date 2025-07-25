@@ -143,6 +143,7 @@ const Note = memo(props => {
 							'btn-circle btn-secondary': isTouchOrSmall,
 							'btn-icon': !isTouchOrSmall,
 						})}
+						title="Note Options"
 					>
 						<Icon
 							type={ '16/options-strong' }
