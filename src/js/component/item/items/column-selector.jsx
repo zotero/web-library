@@ -79,6 +79,7 @@ const ColumnSelector = props => {
 			onToggle={ handleToggleDropdown }
 			className="column-selector"
 			placement="bottom-end"
+			maxHeight={ true }
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
