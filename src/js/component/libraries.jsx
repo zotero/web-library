@@ -31,21 +31,23 @@ const LibraryNode = props => {
 	// no nodes inside if device is non-touch (no "All Items" node) and library is read-only (no
 	// trash) and has no collections
 	const isConfirmedEmpty = isReadOnly && !isTouchOrSmall && totalResults === 0;
-	const isPickerSkip = pickerMode && (isReadOnly || pickerSkipLibraries.includes(libraryKey) || (pickerRequireFileUpload && !isFileUploadAllowed));
+	const shouldSkipDueToFileUploadRequirements = (pickerRequireFileUpload && !isFileUploadAllowed);
+	const isPickerSkip = pickerMode && (isReadOnly || pickerSkipLibraries.includes(libraryKey) || shouldSkipDueToFileUploadRequirements);
+	const shouldUseSubtree = !isConfirmedEmpty && !(pickerMode && shouldSkipDueToFileUploadRequirements);
 
 	const handleSelect = useCallback(() => {
 		const path = { library: libraryKey, view: 'library' };
 
 		if (pickerPicksCollection && !isPickerSkip && !isTouchOrSmall) {
 			pickerPick({ libraryKey });
-		} else if (pickerMode) {
+		} else if (pickerMode && !shouldSkipDueToFileUploadRequirements) {
 			pickerNavigate(path);
 		} else if(!pickerMode) {
 			dispatch(navigate(path, true));
 		}
 
 		onNodeSelected(path);
-	}, [libraryKey, pickerPicksCollection, isPickerSkip, isTouchOrSmall, pickerMode, onNodeSelected, pickerPick, pickerNavigate, dispatch]);
+	}, [libraryKey, pickerPicksCollection, isPickerSkip, isTouchOrSmall, pickerMode, shouldSkipDueToFileUploadRequirements, onNodeSelected, pickerPick, pickerNavigate, dispatch]);
 
 	const handlePickerPick = useCallback(() => {
 		pickerPick({ libraryKey });
@@ -106,8 +108,8 @@ const LibraryNode = props => {
 			onOpen={ handleOpenToggle }
 			onSelect={ handleSelect }
 			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
-			showTwisty={ !isConfirmedEmpty }
-			subtree={ isConfirmedEmpty ? null : isOpen ? <CollectionTree { ...getTreeProps() } /> : null }
+			showTwisty={ shouldUseSubtree }
+			subtree={ shouldUseSubtree ? isOpen ? <CollectionTree {...getTreeProps()} /> : null : null  }
 			data-key={ libraryKey }
 			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
 			{ ...pick(props, ['onFocusNext', 'onFocusPrev'])}
