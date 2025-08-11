@@ -6,16 +6,16 @@ const supportedLocales = localeData.map(locale => locale.value);
 
 export const bibliographyFromItems = (itemKeys, libraryKey, { style = 'chicago-notes-bibliography', locale = 'en-US' }) => {
 	return async (dispatch, getState) => {
-		style = 'chicago-notes-bibliography'; // TODO: make this configurable later
 		const state = getState();
-		const fakeIntl = { locale: 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
-		const Zotero = configureZoteroShim(state.meta.schema, fakeIntl);
-		const { styleXml } = await fetchAndParseIndependentStyle(style);
-		const { styleHasBibliography } = getStyleProperties(styleXml);
+		const mockIntl = { locale: 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
+		const Zotero = configureZoteroShim(state.meta.schema, mockIntl);
+		const { styleXml, parentStyleXml } = await fetchAndParseIndependentStyle(style);
+		const relevantStyleXml = parentStyleXml ?? styleXml;
+		const { styleHasBibliography } = getStyleProperties(relevantStyleXml);
 		const items = itemKeys.map(key => state.libraries[libraryKey].items[key]);
 		const itemsCSL = items.map(i => Zotero.Utilities.Item.itemToCSLJSON({ ...i, uri: i.key, }));
 
-		const citeproc = await CiteprocWrapper.new(styleXml, {
+		const citeproc = await CiteprocWrapper.new(relevantStyleXml, {
 			citeprocJSPath: '/static/web-library/js/citeproc.js', // TODO: make this config-driven later
 			format: 'html',
 			formatOptions: { linkAnchors: true, },
@@ -27,12 +27,24 @@ export const bibliographyFromItems = (itemKeys, libraryKey, { style = 'chicago-n
 		citeproc.includeUncited("All");
 		citeproc.insertReferences(itemsCSL);
 
-		const bibliographyItems = citeproc.makeBibliography();
-		const bibliographyMeta = citeproc.bibliographyMeta();
-		const formattedBibliography = styleHasBibliography ? formatBib(bibliographyItems, bibliographyMeta) : formatFallback(bibliographyItems);
+		let bibliographyItems, bibliographyMeta;
+
+		if (styleHasBibliography) {
+			bibliographyItems = citeproc.makeBibliography();
+			bibliographyMeta = citeproc.bibliographyMeta();
+		} else {
+			citeproc.initClusters(
+				itemsCSL.map(item => ({ id: item.id, cites: [{ id: item.id }] }))
+			);
+			citeproc.setClusterOrder(itemsCSL.map(item => ({ id: item.id })));
+			const render = citeproc.fullRender();
+			bibliographyItems = itemsCSL.map(item => ({ id: item.id, value: render.allClusters[item.id] }));
+		}
+		const formattedBibliography = styleHasBibliography ?
+			formatBib(bibliographyItems, bibliographyMeta) :
+			formatFallback(bibliographyItems);
 
 		citeproc.free();
-
 		return formattedBibliography;
 	};
 };
