@@ -13,7 +13,7 @@ import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
 import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { getUniqueId } from '../../utils';
 import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, bibliographyFromCollection, bibliographyFromItems, citeItems, preferenceChange, triggerSelectMode } from '../../actions';
+import { toggleModal, fetchCSLStyle, bibliographyFromCollection, bibliographyFromItems, preferenceChange, triggerSelectMode } from '../../actions';
 
 
 const BibliographyModal = () => {
@@ -27,6 +27,10 @@ const BibliographyModal = () => {
 	const collectionKey = useSelector(state => state.modal.collectionKey);
 	const itemKeys = useSelector(state => state.modal.itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
+	const styleXml = useSelector(state => state.cite.styleXml);
+	const prevStyleXml = usePrevious(styleXml);
+	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
+	const styleProperties = useSelector(state => state.cite.styleProperties);
 
 	const wasOpen = usePrevious(isOpen);
 	const prevCitationStyle = usePrevious(citationStyle);
@@ -52,25 +56,22 @@ const BibliographyModal = () => {
 			setIsUpdating(true);
 			var nextOutput;
 			if(outputMode === 'cite') {
-				nextOutput = await dispatch(citeItems(
-					itemKeys, libraryKey, citationStyle, citationLocale
-				));
+				throw new Error('TODO: Citations mode support.');
 			} else {
 				if(collectionKey) {
-					nextOutput = await dispatch(bibliographyFromCollection(
-						collectionKey, libraryKey, citationStyle, citationLocale
-					));
+					throw new Error('TODO: Collection support.');
+					// nextOutput = await dispatch(bibliographyFromCollection(
+					// 	collectionKey, libraryKey, { style: citationStyle, locale: citationLocale }
+					// ));
 				} else {
-					nextOutput = await dispatch(bibliographyFromItems(
-						itemKeys, libraryKey, citationStyle, citationLocale
-					));
+					nextOutput = await dispatch(bibliographyFromItems(itemKeys, libraryKey, ));
 				}
 			}
 			setOutput(nextOutput);
 		} finally {
 			setIsUpdating(false);
 		}
-	}, [citationLocale, citationStyle, collectionKey, dispatch, itemKeys, libraryKey, outputMode]);
+	}, [collectionKey, dispatch, itemKeys, libraryKey, outputMode]);
 
 	const copyToClipboard = useCallback(bibliographyToCopy => {
 		const bibliographyText = stripTagsUsingDOM(bibliographyToCopy);
@@ -137,6 +138,7 @@ const BibliographyModal = () => {
 			dispatch(toggleModal(STYLE_INSTALLER, true));
 		} else {
 			dispatch(preferenceChange('citationStyle', citationStyle));
+			dispatch(fetchCSLStyle(citationStyle));
 		}
 	}, [dispatch]);
 
@@ -156,11 +158,34 @@ const BibliographyModal = () => {
 		}
 	}, [handleCopy]);
 
+	// regenerate bibliography when locale changes
 	useEffect(() => {
-		if(isOpen && (!wasOpen || citationStyle !== prevCitationStyle || citationLocale !== prevCitationLocale)) {
+		if (styleXml && citationLocale !== prevCitationLocale && typeof prevCitationLocale !== 'undefined') {
 			makeOutput();
 		}
-	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
+	}, [citationLocale, makeOutput, prevCitationLocale, styleXml]);
+
+	// fetch style when modal is first opened. This will trigger effect below that actually generates bibliography.
+	useEffect(() => {
+		if (!isFetchingStyle && styleXml === null) {
+			dispatch(fetchCSLStyle(citationStyle));
+		}
+	}, [citationStyle, dispatch, isFetchingStyle, styleXml]);
+
+	// regenerate bibliography when style changes.
+	useEffect(() => {
+		if (styleXml && prevStyleXml !== styleXml && typeof prevStyleXml !== 'undefined') {
+			makeOutput();
+		}
+	}, [citationStyle, makeOutput, prevCitationStyle, prevStyleXml, styleXml]);
+
+	// regenerate bibliography when modal re-opens with style already fetched
+	useEffect(() => {
+		if (isOpen && !wasOpen && styleXml) {
+			makeOutput();
+		}
+	}, [isOpen, makeOutput, styleXml, wasOpen]);
+
 
 	useEffect(() => {
 		if (!isDropdownOpen && wasDropdownOpen) {
@@ -270,6 +295,7 @@ const BibliographyModal = () => {
 											id={ localeSelectorId.current }
 											onLocaleChange={ handleLocaleChange }
 											citationLocale={ citationLocale }
+											styleProperties={ styleProperties }
 										/>
 									</div>
 								</div>

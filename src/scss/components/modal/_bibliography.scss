@@ -76,6 +76,8 @@
 
 		.form-control {
 			@include touch-or-bp-down(sm) {
+				display: flex;
+				align-items: center;
 				line-height: $line-height-base;
 				height: auto;
 				white-space: normal;
@@ -121,10 +123,6 @@
 			padding: 0;
     		margin: 0;
     		min-width: 30%;
-
-    		.native-select-wrap > div {
-				@include text-truncate;
-			}
 		}
 	}
 

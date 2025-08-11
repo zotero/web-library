@@ -91,7 +91,7 @@ const SelectInput = forwardRef((props, ref) => {
 							<option key={ value } value={ value }>{ label }</option>)
 						)}
 					</select>
-					<div className={ className }>
+					<div className={ cx(className, { 'is-disabled': isDisabled }) }>
 						{ (options.find(o => o.value === value) || (value !== null ? { label: value } : false) || options[0] || {}).label }
 					</div>
 				</div>

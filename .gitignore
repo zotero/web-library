@@ -16,6 +16,8 @@ src/static/pdf-reader/
 src/static/pdf-worker/
 src/static/note-editor/
 src/static/fonts/
+src/static/js/citeproc.js
+src/static/locales/
 
 /playwright
 local.log

@@ -21,6 +21,7 @@ const StyleSelector = props => {
 	return (
 		<Select
 			{ ...rest }
+			className="form-control"
 			id={ id }
 			inputGroupClassName={ cx('style-selector', className ) }
 			clearable={ false }
