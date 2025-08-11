@@ -28,7 +28,10 @@ const isTesting = process.env.NODE_ENV?.startsWith('test');
 const config = {
 	input: './src/js/main.js',
 	external: [
-		'cross-fetch/polyfill'
+		'cross-fetch/polyfill',
+		'jsdom',	// zotero-utilities/utilities.js includes jsdom which is then
+					// treeshaken because we replace Zotero.isNode to false. To avoid
+					// bogus imports/warnings it also needs to be marked as external.
 	],
 	output: {
 		file: `./build/static/web-library/zotero-web-library.js` ,
@@ -61,9 +64,9 @@ const config = {
 		}),
 		replace({
 			preventAssignment: true,
-			objectGuards: true,
 			delimiters: ['', ''],
 			values: {
+				'Zotero.isNode': false,
 				'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
 				"process.env['NODE_ENV']": JSON.stringify(process.env.NODE_ENV ?? 'development'),
 				'process.env.TARGET': JSON.stringify(process.env.TARGET ?? 'default')

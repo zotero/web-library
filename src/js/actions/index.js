@@ -5,6 +5,7 @@ export * from './parent';
 export * from './recognize';
 export * from './request';
 export * from "./attachments";
+export * from "./cite";
 export * from "./collections";
 export * from "./deleted";
 export * from "./groups";

@@ -37,6 +37,7 @@ const meta = (state = { ...defaultState }, action) => {
 		case RECEIVE_SCHEMA:
 			return {
 				...state,
+				schema: action.schema,
 				isUsingEmbeddedSchema: !!action?.embedded,
 				itemTypes: action.schema.itemTypes.map(({ itemType }) => ({
 					itemType, localized: action.schema.locales?.[locale]?.itemTypes?.[itemType] ?? itemType

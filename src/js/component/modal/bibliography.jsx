@@ -13,7 +13,7 @@ import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
 import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
 import { getUniqueId } from '../../utils';
 import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, bibliographyFromCollection, bibliographyFromItems, citeItems, preferenceChange, triggerSelectMode } from '../../actions';
+import { toggleModal, bibliographyFromCollection, bibliographyFromItems, preferenceChange, triggerSelectMode } from '../../actions';
 
 
 const BibliographyModal = () => {
@@ -52,17 +52,16 @@ const BibliographyModal = () => {
 			setIsUpdating(true);
 			var nextOutput;
 			if(outputMode === 'cite') {
-				nextOutput = await dispatch(citeItems(
-					itemKeys, libraryKey, citationStyle, citationLocale
-				));
+				throw new Error('TODO: Citations mode support.');
 			} else {
 				if(collectionKey) {
-					nextOutput = await dispatch(bibliographyFromCollection(
-						collectionKey, libraryKey, citationStyle, citationLocale
-					));
+					throw new Error('TODO: Collection support.');
+					// nextOutput = await dispatch(bibliographyFromCollection(
+					// 	collectionKey, libraryKey, { style: citationStyle, locale: citationLocale }
+					// ));
 				} else {
 					nextOutput = await dispatch(bibliographyFromItems(
-						itemKeys, libraryKey, citationStyle, citationLocale
+						itemKeys, libraryKey, { style: citationStyle, locale: citationLocale }
 					));
 				}
 			}
@@ -160,7 +159,7 @@ const BibliographyModal = () => {
 		if(isOpen && (!wasOpen || citationStyle !== prevCitationStyle || citationLocale !== prevCitationLocale)) {
 			makeOutput();
 		}
-	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle]);
+	}, [citationLocale, citationStyle, isOpen, makeOutput, prevCitationLocale, prevCitationStyle, wasOpen]);
 
 	useEffect(() => {
 		if (!isDropdownOpen && wasDropdownOpen) {
