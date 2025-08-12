@@ -58,10 +58,10 @@ const TouchFooter = () => {
 						<Button icon onClick={handleExportModalOpen} disabled={selectedItemsCount === 0 || selectedItemsCount > 100}>
 							<Icon type={'24/export'} width="24" height="24" />
 						</Button>
-						<Button icon onClick={handleCiteModalOpen} disabled={selectedItemsCount === 0 || selectedItemsCount > 100}>
+						<Button icon onClick={handleCiteModalOpen} disabled={selectedItemsCount === 0}>
 							<Icon type={'24/cite'} width="24" height="24" />
 						</Button>
-						<Button icon onClick={handleBibliographyModalOpen} disabled={selectedItemsCount === 0 || selectedItemsCount > 100}>
+						<Button icon onClick={handleBibliographyModalOpen} disabled={selectedItemsCount === 0}>
 							<Icon type={'24/bibliography'} width="24" height="24" />
 						</Button>
 						<MoreActionsDropdownTouch />
