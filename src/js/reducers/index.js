@@ -1,5 +1,6 @@
 import { mapObject } from 'web-common/utils';
 
+import cite from './cite';
 import config from './config';
 import current from './current';
 import device from './device';
@@ -24,6 +25,7 @@ import traffic from './traffic';
 
 const createReducers = (extraReducers = {}) => (state, action) => {
 	const nextState = {
+		cite: cite(state?.cite, action, state),
 		config: config(state?.config, action, state),
 		current: current(state?.current, action, state),
 		device: device(state?.device, action, state),
