@@ -288,7 +288,7 @@ const ItemActionsDesktop = memo(props => {
 					onFocusPrev={onFocusPrev}
 				/>
 				<Button
-					disabled={selectedContainsCollection || selectedCount === 0 || selectedCount > 100}
+					disabled={selectedContainsCollection || selectedCount === 0}
 					icon
 					onClick={handleCiteModalOpen}
 					onKeyDown={handleKeyDown}
@@ -298,7 +298,7 @@ const ItemActionsDesktop = memo(props => {
 					<Icon type="16/cite" width="16" height="16" />
 				</Button>
 				<Button
-					disabled={selectedContainsCollection || selectedCount === 0 || selectedCount > 100}
+					disabled={selectedContainsCollection || selectedCount === 0}
 					icon
 					onClick={handleBibliographyModalOpen}
 					onKeyDown={handleKeyDown}
