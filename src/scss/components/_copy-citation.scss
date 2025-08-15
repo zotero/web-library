@@ -1,0 +1,71 @@
+.modal.copy-citation-modal {
+	max-width: 720px;
+	width: unset;
+
+	@include bp-down(xs) {
+		max-width: unset;
+		width: 100%;
+	}
+
+	.bubbles {
+		--bubble-height: 28px;
+		--bubble-horizontal-margin: 2px;
+		--bubble-rows-gap: 5px;
+
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--bubble-rows-gap);
+		row-gap: var(--bubble-rows-gap);
+		max-height: calc(3.5 * (var(--bubble-height) + var(--bubble-rows-gap)));
+		padding: 8px 16px;
+		margin-bottom: 16px;
+		overflow: auto;
+		margin-left: -16px;
+		margin-right: -16px;
+		width: calc(100% + 32px);
+
+		.bubble {
+			border-radius: 5px;
+			padding: 0 8px;
+			white-space: nowrap;
+			height: var(--bubble-height);
+			background-color: var(--fill-quinary);
+			cursor: pointer;
+
+			.dropmarker {
+				transform: rotate(180deg);
+			}
+		}
+	}
+
+	.bubble-popover {
+		.form {
+			display: flex;
+			flex-direction: column;
+
+			.select, .select-control {
+				height: 100%;
+			}
+		}
+
+		.buttons-wrap {
+			display: flex;
+			margin-top: $space-sm;
+
+			.right {
+				flex: 1 0 auto;
+				display: flex;
+				justify-content: flex-end;
+
+				.btn + .btn {
+					margin-left: $space-sm;
+				}
+			}
+
+			@include touch-or-bp-down(sm) {
+				padding: 0 $space-md;
+			}
+		}
+	}
+}

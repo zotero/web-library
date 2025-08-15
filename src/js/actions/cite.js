@@ -81,3 +81,36 @@ export const bibliographyFromItems = (itemKeys, libraryKey) => {
 export const bibliographyFromCollection = (collectionKey, libraryKey, { style = 'chicago-note-bibliography', locale = 'en-US' }) => {
 	throw new Error("TODO: Implement bibliographyFromCollection");
 };
+
+export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const mockIntl = { locale: 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
+		const Zotero = configureZoteroShim(state.meta.schema, mockIntl);
+		const styleXml = state.cite.styleXml;
+		const { defaultLocale } = state.cite.styleProperties;
+		const items = itemKeys.map(key => state.libraries[libraryKey].items[key]);
+		const itemsCSL = items.map(i => Zotero.Utilities.Item.itemToCSLJSON({ ...i, uri: i.key, }));
+
+		const citeproc = await CiteprocWrapper.new(styleXml, {
+			citeprocJSPath: '/static/web-library/js/citeproc.js', // TODO: make this config-driven later
+			format: 'html',
+			formatOptions: { linkAnchors: true },
+			localeOverride: defaultLocale ? null : state.preferences.citationLocale ?? 'en-US',
+			localesPath: '/static/web-library/locales/', // TODO: make this config-driven later
+			supportedLocales,
+			useCiteprocJS: true,
+		});
+
+		citeproc.includeUncited("All");
+		citeproc.insertReferences(itemsCSL);
+
+		const cites = itemKeys.map((key, index) => ({ id: key, ...modifiers[index] }));
+		const positions = [{}];
+
+		const html = citeproc.previewCitationCluster(cites, positions, 'html');
+		const plain = citeproc.previewCitationCluster(cites, positions, 'plain');
+
+		return { html, plain };
+	};
+};
