@@ -14,3 +14,6 @@
 [submodule "modules/zotero-schema"]
 	path = modules/zotero-schema
 	url = https://github.com/zotero/zotero-schema.git
+[submodule "modules/locales"]
+	path = modules/locales
+	url = https://github.com/citation-style-language/locales.git

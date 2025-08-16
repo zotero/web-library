@@ -8,7 +8,7 @@ import {
 	exportItems, navigate, retrieveMetadata, toggleModal, undoRetrieveMetadata
 } from '.';
 import columnProperties from '../constants/column-properties';
-import { BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
+import { COPY_CITATION, BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
 import { BEGIN_ONGOING, COMPLETE_ONGOING, CLEAR_ONGOING } from '../constants/actions';
 import { getUniqueId } from '../utils';
@@ -75,7 +75,7 @@ const currentBibliographyModal = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { itemKeys, libraryKey } = state.current;
-		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey, outputMode: 'bibliography' }));
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
 	}
 }
 
@@ -83,7 +83,7 @@ const currentCiteModal = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const { itemKeys, libraryKey } = state.current;
-		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey, outputMode: 'cite' }));
+		dispatch(toggleModal(COPY_CITATION, true, { itemKeys, libraryKey }));
 	}
 }
 
