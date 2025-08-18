@@ -40,6 +40,11 @@
 	}
 
 	.bubble-popover {
+		@include touch-or-bp-down(sm) {
+			// there is no `.buttons-wrap` on mobile, so we add some bottom padding
+			padding-bottom: $space-lg;
+		}
+
 		.form {
 			display: flex;
 			flex-direction: column;
@@ -47,11 +52,17 @@
 			.select, .select-control {
 				height: 100%;
 			}
+
+			@include touch-or-bp-down(sm) {
+				.form-group:first-child {
+					// On desktop these are two separate form groups, but on mobile merged looks better
+					margin-bottom: -1px;
+				}
+			}
 		}
 
 		.buttons-wrap {
 			display: flex;
-			margin-top: $space-sm;
 
 			.right {
 				flex: 1 0 auto;
@@ -61,10 +72,6 @@
 				.btn + .btn {
 					margin-left: $space-sm;
 				}
-			}
-
-			@include touch-or-bp-down(sm) {
-				padding: 0 $space-md;
 			}
 		}
 	}

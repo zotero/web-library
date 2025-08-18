@@ -1,4 +1,4 @@
-import { arrow, useFloating } from '@floating-ui/react-dom';
+import { arrow, shift, useFloating } from '@floating-ui/react-dom';
 import { Button, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useReducer } from 'react';
 import { isTriggerEvent } from 'web-common/utils';
@@ -48,19 +48,18 @@ const buildBubbleString = (item, locatorLabel, locatorValue) => {
 
 // Inspired by https://github.com/zotero/zotero/blob/8df8182f01d4294482e33031567db0359cd145c3/chrome/content/zotero/elements/bubbleInput.js
 const Bubble = memo((props => {
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { isOpen, item, modifier, onModifierChange, onOpenPopover } = props;
 	const { locator = '', label = '', mode = '' } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
 	const id = useId();
 	const wasOpen = usePrevious(isOpen);
-
 	const ref = useRef(null);
 	const popoverRef = useRef(null);
 	const arrowRef = useRef(null);
 	const inputRef = useRef(null);
-	const { x, y, refs, strategy, update, middlewareData } = useFloating({
-		placement: 'bottom', middleware: [arrow({ element: arrowRef })]
-	});
+	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
+	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
 
 	const locatorOptions = Object.entries(locators).map(([value, label]) => ({ value, label }));
 
@@ -136,6 +135,17 @@ const Bubble = memo((props => {
 					style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
 				>
 					<div className="popover-inner" role="tooltip">
+						{ isTouchOrSmall && (
+						<div className="popover-close">
+							<Button
+								icon
+								className="btn-close"
+								onClick={handleDone}
+							>
+								<Icon type={'10/x'} width="12" height="12" />
+							</Button>
+						</div>
+						) }
 						<div className="popover-body">
 							<div className="form">
 								<div className="form-row form-group">
@@ -155,6 +165,7 @@ const Bubble = memo((props => {
 									</div>
 									<div className="col-6">
 										<Input
+											autoComplete="off"
 											ref={ inputRef }
 											aria-label="Locator"
 											name="Locator"
@@ -166,16 +177,20 @@ const Bubble = memo((props => {
 										/>
 									</div>
 								</div>
-								<div className="checkbox">
-									<label>
+								<div className="form-group checkboxes">
+									<div className="checkbox">
 										<input
+											id={`${id}-suppress-author`}
 											type="checkbox"
 											checked={mode === 'SuppressAuthor'}
 											onChange={handleModeChange}
 										/>
-										Omit Author
-									</label>
+										<label htmlFor={`${id}-suppress-author`}>
+											Omit Author
+										</label>
+									</div>
 								</div>
+								{ !isTouchOrSmall && (
 								<div className="buttons-wrap">
 									{/* <div className="left">
 										<Button onClick={handleDone} className="btn btn-danger">
@@ -188,6 +203,7 @@ const Bubble = memo((props => {
 										</Button>
 									</div>
 								</div>
+								) }
 							</div>
 						</div>
 					</div>
@@ -282,12 +298,18 @@ const CopyCitationModal = () => {
 			{ mime: 'text/html', data: state.citationsHTML },
 		];
 
-		dispatchState({ type: 'COPY' });
-		copyTimeout.current = setTimeout(() => {
-			dispatchState({ type: 'RESET_COPY' });
-		}, 950);
-		return copy(state.citationsPlain);
-	}, [state]);
+		copy(state.citationsPlain);
+
+		if(isTouchOrSmall) {
+			dispatch(toggleModal(COPY_CITATION, false));
+		} else {
+			dispatchState({ type: 'COPY' });
+			clearTimeout(copyTimeout.current);
+			copyTimeout.current = setTimeout(() => {
+				dispatchState({ type: 'RESET_COPY' });
+			}, 950);
+		}
+	}, [state.citationsPlain, state.citationsHTML, isTouchOrSmall, dispatch]);
 
 	const updatePreview = useCallback(async () => {
 		clearTimeout(copyTimeout.current);
@@ -451,7 +473,7 @@ const CopyCitationModal = () => {
 									className="btn-link"
 									onClick={handleCopyClick}
 								>
-									Create
+									Copy
 								</Button>
 							</div>
 						</Fragment>
@@ -502,18 +524,20 @@ const CopyCitationModal = () => {
 					/>
 				</div>
 			</div>
-			<div className="modal-footer justify-content-end">
-				<Button onClick={handleCopyClick} className="btn btn-lg btn-secondary" disabled={state.isUpdating}>
-					<span className={cx('inline-feedback', { 'active': state.isCopied })}>
-						<span className="default-text" aria-hidden={!state.isCopied}>
-							{title}
+			{ !isTouchOrSmall && (
+				<div className="modal-footer justify-content-end">
+					<Button onClick={handleCopyClick} className="btn btn-lg btn-secondary" disabled={state.isUpdating}>
+						<span className={cx('inline-feedback', { 'active': state.isCopied })}>
+							<span className="default-text" aria-hidden={!state.isCopied}>
+								{title}
+							</span>
+							<span className="shorter feedback" aria-hidden={state.isCopied}>
+								Copied!
+							</span>
 						</span>
-						<span className="shorter feedback" aria-hidden={state.isCopied}>
-							Copied!
-						</span>
-					</span>
-				</Button>
-			</div>
+					</Button>
+				</div>
+			) }
 		</Modal>
 	);
 };

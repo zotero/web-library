@@ -16,6 +16,11 @@
 
 	@include variant(".popover .form") {
 		margin: $space-min 0;
+
+		@include touch-or-bp-down(sm) {
+			margin: -$space-sm;
+			padding: 0;
+		}
 	}
 }
 
@@ -42,10 +47,6 @@ fieldset {
 }
 
 .form-group {
-	&.checkbox {
-		display: flex;
-	}
-
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		padding: $input-border-width $input-btn-padding-x-touch;
