@@ -1,19 +1,16 @@
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
+import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { usePrevious } from 'web-common/hooks';
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
-import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { usePrevious } from 'web-common/hooks';
 
-import LocaleSelector from '../locale-selector';
+import { BIBLIOGRAPHY } from '../../constants/modals';
+import { stripTagsUsingDOM } from '../../common/format';
+import { toggleModal, fetchCSLStyle, bibliographyFromItems, triggerSelectMode } from '../../actions';
+import CitationOptions from '../citation-options';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
-import StyleSelector from '../style-selector';
-import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../../constants/modals';
-import { coreCitationStyles } from '../../../../data/citation-styles-data.json';
-import { getUniqueId } from '../../utils';
-import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, fetchCSLStyle, bibliographyFromCollection, bibliographyFromItems, preferenceChange, triggerSelectMode } from '../../actions';
 
 
 const BibliographyModal = () => {
@@ -22,20 +19,16 @@ const BibliographyModal = () => {
 	const isOpen = useSelector(state => state.modal.id === BIBLIOGRAPHY);
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const citationLocale = useSelector(state => state.preferences.citationLocale);
-	const installedCitationStyles = useSelector(state => state.preferences.installedCitationStyles, shallowEqual);
 	const collectionKey = useSelector(state => state.modal.collectionKey);
 	const itemKeys = useSelector(state => state.modal.itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const styleXml = useSelector(state => state.cite.styleXml);
 	const prevStyleXml = usePrevious(styleXml);
 	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
-	const styleProperties = useSelector(state => state.cite.styleProperties);
 
 	const wasOpen = usePrevious(isOpen);
 	const prevCitationStyle = usePrevious(citationStyle);
 	const prevCitationLocale = usePrevious(citationLocale);
-
-	const citationStyles = [...coreCitationStyles, ...installedCitationStyles];
 
 	const [requestedAction, setRequestedAction] = useState('clipboard');
 	const [isClipboardCopied, setIsClipboardCopied] = useState(false);
@@ -45,8 +38,6 @@ const BibliographyModal = () => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const wasDropdownOpen = usePrevious(isDropdownOpen);
 
-	const styleSelectorId = useRef(getUniqueId());
-	const localeSelectorId = useRef(getUniqueId());
 	const copyDataInclude = useRef(null);
 	const dropdownTimer = useRef(null);
 
@@ -127,24 +118,15 @@ const BibliographyModal = () => {
 		dispatch(triggerSelectMode(false, true));
 	}, [output, copyToClipboard, dispatch, requestedAction]);
 
-	const handleStyleChange = useCallback(async citationStyle => {
-		if (citationStyle === 'install') {
-			dispatch(toggleModal(BIBLIOGRAPHY, false));
-			dispatch(toggleModal(STYLE_INSTALLER, true));
-		} else {
-			dispatch(preferenceChange('citationStyle', citationStyle));
-			dispatch(fetchCSLStyle(citationStyle));
-		}
-	}, [dispatch]);
-
-	const handleLocaleChange = useCallback(locale => {
-		dispatch(preferenceChange('citationLocale', locale));
-	}, [dispatch]);
-
 	const handleCancel = useCallback(async () => {
 		dispatch(toggleModal(BIBLIOGRAPHY, false));
 		setOutput('');
 	}, [dispatch]);
+
+	const handleBibliographyClick = useCallback(() => {
+		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		dispatch(toggleModal('COPY_CITATION', true, { itemKeys, libraryKey }));
+	}, [dispatch, itemKeys, libraryKey]);
 
 	useEffect(() => {
 		document.addEventListener('copy', handleCopy, true);
@@ -200,7 +182,7 @@ const BibliographyModal = () => {
 			contentLabel={'Bibliography'}
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
-			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall, 'modal-full-height': !isTouchOrSmall })}
+			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
 			<div className="modal-header">
 				{
@@ -253,50 +235,7 @@ const BibliographyModal = () => {
 				tabIndex={!isTouchOrSmall ? 0 : null}
 			>
 				<div className="form">
-					<div className="citation-options">
-						<div className="form-row">
-							<div className="col-9">
-								<div className="form-group form-row style-selector-container">
-									<label
-										id={`${styleSelectorId.current}-label`}
-										htmlFor={isTouchOrSmall ? styleSelectorId.current : null}
-										className="col-form-label"
-									>
-										Citation Style
-									</label>
-									<div className="col">
-										<StyleSelector
-											aria-labelledby={isTouchOrSmall ? null : `${styleSelectorId.current}-label`}
-											id={styleSelectorId.current}
-											onStyleChange={handleStyleChange}
-											citationStyle={citationStyle}
-											citationStyles={citationStyles}
-										/>
-									</div>
-								</div>
-							</div>
-							<div className="col-3">
-								<div className="form-group form-row locale-selector-container">
-									<label
-										id={`${localeSelectorId.current}-label`}
-										htmlFor={isTouchOrSmall ? localeSelectorId.current : null}
-										className="col-form-label"
-									>
-										Language
-									</label>
-									<div className="col">
-										<LocaleSelector
-											aria-labelledby={isTouchOrSmall ? null : `${localeSelectorId.current}-label`}
-											id={localeSelectorId.current}
-											onLocaleChange={handleLocaleChange}
-											citationLocale={citationLocale}
-											styleProperties={styleProperties}
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					<CitationOptions />
 					{isTouchOrSmall && (
 						<RadioSet
 							onChange={handleRequestedActionChange}
@@ -322,50 +261,57 @@ const BibliographyModal = () => {
 				</div>
 			</div>
 			{!isTouchOrSmall && (
-				<div className="modal-footer justify-content-end">
-					<Dropdown
-						isOpen={isDropdownOpen}
-						onToggle={handleDropdownToggle}
-						className={cx('btn-group', { 'success': isClipboardCopied })}
-					>
-						<Button
-							type="button"
-							disabled={isUpdating}
-							className='btn btn-lg btn-secondary copy-to-clipboard'
-							onClick={handleCopyToClipboardInteraction}
-							onKeyDown={handleCopyToClipboardInteraction}
-						>
-							<span className={cx('inline-feedback', { 'active': isClipboardCopied })}>
-								<span className="default-text" aria-hidden={!isClipboardCopied}>
-									Copy to Clipboard
-								</span>
-								<span className="shorter feedback" aria-hidden={isClipboardCopied}>
-									Copied!
-								</span>
-							</span>
+				<div className="modal-footer">
+					<div className="modal-footer-left">
+						<Button onClick={handleBibliographyClick} className="btn">
+							Citations
 						</Button>
-						<DropdownToggle
-							disabled={isUpdating}
-							className="btn-lg btn-secondary dropdown-toggle"
+					</div>
+					<div className="modal-footer-right">
+						<Dropdown
+							isOpen={isDropdownOpen}
+							onToggle={handleDropdownToggle}
+							className={cx('btn-group', { 'success': isClipboardCopied })}
 						>
-							<Icon type={'16/chevron-9'} width="16" height="16" />
-						</DropdownToggle>
-						<DropdownMenu className="dropdown-menu">
-							<DropdownItem
-								onClick={handleCopyHtmlClick}
-								className="btn clipboard-trigger"
+							<Button
+								type="button"
+								disabled={isUpdating}
+								className='btn btn-lg btn-secondary copy-to-clipboard'
+								onClick={handleCopyToClipboardInteraction}
+								onKeyDown={handleCopyToClipboardInteraction}
 							>
-								<span className={cx('inline-feedback', { 'active': isHtmlCopied })}>
-									<span className="default-text" aria-hidden={!isHtmlCopied}>
-										Copy HTML
+								<span className={cx('inline-feedback', { 'active': isClipboardCopied })}>
+									<span className="default-text" aria-hidden={!isClipboardCopied}>
+										Copy to Clipboard
 									</span>
-									<span className="shorter feedback" aria-hidden={isHtmlCopied}>
+									<span className="shorter feedback" aria-hidden={isClipboardCopied}>
 										Copied!
 									</span>
 								</span>
-							</DropdownItem>
-						</DropdownMenu>
-					</Dropdown>
+							</Button>
+							<DropdownToggle
+								disabled={isUpdating}
+								className="btn-lg btn-secondary dropdown-toggle"
+							>
+								<Icon type={'16/chevron-9'} width="16" height="16" />
+							</DropdownToggle>
+							<DropdownMenu className="dropdown-menu">
+								<DropdownItem
+									onClick={handleCopyHtmlClick}
+									className="btn clipboard-trigger"
+								>
+									<span className={cx('inline-feedback', { 'active': isHtmlCopied })}>
+										<span className="default-text" aria-hidden={!isHtmlCopied}>
+											Copy HTML
+										</span>
+										<span className="shorter feedback" aria-hidden={isHtmlCopied}>
+											Copied!
+										</span>
+									</span>
+								</DropdownItem>
+							</DropdownMenu>
+						</Dropdown>
+					</div>
 				</div>
 			)}
 		</Modal>

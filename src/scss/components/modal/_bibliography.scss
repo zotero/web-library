@@ -1,10 +1,13 @@
-//
-// Bibliography modal
-//
-
 .bibliography-modal {
+	max-width: 720px;
+	width: unset;
+
+	@include bp-down(xs) {
+		max-width: unset;
+		width: 100%;
+	}
+
 	@include mouse-and-bp-up(md) {
-		min-height: calc(100vh - 2 * #{$space-xl});
 		overflow: visible; // Modal needs overflow for split button dropdown, so we need to reset the border-radius
 	}
 
@@ -43,29 +46,6 @@
 		flex: 1 1 auto;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.citation-options {
-		@include touch-or-bp-down(sm) {
-			margin-bottom: $form-group-margin-touch;
-		}
-
-		@include mouse-and-bp-up(md) {
-			position: sticky;
-			top: 0;
-			width: 100%;
-			background-color: $modal-content-bg;
-			padding-top: $form-group-margin;
-			padding-bottom: $form-group-margin;
-			border-bottom: $border-width solid $modal-border-color;
-			margin-bottom: $modal-inner-padding;
-		}
-
-		@include state(".modal-body:focus .citation-options") {
-			@include mouse-keyboard-and-bp-up(md) {
-				padding-top: $form-group-margin - $outline-width;
-			}
-		}
 	}
 
 	.style-selector-container {

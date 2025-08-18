@@ -54,6 +54,7 @@ $scope: ".zotero-wl";
 #{$scope} {
 	@import "components/button";
 	@import "components/bibliography";
+	@import "components/citation-options";
 	@import "components/copy-citation";
 	@import "components/collection-tree";
 	@import "components/dropdown"; // switch to "../../modules/web-common/scss/dropdown" but with scopedVariant

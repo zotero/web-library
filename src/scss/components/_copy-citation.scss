@@ -7,6 +7,12 @@
 		width: 100%;
 	}
 
+	.modal-body {
+		@include mouse-and-bp-up(md) {
+			padding-top: 0;
+		}
+	}
+
 	.bubbles {
 		--bubble-height: 28px;
 		--bubble-horizontal-margin: 2px;

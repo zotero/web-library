@@ -10,12 +10,13 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 
 import { citationFromItems, fetchCSLStyle, toggleModal } from '../../actions';
-import { COPY_CITATION } from '../../constants/modals';
+import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
 import { locatorShortForms, locators } from '../../constants/locators';
 import FocusTrap from '../focus-trap';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import Select from '../form/select';
+import CitationOptions from '../citation-options';
 
 
 const buildBubbleString = (item, locatorLabel, locatorValue) => {
@@ -266,7 +267,9 @@ const CopyCitationModal = () => {
 	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
 	const styleProperties = useSelector(state => state.cite.styleProperties);
 	const styleXml = useSelector(state => state.cite.styleXml);
+	const citationLocale = useSelector(state => state.preferences.citationLocale);
 	const prevStyleXml = usePrevious(styleXml);
+	const prevCitationLocale = usePrevious(citationLocale);
 	const title = styleProperties?.isNoteStyle ? 'Copy Note' : 'Copy Citation';
 	const bubblesRef = useRef(null);
 	const copyDataInclude = useRef(null);
@@ -390,6 +393,18 @@ const CopyCitationModal = () => {
 		}
 	}, []);
 
+	const handleBibliographyClick = useCallback(() => {
+		dispatch(toggleModal(COPY_CITATION, false));
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
+	}, [dispatch, itemKeys, libraryKey]);
+
+	// regenerate bibliography when locale changes
+	useEffect(() => {
+		if (styleXml && citationLocale !== prevCitationLocale && typeof prevCitationLocale !== 'undefined') {
+			updatePreview();
+		}
+	}, [citationLocale, updatePreview, prevCitationLocale, styleXml]);
+
 	// fetch style when modal is first opened. This will trigger effect below that actually generates bibliography.
 	useEffect(() => {
 		if (!isFetchingStyle && styleXml === null) {
@@ -494,6 +509,9 @@ const CopyCitationModal = () => {
 				}
 			</div>
 			<div className="modal-body">
+				<div className="form">
+					<CitationOptions />
+				</div>
 				<div
 					className="bubbles"
 					onBlur={receiveBlur}
@@ -525,17 +543,24 @@ const CopyCitationModal = () => {
 				</div>
 			</div>
 			{ !isTouchOrSmall && (
-				<div className="modal-footer justify-content-end">
-					<Button onClick={handleCopyClick} className="btn btn-lg btn-secondary" disabled={state.isUpdating}>
-						<span className={cx('inline-feedback', { 'active': state.isCopied })}>
-							<span className="default-text" aria-hidden={!state.isCopied}>
-								{title}
+				<div className="modal-footer">
+					<div className="modal-footer-left">
+						<Button onClick={handleBibliographyClick} className="btn">
+							Bibliography
+						</Button>
+					</div>
+					<div className="modal-footer-right">
+						<Button onClick={handleCopyClick} className="btn btn-lg btn-secondary" disabled={state.isUpdating}>
+							<span className={cx('inline-feedback', { 'active': state.isCopied })}>
+								<span className="default-text" aria-hidden={!state.isCopied}>
+									{title}
+								</span>
+								<span className="shorter feedback" aria-hidden={state.isCopied}>
+									Copied!
+								</span>
 							</span>
-							<span className="shorter feedback" aria-hidden={state.isCopied}>
-								Copied!
-							</span>
-						</span>
-					</Button>
+						</Button>
+					</div>
 				</div>
 			) }
 		</Modal>
