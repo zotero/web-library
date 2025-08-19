@@ -1,5 +1,4 @@
 .bibliography-modal {
-	max-width: 720px;
 	width: unset;
 
 	@include bp-down(xs) {
@@ -7,7 +6,9 @@
 		width: 100%;
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include mouse-and-bp-up(md) {max-height: calc(100vh - 64px);
+		width: 720px;
+		min-height: 480px; // allow enough space for dropdowns to be fully contained within the modal
 		overflow: visible; // Modal needs overflow for split button dropdown, so we need to reset the border-radius
 	}
 
@@ -19,6 +20,9 @@
 	}
 
 	.modal-body {
+		display: flex;
+		flex-direction: column;
+
 		@include mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			padding-top: 0;
@@ -43,71 +47,17 @@
 	}
 
 	.form {
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		display: flex;
 		flex-direction: column;
 	}
 
-	.style-selector-container {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 auto;
-			display: flex;
-		}
-
-		.form-control {
-			@include touch-or-bp-down(sm) {
-				display: flex;
-				align-items: center;
-				line-height: $line-height-base;
-				height: auto;
-				white-space: normal;
-				overflow: visible;
-				padding-right: $input-btn-padding-x-touch;
-				margin-right: 0;
-			}
-		}
-	}
-
-	.style-selector-container, .locale-selector-container {
-		@include touch-or-bp-down(sm) {
-			.col-form-label {
-				flex: 0 0 33%;
-			}
-
-			.col {
-				flex: 0 0 66%;
-				overflow: hidden;
-			}
-		}
-	}
-
-	.style-selector {
-		.select-option:last-child {
-			color: $link-color;
-			-webkit-font-smoothing: subpixel-antialiased;
-			-moz-osx-font-smoothing: grayscale;
-		}
-	}
-
-	.locale-selector-container {
-		@include mouse-and-bp-up(md) {
-			flex: 1 1 auto;
-			display: flex;
-			padding-left: $space-xs;
-		}
-	}
-
-	.style-selector, .locale-selector {
-		@include touch-or-bp-down(sm) {
-		    height: 100%;
-			padding: 0;
-    		margin: 0;
-    		min-width: 30%;
-		}
-	}
-
 	.bibliography-container {
 		padding: 0 $modal-inner-padding;
+
+		@include mouse-and-bp-up(md) {
+			overflow-y: scroll;
+		}
 
 		@include state(".loading .bibliography-container") {
 			flex: 1 1 auto;

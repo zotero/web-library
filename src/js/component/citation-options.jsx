@@ -39,16 +39,16 @@ const CitationOptions = () => {
 				<div className="col-7">
 					<div className="form-group form-row style-selector-container">
 						<label
-							id={`${styleSelectorId.current}-label`}
-							htmlFor={isTouchOrSmall ? styleSelectorId.current : null}
+							id={`${styleSelectorId}-label`}
+							htmlFor={isTouchOrSmall ? styleSelectorId : null}
 							className="col-form-label"
 						>
 							Citation Style
 						</label>
 						<div className="col">
 							<StyleSelector
-								aria-labelledby={isTouchOrSmall ? null : `${styleSelectorId.current}-label`}
-								id={styleSelectorId.current}
+								aria-labelledby={isTouchOrSmall ? null : `${styleSelectorId}-label`}
+								id={styleSelectorId}
 								onStyleChange={handleStyleChange}
 								citationStyle={citationStyle}
 								citationStyles={citationStyles}
@@ -59,16 +59,16 @@ const CitationOptions = () => {
 				<div className="col-5">
 					<div className="form-group form-row locale-selector-container">
 						<label
-							id={`${localeSelectorId.current}-label`}
-							htmlFor={isTouchOrSmall ? localeSelectorId.current : null}
+							id={`${localeSelectorId}-label`}
+							htmlFor={isTouchOrSmall ? localeSelectorId : null}
 							className="col-form-label"
 						>
 							Language
 						</label>
 						<div className="col">
 							<LocaleSelector
-								aria-labelledby={isTouchOrSmall ? null : `${localeSelectorId.current}-label`}
-								id={localeSelectorId.current}
+								aria-labelledby={isTouchOrSmall ? null : `${localeSelectorId}-label`}
+								id={localeSelectorId}
 								onLocaleChange={handleLocaleChange}
 								citationLocale={citationLocale}
 								styleProperties={styleProperties}

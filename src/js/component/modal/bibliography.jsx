@@ -172,7 +172,7 @@ const BibliographyModal = () => {
 
 	const className = cx({
 		'bibliography-modal': true,
-		'modal-xl modal-scrollable': !isTouchOrSmall,
+		'modal-scrollable': !isTouchOrSmall,
 		'modal-touch modal-form': isTouchOrSmall,
 	});
 
@@ -246,24 +246,24 @@ const BibliographyModal = () => {
 							value={requestedAction}
 						/>
 					)}
-					{!isTouchOrSmall && (
-						<div className="bibliography-container">
-							{isUpdating ? (
-								<Spinner className="large" />
-							) : (
-								<div className="bibliography read-only"
-									dangerouslySetInnerHTML={{ __html: output }}
-								/>
-							)
-							}
-						</div>
-					)}
 				</div>
+				{!isTouchOrSmall && (
+					<div className="bibliography-container">
+						{isUpdating ? (
+							<Spinner className="large" />
+						) : (
+							<div className="bibliography read-only"
+								dangerouslySetInnerHTML={{ __html: output }}
+							/>
+						)
+						}
+					</div>
+				)}
 			</div>
 			{!isTouchOrSmall && (
 				<div className="modal-footer">
 					<div className="modal-footer-left">
-						<Button onClick={handleBibliographyClick} className="btn">
+						<Button onClick={handleBibliographyClick} className="btn btn-lg btn-default">
 							Citations
 						</Button>
 					</div>

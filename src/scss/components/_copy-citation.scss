@@ -1,13 +1,22 @@
-.modal.copy-citation-modal {
-	max-width: 720px;
+.copy-citation-modal {
+	max-height: calc(100vh - 64px);
 	width: unset;
 
 	@include bp-down(xs) {
 		max-width: unset;
+		max-height: unset;
 		width: 100%;
 	}
 
+	@include mouse-and-bp-up(md) {
+		width: 720px;
+		min-height: 480px; // allow enough space for dropdowns to be fully contained within the modal
+	}
+
 	.modal-body {
+		display: flex;
+		flex-direction: column;
+
 		@include mouse-and-bp-up(md) {
 			padding-top: 0;
 		}
@@ -45,6 +54,22 @@
 		}
 	}
 
+	.citation-touch {
+		.form-row {
+			label {
+				flex: 1 1 auto;
+			}
+
+			.icon {
+				color: var(--fill-primary);
+			}
+		}
+	}
+
+	.copy-citation-container {
+		overflow-y: scroll;
+	}
+
 	.bubble-popover {
 		@include touch-or-bp-down(sm) {
 			// there is no `.buttons-wrap` on mobile, so we add some bottom padding
@@ -52,6 +77,7 @@
 		}
 
 		.form {
+			flex: 0 1 auto;
 			display: flex;
 			flex-direction: column;
 
@@ -78,6 +104,51 @@
 				.btn + .btn {
 					margin-left: $space-sm;
 				}
+			}
+		}
+	}
+
+	.citation-touch-editor {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: $z-index-modal + 2;
+		display: flex;
+		padding: 0;
+		flex-direction: column;
+		background-color: $panel-bg;
+
+		@include touch-or-bp-down(sm) {
+			.form {
+				margin: 0;
+			}
+		}
+
+		.col-form-label::after {
+			content: ':';
+		}
+
+
+		.col {
+			display: flex;
+		}
+
+		.buttons-wrap {
+			display: flex;
+
+			.right {
+				flex: 1 0 auto;
+				display: flex;
+				justify-content: flex-end;
+
+				.btn + .btn {
+					margin-left: $space-sm;
+				}
+			}
+
+			@include touch-or-bp-down(sm) {
+				padding: 0 $space-md;
 			}
 		}
 	}

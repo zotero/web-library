@@ -1,10 +1,11 @@
 import { arrow, shift, useFloating } from '@floating-ui/react-dom';
 import { Button, Icon } from 'web-common/components';
-import { Fragment, memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useReducer } from 'react';
+import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useReducer } from 'react';
 import { isTriggerEvent } from 'web-common/utils';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
+import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
@@ -17,6 +18,8 @@ import Input from '../form/input';
 import Modal from '../ui/modal';
 import Select from '../form/select';
 import CitationOptions from '../citation-options';
+
+const locatorOptions = Object.entries(locators).map(([value, label]) => ({ value, label }));
 
 
 const buildBubbleString = (item, locatorLabel, locatorValue) => {
@@ -45,11 +48,108 @@ const buildBubbleString = (item, locatorLabel, locatorValue) => {
 	}
 
 	return str;
-}
+};
+
+const CitationForm = memo(forwardRef((props, ref) => {
+	const { locator, label, mode, itemKey, onModifierChange, onClose } = props;
+	const inputRef = useRef(null);
+	const id = useId();
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if (inputRef.current) {
+				inputRef.current.focus();
+			}
+		}
+	}));
+
+	const handleLabelChange = useCallback((newLabel) => {
+		onModifierChange(itemKey, { locator, mode, label: newLabel });
+	}, [itemKey, locator, mode, onModifierChange]);
+
+	const handleLocatorChange = useDebouncedCallback(useCallback((newLocator) => {
+		onModifierChange(itemKey, { locator: newLocator, mode, label });
+	}, [onModifierChange, itemKey, mode, label]), 300);
+
+	const handleModeChange = useCallback((ev) => {
+		const newMode = ev.target.checked ? 'SuppressAuthor' : '';
+		onModifierChange(itemKey, { locator, mode: newMode, label });
+	}, [onModifierChange, itemKey, locator, label]);
+
+	return (
+		<div className="form">
+			<div className="form-row form-group">
+				<div className="col-6">
+					<Select
+						aria-label="Locator Label"
+						name="label"
+						clearable={false}
+						onChange={() => true}
+						onCommit={handleLabelChange}
+						options={locatorOptions}
+						searchable={false}
+						tabIndex={0}
+						value={label || 'page'}
+						className="form-control"
+					/>
+				</div>
+				<div className="col-6">
+					<Input
+						autoComplete="off"
+						ref={inputRef}
+						aria-label="Locator"
+						name="Locator"
+						onChange={handleLocatorChange}
+						tabIndex={0}
+						value={locator}
+						className="form-control form-control-sm"
+						placeholder="Number"
+					/>
+				</div>
+			</div>
+			<div className="form-group checkboxes">
+				<div className="checkbox">
+					<input
+						id={`${id}-suppress-author`}
+						type="checkbox"
+						checked={mode === 'SuppressAuthor'}
+						onChange={handleModeChange}
+					/>
+					<label htmlFor={`${id}-suppress-author`}>
+						Omit Author
+					</label>
+				</div>
+			</div>
+			<div className="buttons-wrap">
+				{/* <div className="left">
+									<Button onClick={handleDone} className="btn btn-danger">
+										Remove
+									</Button>
+								</div> */}
+				<div className="right">
+					<Button onClick={onClose} className="btn btn-default">
+						Done
+					</Button>
+				</div>
+			</div>
+		</div>
+	)
+}));
+
+CitationForm.displayName = 'CitationForm';
+
+CitationForm.propTypes = {
+	itemKey: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	locator: PropTypes.string,
+	mode: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
+	onModifierChange: PropTypes.func.isRequired,
+	formRef: PropTypes.object
+};
 
 // Inspired by https://github.com/zotero/zotero/blob/8df8182f01d4294482e33031567db0359cd145c3/chrome/content/zotero/elements/bubbleInput.js
 const Bubble = memo((props => {
-	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { isOpen, item, modifier, onModifierChange, onOpenPopover } = props;
 	const { locator = '', label = '', mode = '' } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
@@ -58,11 +158,9 @@ const Bubble = memo((props => {
 	const ref = useRef(null);
 	const popoverRef = useRef(null);
 	const arrowRef = useRef(null);
-	const inputRef = useRef(null);
+	const formRef = useRef(null);
 	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
 	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
-
-	const locatorOptions = Object.entries(locators).map(([value, label]) => ({ value, label }));
 
 	const handleClick = useCallback((ev) => {
 		if (isOpen) {
@@ -86,25 +184,10 @@ const Bubble = memo((props => {
 	}, [onOpenPopover]);
 
 
-	const handleLabelChange = useCallback((newLabel) => {
-		onModifierChange(item.key, { locator, mode, label: newLabel });
-	}, [item.key, locator, mode, onModifierChange]);
-
-	const handleLocatorChange = useDebouncedCallback(useCallback((newLocator) => {
-		onModifierChange(item.key, { locator: newLocator, mode, label });
-	}, [onModifierChange, item.key, mode, label]), 300);
-
-	const handleModeChange = useCallback((ev) => {
-		const newMode = ev.target.checked ? 'SuppressAuthor' : '';
-		onModifierChange(item.key, { locator, mode: newMode, label });
-	}, [onModifierChange, item.key, locator, label]);
-
 	useLayoutEffect(() => {
 		if (isOpen && !wasOpen) {
 			update();
-			if (inputRef.current) {
-				inputRef.current.focus();
-			}
+			formRef.current?.focus();
 		}
 	}, [isOpen, update, wasOpen]);
 
@@ -136,76 +219,16 @@ const Bubble = memo((props => {
 					style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
 				>
 					<div className="popover-inner" role="tooltip">
-						{ isTouchOrSmall && (
-						<div className="popover-close">
-							<Button
-								icon
-								className="btn-close"
-								onClick={handleDone}
-							>
-								<Icon type={'10/x'} width="12" height="12" />
-							</Button>
-						</div>
-						) }
 						<div className="popover-body">
-							<div className="form">
-								<div className="form-row form-group">
-									<div className="col-6">
-										<Select
-											aria-label="Locator Label"
-											name="label"
-											clearable={false}
-											onChange={() => true}
-											onCommit={handleLabelChange}
-											options={locatorOptions}
-											searchable={false}
-											tabIndex={0}
-											value={label || 'page'}
-											className="form-control"
-										/>
-									</div>
-									<div className="col-6">
-										<Input
-											autoComplete="off"
-											ref={ inputRef }
-											aria-label="Locator"
-											name="Locator"
-											onChange={handleLocatorChange}
-											tabIndex={0}
-											value={locator}
-											className="form-control form-control-sm"
-											placeholder="Number"
-										/>
-									</div>
-								</div>
-								<div className="form-group checkboxes">
-									<div className="checkbox">
-										<input
-											id={`${id}-suppress-author`}
-											type="checkbox"
-											checked={mode === 'SuppressAuthor'}
-											onChange={handleModeChange}
-										/>
-										<label htmlFor={`${id}-suppress-author`}>
-											Omit Author
-										</label>
-									</div>
-								</div>
-								{ !isTouchOrSmall && (
-								<div className="buttons-wrap">
-									{/* <div className="left">
-										<Button onClick={handleDone} className="btn btn-danger">
-											Remove
-										</Button>
-									</div> */}
-									<div className="right">
-										<Button onClick={handleDone} className="btn-secondary">
-											Done
-										</Button>
-									</div>
-								</div>
-								) }
-							</div>
+							<CitationForm
+								itemKey={item.key}
+								label={label}
+								locator={locator}
+								mode={mode}
+								onClose={handleDone}
+								onModifierChange={onModifierChange}
+								ref={formRef}
+							/>
 						</div>
 					</div>
 					<span className="popover-arrow" ref={arrowRef} style={{ left: middlewareData?.arrow?.x }}></span>
@@ -218,17 +241,117 @@ const Bubble = memo((props => {
 Bubble.displayName = 'Bubble';
 
 Bubble.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    item: PropTypes.shape({
-        key: PropTypes.string.isRequired
-    }).isRequired,
-    modifier: PropTypes.shape({
-        locator: PropTypes.string,
-        label: PropTypes.string,
-        mode: PropTypes.string
-    }).isRequired,
-    onModifierChange: PropTypes.func.isRequired,
-    onOpenPopover: PropTypes.func.isRequired
+	isOpen: PropTypes.bool.isRequired,
+	item: PropTypes.shape({
+		key: PropTypes.string.isRequired
+	}).isRequired,
+	modifier: PropTypes.shape({
+		locator: PropTypes.string,
+		label: PropTypes.string,
+		mode: PropTypes.string
+	}).isRequired,
+	onModifierChange: PropTypes.func.isRequired,
+	onOpenPopover: PropTypes.func.isRequired
+};
+
+const CitationTouch = memo(props => {
+	const { isOpen, item, modifier, onOpenTouchEditor } = props;
+	const { locator = '', label = '' } = modifier;
+	const shortLabel = locatorShortForms[label] || label;
+
+	const handleOpenTouchEditor = useCallback(ev => {
+		onOpenTouchEditor(ev.currentTarget.closest('.citation-touch').dataset.key);
+	}, [onOpenTouchEditor]);
+
+	return (
+		<div className="citation-touch" data-key={item.key}>
+			<div className="form-row">
+				<div className="col-12">
+					<div className="form-group form-row">
+						<label>{buildBubbleString(item, shortLabel, locator)}</label>
+						<Button onClick={handleOpenTouchEditor} className={cx('btn btn-icon', { 'btn-active': isOpen })}>
+							<Icon type={'16/quote'} width="16" height="16" />
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+});
+
+CitationTouch.displayName = 'CitationTouch';
+
+CitationTouch.propTypes = {
+	isOpen: PropTypes.bool.isRequired,
+	item: PropTypes.shape({
+		key: PropTypes.string.isRequired
+	}).isRequired,
+	modifier: PropTypes.shape({
+		locator: PropTypes.string,
+		label: PropTypes.string,
+		mode: PropTypes.string
+	}).isRequired,
+	onOpenTouchEditor: PropTypes.func.isRequired
+};
+
+const CitationTouchEditor = memo(({ modifier, itemKey, onClose, onModifierChange, isOpen }) => {
+	const formRef = useRef(null);
+	const fadeOverlayRef = useRef(null);
+	const citationTouchEditorRef = useRef(null);
+
+	const handleTouchEditorEnter = () => {
+		formRef.current?.focus();
+	};
+
+	return (
+		<Fragment>
+			<CSSTransition
+				in={isOpen}
+				mountOnEnter
+				unmountOnExit
+				timeout={250}
+				classNames="fade"
+				nodeRef={fadeOverlayRef}
+			>
+				<div ref={fadeOverlayRef} onClick={onClose} className="fade-overlay"></div>
+			</CSSTransition>
+			<CSSTransition
+				classNames="slide-down"
+				in={isOpen}
+				mountOnEnter
+				nodeRef={citationTouchEditorRef}
+				onEnter={handleTouchEditorEnter}
+				timeout={500}
+				unmountOnExit
+			>
+				<div className="citation-touch-editor" ref={citationTouchEditorRef}>
+					{isOpen && <CitationForm
+						itemKey={itemKey}
+						label={modifier.label}
+						locator={modifier.locator}
+						mode={modifier.mode}
+						onClose={onClose}
+						onModifierChange={onModifierChange}
+						ref={formRef}
+					/>}
+				</div>
+			</CSSTransition>
+		</Fragment>
+	);
+});
+
+CitationTouchEditor.displayName = 'CitationTouchEditor';
+
+CitationTouchEditor.propTypes = {
+	modifier: PropTypes.shape({
+		label: PropTypes.string,
+		locator: PropTypes.string,
+		mode: PropTypes.string
+	}).isRequired,
+	isOpen: PropTypes.bool.isRequired,
+	itemKey: PropTypes.string.isRequired,
+	onClose: PropTypes.func.isRequired,
+	onModifierChange: PropTypes.func.isRequired,
 };
 
 const reducer = (state, action) => {
@@ -272,6 +395,7 @@ const CopyCitationModal = () => {
 	const prevCitationLocale = usePrevious(citationLocale);
 	const title = styleProperties?.isNoteStyle ? 'Copy Note' : 'Copy Citation';
 	const bubblesRef = useRef(null);
+	const citationsTouchRef = useRef(null);
 	const copyDataInclude = useRef(null);
 	const copyTimeout = useRef(null);
 	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(bubblesRef);
@@ -288,7 +412,7 @@ const CopyCitationModal = () => {
 	});
 
 	const handleCancel = useCallback(async (ev) => {
-		if(ev.type === 'keydown' && ev.key === 'Escape' && state.popoverOpenFor) {
+		if (ev.type === 'keydown' && ev.key === 'Escape' && state.popoverOpenFor) {
 			dispatchState({ type: 'CLOSE_POPOVER' });
 			return;
 		}
@@ -303,7 +427,7 @@ const CopyCitationModal = () => {
 
 		copy(state.citationsPlain);
 
-		if(isTouchOrSmall) {
+		if (isTouchOrSmall) {
 			dispatch(toggleModal(COPY_CITATION, false));
 		} else {
 			dispatchState({ type: 'COPY' });
@@ -332,15 +456,18 @@ const CopyCitationModal = () => {
 		dispatchState({ type: 'UPDATE_MODIFIERS', modifiers: newModifiers });
 	}, [itemKeys, state.modifiers]);
 
-	const handleOpenPopover = useCallback((key) => {
+	const handleOpenPopoverOrEditor = useCallback((key) => {
 		dispatchState({ type: 'OPEN_POPOVER', key });
 	}, []);
 
+	const handleClosePopoverOrEditor = useCallback(() => {
+		dispatchState({ type: 'OPEN_POPOVER', key: null });
+	}, []);
+
 	const handleBubblesKeyDown = useCallback((ev) => {
-		if(state.popoverOpenFor) {
+		if (state.popoverOpenFor) {
 			return;
 		}
-
 		if (ev.key === 'ArrowRight') {
 			focusNext(ev, { useCurrentTarget: false });
 		} else if (ev.key === 'ArrowLeft') {
@@ -349,16 +476,18 @@ const CopyCitationModal = () => {
 	}, [focusNext, focusPrev, state.popoverOpenFor]);
 
 	const handleDocumentEvent = useCallback(ev => {
+		// ignore right-clicks
 		if (ev.type === 'click' && ev.button === 2) {
 			return;
 		}
 
-		if (ev.target?.closest?.('.popover')) {
+		// ignore clicks on the popover (or touch editor on touch devices) itself
+		if (ev.target?.closest?.('.popover') || ev.target?.closest?.('.citation-touch-editor')) {
 			return;
 		}
 
+		// Click occurred on the bubble button; let its own handler manage popover toggling
 		if (ev.target?.closest('button')?.dataset?.key === state.popoverOpenFor) {
-			// Click occurred on the bubble button; let its own handler manage popover toggling
 			return;
 		}
 
@@ -436,12 +565,13 @@ const CopyCitationModal = () => {
 	// Return focus to the bubble button whose popover just closed
 	useEffect(() => {
 		if (state.popoverOpenFor === null && state.prevPopoverOpenFor) {
-			const bubbleButton = document.querySelector(`.bubble[data-key="${state.prevPopoverOpenFor}"]`);
+			const containerRef = isTouchOrSmall ? citationsTouchRef : bubblesRef;
+			const bubbleButton = containerRef.current.querySelector(`[data-key="${state.prevPopoverOpenFor}"]`);
 			if (bubbleButton) {
 				bubbleButton.focus();
 			}
 		}
-	}, [state.popoverOpenFor, state.prevPopoverOpenFor]);
+	}, [isTouchOrSmall, state.popoverOpenFor, state.prevPopoverOpenFor]);
 
 	// Register copy event handler to inject html and plain text into clipboard
 	useEffect(() => {
@@ -453,6 +583,7 @@ const CopyCitationModal = () => {
 
 	const className = cx({
 		'copy-citation-modal': true,
+		'modal-scrollable': true,
 		'modal-touch modal-form': isTouchOrSmall,
 	});
 
@@ -465,6 +596,15 @@ const CopyCitationModal = () => {
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
+			{isTouchOrSmall && (
+				<CitationTouchEditor
+					isOpen={state.popoverOpenFor !== null}
+					itemKey={state.popoverOpenFor}
+					modifier={state.modifiers[itemKeys.indexOf(state.popoverOpenFor)]}
+					onClose={handleClosePopoverOrEditor}
+					onModifierChange={handleModifierChange}
+				/>
+			)}
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
@@ -511,41 +651,58 @@ const CopyCitationModal = () => {
 			<div className="modal-body">
 				<div className="form">
 					<CitationOptions />
+					{isTouchOrSmall &&(
+						<div className="citations-touch" ref={citationsTouchRef}>
+							{items.map((item, index) => (
+								<CitationTouch
+									isOpen={state.popoverOpenFor === item.key}
+									key={item.key}
+									item={item}
+									modifier={state.modifiers[index]}
+									onOpenTouchEditor={handleOpenPopoverOrEditor}
+								/>
+							))}
+						</div>
+					)}
 				</div>
-				<div
-					className="bubbles"
-					onBlur={receiveBlur}
-					onFocus={receiveFocus}
-					onKeyDown={handleBubblesKeyDown}
-					ref={bubblesRef}
-					tabIndex={0}
-				>
-					{items.map((item, index) => (
-						<Bubble
-							isOpen={state.popoverOpenFor === item.key}
-							item={item}
-							key={item.key}
-							modifier={state.modifiers[index]}
-							onModifierChange={handleModifierChange}
-							onOpenPopover={handleOpenPopover}
-						/>
-					))}
-				</div>
-				<div>
-					<h5 id="copy-citation-preview-header">
-						Preview:
-					</h5>
-					<figure
-						aria-labelledby="copy-citation-preview-header"
-						className="preview"
-						dangerouslySetInnerHTML={{ __html: state.citationsHTML }}
-					/>
-				</div>
+				{!isTouchOrSmall && (
+					<Fragment>
+						<div
+							className="bubbles"
+							onBlur={receiveBlur}
+							onFocus={receiveFocus}
+							onKeyDown={handleBubblesKeyDown}
+							ref={bubblesRef}
+							tabIndex={0}
+						>
+							{items.map((item, index) => (
+								<Bubble
+									isOpen={state.popoverOpenFor === item.key}
+									item={item}
+									key={item.key}
+									modifier={state.modifiers[index]}
+									onModifierChange={handleModifierChange}
+									onOpenPopover={handleOpenPopoverOrEditor}
+								/>
+							))}
+						</div>
+						<div className="copy-citation-container">
+							<h5 id="copy-citation-preview-header">
+								Preview:
+							</h5>
+							<figure
+								aria-labelledby="copy-citation-preview-header"
+								className="preview"
+								dangerouslySetInnerHTML={{ __html: state.citationsHTML }}
+							/>
+						</div>
+					</Fragment>
+				)}
 			</div>
-			{ !isTouchOrSmall && (
+			{!isTouchOrSmall && (
 				<div className="modal-footer">
 					<div className="modal-footer-left">
-						<Button onClick={handleBibliographyClick} className="btn">
+						<Button onClick={handleBibliographyClick} className="btn btn-lg btn-default">
 							Bibliography
 						</Button>
 					</div>
@@ -562,7 +719,7 @@ const CopyCitationModal = () => {
 						</Button>
 					</div>
 				</div>
-			) }
+			)}
 		</Modal>
 	);
 };

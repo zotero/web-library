@@ -12,16 +12,6 @@
 		flex: 1 1 auto;
 	}
 
-	.fade-overlay {
-		position: absolute;
-		left: 0;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0,0,0, .5);
-		z-index: $z-index-modal + 1;
-	}
-
 	.tag-color-manager {
 		position: absolute;
 		top: 0;

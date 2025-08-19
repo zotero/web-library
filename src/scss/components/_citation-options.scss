@@ -19,4 +19,60 @@
 			padding-top: $form-group-margin - $outline-width;
 		}
 	}
+
+	.style-selector-container {
+		flex: 1 1 auto;
+		display: flex;
+
+		.form-control {
+			@include touch-or-bp-down(sm) {
+				display: flex;
+				align-items: center;
+				line-height: $line-height-base;
+				height: auto;
+				white-space: normal;
+				overflow: visible;
+				padding-right: $input-btn-padding-x-touch;
+				margin-right: 0;
+			}
+		}
+	}
+
+	.style-selector-container, .locale-selector-container {
+		@include touch-or-bp-down(sm) {
+			.col-form-label {
+				flex: 0 0 33%;
+			}
+
+			.col {
+				flex: 0 0 66%;
+				overflow: hidden;
+			}
+		}
+	}
+
+	.style-selector {
+		.select-option:last-child {
+			color: $link-color;
+			-webkit-font-smoothing: subpixel-antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+	}
+
+	.locale-selector-container {
+		@include mouse-and-bp-up(md) {
+			flex: 1 1 auto;
+			display: flex;
+			padding-left: $space-xs;
+		}
+	}
+
+	.style-selector, .locale-selector {
+		@include touch-or-bp-down(sm) {
+			height: 100%;
+			padding: 0;
+			margin: 0;
+			min-width: 30%;
+		}
+	}
 }
