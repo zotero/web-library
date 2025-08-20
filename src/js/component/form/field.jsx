@@ -5,7 +5,7 @@ import { noop, pick } from 'web-common/utils';
 import { Icon } from 'web-common/components';
 
 import { CREATOR } from '../../constants/dnd';
-import { useDrag, useDrop } from 'react-dnd';
+import { useSortable } from '../../hooks';
 
 const SimpleField = memo(forwardRef((props, ref) => {
 	const { children, className, dragHandle=null, onClick = noop, onKeyDown = noop, tabIndex } = props;
@@ -48,62 +48,30 @@ const SortableField = memo(forwardRef((props, outerRef) => {
 	raw = {}, ...rest } = props;
 
 	const fieldRef = useRef(null);
-	const [{ isDragging }, drag, preview] = useDrag({
-		type: CREATOR,
-		item: () => {
-			const sourceRect = fieldRef.current.getBoundingClientRect();
-			return { index, raw, sourceRect, onReorder };
-		},
-		collect: (monitor) => ({ isDragging: monitor.isDragging() }),
-		end: (item, monitor) => {
-			monitor.didDrop() ? onReorderCommit() : onReorderCancel();
-		}
-	});
+	const getItem = () => ({ index, raw, sourceRect: fieldRef.current.getBoundingClientRect(), onReorder });
 
-	const [{ isOver, canDrop }, drop] = useDrop({
-		accept: [CREATOR],
-		collect: monitor => ({
-			isOver: monitor.isOver({ shallow: true }),
-			canDrop: monitor.canDrop(),
-		}),
-		hover: (item, monitor) => {
-			const dragIndex = item.index;
-			const hoverIndex = index
-			if(dragIndex === hoverIndex) {
-				return;
-			}
-			const hoverBoundingRect = fieldRef.current.getBoundingClientRect();
-			const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-			const clientOffset = monitor.getClientOffset();
-			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-			if(dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-				return;
-			}
-
-			if(dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-				return;
-			}
-
-			onReorder(dragIndex, hoverIndex);
-			item.index = hoverIndex;
-		}
-	});
+	const { dragRef, dropRef, previewRef, isDragging, isOver, canDrop } = useSortable(
+		fieldRef, CREATOR, getItem, index, onReorder, onReorderCommit, onReorderCancel
+	);
 
 	const isDragTarget = isOver && canDrop;
 	const fieldClassName = cx(className, { 'dnd-target': isDragTarget, 'dnd-source': isDragging });
 
-	const dragHandle = drag(
+	const dragHandle = dragRef(
 		<div className="handle">
 			<Icon type={ '24/grip' } className="touch" width="24" height="24"/>
 			<Icon type={ '12/grip' } className="mouse" width="12" height="12"/>
 		</div>
 	);
 
+	dropRef(fieldRef);
+	previewRef(fieldRef);
+
 	return <SimpleField
 		{ ...rest }
 		className={ fieldClassName }
 		dragHandle={ dragHandle }
-		ref={ ref => { fieldRef.current = ref; outerRef.current = ref; drop(ref); preview(ref); } }
+		ref={ ref => { fieldRef.current = ref; outerRef.current = ref; } }
 	/>;
 }));
 

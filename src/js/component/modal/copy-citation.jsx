@@ -2,7 +2,7 @@ import { arrow, shift, useFloating } from '@floating-ui/react-dom';
 import { Button, Icon } from 'web-common/components';
 import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useReducer } from 'react';
 import { isTriggerEvent } from 'web-common/utils';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
@@ -18,6 +18,8 @@ import Input from '../form/input';
 import Modal from '../ui/modal';
 import Select from '../form/select';
 import CitationOptions from '../citation-options';
+import { CITATION } from '../../constants/dnd';
+import { useSortable, HORIZONTAL } from '../../hooks';
 
 const locatorOptions = Object.entries(locators).map(([value, label]) => ({ value, label }));
 
@@ -150,7 +152,7 @@ CitationForm.propTypes = {
 
 // Inspired by https://github.com/zotero/zotero/blob/8df8182f01d4294482e33031567db0359cd145c3/chrome/content/zotero/elements/bubbleInput.js
 const Bubble = memo((props => {
-	const { isOpen, item, modifier, onModifierChange, onOpenPopover } = props;
+	const { isOpen, item, index, modifier, onModifierChange, onOpenPopover, onReorderPreview, onReorderCommit, onReorderCancel } = props;
 	const { locator = '', label = '', mode = '' } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
 	const id = useId();
@@ -161,6 +163,11 @@ const Bubble = memo((props => {
 	const formRef = useRef(null);
 	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
 	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
+	const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
+		ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
+	);
+
+	dragRef(dropRef(ref));
 
 	const handleClick = useCallback((ev) => {
 		if (isOpen) {
@@ -191,10 +198,14 @@ const Bubble = memo((props => {
 		}
 	}, [isOpen, update, wasOpen]);
 
+	const classNames = cx('bubble',
+		{ 'open': isOpen, 'dnd-target': isOver && canDrop, 'dnd-source': isDragging }
+	);
+
 	return (
 		<Fragment>
 			<Button
-				className="bubble"
+				className={classNames}
 				data-key={item.key}
 				aria-controls={`${id}-dialog`}
 				icon
@@ -242,6 +253,7 @@ Bubble.displayName = 'Bubble';
 
 Bubble.propTypes = {
 	isOpen: PropTypes.bool.isRequired,
+	index: PropTypes.number.isRequired,
 	item: PropTypes.shape({
 		key: PropTypes.string.isRequired
 	}).isRequired,
@@ -251,7 +263,10 @@ Bubble.propTypes = {
 		mode: PropTypes.string
 	}).isRequired,
 	onModifierChange: PropTypes.func.isRequired,
-	onOpenPopover: PropTypes.func.isRequired
+	onOpenPopover: PropTypes.func.isRequired,
+	onReorderCancel: PropTypes.func.isRequired,
+	onReorderCommit: PropTypes.func.isRequired,
+	onReorderPreview: PropTypes.func.isRequired,
 };
 
 const CitationTouch = memo(props => {
@@ -372,6 +387,14 @@ const reducer = (state, action) => {
 			return { ...state, isCopied: true };
 		case 'RESET_COPY':
 			return { ...state, isCopied: false };
+		case 'REORDER_PREVIEW':
+			return { ...state, previewOrder: action.newOrder };
+		case 'REORDER_COMMIT':
+			return { ...state, currentOrder: state.previewOrder ? [...state.previewOrder] : state.currentOrder, previewOrder: null, shouldUpdate: true };
+		case 'REORDER_CANCEL':
+			return { ...state, previewOrder: null };
+		case 'RESET_ORDER':
+			return { ...state, currentOrder: action.newOrder, previewOrder: null };
 		default:
 			return state;
 	}
@@ -384,7 +407,7 @@ const CopyCitationModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const itemKeys = useSelector(state => state.modal.itemKeys || []);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
-	const items = useSelector(state => itemKeys.map(key => state.libraries[libraryKey].dataObjects[key]), shallowEqual);
+	const itemsLookup = useSelector(state => state.libraries[libraryKey]?.dataObjects);
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const prevCitationStyle = usePrevious(citationStyle);
 	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
@@ -403,12 +426,14 @@ const CopyCitationModal = () => {
 	const [state, dispatchState] = useReducer(reducer, {
 		isCopied: false,
 		isUpdating: false,
-		modifiers: itemKeys.map(() => ({ label: '', locator: '', mode: '' })),
+		modifiers: Object.fromEntries(itemKeys.map(key => [key, { label: '', locator: '', mode: '' }])),
 		citationsPlain: null,
 		citationsHTML: null,
 		shouldUpdate: false,
 		popoverOpenFor: null,
-		prevPopoverOpenFor: null
+		prevPopoverOpenFor: null,
+		currentOrder: itemKeys,
+		previewOrder: null,
 	});
 
 	const handleCancel = useCallback(async (ev) => {
@@ -442,19 +467,20 @@ const CopyCitationModal = () => {
 		clearTimeout(copyTimeout.current);
 		try {
 			dispatchState({ type: 'BEGIN_UPDATE' });
-			const { html, plain } = await dispatch(citationFromItems(itemKeys, state.modifiers, libraryKey));
+			const { html, plain } = await dispatch(citationFromItems(state.currentOrder, state.modifiers, libraryKey));
 			dispatchState({ type: 'COMPLETE_UPDATE', citationsHTML: html, citationsPlain: plain });
 		} catch (error) {
 			dispatchState({ type: 'ERROR_UPDATE' });
 		}
-	}, [dispatch, itemKeys, libraryKey, state.modifiers]);
+	}, [dispatch, state.currentOrder, libraryKey, state.modifiers]);
 
 	const handleModifierChange = useCallback((key, newModifier) => {
-		const index = itemKeys.indexOf(key);
-		const newModifiers = [...state.modifiers];
-		newModifiers[index] = newModifier;
+		const newModifiers = {
+			...state.modifiers,
+			[key]: newModifier,
+		};
 		dispatchState({ type: 'UPDATE_MODIFIERS', modifiers: newModifiers });
-	}, [itemKeys, state.modifiers]);
+	}, [state.modifiers]);
 
 	const handleOpenPopoverOrEditor = useCallback((key) => {
 		dispatchState({ type: 'OPEN_POPOVER', key });
@@ -474,6 +500,20 @@ const CopyCitationModal = () => {
 			focusPrev(ev, { useCurrentTarget: false });
 		}
 	}, [focusNext, focusPrev, state.popoverOpenFor]);
+
+	const handleReorderPreview = useCallback((fromIndex, toIndex) => {
+		const newOrder = [...(state.previewOrder ?? state.currentOrder)];
+		newOrder.splice(toIndex, 0, newOrder.splice(fromIndex, 1)[0]);
+		dispatchState({ type: 'REORDER_PREVIEW', newOrder });
+	}, [state.currentOrder, state.previewOrder]);
+
+	const handleReorderCommit = useCallback(() => {
+		dispatchState({ type: 'REORDER_COMMIT' });
+	}, [dispatchState]);
+
+	const handleReorderCancel = useCallback(() => {
+		dispatchState({ type: 'REORDER_CANCEL' });
+	}, [dispatchState]);
 
 	const handleDocumentEvent = useCallback(ev => {
 		// ignore right-clicks
@@ -600,7 +640,7 @@ const CopyCitationModal = () => {
 				<CitationTouchEditor
 					isOpen={state.popoverOpenFor !== null}
 					itemKey={state.popoverOpenFor}
-					modifier={state.modifiers[itemKeys.indexOf(state.popoverOpenFor)]}
+					modifier={state.modifiers[state.popoverOpenFor]}
 					onClose={handleClosePopoverOrEditor}
 					onModifierChange={handleModifierChange}
 				/>
@@ -651,21 +691,21 @@ const CopyCitationModal = () => {
 			<div className="modal-body">
 				<div className="form">
 					<CitationOptions />
-					{isTouchOrSmall &&(
+					{itemsLookup && isTouchOrSmall && (
 						<div className="citations-touch" ref={citationsTouchRef}>
-							{items.map((item, index) => (
+							{(state.previewOrder ?? state.currentOrder).map(itemKey => (
 								<CitationTouch
-									isOpen={state.popoverOpenFor === item.key}
-									key={item.key}
-									item={item}
-									modifier={state.modifiers[index]}
+									isOpen={state.popoverOpenFor === itemKey}
+									key={itemKey}
+									item={itemsLookup[itemKey]}
+									modifier={state.modifiers[itemKey]}
 									onOpenTouchEditor={handleOpenPopoverOrEditor}
 								/>
 							))}
 						</div>
 					)}
 				</div>
-				{!isTouchOrSmall && (
+				{itemsLookup && !isTouchOrSmall && (
 					<Fragment>
 						<div
 							className="bubbles"
@@ -675,14 +715,18 @@ const CopyCitationModal = () => {
 							ref={bubblesRef}
 							tabIndex={0}
 						>
-							{items.map((item, index) => (
+							{(state.previewOrder ?? state.currentOrder).map((itemKey, index) => (
 								<Bubble
-									isOpen={state.popoverOpenFor === item.key}
-									item={item}
-									key={item.key}
-									modifier={state.modifiers[index]}
+									isOpen={state.popoverOpenFor === itemKey}
+									item={itemsLookup[itemKey]}
+									key={itemKey}
+									modifier={state.modifiers[itemKey]}
 									onModifierChange={handleModifierChange}
 									onOpenPopover={handleOpenPopoverOrEditor}
+									index={index}
+									onReorderPreview={handleReorderPreview}
+									onReorderCommit={handleReorderCommit}
+									onReorderCancel={handleReorderCancel}
 								/>
 							))}
 						</div>

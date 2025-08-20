@@ -105,7 +105,7 @@ export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
 		citeproc.includeUncited("All");
 		citeproc.insertReferences(itemsCSL);
 
-		const cites = itemKeys.map((key, index) => ({ id: key, ...modifiers[index] }));
+		const cites = itemKeys.map((key) => ({ id: key, ...modifiers[key] }));
 		const positions = [{}];
 
 		const html = citeproc.previewCitationCluster(cites, positions, 'html');

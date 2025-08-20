@@ -48,6 +48,10 @@
 			background-color: var(--fill-quinary);
 			cursor: pointer;
 
+			&.dnd-source {
+				opacity: 0;
+			}
+
 			.dropmarker {
 				transform: rotate(180deg);
 			}
