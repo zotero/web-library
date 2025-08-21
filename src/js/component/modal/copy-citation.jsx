@@ -387,8 +387,10 @@ const reducer = (state, action) => {
 			return { ...state, isCopied: true };
 		case 'RESET_COPY':
 			return { ...state, isCopied: false };
-		case 'REORDER_PREVIEW':
-			return { ...state, previewOrder: action.newOrder };
+		case 'REORDER':
+			return action.commit ?
+				{ ...state, currentOrder: action.newOrder, previewOrder: null, shouldUpdate: true } :
+				{ ...state, previewOrder: action.newOrder };
 		case 'REORDER_COMMIT':
 			return { ...state, currentOrder: state.previewOrder ? [...state.previewOrder] : state.currentOrder, previewOrder: null, shouldUpdate: true };
 		case 'REORDER_CANCEL':
@@ -490,21 +492,10 @@ const CopyCitationModal = () => {
 		dispatchState({ type: 'OPEN_POPOVER', key: null });
 	}, []);
 
-	const handleBubblesKeyDown = useCallback((ev) => {
-		if (state.popoverOpenFor) {
-			return;
-		}
-		if (ev.key === 'ArrowRight') {
-			focusNext(ev, { useCurrentTarget: false });
-		} else if (ev.key === 'ArrowLeft') {
-			focusPrev(ev, { useCurrentTarget: false });
-		}
-	}, [focusNext, focusPrev, state.popoverOpenFor]);
-
-	const handleReorderPreview = useCallback((fromIndex, toIndex) => {
+	const handleReorder = useCallback((fromIndex, toIndex, commit = false) => {
 		const newOrder = [...(state.previewOrder ?? state.currentOrder)];
 		newOrder.splice(toIndex, 0, newOrder.splice(fromIndex, 1)[0]);
-		dispatchState({ type: 'REORDER_PREVIEW', newOrder });
+		dispatchState({ type: 'REORDER', newOrder, commit });
 	}, [state.currentOrder, state.previewOrder]);
 
 	const handleReorderCommit = useCallback(() => {
@@ -514,6 +505,30 @@ const CopyCitationModal = () => {
 	const handleReorderCancel = useCallback(() => {
 		dispatchState({ type: 'REORDER_CANCEL' });
 	}, [dispatchState]);
+
+	const handleBubblesKeyDown = useCallback((ev) => {
+		if (state.popoverOpenFor) {
+			return;
+		}
+		const index = state.currentOrder.indexOf(ev.target.dataset.key);
+		if (ev.key === 'ArrowRight') {
+			if(ev.shiftKey) {
+				if (index < state.currentOrder.length - 1) {
+					handleReorder(index, state.currentOrder.indexOf(ev.target.dataset.key) + 1, true);
+				}
+			} else {
+				focusNext(ev, { useCurrentTarget: false });
+			}
+		} else if (ev.key === 'ArrowLeft') {
+			if (ev.shiftKey) {
+				if (index > 0) {
+					handleReorder(index, index - 1, true);
+				}
+			} else {
+				focusPrev(ev, { useCurrentTarget: false });
+			}
+		}
+	}, [focusNext, focusPrev, handleReorder, state.currentOrder, state.popoverOpenFor]);
 
 	const handleDocumentEvent = useCallback(ev => {
 		// ignore right-clicks
@@ -724,7 +739,7 @@ const CopyCitationModal = () => {
 									onModifierChange={handleModifierChange}
 									onOpenPopover={handleOpenPopoverOrEditor}
 									index={index}
-									onReorderPreview={handleReorderPreview}
+									onReorderPreview={handleReorder}
 									onReorderCommit={handleReorderCommit}
 									onReorderCancel={handleReorderCancel}
 								/>
