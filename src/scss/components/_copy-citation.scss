@@ -58,18 +58,6 @@
 		}
 	}
 
-	.citation-touch {
-		.form-row {
-			label {
-				flex: 1 1 auto;
-			}
-
-			.icon {
-				color: var(--fill-primary);
-			}
-		}
-	}
-
 	.copy-citation-container {
 		overflow-y: scroll;
 	}
@@ -154,6 +142,40 @@
 			@include touch-or-bp-down(sm) {
 				padding: 0 $space-md;
 			}
+		}
+	}
+}
+
+
+.copy-citation-modal .citation-touch,
+.drag-layer .citation-touch {
+	&.dnd-source {
+		opacity: 0;
+	}
+
+	.label {
+		flex: 1 1 0;
+		text-align: left;
+		background: image-url("icons/chevron-13.svg") no-repeat right $space-sm center $input-bg;
+	}
+
+	.drag-handle {
+		align-items: center;
+		align-items: center;
+		align-self: stretch;
+		border-left: 1px solid $input-border-color;
+		display: flex;
+		flex: 0 0 auto;
+		padding-left: $default-padding-x-touch;
+		padding-right: calc($default-padding-x-touch - $space-sm); // adjust for form-row padding
+		touch-action: manipulation;
+
+		@include state(".editing .creators-entry") {
+			display: flex;
+		}
+
+		.icon-grip {
+			color: var(--color-shade-4);
 		}
 	}
 }

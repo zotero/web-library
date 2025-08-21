@@ -270,23 +270,41 @@ Bubble.propTypes = {
 };
 
 const CitationTouch = memo(props => {
-	const { isOpen, item, modifier, onOpenTouchEditor } = props;
+	const { isOpen, item, index, modifier, onOpenTouchEditor, onReorderPreview, onReorderCommit, onReorderCancel } = props;
 	const { locator = '', label = '' } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
+	const ref = useRef(null);
+	const dragHandleRef = useRef(null);
+	const bubbleString = buildBubbleString(item, shortLabel, locator);
+	const getItem = () => ({ index, bubbleString, sourceRect: ref.current.getBoundingClientRect() });
+
+	const { dragRef, dropRef, previewRef, isDragging, isOver, canDrop } = useSortable(
+		ref, CITATION, getItem, index, onReorderPreview, onReorderCommit, onReorderCancel
+	);
+
+	dragRef(dragHandleRef);
+	dropRef(ref);
+	previewRef(ref);
+
+	const classNames = cx('citation-touch',
+		{ 'open': isOpen, 'dnd-target': isOver && canDrop, 'dnd-source': isDragging }
+	);
 
 	const handleOpenTouchEditor = useCallback(ev => {
 		onOpenTouchEditor(ev.currentTarget.closest('.citation-touch').dataset.key);
 	}, [onOpenTouchEditor]);
 
 	return (
-		<div className="citation-touch" data-key={item.key}>
+		<div className={classNames} ref={ref} data-key={item.key}>
 			<div className="form-row">
 				<div className="col-12">
 					<div className="form-group form-row">
-						<label>{buildBubbleString(item, shortLabel, locator)}</label>
-						<Button onClick={handleOpenTouchEditor} className={cx('btn btn-icon', { 'btn-active': isOpen })}>
-							<Icon type={'16/quote'} width="16" height="16" />
+						<Button onClick={handleOpenTouchEditor} className="btn label">
+							{bubbleString}
 						</Button>
+						<div className="drag-handle" ref={dragHandleRef} >
+							<Icon type="24/grip" role="presentation" width="24" height="24" />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -301,12 +319,16 @@ CitationTouch.propTypes = {
 	item: PropTypes.shape({
 		key: PropTypes.string.isRequired
 	}).isRequired,
+	index: PropTypes.number.isRequired,
 	modifier: PropTypes.shape({
 		locator: PropTypes.string,
 		label: PropTypes.string,
 		mode: PropTypes.string
 	}).isRequired,
-	onOpenTouchEditor: PropTypes.func.isRequired
+	onOpenTouchEditor: PropTypes.func.isRequired,
+	onReorderCancel: PropTypes.func.isRequired,
+	onReorderCommit: PropTypes.func.isRequired,
+	onReorderPreview: PropTypes.func.isRequired,
 };
 
 const CitationTouchEditor = memo(({ modifier, itemKey, onClose, onModifierChange, isOpen }) => {
@@ -443,8 +465,8 @@ const CopyCitationModal = () => {
 			dispatchState({ type: 'CLOSE_POPOVER' });
 			return;
 		}
-		dispatch(toggleModal(COPY_CITATION, false));
-	}, [dispatch, state.popoverOpenFor]);
+		dispatch(toggleModal(COPY_CITATION, false, { itemKeys, libraryKey }));
+	}, [dispatch, itemKeys, libraryKey, state.popoverOpenFor]);
 
 	const handleCopyClick = useCallback(async () => {
 		copyDataInclude.current = [
@@ -455,7 +477,7 @@ const CopyCitationModal = () => {
 		copy(state.citationsPlain);
 
 		if (isTouchOrSmall) {
-			dispatch(toggleModal(COPY_CITATION, false));
+			dispatch(toggleModal(COPY_CITATION, false, { itemKeys, libraryKey }));
 		} else {
 			dispatchState({ type: 'COPY' });
 			clearTimeout(copyTimeout.current);
@@ -463,7 +485,7 @@ const CopyCitationModal = () => {
 				dispatchState({ type: 'RESET_COPY' });
 			}, 950);
 		}
-	}, [state.citationsPlain, state.citationsHTML, isTouchOrSmall, dispatch]);
+	}, [state.citationsPlain, state.citationsHTML, isTouchOrSmall, dispatch, itemKeys, libraryKey]);
 
 	const updatePreview = useCallback(async () => {
 		clearTimeout(copyTimeout.current);
@@ -578,7 +600,7 @@ const CopyCitationModal = () => {
 	}, []);
 
 	const handleBibliographyClick = useCallback(() => {
-		dispatch(toggleModal(COPY_CITATION, false));
+		dispatch(toggleModal(COPY_CITATION, false, { itemKeys, libraryKey }));
 		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
 	}, [dispatch, itemKeys, libraryKey]);
 
@@ -708,13 +730,17 @@ const CopyCitationModal = () => {
 					<CitationOptions />
 					{itemsLookup && isTouchOrSmall && (
 						<div className="citations-touch" ref={citationsTouchRef}>
-							{(state.previewOrder ?? state.currentOrder).map(itemKey => (
+							{(state.previewOrder ?? state.currentOrder).map((itemKey, index) => (
 								<CitationTouch
+									index={index}
 									isOpen={state.popoverOpenFor === itemKey}
-									key={itemKey}
 									item={itemsLookup[itemKey]}
+									key={itemKey}
 									modifier={state.modifiers[itemKey]}
 									onOpenTouchEditor={handleOpenPopoverOrEditor}
+									onReorderCancel={handleReorderCancel}
+									onReorderCommit={handleReorderCommit}
+									onReorderPreview={handleReorder}
 								/>
 							))}
 						</div>
@@ -732,16 +758,16 @@ const CopyCitationModal = () => {
 						>
 							{(state.previewOrder ?? state.currentOrder).map((itemKey, index) => (
 								<Bubble
+									index={index}
 									isOpen={state.popoverOpenFor === itemKey}
 									item={itemsLookup[itemKey]}
 									key={itemKey}
 									modifier={state.modifiers[itemKey]}
 									onModifierChange={handleModifierChange}
 									onOpenPopover={handleOpenPopoverOrEditor}
-									index={index}
-									onReorderPreview={handleReorder}
-									onReorderCommit={handleReorderCommit}
 									onReorderCancel={handleReorderCancel}
+									onReorderCommit={handleReorderCommit}
+									onReorderPreview={handleReorder}
 								/>
 							))}
 						</div>

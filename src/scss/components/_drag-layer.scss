@@ -53,6 +53,10 @@
 	}
 }
 
+.citation-touch-drag-preview {
+	min-height: $line-height-large-touch;
+}
+
 .items-drag-indicator {
 	position: absolute;
 	display: flex;

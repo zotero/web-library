@@ -48,7 +48,7 @@ const SortableField = memo(forwardRef((props, outerRef) => {
 	raw = {}, ...rest } = props;
 
 	const fieldRef = useRef(null);
-	const getItem = () => ({ index, raw, sourceRect: fieldRef.current.getBoundingClientRect(), onReorder });
+	const getItem = () => ({ raw, sourceRect: fieldRef.current.getBoundingClientRect(), onReorder });
 
 	const { dragRef, dropRef, previewRef, isDragging, isOver, canDrop } = useSortable(
 		fieldRef, CREATOR, getItem, index, onReorder, onReorderCommit, onReorderCancel

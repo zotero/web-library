@@ -181,6 +181,7 @@
 
 	@include scopedVariant(".modal-scrollable") {
 		overflow-y: auto;
+		overflow-x: clip;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 
 		&:focus {
