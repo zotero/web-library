@@ -23,8 +23,8 @@ import { useSortable, HORIZONTAL } from '../../hooks';
 
 const locatorOptions = Object.entries(locators).map(([value, label]) => ({ value, label }));
 
-
-const buildBubbleString = (item, locatorLabel, locatorValue) => {
+// Ported from https://github.com/zotero/zotero/blob/5c6400e21bfa644a12df38cea2bfa487811070f3/chrome/content/zotero/integration/citationDialog/helpers.mjs#L285
+const buildBubbleString = (item, locatorLabel, locatorValue, prefix, suffix) => {
 	// Creator
 	let title;
 	let str = item[Symbol.for('derived')]?.creator;
@@ -49,40 +49,68 @@ const buildBubbleString = (item, locatorLabel, locatorValue) => {
 		str += `, ${locatorLabel} ${locatorValue}`;
 	}
 
+	// Prefix
+	if (prefix && window.CSL?.ENDSWITH_ROMANESQUE_REGEXP) {
+		prefix = prefix.substr(0, 10) + (prefix.length > 10 ? "…" : "");
+		str = prefix
+			+ (window.CSL.ENDSWITH_ROMANESQUE_REGEXP.test(prefix) ? " " : "")
+			+ str;
+	}
+
+	// Suffix
+	if (suffix && window.CSL?.STARTSWITH_ROMANESQUE_REGEXP) {
+		suffix = suffix.substr(0, 10) + (suffix.length > 10 ? "…" : "");
+		str += (window.CSL.STARTSWITH_ROMANESQUE_REGEXP.test(suffix) ? " " : "") + suffix;
+	}
+
 	return str;
 };
 
 const CitationForm = memo(forwardRef((props, ref) => {
-	const { locator, label, mode, itemKey, onModifierChange, onClose } = props;
-	const inputRef = useRef(null);
+	const { locator, label, mode, prefix, suffix, itemKey, onModifierChange, onClose } = props;
+	const locatorInputRef = useRef(null);
+	const formRef = useRef(null);
+	const labelSelectRef = useRef(null);
+
 	const id = useId();
 
 	useImperativeHandle(ref, () => ({
 		focus: () => {
-			if (inputRef.current) {
-				inputRef.current.focus();
+			if (locatorInputRef.current) {
+				locatorInputRef.current.focus();
 			}
 		}
 	}));
 
-	const handleLabelChange = useCallback((newLabel) => {
-		onModifierChange(itemKey, { locator, mode, label: newLabel });
-	}, [itemKey, locator, mode, onModifierChange]);
+	const getValuesFromInputs = useCallback(() => {
+		const formData = new FormData(formRef.current);
+		return {
+			locator: formData.get('locator'),
+			prefix: formData.get('prefix'),
+			suffix: formData.get('suffix'),
+		};
+	}, []);
 
-	const handleLocatorChange = useDebouncedCallback(useCallback((newLocator) => {
-		onModifierChange(itemKey, { locator: newLocator, mode, label });
-	}, [onModifierChange, itemKey, mode, label]), 300);
+	const handleInputChange = useDebouncedCallback(useCallback(() => {
+		onModifierChange(itemKey, { mode, label, ...getValuesFromInputs(), });
+	}, [getValuesFromInputs, itemKey, label, mode, onModifierChange]), 300);
+
+	const handleLabelChange = useCallback((newLabel) => {
+		onModifierChange(itemKey, { label: newLabel, mode, ...getValuesFromInputs(), });
+	}, [getValuesFromInputs, itemKey, mode, onModifierChange]);
 
 	const handleModeChange = useCallback((ev) => {
 		const newMode = ev.target.checked ? 'SuppressAuthor' : '';
-		onModifierChange(itemKey, { locator, mode: newMode, label });
-	}, [onModifierChange, itemKey, locator, label]);
+		onModifierChange(itemKey, { mode: newMode, label, ...getValuesFromInputs() });
+	}, [onModifierChange, itemKey, label, getValuesFromInputs]);
+
 
 	return (
-		<div className="form">
+		<form ref={formRef} className="form">
 			<div className="form-row form-group">
 				<div className="col-6">
 					<Select
+						ref={labelSelectRef}
 						aria-label="Locator Label"
 						name="label"
 						clearable={false}
@@ -98,14 +126,46 @@ const CitationForm = memo(forwardRef((props, ref) => {
 				<div className="col-6">
 					<Input
 						autoComplete="off"
-						ref={inputRef}
+						ref={locatorInputRef}
 						aria-label="Locator"
-						name="Locator"
-						onChange={handleLocatorChange}
+						name="locator"
+						onChange={handleInputChange}
 						tabIndex={0}
 						value={locator}
 						className="form-control form-control-sm"
 						placeholder="Number"
+					/>
+				</div>
+			</div>
+			<div className="form-row form-group">
+				<div className="col-6">
+					<label htmlFor={`${id}-prefix`}>Prefix</label>
+				</div>
+				<div className="col-6">
+					<Input
+						id={`${id}-prefix`}
+						aria-label="Prefix"
+						name="prefix"
+						onChange={handleInputChange}
+						tabIndex={0}
+						value={prefix}
+						className="form-control form-control-sm"
+					/>
+				</div>
+			</div>
+			<div className="form-row form-group">
+				<div className="col-6">
+					<label htmlFor={`${id}-suffix`}>Suffix</label>
+				</div>
+				<div className="col-6">
+					<Input
+						id={`${id}-suffix`}
+						aria-label="Suffix"
+						name="suffix"
+						onChange={handleInputChange}
+						tabIndex={0}
+						value={suffix}
+						className="form-control form-control-sm"
 					/>
 				</div>
 			</div>
@@ -114,6 +174,7 @@ const CitationForm = memo(forwardRef((props, ref) => {
 					<input
 						id={`${id}-suppress-author`}
 						type="checkbox"
+						name="mode"
 						checked={mode === 'SuppressAuthor'}
 						onChange={handleModeChange}
 					/>
@@ -129,43 +190,45 @@ const CitationForm = memo(forwardRef((props, ref) => {
 									</Button>
 								</div> */}
 				<div className="right">
-					<Button onClick={onClose} className="btn btn-default">
+					<Button type="button" onClick={onClose} className="btn btn-default">
 						Done
 					</Button>
 				</div>
 			</div>
-		</div>
+		</form>
 	)
 }));
 
 CitationForm.displayName = 'CitationForm';
 
 CitationForm.propTypes = {
+	formRef: PropTypes.object,
 	itemKey: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	locator: PropTypes.string,
 	mode: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
 	onModifierChange: PropTypes.func.isRequired,
-	formRef: PropTypes.object
+	prefix: PropTypes.string,
+	suffix: PropTypes.string,
 };
 
 // Inspired by https://github.com/zotero/zotero/blob/8df8182f01d4294482e33031567db0359cd145c3/chrome/content/zotero/elements/bubbleInput.js
 const Bubble = memo((props => {
 	const { isOpen, item, index, modifier, onModifierChange, onOpenPopover, onReorderPreview, onReorderCommit, onReorderCancel } = props;
-	const { locator = '', label = '', mode = '' } = modifier;
+	const { locator, label, mode, prefix, suffix } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
 	const id = useId();
 	const wasOpen = usePrevious(isOpen);
-	const ref = useRef(null);
-	const popoverRef = useRef(null);
-	const arrowRef = useRef(null);
-	const formRef = useRef(null);
-	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
-	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
-	const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
-		ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
-	);
+		const ref = useRef(null);
+		const popoverRef = useRef(null);
+		const arrowRef = useRef(null);
+		const formRef = useRef(null);
+		const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
+		const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
+		const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
+			ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
+		);
 
 	dragRef(dropRef(ref));
 
@@ -215,7 +278,7 @@ const Bubble = memo((props => {
 				tabIndex={-2}
 				ref={r => { refs.setReference(r); ref.current = r; }}
 			>
-				{buildBubbleString(item, shortLabel, locator)}
+				{buildBubbleString(item, shortLabel, locator, prefix, suffix)}
 				<Icon type="16/chevron-7" className="dropmarker" width="16" height="16" />
 			</Button>
 			<FocusTrap disabled={!isOpen}>
@@ -236,6 +299,8 @@ const Bubble = memo((props => {
 								label={label}
 								locator={locator}
 								mode={mode}
+								prefix={prefix}
+								suffix={suffix}
 								onClose={handleDone}
 								onModifierChange={onModifierChange}
 								ref={formRef}
@@ -260,7 +325,9 @@ Bubble.propTypes = {
 	modifier: PropTypes.shape({
 		locator: PropTypes.string,
 		label: PropTypes.string,
-		mode: PropTypes.string
+		mode: PropTypes.string,
+		prefix: PropTypes.string,
+		suffix: PropTypes.string
 	}).isRequired,
 	onModifierChange: PropTypes.func.isRequired,
 	onOpenPopover: PropTypes.func.isRequired,
@@ -271,11 +338,11 @@ Bubble.propTypes = {
 
 const CitationTouch = memo(props => {
 	const { isOpen, item, index, modifier, onOpenTouchEditor, onReorderPreview, onReorderCommit, onReorderCancel } = props;
-	const { locator = '', label = '' } = modifier;
+	const { locator, label, prefix, suffix } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
 	const ref = useRef(null);
 	const dragHandleRef = useRef(null);
-	const bubbleString = buildBubbleString(item, shortLabel, locator);
+	const bubbleString = buildBubbleString(item, shortLabel, locator, prefix, suffix);
 	const getItem = () => ({ index, bubbleString, sourceRect: ref.current.getBoundingClientRect() });
 
 	const { dragRef, dropRef, previewRef, isDragging, isOver, canDrop } = useSortable(
@@ -323,7 +390,9 @@ CitationTouch.propTypes = {
 	modifier: PropTypes.shape({
 		locator: PropTypes.string,
 		label: PropTypes.string,
-		mode: PropTypes.string
+		mode: PropTypes.string,
+		prefix: PropTypes.string,
+		suffix: PropTypes.string
 	}).isRequired,
 	onOpenTouchEditor: PropTypes.func.isRequired,
 	onReorderCancel: PropTypes.func.isRequired,
@@ -367,6 +436,8 @@ const CitationTouchEditor = memo(({ modifier, itemKey, onClose, onModifierChange
 						label={modifier.label}
 						locator={modifier.locator}
 						mode={modifier.mode}
+						prefix={modifier.prefix}
+						suffix={modifier.suffix}
 						onClose={onClose}
 						onModifierChange={onModifierChange}
 						ref={formRef}
@@ -383,7 +454,9 @@ CitationTouchEditor.propTypes = {
 	modifier: PropTypes.shape({
 		label: PropTypes.string,
 		locator: PropTypes.string,
-		mode: PropTypes.string
+		mode: PropTypes.string,
+		prefix: PropTypes.string,
+		suffix: PropTypes.string
 	}).isRequired,
 	isOpen: PropTypes.bool.isRequired,
 	itemKey: PropTypes.string.isRequired,
@@ -450,7 +523,7 @@ const CopyCitationModal = () => {
 	const [state, dispatchState] = useReducer(reducer, {
 		isCopied: false,
 		isUpdating: false,
-		modifiers: Object.fromEntries(itemKeys.map(key => [key, { label: '', locator: '', mode: '' }])),
+		modifiers: Object.fromEntries(itemKeys.map(key => [key, { label: '', locator: '', mode: '', prefix: '', suffix: '' }])),
 		citationsPlain: null,
 		citationsHTML: null,
 		shouldUpdate: false,
