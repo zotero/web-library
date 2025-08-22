@@ -400,10 +400,11 @@ CitationTouch.propTypes = {
 	onReorderPreview: PropTypes.func.isRequired,
 };
 
-const CitationTouchEditor = memo(({ modifier, itemKey, onClose, onModifierChange, isOpen }) => {
+const CitationTouchEditor = memo(({ modifier, item, onClose, onModifierChange, isOpen }) => {
 	const formRef = useRef(null);
 	const fadeOverlayRef = useRef(null);
 	const citationTouchEditorRef = useRef(null);
+	const bubbleString = item && modifier && buildBubbleString(item, modifier.label, modifier.locator, modifier.prefix, modifier.suffix);
 
 	const handleTouchEditorEnter = () => {
 		formRef.current?.focus();
@@ -431,17 +432,18 @@ const CitationTouchEditor = memo(({ modifier, itemKey, onClose, onModifierChange
 				unmountOnExit
 			>
 				<div className="citation-touch-editor" ref={citationTouchEditorRef}>
-					{isOpen && <CitationForm
-						itemKey={itemKey}
-						label={modifier.label}
-						locator={modifier.locator}
-						mode={modifier.mode}
-						prefix={modifier.prefix}
-						suffix={modifier.suffix}
+					<h5>{bubbleString}</h5>
+					<CitationForm
+						itemKey={item?.key}
+						label={modifier?.label}
+						locator={modifier?.locator}
+						mode={modifier?.mode}
+						prefix={modifier?.prefix}
+						suffix={modifier?.suffix}
 						onClose={onClose}
 						onModifierChange={onModifierChange}
 						ref={formRef}
-					/>}
+					/>
 				</div>
 			</CSSTransition>
 		</Fragment>
@@ -749,7 +751,7 @@ const CopyCitationModal = () => {
 			{isTouchOrSmall && (
 				<CitationTouchEditor
 					isOpen={state.popoverOpenFor !== null}
-					itemKey={state.popoverOpenFor}
+					item={itemsLookup[state.popoverOpenFor]}
 					modifier={state.modifiers[state.popoverOpenFor]}
 					onClose={handleClosePopoverOrEditor}
 					onModifierChange={handleModifierChange}

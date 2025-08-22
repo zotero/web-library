@@ -1,5 +1,6 @@
 .copy-citation-modal {
 	max-height: calc(100vh - 64px);
+	min-height: 360px; // on touch, allow enough space for the slide-down editor
 	width: unset;
 
 	@include bp-down(xs) {
@@ -63,11 +64,6 @@
 	}
 
 	.bubble-popover {
-		@include touch-or-bp-down(sm) {
-			// there is no `.buttons-wrap` on mobile, so we add some bottom padding
-			padding-bottom: $space-lg;
-		}
-
 		.form {
 			flex: 0 1 auto;
 			display: flex;
@@ -75,13 +71,6 @@
 
 			.select, .select-control {
 				height: 100%;
-			}
-
-			@include touch-or-bp-down(sm) {
-				.form-group:first-child {
-					// On desktop these are two separate form groups, but on mobile merged looks better
-					margin-bottom: -1px;
-				}
 			}
 		}
 
@@ -111,16 +100,27 @@
 		flex-direction: column;
 		background-color: $panel-bg;
 
-		@include touch-or-bp-down(sm) {
+		@include touch-or-bp-down(sm) { // keep to match specificity
 			.form {
-				margin: 0;
+				margin: 0; // reset the negative margin
+				padding: $space-sm 0;
 			}
+		}
+
+		h5 {
+			@include text-truncate(ellipsis);
+			margin-top: $space-xs;
+			padding: 0 $space-sm;
+			text-align: center;
+		}
+
+		.form-group:has(+ .buttons-wrap) {
+			margin-bottom: $space-sm;
 		}
 
 		.col-form-label::after {
 			content: ':';
 		}
-
 
 		.col {
 			display: flex;
