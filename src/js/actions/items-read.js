@@ -87,9 +87,18 @@ const fetchChildItems = (itemKey, queryOptions, overrides) => {
 }
 
 const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
-	return fetchItems(
-		'FETCH_ITEMS', {}, { ...queryOptions, itemKey: itemKeys.join(','), }, overrides
-	);
+	return async (dispatch) => {
+		itemKeys = Array.from(new Set(itemKeys));
+		const batchSize = 100;
+		let promises = [];
+		for (let i = 0; i < itemKeys.length; i += batchSize) {
+			const batch = itemKeys.slice(i, i + batchSize);
+			promises.push(dispatch(fetchItems(
+				'FETCH_ITEMS', {}, { ...queryOptions, itemKey: batch.join(',') }, overrides
+			)));
+		}
+		return Promise.all(promises);
+	}
 }
 
 // @NOTE: same as fetch items but limited to one item and ignored when considering membership

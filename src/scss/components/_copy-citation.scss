@@ -61,6 +61,13 @@
 
 	.copy-citation-container {
 		overflow-y: scroll;
+
+		@include state(".loading .copy-citation-container") {
+			flex: 1 1 auto;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 	}
 
 	.bubble-popover {

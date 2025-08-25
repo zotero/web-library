@@ -1,5 +1,5 @@
 import { arrow, shift, useFloating } from '@floating-ui/react-dom';
-import { Button, Icon } from 'web-common/components';
+import { Button, Icon, Spinner } from 'web-common/components';
 import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useReducer } from 'react';
 import { isTriggerEvent } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
-import { citationFromItems, fetchCSLStyle, toggleModal } from '../../actions';
+import { citationFromItems, fetchCSLStyle, fetchItemsByKeys, toggleModal } from '../../actions';
 import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
 import { locatorShortForms, locators } from '../../constants/locators';
 import FocusTrap from '../focus-trap';
@@ -220,15 +220,15 @@ const Bubble = memo((props => {
 	const shortLabel = locatorShortForms[label] || label;
 	const id = useId();
 	const wasOpen = usePrevious(isOpen);
-		const ref = useRef(null);
-		const popoverRef = useRef(null);
-		const arrowRef = useRef(null);
-		const formRef = useRef(null);
-		const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
-		const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
-		const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
-			ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
-		);
+	const ref = useRef(null);
+	const popoverRef = useRef(null);
+	const arrowRef = useRef(null);
+	const formRef = useRef(null);
+	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
+	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
+	const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
+		ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
+	);
 
 	dragRef(dropRef(ref));
 
@@ -494,6 +494,8 @@ const reducer = (state, action) => {
 			return { ...state, previewOrder: null };
 		case 'RESET_ORDER':
 			return { ...state, currentOrder: action.newOrder, previewOrder: null };
+		case 'ITEMS_READY':
+			return { ...state, isItemsReady: true, shouldUpdate: true };
 		default:
 			return state;
 	}
@@ -506,7 +508,10 @@ const CopyCitationModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const itemKeys = useSelector(state => state.modal.itemKeys || []);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
+	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);
 	const itemsLookup = useSelector(state => state.libraries[libraryKey]?.dataObjects);
+	const hasMissingItems = itemKeys.some(key => !(key in itemsLookup));
+	const hadMissingItems = usePrevious(hasMissingItems);
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const prevCitationStyle = usePrevious(citationStyle);
 	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
@@ -525,6 +530,7 @@ const CopyCitationModal = () => {
 	const [state, dispatchState] = useReducer(reducer, {
 		isCopied: false,
 		isUpdating: false,
+		isItemsReady: !hasMissingItems,
 		modifiers: Object.fromEntries(itemKeys.map(key => [key, { label: '', locator: '', mode: '', prefix: '', suffix: '' }])),
 		citationsPlain: null,
 		citationsHTML: null,
@@ -609,7 +615,7 @@ const CopyCitationModal = () => {
 		}
 		const index = state.currentOrder.indexOf(ev.target.dataset.key);
 		if (ev.key === 'ArrowRight') {
-			if(ev.shiftKey) {
+			if (ev.shiftKey) {
 				if (index < state.currentOrder.length - 1) {
 					handleReorder(index, state.currentOrder.indexOf(ev.target.dataset.key) + 1, true);
 				}
@@ -679,6 +685,21 @@ const CopyCitationModal = () => {
 		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
 	}, [dispatch, itemKeys, libraryKey]);
 
+	useEffect(() => {
+		if (!state.isItemsReady && hasMissingItems && requestsPending === 0) {
+			const missingKeys = itemKeys.filter(key => !(key in itemsLookup));
+			if (missingKeys.length) {
+				dispatch(fetchItemsByKeys(missingKeys));
+			}
+		}
+	}, [dispatch, hasMissingItems, itemKeys, itemsLookup, requestsPending, state.isItemsReady]);
+
+	useEffect(() => {
+		if (hadMissingItems && !hasMissingItems) {
+			dispatchState({ type: 'ITEMS_READY' });
+		}
+	}, [hadMissingItems, hasMissingItems, state.hasMissingItems]);
+
 	// regenerate bibliography when locale changes
 	useEffect(() => {
 		if (styleXml && citationLocale !== prevCitationLocale && typeof prevCitationLocale !== 'undefined') {
@@ -707,7 +728,7 @@ const CopyCitationModal = () => {
 		}
 	}, [isOpen, updatePreview, styleXml, wasOpen]);
 
-	// regenerate citations when modifiers change
+	// regenerate citations
 	useEffect(() => {
 		if (state.shouldUpdate && !state.isUpdating && styleXml) {
 			updatePreview();
@@ -733,6 +754,10 @@ const CopyCitationModal = () => {
 		}
 	}, [handleCopyToClipboard]);
 
+	useEffect(() => {
+		dispatchState({ type: 'RESET_ORDER', newOrder: itemKeys });
+	}, [itemKeys])
+
 	const className = cx({
 		'copy-citation-modal': true,
 		'modal-scrollable': true,
@@ -744,7 +769,7 @@ const CopyCitationModal = () => {
 			className={className}
 			contentLabel={title}
 			isOpen={isOpen}
-			isBusy={isFetchingStyle}
+			isBusy={!state.isItemsReady || isFetchingStyle}
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
@@ -800,10 +825,10 @@ const CopyCitationModal = () => {
 					)
 				}
 			</div>
-			<div className="modal-body">
+			<div className={cx("modal-body", { loading: !isTouchOrSmall && state.isUpdating } )}>
 				<div className="form">
 					<CitationOptions />
-					{itemsLookup && isTouchOrSmall && (
+					{itemsLookup && !hasMissingItems && isTouchOrSmall && (
 						<div className="citations-touch" ref={citationsTouchRef}>
 							{(state.previewOrder ?? state.currentOrder).map((itemKey, index) => (
 								<CitationTouch
@@ -821,7 +846,7 @@ const CopyCitationModal = () => {
 						</div>
 					)}
 				</div>
-				{itemsLookup && !isTouchOrSmall && (
+				{itemsLookup && !hasMissingItems && !isTouchOrSmall && (
 					<Fragment>
 						<div
 							className="bubbles"
@@ -847,14 +872,20 @@ const CopyCitationModal = () => {
 							))}
 						</div>
 						<div className="copy-citation-container">
-							<h5 id="copy-citation-preview-header">
-								Preview:
-							</h5>
-							<figure
-								aria-labelledby="copy-citation-preview-header"
-								className="preview"
-								dangerouslySetInnerHTML={{ __html: state.citationsHTML }}
-							/>
+							{state.isUpdating ? (
+								<Spinner className="large" />
+							) : (
+								<Fragment>
+									<h5 id="copy-citation-preview-header">
+										Preview:
+									</h5>
+									<figure
+										aria-labelledby="copy-citation-preview-header"
+										className="preview"
+										dangerouslySetInnerHTML={{ __html: state.citationsHTML }}
+									/>
+								</Fragment>
+							)}
 						</div>
 					</Fragment>
 				)}

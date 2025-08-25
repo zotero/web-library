@@ -7,7 +7,7 @@ import cx from 'classnames';
 
 import { BIBLIOGRAPHY } from '../../constants/modals';
 import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, fetchCSLStyle, bibliographyFromItems, triggerSelectMode } from '../../actions';
+import { toggleModal, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
 import CitationOptions from '../citation-options';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
@@ -20,8 +20,13 @@ const BibliographyModal = () => {
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const citationLocale = useSelector(state => state.preferences.citationLocale);
 	const collectionKey = useSelector(state => state.modal.collectionKey);
-	const itemKeys = useSelector(state => state.modal.itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
+	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);
+	const itemKeys = useSelector(state => state.modal.itemKeys);
+	const itemsLookup = useSelector(state => state.libraries[libraryKey]?.dataObjects);
+	const hasMissingItems = (itemKeys || []).some(key => !(key in itemsLookup));
+	const hadMissingItems = usePrevious(hasMissingItems);
+
 	const styleXml = useSelector(state => state.cite.styleXml);
 	const prevStyleXml = usePrevious(styleXml);
 	const isFetchingStyle = useSelector(state => state.cite.isFetchingStyle);
@@ -30,6 +35,7 @@ const BibliographyModal = () => {
 	const prevCitationStyle = usePrevious(citationStyle);
 	const prevCitationLocale = usePrevious(citationLocale);
 
+	const [isItemsReady, setIsItemsReady] = useState(!hasMissingItems);
 	const [requestedAction, setRequestedAction] = useState('clipboard');
 	const [isClipboardCopied, setIsClipboardCopied] = useState(false);
 	const [isHtmlCopied, setIsHtmlCopied] = useState(false);
@@ -137,10 +143,10 @@ const BibliographyModal = () => {
 
 	// regenerate bibliography when locale changes
 	useEffect(() => {
-		if (styleXml && citationLocale !== prevCitationLocale && typeof prevCitationLocale !== 'undefined') {
+		if (isItemsReady && styleXml && citationLocale !== prevCitationLocale && typeof prevCitationLocale !== 'undefined') {
 			makeOutput();
 		}
-	}, [citationLocale, makeOutput, prevCitationLocale, styleXml]);
+	}, [citationLocale, isItemsReady, makeOutput, prevCitationLocale, styleXml]);
 
 	// fetch style when modal is first opened. This will trigger effect below that actually generates bibliography.
 	useEffect(() => {
@@ -151,17 +157,32 @@ const BibliographyModal = () => {
 
 	// regenerate bibliography when style changes.
 	useEffect(() => {
-		if (styleXml && prevStyleXml !== styleXml && typeof prevStyleXml !== 'undefined') {
+		if (isItemsReady && styleXml && prevStyleXml !== styleXml && typeof prevStyleXml !== 'undefined') {
 			makeOutput();
 		}
-	}, [citationStyle, makeOutput, prevCitationStyle, prevStyleXml, styleXml]);
+	}, [citationStyle, isItemsReady, makeOutput, prevCitationStyle, prevStyleXml, styleXml]);
 
 	// regenerate bibliography when modal re-opens with style already fetched
 	useEffect(() => {
-		if (isOpen && !wasOpen && styleXml) {
+		if (isItemsReady && isOpen && !wasOpen && styleXml) {
 			makeOutput();
 		}
-	}, [isOpen, makeOutput, styleXml, wasOpen]);
+	}, [isOpen, makeOutput, styleXml, wasOpen, isItemsReady]);
+
+	useEffect(() => {
+		if (!isItemsReady && hasMissingItems && requestsPending === 0) {
+			const missingKeys = itemKeys.filter(key => !(key in itemsLookup));
+			dispatch(fetchItemsByKeys(missingKeys));
+		}
+	}, [dispatch, hasMissingItems, isItemsReady, itemKeys, itemsLookup, requestsPending]);
+
+	// regenerate bibliography when modal opens with some items initially missing and have been fetched
+	useEffect(() => {
+		if (hadMissingItems && !hasMissingItems) {
+			setIsItemsReady(true);
+			makeOutput();
+		}
+	}, [hadMissingItems, hasMissingItems, makeOutput]);
 
 
 	useEffect(() => {
@@ -180,6 +201,7 @@ const BibliographyModal = () => {
 		<Modal
 			className={className}
 			contentLabel={'Bibliography'}
+			isBusy={!isItemsReady}
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
