@@ -7,7 +7,7 @@ import cx from 'classnames';
 
 import { BIBLIOGRAPHY } from '../../constants/modals';
 import { stripTagsUsingDOM } from '../../common/format';
-import { toggleModal, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
+import { toggleModal, fetchItemKeys, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
 import CitationOptions from '../citation-options';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
@@ -23,6 +23,7 @@ const BibliographyModal = () => {
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);
 	const itemKeys = useSelector(state => state.modal.itemKeys);
+	const prevItemKeys = usePrevious(itemKeys);
 	const itemsLookup = useSelector(state => state.libraries[libraryKey]?.dataObjects);
 	const hasMissingItems = (itemKeys || []).some(key => !(key in itemsLookup));
 	const hadMissingItems = usePrevious(hasMissingItems);
@@ -35,7 +36,7 @@ const BibliographyModal = () => {
 	const prevCitationStyle = usePrevious(citationStyle);
 	const prevCitationLocale = usePrevious(citationLocale);
 
-	const [isItemsReady, setIsItemsReady] = useState(!hasMissingItems);
+	const [isItemsReady, setIsItemsReady] = useState(!hasMissingItems && !collectionKey);
 	const [requestedAction, setRequestedAction] = useState('clipboard');
 	const [isClipboardCopied, setIsClipboardCopied] = useState(false);
 	const [isHtmlCopied, setIsHtmlCopied] = useState(false);
@@ -50,20 +51,11 @@ const BibliographyModal = () => {
 	const makeOutput = useCallback(async () => {
 		try {
 			setIsUpdating(true);
-			var nextOutput;
-			if (collectionKey) {
-				throw new Error('TODO: Collection support.');
-				// nextOutput = await dispatch(bibliographyFromCollection(
-				// 	collectionKey, libraryKey, { style: citationStyle, locale: citationLocale }
-				// ));
-			} else {
-				nextOutput = await dispatch(bibliographyFromItems(itemKeys, libraryKey,));
-			}
-			setOutput(nextOutput);
+			setOutput(await dispatch(bibliographyFromItems(itemKeys, libraryKey)));
 		} finally {
 			setIsUpdating(false);
 		}
-	}, [collectionKey, dispatch, itemKeys, libraryKey]);
+	}, [dispatch, itemKeys, libraryKey]);
 
 	const copyToClipboard = useCallback(bibliographyToCopy => {
 		const bibliographyText = stripTagsUsingDOM(bibliographyToCopy);
@@ -120,19 +112,24 @@ const BibliographyModal = () => {
 		} else {
 			copyToClipboard(output);
 		}
-		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		dispatch(toggleModal(BIBLIOGRAPHY, false, { itemKeys, libraryKey }));
 		dispatch(triggerSelectMode(false, true));
-	}, [output, copyToClipboard, dispatch, requestedAction]);
+	}, [requestedAction, dispatch, itemKeys, libraryKey, output, copyToClipboard]);
 
 	const handleCancel = useCallback(async () => {
-		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		dispatch(toggleModal(BIBLIOGRAPHY, false, { itemKeys, libraryKey }));
 		setOutput('');
-	}, [dispatch]);
+	}, [dispatch, itemKeys, libraryKey]);
 
 	const handleBibliographyClick = useCallback(() => {
-		dispatch(toggleModal(BIBLIOGRAPHY, false));
+		dispatch(toggleModal(BIBLIOGRAPHY, false, { itemKeys, libraryKey }));
 		dispatch(toggleModal('COPY_CITATION', true, { itemKeys, libraryKey }));
 	}, [dispatch, itemKeys, libraryKey]);
+
+	const fetchCollectionItemKeys = useCallback(async () => {
+		const itemKeys = await dispatch(fetchItemKeys('ITEMS_IN_COLLECTION', libraryKey, { collectionKey }));
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { libraryKey, itemKeys }));
+	}, [collectionKey, dispatch, libraryKey]);
 
 	useEffect(() => {
 		document.addEventListener('copy', handleCopy, true);
@@ -172,9 +169,9 @@ const BibliographyModal = () => {
 	useEffect(() => {
 		if (!isItemsReady && hasMissingItems && requestsPending === 0) {
 			const missingKeys = itemKeys.filter(key => !(key in itemsLookup));
-			dispatch(fetchItemsByKeys(missingKeys));
+			dispatch(fetchItemsByKeys(missingKeys, {}, { current: { libraryKey } }));
 		}
-	}, [dispatch, hasMissingItems, isItemsReady, itemKeys, itemsLookup, requestsPending]);
+	}, [dispatch, hasMissingItems, isItemsReady, itemKeys, itemsLookup, libraryKey, requestsPending]);
 
 	// regenerate bibliography when modal opens with some items initially missing and have been fetched
 	useEffect(() => {
@@ -184,12 +181,27 @@ const BibliographyModal = () => {
 		}
 	}, [hadMissingItems, hasMissingItems, makeOutput]);
 
-
 	useEffect(() => {
 		if (!isDropdownOpen && wasDropdownOpen) {
 			setIsHtmlCopied(false);
 		}
 	}, [isDropdownOpen, wasDropdownOpen]);
+
+	useEffect(() => {
+		if (collectionKey) {
+			fetchCollectionItemKeys();
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	useEffect(() => {
+		if(itemKeys !== prevItemKeys) {
+			const newIsItemsReady = !(itemKeys || []).some(key => !(key in itemsLookup));
+			setIsItemsReady(newIsItemsReady);
+			if(styleXml && newIsItemsReady) {
+				makeOutput();
+			}
+		}
+	}, [itemKeys, prevItemKeys, itemsLookup, makeOutput, styleXml]);
 
 	const className = cx({
 		'bibliography-modal': true,
@@ -201,7 +213,7 @@ const BibliographyModal = () => {
 		<Modal
 			className={className}
 			contentLabel={'Bibliography'}
-			isBusy={!isItemsReady}
+			isBusy={!isItemsReady || !!collectionKey /* show only spinner if collectionKey is set, while we fetch keys and re-open modal with itemKeys set instead */ }
 			isOpen={isOpen}
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}

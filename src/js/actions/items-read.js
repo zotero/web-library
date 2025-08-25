@@ -344,6 +344,16 @@ const fetchAllChildItems = (itemKey, queryOptions = {}, overrides) => {
 	}
 }
 
+const fetchItemKeys = (type, libraryKey, queryConfig = {}, queryOptions = {}) => {
+	return async (dispatch, getState) => {
+		const config = getState().config;
+		const api = getApiForItems({ config, libraryKey }, type, queryConfig);
+		const response = await api.get({ ...escapeBooleanSearches(queryOptions, 'tag'), format: 'keys' });
+		const keys = (await response.getData().text()).split("\n").filter(k => k !== "");
+		return keys;
+	}
+}
+
 const findRowIndexInSource = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
@@ -354,7 +364,6 @@ const findRowIndexInSource = () => {
 		}
 
 		const libraryKey = state.current.libraryKey;
-		const config = state.config;
 		const { collectionKey, isTrash, isMyPublications, itemsSource, search: q, qmode,
 			tags: tag = [] } = state.current;
 		const { field: sortBy, sort: sortDirection } = state.preferences.columns.find(
@@ -398,9 +407,7 @@ const findRowIndexInSource = () => {
 		}
 
 		try {
-			const api = getApiForItems({ config, libraryKey }, type, queryConfig);
-			const response = await api.get({ ...escapeBooleanSearches(queryOptions, 'tag'), format: 'keys' });
-			const keys = (await response.getData().text()).split("\n");
+			await fetchItemKeys(type, libraryKey, queryConfig, queryOptions);
 			if(keys.indexOf(itemKey) !== -1) {
 				return keys.indexOf(itemKey);
 			}
@@ -410,6 +417,7 @@ const findRowIndexInSource = () => {
 		}
 	}
 }
+
 
 const querySecondary = ({ libraryKey, collectionKey, isTrash, isMyPublications, q, tag, qmode }) => {
 	return {
@@ -423,6 +431,7 @@ export {
 	fetchAllItemsSince,
 	fetchChildItems,
 	fetchItemDetails,
+	fetchItemKeys,
 	fetchItemsByKeys,
 	fetchItemsInCollection,
 	fetchItemsQuery,
@@ -433,7 +442,7 @@ export {
 	fetchTrashItems,
 	findRowIndexInSource,
 	getAttachmentUrl,
+	querySecondary,
 	sortItems,
 	sortItemsSecondary,
-	querySecondary
 };

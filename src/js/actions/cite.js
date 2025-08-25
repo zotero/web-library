@@ -78,9 +78,6 @@ export const bibliographyFromItems = (itemKeys, libraryKey) => {
 	};
 };
 
-export const bibliographyFromCollection = (collectionKey, libraryKey, { style = 'chicago-note-bibliography', locale = 'en-US' }) => {
-	throw new Error("TODO: Implement bibliographyFromCollection");
-};
 
 export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
 	return async (dispatch, getState) => {

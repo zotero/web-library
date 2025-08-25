@@ -689,10 +689,10 @@ const CopyCitationModal = () => {
 		if (!state.isItemsReady && hasMissingItems && requestsPending === 0) {
 			const missingKeys = itemKeys.filter(key => !(key in itemsLookup));
 			if (missingKeys.length) {
-				dispatch(fetchItemsByKeys(missingKeys));
+				dispatch(fetchItemsByKeys(missingKeys, {}, { current: { libraryKey } }));
 			}
 		}
-	}, [dispatch, hasMissingItems, itemKeys, itemsLookup, requestsPending, state.isItemsReady]);
+	}, [dispatch, hasMissingItems, itemKeys, itemsLookup, libraryKey, requestsPending, state.isItemsReady]);
 
 	useEffect(() => {
 		if (hadMissingItems && !hasMissingItems) {
