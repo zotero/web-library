@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { Icon } from 'web-common/components';
+import { Button, Icon } from 'web-common/components';
 
-import { ITEM, CREATOR } from '../constants/dnd';
+import { ITEM, CREATOR, CITATION } from '../constants/dnd';
 import { useDragLayer } from 'react-dnd';
 
 const dndCollect = monitor => ({
@@ -34,15 +34,15 @@ const getNextToCursorStyles = ({ clientOffset }) => {
 	};
 }
 
-const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect) => {
+const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect, { ignoreOffsetX = false, ignoreOffsetY = false } = {}) => {
 	if (!differenceFromInitialOffset) {
 		return {
 			display: 'none'
 		};
 	}
 
-	const x = Math.round(sourceRect.x + differenceFromInitialOffset.x);
-	const y = Math.round(sourceRect.y + differenceFromInitialOffset.y);
+	const x = ignoreOffsetX ? sourceRect.x : Math.round(sourceRect.x + differenceFromInitialOffset.x);
+	const y = ignoreOffsetY ? sourceRect.y : Math.round(sourceRect.y + differenceFromInitialOffset.y);
 
 	const transform = `translate(${x}px, ${y}px)`;
 	return {
@@ -54,15 +54,14 @@ const getRelativeToOriginalStyles = ({ differenceFromInitialOffset }, sourceRect
 }
 
 const CreatorDragPreview = memo(({ creator }) => {
-	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	return isTouchOrSmall ? (
+	return (
 		<div className="metadata creators creator-drag-preview">
-			<div className="creator-type truncate">{ creator.creatorType }</div>
+			<div className="creator-type truncate">{creator.creatorType}</div>
 			<div className="name truncate">
-				{ 'name' in creator ? creator.name : creator.lastName + ', ' + creator.firstName }
+				{'name' in creator ? creator.name : creator.lastName + ', ' + creator.firstName}
 			</div>
 		</div>
-	) : null; // on desktops we use html5 backend
+	);
 });
 
 CreatorDragPreview.displayName = 'CreatorDragPreview';
@@ -71,19 +70,42 @@ CreatorDragPreview.propTypes = {
 	creator: PropTypes.object,
 };
 
-const SingleItemDragPreview = memo(({ itemData }) => {
-	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
+const CitationDragPreview = memo(({ bubbleString }) => {
+	return(
+		<div className="citation-touch drag-preview">
+			<div className="form-row">
+				<div className="col-12">
+					<div className="form-group form-row">
+						<Button className="btn label">
+							{bubbleString}
+						</Button>
+						<div className="drag-handle" >
+							<Icon type="24/grip" role="presentation" width="24" height="24" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+});
 
+CitationDragPreview.displayName = 'CitationDragPreview';
+
+CitationDragPreview.propTypes = {
+	bubbleString: PropTypes.string,
+};
+
+const SingleItemDragPreview = memo(({ itemData }) => {
 	return (
 		<div className="items-drag-indicator single">
 			<Icon
-				type={ `16/item-type/${itemData.iconName}` }
-				symbol={ `${itemData.iconName}-white` }
-				usePixelRatio={ true }
+				type={`16/item-type/${itemData.iconName}`}
+				symbol={`${itemData.iconName}-white`}
+				usePixelRatio={true}
 				width="16"
 				height="16"
 			/>
-			<span>{ itemData.title }</span>
+			<span>{itemData.title}</span>
 		</div>
 	);
 });
@@ -95,18 +117,16 @@ SingleItemDragPreview.propTypes = {
 };
 
 const MultiItemsDragPreview = memo(({ selectedItemKeysLength }) => {
-	var dvp = window.devicePixelRatio >= 2 ? 2 : 1;
-
 	return (
 		<div className="items-drag-indicator multiple">
 			<Icon
 				type={`16/item-type/document`}
 				symbol="document-white"
-				usePixelRatio={ true }
+				usePixelRatio={true}
 				width="16"
 				height="16"
 			/>
-			<span>{ selectedItemKeysLength } Items</span>
+			<span>{selectedItemKeysLength} Items</span>
 		</div>
 	);
 });
@@ -118,28 +138,28 @@ MultiItemsDragPreview.propTypes = {
 };
 
 const CustomDragLayer = () => {
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { isDragging, itemType, item: draggedObject, ...offsets } = useDragLayer(dndCollect);
-	var style;
+	const needsDragLayer = isDragging && (itemType === ITEM || isTouchOrSmall); // on desktops we use html5 backend for anything but ITEM
 
-	switch(itemType) {
-		case CREATOR:
-			style = getRelativeToOriginalStyles(offsets, draggedObject.sourceRect);
-		break
-		case ITEM:
-			style = getNextToCursorStyles(offsets);
-		break;
+	let style;
+	if(isTouchOrSmall && (itemType === CITATION || itemType === CREATOR)) {
+		style = getRelativeToOriginalStyles(offsets, draggedObject.sourceRect, { ignoreOffsetX: true });
+	} else if(itemType === ITEM) {
+		style = getNextToCursorStyles(offsets);
 	}
 
 	// @NOTE: re-renders constantly during drag operation due to offsets changing
-	return isDragging ? (
+	return needsDragLayer ? (
 		<div className="drag-layer">
-			<div style={ style }>
-				{ itemType === CREATOR && <CreatorDragPreview creator={ draggedObject.raw } />  }
-				{ itemType === ITEM && draggedObject.selectedItemKeysLength === 1 &&
-					<SingleItemDragPreview itemData={ draggedObject.itemData } />
+			<div style={style}>
+				{isTouchOrSmall && itemType === CITATION && <CitationDragPreview bubbleString={draggedObject.bubbleString} />}
+				{isTouchOrSmall && itemType === CREATOR && <CreatorDragPreview creator={draggedObject.raw} />}
+				{itemType === ITEM && draggedObject.selectedItemKeysLength === 1 &&
+					<SingleItemDragPreview itemData={draggedObject.itemData} />
 				}
-				{ itemType === ITEM && draggedObject.selectedItemKeysLength > 1 &&
-					<MultiItemsDragPreview selectedItemKeysLength={ draggedObject.selectedItemKeysLength } />
+				{itemType === ITEM && draggedObject.selectedItemKeysLength > 1 &&
+					<MultiItemsDragPreview selectedItemKeysLength={draggedObject.selectedItemKeysLength} />
 				}
 			</div>
 		</div>

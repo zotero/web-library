@@ -8,7 +8,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 
 import Editable from '../editable';
 import Node from './node';
-import { COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
+import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate } from '../../actions';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
@@ -332,11 +332,12 @@ LevelWrapper.propTypes = {
 
 
 const DotMenu = memo(props => {
-	const { collection, dotMenuFor, focusBySelector, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
+	const { collection, dotMenuFor, focusBySelector, isReadOnly, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
 		addVirtual } = props;
 	const dispatch = useDispatch();
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
 	const currentCollectionKey = useSelector(state => state.current.collectionKey);
+	const hasItems = useSelector(state => (state.libraries[parentLibraryKey]?.itemsByCollection?.[collection.key]?.totalResults ?? Infinity) > 0); // This should always be known but if we somehow don't know, we assume collection has items
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
 	const isOpen = dotMenuFor === collection.key;
@@ -433,9 +434,9 @@ const DotMenu = memo(props => {
 	// 	dispatch(toggleModal(EXPORT, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
 	// });
 
-	// const handleBibliographyClick = useCallback(() => {
-	// 	dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	// });
+	const handleBibliographyClick = useCallback(() => {
+		dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
+	}, [collection.key, dispatch, parentLibraryKey]);
 
 	return (
         <Dropdown
@@ -456,6 +457,7 @@ const DotMenu = memo(props => {
 			<DropdownMenu>
 				<Fragment>
 				<DropdownItem
+					disabled={isReadOnly}
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleRenameClick }
@@ -464,6 +466,7 @@ const DotMenu = memo(props => {
 					Rename
 				</DropdownItem>
 				<DropdownItem
+					disabled={isReadOnly}
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
@@ -472,6 +475,7 @@ const DotMenu = memo(props => {
 					New Subcollection
 				</DropdownItem>
 				<DropdownItem
+					disabled={isReadOnly}
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleMoveCollectionClick }
@@ -481,6 +485,7 @@ const DotMenu = memo(props => {
 				</DropdownItem>
 				<DropdownItem divider />
 				<DropdownItem
+					disabled={isReadOnly}
 					onBlur={stopPropagation}
 					onMouseDown={stopPropagation}
 					onClick={handleDeleteClick}
@@ -488,6 +493,16 @@ const DotMenu = memo(props => {
 				>
 					Delete
 				</DropdownItem>
+				<DropdownItem divider />
+					<DropdownItem
+						disabled={!hasItems}
+						onBlur={stopPropagation}
+						onMouseDown={stopPropagation}
+						onClick={handleBibliographyClick}
+						onKeyDown={handleBibliographyClick}
+					>
+						Create Bibliography
+					</DropdownItem>
 				</Fragment>
 			</DropdownMenu>
 		</Dropdown>
@@ -762,16 +777,17 @@ const CollectionNode = memo(props => {
 						>
 							{ collectionName }
 						</div>
-						{(!isReadOnly && !pickerMode) ? (
+						{pickerMode ? null : (
 							<DotMenu
 								collection = { collection }
 								setRenaming = { setRenaming }
 								parentLibraryKey = { parentLibraryKey }
+								isReadOnly={isReadOnly}
 								{ ...pick(rest, ['addVirtual', 'commitAdd', 'cancelAdd',
 								'dotMenuFor', 'focusBySelector', 'onFocusNext', 'opened',
 								'setDotMenuFor', 'setOpened']) }
 							/>
-						) : null }
+						)}
 					</Fragment>
 				)
 			}

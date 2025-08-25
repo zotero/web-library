@@ -16,6 +16,11 @@
 
 	@include variant(".popover .form") {
 		margin: $space-min 0;
+
+		@include touch-or-bp-down(sm) {
+			margin: -$space-sm;
+			padding: 0;
+		}
 	}
 }
 
@@ -42,10 +47,6 @@ fieldset {
 }
 
 .form-group {
-	&.checkbox {
-		display: flex;
-	}
-
 	@include touch-or-bp-down(sm) {
 		display: flex;
 		padding: $input-border-width $input-btn-padding-x-touch;
@@ -250,6 +251,10 @@ label {
 			padding: 0;
 			border: none;
 		}
+
+		&.is-disabled .select-value {
+			color: var(--color-text-disabled);
+		}
 	}
 
 	@at-root #{$scope} select.form-control {
@@ -321,10 +326,14 @@ textarea {
 		}
 
 		.form-control {
-			@include text-truncate(clip);
+			@include text-truncate(ellipsis);
 			padding-right: 0;
 			margin-right: $input-btn-padding-x-touch;
 			line-height: $input-btn-height-touch; // Center text vertically
+
+			&.is-disabled {
+				color: var(--color-text-disabled);
+			}
 		}
 	}
 }

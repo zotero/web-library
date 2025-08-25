@@ -59,6 +59,8 @@ $scope: ".zotero-wle";
 #{$scope} {
 	@import "components/button";
 	@import "components/bibliography";
+	@import "components/citation-options";
+	@import "components/copy-citation";
 	@import "components/collection-tree";
 	@import "components/dropdown";
 	@import "../../modules/web-common/scss/select";

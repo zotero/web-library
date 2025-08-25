@@ -12,7 +12,7 @@ import { Spinner } from 'web-common/components';
 var initialPadding;
 
 const Modal = forwardRef((props, ref) => {
-	const { children, className, isBusy, isOpen, onAfterOpen, overlayClassName, ...rest } = props;
+	const { children, className, isBusy, isOpen, onAfterOpen, overlayClassName, contentRef: propContentRef, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const containterClassName = useSelector(state => state.config.containterClassName);
 	const wasOpen = usePrevious(isOpen);
@@ -39,7 +39,10 @@ const Modal = forwardRef((props, ref) => {
 
 	const setContentRef = useCallback(newRef => {
 		contentRef.current = newRef;
-	}, []);
+		if (propContentRef) {
+			propContentRef(newRef);
+		}
+	}, [propContentRef]);
 
 	useEffect(() => { // correct for scrollbars
 		if(typeof(wasOpen) === 'undefined') {
@@ -80,6 +83,7 @@ const Modal = forwardRef((props, ref) => {
 Modal.propTypes = {
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	className: PropTypes.string,
+	contentRef: PropTypes.func,
 	isBusy: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	onAfterOpen: PropTypes.func,

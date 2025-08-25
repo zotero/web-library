@@ -5,12 +5,16 @@ import Select from './form/select';
 import localeData from '../../../data/locale-data.json';
 
 const LocaleSelector = props => {
-	const { className, citationLocale, onLocaleChange, id, ...rest } = props;
+	const { className, citationLocale, onLocaleChange, styleProperties, id, ...rest } = props;
+
+	const defaultLocale = styleProperties?.defaultLocale;
 
 	return (
 		<Select
 			{...rest}
+			className="form-control"
 			clearable={ false }
+			isDisabled={ styleProperties === null || !!defaultLocale }
 			id={ id }
 			inputGroupClassName={ cx('locale-selector', className ) }
 			onChange={ () => true /* commit on change */ }
@@ -18,16 +22,17 @@ const LocaleSelector = props => {
 			options={ localeData }
 			searchable={ true }
 			tabIndex={ 0 }
-			value={ citationLocale }
+			value={defaultLocale ? defaultLocale : citationLocale }
 		/>
 	);
 }
 
 LocaleSelector.propTypes = {
+	citationLocale: PropTypes.string,
 	className: PropTypes.string,
 	id: PropTypes.string,
-	citationLocale: PropTypes.string,
-	onLocaleChange: PropTypes.func
+	onLocaleChange: PropTypes.func,
+	styleProperties: PropTypes.object,
 }
 
 export default memo(LocaleSelector);
