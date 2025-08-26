@@ -1,4 +1,5 @@
 import { pick } from 'web-common/utils';
+import { getZotero } from 'web-common/zotero';
 
 import { isLikeURL } from '../utils';
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
@@ -6,7 +7,6 @@ import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS
 	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE,
 	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
-import { extractIdentifiers } from '../common/identifiers';
 import { EMPTY, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
 
 const getNextLinkFromResponse = response => {
@@ -43,7 +43,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 			}
 			const identifierIsUrl = isLikeURL(identifier);
 			if(!identifierIsUrl) {
-				const identifierObjects = extractIdentifiers(identifier);
+				const identifierObjects = getZotero().Utilities.extractIdentifiers(identifier);
 				if(identifierObjects.length === 0) {
 					// invalid identifier, if we don't return, it will run search for a generic term like zbib
 					dispatch(reportIdentifierNoResults());

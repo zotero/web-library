@@ -1,5 +1,6 @@
+import { getZotero } from 'web-common/zotero';
 import { fetchAllChildItems, fetchChildItems, getAttachmentUrl } from '.';
-import { cleanDOI, cleanURL, get, getDOIURL, getItemFromApiUrl, openDelayedURL } from '../utils';
+import { cleanURL, get, getDOIURL, getItemFromApiUrl, openDelayedURL } from '../utils';
 import { makePath } from '../common/navigation';
 import { PDFWorker } from '../common/pdf-worker.js';
 import { REQUEST_EXPORT_PDF, RECEIVE_EXPORT_PDF, ERROR_EXPORT_PDF  } from '../constants/actions';
@@ -58,7 +59,7 @@ const tryGetBestAttachmentURLFallback = itemKey => {
 		}
 
 		if(item.DOI) {
-			const doi = cleanDOI(item.DOI);
+			const doi = getZotero().Utilities.cleanDOI(item.DOI);
 			if(doi) {
 				return getDOIURL(doi);
 			}

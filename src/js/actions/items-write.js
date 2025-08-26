@@ -1,5 +1,6 @@
 import api from 'zotero-api-client';
 import { omit, pick } from 'web-common/utils';
+import { getZotero } from 'web-common/zotero';
 
 import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
 import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate } from '.';
@@ -8,7 +9,6 @@ import { get, getItemCanonicalUrl, getUniqueId, mergeItemKeysRelations, removeRe
 import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
 import { parseDescriptiveString } from '../common/format';
-import { strToISO } from '../common/date';
 import { sniffForMIMEType } from '../common/mime';
 import { READER_CONTENT_TYPES } from '../constants/reader';
 
@@ -1571,8 +1571,7 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 		else if(fieldKey === 'accessDate' || fieldKey === 'date'||
 			(item.itemType in mappings && 'date' in mappings[item.itemType] && fieldKey === mappings[item.itemType]['date'])
 		) {
-			// attempt to parse date into iso format using Zotero strToDate
-			const isoDate = strToISO(patch[fieldKey]);
+			const isoDate = getZotero().Date.strToISO(patch[fieldKey]);
 			if (isoDate) {
 				patch[fieldKey] = isoDate;
 			} else {

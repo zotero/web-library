@@ -3,6 +3,7 @@ import { Button, Icon } from 'web-common/components';
 import { Fragment, useCallback, memo, useEffect, useState, useRef, useId } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious, useFocusManager } from 'web-common/hooks';
+import { getZotero } from 'web-common/zotero';
 
 import Input from '../form/input';
 import Modal from '../ui/modal';
@@ -11,7 +12,6 @@ import {
 	createEmptyParentItems, createParentItemFromIdentifier, dismissErrorByTag, navigate,
 	reportIdentifierNoResults, toggleModal, triggerSelectMode
 } from '../../actions';
-import { extractIdentifiers } from '../../common/identifiers';
 
 const CreateParentItemModal = () => {
 	const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const CreateParentItemModal = () => {
 	);
 
 	const addFromIdentifier = useCallback(async (newIdentifier) => {
-		const identifiers = extractIdentifiers(newIdentifier);
+		const identifiers = getZotero().Utilities.extractIdentifiers(newIdentifier);
 		if (identifiers.length === 1) {
 			try {
 				setIsBusy(true);

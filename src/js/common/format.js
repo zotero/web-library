@@ -19,29 +19,6 @@ const noteSummary = note => {
 		.substring(0, 180); // truncate to 180 chars
 };
 
-// https://github.com/zotero/utilities/blob/e00d98d3a11f6233651a052c108117cf44873edc/utilities_item.js#L576
-const noteAsTitle = text => {
-	const MAX_TITLE_LENGTH = 120;
-	var origText = text;
-	text = text.trim();
-	// Add line breaks after block elements
-	text = text.replace(/(<\/(h\d|p|div)+>)/g, '$1\n');
-	text = text.replace(/<br\s*\/?>/g, ' ');
-	text = unescapeHTML(text);
-
-	// If first line is just an opening HTML tag, remove it
-	if (/^<[^>\n]+[^/]>\n/.test(origText)) {
-		text = text.trim();
-	}
-
-	var t = text.substring(0, MAX_TITLE_LENGTH);
-	var ln = t.indexOf("\n");
-	if (ln > -1 && ln < MAX_TITLE_LENGTH) {
-		t = t.substring(0, ln);
-	}
-	return t;
-}
-
 const creator = creator => 'lastName' in creator ?
 	[creator.lastName, creator.firstName].filter(s => s.trim().length).join(', ') : creator.name;
 
@@ -261,7 +238,6 @@ export {
     getFileBaseNameFromItem,
     getValidFileName,
     itemsSourceLabel,
-    noteAsTitle,
     noteSummary,
     parseDescriptiveString,
     pluralize,

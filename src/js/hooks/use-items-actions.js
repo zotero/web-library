@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
-import { cleanDOI, cleanURL } from '../utils';
+import { getZotero } from 'web-common/zotero';
+
+import { cleanURL } from '../utils';
 
 const useCanRecognize = () => {
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
@@ -59,7 +61,7 @@ const useItemsActions = () => {
 	const attachmentContentType = item?.itemType === 'attachment' ? item.contentType : item?.[Symbol.for('links')]?.attachment?.attachmentType ?? null;
 	const isViewFile = !!attachmentContentType;
 	const url = item && item.url ? cleanURL(item.url, true) : null;
-	const doi = item && item.DOI ? cleanDOI(item.DOI) : null;
+	const doi = item && item.DOI ? getZotero().Utilities.cleanDOI(item.DOI) : null;
 	const isViewOnline = !isViewFile && (url || doi);
 
 	const canDuplicate = !isTrash && !isMyPublications && !isReadOnly && item && item.itemType !== 'attachment';

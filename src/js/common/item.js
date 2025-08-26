@@ -1,5 +1,7 @@
-import { cleanDOI, cleanURL, get, containsEmoji, extractEmoji } from '../utils';
-import { noteAsTitle, dateLocalized } from './format';
+import { getZotero } from 'web-common/zotero';
+
+import { cleanURL, get, containsEmoji, extractEmoji } from '../utils';
+import { dateLocalized } from './format';
 import { itemTypesWithIcons } from '../../../data/item-types-with-icons.json';
 
 
@@ -11,7 +13,7 @@ const getBaseMappedValue = (mappings, item, property) => {
 
 const getItemTitle = (mappings, item) => {
 	if (item.itemType === 'note') {
-		return noteAsTitle(item.note);
+		return getZotero().Utilities.Item.noteToTitle(item.note);
 	}
 	if (!item.itemType && item.name) {
 		return item.name;
@@ -85,7 +87,7 @@ const getAttachmentColumnIcon = item => {
 	}
 
 	if(item.DOI) {
-		const doi = cleanDOI(item.DOI);
+		const doi = getZotero().Utilities.cleanDOI(item.DOI);
 		if(doi) {
 			return 'link';
 		}

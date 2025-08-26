@@ -1,4 +1,5 @@
-import { noteAsTitle } from './common/format';
+import { getZotero } from 'web-common/zotero';
+
 import columnProperties from './constants/column-properties';
 
 const splice = (array, at, count = 0, ...items) => {
@@ -55,6 +56,7 @@ const reverseMap = map => {
 };
 
 // https://github.com/zotero/utilities/blob/e00d98d3a11f6233651a052c108117cf44873edc/utilities.js#L699
+// but has to be ported because one from Zotero.Utilities relies on `Utilities.Internal`
 const unescapeHTML = str => {
 	if (str.indexOf("<") === -1 && str.indexOf("&") === -1) {
 		return str;
@@ -183,7 +185,7 @@ const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 	}
 
 	if (item.itemType === 'note' && sortBy === 'title') {
-		return noteAsTitle(item.note || '');
+		return getZotero().Utilities.Item.noteToTitle(item.note || '');
 	}
 
 	if(sortBy === 'creator') {
@@ -366,6 +368,7 @@ const isLikeURL = identifier => {
 }
 
 // https://github.com/zotero/zotero/blob/d3601bba24a83b3930711cc664e8ffad2ee41fd8/chrome/content/zotero/xpcom/utilities.js#L200
+// But we cannot re-use it because it depends on `Services`
 const cleanURL = (url, shouldTryHttp = false) => {
 	url = url.trim();
 
@@ -398,16 +401,6 @@ const getDOIURL = doi => 'https://doi.org/'
 										.replace(/\?/g, '%3f')
 										.replace(/%/g, '%25')
 										.replace(/"/g, '%22');
-
-// https://github.com/zotero/zotero/blob/5bb2486040fa1fc617c81b4aea756ba338584f6b/chrome/content/zotero/xpcom/utilities.js#L238-L249
-const cleanDOI = doi => {
-	if(typeof(doi) != "string") {
-		throw new Error("cleanDOI: argument must be a string");
-	}
-
-	const doiMatches = doi.match(/10(?:\.[0-9]{4,})?\/[^\s]*[^\s.,]/);
-	return doiMatches ? doiMatches[0] : null;
-}
 
 const getLibraryKeyFromTopic = topic => {
 	if(typeof topic !== 'string') {
@@ -592,7 +585,6 @@ export {
 	binarySearch,
     cede,
     clamp,
-    cleanDOI,
     cleanURL,
     compare,
     compareItem,

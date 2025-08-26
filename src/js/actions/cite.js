@@ -1,6 +1,7 @@
 import { CiteprocWrapper, fetchAndParseIndependentStyle, formatBib, formatFallback, getStyleProperties } from 'web-common/cite';
 import { BEGIN_FETCH_STYLE, COMPLETE_FETCH_STYLE, ERROR_FETCH_STYLE } from '../constants/actions';
-import { configureZoteroShim } from 'web-common/zotero';
+import { getZotero } from 'web-common/zotero';
+
 import localeData from '../../../data/locale-data.json';
 
 const supportedLocales = localeData.map(locale => locale.value);
@@ -37,8 +38,7 @@ export const fetchCSLStyle = (styleName) => {
 export const bibliographyFromItems = (itemKeys, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const mockIntl = { locale: 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
-		const Zotero = configureZoteroShim(state.meta.schema, mockIntl);
+		const Zotero = getZotero();
 		const styleXml = state.cite.styleXml;
 		const { styleHasBibliography, defaultLocale } = state.cite.styleProperties;
 		const items = itemKeys.map(key => state.libraries[libraryKey].items[key]);
@@ -82,8 +82,7 @@ export const bibliographyFromItems = (itemKeys, libraryKey) => {
 export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const mockIntl = { locale: 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
-		const Zotero = configureZoteroShim(state.meta.schema, mockIntl);
+		const Zotero = getZotero();
 		const styleXml = state.cite.styleXml;
 		const { defaultLocale } = state.cite.styleProperties;
 		const items = itemKeys.map(key => state.libraries[libraryKey].items[key]);

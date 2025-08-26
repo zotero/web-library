@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Icon } from 'web-common/components';
+import { getZotero } from 'web-common/zotero';
 
 import Editable from '../editable';
 import Field from '../form/field';
 import Input from '../form/input';
 import SelectInput from '../form/select';
 import TextAreaInput from '../form/text-area';
-import { cleanDOI, cleanURL, getDOIURL } from '../../utils';
-import { strToDate } from '../../common/date';
+import { cleanURL, getDOIURL } from '../../utils';
 
 const pickInputComponent = field => {
 	switch(field.key) {
@@ -38,7 +38,7 @@ const BoxFieldLabel = memo(({ field, id }) => {
 	}
 
 	if(field.key === 'DOI' && field.value) {
-		const doi = cleanDOI(field.value);
+		const doi = getZotero().Utilities.cleanDOI(field.value);
 		if(doi) {
 			label = (
 				<a target="_blank" rel="nofollow noopener noreferrer" href={ getDOIURL(doi) }>
@@ -88,7 +88,7 @@ const BoxFieldInputEditable = memo(props => {
 	}
 
 	if(field.isReadOnly && field.value && field.key === 'DOI') {
-		const doi = cleanDOI(field.value);
+		const doi = getZotero().Utilities.cleanDOI(field.value);
 		if(doi) {
 			url = getDOIURL(doi);
 		}
@@ -212,10 +212,10 @@ const BoxField = props => {
 	const isPseudoEditable = !isForm && isSelect;
 	const shouldUseEditable = !isForm &&!isPseudoEditable;
 	const boxFieldProps = { ...props, id };
-	const [dateFormatHint, setDateFormatHint] = useState(() => field.key === 'date' ? strToDate(field.value)?.order : null)
+	const [dateFormatHint, setDateFormatHint] = useState(() => field.key === 'date' ? getZotero().Date.strToDate(field.value)?.order : null);
 
 	const handleDateKeyUp = useCallback((ev) => {
-		setDateFormatHint(strToDate(ev.target.value)?.order);
+		setDateFormatHint(getZotero().Date.strToDate(ev.target.value)?.order);
 	}, []);
 
 	if(field.key === 'date') {
