@@ -21,6 +21,8 @@ export const pdfReaderCMapsURL = '/static/web-library/pdf-reader/pdf/web/cmaps/'
 export const pdfReaderStandardFontsURL = '/static/web-library/pdf-reader/pdf/web/standard_fonts/';
 export const pdfWorkerURL = '/static/web-library/pdf-worker/worker.js';
 export const noteEditorURL = '/static/web-library/note-editor/editor.html';
+export const citeprocURL = '/static/web-library/js/citeproc.js';
+export const localesURL = '/static/web-library/locales/';
 
 
 export const libraries = {

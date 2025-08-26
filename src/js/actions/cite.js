@@ -45,11 +45,11 @@ export const bibliographyFromItems = (itemKeys, libraryKey) => {
 		const itemsCSL = items.map(i => Zotero.Utilities.Item.itemToCSLJSON({ ...i, uri: i.key, }));
 
 		const citeproc = await CiteprocWrapper.new(styleXml, {
-			citeprocJSPath: '/static/web-library/js/citeproc.js', // TODO: make this config-driven later
+			citeprocJSPath: state.config.citeprocURL,
 			format: 'html',
-			formatOptions: { linkAnchors: true, },
+			formatOptions: { linkAnchors: true },
 			localeOverride: defaultLocale ? null : state.preferences.citationLocale ?? 'en-US',
-			localesPath: '/static/web-library/locales/', // TODO: make this config-driven later
+			localesPath: state.config.localesURL,
 			supportedLocales,
 			useCiteprocJS: true,
 		});
@@ -89,11 +89,11 @@ export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
 		const itemsCSL = items.map(i => Zotero.Utilities.Item.itemToCSLJSON({ ...i, uri: i.key, }));
 
 		const citeproc = await CiteprocWrapper.new(styleXml, {
-			citeprocJSPath: '/static/web-library/js/citeproc.js', // TODO: make this config-driven later
+			citeprocJSPath: state.config.citeprocURL,
 			format: 'html',
 			formatOptions: { linkAnchors: true },
 			localeOverride: defaultLocale ? null : state.preferences.citationLocale ?? 'en-US',
-			localesPath: '/static/web-library/locales/', // TODO: make this config-driven later
+			localesPath: state.config.localesURL,
 			supportedLocales,
 			useCiteprocJS: true,
 		});
