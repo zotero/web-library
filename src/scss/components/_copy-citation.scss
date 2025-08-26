@@ -54,7 +54,14 @@
 			}
 
 			.dropmarker {
-				transform: rotate(180deg);
+				// Rotate the `use` element inside the SVG, not the SVG itself, to avoid creating a
+				// new stacking context, which would render the chevron on top of the dropdown of
+				// the style selector options.
+				use {
+					transform: rotate(180deg);
+					transform-origin: 50% 50%;
+					transform-box: fill-box;
+				}
 			}
 		}
 	}
