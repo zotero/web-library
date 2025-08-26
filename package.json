@@ -134,6 +134,7 @@
     "babel-plugin-transform-import-meta": "^2.3.2",
     "browserstack-local": "^1.5.6",
     "chai": "^5.2.0",
+    "citeproc": "^2.4.63",
     "eslint": "<9.0.0",
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-react": "^7.37.4",

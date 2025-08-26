@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { findByText, getByRole, screen, getByText, waitFor } from '@testing-library/react';
+import { findByText, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import fileSaver from 'file-saver';
 
@@ -14,9 +14,15 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-search-selected.json';
-import testUserCitations from './fixtures/response/test-user-citations.json';
-import testUserBibliographyMLA from './fixtures/response/test-user-bibliography-mla-xml.js';
-import testUserBibliographyTurabian from './fixtures/response/test-user-bibliography-turabian-xml.js';
+import modernLanguageAssociationStyle from './fixtures/modern-language-association.csl.js';
+import turabianNotesStyle from './fixtures/turabian-notes-bibliography.csl.js';
+import chicagoStyle from './fixtures/chicago-notes-bibliography-subsequent-author-title-17th-edition.csl.js';
+import localesUS from './fixtures/locales-en-us.xml.js';
+import localesPL from './fixtures/locales-pl-pl.xml.js';
+
+// Mock CSL
+import CSL from 'citeproc';
+window.CSL = CSL;
 
 // Force My Library to be read-only
 stateRaw.config.libraries[0].isReadOnly = true;
@@ -36,11 +42,34 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 				test(`${req.method} ${req.url} is not handled`, () => { });
 			},
 		});
+		localStorage.setItem('zotero-style-locales-en-US', localesUS);
+		localStorage.setItem('zotero-style-locales-pl-PL', localesPL);
 	});
 
 	beforeEach(() => {
 		delete window.location;
 		window.location = new URL('http://localhost/testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list');
+		server.use(
+			http.get('https://www.zotero.org/styles/modern-language-association', () => {
+				return HttpResponse.text(modernLanguageAssociationStyle, {
+					headers: { 'Content-Type': 'application/vnd.citationstyles.style+xml' },
+				});
+			}),
+		);
+		server.use(
+			http.get('https://www.zotero.org/styles/turabian-notes-bibliography', () => {
+				return HttpResponse.text(turabianNotesStyle, {
+					headers: { 'Content-Type': 'application/vnd.citationstyles.style+xml' },
+				});
+			}),
+		);
+		server.use(
+			http.get('https://www.zotero.org/styles/chicago-notes-bibliography-subsequent-author-title-17th-edition', () => {
+				return HttpResponse.text(chicagoStyle, {
+					headers: { 'Content-Type': 'application/vnd.citationstyles.style+xml' },
+				});
+			}),
+		);
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -85,54 +114,18 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 
-		let hasBeenPosted = false;
-		server.use(
-			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
-				const url = new URL(request.url);
-				expect(url.searchParams.get('include')).toEqual('citation');
-				expect(url.searchParams.get('includeTrashed')).toEqual('1');
-				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
-				expect(url.searchParams.get('style')).toEqual('modern-language-association');
-				expect(url.searchParams.get('locale')).toEqual('en-US');
-
-				hasBeenPosted = true;
-				return HttpResponse.json(testUserCitations);
-			}),
-		);
-
 		const createCitationsBtn = screen.getByRole('button', { name: 'Create Citations' });
 		await userEvent.click(createCitationsBtn);
 		await waitForPosition();
 
-		const dialog = await screen.findByRole('dialog', { name: 'Citations' });
+		const dialog = await screen.findByRole('dialog', { name: 'Copy Citation' });
 
-		expect(hasBeenPosted).toBe(true);
-		expect(getByText(dialog, '(Silver)')).toBeInTheDocument();
-		expect(getByText(dialog, '(Foead et al.)')).toBeInTheDocument();
+		expect(await findByText(dialog, '(Foead et al.; Silver)')).toBeInTheDocument();
 	});
 
 	test('Generate bibliography for selected items using toolbar', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-
-		let requestsCounter = 0;
-		server.use(
-			http.get('https://api.zotero.org/users/1/items', async ({request}) => {
-				const url = new URL(request.url);
-				expect(url.searchParams.get('format')).toEqual('bib');
-				expect(url.searchParams.get('includeTrashed')).toEqual('1');
-				expect(url.searchParams.get('itemKey')).toEqual('J489T6X3,3JCLFUG4');
-
-				const style = url.searchParams.get('style');
-				const locale = url.searchParams.get('locale');
-				requestsCounter++;
-
-				expect(style).toBe(requestsCounter === 1 ? 'modern-language-association' : 'turabian-notes-bibliography');
-				expect(locale).toBe(requestsCounter <= 2 ? 'en-US' : 'pl-PL');
-
-				return HttpResponse.xml(style === 'modern-language-association' ? testUserBibliographyMLA : testUserBibliographyTurabian);
-			}),
-		);
 
 		const createBibliographyBtn = screen.getByRole('button', { name: 'Create Bibliography' });
 		await userEvent.click(createBibliographyBtn);
@@ -140,24 +133,29 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		const dialog = await screen.findByRole('dialog', { name: 'Bibliography' });
 
-		expect(requestsCounter).toBe(1);
-		expect(getByText(dialog, /Foead, Daniel, et al\./)).toBeInTheDocument();
-		expect(getByText(dialog, /Silver, David/)).toBeInTheDocument();
+		expect(
+			await findByText(dialog, /Foead, Daniel, et al\./, {})
+		).toBeInTheDocument();
+		expect(
+			await findByText(dialog, /Silver, David/, {})
+		).toBeInTheDocument();
 
 		const styleComboBox = screen.getByRole('combobox', { name: 'Citation Style' });
 		await userEvent.click(styleComboBox);
 		const option = getByRole(getByRole(styleComboBox, 'listbox'), 'option', { name: /Turabian/ });
 		await userEvent.click(option);
 
-		await findByText(dialog, /Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, and Eric Gunawan/);
-		expect(requestsCounter).toBe(2);
+		expect(
+			await findByText(dialog, 'Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, and Eric Gunawan. “A Systematic Literature Review of A* Pathfinding.”', { exact: false })
+		).toBeInTheDocument();
 
 		const langComboBox = screen.getByRole('combobox', { name: 'Language' });
 		await userEvent.click(langComboBox);
 		await userEvent.selectOptions(getByRole(langComboBox, 'listbox'), 'Polish');
 
-		await findByText(dialog, /Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, and Eric Gunawan/);
-		expect(requestsCounter).toBe(3);
+		expect(
+			await findByText(dialog, 'Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, i Eric Gunawan. „A systematic literature review of A* pathfinding”.', { exact: false })
+		).toBeInTheDocument();
 	});
 
 	test('Subscribe to feed using toolbar button', async () => {
