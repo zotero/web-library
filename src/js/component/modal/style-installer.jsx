@@ -1,8 +1,10 @@
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import { Fragment, useCallback, useEffect, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
+import { omit } from 'web-common/utils';
 
 import Input from '../form/input';
 import Modal from '../ui/modal';
@@ -21,19 +23,19 @@ const StyleItem = memo(props => {
 
 	return (
 		<li
-			className={ cx('style', { selected: isSelected }) }
-			key={ style.name }
+			className={cx('style', { selected: isSelected })}
+			key={style.name}
 		>
 			<div className="style-title">
-				{ style.title }
+				{style.title}
 			</div>
 			{
 				isActive ? (
 					<Button
-						className={ cx({
+						className={cx({
 							'btn-circle btn-primary': isTouchOrSmall,
 							'btn-outline-light': !isTouchOrSmall
-						}) }
+						})}
 						disabled
 					>
 						{
@@ -44,10 +46,10 @@ const StyleItem = memo(props => {
 					</Button>
 				) : isCore ? (
 					<Button
-						className={ cx({
+						className={cx({
 							'btn-circle btn-primary': isTouchOrSmall,
 							'btn-outline-light': !isTouchOrSmall
-						}) }
+						})}
 						disabled
 					>
 						{
@@ -58,12 +60,12 @@ const StyleItem = memo(props => {
 					</Button>
 				) : isInstalled ? (
 					<Button
-						value={ style.name }
-						className={ cx({
+						value={style.name}
+						className={cx({
 							'btn-circle btn-primary': isTouchOrSmall,
 							'btn-outline-primary': !isTouchOrSmall
-						}) }
-						onClick={ onDelete }
+						})}
+						onClick={onDelete}
 					>
 						{
 							isTouchOrSmall ? (
@@ -73,12 +75,12 @@ const StyleItem = memo(props => {
 					</Button>
 				) : (
 					<Button
-						value={ style.name }
-						className={ cx({
+						value={style.name}
+						className={cx({
 							'btn-circle btn-secondary': isTouchOrSmall,
 							'btn-outline-secondary': !isTouchOrSmall
-						}) }
-						onClick={ onInstall }
+						})}
+						onClick={onInstall}
 					>
 						{
 							isTouchOrSmall ? (
@@ -92,6 +94,16 @@ const StyleItem = memo(props => {
 	);
 });
 
+StyleItem.propTypes = {
+	isActive: PropTypes.bool.isRequired,
+	isCore: PropTypes.bool.isRequired,
+	isSelected: PropTypes.bool.isRequired,
+	isInstalled: PropTypes.bool.isRequired,
+	onDelete: PropTypes.func.isRequired,
+	onInstall: PropTypes.func.isRequired,
+	style: PropTypes.object.isRequired
+};
+
 StyleItem.displayName = 'StyleItem';
 
 const StyleInstallerModal = () => {
@@ -99,9 +111,10 @@ const StyleInstallerModal = () => {
 	const isFetching = useSelector(state => state.styles.isFetching);
 	const stylesData = useSelector(state => state.styles.stylesData);
 	const installedCitationStyles = useSelector(state => state.preferences.installedCitationStyles);
-	const currentCitationStyle = useSelector(state=> state.preferences.citationStyle);
+	const currentCitationStyle = useSelector(state => state.preferences.citationStyle);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isOpen = useSelector(state => state.modal.id === STYLE_INSTALLER);
+	const fromData = useSelector(state => state.modal.from);
 
 	const [isWorkerReady, setIsWorkerReady] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
@@ -112,15 +125,15 @@ const StyleInstallerModal = () => {
 
 	const handleWorkerMessage = useCallback(event => {
 		const [messageKind, payload] = event.data;
-		switch(messageKind) {
+		switch (messageKind) {
 			case 'READY':
 				setIsWorkerReady(true);
-			break;
+				break;
 			case 'FILTER_COMPLETE':
 				setIsSearching(false);
 				setHasResults(true);
 				setMatchedCitationStyles(payload);
-			break;
+				break;
 		}
 	}, []);
 
@@ -128,7 +141,7 @@ const StyleInstallerModal = () => {
 		setHasResults(false);
 		setSelectedIndex(null);
 
-		if(newFilterValue.length > 0) {
+		if (newFilterValue.length > 0) {
 			setIsSearching(true);
 			searchWorker.postMessage(['FILTER', newFilterValue.toLowerCase()]);
 		}
@@ -137,12 +150,16 @@ const StyleInstallerModal = () => {
 	const handleClose = useCallback(() => {
 		dispatch(toggleModal(STYLE_INSTALLER, false));
 
+		if (fromData) {
+			dispatch(toggleModal(fromData.id, true, { ...omit(fromData, 'id') }));
+		}
+
 		// clear filter once modal is really closed, but not before to avoid flicker
 		setTimeout(() => {
 			setFilterInputValue('');
 			setSelectedIndex(null);
 		}, 300);
-	}, [dispatch]);
+	}, [dispatch, fromData]);
 
 	const handleFilterInputChange = useCallback(newValue => {
 		setFilterInputValue(newValue);
@@ -169,13 +186,13 @@ const StyleInstallerModal = () => {
 	}, [handleWorkerMessage]);
 
 	useEffect(() => {
-		if(stylesData !== null) {
+		if (stylesData !== null) {
 			searchWorker.postMessage(['LOAD', stylesData]);
 		}
 	}, [stylesData]);
 
 	useEffect(() => {
-		if( isOpen && !stylesData && !isFetching) {
+		if (isOpen && !stylesData && !isFetching) {
 			dispatch(fetchStyles());
 		}
 	}, [dispatch, isOpen, stylesData, isFetching]);
@@ -189,12 +206,12 @@ const StyleInstallerModal = () => {
 	});
 
 	return (
-        <Modal
-			className={ className }
+		<Modal
+			className={className}
 			contentLabel="Citation Style Installer"
-			isBusy={ !isReady }
-			isOpen={ isOpen }
-			onRequestClose={ handleClose }
+			isBusy={!isReady}
+			isOpen={isOpen}
+			onRequestClose={handleClose}
 		>
 			<div className="modal-header">
 				{
@@ -209,7 +226,7 @@ const StyleInstallerModal = () => {
 							<div className="modal-header-right">
 								<Button
 									className="btn-link"
-									onClick={ handleClose }
+									onClick={handleClose}
 								>
 									Close
 								</Button>
@@ -223,54 +240,54 @@ const StyleInstallerModal = () => {
 							<Button
 								icon
 								className="close"
-								onClick={ handleClose }
+								onClick={handleClose}
 							>
-								<Icon type={ '16/close' } width="16" height="16" />
+								<Icon type={'16/close'} width="16" height="16" />
 							</Button>
 						</Fragment>
 					)
 				}
 			</div>
-			<div className="modal-body" tabIndex={ 0 }>
+			<div className="modal-body" tabIndex={0}>
 				<div className="style-search">
 					<Input
 						autoFocus
 						className="form-control form-control-lg style-search-input"
-						isBusy={ isSearching }
-						onChange={ handleFilterInputChange }
+						isBusy={isSearching}
+						onChange={handleFilterInputChange}
 						placeholder="Search"
-						tabIndex={ 0 }
+						tabIndex={0}
 						type="text"
-						value={ filterInputValue }
+						value={filterInputValue}
 					/>
 				</div>
 				<ul className="style-list">
 					{
 						(hasResults ? matchedCitationStyles : localCitationStyles).map(
-						style => {
-							const styleData = localCitationStyles.find(cs => cs.name === style.name);
-							const isInstalled = typeof styleData !== 'undefined';
-							const isCore = isInstalled && styleData.isCore || false;
-							const isActive = style.name === currentCitationStyle;
-							const isSelected = matchedCitationStyles[selectedIndex] ?
-								matchedCitationStyles[selectedIndex].name === style.name : false;
+							style => {
+								const styleData = localCitationStyles.find(cs => cs.name === style.name);
+								const isInstalled = typeof styleData !== 'undefined';
+								const isCore = isInstalled && styleData.isCore || false;
+								const isActive = style.name === currentCitationStyle;
+								const isSelected = matchedCitationStyles[selectedIndex] ?
+									matchedCitationStyles[selectedIndex].name === style.name : false;
 
-							return <StyleItem
-								isActive={ isActive }
-								isCore={ isCore }
-								isInstalled={ isInstalled }
-								isSelected={ isSelected }
-								key={ style.name }
-								onDelete={ handleDelete }
-								onInstall={ handleInstall }
-								style={ style }
-							/>;
-						})
+								return <StyleItem
+									isActive={isActive}
+									isCore={isCore}
+									isInstalled={isInstalled}
+									isSelected={isSelected}
+									key={style.name}
+									onDelete={handleDelete}
+									onInstall={handleInstall}
+									style={style}
+								/>;
+							})
 					}
 				</ul>
 			</div>
 		</Modal>
-    );
+	);
 }
 
 export default memo(StyleInstallerModal);

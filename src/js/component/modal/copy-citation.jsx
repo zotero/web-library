@@ -507,6 +507,7 @@ const CopyCitationModal = () => {
 	const isOpen = useSelector(state => state.modal.id === COPY_CITATION);
 	const wasOpen = usePrevious(isOpen);
 	const itemKeys = useSelector(state => state.modal.itemKeys || []);
+	const prevItemKeys = usePrevious(itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);
 	const itemsLookup = useSelector(state => state.libraries[libraryKey]?.dataObjects);
@@ -755,8 +756,10 @@ const CopyCitationModal = () => {
 	}, [handleCopyToClipboard]);
 
 	useEffect(() => {
-		dispatchState({ type: 'RESET_ORDER', newOrder: itemKeys });
-	}, [itemKeys])
+		if(isOpen && itemKeys !== prevItemKeys) {
+			dispatchState({ type: 'RESET_ORDER', newOrder: itemKeys });
+		}
+	}, [itemKeys, isOpen, prevItemKeys])
 
 	const className = cx({
 		'copy-citation-modal': true,

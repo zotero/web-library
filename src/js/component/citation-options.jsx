@@ -1,7 +1,8 @@
 import { memo, useCallback, useId } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { pick } from 'web-common/utils';
 
-import { BIBLIOGRAPHY, STYLE_INSTALLER } from '../constants/modals';
+import { STYLE_INSTALLER } from '../constants/modals';
 import LocaleSelector from './locale-selector';
 import StyleSelector from './style-selector';
 import { toggleModal, fetchCSLStyle, preferenceChange } from '../actions';
@@ -13,6 +14,7 @@ const CitationOptions = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const styleSelectorId = useId();
 	const localeSelectorId = useId();
+	const currentModalData = useSelector(state => state.modal);
 	const styleProperties = useSelector(state => state.cite.styleProperties);
 	const citationStyle = useSelector(state => state.preferences.citationStyle);
 	const citationLocale = useSelector(state => state.preferences.citationLocale);
@@ -21,13 +23,12 @@ const CitationOptions = () => {
 
 	const handleStyleChange = useCallback(async citationStyle => {
 		if (citationStyle === 'install') {
-			dispatch(toggleModal(BIBLIOGRAPHY, false));
-			dispatch(toggleModal(STYLE_INSTALLER, true));
+			dispatch(toggleModal(STYLE_INSTALLER, true, { from: { ...pick(currentModalData, ['id', 'itemKeys', 'libraryKey']) }}));
 		} else {
 			dispatch(preferenceChange('citationStyle', citationStyle));
 			dispatch(fetchCSLStyle(citationStyle));
 		}
-	}, [dispatch]);
+	}, [currentModalData, dispatch]);
 
 	const handleLocaleChange = useCallback(locale => {
 		dispatch(preferenceChange('citationLocale', locale));

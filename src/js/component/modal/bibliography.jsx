@@ -49,6 +49,10 @@ const BibliographyModal = () => {
 	const dropdownTimer = useRef(null);
 
 	const makeOutput = useCallback(async () => {
+		if(!libraryKey || !itemKeys) {
+			return;
+		}
+
 		try {
 			setIsUpdating(true);
 			setOutput(await dispatch(bibliographyFromItems(itemKeys, libraryKey)));
