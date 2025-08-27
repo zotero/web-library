@@ -7,7 +7,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 (async () => {
     // First generate the supported locales file which includes the language names, sorted by label
     const inPath = join(ROOT, 'modules', 'locales', 'locales.json');
-    const outputPath = join(ROOT, 'data', 'supported-locales.json');
+    const outputPath = join(ROOT, 'data', 'locale-data.json');
     const locale = JSON.parse(await fs.readFile(inPath, 'utf-8'));
     const languageNames = Object.entries(locale['language-names'])
         .reduce((aggr, [key, names]) => {
