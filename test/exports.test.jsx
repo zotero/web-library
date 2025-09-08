@@ -9,6 +9,7 @@ import { findByText, getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import fileSaver from 'file-saver';
 
+import { installMockedXHR, uninstallMockedXHR, installUnhandledRequestHandler } from './utils/xhr-mock';
 import { renderWithProviders } from './utils/render';
 import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
@@ -17,8 +18,6 @@ import stateRaw from './fixtures/state/desktop-test-user-search-selected.json';
 import modernLanguageAssociationStyle from './fixtures/modern-language-association.csl.js';
 import turabianNotesStyle from './fixtures/turabian-notes-bibliography.csl.js';
 import chicagoStyle from './fixtures/chicago-notes-bibliography-subsequent-author-title-17th-edition.csl.js';
-import localesUS from './fixtures/locales-en-us.xml.js';
-import localesPL from './fixtures/locales-pl-pl.xml.js';
 
 // Mock CSL
 import CSL from 'citeproc';
@@ -36,14 +35,8 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 	const server = setupServer(...handlers)
 
 	beforeAll(() => {
-		server.listen({
-			onUnhandledRequest: (req) => {
-				// https://github.com/mswjs/msw/issues/946#issuecomment-1202959063
-				test(`${req.method} ${req.url} is not handled`, () => { });
-			},
-		});
-		localStorage.setItem('zotero-style-locales-en-US', localesUS);
-		localStorage.setItem('zotero-style-locales-pl-PL', localesPL);
+		installUnhandledRequestHandler(server);
+		installMockedXHR();
 	});
 
 	beforeEach(() => {
@@ -73,7 +66,11 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 	});
 
 	afterEach(() => server.resetHandlers());
-	afterAll(() => server.close());
+
+	afterAll(() => {
+		uninstallMockedXHR();
+		server.close();
+	});
 
 	test('Export item using toolbar button', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });

@@ -9,6 +9,11 @@ class FetchEnvironment extends TestEnvironment {
 		this.global.Headers = Headers;
 		this.global.Request = Request;
 		this.global.Response = Response;
+		this.global.TransformStream = TransformStream;
+		this.global.ReadableStream = ReadableStream;
+		this.global.WritableStream = WritableStream;
+		this.global.ByteLengthQueuingStrategy = ByteLengthQueuingStrategy;
+		this.global.CountQueuingStrategy = CountQueuingStrategy;
 	}
 }
 
