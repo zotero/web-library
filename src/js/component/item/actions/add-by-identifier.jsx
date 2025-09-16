@@ -39,7 +39,7 @@ const AddByIdentifier = props => {
 	const arrowRef = useRef(null);
 
 	const { x, y, refs, strategy, update, middlewareData } = useFloating({
-		placement: 'bottom', middleware: [arrow({ element: arrowRef })]
+		placement: 'bottom-start', middleware: [arrow({ element: arrowRef })]
 	});
 
 	const addItem = useCallback(async item => {
