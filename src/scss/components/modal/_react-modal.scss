@@ -283,9 +283,12 @@
 
 .modal-slide {
 	&.ReactModal {
+		// Transitioning opacity yields a smoother animation but triggers a Safari glitch (see
+		// #628). To work around this, we transition background-color when the modal opens and
+		// opacity when it closes (Safari doesn't glitch on close).
 		&__Overlay {
 			@include touch-or-bp-down(sm) {
-				opacity: 0;
+				background-color: rgba(0, 0, 0, 0);
 			}
 
 			.modal-content {
@@ -296,8 +299,8 @@
 
 			&--after-open {
 				@include touch-or-bp-down(sm) {
-					opacity: 1;
-					transition: opacity $nav-transition;
+					background-color: var(--color-backdrop);
+					transition: background-color $nav-transition;
 				}
 
 				.modal-content {
