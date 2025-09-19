@@ -1,3 +1,6 @@
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Icon
 // --------------------------------------------------
@@ -28,9 +31,9 @@
 
 
 .icon-circle, .icon-crescent-circle {
-	color: $icon-circle-color;
+	color: common.$icon-circle-color;
 
-	@each $colorHex, $colorVar in $tagColorsLookupItemsTable {
+	@each $colorHex, $colorVar in variables.$tagColorsLookupItemsTable {
 		&[data-color="#{$colorHex}"] {
 			// for known tag colors we're overriding the color set with style
 			// attribute to match equivalent theme color, hence !important

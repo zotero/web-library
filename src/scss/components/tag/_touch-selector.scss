@@ -1,3 +1,9 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Touch Tag selector
 // --------------------------------------------------
@@ -9,27 +15,27 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: $z-index-touch-tag-selector;
-	background-color: $touch-tag-selector-pane-bg;
-	@include hairline(right, "color-shade-4");
+	z-index: variables.$z-index-touch-tag-selector;
+	background-color: common.$touch-tag-selector-pane-bg;
+	@include hairline.hairline(right, "color-shade-4");
 
 	& {
 		position: absolute; // Override position relative from hairline mixin
 	}
 
-	@include bp-down(xs) {
-		top: -$touch-header-height - $navbar-height-xs;
-		@include hairline-disabled(right);
+	@include breakpoints.bp-down(xs) {
+		top: -(variables.$touch-header-height) - variables.$navbar-height-xs;
+		@include hairline.hairline-disabled(right);
 	}
 
 }
 
 .touch-tag-selector, .tag-manager-list-container {
 	.touch-header {
-		@include bp-down(xs) {
+		@include breakpoints.bp-down(xs) {
 			padding-top: 0;
-			height: $line-height-large-touch + $border-width;
-			@include hairline-disabled(top);
+			height: variables.$line-height-large-touch + variables.$border-width;
+			@include hairline.hairline-disabled(top);
 		}
 	}
 
@@ -37,41 +43,41 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
-		height: $line-height-large-touch + $border-width;
-		padding: 0 $space-min $border-width;
-		@include hairline(bottom, "color-shade-4");
+		height: variables.$line-height-large-touch + variables.$border-width;
+		padding: 0 variables.$space-min variables.$border-width;
+		@include hairline.hairline(bottom, "color-shade-4");
 	}
 
 	.tag {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		height: $line-height-large-touch + $border-width;
-		padding: $border-width $default-padding-x-touch 0;
+		height: variables.$line-height-large-touch + variables.$border-width;
+		padding: variables.$border-width variables.$default-padding-x-touch 0;
 
-		@include hairline(
+		@include hairline.hairline(
 			top,
 			"color-shade-4",
-			$start: (2 * $default-padding-x-touch + $space-md)
+			$start: (2 * variables.$default-padding-x-touch + variables.$space-md)
 		);
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			height: 28px;
-			padding: $border-width $default-padding-x;
+			padding: variables.$border-width variables.$default-padding-x;
 
-			@include hairline(
+			@include hairline.hairline(
 				top,
 				"color-shade-4",
-				$start: (2 * $default-padding-x + $space-md)
+				$start: (2 * variables.$default-padding-x + variables.$space-md)
 			);
 
 			&:first-child {
-				@include hairline-disabled(top);
+				@include hairline.hairline-disabled(top);
 			}
 		}
 
 		&:first-child {
-			@include hairline-disabled(top);
+			@include hairline.hairline-disabled(top);
 		}
 
 		.truncate {
@@ -81,17 +87,17 @@
 
 	.tag-color {
 		flex: 0 0 auto;
-		width: $space-md;
-		height: $space-md;
+		width: variables.$space-md;
+		height: variables.$space-md;
 		border-radius: 50%;
-		border: $border-width solid $tag-color-border-color;
-		margin-right: $default-padding-x-touch;
+		border: variables.$border-width solid common.$tag-color-border-color;
+		margin-right: variables.$default-padding-x-touch;
 
 		&[style*="color"] {
 			background-color: currentColor;
-			border: $border-width solid var(--tag-color-border);
+			border: variables.$border-width solid var(--tag-color-border);
 
-			@each $colorHex, $colorVar in $tagColorsLookupItemsTable {
+			@each $colorHex, $colorVar in variables.$tagColorsLookupItemsTable {
 				&[data-color="#{$colorHex}"] {
 					// for known tag colors we're overriding the color set with style
 					// attribute to match equivalent theme color, hence !important
@@ -108,7 +114,7 @@
 		.tag {
 			// Use box shadow once Safari is able to render 0.5px box-shadow
 			&:last-child {
-				background-color: $touch-tag-selector-pane-bg;
+				background-color: common.$touch-tag-selector-pane-bg;
 				position: relative;
 
 				&::after {
@@ -117,7 +123,7 @@
 					z-index: -1;
 					right: 0;
 					bottom: 0;
-					left:  2 * $default-padding-x-touch + $space-md;
+					left:  2 * variables.$default-padding-x-touch + variables.$space-md;
 					height: 1px;
 					box-shadow: 0 1px var(--color-shade-2);
 
@@ -126,21 +132,21 @@
 						transform: translateY(-0.5px);
 					}
 
-					@include mouse-and-bp-up(md) {
-						left:  2 * $default-padding-x + $space-md;
+					@include breakpoints.mouse-and-bp-up(md) {
+						left:  2 * variables.$default-padding-x + variables.$space-md;
 					}
 				}
 			}
 
 			.truncate {
-				@include state(".tag.placeholder") {
+				@include selectors.state(".tag.placeholder") {
 					flex: 0 0 calc(70% - 32px);
 					margin-right: auto;
-					height: $space-sm;
-					border-radius: $space-sm * 0.5;
+					height: variables.$space-sm;
+					border-radius: variables.$space-sm * 0.5;
 					background-color: var(--color-shade-2);
 
-					@include variant(".tag.odd") {
+					@include selectors.state(".tag.odd") {
 						flex: 0 0 calc(85% - 32px);
 					}
 				}
@@ -148,7 +154,7 @@
 		}
 
 		&.selected-tags {
-			background-color: $touch-tag-selected-bg;
+			background-color: common.$touch-tag-selected-bg;
 
 			.tag, .tag:last-child {
 				background-color: unset;
@@ -162,7 +168,7 @@
 
 				.btn-circle {
 					flex: 0 0 auto;
-					margin-left: $default-padding-x-touch;
+					margin-left: variables.$default-padding-x-touch;
 				}
 			}
 		}

@@ -1,14 +1,18 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 .tag-color-manager {
 	display: flex;
-	padding: $space-lg;
+	padding: variables.$space-lg;
 	flex-direction: column;
-	background-color: $panel-bg;
+	background-color: common.$panel-bg;
 
 	.col-form-label::after {
 		content: ':';
 	}
 
-	@include touch-or-bp-down(sm) {
+	@include breakpoints.touch-or-bp-down(sm) {
 		padding: 0;
 
 		.form {
@@ -28,8 +32,8 @@
 			margin: 0 0 1em 0;
 		}
 
-		@include touch-or-bp-down(sm) {
-			padding: 0 $space-md;
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding: 0 variables.$space-md;
 		}
 	}
 
@@ -42,25 +46,25 @@
 			justify-content: flex-end;
 
 			.btn + .btn {
-				margin-left: $space-sm;
+				margin-left: variables.$space-sm;
 			}
 		}
 
-		@include touch-or-bp-down(sm) {
-			padding: 0 $space-md;
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding: 0 variables.$space-md;
 		}
 	}
 
 	.color-swatch {
-		width: $space-md;
-		height: $space-md;
+		width: variables.$space-md;
+		height: variables.$space-md;
 		margin-top: 4px;
 		margin-left: 4px;
 		margin-right: -4px;
 
-		@include touch-or-bp-down(sm) {
-			width: $space-lg;
-			height: $space-lg;
+		@include breakpoints.touch-or-bp-down(sm) {
+			width: variables.$space-lg;
+			height: variables.$space-lg;
 			margin-top: 8px;
 		}
 	}

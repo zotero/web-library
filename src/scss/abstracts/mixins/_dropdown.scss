@@ -1,10 +1,13 @@
+@use "../variables";
+@use "breakpoints";
+
 @mixin dropdown-menu {
 	background: var(--material-toolbar);
-	box-shadow: $menu-box-shadow;
+	box-shadow: variables.$menu-box-shadow;
 	border: var(--material-panedivider);
-	border-radius: $menu-border-radius;
-	z-index: $z-index-menu;
-	margin: $space-min 0;
+	border-radius: variables.$menu-border-radius;
+	z-index: variables.$z-index-menu;
+	margin: variables.$space-min 0;
 	display: none;
 	will-change: transform;
 	transform: translate3d(0, 0, 0);
@@ -15,12 +18,12 @@
 		outline: none;
 	}
 
-	@include touch-or-bp-down(sm) {
-		padding: $space-xs 0;
+	@include breakpoints.touch-or-bp-down(sm) {
+		padding: variables.$space-xs 0;
 	}
 
-	@include mouse-and-bp-up(md) {
-		padding: $space-min 0;
+	@include breakpoints.mouse-and-bp-up(md) {
+		padding: variables.$space-min 0;
 	}
 }
 
@@ -36,14 +39,14 @@
 	color: var(--fill-primary);
 	cursor: pointer;
 
-	@include touch-or-bp-down(sm) {
-		line-height: $line-height-base-mobile; // Prevent inheritance
-		padding: $dropdown-item-padding-y-touch $dropdown-item-padding-x-touch;
+	@include breakpoints.touch-or-bp-down(sm) {
+		line-height: variables.$line-height-base-mobile; // Prevent inheritance
+		padding: variables.$dropdown-item-padding-y-touch variables.$dropdown-item-padding-x-touch;
 	}
 
-	@include mouse-and-bp-up(md) {
-		line-height: $line-height-base; // Prevent inheritance
-		padding: ($input-btn-padding-y + $input-border-width) $input-btn-padding-x;
+	@include breakpoints.mouse-and-bp-up(md) {
+		line-height: variables.$line-height-base; // Prevent inheritance
+		padding: (variables.$input-btn-padding-y + variables.$input-border-width) variables.$input-btn-padding-x;
 	}
 
 	&.disabled {
@@ -69,20 +72,20 @@
 	.icon {
 		vertical-align: top;
 
-		@include touch-or-bp-down(sm) {
-			margin-right: $space-xs;
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin-right: variables.$space-xs;
 		}
 	}
 }
 
 @mixin dropdown-divider {
-	border-top: $input-border-width solid $menu-devider;
+	border-top: variables.$input-border-width solid variables.$menu-devider;
 
-	@include touch-or-bp-down(sm) {
-		margin: $space-xs 0;
+	@include breakpoints.touch-or-bp-down(sm) {
+		margin: variables.$space-xs 0;
 	}
 
-	@include mouse-and-bp-up(md) {
-		margin: $space-min 0;
+	@include breakpoints.mouse-and-bp-up(md) {
+		margin: variables.$space-min 0;
 	}
 }

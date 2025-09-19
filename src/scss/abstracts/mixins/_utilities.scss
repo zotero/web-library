@@ -1,3 +1,6 @@
+@use "../variables";
+@use "breakpoints";
+
 //
 // Utilities
 // --------------------------------------------------
@@ -21,12 +24,12 @@
   	text-overflow: $text-overflow;
   	white-space: normal; // Reset
 
-  	@include touch-or-bp-down(sm) {
-			min-height: $lines * $line-height-computed-mobile;
+  	@include breakpoints.touch-or-bp-down(sm) {
+			min-height: $lines * variables.$line-height-computed-mobile;
 		}
 
-  	@include mouse-and-bp-up(md) {
-			min-height: $lines * $line-height-computed;
+  	@include breakpoints.mouse-and-bp-up(md) {
+			min-height: $lines * variables.$line-height-computed;
 		}
   }
 }

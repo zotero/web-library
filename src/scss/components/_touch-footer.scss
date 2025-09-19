@@ -1,17 +1,21 @@
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Touch footer
 // --------------------------------------------------
 
 .touch-footer {
 	flex: 0 0 auto;
-	padding: $border-width 0;
-	height: $touch-footer-height;
-	background-color: $touch-footer-bg;
-	color: $touch-footer-color;
-	@include hairline(top, "color-shade-4");
+	padding: variables.$border-width 0;
+	height: variables.$touch-footer-height;
+	background-color: common.$touch-footer-bg;
+	color: common.$touch-footer-color;
+	@include hairline.hairline(top, "color-shade-4");
 
 	&.darker {
-		background-color: $touch-footer-darker-bg;
+		background-color: common.$touch-footer-darker-bg;
 	}
 
 	.btn-icon .icon {

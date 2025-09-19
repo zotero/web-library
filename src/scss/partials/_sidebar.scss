@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+
 //
 // Sidebar
 // --------------------------------------------------
@@ -10,50 +15,50 @@
 	position: relative;
 	min-height: 0;
 
-	@include touch-or-bp-down(sm) {
-		@include hairline(right, "color-shade-4");
+	@include breakpoints.touch-or-bp-down(sm) {
+		@include hairline.hairline(right, "color-shade-4");
 	}
 
-	@include bp-down-normalized(xs) {
+	@include breakpoints.bp-down-normalized(xs) {
 		position: absolute;
-		top: $touch-header-height;
+		top: variables.$touch-header-height;
 		left: 0;
 		right: 0;
 		bottom: 0;
 		overflow: visible; // Allow touch-tag-selector to overflow
-		@include hairline-disabled(right);
+		@include hairline.hairline-disabled(right);
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		border-right: var(--material-border-quarternary);
 	}
 
-	@include bp-up(sm) {
-		flex: 0 0 $sidebar-width-sm;
+	@include breakpoints.bp-up(sm) {
+		flex: 0 0 variables.$sidebar-width-sm;
 	}
 
-	@include bp-up(md) {
-		flex: 0 0 $sidebar-width-md;
+	@include breakpoints.bp-up(md) {
+		flex: 0 0 variables.$sidebar-width-md;
 
-		@include scopedVariant(".touch") {
-			flex: 0 0 $sidebar-width-md-touch;
+		.touch & {
+			flex: 0 0 variables.$sidebar-width-md-touch;
 		}
 	}
 
-	@include bp-up(lg) {
-		flex: 0 0 $sidebar-width-lg;
+	@include breakpoints.bp-up(lg) {
+		flex: 0 0 variables.$sidebar-width-lg;
 
-		@include scopedVariant(".touch") {
-			flex: 0 0 $sidebar-width-lg-touch;
+		.touch & {
+			flex: 0 0 variables.$sidebar-width-lg-touch;
 		}
 	}
 
 	.touch-footer {
-		@include bp-down(xs) {
-			z-index: $z-index-touch-side-footer;
-			transition: transform $nav-transition;
+		@include breakpoints.bp-down(xs) {
+			z-index: variables.$z-index-touch-side-footer;
+			transition: transform variables.$nav-transition;
 
-			@include scopedVariant(".touch-tag-selector-active.view-item-details-active") {
+			.touch-tag-selector-active.view-item-details-active & {
 				transform: translate3d(-25%, 0, 0);
 			}
 		}

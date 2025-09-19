@@ -1,3 +1,8 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Attachment pane
 // --------------------------------------------------
@@ -5,7 +10,7 @@
 .tab-pane.attachments {
 	position: relative;
 
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: min-content auto;
 		grid-auto-flow: column;
@@ -16,7 +21,7 @@
 		}
 	}
 
-	@include mouse-and-bp-up(lg) {
+	@include breakpoints.mouse-and-bp-up(lg) {
 		height: 100%; // Fix rich-editor height in Safari
 	}
 
@@ -27,22 +32,22 @@
 	}
 
 	> .toolbar {
-		height: $toolbar-height-touch;
+		height: variables.$toolbar-height-touch;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			@include scopedVariant(".scrollbar-style-permanent") {
-				height: $toolbar-height-touch + $border-width;
-				border-bottom: $border-width solid $attachments-toolbar-border-color;
+			.scrollbar-style-permanent & {
+				height: variables.$toolbar-height-touch + variables.$border-width;
+				border-bottom: variables.$border-width solid common.$attachments-toolbar-border-color;
 			}
 		}
 
 		.counter {
-			margin-right: $space-xs;
+			margin-right: variables.$space-xs;
 		}
 
 		> .btn-default {
-			@include state(".btn-file:active .btn-default") {
-				color: $icon-active-color;
+			@include selectors.state(".btn-file:active .btn-default") {
+				color: common.$icon-active-color;
 			}
 		}
 	}
@@ -51,8 +56,8 @@
 		flex: 1 1 0;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			@include scopedVariant(".scrollbar-style-permanent") {
-				padding-top: $space-min * 0.5;
+			.scrollbar-style-permanent & {
+				padding-top: variables.$space-min * 0.5;
 			}
 		}
 	}
@@ -61,15 +66,15 @@
 		display: flex;
 		flex-direction: column;
 
-		@include mouse-and-bp-only(md) {
-			border-left: $border-width solid $attachment-details-border-color;
+		@include breakpoints.mouse-and-bp-only(md) {
+			border-left: variables.$border-width solid common.$attachment-details-border-color;
 			grid-column: 2;
 			grid-row: 1 / 3;
 		}
 
-		@include mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-and-bp-up(lg) {
 			flex: 0 0 calc(50% + 42px); // Same size for scrollable area in attachment-list and rich-editor for an average of a 2 line metadata-list
-			border-top: $border-width solid $attachment-details-border-color;
+			border-top: variables.$border-width solid common.$attachment-details-border-color;
 		}
 
 		&.no-selection {
@@ -79,22 +84,22 @@
 	}
 
 	.placeholder {
-		font-size: $font-size-h1;
-		color: $attachment-placeholder-color;
+		font-size: variables.$font-size-h1;
+		color: common.$attachment-placeholder-color;
 	}
 
 	.rich-editor {
-		@include mouse-and-bp-up(md) {
-			border-top: $border-width solid $editor-border-color;
+		@include breakpoints.mouse-and-bp-up(md) {
+			border-top: variables.$border-width solid common.$editor-border-color;
 		}
 	}
 
 	.add-linked-url {
-		background-color: $panel-bg;
-		padding: $space-sm;
+		background-color: common.$panel-bg;
+		padding: variables.$space-sm;
 		position: absolute;
 		width: 100%;
-		border-bottom: $border-width solid $attachment-details-border-color;
+		border-bottom: variables.$border-width solid common.$attachment-details-border-color;
 		z-index: 2;
 
 		.toolbar {
@@ -102,7 +107,7 @@
 		}
 
 		.btn {
-			margin-left: $space-min;
+			margin-left: variables.$space-min;
 		}
 	}
 }
@@ -115,15 +120,15 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding-bottom: $space-xs;
+			padding-bottom: variables.$space-xs;
 
-			@include touch-or-bp-down(sm) {
-				padding-top: $space-sm;
-				padding-bottom: $space-sm;
+			@include breakpoints.touch-or-bp-down(sm) {
+				padding-top: variables.$space-sm;
+				padding-bottom: variables.$space-sm;
 			}
 
 			.btn {
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					background-color: var(--color-background);
 				}
 			}
@@ -134,23 +139,23 @@
 				align-items: center;
 				text-decoration: none;
 
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					min-width: 106px; // prevent button shrinking when showing spinner
 				}
 
 				> .icon {
-					margin-left: $space-xs;
+					margin-left: variables.$space-xs;
 				}
 			}
 
 			.btn-icon .icon {
-				color: $icon-color;
+				color: common.$icon-color;
 			}
 
 			> .btn + .btn-group,
 			> .btn + .btn,
 			> .btn-group + .btn {
-				margin-left: $space-xs;
+				margin-left: variables.$space-xs;
 			}
 		}
 }

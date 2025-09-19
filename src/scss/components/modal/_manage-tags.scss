@@ -1,3 +1,6 @@
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 .manage-tags.modal {
 	position: relative;
 
@@ -17,7 +20,7 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		background-color: $modal-content-bg;
-		z-index: $z-index-modal + 2;
+		background-color: common.$modal-content-bg;
+		z-index: variables.$z-index-modal + 2;
 	}
 }

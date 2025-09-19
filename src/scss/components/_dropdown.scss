@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/dropdown";
+@use "../abstracts/mixins/selectors";
+@use "../themes/common";
+
 .dropdown {
 	position: relative;
 
@@ -11,14 +16,14 @@
 			vertical-align: -2px; // Works for btn-lg
 		}
 
-		@include state(".dropdown.show") {
+		@include selectors.state(".dropdown.show") {
 			&.btn-link,
 			&.btn-icon {
-				@include mouse-and-bp-up(md) {
-					color: $icon-active-color;
+				@include breakpoints.mouse-and-bp-up(md) {
+					color: common.$icon-active-color;
 
 					.icon {
-						color: $icon-active-color;
+						color: common.$icon-active-color;
 					}
 				}
 			}
@@ -26,17 +31,17 @@
 	}
 
 	.dropdown-menu {
-		@include dropdown-menu;
+		@include dropdown.dropdown-menu;
 
-		@include state(".dropdown.show") {
+		@include selectors.state(".dropdown.show") {
 			display: block;
 		}
 	}
 
 	.dropdown-item {
-		@include dropdown-item;
+		@include dropdown.dropdown-item;
 
-		@include scopedVariant(".keyboard") {
+		.keyboard & {
 			&:focus {
 				color: var(--primary-on-accent);
 				background-color: var(--color-accent);
@@ -45,6 +50,6 @@
 	}
 
 	.dropdown-divider {
-		@include dropdown-divider;
+		@include dropdown.dropdown-divider;
 	}
 }

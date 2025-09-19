@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/utilities";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Base styles
 // --------------------------------------------------
@@ -30,32 +35,32 @@ html {
 	color-scheme: light dark;
 	-webkit-tap-highlight-color: transparent;
 
-	@include bp-down(sm) {
-		font-size: $font-size-mobile; // 1rem
+	@include breakpoints.bp-down(sm) {
+		font-size: variables.$font-size-mobile; // 1rem
 	}
 
-	@include bp-up(md) {
-		font-size: $font-size-base; // 1rem
+	@include breakpoints.bp-up(md) {
+		font-size: variables.$font-size-base; // 1rem
 	}
 
 	&.touch {
-		font-size: $font-size-mobile; // 1rem
+		font-size: variables.$font-size-mobile; // 1rem
 	}
 }
 
 body {
 	background: var(--color-background);
 	color: var(--fill-primary);
-	font-family: $font-family-base;
+	font-family: variables.$font-family-base;
 	cursor: default;
 	user-select: none;
 
-	@include touch-or-bp-down(sm) {
-		line-height: $line-height-base-mobile;
+	@include breakpoints.touch-or-bp-down(sm) {
+		line-height: variables.$line-height-base-mobile;
 	}
 
-	@include mouse-and-bp-up(sm) {
-		line-height: $line-height-base;
+	@include breakpoints.mouse-and-bp-up(sm) {
+		line-height: variables.$line-height-base;
 	}
 }
 
@@ -88,12 +93,12 @@ a {
 	flex-direction: column;
 	min-height: 0;
 
-	@media (max-width: $navbar-breakpoint - 1px) {
+	@media (max-width: variables.$navbar-breakpoint - 1px) {
 		overflow: hidden; // Do not overlap open mobile navbar nav
-		transition: transform $mobile-navbar-nav-transition;
+		transition: transform variables.$mobile-navbar-nav-transition;
 
 		.navbar-nav-opened & {
-			transform: translate3d($content-transform, 0, 0);
+			transform: translate3d(variables.$content-transform, 0, 0);
 		}
 	}
 
@@ -107,11 +112,11 @@ a {
 main {
 	flex: 1 1 auto;
 	display: flex;
-	background: $main-bg;
+	background: common.$main-bg;
 	min-height: 0;
 	position: relative; // Needed to fix weird touch layout in Chrome’s device emulator
 }
 
 .truncate {
-	@include text-truncate;
+	@include utilities.text-truncate;
 }

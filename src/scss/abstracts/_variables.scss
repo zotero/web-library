@@ -1,32 +1,62 @@
-//
-// Variables
-// --------------------------------------------------
+@use "sass:map";
+@use "sass:math";
 
-
-// Dimensions
-// --------------------------------------------------
-
-$space-min:    4px;
-$space-xs:     8px;
-$space-sm:    12px;
-$space-md:    16px;
-$space-lg:    24px;
-$space-xl:    32px;
-$space-xxl:   48px;
-$space-max:   64px;
-
-$space-thumb: 42px;
-
+@use "../../../modules/web-common/scss/abstracts/defaults" with (
+	$space-max: 64px,
+	$font-size-base: 13px,
+	$line-height-base: 1.539,
+	$line-height-large-touch: 42px,
+	$input-btn-padding-x: 8px,
+	$input-btn-padding-y: 2px,
+	$input-btn-padding-x-lg: 12px,
+	$input-btn-padding-y-lg: 5px,
+	$outline-width: 3px,
+	$error: var(--accent-red),
+	$warning: var(--accent-yellow),
+	$info: var(--accent-blue),
+	$focus-color: var(--accent-blue),
+	$link-color: var(--accent-blue),
+	$shade-0: var(--color-shade-0),
+	$shade-1: var(--color-shade-1),
+	$shade-2: var(--color-shade-2),
+	$shade-3: var(--color-shade-3),
+	$shade-4: var(--color-shade-4),
+	$shade-5: var(--color-shade-5),
+	$shade-6: var(--color-shade-6),
+	$shade-7: var(--color-shade-7),
+	$shade-8: var(--color-shade-8),
+	$shade-9: var(--color-shade-9),
+	$shade-10: var(--color-shade-10),
+	$menu-color: var(--color-primary),
+	$menu-color-disabled: var(--color-text-disabled),
+	$menu-bg: var(--color-shade-0),
+	$menu-item-hover-color: var(--primary-on-accent),
+	$menu-item-hover-bg: var(--color-accent),
+	$menu-item-selected-hover-bg: var(--color-accent),
+	$btn-light-color: var(--color-shade-6),
+	$btn-success-color: var(--accent-green),
+	$input-focus-color: var(--accent-blue),
+	$placeholder-color: var(--color-shade-5),
+	$checkbox-checked-bg-touch: var(--accent-blue),
+	$icon-color: var(--color-shade-6),
+	$editable-border-color: var(--accent-blue),
+	$editable-hover-bg: var(--color-editable-hover-bg),
+	$editable-backdrop-hover-bg: var(--color-editable-backdrop-hover-bg),
+	$spinner-color: var(--accent-blue),
+	$select-chevron-icon: "icons/chevron-7.svg",
+	$tab-active-color: var(--accent-blue),
+	$tab-inactive-color: var(--color-shade-8),
+);
+@forward "../../../modules/web-common/scss/abstracts/defaults";
+@use "../../../modules/web-common/scss/abstracts/defaults" as *;
 
 // Typography
-// --------------------------------------------------
-
 $font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-monospace:  Menlo, Consolas, monospace;
-$font-family-base:       $font-family-sans-serif;
+$font-family-monospace: Menlo, Consolas, monospace;
+$font-family-base: $font-family-sans-serif;
 
-$font-size-small:  12px;
-$font-size-base:   13px;
+$font-size-small: 12px;
+$font-size-base: 13px;
 $font-size-mobile: 16px;
 
 $font-size-lg: 16px;
@@ -35,11 +65,11 @@ $font-size-h1: 20px;
 $font-size-h2: 16px;
 $font-size-h3: 14px;
 
-$line-height-base:            1.539;
-$line-height-computed:        round($font-size-base * $line-height-base);
+$line-height-base: 1.539;
+$line-height-computed: math.round($font-size-base * $line-height-base);
 
-$line-height-base-mobile:     1.5;
-$line-height-computed-mobile: floor($font-size-mobile * $line-height-base);
+$line-height-base-mobile: 1.5;
+$line-height-computed-mobile: math.floor($font-size-mobile * $line-height-base);
 
 // todo: line-height-small
 $line-height-large: 26px;
@@ -53,325 +83,230 @@ $headings-line-height: 1.2;
 
 
 // Components
-// --------------------------------------------------
-
 $padding-x-sm: $space-sm;
 $padding-x-md: $space-md;
 
-$default-padding-x:       $space-sm;
+$default-padding-x: $space-sm;
 $default-padding-x-touch: $space-md;
 
-$border-radius:    4px;
+$border-width: 1px;
+$border-radius: 4px;
 $border-radius-sm: 3px;
 $border-radius-lg: 6px;
-
-$border-width: 1px;
-
 $separator-width: 1px;
 
-
 // Transitions
-// --------------------------------------------------
-
 $nav-transition-duration: 0.5s;
-
 $mobile-navbar-nav-transition: $nav-transition-duration cubic-bezier(0.23, 1, 0.32, 1);
 $nav-transition: $nav-transition-duration cubic-bezier(0.23, 1, 0.32, 1);
 $twisty-transition: 0.1s ease;
 $fade-transition-duration: 0.25s;
 $fade-transition: $fade-transition-duration ease-in-out;
 $nav-fade-transition: $nav-transition;
-$creator-color-transition: .5s cubic-bezier(1,0,.5,.5);
+$creator-color-transition: .5s cubic-bezier(1, 0, .5, .5);
 $creator-color-transition-delay: .1s;
 
 // Grid
-// --------------------------------------------------
-
 $grid-columns: 12;
 
 
 // Grid breakpoints
-// --------------------------------------------------
-
-$grid-breakpoints: (
-	xs: 480px,
-	sm: 768px,
-	md: 992px,
-	lg: 1200px
-);
+$grid-breakpoints: (xs: 480px,
+		sm: 768px,
+		md: 992px,
+		lg: 1200px);
 
 
 // Z-index master list
-
-$z-index-mobile-nav:          0;
-$z-index-rich-editor-touch:  20;
-$z-index-details-drilldown:  20;
-$z-index-search-backdrop:    20;
-$z-index-hairline:           20;
-$z-index-search-bar:         30;
-$z-index-touch-side-footer:  30;
+$z-index-mobile-nav: 0;
+$z-index-rich-editor-touch: 20;
+$z-index-details-drilldown: 20;
+$z-index-search-backdrop: 20;
+$z-index-hairline: 20;
+$z-index-search-bar: 30;
+$z-index-touch-side-footer: 30;
 $z-index-touch-tag-selector: 40;
-$z-index-level:              30;
-$z-index-level-active:       40;
-$z-index-navbar:             40;
-$z-index-menu:               50;
-$z-index-popover:			 60;
-$z-index-modal:              60;
-$z-index-errors:             70;
-$z-index-loading-cover:      80;
-$z-index-drag-layer:        100;
-
+$z-index-level: 30;
+$z-index-level-active: 40;
+$z-index-navbar: 40;
+$z-index-menu: 50;
+$z-index-popover: 60;
+$z-index-modal: 60;
+$z-index-errors: 70;
+$z-index-loading-cover: 80;
+$z-index-drag-layer: 100;
 
 // Navbbar
-// --------------------------------------------------
-
-$navbar-height-xs:            $space-thumb;
-$navbar-height-sm:            $space-max;
-$navbar-font-size:            $space-md;
-$navbar-margin-bottom:        $space-min;
-$navbar-padding-x:            $space-sm;
-$navbar-padding-x-touch:      $space-xl;
-$navbar-padding-y:            $space-sm;
-$navbar-padding-y-touch:      $space-sm;
-$navbar-padding-top:          21px;
-$navbar-padding-bottom:       21px;
-$navbar-breakpoint:           map-get($grid-breakpoints, lg);
-$navbar-toggle-padding-x:     $space-md;
-$icon-bar-width:              $space-lg;
-$icon-bar-height:             2px;
-$icon-bar-spacing:            6px;
-$navbar-nav-mobile-width:     280px;
-$content-transform:           -$navbar-nav-mobile-width;
+$navbar-height-xs: $space-thumb;
+$navbar-height-sm: $space-max;
+$navbar-font-size: $space-md;
+$navbar-margin-bottom: $space-min;
+$navbar-padding-x: $space-sm;
+$navbar-padding-x-touch: $space-xl;
+$navbar-padding-y: $space-sm;
+$navbar-padding-y-touch: $space-sm;
+$navbar-padding-top: 21px;
+$navbar-padding-bottom: 21px;
+$navbar-breakpoint: map.get($grid-breakpoints, lg);
+$navbar-toggle-padding-x: $space-md;
+$icon-bar-width: $space-lg;
+$icon-bar-height: 2px;
+$icon-bar-spacing: 6px;
+$navbar-nav-mobile-width: 280px;
+$content-transform: -$navbar-nav-mobile-width;
 $mobile-navbar-nav-transform: translate3d(25%, 0, 0);
-$search-width:                240px;
-
+$search-width: 240px;
 
 // Navbbar brand
-// --------------------------------------------------
-
-$navbar-brand-width-xs:  84px; // 7/8 of full size
+$navbar-brand-width-xs: 84px; // 7/8 of full size
 $navbar-brand-height-xs: 22px;
-$navbar-brand-width-sm:  96px;
+$navbar-brand-width-sm: 96px;
 $navbar-brand-height-sm: 26px;
 
-
 // Sidebar
-// --------------------------------------------------
-
-$sidebar-width-sm:       320px;
-$sidebar-width-md:       25%;
+$sidebar-width-sm: 320px;
+$sidebar-width-md: 25%;
 $sidebar-width-md-touch: 320px;
-$sidebar-width-lg:       280px;
+$sidebar-width-lg: 280px;
 $sidebar-width-lg-touch: 25%;
 
 
 // Collection tree
-// --------------------------------------------------
-
-$collection-tree-padding-left:         $space-md;
-$collection-tree-padding-x:            $space-sm;
-$collection-tree-padding-x-touch:      $space-md;
-$collection-tree-indent:               $space-sm;
-$collection-tree-max-levels:           10;
-$collection-tree-section-spacing:      20px;
-$collection-tree-picker-padding-left:  $space-lg;
-
+$collection-tree-padding-left: $space-md;
+$collection-tree-padding-x: $space-sm;
+$collection-tree-padding-x-touch: $space-md;
+$collection-tree-indent: $space-sm;
+$collection-tree-max-levels: 10;
+$collection-tree-section-spacing: 20px;
+$collection-tree-picker-padding-left: $space-lg;
 
 // Items & item list/table
-// --------------------------------------------------
-
-$item-list-row-height:     61px;
-$item-list-padding-top:    ($space-sm - 5px); // Hairline
+$item-list-row-height: 61px;
+$item-list-padding-top: ($space-sm - 5px); // Hairline
 $item-list-padding-bottom: ($space-sm - 6px);
-$item-list-padding-x:      $default-padding-x-touch;
-$item-list-padding-right:  39px;
+$item-list-padding-x: $default-padding-x-touch;
+$item-list-padding-right: 39px;
 
 $item-table-head-height: $space-lg;
-$item-table-row-height:  $line-height-large;
-
+$item-table-row-height: $line-height-large;
 
 // Toolbar
-// --------------------------------------------------
-
-$toolbar-height:       $line-height-large + $space-min;
+$toolbar-height: $line-height-large + $space-min;
 $toolbar-height-touch: $line-height-large-touch;
 
-
 // Item details
-// --------------------------------------------------
-
-$item-details-width-lg:       360px;
+$item-details-width-lg: 360px;
 $item-details-width-lg-touch: 33vw;
-$info-view-font-size:         20px;
-
+$info-view-font-size: 20px;
 
 // Tabs
-// --------------------------------------------------
-
-$tabs-height:            $line-height-large + $space-min;
-$tabs-height-touch:      $space-thumb;
-$tabs-padding-x:         $space-md;
+$tabs-height: $line-height-large + $space-min;
+$tabs-height-touch: $space-thumb;
+$tabs-padding-x: $space-md;
 $tabs-compact-padding-x: $default-padding-x;
 
-
 // Metadata list
-// --------------------------------------------------
-
-$metadata-list-margin-x-touch:     20px; // todo
-$metadata-list-line-height:        $space-lg; // Define in px
-$metadata-list-line-height-sm:     28px;
-$metadata-list-gutter:             $space-sm;
-$metadata-list-gutter-mobile:      $space-md;
-$metadata-list-offset:             33%;
-$metadata-handle-offset:           20px;
-
+$metadata-list-margin-x-touch: 20px; // todo
+$metadata-list-line-height: $space-lg; // Define in px
+$metadata-list-line-height-sm: 28px;
+$metadata-list-gutter: $space-sm;
+$metadata-list-gutter-mobile: $space-md;
+$metadata-list-offset: 33%;
+$metadata-handle-offset: 20px;
 
 // Creators
-// --------------------------------------------------
-$creators-last-name-max-width:       67%;
+$creators-last-name-max-width: 67%;
 $creators-value-padding-right-touch: 31px;
 
-
 // Note list
-// --------------------------------------------------
-
-$note-list-padding-top:    ($space-sm - 5px); // Hairline
+$note-list-padding-top: ($space-sm - 5px); // Hairline
 $note-list-padding-bottom: ($space-sm - 6px);
 
-
 // Icon
-// --------------------------------------------------
-
 $icon-spin-size-sm: $space-md;
 $icon-spin-size-md: $space-lg;
 $icon-spin-size-lg: $space-xl;
 
-
 // Buttons & forms
-// --------------------------------------------------
-
-$input-btn-height-touch:    $line-height-large-touch;
-$input-btn-padding-x:       $space-xs;
-$input-btn-padding-x-touch: $space-xs;
-$input-btn-padding-y:       2px;
-$input-btn-padding-y-touch: $space-xs;
-$input-btn-padding-x-lg:    $space-sm;
-$input-btn-padding-y-lg:    5px;
-//$input-btn-padding-x-lg:    $space-md;
-//$input-btn-padding-y-lg:    11px;
-//$input-btn-padding-x-sm:    $space-sm;
-//$input-btn-padding-y-sm:    3px;
-
-$input-border-width: $border-width;
-
 $input-btn-focus-width: 2px;
-
+$input-btn-height-touch: $line-height-large-touch;
+$input-btn-padding-x: $space-xs;
+$input-btn-padding-x-touch: $space-xs;
+$input-btn-padding-y: 2px;
+$input-btn-padding-y-touch: $space-xs;
+$input-btn-padding-x-lg: $space-sm;
+$input-btn-padding-y-lg: 5px;
+$input-border-width: $border-width;
 $input-btn-border-radius: $border-radius-sm;
-
 $input-btn-transition: 0.15s ease;
 
-
 // Forms
-// --------------------------------------------------
-
-$form-group-margin:       $space-sm;
+$form-group-margin: $space-sm;
 $form-group-margin-touch: 20px; // todo
-$input-border-radius:     $input-btn-border-radius;
+$input-border-radius: $input-btn-border-radius;
 
 $form-grid-gutter-width: $space-xs;
 
-$icon-spin-spacing-lg:
-	(
-		floor($font-size-lg * $line-height-base)
-		+ 2 * $input-btn-padding-y-lg
-		+ 2 * $input-border-width
-		- $icon-spin-size-sm
-	) * 0.5;
+$icon-spin-spacing-lg: (math.floor($font-size-lg * $line-height-base) + 2 * $input-btn-padding-y-lg + 2 * $input-border-width - $icon-spin-size-sm) * 0.5;
 
 $input-transition: 0.15s ease;
 
 
 // Outline
-// --------------------------------------------------
-
-$outline-width:  $input-btn-focus-width + $border-width;
+$outline-width: $input-btn-focus-width + $border-width;
 $outline-offset: 2px;
 
-
 // Editable
-// --------------------------------------------------
-
-$editable-border-width:  $outline-width;
-$editable-padding:       2px;
+$editable-border-width: $outline-width;
+$editable-padding: 2px;
 $editable-border-radius: 3px;
 
-
 // Dropdown
-// --------------------------------------------------
-
 $menu-border-radius: $border-radius-sm;
 $dropdown-item-padding-x-touch: $space-md;
 $dropdown-item-padding-y-touch: 9px;
 
 // Auto resizer
-// --------------------------------------------------
-
 $auto-resizer-vertical-rows: 1;
 
-
 // Modal
-// --------------------------------------------------
-
-$modal-header-height:        $space-thumb;
-$modal-header-padding:       $space-md;
-$modal-inner-padding:        $space-md;
-$modal-md:                   444px;
-$modal-lg:                   800px;
-$modal-xl:                   1140px;
-$modal-title-font-size:      $font-size-h1;
-$modal-border-radius:        $border-radius-lg;
-$modal-exit-transition-xs:   0.2s linear;
-
+$modal-header-height: $space-thumb;
+$modal-header-padding: $space-md;
+$modal-inner-padding: $space-md;
+$modal-md: 444px;
+$modal-lg: 800px;
+$modal-xl: 1140px;
+$modal-title-font-size: $font-size-h1;
+$modal-border-radius: $border-radius-lg;
+$modal-exit-transition-xs: 0.2s linear;
 
 // Abstract
-// --------------------------------------------------
-
 $abstract-margin-x-touch: $metadata-list-margin-x-touch;
 
-
 // Touch header & footer
-// --------------------------------------------------
-
 $touch-header-height: $line-height-large-touch + 2 * $border-width;
 $touch-footer-height: $touch-header-height;
 
-
 // Errors
-// --------------------------------------------------
-
 $error-width: 320px;
 $error-spacing: $space-xs;
 $permanent-scrollbar-width: 15px;
 
-
 // Rich editor
-// --------------------------------------------------
-
-$bp-sub-sup-sm:         874px;
-$bp-sub-sup-lg:         1678px;
-$bp-remove-format-lg:   1270px;
+$bp-sub-sup-sm: 874px;
+$bp-sub-sup-lg: 1678px;
+$bp-remove-format-lg: 1270px;
 $bp-blockquote-link-sm: 830px;
 $bp-blockquote-link-lg: 1544px;
-$bp-lists-sm:           815px;
-$bp-lists-lg:           1500px;
-
+$bp-lists-sm: 815px;
+$bp-lists-lg: 1500px;
 
 // Note styles
-// --------------------------------------------------
-
-$note-h1-font-size: 1.5em;  /* h1–h3 sizing is interpolated */
+$note-h1-font-size: 1.5em;
+/* h1–h3 sizing is interpolated */
 $note-h2-font-size: 1.28em;
-$note-h3-font-size: 1.1em;  /* h4–h6 sizing is linear */
+$note-h3-font-size: 1.1em;
+/* h4–h6 sizing is linear */
 $note-h4-font-size: 1em;
 $note-h5-font-size: 0.9em;
 $note-h6-font-size: 0.8em;
@@ -384,88 +319,310 @@ $note-h5-margin: 1.53em;
 $note-h6-margin: 1.72em;
 
 $note-line-height-base: 1.33;
-
 $note-headings-font-weight: 700;
 
-
 // Tag selector
-// --------------------------------------------------
-
-$tag-selector-height:           33%;
+$tag-selector-height: 33%;
 $tag-selector-collapsed-height: 9px;
-$tag-padding-x:                 6px;
-$tag-border-radius:             $border-radius-sm;
-
+$tag-padding-x: 6px;
+$tag-border-radius: $border-radius-sm;
 
 // Popover
-// --------------------------------------------------
-
-$popover-max-width:        400px;
+$popover-max-width: 400px;
 $popover-header-padding-y: $space-xs;
 $popover-header-padding-x: $space-sm;
-$popover-body-padding-y:   $space-xs;
-$popover-body-padding-x:   $space-sm;
+$popover-body-padding-y: $space-xs;
+$popover-body-padding-x: $space-sm;
 $popover-header-font-size: 14px;
-$popover-border-radius:    $border-radius-sm;
-$popover-arrow-width:      $space-md;
-$popover-arrow-height:     $space-xs;
-$popover-border-width:     $border-width;
-
+$popover-border-radius: $border-radius-sm;
+$popover-arrow-width: $space-md;
+$popover-arrow-height: $space-xs;
+$popover-border-width: $border-width;
 
 // Badge
-// --------------------------------------------------
-
-$badge-font-size:        75%;
+$badge-font-size: 75%;
 $badge-font-size-mobile: 100%;
-$badge-font-weight:      700;
-$badge-padding-y:        0.25em;
+$badge-font-weight: 700;
+$badge-padding-y: 0.25em;
 $badge-padding-y-mobile: 0.1em;
-$badge-padding-x:        0.4em;
+$badge-padding-x: 0.4em;
 $badge-padding-x-mobile: 0.4em;
-$badge-border-radius:    $border-radius;
-
-$badge-pill-padding-x:     0.5em;
+$badge-border-radius: $border-radius;
+$badge-pill-padding-x: 0.5em;
 $badge-pill-border-radius: 10rem;
 
-
 // Scrollbar
-// --------------------------------------------------
-
 $scrollbar-size: $space-sm;
 
-
 // Identifier picker
-// --------------------------------------------------
-
-$result-padding:      $space-md;
+$result-padding: $space-md;
 
 // match popups from reader
 $reader-popup-border-radius: 5px;
 $reader-popup-padding: 5px 0;
 
-$tagColorsLookup: (
-	'#ff6666': --tag-red,
-	'#ff8c19': --tag-orange,
-	'#999999': --tag-gray,
-	'#5fb236': --tag-green,
-	'#009980': --tag-teal,
-	'#2ea8e5': --tag-blue,
-	'#576dd9': --tag-indigo,
-	'#a28ae5': --tag-purple,
-	'#a6507b': --tag-plum,
-);
+$tagColorsLookup: ('#ff6666': --tag-red,
+		'#ff8c19': --tag-orange,
+		'#999999': --tag-gray,
+		'#5fb236': --tag-green,
+		'#009980': --tag-teal,
+		'#2ea8e5': --tag-blue,
+		'#576dd9': --tag-indigo,
+		'#a28ae5': --tag-purple,
+		'#a6507b': --tag-plum,
+	);
 
 // When a color with an alpha channel is used as `fill` in an SVG, it doesn't
 // seem to be mixed correctly with the HTML background. Instead, we're using
 // these pre-calculated opaque colors.
-$tagColorsLookupItemsTable: (
-	'#ff6666': --tag-red-on-background,
-	'#ff8c19': --tag-orange-on-background,
-	'#999999': --tag-gray-on-background,
-	'#5fb236': --tag-green-on-background,
-	'#009980': --tag-teal-on-background,
-	'#2ea8e5': --tag-blue-on-background,
-	'#576dd9': --tag-indigo-on-background,
-	'#a28ae5': --tag-purple-on-background,
-	'#a6507b': --tag-plum-on-background,
-);
+$tagColorsLookupItemsTable: ('#ff6666': --tag-red-on-background,
+		'#ff8c19': --tag-orange-on-background,
+		'#999999': --tag-gray-on-background,
+		'#5fb236': --tag-green-on-background,
+		'#009980': --tag-teal-on-background,
+		'#2ea8e5': --tag-blue-on-background,
+		'#576dd9': --tag-indigo-on-background,
+		'#a28ae5': --tag-purple-on-background,
+		'#a6507b': --tag-plum-on-background,
+	);
+
+// @TODO: migrate all these variables to css vars
+$shade-0: var(--color-shade-0);
+$shade-1: var(--color-shade-1);
+$shade-2: var(--color-shade-2);
+$shade-3: var(--color-shade-3);
+$shade-4: var(--color-shade-4);
+$shade-5: var(--color-shade-5);
+$shade-6: var(--color-shade-6);
+$shade-7: var(--color-shade-7);
+$shade-8: var(--color-shade-8);
+$shade-9: var(--color-shade-9);
+$shade-10: var(--color-shade-10);
+
+// Scaffolding
+$body-bg: $shade-0;
+$text-color: $shade-9;
+
+$headings-color: $shade-8;
+
+$link-color: var(--accent-blue);
+$link-hover-color: var(--accent-blue);
+
+$focus-color: var(--accent-blue);
+
+// Typography
+$text-selection-color: inherit;
+$text-selection-bg: var(--color-text-selection-bg);
+
+// Separator
+$separator-color: $shade-3;
+
+// Main
+$main-bg: $shade-0;
+
+// Scrollbar
+$scrollbar-bg: transparent;
+$scrollbar-color: $shade-4;
+
+// Icon
+$icon-color: $shade-6;
+$icon-color-touch: $link-color;
+$icon-active-color: $shade-9;
+$icon-circle-color: $shade-5;
+
+// Navbar
+$navbar-bg: $body-bg;
+$navbar-border-color: $shade-0;
+$navbar-link-color: $shade-9;
+$navbar-link-active-color: var(--accent-blue);
+$navbar-link-mobile-active-color: var(--color-shade-0-50);
+$navbar-dropdown-toggle-active-color: $shade-6;
+
+// Collection tree
+$collection-tree-headings-color: $shade-6;
+$touch-collection-tree-border: $shade-4;
+$touch-collection-tree-separator: $body-bg;
+
+// Items
+$items-bg: $shade-0;
+
+// Item list
+$item-creator-date-color: var(--color-item-list-second-row);
+$item-list-chevron-color: $shade-4;
+
+// Item table
+$item-table-head-color: $shade-8;
+$item-table-head-border: $shade-2;
+$item-table-head-active-bg: $shade-1;
+$item-table-odd-bg: var(--color-shade-1-darker);
+$item-table-active-bg: $shade-3;
+$sort-indicator: var(--accent-blue);
+
+// Item details
+$item-details-border-1x: $shade-3;
+$info-view-color: $shade-5;
+
+// Panel
+$panel-bg: $shade-1;
+$panel-header-color: $shade-8;
+$panel-backdrop-bg: var(--color-panel-backdrop-bg);
+
+// Tabs
+$tabs-border-color: $shade-3;
+$tab-active-color: var(--accent-blue);
+$tab-inactive-color: $headings-color;
+
+// Metadata list
+$key-color: $shade-6;
+$handle-color-touch: $shade-4;
+$handle-color-mouse: $shade-6;
+$metadata-heading-color: $shade-5;
+$metadata-separator-color: $shade-3;
+
+// Notes list
+$notes-toolbar-border-color: $shade-3;
+$note-active-bg: $shade-3;
+$note-focus-color: $shade-0;
+$note-focus-bg: var(--accent-blue);
+$note-border-color: $shade-3;
+$note-list-chevron-color: $shade-4;
+$note-placeholder-color: $shade-5;
+
+// Attachment list
+$attachments-toolbar-border-color: $shade-3;
+$attachment-details-border-color: $shade-3;
+$attachment-placeholder-color: $shade-5;
+$no-link-opacity: 0.5;
+
+// Rich editor
+$editor-bg: $shade-0;
+$editor-border-color: $shade-3;
+$tox-edit-area-border-color: $shade-2;
+
+// Note
+$note-headings-color: $headings-color;
+$blockquote-border-color: $shade-3;
+
+// Button
+$btn-light-color: $shade-6;
+$btn-default-color: $shade-9;
+$btn-default-hover-bg: $shade-0;
+$btn-default-border-color: $shade-3;
+$btn-success-color: var(--accent-green);
+$btn-icon-hover-bg: var(--color-shade-1-darker);
+$btn-icon-active-color: $shade-7;
+$btn-icon-active-bg: $shade-2;
+$btn-icon-separator-color: $shade-3;
+$twisty-color: $shade-6;
+$twisty-focus-color: var(--accent-asphalt);
+$twisty-selected-color: $shade-7;
+
+// Forms
+$form-bg-touch: $shade-1;
+$input-bg: $body-bg;
+$input-border-color: $shade-3;
+$input-focus-color: var(--accent-blue);
+$placeholder-color: $shade-5;
+$checkbox-border-touch: $shade-4;
+$checkbox-checked-bg-touch: var(--accent-blue);
+$label-color: $shade-6;
+
+// Spinner
+$spinner-color: var(--accent-blue);
+
+// Touch header
+$touch-header-color: $shade-8; // Better than $shade-6 to link color
+$touch-header-link-color: var(--accent-blue);
+$touch-header-bg: $shade-1;
+$touch-header-darker-bg: var(--color-shade-1-darker);
+$btn-options-color: var(--accent-blue);
+$btn-options-bg: transparent;
+$btn-options-focus-color: rgba($btn-options-color, 0.5);
+
+// Touch footer
+$touch-footer-color: $shade-8;
+$touch-footer-bg: $shade-1;
+$touch-footer-darker-bg: var(--color-shade-1-darker);
+
+// Editable
+$editable-color: $text-color;
+$editable-bg: $shade-0;
+$editable-border-color: var(--accent-blue);
+$editable-hover-bg: var(--color-editable-hover-bg);
+$editable-backdrop-bg: $shade-1;
+$editable-backdrop-hover-bg: var(--color-editable-backdrop-hover-bg);
+
+// Menu (select, dropdown, …) - required to configure components in web-common
+$menu-color: var(--color-primary);
+$menu-color-disabled: var(--color-text-disabled);
+$menu-bg: var(--color-shade-0);
+$menu-item-hover-color: var(--primary-on-accent);
+$menu-item-hover-bg: var(--color-accent);
+$menu-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$menu-item-selected-bg: $shade-2;
+$menu-item-selected-hover-bg: var(--color-accent);
+$menu-devider: $shade-2;
+$menu-no-results-color: $shade-5;
+
+// Drag layer
+$creator-drag-preview-shadow: var(--color-drag-preview-shadow);
+$items-drag-indicator-color: var(--primary-on-accent);
+$items-drag-indicator-bg: var(--accent-blue-lighter);
+
+// Modal
+$modal-content-bg: $body-bg;
+$modal-content-bg-touch: $shade-1;
+$modal-header-bg: $shade-0;
+$modal-touch-header-bg: $shade-1;
+$modal-form-header-bg: var(--color-shade-1-darker);
+$modal-border-color: $shade-2;
+
+// Toolbar
+$tool-group-separator-color: $shade-2;
+
+// Messages
+$message-bg: $body-bg;
+$error: var(--accent-red);
+$info: var(--accent-blue);
+$warning: var(--accent-yellow);
+
+// Tag selector
+$tag-selector-border-color: $shade-3;
+$tag-selector-color: $shade-8;
+$tag-hover-bg: $shade-2;
+$tag-selected-color: $shade-0;
+$tag-selected-bg: $shade-6;
+$tag-selected-active-bg: $shade-7;
+$tag-selector-grip-color: $shade-4;
+$tag-selector-grip-color-active: var(--accent-blue);
+
+// Touch tag selector
+$touch-tag-selector-pane-bg: $shade-0;
+$touch-tag-selected-bg: $shade-3;
+$tag-color-border-color: $shade-4;
+
+// Popover
+$popover-bg: $body-bg;
+$popover-body-color: $text-color;
+$popover-header-bg: $body-bg;
+$popover-header-color: $shade-8;
+$popover-header-border-color: $shade-2;
+$popover-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$popover-arrow-color: $body-bg;
+$popover-arrow-outer-color: rgba(0, 0, 0, 0.2);
+
+// Oncoing
+$ongoing-border-color: $shade-3;
+$ongoing-color: $shade-8;
+
+// Identifier picker
+$result-border-color: $shade-2;
+$result-hover-color: $shade-0;
+$result-hover-bg: $shade-1;
+$badge-light-border-color: $shade-3;
+$badge-light-bg: $shade-0;
+
+$select-chevron-icon: "icons/chevron-7.svg";
+
+// match popups from reader
+$reader-popup-shadow: 0 0 0 1px #0000001a, 0 5px 10px #0009;

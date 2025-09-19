@@ -1,60 +1,65 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Abstract
 // --------------------------------------------------
 
 .abstract {
-	@include touch-or-bp-down(sm) {
-		margin: 8px $default-padding-x-touch 8px;
-		border-top: 1px solid $metadata-separator-color;
+	@include breakpoints.touch-or-bp-down(sm) {
+		margin: 8px variables.$default-padding-x-touch 8px;
+		border-top: 1px solid common.$metadata-separator-color;
 	}
 
-	@include bp-down-normalized(xs) {
+	@include breakpoints.bp-down-normalized(xs) {
 		border-top: 0;
 	}
 
-	@include mouse-and-bp-up(md) {
-		margin: 0 $default-padding-x;
+	@include breakpoints.mouse-and-bp-up(md) {
+		margin: 0 variables.$default-padding-x;
 		padding-bottom: 15px - 7px;
 	}
 
-	@include mouse-and-bp-only(lg) {
-		border-top: 1px solid $metadata-separator-color;
+	@include breakpoints.mouse-and-bp-only(lg) {
+		border-top: 1px solid common.$metadata-separator-color;
 	}
 
 	&.editing {
-		@include touch-or-bp-down(sm) {
-			margin: 0 $abstract-margin-x-touch 10px;
-			background-color: $input-bg;
-			border-radius: $input-border-radius;
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin: 0 variables.$abstract-margin-x-touch 10px;
+			background-color: common.$input-bg;
+			border-radius: variables.$input-border-radius;
 			border-top: 0;
-			padding: 0 $input-btn-padding-x-touch;
+			padding: 0 variables.$input-btn-padding-x-touch;
 		}
 
-		@include touch-and-bp-only(md) {
-			margin-top: $form-group-margin-touch;
-			margin-bottom: $form-group-margin-touch;
+		@include breakpoints.touch-and-bp-only(md) {
+			margin-top: variables.$form-group-margin-touch;
+			margin-bottom: variables.$form-group-margin-touch;
 		}
 
-		@include bp-down-normalized(xs) {
+		@include breakpoints.bp-down-normalized(xs) {
 			margin: 0 0 10px 0;
 			border-radius: 0;
-			border-top: $separator-width solid $separator-color;
-			border-bottom: $separator-width solid $separator-color;
+			border-top: variables.$separator-width solid common.$separator-color;
+			border-bottom: variables.$separator-width solid common.$separator-color;
 		}
 	}
 
 	&.empty-abstract {
 		&:not(.editing) {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				display: none;
 			}
 		}
 
-		@include mouse-and-bp-only(md) {
+		@include breakpoints.mouse-and-bp-only(md) {
 			padding-top: 14px;
 		}
 
-		@include mouse-and-bp-only(lg) {
+		@include breakpoints.mouse-and-bp-only(lg) {
 			padding-top: 9px; // metadata-list spacing
 		}
 	}
@@ -65,12 +70,12 @@
 }
 
 .abstract-body {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		padding-bottom: 2px; // 24px, use padding to prevent collapsing margins
 	}
 
-	@include scopedVariant(".editing") {
-		@include touch-or-bp-down(sm) {
+	.editing & {
+		@include breakpoints.touch-or-bp-down(sm) {
 			.input-group.textarea {
 				margin-top: -6px;
 				padding-top: 0;
@@ -80,49 +85,49 @@
 }
 
 .abstract-heading {
-	color: $key-color;
+	color: common.$key-color;
 	cursor: default; // Reset
 	user-select: none; // Reset
 	pointer-events: none;
 
-	@include touch-or-bp-down(sm) {
+	@include breakpoints.touch-or-bp-down(sm) {
 		margin-top: 0;
 		padding-top: 10px; // metadata-list spacing
 		margin-bottom: 4px; // metadata-list spacing
-		line-height: $line-height-base;
+		line-height: variables.$line-height-base;
 	}
 
-	@include bp-down-normalized(xs) {
+	@include breakpoints.bp-down-normalized(xs) {
 		margin-top: 0;
 		padding-top: 0;
 		margin-bottom: 0;
 	}
 
-	@include mouse-and-bp-up(md) {
-		font-size: $font-size-base;
-		line-height: $metadata-list-line-height;
+	@include breakpoints.mouse-and-bp-up(md) {
+		font-size: variables.$font-size-base;
+		line-height: variables.$metadata-list-line-height;
 		margin-top: 15px - 8px;
 		margin-bottom: 0;
 		padding-bottom: 2px;
 	}
 
-	@include mouse-and-bp-only(lg) {
+	@include breakpoints.mouse-and-bp-only(lg) {
 		margin-top: 15px - 8px;
 		margin-bottom: 0;
 		padding-bottom: 2px;
 	}
 
-	@include scopedVariant(".empty-abstract") {
-		@include mouse-and-bp-up(md) {
+	.empty-abstract & {
+		@include breakpoints.mouse-and-bp-up(md) {
 			display: none;
 		}
 	}
 
-	@include scopedVariant(".editing") {
-		@include touch-or-bp-down(sm) {
-			padding: 0 $input-btn-padding-x-touch;
+	.editing & {
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding: 0 variables.$input-btn-padding-x-touch;
 			margin-bottom: 0;
-			line-height: $space-thumb;
+			line-height: variables.$space-thumb;
 		}
 	}
 }

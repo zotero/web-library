@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Toolbar
 // --------------------------------------------------
@@ -10,20 +15,20 @@
 	white-space: nowrap;
 	background: var(--material-toolbar);
 
-	@include touch-or-bp-down(sm) {
-		height: $line-height-large-touch;
-		padding: 0 $default-padding-x-touch;
+	@include breakpoints.touch-or-bp-down(sm) {
+		height: variables.$line-height-large-touch;
+		padding: 0 variables.$default-padding-x-touch;
 	}
 
-	@include mouse-and-bp-up(md) {
-		height: $toolbar-height;
-		padding: 0 $default-padding-x;
+	@include breakpoints.mouse-and-bp-up(md) {
+		height: variables.$toolbar-height;
+		padding: 0 variables.$default-padding-x;
 		color: var(--fill-secondary);
 	}
 
-	@include variant(".toolbar.dense") {
-		@include scopedVariant("html:not(.specifity)") {
-			padding: 0 ($space-min * 0.5);
+	@include selectors.state(".toolbar.dense") {
+		html:not(.specifity) & {
+			padding: 0 (variables.$space-min * 0.5);
 		}
 	}
 
@@ -39,7 +44,7 @@
 	.toolbar-left {
 		margin-right: auto;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			padding-right: 3px;
 		}
 	}
@@ -48,7 +53,7 @@
 		margin: 0 auto;
 		justify-content: center;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			padding: 0 3px;
 		}
 	}
@@ -57,7 +62,7 @@
 		margin-left: auto;
 		justify-content: flex-end;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			padding-left: 3px;
 			position: relative; // Above touch-nav
 		}
@@ -66,8 +71,8 @@
 	.toolbar-justified {
 		flex: 1 1 auto;
 
-		@include touch-or-bp-down(sm) {
-			margin: 0 (-$default-padding-x-touch);
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin: 0 (-(variables.$default-padding-x-touch));
 		}
 	}
 
@@ -75,24 +80,24 @@
 		display: flex;
 		align-items: center;
 
-		@include variant(".toolbar .toolbar-justified") {
+		@include selectors.state(".toolbar .toolbar-justified") {
 			flex: 1 1 auto;
 			justify-content: space-around;
 		}
 
 		> * + * {
-			margin-left: $space-min * 0.5;
+			margin-left: variables.$space-min * 0.5;
 
-			@include variant(".toolbar .toolbar-justified") {
+			@include selectors.state(".toolbar .toolbar-justified") {
 				margin: 0;
 			}
 		}
 
 		& + .tool-group {
-			margin-left: $space-lg;
+			margin-left: variables.$space-lg;
 		}
 
-		@include variant(".toolbar.dense") {
+		@include selectors.state(".toolbar.dense") {
 			position: relative;
 
 			&::before {
@@ -100,13 +105,13 @@
 				left: 0;
 				top: 2px;
 				bottom: 2px;
-				width: $border-width;
-				background-color: $tool-group-separator-color;
+				width: variables.$border-width;
+				background-color: common.$tool-group-separator-color;
 			}
 
 			& + .tool-group {
-				margin-left: $space-min * 0.5;
-				padding-left: $space-min * 0.5 + $border-width;
+				margin-left: variables.$space-min * 0.5;
+				padding-left: variables.$space-min * 0.5 + variables.$border-width;
 
 				&::before {
 					content: "";

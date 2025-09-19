@@ -1,15 +1,22 @@
+@use "../abstracts/functions/asset-url";
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/mixins/utilities";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .copy-citation-modal {
 	max-height: calc(100vh - 64px);
 	min-height: 360px; // on touch, allow enough space for the slide-down editor
 	width: unset;
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		max-width: unset;
 		max-height: unset;
 		width: 100%;
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		width: 720px;
 		min-height: 480px; // allow enough space for dropdowns to be fully contained within the modal
 	}
@@ -18,7 +25,7 @@
 		display: flex;
 		flex-direction: column;
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			padding-top: 0;
 		}
 	}
@@ -69,7 +76,7 @@
 	.copy-citation-container {
 		overflow-y: scroll;
 
-		@include state(".loading .copy-citation-container") {
+		@include selectors.state(".loading .copy-citation-container") {
 			flex: 1 1 auto;
 			display: flex;
 			justify-content: center;
@@ -97,7 +104,7 @@
 				justify-content: flex-end;
 
 				.btn + .btn {
-					margin-left: $space-sm;
+					margin-left: variables.$space-sm;
 				}
 			}
 		}
@@ -108,28 +115,28 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		z-index: $z-index-modal + 2;
+		z-index: variables.$z-index-modal + 2;
 		display: flex;
 		padding: 0;
 		flex-direction: column;
-		background-color: $panel-bg;
+		background-color: common.$panel-bg;
 
-		@include touch-or-bp-down(sm) { // keep to match specificity
+		@include breakpoints.touch-or-bp-down(sm) { // keep to match specificity
 			.form {
 				margin: 0; // reset the negative margin
-				padding: $space-sm 0;
+				padding: variables.$space-sm 0;
 			}
 		}
 
 		h5 {
-			@include text-truncate(ellipsis);
-			margin-top: $space-xs;
-			padding: 0 $space-sm;
+			@include utilities.text-truncate(ellipsis);
+			margin-top: variables.$space-xs;
+			padding: 0 variables.$space-sm;
 			text-align: center;
 		}
 
 		.form-group:has(+ .buttons-wrap) {
-			margin-bottom: $space-sm;
+			margin-bottom: variables.$space-sm;
 		}
 
 		.col-form-label::after {
@@ -149,12 +156,12 @@
 				justify-content: flex-end;
 
 				.btn + .btn {
-					margin-left: $space-sm;
+					margin-left: variables.$space-sm;
 				}
 			}
 
-			@include touch-or-bp-down(sm) {
-				padding: 0 $space-md;
+			@include breakpoints.touch-or-bp-down(sm) {
+				padding: 0 variables.$space-md;
 			}
 		}
 	}
@@ -170,21 +177,21 @@
 	.label {
 		flex: 1 1 0;
 		text-align: left;
-		background: image-url("icons/chevron-13.svg") no-repeat right $space-sm center $input-bg;
+		background: asset-url.image-url("icons/chevron-13.svg") no-repeat right variables.$space-sm center common.$input-bg;
 	}
 
 	.drag-handle {
 		align-items: center;
 		align-items: center;
 		align-self: stretch;
-		border-left: 1px solid $input-border-color;
+		border-left: 1px solid common.$input-border-color;
 		display: flex;
 		flex: 0 0 auto;
-		padding-left: $default-padding-x-touch;
-		padding-right: calc($default-padding-x-touch - $space-sm); // adjust for form-row padding
+		padding-left: variables.$default-padding-x-touch;
+		padding-right: calc(variables.$default-padding-x-touch - variables.$space-sm); // adjust for form-row padding
 		touch-action: manipulation;
 
-		@include state(".editing .creators-entry") {
+		@include selectors.state(".editing .creators-entry") {
 			display: flex;
 		}
 

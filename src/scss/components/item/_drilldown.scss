@@ -1,86 +1,84 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 @use "sass:map";
 
 .touch-details-drilldown {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
-	top: $touch-header-height;
+	top: variables.$touch-header-height;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: $z-index-details-drilldown;
-	background-color: $panel-bg;
+	z-index: variables.$z-index-details-drilldown;
+	background-color: common.$panel-bg;
 	transform: translate3d(100%, 0, 0);
-	transition: transform $nav-transition;
+	transition: transform variables.$nav-transition;
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		top: 0;
 		transform: translate3d(125%, 0, 0);
 	}
 
-	@include touch-and-bp-up(lg) {
+	@include breakpoints.touch-and-bp-up(lg) {
 		left: auto;
-		width: $item-details-width-lg-touch;
+		width: variables.$item-details-width-lg-touch;
 		border-left: 1px solid var(--color-shade-2);
 	}
 
-	@include scopedVariant('.view-note-active') {
+	.view-note-active & {
 		&.touch-note {
 			transform: translate3d(0, 0, 0);
 
-			@include bp-down(xs) {
+			@include breakpoints.bp-down(xs) {
 				transform: translate3d(25%, 0, 0);
 			}
 		}
 	}
 
-	@include scopedVariant('.view-attachment-active') {
+	.view-attachment-active & {
 		&.touch-attachment {
 			transform: translate3d(0, 0, 0);
 
-			@include bp-down(xs) {
+			@include breakpoints.bp-down(xs) {
 				transform: translate3d(25%, 0, 0);
 			}
 		}
 
 		.rich-editor {
-			@include hairline(top, "color-shade-4");
+			@include hairline.hairline(top, "color-shade-4");
 		}
 	}
 
-	@include scopedVariant(".touch-tag-selector-active") {
-		@include bp-down(sm) {
-			bottom: -$touch-footer-height;
+	.touch-tag-selector-active & {
+		@include breakpoints.bp-down(sm) {
+			bottom: -(variables.$touch-footer-height);
 		}
 
-		@include touch-and-bp-only(md) {
-			bottom: -$touch-footer-height;
+		@include breakpoints.touch-and-bp-only(md) {
+			bottom: -(variables.$touch-footer-height);
 		}
 	}
 
 	@each $drilldown in note, attachment {
 		&.touch-#{$drilldown} {
-			@include bp-down(xs) {
-
-				// Start searching in note drilldown
-
-				// Init
-
-				@include scopedVariant(".search-active.view-#{$drilldown}-active") {
+			@include breakpoints.bp-down(xs) {
+				.search-active.view-#{$drilldown}-active & {
 					transform: translate3d(0, 0, 0);
 					transition: none;
 				}
-
-				// Search results
-				// => No styles needed
 			}
 		}
 	}
 
 	&.editing {
 		.metadata .value {
-			@include touch-or-bp-down(sm) {
-				$textarea-padding: ($space-thumb - $font-size-mobile * $line-height-base-mobile) * 0.5;
+			@include breakpoints.touch-or-bp-down(sm) {
+				$textarea-padding: (variables.$space-thumb - variables.$font-size-mobile * variables.$line-height-base-mobile) * 0.5;
 				padding-top: $textarea-padding;
 				padding-bottom: $textarea-padding;
 			}

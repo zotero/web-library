@@ -1,3 +1,10 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/same";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Item details
 // --------------------------------------------------
@@ -8,50 +15,50 @@
 	background: var(--material-sidepane);
 	overflow: hidden;
 
-	@include touch-or-bp-down(sm) {
+	@include breakpoints.touch-or-bp-down(sm) {
 		background: var(--color-shade-1);
 	}
 
-	@include bp-down(sm) {
-		@include same(right, bottom, left, 0);
-		top: $touch-header-height;
+	@include breakpoints.bp-down(sm) {
+		@include same.same(right, bottom, left, 0);
+		top: variables.$touch-header-height;
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 	}
 
-	@include touch-and-bp-only(md) {
-		@include same(right, bottom, left, 0);
-		top: $touch-header-height;
+	@include breakpoints.touch-and-bp-only(md) {
+		@include same.same(right, bottom, left, 0);
+		top: variables.$touch-header-height;
 		position: absolute;
 		transform: translate3d(100%, 0, 0);
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 	}
 
-	@include scopedVariant(".view-item-details-active") {
-		@include bp-down(sm) {
+		.view-item-details-active & {
+		@include breakpoints.bp-down(sm) {
 			transform: translate3d(0, 0, 0);
 		}
 
-		@include touch-and-bp-only(md) {
+		@include breakpoints.touch-and-bp-only(md) {
 			transform: translate3d(0, 0, 0);
 		}
 	}
 
-	@include scopedVariant(".touch-tag-selector-active") {
-		@include bp-down(sm) {
-			bottom: -$touch-footer-height;
+		.touch-tag-selector-active & {
+		@include breakpoints.bp-down(sm) {
+			bottom: -(variables.$touch-footer-height);
 		}
 
-		@include touch-and-bp-only(md) {
-			bottom: -$touch-footer-height;
+		@include breakpoints.touch-and-bp-only(md) {
+			bottom: -(variables.$touch-footer-height);
 		}
 	}
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		top: 0;
 
-		@include scopedVariant(".view-item-details-active") {
+		.view-item-details-active & {
 			transform: translate3d(25%, 0, 0);
 		}
 
@@ -59,22 +66,22 @@
 
 		// Init
 
-		@include scopedVariant(".search-active.view-item-details-active") {
+		.search-active.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
 
 		// Search results
 
-		@include scopedVariant(".search-results.search-init.view-item-list-active") {
+		.search-results.search-init.view-item-list-active & {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
-			transition: opacity $fade-transition, transform $fade-transition $fade-transition-duration;
+			transition: opacity variables.$fade-transition, transform variables.$fade-transition variables.$fade-transition-duration;
 		}
 
 		// Cancel search
 
-		@include scopedVariant(".search-cancel.search-active.view-item-details-active") {
+		.search-cancel.search-active.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
@@ -85,38 +92,38 @@
 			}
 		}
 
-		@include scopedVariant(".search-cancel.search-results.view-item-details-active") {
+		.search-cancel.search-results.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			opacity: 0;
 			transition: none;
-			animation: fade-in-item-details $fade-transition-duration ease-in-out forwards; // We need an animation here to ensure that opacity is 0 at the start.
+			animation: fade-in-item-details variables.$fade-transition-duration ease-in-out forwards; // We need an animation here to ensure that opacity is 0 at the start.
 		}
 	}
 
-	@include tablet {
+	@include breakpoints.tablet {
 
 		// Start searching in item details view
 
 		// Search results
 
-		@include state(".search-results.view-item-list-active .item-details") {
+		.search-results.view-item-list-active & {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
-			transition: transform $nav-transition, opacity 0s linear $nav-transition-duration;
+			transition: transform variables.$nav-transition, opacity 0s linear variables.$nav-transition-duration;
 		}
 
-		@include state(".search-results.search-init.view-item-list-active .item-details") {
+		.search-results.search-init.view-item-list-active & {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
-			transition: opacity $fade-transition, transform $fade-transition $fade-transition-duration;
+			transition: opacity variables.$fade-transition, transform variables.$fade-transition variables.$fade-transition-duration;
 		}
 
 		// Cancel search in item details view (going back to item list view)
 
-		@include state(".search-cancel.view-item-list-active .item-details") {
+		.search-cancel.view-item-list-active & {
 			transform: translate3d(100%, 0, 0);
 			opacity: 0;
-			transition: opacity ($fade-transition-duration - 0.1) ease-in-out, transform 0s linear ($fade-transition-duration - 0.1); // Must be a bit faster than JS class change
+			transition: opacity (variables.$fade-transition-duration - 0.1) ease-in-out, transform 0s linear (variables.$fade-transition-duration - 0.1); // Must be a bit faster than JS class change
 
 			.info-view {
 				display: none; // Hack: ideally we would keep showing the item details of a search result
@@ -125,54 +132,55 @@
 
 		// Cancel search in item list view (going back to item details view)
 		// Used for either .search-init or .search-results set
-		@include state(".search-cancel.view-item-details-active .item-details") {
+		.search-cancel.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			opacity: 1;
-			transition: opacity $fade-transition;
+			transition: opacity variables.$fade-transition;
 		}
 	}
 
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		flex: 0 0 50%;
-		padding-top: $border-width;
+		padding-top: variables.$border-width;
 	}
 
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		padding-top: 0;
 		box-shadow: 0 -1px rgba(#000, 0.1);
 		position: relative; // Above odd rows
 	}
 
-	@include bp-up-normalized(lg) {
-		flex: 0 0 $item-details-width-lg;
+	@include breakpoints.bp-up-normalized(lg) {
+		flex: 0 0 variables.$item-details-width-lg;
 		min-width: 0; // Fix truncation
 	}
 
-	@include touch-and-bp-only(lg) {
-		flex: 0 0 $item-details-width-lg-touch;
-		@include hairline(left, "color-shade-4");
+	@include breakpoints.touch-and-bp-only(lg) {
+		flex: 0 0 variables.$item-details-width-lg-touch;
+		@include hairline.hairline(left, "color-shade-4");
 	}
 
-	@include mouse-and-bp-only(lg) {
+	@include breakpoints.mouse-and-bp-only(lg) {
 		border-left: var(--material-border-quarternary);
 	}
 
 	.panel {
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 
-		@include scopedVariant(".view-note-active", ".view-attachment-active") {
-			@include bp-down(sm) {
+		.view-note-active &,
+		.view-attachment-active & {
+			@include breakpoints.bp-down(sm) {
 				transform: translate3d(-25%, 0, 0);
 			}
 
-			@include touch-and-bp-up(md) {
+			@include breakpoints.touch-and-bp-up(md) {
 				transform: translate3d(-25%, 0, 0);
 			}
 		}
 	}
 
 	.panel-header {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			display: none;
 		}
 
@@ -180,13 +188,13 @@
 			position: absolute;
 			right: 0;
 			top: 0;
-			height: calc(100% - #{$border-width});
-			padding: 0 $default-padding-x-touch;
+			height: calc(100% - #{variables.$border-width});
+			padding: 0 variables.$default-padding-x-touch;
 
 			&:focus {
-				@include scopedVariant(".keyboard") {
-					outline: $outline-width solid $focus-color;
-					outline-offset: -$outline-width;
+				.keyboard & {
+					outline: variables.$outline-width solid common.$focus-color;
+					outline-offset: -(variables.$outline-width);
 				}
 			}
 		}
@@ -197,13 +205,13 @@
 	//}
 
 	// Two column layout for md screens
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 
 		// Optimize tabs layout
 		.tabs.compact {
 			li {
 				a {
-					padding: 0 $default-padding-x-touch;
+					padding: 0 variables.$default-padding-x-touch;
 				}
 			}
 		}
@@ -225,7 +233,7 @@
 		justify-content: center;
 		align-items: center;
 		height: 100%;
-		font-size: $info-view-font-size;
-		color: $info-view-color;
+		font-size: variables.$info-view-font-size;
+		color: common.$info-view-color;
 	}
 }

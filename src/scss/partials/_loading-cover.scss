@@ -1,3 +1,7 @@
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Loading cover
 // --------------------------------------------------
@@ -11,11 +15,11 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: $z-index-loading-cover;
+	z-index: variables.$z-index-loading-cover;
 	background-color: var(--color-background);
 
 	.icon-z {
-		@include scopedVariant("html:not(.specifity)") {
+		html:not(.specifity) & {
 			color: var(--accent-red-on-shade-1);
 		}
 	}
@@ -35,7 +39,7 @@
 			fill: none;
 
 			&.back {
-				stroke: $shade-2;
+				stroke: common.$shade-2;
 			}
 
 			&.front {

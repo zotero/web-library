@@ -1,32 +1,37 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 .identifier-picker-modal {
 	.modal-body {
 		overflow: auto;
 		max-height: calc(100vh - 96px);
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			max-height: calc(90vh - 96px - 32px); // 90% of the screen, accounting for the modal header and modal margin
 		}
 	}
 
 	.modal-footer-left {
 		.btn-link + .btn-link {
-			margin-left: $space-sm;
+			margin-left: variables.$space-sm;
 		}
 	}
 
 	.results {
-		margin: 0 - $modal-inner-padding;
+		margin: 0 - variables.$modal-inner-padding;
 		padding: 0;
 		list-style: none;
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			margin: 0;
 		}
 	}
 
 	.result {
-		border-top: 1px solid $result-border-color;
-		padding: $result-padding;
+		border-top: 1px solid common.$result-border-color;
+		padding: variables.$result-padding;
 		cursor: pointer;
 		display: flex;
 
@@ -35,16 +40,16 @@
 		}
 
 		&:hover {
-			background-color: $result-hover-bg;
+			background-color: common.$result-hover-bg;
 
 			.badge {
-				background-color: $result-hover-bg;
+				background-color: common.$result-hover-bg;
 				border-color: var(--color-identifier-badge-hover-border);
 			}
 		}
 
 		&:focus, &:focus-within {
-			@include scopedVariant(".keyboard") {
+			.keyboard & {
 				outline: 3px solid var(--accent-blue);
 				outline-offset: -3px;
 			}
@@ -60,13 +65,13 @@
 
 		.title {
 			margin: 0;
-			font-size: $font-size-h3;
+			font-size: variables.$font-size-h3;
 			line-height: 1.5rem;
 			font-weight: 600;
 		}
 
 		.title-container {
-			margin-right: $space-min + $space-min * 0.5;
+			margin-right: variables.$space-min + variables.$space-min * 0.5;
 		}
 
 		.description {
@@ -82,11 +87,11 @@
 
 		.badge {
 			display: inline-block;
-			font-size: $badge-font-size;
+			font-size: variables.$badge-font-size;
 			font-weight: 400;
 			line-height: 1;
-			padding: $badge-padding-y $badge-padding-x;
-			border-radius: $border-radius-sm;
+			padding: variables.$badge-padding-y variables.$badge-padding-x;
+			border-radius: variables.$border-radius-sm;
 
 			&:empty {
 				display: none;
@@ -94,8 +99,8 @@
 		}
 
 		.badge-light {
-			border: 1px solid $badge-light-border-color;
-			background-color: $badge-light-bg;
+			border: 1px solid common.$badge-light-border-color;
+			background-color: common.$badge-light-bg;
 		}
 
 	}
@@ -104,9 +109,9 @@
 		align-items: center;
 		display: flex;
 		justify-content: center;
-		margin-top: $space-lg;
+		margin-top: variables.$space-lg;
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			margin-top: 0;
 		}
 	}

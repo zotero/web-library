@@ -1,25 +1,30 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Touch header
 // --------------------------------------------------
 
 .touch-header {
 	flex: 0 0 auto;
-	line-height: $line-height-base; // Reset for correct outline size
-	background-color: $touch-header-bg;
-	color: $touch-header-color;
-	height: $touch-header-height;
+	line-height: variables.$line-height-base; // Reset for correct outline size
+	background-color: common.$touch-header-bg;
+	color: common.$touch-header-color;
+	height: variables.$touch-header-height;
 	position: relative;
-	padding: $border-width 0;
-	@include hairline(top, "color-shade-4");
-	@include hairline(bottom, "color-shade-4");
+	padding: variables.$border-width 0;
+	@include hairline.hairline(top, "color-shade-4");
+	@include hairline.hairline(bottom, "color-shade-4");
 
 	&.darker {
-		background-color: $touch-header-darker-bg;
+		background-color: common.$touch-header-darker-bg;
 	}
 
 	.select-button {
-		@include bp-up(sm) {
-			margin-left: $space-md;
+		@include breakpoints.bp-up(sm) {
+			margin-left: variables.$space-md;
 		}
 	}
 }

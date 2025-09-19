@@ -1,14 +1,20 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/mixins/utilities";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Tag selector
 // --------------------------------------------------
 
 .tag-selector {
-	@include mouse-and-bp-up(md) {
-		flex: 0 0 $tag-selector-height;
+	@include breakpoints.mouse-and-bp-up(md) {
+		flex: 0 0 variables.$tag-selector-height;
 		display: flex;
 		flex-direction: column;
 		border-top: var(--material-border-quarternary);
-		line-height: $line-height-base;
+		line-height: variables.$line-height-base;
 		min-height: 0;
 
 		.scroll-container {
@@ -16,7 +22,7 @@
 		}
 
 		&.collapsed {
-			flex: 0 0 $tag-selector-collapsed-height;
+			flex: 0 0 variables.$tag-selector-collapsed-height;
 		}
 
 		.tag-selector-toggle {
@@ -29,23 +35,23 @@
 			border-radius: 0;
 
 			@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-				@include variant("html.scrollbar-style-permanent") {
-					border-bottom: $border-width solid $tag-selector-border-color;
+				.scrollbar-style-permanent & {
+					border-bottom: variables.$border-width solid common.$tag-selector-border-color;
 				}
 			}
 
 			.icon {
 				vertical-align: top;
-				color: $tag-selector-grip-color;
+				color: common.$tag-selector-grip-color;
 			}
 
 			&:focus .icon {
-				color: $tag-selector-grip-color-active;
+				color: common.$tag-selector-grip-color-active;
 			}
 		}
 
 		.tag-selector-container {
-			@include state(".tag-selector.collapsed") {
+			@include selectors.state(".tag-selector.collapsed") {
 				display: none;
 			}
 		}
@@ -55,33 +61,33 @@
 			flex-wrap: wrap;
 			align-content: flex-start;
 			height: 100%;
-			font-size: $font-size-small;
-			padding: 1px ($default-padding-x - 7px) $space-min ($space-md - 7px);
+			font-size: variables.$font-size-small;
+			padding: 1px (variables.$default-padding-x - 7px) variables.$space-min (variables.$space-md - 7px);
 		}
 
 		.tag {
 			flex: 0 1 auto;
 			display: flex;
 			align-items: center;
-			padding: 0 $tag-padding-x;
-			margin: $space-min ($space-min * 0.25);
-			border-radius: $tag-border-radius;
+			padding: 0 variables.$tag-padding-x;
+			margin: variables.$space-min (variables.$space-min * 0.25);
+			border-radius: variables.$tag-border-radius;
 			cursor: pointer;
 			min-width: 0;
 
 			&:hover:not(.disabled) {
-				background-color: $tag-hover-bg;
+				background-color: common.$tag-hover-bg;
 			}
 
 			&:active {
-				background-color: $tag-selected-bg;
+				background-color: common.$tag-selected-bg;
 			}
 
 			&.selected {
-				background-color: $tag-selected-bg;
+				background-color: common.$tag-selected-bg;
 
 				&:active {
-					background-color: $tag-hover-bg;
+					background-color: common.$tag-hover-bg;
 				}
 			}
 
@@ -92,15 +98,15 @@
 				&:active {
 					background-color: currentColor;
 
-					@each $colorHex, $colorVar in $tagColorsLookup {
-						@include state('.tag[data-color="#{$colorHex}"]') {
+					@each $colorHex, $colorVar in variables.$tagColorsLookup {
+						@include selectors.state('.tag[data-color="#{$colorHex}"]') {
 							background-color: var($colorVar);
 						}
 					}
 				}
 
 				&.selected:active {
-					background-color: $tag-hover-bg;
+					background-color: common.$tag-hover-bg;
 				}
 			}
 
@@ -116,39 +122,39 @@
 
 			.tag-label {
 				color: var(--fill-primary);
-				@include text-truncate;
+				@include utilities.text-truncate;
 
-				@include state(".tag.selected", ".tag:active") {
+				@include selectors.state(".tag.selected", ".tag:active") {
 					color: var(--color-background);
 				}
 
-				@include state(".tag.selected:active") {
+				@include selectors.state(".tag.selected:active") {
 					color: var(--fill-primary);
 				}
 			}
 
 			&:not(.emoji)::before {
-				@include variant(".tag.colored") {
+				@include selectors.state(".tag.colored") {
 					content: "";
 					display: block;
 					width: 10px;
 					height: 10px;
 					background-color: currentColor;
-					margin-right: $space-min;
+					margin-right: variables.$space-min;
 					border-radius: 5px;
-					border: $border-width solid var(--tag-color-border);
+					border: variables.$border-width solid var(--tag-color-border);
 
-					@each $colorHex, $colorVar in $tagColorsLookup {
-						@include state('.tag[data-color="#{$colorHex}"]') {
+					@each $colorHex, $colorVar in variables.$tagColorsLookup {
+						@include selectors.state('.tag[data-color="#{$colorHex}"]') {
 							background-color: var($colorVar);
 						}
 					}
 
-					@include state(".colored.selected", ".colored:active") {
+					@include selectors.state(".colored.selected", ".colored:active") {
 						border-color: var(--color-button);
 					}
 
-					@include state(".colored.selected:active") {
+					@include selectors.state(".colored.selected:active") {
 						border-color: var(--tag-color-border);
 					}
 				}
@@ -160,16 +166,16 @@
 			display: flex;
 			align-items: center;
 			background: var(--material-sidepane);
-			padding: $space-min $default-padding-x $space-min;
+			padding: variables.$space-min variables.$default-padding-x variables.$space-min;
 			margin-top: auto;
 
-			@include state(".tag-selector.collapsed") {
+			@include selectors.state(".tag-selector.collapsed") {
 				display: none;
 			}
 
 			@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-				@include variant("html.scrollbar-style-permanent") {
-					border-top: $border-width solid $tag-selector-border-color;
+				.scrollbar-style-permanent & {
+					border-top: variables.$border-width solid common.$tag-selector-border-color;
 				}
 			}
 		}
@@ -177,13 +183,13 @@
 		.dropdown {
 			flex: 0 0 auto;
 			margin-left: 5px;
-			margin-right: -$space-min - 2px;
+			margin-right: -(variables.$space-min) - 2px;
 		}
 	}
 
 	.tag-manager-open-info {
 		align-items: center;
-		color: $info-view-color;
+		color: common.$info-view-color;
 		display: flex;
 		flex: 1 1 auto;
 		justify-content: center;

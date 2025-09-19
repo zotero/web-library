@@ -1,32 +1,36 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+
 //
 // Badge
 // --------------------------------------------------
 
 .badge {
 	display: inline-block;
-	font-weight: $badge-font-weight;
+	font-weight: variables.$badge-font-weight;
 	line-height: 1;
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: baseline;
-	border-radius: $badge-border-radius;
+	border-radius: variables.$badge-border-radius;
 
-	@include touch-or-bp-down(sm) {
-		font-size: $badge-font-size-mobile;
-		padding: $badge-padding-y-mobile $badge-padding-x-mobile;
+	@include breakpoints.touch-or-bp-down(sm) {
+		font-size: variables.$badge-font-size-mobile;
+		padding: variables.$badge-padding-y-mobile variables.$badge-padding-x-mobile;
 	}
 
-	@include mouse-and-bp-up(md) {
-		font-size: $badge-font-size;
-		padding: $badge-padding-y $badge-padding-x;
+	@include breakpoints.mouse-and-bp-up(md) {
+		font-size: variables.$badge-font-size;
+		padding: variables.$badge-padding-y variables.$badge-padding-x;
 	}
 }
 
 .badge-pill {
-	border-radius: $badge-pill-border-radius;
+	border-radius: variables.$badge-pill-border-radius;
 
-	@include scopedVariant("html:not(.specifity)") {
-		padding-right: $badge-pill-padding-x;
-		padding-left: $badge-pill-padding-x;
+	html:not(.specifity) & {
+		padding-right: variables.$badge-pill-padding-x;
+		padding-left: variables.$badge-pill-padding-x;
 	}
 }

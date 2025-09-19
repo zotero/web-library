@@ -1,3 +1,6 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/variables";
+
 //
 // Grid
 //
@@ -11,11 +14,11 @@
 	position: relative;
 }
 
-@for $i from 1 through $grid-columns {
+@for $i from 1 through variables.$grid-columns {
 	.col-#{$i} {
-		@include mouse-and-bp-up(md) {
-			flex: 0 0 calc( 100% / (#{math.div($grid-columns, $i)}) );
-			max-width: calc( 100% / (#{math.div($grid-columns, $i)}) );
+		@include breakpoints.mouse-and-bp-up(md) {
+			flex: 0 0 calc( 100% / (#{math.div(variables.$grid-columns, $i)}) );
+			max-width: calc( 100% / (#{math.div(variables.$grid-columns, $i)}) );
 		}
 	}
 }

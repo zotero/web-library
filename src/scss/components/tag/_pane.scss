@@ -1,3 +1,5 @@
+@use "../../abstracts/variables";
+
 //
 // Tag pane
 // --------------------------------------------------
@@ -7,10 +9,10 @@
 	.toolbar {
 		position: sticky;
 		top: 0;
-		height: $toolbar-height-touch;
+		height: variables.$toolbar-height-touch;
 
 		.counter {
-			margin-right: $space-xs;
+			margin-right: variables.$space-xs;
 		}
 	}
 

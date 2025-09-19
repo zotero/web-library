@@ -1,3 +1,6 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/variables";
+
 //
 // Searchbar
 // --------------------------------------------------
@@ -10,23 +13,23 @@
 	left: 0;
 	display: flex;
 	align-items: center;
-	padding: 0 $default-padding-x-touch;
+	padding: 0 variables.$default-padding-x-touch;
 	background: var(--color-toolbar);
-	z-index: $z-index-search-bar;
+	z-index: variables.$z-index-search-bar;
 
 	.input-group.search {
-		margin: 0 $default-padding-x-touch 0 (-$default-padding-x-touch + $space-min);
+		margin: 0 variables.$default-padding-x-touch 0 (-(variables.$default-padding-x-touch) + variables.$space-min);
 		position: relative;
 
 		.form-control {
-			@include bp-down-normalized(xs) {
+			@include breakpoints.bp-down-normalized(xs) {
 				padding-left: 38px;
 			}
 		}
 	}
 
 	.item-actions-touch {
-		margin-left: $default-padding-x-touch;
+		margin-left: variables.$default-padding-x-touch;
 	}
 }
 

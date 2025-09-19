@@ -1,7 +1,3 @@
-//
-// Utilities
-// --------------------------------------------------
-
-@import "utilities/visibility";
-@import "utilities/flex";
-@import "utilities/text";
+@use "utilities/visibility";
+@use "utilities/flex";
+@use "utilities/text";

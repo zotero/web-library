@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 //
 // Transitions
 // --------------------------------------------------
@@ -10,7 +12,7 @@
 
 		&-active {
 			opacity: 1;
-			transition: opacity $fade-transition;
+			transition: opacity variables.$fade-transition;
 		}
 	}
 
@@ -19,7 +21,7 @@
 
 		&-active {
 			opacity: 0;
-			transition: opacity $fade-transition;
+			transition: opacity variables.$fade-transition;
 		}
 	}
 }
@@ -32,7 +34,7 @@
 
 		&-active {
 			opacity: 1;
-			transition: opacity $nav-fade-transition;
+			transition: opacity variables.$nav-fade-transition;
 		}
 	}
 
@@ -41,7 +43,7 @@
 
 		&-active {
 			opacity: 0;
-			transition: opacity $nav-fade-transition;
+			transition: opacity variables.$nav-fade-transition;
 		}
 	}
 }
@@ -54,7 +56,7 @@
 
 		&-active {
 			transform: translate3d(0, 0, 0);
-			transition: transform $nav-transition;
+			transition: transform variables.$nav-transition;
 		}
 	}
 
@@ -63,7 +65,7 @@
 
 		&-active {
 			transform: translate3d(0, 100%, 0);
-			transition: transform $nav-transition;
+			transition: transform variables.$nav-transition;
 		}
 	}
 }
@@ -76,7 +78,7 @@
 
 		&-active {
 			transform: translate3d(0, 0, 0);
-			transition: transform $nav-transition;
+			transition: transform variables.$nav-transition;
 		}
 	}
 
@@ -85,7 +87,7 @@
 
 		&-active {
 			transform: translate3d(0, -100%, 0);
-			transition: transform $nav-transition;
+			transition: transform variables.$nav-transition;
 		}
 	}
 }

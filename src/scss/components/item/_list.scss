@@ -1,3 +1,11 @@
+@use "sass:math";
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/mixins/utilities";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Item list
 // --------------------------------------------------
@@ -10,8 +18,8 @@
 	.icon-spin {
 		color: var(--color-accent);
 		position: absolute;
-		left: calc(50% - #{$icon-spin-size-lg * 0.5});
-		top: calc(50% - #{$icon-spin-size-lg * 0.5} + #{$line-height-large * 0.5});
+		left: calc(50% - #{variables.$icon-spin-size-lg * 0.5});
+		top: calc(50% - #{variables.$icon-spin-size-lg * 0.5} + #{variables.$line-height-large * 0.5});
 	}
 }
 
@@ -26,62 +34,62 @@
 	.item {
 		// Items in the list are fixed at 61px height
 		display: flex;
-		padding: $item-list-padding-top $item-list-padding-x $item-list-padding-bottom;
+		padding: variables.$item-list-padding-top variables.$item-list-padding-x variables.$item-list-padding-bottom;
 		position: relative;
-		@include hairline(top, "color-shade-4", $start: (2 * $item-list-padding-x + 28px));
+		@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$item-list-padding-x + 28px));
 
-		@include bp-down(xs) {
-			@include hairline(top, "color-shade-4", $start: $item-list-padding-x);
+		@include breakpoints.bp-down(xs) {
+			@include hairline.hairline(top, "color-shade-4", $start: variables.$item-list-padding-x);
 		}
 
-		@include state(".items-list:not(.select-mode)") {
-			padding-right: $item-list-padding-right;
+		@include selectors.state(".items-list:not(.select-mode)") {
+			padding-right: variables.$item-list-padding-right;
 
 			&.active {
 				color: var(--primary-on-accent);
 				background-color: var(--accent-blue);
-				@include hairline-disabled(top);
+				@include hairline.hairline-disabled(top);
 
 				& + .item {
-					@include hairline-disabled(top);
+					@include hairline.hairline-disabled(top);
 				}
 			}
 		}
 
-		@include state(".items-list.select-mode") {
-			padding-left: 2 * $item-list-padding-x + $space-lg;
-			padding-right: $item-list-padding-x;
-			@include hairline(top, "color-shade-4", $start: (3 * $item-list-padding-x + $space-lg + 28px));
+		@include selectors.state(".items-list.select-mode") {
+			padding-left: 2 * variables.$item-list-padding-x + variables.$space-lg;
+			padding-right: variables.$item-list-padding-x;
+			@include hairline.hairline(top, "color-shade-4", $start: (3 * variables.$item-list-padding-x + variables.$space-lg + 28px));
 
-			@include bp-down(xs) {
-				@include hairline(top, "color-shade-4", $start: (2 * $item-list-padding-x + $space-lg));
+			@include breakpoints.bp-down(xs) {
+				@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$item-list-padding-x + variables.$space-lg));
 			}
 		}
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
-				outline-offset: -$outline-width;
-				@include hairline-disabled(top);
+			.keyboard & {
+				outline-offset: -(variables.$outline-width);
+				@include hairline.hairline-disabled(top);
 
 				&.active {
-					@include state(".items-list:not(.select-mode)") {
+					@include selectors.state(".items-list:not(.select-mode)") {
 						outline-color: var(--primary-on-accent);
 					}
 				}
 
 				& + .item {
-					@include state(".items-list:not(.select-mode)") {
-						@include hairline-disabled(top);
+					@include selectors.state(".items-list:not(.select-mode)") {
+						@include hairline.hairline-disabled(top);
 					}
 				}
 			}
 		}
 
 		&:first-child {
-			@include hairline-disabled(top);
+			@include hairline.hairline-disabled(top);
 
-			@include state(".items-list.select-mode") {
-				@include hairline-disabled(top);
+			@include selectors.state(".items-list.select-mode") {
+				@include hairline.hairline-disabled(top);
 			}
 		}
 
@@ -95,7 +103,7 @@
 				z-index: -1;
 				right: 0;
 				bottom: 0;
-				left: 2 * $item-list-padding-x + 28px;
+				left: 2 * variables.$item-list-padding-x + 28px;
 				height: 1px;
 				box-shadow: 0 1px var(--color-shade-2);
 
@@ -104,15 +112,15 @@
 					transform: translateY(-0.5px);
 				}
 
-				@include bp-down(xs) {
-					left: $item-list-padding-x;
+				@include breakpoints.bp-down(xs) {
+					left: variables.$item-list-padding-x;
 				}
 
-				@include state(".items-list.select-mode") {
-					left: 3 * $item-list-padding-x + $space-lg + 28px;
+				@include selectors.state(".items-list.select-mode") {
+					left: 3 * variables.$item-list-padding-x + variables.$space-lg + 28px;
 
-					@include bp-down(xs) {
-						left: 2 * $item-list-padding-x + 28px;
+					@include breakpoints.bp-down(xs) {
+						left: 2 * variables.$item-list-padding-x + 28px;
 					}
 				}
 			}
@@ -120,26 +128,26 @@
 
 		input[type="checkbox"] {
 			position: absolute;
-			left: $item-list-padding-x;
-			top: ($item-list-row-height - $border-width - $space-lg) * 0.5 + $border-width;
+			left: variables.$item-list-padding-x;
+			top: (variables.$item-list-row-height - variables.$border-width - variables.$space-lg) * 0.5 + variables.$border-width;
 			pointer-events: none; // These are purely decorative
 		}
 
 		.item-type {
 			flex: 0 0 auto;
 			align-self: center;
-			margin-right: $item-list-padding-x;
+			margin-right: variables.$item-list-padding-x;
 
-			@include state(".item.placeholder") {
+			@include selectors.state(".item.placeholder") {
 				color: var(--color-shade-2);
 			}
 		}
 
 		.metadata {
-			@include text-truncate;
+			@include utilities.text-truncate;
 			position: relative;
 
-			@include state(".item.placeholder") {
+			@include selectors.state(".item.placeholder") {
 				height: 12px;
 				border-radius: 6px;
 				background-color: var(--color-shade-2);
@@ -147,13 +155,13 @@
 		}
 
 		.title {
-			height: floor($font-size-mobile * $line-height-base); // Keep second line at the bottom
+			height: math.floor(variables.$font-size-mobile * variables.$line-height-base); // Keep second line at the bottom
 
-			@include state(".item.placeholder") {
+			@include selectors.state(".item.placeholder") {
 				width: 80%;
 				margin-top: 6px;
 
-				@include variant(".item.odd") {
+				@include selectors.state(".item.odd") {
 					width: 90%;
 				}
 			}
@@ -161,23 +169,23 @@
 
 		.creator-year {
 			display: flex;
-			color: $item-creator-date-color;
+			color: common.$item-creator-date-color;
 
-			@include state(".item.placeholder") {
+			@include selectors.state(".item.placeholder") {
 				width: 60%;
 				margin-top: 12px;
 				background-color: var(--color-shade-2-50);
 
-				@include variant(".item.odd") {
+				@include selectors.state(".item.odd") {
 					width: 70%;
 				}
 			}
 
 			.creator,
 			.year {
-				@include text-truncate;
+				@include utilities.text-truncate;
 
-				@include state(".items-list:not(.select-mode) .item.active") {
+				@include selectors.state(".items-list:not(.select-mode) .item.active") {
 					color: var(--primary-on-accent);
 					opacity: 0.67;
 				}
@@ -214,9 +222,9 @@
 				margin-left: auto;
 				display: flex;
 				align-items: center;
-				padding-left: $space-xs;
+				padding-left: variables.$space-xs;
 
-				@include state(".icons:empty", ".item.placeholder") {
+				@include selectors.state(".icons:empty", ".item.placeholder") {
 					display: none;
 				}
 
@@ -226,18 +234,18 @@
 
 				.tag-circles {
 					display: inline-flex;
-					margin-left: $space-min;
+					margin-left: variables.$space-min;
 				}
 
 				.icon {
-					color: $item-creator-date-color;
+					color: common.$item-creator-date-color;
 				}
 
 				.icon-attachment,
 				.icon-note-sm {
-					margin-right: $space-min;
+					margin-right: variables.$space-min;
 
-					@include state(".items-list:not(.select-mode) .item.active") {
+					@include selectors.state(".items-list:not(.select-mode) .item.active") {
 						color: var(--primary-on-accent);
 					}
 				}
@@ -247,15 +255,15 @@
 		.icon-chevron-13 {
 			position: absolute;
 			right: 12px;
-			top: ($item-list-row-height - $border-width - $space-md) * 0.5 + $border-width;
+			top: (variables.$item-list-row-height - variables.$border-width - variables.$space-md) * 0.5 + variables.$border-width;
 			transform: rotate(90deg);
-			color: $item-list-chevron-color;
+			color: common.$item-list-chevron-color;
 
-			@include state(".item.active") {
+			@include selectors.state(".item.active") {
 				color: var(--primary-on-accent);
 			}
 
-			@include state(".items-list.select-mode") {
+			@include selectors.state(".items-list.select-mode") {
 				display: none;
 			}
 		}
@@ -267,6 +275,6 @@
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-	font-size: $info-view-font-size;
-	color: $info-view-color;
+	font-size: variables.$info-view-font-size;
+	color: common.$info-view-color;
 }

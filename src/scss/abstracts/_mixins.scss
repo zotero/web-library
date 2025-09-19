@@ -1,12 +1,8 @@
-//
-// Mixins
-// --------------------------------------------------
-
-@import "mixins/breakpoints";
-@import "mixins/dropdown";
-@import "mixins/same";
-@import "mixins/utilities";
-@import "mixins/selectors";
-@import "mixins/hairline";
-@import "mixins/button";
-@import "mixins/theme";
+@use "mixins/breakpoints";
+@use "mixins/dropdown";
+@use "mixins/same";
+@use "mixins/utilities";
+@use "mixins/selectors";
+@use "mixins/hairline";
+@use "mixins/button";
+@use "mixins/theme";

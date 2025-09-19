@@ -1,22 +1,27 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .citation-options {
-	@include touch-or-bp-down(sm) {
-		margin-bottom: $form-group-margin-touch;
+	@include breakpoints.touch-or-bp-down(sm) {
+		margin-bottom: variables.$form-group-margin-touch;
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		position: sticky;
 		top: 0;
 		width: 100%;
-		background-color: $modal-content-bg;
-		padding-top: $form-group-margin;
-		padding-bottom: $form-group-margin;
-		border-bottom: $border-width solid $modal-border-color;
-		margin-bottom: $modal-inner-padding;
+		background-color: common.$modal-content-bg;
+		padding-top: variables.$form-group-margin;
+		padding-bottom: variables.$form-group-margin;
+		border-bottom: variables.$border-width solid common.$modal-border-color;
+		margin-bottom: variables.$modal-inner-padding;
 	}
 
-	@include state(".modal-body:focus .citation-options") {
-		@include mouse-keyboard-and-bp-up(md) {
-			padding-top: $form-group-margin - $outline-width;
+	@include selectors.state(".modal-body:focus .citation-options") {
+		@include breakpoints.mouse-keyboard-and-bp-up(md) {
+			padding-top: variables.$form-group-margin - variables.$outline-width;
 		}
 	}
 
@@ -25,21 +30,21 @@
 		display: flex;
 
 		.form-control {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				display: flex;
 				align-items: center;
-				line-height: $line-height-base;
+				line-height: variables.$line-height-base;
 				height: auto;
 				white-space: normal;
 				overflow: visible;
-				padding-right: $input-btn-padding-x-touch;
+				padding-right: variables.$input-btn-padding-x-touch;
 				margin-right: 0;
 			}
 		}
 	}
 
 	.style-selector-container, .locale-selector-container {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			.col-form-label {
 				flex: 0 0 33%;
 			}
@@ -53,22 +58,22 @@
 
 	.style-selector {
 		.select-option:last-child {
-			color: $link-color;
+			color: common.$link-color;
 			-webkit-font-smoothing: subpixel-antialiased;
 			-moz-osx-font-smoothing: grayscale;
 		}
 	}
 
 	.locale-selector-container {
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
-			padding-left: $space-xs;
+			padding-left: variables.$space-xs;
 		}
 	}
 
 	.style-selector, .locale-selector {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			height: 100%;
 			padding: 0;
 			margin: 0;

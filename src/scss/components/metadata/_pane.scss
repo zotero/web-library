@@ -1,18 +1,19 @@
-//
-// Metadata (info) pane
-// --------------------------------------------------
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
 
 .info {
-	@include scopedVariant(".read-only") {
+	.read-only & {
 		user-select: text;
 		cursor: auto;
 	}
 
-	@include touch-or-bp-down(md) {
-		padding-bottom: $space-lg - 14px;
+	@include breakpoints.touch-or-bp-down(md) {
+		padding-bottom: variables.$space-lg - 14px;
 	}
 
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		position: relative;
 		min-height: 100%;
 
@@ -20,9 +21,9 @@
 			&::after {
 				content: "";
 				position: absolute;
-				width: $border-width;
+				width: variables.$border-width;
 				height: 100%;
-				left: calc(50% - #{$border-width});
+				left: calc(50% - #{variables.$border-width});
 				top: 0;
 				background: #ddd;
 			}
@@ -31,22 +32,22 @@
 
 	.item-title,
 	.tab-pane-heading {
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			display: none;
 		}
 	}
 
 	.item-title {
-		border-bottom: $separator-width solid $separator-color;
+		border-bottom: variables.$separator-width solid common.$separator-color;
 		padding-bottom: 11px; // metadata-list spacing
-		margin: ($space-lg - 5px) $default-padding-x-touch 8px; // 8px: metadata-list spacing
+		margin: (variables.$space-lg - 5px) variables.$default-padding-x-touch 8px; // 8px: metadata-list spacing
 
 		&.placeholder {
-			color: $placeholder-color;
+			color: common.$placeholder-color;
 		}
 	}
 
 	.tab-pane-heading {
-		padding: 0 $default-padding-x;
+		padding: 0 variables.$default-padding-x;
 	}
 }

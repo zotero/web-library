@@ -1,3 +1,6 @@
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Scrollbar
 // --------------------------------------------------
@@ -5,28 +8,28 @@
 .scrollbar-style-permanent {
 	::-webkit {
 		&-scrollbar {
-			width: $scrollbar-size;
-			height: $scrollbar-size;
+			width: variables.$scrollbar-size;
+			height: variables.$scrollbar-size;
 
 			&-track {
-				background-color: $scrollbar-bg;
+				background-color: common.$scrollbar-bg;
 			}
 
 			&-thumb {
-				background-color: $scrollbar-color;
+				background-color: common.$scrollbar-color;
 				border-radius: 6px;
-				border: $space-min solid $scrollbar-bg;
+				border: variables.$space-min solid common.$scrollbar-bg;
 				background-clip: content-box;
-				min-width: $space-lg + 2 * $space-min;
-				min-height: $space-lg + 2 * $space-min;
+				min-width: variables.$space-lg + 2 * variables.$space-min;
+				min-height: variables.$space-lg + 2 * variables.$space-min;
 
 				&:active {
-					border-width: $space-min * 0.5;
+					border-width: variables.$space-min * 0.5;
 				}
 			}
 
 			&-corner {
-				background: $scrollbar-bg;
+				background: common.$scrollbar-bg;
 			}
 		}
 	}

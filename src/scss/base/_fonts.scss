@@ -1,3 +1,5 @@
+@use "../abstracts/functions/asset-url";
+
 //
 // Fonts
 //
@@ -50,11 +52,11 @@
   font-family: 'AvenirNextLTPro';
   font-weight: 400;
   font-style: normal;
-  src: font-url('36AC02_5_0.eot');
+  src: asset-url.font-url('36AC02_5_0.eot');
   src:
-    font-url('36AC02_5_0.eot?#iefix') format('embedded-opentype'),
-    font-url('36AC02_5_0.woff2') format('woff2'),
-    font-url('36AC02_5_0.woff') format('woff'),
-    font-url('36AC02_5_0.ttf') format('truetype'),
-    font-url('36AC02_5_0.svg#wf') format('svg');
+    asset-url.font-url('36AC02_5_0.eot?#iefix') format('embedded-opentype'),
+    asset-url.font-url('36AC02_5_0.woff2') format('woff2'),
+    asset-url.font-url('36AC02_5_0.woff') format('woff'),
+    asset-url.font-url('36AC02_5_0.ttf') format('truetype'),
+    asset-url.font-url('36AC02_5_0.svg#wf') format('svg');
 }

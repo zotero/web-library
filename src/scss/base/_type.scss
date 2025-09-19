@@ -1,3 +1,6 @@
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Type
 // --------------------------------------------------
@@ -14,16 +17,16 @@ body {
 // Headings
 
 h1, h2, h3, h4, h5, h6 {
-	font-family: $headings-font-family;
-	color: $headings-color;
+	font-family: variables.$headings-font-family;
+	color: common.$headings-color;
 	margin: 0;
-	font-weight: $headings-font-weight;
+	font-weight: variables.$headings-font-weight;
 	font-size: inherit;
 	line-height: inherit;
 }
 
 .h1, .h2 {
-	line-height: $headings-line-height;
+	line-height: variables.$headings-line-height;
 	margin-bottom: 1rem;
 }
 
@@ -31,14 +34,14 @@ h1, h2, h3, h4, h5, h6 {
 	font: {
 		family: BlinkMacSystemFont, "HelveticaNeue-Light", "Helvetica Neue Light",
 			"Helvetica Neue", Helvetica, Arial, sans-serif;
-		size: $font-size-h1;
+		size: variables.$font-size-h1;
 		weight: 300;
 	}
 }
 
 .h2 {
-	font-size: $font-size-h2;
-	margin-top: ($space-md - 5px);
+	font-size: variables.$font-size-h2;
+	margin-top: (variables.$space-md - 5px);
 }
 
 
@@ -52,12 +55,12 @@ p {
 // Links
 
 a {
-	color: $link-color;
+	color: common.$link-color;
 	text-decoration: none;
 
 	&:hover {
-		color: $link-hover-color;
-		text-decoration: $link-hover-decoration;
+		color: common.$link-hover-color;
+		text-decoration: variables.$link-hover-decoration;
 	}
 }
 
@@ -74,6 +77,6 @@ ul, ol {
 // Text selection
 
 ::selection {
-	color: $text-selection-color;
-	background-color: $text-selection-bg;
+	color: common.$text-selection-color;
+	background-color: common.$text-selection-bg;
 }

@@ -1,24 +1,28 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+
 //
 // Title
 // --------------------------------------------------
 
 .metadata-list {
 	.title {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			display: none;
 
-			@include state(".panel.editing .metadata-list") {
+			@include selectors.state(".panel.editing .metadata-list") {
 				display: flex;
-				margin-bottom: $form-group-margin-touch;
-				border-bottom-left-radius: $input-btn-border-radius;
-				border-bottom-right-radius: $input-btn-border-radius;
+				margin-bottom: variables.$form-group-margin-touch;
+				border-bottom-left-radius: variables.$input-btn-border-radius;
+				border-bottom-right-radius: variables.$input-btn-border-radius;
 			}
 		}
 
-		@include bp-down-normalized(xs) {
-			@include state(".panel.editing .metadata-list") {
-				min-height: $line-height-large-touch + 2 * $border-width;
-				padding-bottom: $border-width;
+		@include breakpoints.bp-down-normalized(xs) {
+			@include selectors.state(".panel.editing .metadata-list") {
+				min-height: variables.$line-height-large-touch + 2 * variables.$border-width;
+				padding-bottom: variables.$border-width;
 
 				&::after {
 					content: "";

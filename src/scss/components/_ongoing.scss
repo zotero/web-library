@@ -1,3 +1,6 @@
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .ongoing-pane {
 	flex: 0 0 auto;
 	overflow: hidden;
@@ -27,7 +30,7 @@
 
 			@keyframes flash-foreground {
 				0% {
-					color: $ongoing-color;
+					color: common.$ongoing-color;
 				}
 
 				50% {
@@ -36,7 +39,7 @@
 				}
 
 				100% {
-					color: $ongoing-color;
+					color: common.$ongoing-color;
 				}
 			}
 		}
@@ -47,7 +50,7 @@
 	}
 
 	.process {
-		border-top: $border-width solid $ongoing-border-color;
+		border-top: variables.$border-width solid common.$ongoing-border-color;
 	}
 }
 
@@ -56,10 +59,10 @@
 .ongoing-modal {
 	.process {
 		align-items: center;
-		color: $ongoing-color;
+		color: common.$ongoing-color;
 		display: flex;
 		font-weight: bold;
-		padding: $space-xs $default-padding-x;
+		padding: variables.$space-xs variables.$default-padding-x;
 	}
 
 	.ongoing-text {

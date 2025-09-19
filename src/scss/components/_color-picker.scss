@@ -1,3 +1,9 @@
+@use "../abstracts/functions/asset-url";
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Color picker
 // --------------------------------------------------
@@ -8,35 +14,35 @@
 	}
 
 	.color-picker-grid {
-		grid-gap: $space-min;
+		grid-gap: variables.$space-min;
 
-		@include touch-or-bp-down(sm) {
-			grid-template-columns: repeat(8, $space-thumb);
-			grid-template-rows: repeat(5, $space-thumb);
-			padding: $space-min;
+		@include breakpoints.touch-or-bp-down(sm) {
+			grid-template-columns: repeat(8, variables.$space-thumb);
+			grid-template-rows: repeat(5, variables.$space-thumb);
+			padding: variables.$space-min;
 		}
 
-		@include mouse-and-bp-up(md) {
-			grid-template-columns: repeat(8, $space-md);
-			grid-template-rows: repeat(5, $space-md);
-			padding: $space-min;
+		@include breakpoints.mouse-and-bp-up(md) {
+			grid-template-columns: repeat(8, variables.$space-md);
+			grid-template-rows: repeat(5, variables.$space-md);
+			padding: variables.$space-min;
 		}
 
-		@include scopedVariant(".tag-color-manager") {
-			@include touch-or-bp-down(sm) {
-				grid-template-columns: repeat(3, $space-thumb);
-				grid-template-rows: repeat(3, $space-thumb);
-				padding: $space-min;
+		.tag-color-manager & {
+			@include breakpoints.touch-or-bp-down(sm) {
+				grid-template-columns: repeat(3, variables.$space-thumb);
+				grid-template-rows: repeat(3, variables.$space-thumb);
+				padding: variables.$space-min;
 			}
 
-			@include mouse-and-bp-up(md) {
-				grid-template-columns: repeat(3, $space-md);
-				grid-template-rows: repeat(3, $space-md);
-				padding: $space-min;
+			@include breakpoints.mouse-and-bp-up(md) {
+				grid-template-columns: repeat(3, variables.$space-md);
+				grid-template-rows: repeat(3, variables.$space-md);
+				padding: variables.$space-min;
 			}
 		}
 
-		@include state(".color-picker.show") {
+		@include selectors.state(".color-picker.show") {
 			display: grid;
 		}
 	}
@@ -44,22 +50,22 @@
 	.color-picker-option {
 		border: none;
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			width: 100%;
 			height: 100%;
 
 			&:focus {
-				outline: $outline-width solid $focus-color;
+				outline: variables.$outline-width solid common.$focus-color;
 			}
 
 			&[data-color="#ffffff"],
 			&.clear {
 				padding: 0;
-				border: $border-width solid #ddd;
+				border: variables.$border-width solid #ddd;
 			}
 
 			&.clear {
-				background:	image-url("icons/x.svg") center center no-repeat;
+				background:	asset-url.image-url("icons/x.svg") center center no-repeat;
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Attachment list
 // --------------------------------------------------
@@ -5,7 +10,7 @@
 .attachment-list {
 	.attachment {
 		> .icon-spin {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				margin-left: 13px;
 				margin-right: 4px;
 			}
@@ -13,29 +18,29 @@
 
 		> .icon:first-child,
 		.truncate {
-			@include variant(".attachment.no-link") {
-				opacity: $no-link-opacity;
+			@include selectors.state(".attachment.no-link") {
+				opacity: common.$no-link-opacity;
 			}
 		}
 
 		> .btn-icon {
-			@include touch-or-bp-down(sm) {
-				padding: $space-min;
+			@include breakpoints.touch-or-bp-down(sm) {
+				padding: variables.$space-min;
 			}
 		}
 
 
 		> .btn-icon .icon {
-			@include touch-or-bp-down(sm) {
-				@include variant(".attachment:not(.selected)") {
+			@include breakpoints.touch-or-bp-down(sm) {
+				@include selectors.state(".attachment:not(.selected)") {
 					color: var(--color-accent);
 				}
 			}
 		}
 
 		> .btn-icon:last-child {
-			@include touch-or-bp-down(sm) {
-				margin-right: -$input-btn-padding-x-touch - $border-width;
+			@include breakpoints.touch-or-bp-down(sm) {
+				margin-right: -(variables.$input-btn-padding-x-touch) - variables.$border-width;
 			}
 		}
 	}

@@ -1,3 +1,9 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/mixins/utilities";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Navbar
 // --------------------------------------------------
@@ -6,21 +12,21 @@
 	flex: 0 0 auto;
 	display: flex;
 	align-items: center;
-	font-size: $navbar-font-size;
+	font-size: variables.$navbar-font-size;
 	width: 100%;
-	height: $navbar-height-xs;
+	height: variables.$navbar-height-xs;
 	position: relative;
 	left: 0;
-	padding: 0 $space-md;
-	background-color: $navbar-bg;
-	font-family: "AvenirNextLTPro", $font-family-sans-serif;
+	padding: 0 variables.$space-md;
+	background-color: common.$navbar-bg;
+	font-family: "AvenirNextLTPro", variables.$font-family-sans-serif;
 	-webkit-font-smoothing: auto;
 	-moz-osx-font-smoothing: auto;
 
-	@include bp-up(sm) {
+	@include breakpoints.bp-up(sm) {
 		flex: 0 0 auto;
-		height: $navbar-height-sm;
-		background: $navbar-bg;
+		height: variables.$navbar-height-sm;
+		background: common.$navbar-bg;
 	}
 
 	.nav-link {
@@ -32,7 +38,7 @@
 	.search,
 	.navbar-toggle {
 		position: relative;
-		z-index: $z-index-navbar;
+		z-index: variables.$z-index-navbar;
 	}
 
 	.navbar-brand {
@@ -42,16 +48,16 @@
 
 		a {
 			display: block;
-			width: $navbar-brand-width-xs;
-			height: $navbar-brand-height-xs;
+			width: variables.$navbar-brand-width-xs;
+			height: variables.$navbar-brand-height-xs;
 
-			@include bp-up(sm) {
-				width: $navbar-brand-width-sm;
-				height: $navbar-brand-height-sm;
+			@include breakpoints.bp-up(sm) {
+				width: variables.$navbar-brand-width-sm;
+				height: variables.$navbar-brand-height-sm;
 			}
 
 			&:focus {
-				@include scopedVariant(".keyboard") {
+				.keyboard & {
 					outline-offset: 8px;
 				}
 			}
@@ -60,34 +66,34 @@
 
 	.main-nav {
 		display: none;
-		padding-left: $space-sm;
+		padding-left: variables.$space-sm;
 
-		@media (min-width: $navbar-breakpoint) {
+		@media (min-width: variables.$navbar-breakpoint) {
 			display: flex;
 		}
 
 		.nav-link {
-			color: $navbar-link-color;
+			color: common.$navbar-link-color;
 
-			@include scopedVariant("html:not(.specifity)") {
-				padding: $navbar-padding-y $navbar-padding-x;
+			html:not(.specifity) & {
+				padding: variables.$navbar-padding-y variables.$navbar-padding-x;
 			}
 
 			&:focus {
-				@include scopedVariant(".keyboard") {
-					outline-offset: -$outline-width;
+				.keyboard & {
+					outline-offset: -(variables.$outline-width);
 				}
 			}
 		}
 
 		.active .nav-link {
-			color: $navbar-link-active-color;
+			color: common.$navbar-link-active-color;
 		}
 
 		.dropdown-toggle {
-			@include scopedVariant("html:not(.specifity)") {
-				@include state(".show .dropdown-toggle") {
-					color: $navbar-dropdown-toggle-active-color;
+			html:not(.specifity) & {
+				@include selectors.state(".show .dropdown-toggle") {
+					color: common.$navbar-dropdown-toggle-active-color;
 
 					.icon {
 						color: inherit;
@@ -97,7 +103,7 @@
 		}
 
 		.truncate {
-			@include text-truncate;
+			@include utilities.text-truncate;
 			display: inline-block;
 			vertical-align: bottom;
 			max-width: 9vw;
@@ -107,12 +113,12 @@
 	.input-group.search {
 		flex: 1 1 auto;
 		align-self: center;
-		max-width: $search-width;
+		max-width: variables.$search-width;
 		font-size: 14px;
 		line-height: 20px; // Special height, like Upgrade button on zotero.org
-		margin-left: $navbar-padding-x;
+		margin-left: variables.$navbar-padding-x;
 
-		@include bp-down(xs) {
+		@include breakpoints.bp-down(xs) {
 			display: none;
 		}
 
@@ -131,31 +137,31 @@
 	}
 
 	.navbar-toggle {
-		@include bp-down-normalized(xs) {
+		@include breakpoints.bp-down-normalized(xs) {
 			padding: 11px 8px;
-			margin-right: -$space-xs;
+			margin-right: -(variables.$space-xs);
 		}
 
-		@include bp-up-normalized(sm) {
+		@include breakpoints.bp-up-normalized(sm) {
 			padding: 6px 7px;
-			margin: 0 (-$space-xs) 0 (2 * $navbar-padding-x - $space-xs);
+			margin: 0 (-(variables.$space-xs)) 0 (2 * variables.$navbar-padding-x - variables.$space-xs);
 		}
 
 		.icon-bar {
 			display: block;
-			width: $icon-bar-width;
-			height: $icon-bar-height;
+			width: variables.$icon-bar-width;
+			height: variables.$icon-bar-height;
 			background: var(--color-shade-8);
 
 			& + .icon-bar {
-				margin-top: $icon-bar-spacing;
+				margin-top: variables.$icon-bar-spacing;
 			}
 		}
 	}
 
-	@include scopedVariant("html:not(.specifity)") {
+	html:not(.specifity) & {
 		.dropdown-menu {
-			padding: $space-xs 0;
+			padding: variables.$space-xs 0;
 			min-width: 160px;
 			margin: 2px 0 0;
 			box-shadow: none;
@@ -163,22 +169,22 @@
 			border: 1px solid rgba(0, 0, 0, 0.15);
 			border-radius: 4px;
 
-			@include variant(".search .dropdown-menu") {
-				padding: $space-min 0;
+			@include selectors.state(".search .dropdown-menu") {
+				padding: variables.$space-min 0;
 			}
 
 			.dropdown-item {
-				padding: $space-min $space-md;
+				padding: variables.$space-min variables.$space-md;
 				display: flex;
 				align-items: center;
 
-				@include variant(".search .dropdown-menu") {
-					padding: (4.5px + $input-border-width) $space-sm;
+				@include selectors.state(".search .dropdown-menu") {
+					padding: (4.5px + variables.$input-border-width) variables.$space-sm;
 				}
 			}
 
 			.dropdown-divider {
-				margin: $space-xs 0;
+				margin: variables.$space-xs 0;
 			}
 
 			.badge {
@@ -190,18 +196,18 @@
 
 	.upgrade-storage {
 		font-size: 14px;
-		margin-left: 2 * $navbar-padding-x;
+		margin-left: 2 * variables.$navbar-padding-x;
 		text-decoration: none;
 
-		@include scopedVariant("html:not(.specifity)") {
-			padding: 4.5px $space-sm;
-			border-radius: $input-btn-border-radius;
+		html:not(.specifity) & {
+			padding: 4.5px variables.$space-sm;
+			border-radius: variables.$input-btn-border-radius;
 		}
 	}
 
 	.settings-toggle {
-		@include bp-up(sm) {
-			margin-left: $space-min;
+		@include breakpoints.bp-up(sm) {
+			margin-left: variables.$space-min;
 		}
 
 		.icon {
@@ -216,16 +222,16 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: $z-index-navbar;
+	z-index: variables.$z-index-navbar;
 	background-color: rgba(0, 0, 0, 0);
 	visibility: hidden;
 		transition:
-			background-color $mobile-navbar-nav-transition,
-			visibility 0s linear $nav-transition-duration;
+			background-color variables.$mobile-navbar-nav-transition,
+			visibility 0s linear variables.$nav-transition-duration;
 
-	@include scopedVariant(".navbar-nav-opened") {
+	.navbar-nav-opened & {
 		background-color: rgba(0, 0, 0, 0.1);
 		visibility: visible;
-		transition: background-color $mobile-navbar-nav-transition;
+		transition: background-color variables.$mobile-navbar-nav-transition;
 	}
 }

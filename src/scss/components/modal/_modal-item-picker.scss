@@ -1,6 +1,9 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/variables";
+
 // .modal-item-picker used for Add Related and Change Parent Item modals
 .modal-item-picker {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		max-height: calc(100vh - 96px);
 		width: 900px;
 		max-width: 90vw;
@@ -9,7 +12,7 @@
 	.modal-body {
 		overflow: hidden;
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			display: flex;
 			flex-direction: row;
 			padding: 0;
@@ -18,11 +21,11 @@
 
 	.modal-header {
 		.right {
-			@include mouse-and-bp-up(md) {
+			@include breakpoints.mouse-and-bp-up(md) {
 				display: flex;
 
 				.search {
-					margin-right: $space-md;
+					margin-right: variables.$space-md;
 				}
 			}
 		}
@@ -37,7 +40,7 @@
 		background: transparent;
 		border: none;
 		position: absolute;
-		right: $space-md;
+		right: variables.$space-md;
 
 		&.hidden {
 			display: none;
@@ -45,10 +48,10 @@
 	}
 
 	.collection-tree {
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			padding: 8px;
 			overflow: auto;
-			line-height: $line-height-large;
+			line-height: variables.$line-height-large;
 			z-index: 1; // Fix #531
 		}
 	}

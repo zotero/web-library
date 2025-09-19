@@ -1,6 +1,8 @@
 @use 'sass:color';
 @use "sass:map";
 
+@use "../abstracts/mixins/theme";
+
 $-colors: (
 	accent-azure: #66adff,
 	accent-blue: #4072e5,
@@ -93,16 +95,16 @@ $-colors: (
 
 :root {
 	// fallback for browsers that do not support color-schemes (e.g., Safari 11)
-	@include derive-colors($-colors);
+	@include theme.derive-colors($-colors);
 }
 
 :root[data-color-scheme=light] {
 	color-scheme: light;
-	@include derive-colors($-colors);
+	@include theme.derive-colors($-colors);
 }
 
 @media (prefers-color-scheme: light) {
 	:root:not([data-color-scheme]) {
-		@include derive-colors($-colors);
+		@include theme.derive-colors($-colors);
 	}
 }

@@ -1,3 +1,7 @@
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+
 //
 // Tag list
 // --------------------------------------------------
@@ -5,15 +9,15 @@
 .tag-selector-list {
 	.tag {
 		&:focus {
-			@include scopedVariant(".keyboard") {
-				outline-offset: -$outline-width;
-				@include hairline-disabled(top);
+			.keyboard & {
+				outline-offset: -(variables.$outline-width);
+				@include hairline.hairline-disabled(top);
 			}
 		}
 	}
 
 	.icon-circle {
 		margin-left: 2px;
-		margin-right: $space-xs + 2px;
+		margin-right: variables.$space-xs + 2px;
 	}
 }

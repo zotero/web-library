@@ -1,3 +1,7 @@
+@use "../abstracts/functions/asset-url";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Drag layer
 // --------------------------------------------------
@@ -8,68 +12,68 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: $z-index-drag-layer;
+	z-index: variables.$z-index-drag-layer;
 	pointer-events: none;
 	touch-action: none;
 	overflow: hidden;
 }
 
 .creator-drag-preview {
-	$handle-width: 2 * $default-padding-x-touch + $space-lg;
+	$handle-width: 2 * variables.$default-padding-x-touch + variables.$space-lg;
 
 	display: flex;
 	align-items: center;
-	min-height: $line-height-large-touch;
-	padding-left: 2 * $default-padding-x-touch + $space-lg;
-	padding-right: 2 * $default-padding-x-touch + $space-lg + $input-border-width;
-	box-shadow: 0 2px 20px $creator-drag-preview-shadow;
+	min-height: variables.$line-height-large-touch;
+	padding-left: 2 * variables.$default-padding-x-touch + variables.$space-lg;
+	padding-right: 2 * variables.$default-padding-x-touch + variables.$space-lg + variables.$input-border-width;
+	box-shadow: 0 2px 20px common.$creator-drag-preview-shadow;
 	background:
 		linear-gradient(
 			to left,
 			transparent,
 			transparent $handle-width,
-			$input-border-color $handle-width,
-			$input-border-color ($handle-width + $input-border-width),
-			transparent ($handle-width + $input-border-width)
+			common.$input-border-color $handle-width,
+			common.$input-border-color ($handle-width + variables.$input-border-width),
+			transparent ($handle-width + variables.$input-border-width)
 		),
-		image-url("icons/minus-circle-touch.svg")
-			no-repeat $default-padding-x-touch center,
-		image-url("icons/chevron-13.svg")
+		asset-url.image-url("icons/minus-circle-touch.svg")
+			no-repeat variables.$default-padding-x-touch center,
+		asset-url.image-url("icons/chevron-13.svg")
 			no-repeat right ($handle-width + 4px) center,
-		image-url("icons/grip.svg")
-			no-repeat right $default-padding-x-touch center $input-bg;
+		asset-url.image-url("icons/grip.svg")
+			no-repeat right variables.$default-padding-x-touch center common.$input-bg;
 
 	.creator-type {
 		flex: 0 0 calc(
-			#{$metadata-list-offset} - #{$metadata-list-gutter-mobile * 0.5}
+			#{variables.$metadata-list-offset} - #{variables.$metadata-list-gutter-mobile * 0.5}
 		);
-		color: $key-color;
-		margin-right: $metadata-list-gutter-mobile * 0.5;
+		color: common.$key-color;
+		margin-right: variables.$metadata-list-gutter-mobile * 0.5;
 	}
 
 	.name {
-		padding-left: $metadata-list-gutter-mobile * 0.5;
-		padding-right: $creators-value-padding-right-touch;
+		padding-left: variables.$metadata-list-gutter-mobile * 0.5;
+		padding-right: variables.$creators-value-padding-right-touch;
 	}
 }
 
 .citation-touch-drag-preview {
-	min-height: $line-height-large-touch;
+	min-height: variables.$line-height-large-touch;
 }
 
 .items-drag-indicator {
 	position: absolute;
 	display: flex;
 	align-items: center;
-	height: $item-table-row-height;
-	color: $items-drag-indicator-color;
-	background-color: $items-drag-indicator-bg;
+	height: variables.$item-table-row-height;
+	color: common.$items-drag-indicator-color;
+	background-color: common.$items-drag-indicator-bg;
 	opacity: 0.8;
-	padding: 0 $space-sm;
-	border-radius: $item-table-row-height * 0.5;
+	padding: 0 variables.$space-sm;
+	border-radius: variables.$item-table-row-height * 0.5;
 	transform: translate(-50%, -50%);
 
 	.icon {
-		margin-right: $space-xs;
+		margin-right: variables.$space-xs;
 	}
 }

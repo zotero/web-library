@@ -1,3 +1,7 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../themes/common";
+
 //
 // Rich editor
 // --------------------------------------------------
@@ -7,14 +11,14 @@
 	display: flex;
 	flex-direction: column;
 
-	@include touch-or-bp-down(sm) {
-		@include state(".editing .rich-editor") {
-			background-color: $editor-bg;
+	@include breakpoints.touch-or-bp-down(sm) {
+		@include selectors.state(".editing .rich-editor") {
+			background-color: common.$editor-bg;
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		background-color: $editor-bg;
+	@include breakpoints.mouse-and-bp-up(md) {
+		background-color: common.$editor-bg;
 	}
 
 	.editor-container {

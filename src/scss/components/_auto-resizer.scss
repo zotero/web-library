@@ -1,3 +1,9 @@
+@use "sass:math";
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/mixins/utilities";
+@use "../abstracts/variables";
+
 //
 // Auto resizer
 // --------------------------------------------------
@@ -15,18 +21,18 @@
 	}
 
 	.content {
-		@include text-truncate;
+		@include utilities.text-truncate;
 		color: transparent;
 		line-height: normal; // Todo: only when containing editables
-		min-width: $space-sm;
+		min-width: variables.$space-sm;
 
-		@include scopedVariant(".textarea") {
+		.textarea & {
 			white-space: pre-wrap;
 			word-wrap: break-word;
 
-			@include scopedVariant(".editing") {
-				@include touch-or-bp-down(sm) {
-					padding: 0 $input-btn-padding-x-touch;
+			.editing & {
+				@include breakpoints.touch-or-bp-down(sm) {
+					padding: 0 variables.$input-btn-padding-x-touch;
 				}
 			}
 
@@ -35,17 +41,17 @@
 			}
 		}
 
-		@include variant(".auto-resizer.vertical") {
-			line-height: $line-height-base;
+		@include selectors.state(".auto-resizer.vertical") {
+			line-height: variables.$line-height-base;
 
-			@include touch-or-bp-down(sm) {
-				min-height: round($auto-resizer-vertical-rows * $font-size-mobile * $line-height-base-mobile);
+			@include breakpoints.touch-or-bp-down(sm) {
+				min-height: math.round(variables.$auto-resizer-vertical-rows * variables.$font-size-mobile * variables.$line-height-base-mobile);
 			}
 
-			@include mouse-and-bp-up(md) {
-				min-height: round($auto-resizer-vertical-rows * $font-size-base * $line-height-base);
+			@include breakpoints.mouse-and-bp-up(md) {
+				min-height: math.round(variables.$auto-resizer-vertical-rows * variables.$font-size-base * variables.$line-height-base);
 
-				@include state(".busy .auto-resizer") {
+				@include selectors.state(".busy .auto-resizer") {
 					min-height: auto;
 				}
 			}
@@ -59,8 +65,8 @@
 		bottom: 0;
 		left: 0;
 
-		@include variant(".auto-resizer.vertical") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".auto-resizer.vertical") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				min-height: 0;
 				height: 100%; // Address #196
 			}

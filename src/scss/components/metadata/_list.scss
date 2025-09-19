@@ -1,33 +1,41 @@
+@use "sass:math";
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/mixins/utilities";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Metadata list
 // --------------------------------------------------
 
 .metadata-list {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		margin-top: 15px - 8px;
 		margin-bottom: 15px - 7px;
 	}
 
-	@include scopedVariant(".panel.editing") {
-		@include touch-or-bp-down(sm) {
-			margin-top: $form-group-margin-touch;
-			margin-bottom: $form-group-margin-touch;
+	.panel.editing & {
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin-top: variables.$form-group-margin-touch;
+			margin-bottom: variables.$form-group-margin-touch;
 		}
 
-		@include touch-and-bp-up(sm) {
-			margin-left: $metadata-list-margin-x-touch;
-			margin-right: $metadata-list-margin-x-touch;
-		}
-	}
-
-	@include variant(".modal .metadata-list.editing") {
-		@include scopedVariant("html:not(.specifity)") {
-			margin: ($form-group-margin-touch - $modal-inner-padding)
-				(-$modal-inner-padding);
+		@include breakpoints.touch-and-bp-up(sm) {
+			margin-left: variables.$metadata-list-margin-x-touch;
+			margin-right: variables.$metadata-list-margin-x-touch;
 		}
 	}
 
-	@include scopedVariant(".attachment-details", ".standalone-attachment") {
+	@include selectors.state(".modal .metadata-list.editing") {
+		html:not(.specifity) & {
+			margin: (variables.$form-group-margin-touch - variables.$modal-inner-padding)
+				(-(variables.$modal-inner-padding));
+		}
+	}
+
+	.attachment-details &,
+	.standalone-attachment & {
 		user-select: text;
 		cursor: auto;
 	}
@@ -35,42 +43,42 @@
 	.metadata {
 		align-items: flex-start;
 
-		@include bp-down(xs) {
-			margin-bottom: $font-size-mobile * 0.5;
+		@include breakpoints.bp-down(xs) {
+			margin-bottom: variables.$font-size-mobile * 0.5;
 		}
 
-		@include touch-or-bp-down(xs) {
-			padding-left: $default-padding-x-touch;
-			padding-right: $default-padding-x-touch;
+		@include breakpoints.touch-or-bp-down(xs) {
+			padding-left: variables.$default-padding-x-touch;
+			padding-right: variables.$default-padding-x-touch;
 		}
 
-		@include bp-up(sm) {
+		@include breakpoints.bp-up(sm) {
 			display: flex;
 		}
 
-		@include mouse-and-bp-up(sm) {
-			padding-left: $default-padding-x-touch;
-			padding-right: $default-padding-x-touch;
+		@include breakpoints.mouse-and-bp-up(sm) {
+			padding-left: variables.$default-padding-x-touch;
+			padding-right: variables.$default-padding-x-touch;
 		}
 
-		@include mouse-and-bp-up(md) {
-			padding-left: $default-padding-x;
-			padding-right: $default-padding-x;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding-left: variables.$default-padding-x;
+			padding-right: variables.$default-padding-x;
 		}
 
-		@include bp-only(md) {
-			padding-right: ($metadata-list-gutter + 1px);
+		@include breakpoints.bp-only(md) {
+			padding-right: (variables.$metadata-list-gutter + 1px);
 		}
 
 		&.empty,
 		&.virtual {
-			@include touch-or-bp-down(md) {
-				@include state(".panel:not(.editing) .metadata-list") {
+			@include breakpoints.touch-or-bp-down(md) {
+				@include selectors.state(".panel:not(.editing) .metadata-list") {
 					display: none;
 				}
 			}
 
-			@include scopedVariant(".read-only") {
+			.read-only & {
 				display: none;
 			}
 		}
@@ -78,10 +86,10 @@
 		&.dnd-source {
 			opacity: 0;
 
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				& + .metadata {
 					padding-top: 0;
-					margin-top: $input-border-width;
+					margin-top: variables.$input-border-width;
 
 					&::before {
 						content: none;
@@ -91,25 +99,25 @@
 		}
 
 		// Edit mode
-		@include state(".editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				display: flex;
 				align-items: flex-start;
 				position: relative;
-				background-color: $input-bg;
-				padding-top: $input-border-width;
+				background-color: common.$input-bg;
+				padding-top: variables.$input-border-width;
 				margin-bottom: 0;
-				padding-left: $input-btn-padding-x-touch;
-				padding-right: $input-btn-padding-x-touch;
+				padding-left: variables.$input-btn-padding-x-touch;
+				padding-right: variables.$input-btn-padding-x-touch;
 
 				&::before,
 				&::after {
 					position: absolute;
-					left: $default-padding-x-touch;
+					left: variables.$default-padding-x-touch;
 					right: 0;
 					top: 0;
-					height: $input-border-width;
-					background: $input-border-color;
+					height: variables.$input-border-width;
+					background: common.$input-border-color;
 					z-index: 1;
 				}
 
@@ -119,25 +127,25 @@
 			}
 
 			&:first-child {
-				@include variant("#{$scope} main .metadata-list") { // Exclude modals
-					@include bp-up(sm) {
+				@include selectors.state("main .metadata-list") { // Exclude modals
+					@include breakpoints.bp-up(sm) {
 						padding-top: 0;
-						border-top-left-radius: $input-border-radius;
-						border-top-right-radius: $input-border-radius;
+						border-top-left-radius: variables.$input-border-radius;
+						border-top-right-radius: variables.$input-border-radius;
 					}
 				}
 
 				&::before {
-					@include bp-down-normalized(xs) {
+					@include breakpoints.bp-down-normalized(xs) {
 						left: 0;
 					}
 
-					@include scopedVariant(".modal:not(specifity)") {
+					html:not(specifity) .modal & {
 						left: 0;
 					}
 
-					@include variant("#{$scope} main .metadata-list") {
-						@include bp-up(sm) {
+					@include selectors.state("main .metadata-list") {
+						@include breakpoints.bp-up(sm) {
 							content: none;
 						}
 					}
@@ -145,32 +153,32 @@
 			}
 
 			&:last-child {
-				padding-bottom: $input-border-width;
-				@include variant("#{$scope} main .metadata-list") {
-					@include bp-up(sm) {
+				padding-bottom: variables.$input-border-width;
+				@include selectors.state("main .metadata-list") {
+					@include breakpoints.bp-up(sm) {
 						padding-bottom: 0;
-						border-bottom-left-radius: $input-border-radius;
-						border-bottom-right-radius: $input-border-radius;
+						border-bottom-left-radius: variables.$input-border-radius;
+						border-bottom-right-radius: variables.$input-border-radius;
 					}
 				}
 
 				&::after {
-					@include bp-down-normalized(xs) {
+					@include breakpoints.bp-down-normalized(xs) {
 						content: "";
 						left: 0;
 						top: auto;
 						bottom: 0;
 					}
 
-					@include scopedVariant(".modal:not(.specifity)") {
+					html:not(.specifity) .modal & {
 						content: "";
 						left: 0;
 						top: auto;
 						bottom: 0;
 					}
 
-					@include variant("#{$scope} main .metadata-list") {
-						@include bp-up-normalized(sm) {
+					@include selectors.state("main .metadata-list") {
+						@include breakpoints.bp-up-normalized(sm) {
 							content: none;
 						}
 					}
@@ -179,7 +187,7 @@
 
 			// Editable focus state
 			&:focus-within:not(.creators-entry) {
-				@include scopedVariant(".keyboard") {
+				.keyboard & {
 					z-index: 2;
 
 					&::before,
@@ -188,13 +196,13 @@
 						position: absolute;
 						left: 0;
 						right: 0;
-						height: $outline-width;
-						background-color: $focus-color;
+						height: variables.$outline-width;
+						background-color: common.$focus-color;
 					}
 
 					&::before {
 						top: auto;
-						bottom: calc(100% - #{$input-border-width});
+						bottom: calc(100% - #{variables.$input-border-width});
 					}
 
 					&::after {
@@ -206,35 +214,35 @@
 	}
 
 	.touch-separated {
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
-				margin-bottom: $form-group-margin-touch;
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
+				margin-bottom: variables.$form-group-margin-touch;
 			}
 
-			@include bp-down(xs) {
-				padding-bottom: $border-width;
+			@include breakpoints.bp-down(xs) {
+				padding-bottom: variables.$border-width;
 			}
 
-			@include scopedVariant(".modal") {
-				padding-bottom: $border-width;
+			.modal & {
+				padding-bottom: variables.$border-width;
 			}
 
-			@include variant("#{$scope} main .metadata-list") {
-				@include touch-or-bp-up(sm) {
-					border-bottom-left-radius: $input-btn-border-radius;
-					border-bottom-right-radius: $input-btn-border-radius;
+			@include selectors.state("main .metadata-list") {
+				@include breakpoints.touch-or-bp-up(sm) {
+					border-bottom-left-radius: variables.$input-btn-border-radius;
+					border-bottom-right-radius: variables.$input-btn-border-radius;
 				}
 			}
 
 			&::after {
-				@include bp-down-normalized(xs) {
+				@include breakpoints.bp-down-normalized(xs) {
 					left: 0;
 					top: auto;
 					bottom: 0;
 					content: "";
 				}
 
-				@include scopedVariant(".modal:not(.specifity)") {
+				html:not(.specifity) .modal & {
 					left: 0;
 					top: auto;
 					bottom: 0;
@@ -243,29 +251,29 @@
 			}
 
 			& + .metadata {
-				@include bp-down(xs) {
-					padding-bottom: $border-width;
+				@include breakpoints.bp-down(xs) {
+					padding-bottom: variables.$border-width;
 				}
 
-				@include variant("#{$scope} main .metadata-list") {
-					@include touch-and-bp-up(sm) {
+				@include selectors.state("main .metadata-list") {
+					@include breakpoints.touch-and-bp-up(sm) {
 						padding-top: 0;
-						border-top-left-radius: $input-btn-border-radius;
-						border-top-right-radius: $input-btn-border-radius;
+						border-top-left-radius: variables.$input-btn-border-radius;
+						border-top-right-radius: variables.$input-btn-border-radius;
 					}
 				}
 
 				&::before {
-					@include bp-down-normalized(xs) {
+					@include breakpoints.bp-down-normalized(xs) {
 						left: 0;
 					}
 
-					@include scopedVariant(".modal") {
+					.modal & {
 						left: 0;
 					}
 
-					@include variant("#{$scope} main .metadata-list") {
-						@include touch-and-bp-up(sm) {
+					@include selectors.state("main .metadata-list") {
+						@include breakpoints.touch-and-bp-up(sm) {
 							content: none;
 						}
 					}
@@ -273,7 +281,7 @@
 
 				&:focus-within {
 					&::before {
-						@include touch-keyboard-or-bp-down(sm) {
+						@include breakpoints.touch-keyboard-or-bp-down(sm) {
 							content: "";
 						}
 					}
@@ -284,18 +292,18 @@
 
 	.has-btn,
 	.has-btn-icon {
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				padding-left: 0; // Keep vertical paddings
 				padding-right: 0;
 
 				.btn {
-					padding: 0 $default-padding-x-touch;
+					padding: 0 variables.$default-padding-x-touch;
 					border: 0;
 					width: 100%;
 					text-align: left;
-					color: $link-color;
-					line-height: $line-height-large-touch;
+					color: common.$link-color;
+					line-height: variables.$line-height-large-touch;
 
 					&:focus {
 						outline: none;
@@ -309,8 +317,8 @@
 			}
 
 			&::before {
-				@include touch-keyboard-or-bp-down(sm) {
-					@include state(".touch-separated:focus-within") {
+				@include breakpoints.touch-keyboard-or-bp-down(sm) {
+					@include selectors.state(".touch-separated:focus-within") {
 						left: 0;
 					}
 				}
@@ -319,10 +327,10 @@
 	}
 
 	.has-btn {
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			&::before {
-				@include touch-or-bp-down(sm) {
-					left: $default-padding-x-touch;
+				@include breakpoints.touch-or-bp-down(sm) {
+					left: variables.$default-padding-x-touch;
 				}
 			}
 
@@ -333,19 +341,19 @@
 	}
 
 	.has-btn-icon {
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
 			&::before {
-				@include touch-or-bp-down(sm) {
-					left: 2 * $default-padding-x-touch + $space-lg;
+				@include breakpoints.touch-or-bp-down(sm) {
+					left: 2 * variables.$default-padding-x-touch + variables.$space-lg;
 				}
 			}
 
 			.btn-icon {
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					.icon {
 						vertical-align: top;
-						margin-top: ($line-height-large-touch - $space-lg) * 0.5;
-						margin-right: $default-padding-x-touch;
+						margin-top: (variables.$line-height-large-touch - variables.$space-lg) * 0.5;
+						margin-right: variables.$default-padding-x-touch;
 					}
 				}
 			}
@@ -359,46 +367,46 @@
 
 	.key,
 	.value {
-		min-height: $metadata-list-line-height;
+		min-height: variables.$metadata-list-line-height;
 		overflow: visible;
 		min-width: 0; // Fix truncation
 		display: flex;
 
-		@include bp-only(sm) {
-			min-height: $metadata-list-line-height-sm;
+		@include breakpoints.bp-only(sm) {
+			min-height: variables.$metadata-list-line-height-sm;
 		}
 
-		@include touch-and-bp-up(md) {
-			min-height: $metadata-list-line-height-sm;
+		@include breakpoints.touch-and-bp-up(md) {
+			min-height: variables.$metadata-list-line-height-sm;
 		}
 
 		// Edit mode
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
-				min-height: $line-height-large-touch;
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
+				min-height: variables.$line-height-large-touch;
 			}
 		}
 	}
 
 	.key {
-		color: $key-color;
-		margin-top: $space-xs;
-		flex: 0 0 $metadata-list-offset;
+		color: common.$key-color;
+		margin-top: variables.$space-xs;
+		flex: 0 0 variables.$metadata-list-offset;
 		margin-top: 0;
 		align-items: center;
 
-		@include bp-up(sm) {
+		@include breakpoints.bp-up(sm) {
 			justify-content: flex-end;
-			padding-right: $metadata-list-gutter-mobile * 0.5;
+			padding-right: variables.$metadata-list-gutter-mobile * 0.5;
 		}
 
-		@include mouse-and-bp-up(md) {
-			padding-right: $metadata-list-gutter * 0.5;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding-right: variables.$metadata-list-gutter * 0.5;
 		}
 
 		// Edit mode
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				justify-content: flex-start;
 				padding-right: 0;
 			}
@@ -406,7 +414,7 @@
 
 
 		a[href]:hover {
-			color: $link-color;
+			color: common.$link-color;
 		}
 	}
 
@@ -416,7 +424,7 @@
 	}
 
 	label {
-		@include text-truncate;
+		@include utilities.text-truncate;
 		line-height: normal; // Flex alignment is more stable
 		user-select: none; // Reset
 
@@ -426,8 +434,8 @@
 			white-space: inherit;
 		}
 
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				flex: 1 1 auto;
 			}
 		}
@@ -437,7 +445,7 @@
 				color: inherit;
 			}
 
-			@include mouse-and-bp-up(md) {
+			@include breakpoints.mouse-and-bp-up(md) {
 				vertical-align: middle;
 			}
 		}
@@ -464,61 +472,63 @@
 	.value {
 		flex: 1 1 0;
 
-		@include bp-up(sm) {
+		@include breakpoints.bp-up(sm) {
 			display: flex;
 			align-items: center;
-			padding-left: $metadata-list-gutter-mobile * 0.5;
+			padding-left: variables.$metadata-list-gutter-mobile * 0.5;
 		}
 
-		@include mouse-and-bp-up(md) {
-			padding-left: $metadata-list-gutter * 0.5;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding-left: variables.$metadata-list-gutter * 0.5;
 
 			.has-value {
 				.select-value {
 					// reduce internal select input padding to match the padding of the other inputs
-					padding-left: $editable-padding;
-					padding-right: $editable-padding;
+					padding-left: variables.$editable-padding;
+					padding-right: variables.$editable-padding;
 				}
 			}
 		}
 
 		// Edit mode
-		@include state(".panel.editing .metadata-list", ".metadata-list.editing") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".panel.editing .metadata-list", ".metadata-list.editing") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				padding-left: 0;
 			}
 		}
 
-		@include scopedVariant(".attachment-details", ".touch-details-drilldown", ".standalone-attachment") {
+		.attachment-details &,
+		.touch-details-drilldown &,
+		.standalone-attachment & {
 			a > .icon {
-				margin-left: $space-min;
+				margin-left: variables.$space-min;
 				color: unset;
 			}
 		}
 
 		// Standalone attachments
 		a:hover {
-			color: $link-color;
+			color: common.$link-color;
 		}
 	}
 
 	.date-hint {
-		color: $shade-5;
-		margin-left: $space-xs;
+		color: common.$shade-5;
+		margin-left: variables.$space-xs;
 		width: 40px;
 		letter-spacing: 4px;
 		text-align: right;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			margin-top: 9px;
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		.editable {
 			&.textarea {
-				margin-top: round(($metadata-list-line-height - $font-size-base * $line-height-base) * 0.5); // Align vertically with label
-				margin-bottom: round(($metadata-list-line-height - $font-size-base * $line-height-base) * 0.5); // …
+				margin-top: math.round((variables.$metadata-list-line-height - variables.$font-size-base * variables.$line-height-base) * 0.5); // Align vertically with label
+				margin-bottom: math.round((variables.$metadata-list-line-height - variables.$font-size-base * variables.$line-height-base) * 0.5); // …
 			}
 		}
 	}

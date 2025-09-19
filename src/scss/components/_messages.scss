@@ -1,3 +1,7 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Messages
 // --------------------------------------------------
@@ -5,15 +9,15 @@
 .messages {
 	position: fixed;
 	top: 0;
-	right: -$permanent-scrollbar-width;
-	z-index: $z-index-errors;
+	right: -(variables.$permanent-scrollbar-width);
+	z-index: variables.$z-index-errors;
 	overflow: auto;
-	width: calc(100% + #{$permanent-scrollbar-width});
+	width: calc(100% + #{variables.$permanent-scrollbar-width});
 	max-height: 100%;
-	padding-bottom: $space-min; // Prevent clipping of box-shadow
+	padding-bottom: variables.$space-min; // Prevent clipping of box-shadow
 
-	@include bp-up(sm) {
-		width: $error-width + 2 * $error-spacing + $permanent-scrollbar-width;
+	@include breakpoints.bp-up(sm) {
+		width: variables.$error-width + 2 * variables.$error-spacing + variables.$permanent-scrollbar-width;
 	}
 
 	&:empty {
@@ -21,31 +25,31 @@
 	}
 
 	.message {
-		width: calc(100% - #{2 * $error-spacing + $permanent-scrollbar-width});
-		background: $message-bg;
-		padding: $space-xs $default-padding-x;
-		padding-right: $space-md + 2 * $default-padding-x;
+		width: calc(100% - #{2 * variables.$error-spacing + variables.$permanent-scrollbar-width});
+		background: common.$message-bg;
+		padding: variables.$space-xs variables.$default-padding-x;
+		padding-right: variables.$space-md + 2 * variables.$default-padding-x;
 		border-left: 3px solid;
-		box-shadow: $menu-box-shadow;
-		border-radius: $menu-border-radius;
-		margin: $error-spacing;
+		box-shadow: common.$menu-box-shadow;
+		border-radius: variables.$menu-border-radius;
+		margin: variables.$error-spacing;
 		user-select: text;
 		position: relative;
 
 		&.error {
-			border-left-color: $error;
+			border-left-color: common.$error;
 		}
 
 		&.info {
-			border-left-color: $info;
+			border-left-color: common.$info;
 		}
 
 		&.warning {
-			border-left-color: $warning;
+			border-left-color: common.$warning;
 		}
 
-		@include bp-up(sm) {
-			width: $error-width;
+		@include breakpoints.bp-up(sm) {
+			width: variables.$error-width;
 		}
 	}
 
@@ -59,8 +63,8 @@
 		right: 0;
 		bottom: 0;
 
-		@include mouse-and-bp-up(md) {
-			padding: 0 ($space-sm - $input-border-width);
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding: 0 (variables.$space-sm - variables.$input-border-width);
 		}
 	}
 }

@@ -1,21 +1,22 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .library {
 	display: flex;
 	min-height: 0;
 
-	//@include touch-or-bp-down(sm) {
-	//	@include hairline(top, "color-shade-4");
-	//}
-
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		flex: 1 1 auto;
 		flex-direction: column;
 	}
 
-	@include bp-up(sm) {
+	@include breakpoints.bp-up(sm) {
 		width: 100%;
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		border-top: var(--material-panedivider);
 	}
 }
@@ -24,27 +25,27 @@
 	min-width: 0; // Fix truncation of long values in metadata list
 	position: relative;
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		position: absolute;
 		left: 0;
-		top: $touch-header-height;
+		top: variables.$touch-header-height;
 		right: 0;
 		bottom: 0;
-		background-color: $items-bg;
+		background-color: common.$items-bg;
 		transform: translate3d(100%, 0, 0);
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 
-		@include scopedVariant(".view-item-list-active") {
+		.view-item-list-active & {
 			transform: translate3d(0, 0, 0);
 		}
 
-		@include scopedVariant(".view-item-details-active") {
+		.view-item-details-active & {
 			transform: translate3d(-25%, 0, 0);
 		}
 
-		@include scopedVariant(".touch-tag-selector-active") {
-			bottom: $touch-footer-height;
-			z-index: $z-index-touch-side-footer;
+		.touch-tag-selector-active & {
+			bottom: variables.$touch-footer-height;
+			z-index: variables.$z-index-touch-side-footer;
 		}
 
 		.search-backdrop {
@@ -54,14 +55,14 @@
 			bottom: 0;
 			left: 0;
 			background-color: var(--color-backdrop);
-			z-index: $z-index-search-backdrop
+			z-index: variables.$z-index-search-backdrop
 		}
 
 		// Start searching in library view
 
 		// Init
 
-		@include scopedVariant(".search-active.view-library-active") {
+		.search-active.view-library-active & {
 			transform: translate3d(0, 0, 0);
 			background-color: transparent;
 			transition: none;
@@ -69,27 +70,27 @@
 
 		// Search results
 
-		@include scopedVariant(".search-results.search-init.view-item-list-active") {
-			background-color: $items-bg;
+		.search-results.search-init.view-item-list-active & {
+			background-color: common.$items-bg;
 			transform: translate3d(0, 0, 0);
-			transition: background-color $fade-transition;
+			transition: background-color variables.$fade-transition;
 		}
 
 		// Cancel search
 
-		@include scopedVariant(".search-cancel.search-active.view-library-active") {
+		.search-cancel.search-active.view-library-active & {
 			transform: translate3d(0, 0, 0);
 			background-color: transparent;
-			transition: opacity $fade-transition; // Reset
+			transition: opacity variables.$fade-transition; // Reset
 		}
 
-		@include scopedVariant(".search-cancel.search-results.view-library-active") {
+		.search-cancel.search-results.view-library-active & {
 			transform: translate3d(0, 0, 0);
-			background-color: $items-bg;
-			transition: opacity $fade-transition; // Reset
+			background-color: common.$items-bg;
+			transition: opacity variables.$fade-transition; // Reset
 		}
 
-		@include scopedVariant(".view-library-active") {
+		.view-library-active & {
 			&.fade-exit-done {
 				transform: translate3d(100%, 0, 0);
 				transition: none;
@@ -103,38 +104,38 @@
 
 		// Init
 
-		@include scopedVariant(".search-active.view-item-details-active") {
+		.search-active.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
 
 		// Search results
 
-		@include scopedVariant(".search-results.search-init.view-item-list-active") {
-			background-color: $items-bg;
+		.search-results.search-init.view-item-list-active & {
+			background-color: common.$items-bg;
 			transform: translate3d(0, 0, 0);
-			transition: background-color $fade-transition;
+			transition: background-color variables.$fade-transition;
 		}
 
 		.search-backdrop {
-			@include scopedVariant(".search-results.view-item-list-active") {
+			.search-results.view-item-list-active & {
 				transform: translate3d(0, 0, 0);
 			}
 		}
 
 		// Cancel search
 
-		@include scopedVariant(".search-cancel.view-item-details-active") {
+		.search-cancel.view-item-details-active & {
 			transform: translate3d(0, 0, 0);
 			transition: none;
 		}
 	}
 
-	@include bp-up(sm) {
+	@include breakpoints.bp-up(sm) {
 		flex: 1 1 auto;
 	}
 
-	@include tablet {
+	@include breakpoints.tablet {
 		height: 100%;
   	overflow: hidden;
 
@@ -142,7 +143,7 @@
 
   	// Init
 
-  	@include state(".search-init .items") {
+  	@include selectors.state(".search-init .items") {
 	  	.touch-nav {
 		  	.center-axis,
 		  	.inner {
@@ -151,7 +152,7 @@
 
 				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view on tablets
 					.center-axis {
-						animation: fade-in-search-results $fade-transition-duration ease-in-out forwards;
+						animation: fade-in-search-results variables.$fade-transition-duration ease-in-out forwards;
 						@keyframes fade-in-search-results {
 							0% {
 								opacity: 0;
@@ -167,77 +168,77 @@
   	}
 	}
 
-	@include bp-only(md) {
+	@include breakpoints.bp-only(md) {
 		flex-direction: column;
 	}
 
-	@include bp-up(md) {
+	@include breakpoints.bp-up(md) {
 		display: flex;
 	}
 
 	.touch-footer {
 		display: none;
 
-		@include state(".items.select-mode") {
+		@include selectors.state(".items.select-mode") {
 			display: block;
 		}
 
 		// Make 6 buttons fit into the touch-footer on 4" phones
-		@include bp-down-normalized(xs) {
+		@include breakpoints.bp-down-normalized(xs) {
 			.btn-icon {
-				padding: $input-btn-padding-y-touch ($input-btn-padding-x-touch - $space-min);
+				padding: variables.$input-btn-padding-y-touch (variables.$input-btn-padding-x-touch - variables.$space-min);
 			}
 		}
 	}
 }
 
 .items-container {
-	@include tablet {
+	@include breakpoints.tablet {
 		position: absolute;
-		top: $touch-header-height;
+		top: variables.$touch-header-height;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 	}
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		display: flex;
 		height: 100%;
 		flex-direction: column;
 	}
 
-	@include bp-up(sm) {
+	@include breakpoints.bp-up(sm) {
 		display: flex;
 		flex-direction: column;
 	}
 
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		flex: 0 0 50%;
 	}
 
-	@include bp-up-normalized(lg) {
+	@include breakpoints.bp-up-normalized(lg) {
 		flex: 1 1 auto;
 	}
 
-	@include scopedVariant(".view-item-details-active") {
-		@include bp-only(sm) {
+	.view-item-details-active & {
+		@include breakpoints.bp-only(sm) {
 			transform: translate3d(-25%, 0, 0);
 		}
 
-		@include touch-and-bp-only(md) {
+		@include breakpoints.touch-and-bp-only(md) {
 			transform: translate3d(-25%, 0, 0);
 		}
 	}
 
 	// Cancel search in item list view (going back to item details)
 
-	@include scopedVariant(".search-cancel.search-results.view-item-details-active") {
-		@include bp-only(sm) {
+	.search-cancel.search-results.view-item-details-active & {
+		@include breakpoints.bp-only(sm) {
 			display: none; // Hack: ideally we would keep showing the search results in this state
 		}
 
-		@include touch-and-bp-only(md) {
+		@include breakpoints.touch-and-bp-only(md) {
 			display: none; // Hack: ideally we would keep showing the search results in this state
 		}
 	}

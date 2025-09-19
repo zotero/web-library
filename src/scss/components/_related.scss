@@ -1,15 +1,17 @@
+@use "../abstracts/variables";
+
 .tab-pane.related {
 	> .toolbar {
-		height: $toolbar-height-touch;
+		height: variables.$toolbar-height-touch;
 
 		.counter {
-			margin-right: $space-xs;
+			margin-right: variables.$space-xs;
 		}
 	}
 }
 
 .related-list {
-	margin-top: $space-xs;
+	margin-top: variables.$space-xs;
 
 	li a {
 		color: inherit;

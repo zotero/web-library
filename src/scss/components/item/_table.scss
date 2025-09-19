@@ -1,3 +1,7 @@
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 @use "sass:map";
 
 .items-table-wrap {
@@ -16,8 +20,8 @@
 
 	.icon-spin {
 		position: absolute;
-		left: calc(50% - #{$icon-spin-size-lg * 0.5});
-		top: calc(50% - #{$icon-spin-size-lg * 0.5} + #{$line-height-large * 0.5});
+		left: calc(50% - #{variables.$icon-spin-size-lg * 0.5});
+		top: calc(50% - #{variables.$icon-spin-size-lg * 0.5} + #{variables.$line-height-large * 0.5});
 	}
 
 	&.dnd-target {
@@ -47,36 +51,36 @@
 
 		.column-header {
 			display: flex;
-			height: $item-table-head-height;
+			height: variables.$item-table-head-height;
 			text-align: left;
-			padding: 0 $space-min;
-			color: $item-table-head-color;
+			padding: 0 variables.$space-min;
+			color: common.$item-table-head-color;
 			position: relative;
 			min-width: 0; // Fix truncation
 
 			&:active {
-				@include scopedVariant(".items-table-wrap:not(.resizing)") {
-					background-color: $item-table-head-active-bg;
+				.items-table-wrap:not(.resizing) & {
+					background-color: common.$item-table-head-active-bg;
 				}
 			}
 
 			&:focus {
-				@include scopedVariant(".keyboard") {
-					outline-offset: -$outline-width;
+				.keyboard & {
+					outline-offset: -(variables.$outline-width);
 				}
 			}
 
 			&::before {
 				content: "";
-				background: $item-table-head-border;
+				background: common.$item-table-head-border;
 				position: absolute;
 				top: 2px;
 				bottom: 2px;
 				left: 0;
-				width: $border-width;
+				width: variables.$border-width;
 
-				@include state(".column-header:focus") {
-					@include scopedVariant(".keyboard") {
+				@include selectors.state(".column-header:focus") {
+					.keyboard & {
 						content: none;
 					}
 				}
@@ -88,12 +92,12 @@
 				top: 2px;
 				right: 0;
 				bottom: 2px;
-				width: $border-width;
-				box-shadow: $border-width 0 $item-table-head-border;
+				width: variables.$border-width;
+				box-shadow: variables.$border-width 0 common.$item-table-head-border;
 			}
 
 			&:active {
-				@include scopedVariant(".items-table-wrap:not(.resizing)") {
+				.items-table-wrap:not(.resizing) & {
 					&::before {
 						top: 0;
 						bottom: 0;
@@ -116,7 +120,7 @@
 
 			&:last-child {
 				&::after {
-					@include scopedVariant("html:not(.scrollbar-style-permanent)") {
+					html:not(.scrollbar-style-permanent) & {
 						content: none;
 					}
 				}
@@ -127,19 +131,19 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				padding: 0 $space-min 0 ($space-min + $border-width);
+				padding: 0 variables.$space-min 0 (variables.$space-min + variables.$border-width);
 				min-width: 0; // Fix truncation
 
-				@include state(".column-header.reorder-source") {
+				@include selectors.state(".column-header.reorder-source") {
 					opacity: 0.5;
 				}
 
-				@include variant(".column-header:first-child") {
-					padding-left: $space-sm - $space-min;
+				@include selectors.state(".column-header:first-child") {
+					padding-left: variables.$space-sm - variables.$space-min;
 				}
 
-				@include variant(".column-header:not(.attachment):last-child") {
-					padding-right: $space-sm - $space-min;
+				@include selectors.state(".column-header:not(.attachment):last-child") {
+					padding-right: variables.$space-sm - variables.$space-min;
 				}
 			}
 
@@ -158,8 +162,8 @@
 				position: absolute;
 				top: 2px;
 				bottom: 2px;
-				left: -$space-xs * 0.5;
-				width: $space-xs;
+				left: -(variables.$space-xs) * 0.5;
+				width: variables.$space-xs;
 				cursor: ew-resize;
 			}
 
@@ -168,7 +172,7 @@
 				top: 2px;
 				bottom: 2px;
 				width: 3px;
-				background: $sort-indicator;
+				background: common.$sort-indicator;
 				z-index: 2;
 
 				&.reorder-left {
@@ -183,7 +187,7 @@
 	}
 
 	.items-table-body {
-		padding-top: $space-min * 0.5;
+		padding-top: variables.$space-min * 0.5;
 		padding-left: 8px;
 		padding-right: 8px;
 
@@ -200,7 +204,7 @@
 		user-select: none;
 		width: 100%;
 
-		@include state(".items-table.striped") {
+		@include selectors.state(".items-table.striped") {
 			&.odd:not(.active) {
 				background-color: var(--material-stripe);
 			}
@@ -225,16 +229,16 @@
 		}
 
 		&.active {
-			background-color: $item-table-active-bg;
+			background-color: common.$item-table-active-bg;
 
-			@include state(".items-table:focus-within") {
+			@include selectors.state(".items-table:focus-within") {
 				color: var(--primary-on-accent);
 				background-color: var(--color-accent);
 			}
 		}
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
+			.keyboard & {
 				outline: none;
 			}
 		}
@@ -261,7 +265,7 @@
 		.focused-selected-icon,
 		.focused-selected-tag-circles {
 			display: none;
-			@include state(".items-table:focus-within .item.active") {
+			@include selectors.state(".items-table:focus-within .item.active") {
 				display: block;
 			}
 		}
@@ -269,15 +273,15 @@
 		.unfocused-icon,
 		.unfocused-tag-circles {
 			display: block;
-			@include state(".items-table:focus-within .item.active") {
+			@include selectors.state(".items-table:focus-within .item.active") {
 				display: none;
 			}
 		}
 
 		.placeholder-icon {
-			width: $space-md;
-			height: $space-md;
-			margin-right: $space-xs;
+			width: variables.$space-md;
+			height: variables.$space-md;
+			margin-right: variables.$space-xs;
 			background: var(--color-shade-2);
 			border-radius: 4.5px;
 		}
@@ -289,30 +293,30 @@
 			background: var(--color-shade-2);
 			border-radius: 4.5px;
 
-			@include variant(".metadata:nth-child(even) .placeholder") {
+			@include selectors.state(".metadata:nth-child(even) .placeholder") {
 				width: 80%;
 			}
 
-			@include variant(".item.odd") {
+			@include selectors.state(".item.odd") {
 				width: 90%;
 
-				@include variant(".metadata:nth-child(even) .placeholder") {
+				@include selectors.state(".metadata:nth-child(even) .placeholder") {
 					width: 70%;
 				}
 			}
 
-			@include variant(".item.nth-4n-1") {
+			@include selectors.state(".item.nth-4n-1") {
 				width: 80%;
 
-				@include variant(".metadata:nth-child(even) .placeholder") {
+				@include selectors.state(".metadata:nth-child(even) .placeholder") {
 					width: 60%;
 				}
 			}
 
-			@include variant(".item.nth-4n") {
+			@include selectors.state(".item.nth-4n") {
 				width: 60%;
 
-				@include variant(".metadata:nth-child(even) .placeholder") {
+				@include selectors.state(".metadata:nth-child(even) .placeholder") {
 					width: 90%;
 				}
 			}
@@ -322,20 +326,20 @@
 	.metadata {
 		display: flex;
 		align-items: center;
-		height: $item-table-row-height;
-		padding: 0 $space-xs 0 ($space-xs + $border-width);
+		height: variables.$item-table-row-height;
+		padding: 0 variables.$space-xs 0 (variables.$space-xs + variables.$border-width);
 
 		&:first-child {
-			padding-left: $default-padding-x;
+			padding-left: variables.$default-padding-x;
 		}
 
 		&:not(.attachment):last-child {
-			padding-right: $default-padding-x;
+			padding-right: variables.$default-padding-x;
 		}
 
 		&.title {
 			> .icon {
-				margin-right: $space-xs;
+				margin-right: variables.$space-xs;
 			}
 
 			.truncate {
@@ -349,14 +353,14 @@
 				margin-left: auto; // space-between on .metadata breaks placeholders
 				min-width: 0;
 				overflow: hidden;
-				padding-left: $space-xs;
+				padding-left: variables.$space-xs;
 
 				.emoji {
 					margin-left: 4px;
 				}
 
 				.tag-circles {
-					margin-left: $space-min;
+					margin-left: variables.$space-min;
 				}
 			}
 		}
@@ -368,10 +372,10 @@
 	background: var(--color-background);
 	display: flex;
 	height: 100%;
-	height: calc(100% - $item-table-row-height);
+	height: calc(100% - variables.$item-table-row-height);
 	justify-content: center;
 	position: absolute;
 	width: 100%;
 	z-index: 100;
-	margin-top: $item-table-row-height;
+	margin-top: variables.$item-table-row-height;
 }

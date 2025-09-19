@@ -1,52 +1,59 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/button";
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 @use "sass:map";
 
 .btn {
-	padding: $input-btn-padding-y $input-btn-padding-x;
+	padding: variables.$input-btn-padding-y variables.$input-btn-padding-x;
 	cursor: pointer;
-	border: $border-width solid transparent;
-	color: $text-color;
+	border: variables.$border-width solid transparent;
+	color: common.$text-color;
 	background-color: transparent;
 	vertical-align: middle;
 	text-decoration: none;
 	transition:
-		color $input-btn-transition,
-		background-color $input-btn-transition,
-		border-color $input-btn-transition,
-		box-shadow $input-btn-transition;
+		color variables.$input-btn-transition,
+		background-color variables.$input-btn-transition,
+		border-color variables.$input-btn-transition,
+		box-shadow variables.$input-btn-transition;
 
-	@include touch-or-bp-down(sm) {
-		padding: $input-btn-padding-y-touch $default-padding-x-touch;
+	@include breakpoints.touch-or-bp-down(sm) {
+		padding: variables.$input-btn-padding-y-touch variables.$default-padding-x-touch;
 
 		&.hairline-top {
 			border-top: none;
-			padding-top: $input-btn-padding-y-touch + 2 * $input-border-width;
-			@include hairline(top, "color-shade-4");
+			padding-top: variables.$input-btn-padding-y-touch + 2 * variables.$input-border-width;
+			@include hairline.hairline(top, "color-shade-4");
 		}
 
 		&.hairline-start-padding {
-			@include hairline(top, "color-shade-4", $start: $default-padding-x-touch);
+			@include hairline.hairline(top, "color-shade-4", $start: variables.$default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-24 {
-			@include hairline(top, "color-shade-4", $start: $default-padding-x-touch);
+			@include hairline.hairline(top, "color-shade-4", $start: variables.$default-padding-x-touch);
 		}
 
 		&.hairline-start-icon-28 {
-			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
+			@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$default-padding-x-touch + 28px));
 
 			.icon[width="24"] {
 				margin-left: 2px;
-				margin-right: $default-padding-x-touch + 2px;
+				margin-right: variables.$default-padding-x-touch + 2px;
 			}
 		}
 
 		&[class*="hairline"]:only-child {
-			@include hairline-disabled(top);
+			@include hairline.hairline-disabled(top);
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		border-radius: $input-btn-border-radius;
+	@include breakpoints.mouse-and-bp-up(md) {
+		border-radius: variables.$input-btn-border-radius;
 	}
 
 	&:focus:not(.btn-link) {
@@ -63,14 +70,14 @@
 	}
 
 	.icon {
-		@include variant(".btn.icon-left") {
-			@include touch-or-bp-down(sm) {
-				margin-right: $default-padding-x-touch;
+		@include selectors.state(".btn.icon-left") {
+			@include breakpoints.touch-or-bp-down(sm) {
+				margin-right: variables.$default-padding-x-touch;
 				vertical-align: top;
 			}
 
-			@include mouse-and-bp-up(md) {
-				margin-right: $space-min;
+			@include breakpoints.mouse-and-bp-up(md) {
+				margin-right: variables.$space-min;
 			}
 		}
 	}
@@ -79,7 +86,7 @@
 .btn-circle,
 .btn-icon {
 	.icon {
-		@include scopedVariant("html:not(.specifity)") {
+		html:not(.specifity) & {
 			vertical-align: top;
 		}
 	}
@@ -88,32 +95,32 @@
 // Icon button
 
 .btn-icon {
-	color: $icon-color;
-	line-height: $space-md;
+	color: common.$icon-color;
+	line-height: variables.$space-md;
 
-	@include touch-or-bp-down(sm) {
-		padding: $input-btn-padding-y-touch $input-btn-padding-x-touch;
+	@include breakpoints.touch-or-bp-down(sm) {
+		padding: variables.$input-btn-padding-y-touch variables.$input-btn-padding-x-touch;
 	}
 
-	@include touch-keyboard-or-bp-down(sm) {
+	@include breakpoints.touch-keyboard-or-bp-down(sm) {
 		&:focus {
-			outline: $outline-width solid $focus-color;
-			outline-offset: -$outline-width;
+			outline: variables.$outline-width solid common.$focus-color;
+			outline-offset: -(variables.$outline-width);
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		padding: $space-min;
+	@include breakpoints.mouse-and-bp-up(md) {
+		padding: variables.$space-min;
 
 		&.active {
-			background-color: $btn-icon-active-bg;
+			background-color: common.$btn-icon-active-bg;
 		}
 	}
 
-	@include mouse-keyboard-and-bp-up(md) {
+	@include breakpoints.mouse-keyboard-and-bp-up(md) {
 		&:focus {
 			border-color: var(--accent-blue);
-			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue);
+			box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-blue);
 		}
 	}
 
@@ -122,18 +129,18 @@
 		margin: 0;
 	}
 
-	@include mouse-and-bp-up(md) {
-		@include state(".btn-icon:active") {
+	@include breakpoints.mouse-and-bp-up(md) {
+		@include selectors.state(".btn-icon:active") {
 			&,
 			.icon {
-				color: $icon-active-color;
+				color: common.$icon-active-color;
 			}
 		}
 
-		@include state(".btn-icon.active") {
+		@include selectors.state(".btn-icon.active") {
 			&,
 			.icon {
-				color: $btn-icon-active-color;
+				color: common.$btn-icon-active-color;
 			}
 		}
 	}
@@ -142,10 +149,10 @@
 .btn-link {
 	display: inline;
 	border: 0;
-	color: $link-color;
+	color: common.$link-color;
 	background-color: transparent;
 
-	@include scopedVariant("html:not(.specifity)") {
+	html:not(.specifity) & {
 		padding: 0;
 	}
 
@@ -155,8 +162,8 @@
 }
 
 .btn-lg {
-	font-size: $font-size-lg;
-	padding: $input-btn-padding-y-lg $input-btn-padding-x-lg;
+	font-size: variables.$font-size-lg;
+	padding: variables.$input-btn-padding-y-lg variables.$input-btn-padding-x-lg;
 }
 
 .btn-xl {
@@ -168,19 +175,19 @@
 }
 
 .btn-primary {
-	@include button-variant("accent-red");
+	@include button.button-variant("accent-red");
 }
 
 .btn-outline-primary {
-	@include button-variant("accent-red", $outline: true);
+	@include button.button-variant("accent-red", $outline: true);
 }
 
 .btn-secondary {
-	@include button-variant("accent-blue");
+	@include button.button-variant("accent-blue");
 }
 
 .btn-outline-secondary {
-	@include button-variant("accent-blue", $outline: true);
+	@include button.button-variant("accent-blue", $outline: true);
 }
 
 .btn-transparent-secondary {
@@ -188,47 +195,47 @@
 }
 
 .btn-outline-light {
-	@include button-variant($btn-light-color, $outline: true);
+	@include button.button-variant(common.$btn-light-color, $outline: true);
 }
 
 .btn-default {
-	color: $btn-default-color;
-	border-color: $btn-default-border-color;
+	color: common.$btn-default-color;
+	border-color: common.$btn-default-border-color;
 
-	@include state(".btn-default:hover", ".btn-file input:hover + .btn-default") {
-		background-color: $btn-default-hover-bg;
+	@include selectors.state(".btn-default:hover", ".btn-file input:hover + .btn-default") {
+		background-color: common.$btn-default-hover-bg;
 		box-shadow: 0 2px 4px var(--color-button-shadow-lighter);
 	}
 
-	@include state(".btn-default:active", ".btn-file input:active + .btn-default") {
+	@include selectors.state(".btn-default:active", ".btn-file input:active + .btn-default") {
 		background-color: var(--color-button-active-bg);
 		box-shadow: none;
 	}
 
-	@include state(".btn-default:disabled", ".btn-file input:disabled + .btn-default") {
+	@include selectors.state(".btn-default:disabled", ".btn-file input:disabled + .btn-default") {
 		box-shadow: none;
 	}
 
-	@include scopedVariant(".keyboard") {
-		@include state(".btn-default:focus", ".btn-file input:focus + .btn-default") {
+	@include selectors.state(".keyboard .btn-default") {
+		@include selectors.state(".btn-default:focus", ".btn-file input:focus + .btn-default") {
 			border-color: var(--accent-blue);
-			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue);
+			box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-blue);
 		}
 
-		@include state(
+		@include selectors.state(
 			".btn-default:focus:hover", ".btn-file input:focus:hover + .btn-default"
 		) {
 			border-color: var(--accent-blue-lighter);
 	 		box-shadow:
-	 			0 0 0 $input-btn-focus-width var(--accent-blue-lighter),
+	 			0 0 0 variables.$input-btn-focus-width var(--accent-blue-lighter),
 	 			0 4px 4px var(--color-button-shadow);
 		}
 
-		@include state(
+		@include selectors.state(
 			".btn-default:focus:active", ".btn-file input:focus:active + .btn-default"
 		) {
 			border-color: var(--accent-blue-darker);
-			box-shadow: 0 0 0 $input-btn-focus-width var(--accent-blue-darker);
+			box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-blue-darker);
 		}
 	}
 }
@@ -237,9 +244,9 @@
 // Circle button
 
 .btn-circle {
-	@include touch-or-bp-down(sm) {
-		width: $space-lg;
-		height: $space-lg;
+	@include breakpoints.touch-or-bp-down(sm) {
+		width: variables.$space-lg;
+		height: variables.$space-lg;
 		padding: 0;
 		border-radius: 50%;
 		line-height: 1; // Center icon vertically
@@ -259,13 +266,13 @@
 
 .twisty {
 	display: block;
-	width: $space-md;
-	height: $space-md;
+	width: variables.$space-md;
+	height: variables.$space-md;
 	border: 0;
 	padding: 0;
 	background: transparent;
 	cursor: pointer;
-	transition: transform $twisty-transition;
+	transition: transform variables.$twisty-transition;
 
 	.icon-triangle {
 		vertical-align: top;
@@ -292,7 +299,7 @@
 		&:not(:first-child) {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-			margin-left: -$input-border-width;
+			margin-left: -(variables.$input-border-width);
 		}
 
 		// Prevent dark border due to overlap
@@ -305,8 +312,8 @@
 	> .dropdown-toggle {
 
 		&.btn-lg {
-			padding-left: $input-btn-padding-x-lg - 3px; // Square button
-			padding-right: $input-btn-padding-x-lg - 3px;
+			padding-left: variables.$input-btn-padding-x-lg - 3px; // Square button
+			padding-right: variables.$input-btn-padding-x-lg - 3px;
 		}
 	}
 }
@@ -314,7 +321,7 @@
 // File upload button
 
 ::-webkit-file-upload-button {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
   	-webkit-appearance: initial; // Reset normalize
   	font: initial; // Reset normalize
   }

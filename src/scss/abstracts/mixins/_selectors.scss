@@ -1,3 +1,5 @@
+@use "../functions/strings";
+
 //
 // Selectors
 // --------------------------------------------------
@@ -13,16 +15,16 @@
 		$string: $state;
 
 		@each $token in ">", "+", "~" {
-			$string: str-replace($string, $token, " ");
+			$string: strings.str-replace($string, $token, " ");
 		}
 
-		$string: str-replace($string, "  ", " ");
+		$string: strings.str-replace($string, "  ", " ");
 
-		$selectors: str-parse($string, " ");
+		$selectors: strings.str-parse($string, " ");
 
 		@each $sel in $selectors {
-			@if str-index(#{&}, $sel) != null {
-				@at-root #{selector-replace(&, $sel, $state)} {
+			@if string.index(#{&}, $sel) != null {
+				@at-root #{selector.replace(&, $sel, $state)} {
 					@content;
 				}
 			}
@@ -34,66 +36,5 @@
 @mixin variant($args...) {
 	@include state($args...) {
 		@content;
-	}
-}
-
-// Whenever parent selector would be used to style "in context" (e.g. `.variant &` but not
-// `&.variant` ), use `scopedVariant(".variant")` instead. This is required because embedded version
-// of web library prefixes every single style with a scope class to avoid polluting global css (e.g.
-// if web library included styling for ".details" and someone had such a class on their page, web
-// library would pollute that style)
-@mixin scopedVariant($selectors...) {
-	@each $selector in $selectors {
-		@if $scope {
-			$parents: selector.parse(&);
-			@each $parent in $parents {
-				$parentIndex: list.index($parent, $scope);
-				$selectorIndex: list.index($parent, $selector);
-				$shouldScope: true;
-
-				@if $parentIndex == null {
-					$shouldScope: false;
-				}
-
-				@if string.index(#{list.nth(selector.parse($selector), 1)}, "html") == 1 {
-					$shouldScope: false
-				}
-
-				@if string.index(#{list.nth(selector.parse($selector), 1)}, "body") == 1 {
-					$shouldScope: false
-				}
-
-				@if #{list.nth(selector.parse($selector), 1)} == ".keyboard" {
-					$shouldScope: false
-				}
-
-				@if #{list.nth(selector.parse($selector), 1)} == ".touch" {
-					$shouldScope: false
-				}
-
-				@if #{list.nth(selector.parse($selector), 1)} == ".mouse" {
-					$shouldScope: false
-				}
-
-				@if #{list.nth(selector.parse($selector), 1)} == ".scrollbar-style-permanent" {
-					$shouldScope: false
-				}
-
-				@if $shouldScope {
-					$parent: nth-delete($parent, $parentIndex);
-					@at-root #{$scope} #{$selector} #{$parent} {
-						@content;
-					}
-				} @else {
-					@at-root #{$selector} #{&} {
-						@content;
-					}
-				}
-			}
-		} @else {
-			@at-root #{$selector} #{&} {
-				@content;
-			}
-		}
 	}
 }

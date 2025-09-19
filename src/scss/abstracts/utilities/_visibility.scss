@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "../mixins/breakpoints";
+@use "../variables";
+
 //
 // Visibility
 // --------------------------------------------------
@@ -5,15 +9,15 @@
 
 // Responsive visibility
 
-@each $bp in map-keys($grid-breakpoints) {
-  #{$scope} .hidden-#{$bp}-up {
-    @include bp-up($bp) {
+@each $bp in map.keys(variables.$grid-breakpoints) {
+  .hidden-#{$bp}-up {
+    @include breakpoints.bp-up($bp) {
       display: none !important;
     }
   }
 
-  #{$scope} .hidden-#{$bp}-down {
-    @include bp-down($bp) {
+  .hidden-#{$bp}-down {
+    @include breakpoints.bp-down($bp) {
       display: none !important;
     }
   }
@@ -21,23 +25,23 @@
 
 // Responsive visibility for 'mouse devices' only
 
-@each $bp in map-keys($grid-breakpoints) {
-	html:not(.touch) #{$scope} .hidden-mouse-#{$bp}-up {
-		@include bp-up($bp) {
+@each $bp in map.keys(variables.$grid-breakpoints) {
+	html:not(.touch) .hidden-mouse-#{$bp}-up {
+		@include breakpoints.bp-up($bp) {
 			display: none !important;
 		}
 	}
 
-  html:not(.touch) #{$scope} .hidden-mouse-#{$bp}-down {
-    @include bp-down($bp) {
+  html:not(.touch) .hidden-mouse-#{$bp}-down {
+    @include breakpoints.bp-down($bp) {
       display: none !important;
     }
   }
 }
 
-#{$scope} .hidden-mouse,
-#{$scope} .touch {
-	@include mouse-and-bp-up(md) {
+.hidden-mouse,
+.touch {
+	@include breakpoints.mouse-and-bp-up(md) {
 		display: none !important;
 	}
 }
@@ -45,35 +49,35 @@
 
 // Responsive visibility for 'touch devices' only
 
-@each $bp in map-keys($grid-breakpoints) {
-	.touch #{$scope} .hidden-touch-#{$bp}-up {
-		@include bp-up($bp) {
+@each $bp in map.keys(variables.$grid-breakpoints) {
+	.touch .hidden-touch-#{$bp}-up {
+		@include breakpoints.bp-up($bp) {
 			display: none !important;
 		}
 	}
 
-  .touch #{$scope} .hidden-touch-#{$bp}-down {
-    @include bp-down($bp) {
+  .touch .hidden-touch-#{$bp}-down {
+    @include breakpoints.bp-down($bp) {
       display: none !important;
     }
   }
 }
 
-#{$scope} .hidden-touch,
-#{$scope} .mouse {
-	@include touch-or-bp-down(sm) {
+.hidden-touch,
+.mouse {
+	@include breakpoints.touch-or-bp-down(sm) {
 		display: none !important;
 	}
 }
 
-#{$scope} .hidden {
+.hidden {
 	display: none !important;
 }
 
 
 // Screen readers only
 
-#{$scope} .offscreen {
+.offscreen {
   position: absolute;
   width: 1px;
   height: 1px;

@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Search
 // --------------------------------------------------
@@ -7,7 +12,7 @@
 		position: absolute;
 		left: 6px;
 		top: 4px;
-		z-index: $z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
+		z-index: variables.$z-index-menu; // We need to set the z-index here because the dropdown-menu expects a static wrapper
 	}
 
 	.dropdown-toggle {
@@ -16,34 +21,34 @@
 	}
 
 	.icon-search-options {
-		@include touch-or-bp-down(sm) {
-			color: $icon-color; // Reset
+		@include breakpoints.touch-or-bp-down(sm) {
+			color: common.$icon-color; // Reset
 		}
 	}
 
 	.form-control {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			min-height: auto; // Reset
-			padding: 4px 0px 4px $input-btn-padding-x-touch;
-			border: $input-border-width solid $input-border-color; // …
-			background-color: $input-bg; // …
-			border-radius: $input-btn-border-radius;
+			padding: 4px 0px 4px variables.$input-btn-padding-x-touch;
+			border: variables.$input-border-width solid common.$input-border-color; // …
+			background-color: common.$input-bg; // …
+			border-radius: variables.$input-btn-border-radius;
 
 			&:not(:empty) {
 				padding-right: 25px;
 			}
 		}
 
-		@include touch-keyboard-or-bp-down(sm) {
+		@include breakpoints.touch-keyboard-or-bp-down(sm) {
 			&:focus {
-				border: $input-border-width solid $focus-color;
-				box-shadow: 0 0 0 $input-btn-focus-width $focus-color;
+				border: variables.$input-border-width solid common.$focus-color;
+				box-shadow: 0 0 0 variables.$input-btn-focus-width common.$focus-color;
 			}
 		}
 	}
 
 	.with-dropdown {
-		@include scopedVariant("html:not(.specifity)") {
+		html:not(.specifity) & {
 			padding: 5px 25px 5px 36px;
 		}
 	}
@@ -52,25 +57,25 @@
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		right: $space-xs + $border-width;
-		width: $space-md;
-		height: $space-md;
+		right: variables.$space-xs + variables.$border-width;
+		width: variables.$space-md;
+		height: variables.$space-md;
 		border: none;
 		padding: 0;
 		border-radius: 50%;
-		background-color: $icon-color;
+		background-color: common.$icon-color;
 
-		@include scopedVariant("html:not(.specifity).keyboard") {
+		html:not(.specifity).keyboard & {
 			&:focus {
-				border-color: $icon-color;
-				box-shadow: 0 0 0 $input-btn-focus-width $icon-color;
+				border-color: common.$icon-color;
+				box-shadow: 0 0 0 variables.$input-btn-focus-width common.$icon-color;
 				outline: none;
 			}
 		}
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			&:active {
-				background-color: $icon-active-color;
+				background-color: common.$icon-active-color;
 			}
 		}
 
@@ -79,10 +84,10 @@
 			left: 50%;
 			top: 50%;
 			transform: translate(-50%, -50%);
-			color: $input-bg;
+			color: common.$input-bg;
 
-			@include state(".clear:active .icon") {
-				color: $input-bg;
+			@include selectors.state(".clear:active .icon") {
+				color: common.$input-bg;
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Panel
 // --------------------------------------------------
@@ -7,7 +12,7 @@
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	padding-bottom: $space-min;
+	padding-bottom: variables.$space-min;
 	background-clip: content-box;
 
 	&:last-child {
@@ -16,7 +21,7 @@
 
 	.panel-header {
 		flex: 0 0 auto;
-		color: $panel-header-color;
+		color: common.$panel-header-color;
 		display: flex;
 		position: relative;
 		z-index: 1;
@@ -33,19 +38,19 @@
 			color: var(--color-accent);
 		}
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			overflow-y: scroll;
 			-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 		}
 
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			display: flex;
 			flex-direction: column;
 			overflow: hidden; // Fix scrolling on md screens (or min-height: 0)
 		}
 
 		&.loading {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -53,8 +58,8 @@
 		}
 
 		// Disable scrolling while dragging creators on mobiles, keep scrollbar
-		@include state(".drag-layer + .library-container") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".drag-layer + .library-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				pointer-events: none;
 
 				.tab-pane {
@@ -70,6 +75,6 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		background-color: $panel-backdrop-bg;
+		background-color: common.$panel-backdrop-bg;
 	}
 }

@@ -1,5 +1,9 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/utilities";
+@use "../../themes/common";
+
 .recognize-modal {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		width: 550px;
 	}
 
@@ -20,18 +24,18 @@
 		margin-top: 1em;
 		height: 250px;
 
-		@include bp-down(xs) {
+		@include breakpoints.bp-down(xs) {
 			height: 100%; // single column, popup takes up full height
 		}
 
 		.parent-item-title-container {
-			color: $item-creator-date-color;
+			color: common.$item-creator-date-color;
 			display: flex;
 			align-items: center;
 		}
 
 		.parent-item-title {
-			@include text-truncate;
+			@include utilities.text-truncate;
 		}
 
 		.metadata-status-icon {

@@ -1,3 +1,9 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // React-modal
 //
@@ -15,9 +21,9 @@
 	background-color: var(--color-backdrop);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
-	z-index: $z-index-modal;
+	z-index: variables.$z-index-modal;
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		overflow-y: hidden;
 	}
 
@@ -42,26 +48,26 @@
 .modal {
 	border: var(--material-border-quarternary);
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		border: none;
 	}
 
-	@include bp-up(sm) {
-		width: $modal-md;
-		margin: $space-xl auto;
+	@include breakpoints.bp-up(sm) {
+		width: variables.$modal-md;
+		margin: variables.$space-xl auto;
 	}
 
 	&-lg {
-		@include bp-up(sm) {
-			width: $modal-lg;
-			width: calc(100% - 2 * #{$space-xl});
+		@include breakpoints.bp-up(sm) {
+			width: variables.$modal-lg;
+			width: calc(100% - 2 * #{variables.$space-xl});
 		}
 	}
 
 	&-xl {
-		@include bp-up(sm) {
-			width: $modal-xl;
-			width: calc(100% - 2 * #{$space-xl});
+		@include breakpoints.bp-up(sm) {
+			width: variables.$modal-xl;
+			width: calc(100% - 2 * #{variables.$space-xl});
 		}
 	}
 
@@ -72,7 +78,7 @@
 		right: 0;
 		bottom: 0;
 		background-color: rgba(0, 0, 0, .5);
-		z-index: $z-index-modal + 1;
+		z-index: variables.$z-index-modal + 1;
 	}
 }
 
@@ -80,21 +86,21 @@
 	display: flex;
 	flex-direction: column;
 
-	@include bp-down(xs) {
+	@include breakpoints.bp-down(xs) {
 		height: 100%;
 		width: 100%;
 	}
 
-	@include bp-up(sm) {
-		border-radius: $modal-border-radius;
+	@include breakpoints.bp-up(sm) {
+		border-radius: variables.$modal-border-radius;
 		overflow: hidden;
 	}
 
-	@include scopedVariant(".modal-scrollable") {
-		@include bp-up(sm) {
+		.modal-scrollable & {
+		@include breakpoints.bp-up(sm) {
 			display: flex;
 			flex-direction: column;
-			max-height: calc(100% - 2 * #{$space-xl});
+			max-height: calc(100% - 2 * #{variables.$space-xl});
 		}
 	}
 }
@@ -104,8 +110,8 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
-		padding-left: $modal-inner-padding;
-		padding-right: $modal-inner-padding;
+		padding-left: variables.$modal-inner-padding;
+		padding-right: variables.$modal-inner-padding;
 
 		&-left,
 		&-right {
@@ -122,101 +128,101 @@
 			text-align: right;
 		}
 
-		@include touch-or-bp-down(sm) {
-			height: $modal-header-height + $border-width;
-			background-color: $modal-touch-header-bg;
+		@include breakpoints.touch-or-bp-down(sm) {
+			height: variables.$modal-header-height + variables.$border-width;
+			background-color: common.$modal-touch-header-bg;
 		}
 
-		@include mouse-and-bp-up(md) {
-			padding-top: $modal-inner-padding;
-			padding-bottom: $modal-inner-padding;
-			background-color: $modal-content-bg;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding-top: variables.$modal-inner-padding;
+			padding-bottom: variables.$modal-inner-padding;
+			background-color: common.$modal-content-bg;
 		}
 
-		@include scopedVariant(".modal-form") {
-			@include touch-or-bp-down(sm) {
-				background-color: $modal-form-header-bg;
+		.modal-form & {
+			@include breakpoints.touch-or-bp-down(sm) {
+				background-color: common.$modal-form-header-bg;
 			}
 		}
 	}
 }
 
 .modal-header {
-	padding-bottom: $border-width;
+	padding-bottom: variables.$border-width;
 
-	@include touch-or-bp-down(sm) {
-		@include hairline(bottom, "color-shade-4");
+	@include breakpoints.touch-or-bp-down(sm) {
+		@include hairline.hairline(bottom, "color-shade-4");
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		justify-content: space-between;
-		border-bottom: $border-width solid $modal-border-color;
+		border-bottom: variables.$border-width solid common.$modal-border-color;
 	}
 
 	.close {
-		@include mouse-and-bp-up(md) {
-			padding: $space-min + $input-border-width + $modal-inner-padding * 0.5;
-			margin: -$modal-inner-padding * 0.5;
-			margin-right: -$modal-inner-padding * 0.5 + 2px; // Even spacing
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding: variables.$space-min + variables.$input-border-width + variables.$modal-inner-padding * 0.5;
+			margin: -(variables.$modal-inner-padding) * 0.5;
+			margin-right: -(variables.$modal-inner-padding) * 0.5 + 2px; // Even spacing
 		}
 	}
 }
 
 .modal-title {
-	@include mouse-and-bp-up(md) {
-		font-size: $modal-title-font-size;
+	@include breakpoints.mouse-and-bp-up(md) {
+		font-size: variables.$modal-title-font-size;
 	}
 }
 
 .modal-body {
-	padding: $modal-inner-padding;
-	background-color: $modal-content-bg; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
+	padding: variables.$modal-inner-padding;
+	background-color: common.$modal-content-bg; // Set content-bg on header, body, and footer explicitly for better border-radius rendering (focus border)
 	flex: 1;
 
-	@include bp-down(xs) {
-		height: calc(100% - #{$modal-header-height});
+	@include breakpoints.bp-down(xs) {
+		height: calc(100% - #{variables.$modal-header-height});
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	}
 
-	@include scopedVariant(".modal-scrollable") {
+	.modal-scrollable & {
 		overflow-y: auto;
 		overflow-x: clip;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
+			.keyboard & {
 				outline: none;
-				border: $outline-width solid $focus-color;
+				border: variables.$outline-width solid common.$focus-color;
 			}
 		}
 	}
 
-	@include scopedVariant(".modal-form") {
-		@include touch-or-bp-down(sm) {
-			background-color: $form-bg-touch;
+	.modal-form & {
+		@include breakpoints.touch-or-bp-down(sm) {
+			background-color: common.$form-bg-touch;
 		}
 	}
 }
 
 .modal-footer {
-	padding-top: $border-width;
+	padding-top: variables.$border-width;
 
-	@include touch-or-bp-down(sm) {
-		@include hairline(top, "color-shade-4");
+	@include breakpoints.touch-or-bp-down(sm) {
+		@include hairline.hairline(top, "color-shade-4");
 	}
 
-	@include mouse-and-bp-up(md) {
-		border-top: $border-width solid $modal-border-color;
+	@include breakpoints.mouse-and-bp-up(md) {
+		border-top: variables.$border-width solid common.$modal-border-color;
 	}
 
 	> .btn {
 		&:not(:first-child) {
-			margin-left: $space-sm * 0.5;
+			margin-left: variables.$space-sm * 0.5;
 		}
 
 		&:not(:last-child) {
-			margin-right: $space-sm * 0.5;
+			margin-right: variables.$space-sm * 0.5;
 		}
 	}
 }
@@ -229,15 +235,15 @@
 .modal-full-height .modal-content {
 	min-height: 100%;
 
-	@include bp-up(sm) {
+	@include breakpoints.bp-up(sm) {
 		min-height: unset;
-		height: calc(100% - #{2 * $space-xl});
+		height: calc(100% - #{2 * variables.$space-xl});
 	}
 }
 
 .modal-contains-picker {
 	.modal-header {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			padding-left: 0;
 			padding-right: 0;
 		}
@@ -251,7 +257,7 @@
 		padding: 0;
 
 		// On touch devices, the picker inside the modal uses the small-screen behavior at all screen sizes
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			.sidebar {
 				bottom: 44px;
 				height: calc(100% - 88px);
@@ -271,7 +277,7 @@
 				right: 0;
 				top: 44px;
 				transform: translate3d(100%, 0, 0);
-				transition: transform $nav-transition;
+				transition: transform variables.$nav-transition;
 			}
 
 			&.view-item-list-active .items {
@@ -287,40 +293,40 @@
 		// #628). To work around this, we transition background-color when the modal opens and
 		// opacity when it closes (Safari doesn't glitch on close).
 		&__Overlay {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				background-color: rgba(0, 0, 0, 0);
 			}
 
 			.modal-content {
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					transform: translate3d(0, 100%, 0);
 				}
 			}
 
 			&--after-open {
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					background-color: var(--color-backdrop);
-					transition: background-color $nav-transition;
+					transition: background-color variables.$nav-transition;
 				}
 
 				.modal-content {
-					@include touch-or-bp-down(sm) {
+					@include breakpoints.touch-or-bp-down(sm) {
 						transform: translate3d(0, 0, 0);
-						transition: transform $nav-transition;
+						transition: transform variables.$nav-transition;
 					}
 				}
 			}
 
 			&--before-close {
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					opacity: 0;
-					transition: opacity $modal-exit-transition-xs;
+					transition: opacity variables.$modal-exit-transition-xs;
 				}
 
 				.modal-content {
-					@include touch-or-bp-down(sm) {
+					@include breakpoints.touch-or-bp-down(sm) {
 						transform: translate3d(0, 100%, 0);
-						transition: transform $modal-exit-transition-xs;
+						transition: transform variables.$modal-exit-transition-xs;
 					}
 				}
 			}

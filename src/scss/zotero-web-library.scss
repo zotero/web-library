@@ -1,120 +1,95 @@
-//
-// Zotero Web Library
-// --------------------------------------------------
-
-$scope: ".zotero-wl";
 
 // Abstracts
-// --------------------------------------------------
-
-@import "abstracts/variables";
-@import "abstracts/functions";
-@import "abstracts/mixins";
-@import "abstracts/placeholders";
-@import "abstracts/utilities";
+@use "abstracts/variables";
+@use "abstracts/functions";
+@use "abstracts/mixins";
+@use "abstracts/utilities";
 
 // Theme
-// --------------------------------------------------
-
-@import "themes/light";
-@import "themes/dark";
-@import "themes/common";
+@use "themes/light";
+@use "themes/dark";
 
 // Base
-// --------------------------------------------------
-
-@import "base/fonts";
-@import "base/normalize";
-@import "base/base";
-@import "base/type";
+@use "base/fonts";
+@use "base/normalize";
+@use "base/base";
+@use "base/type";
 
 // Partials
-// --------------------------------------------------
-
-@import "partials/focus";
-
-#{$scope} {
-	@import "partials/sidebar";
-	@import "partials/navs";
-	@import "partials/forms";
-	@import "partials/loading-cover";
-	@import "partials/transitions";
-	@import "partials/grid";
-	@import "partials/inline-feedback";
-	@import "partials/scroll-container";
-	@import "partials/badge";
-	@import "partials/details-list";
-	@import "partials/scrollbar";
-	@import "partials/common";
-}
+@use "partials/focus";
+@use "partials/sidebar";
+@use "partials/navs";
+@use "partials/forms";
+@use "partials/loading-cover";
+@use "partials/transitions";
+@use "partials/grid";
+@use "partials/inline-feedback";
+@use "partials/scroll-container";
+@use "partials/badge";
+@use "partials/details-list";
+@use "partials/scrollbar";
+@use "partials/common" as common2;
 
 // Components
-// --------------------------------------------------
+@use "../../modules/web-common/scss/select";
+@use "../../modules/web-common/scss/icon";
+@use "components/button";
+@use "components/bibliography";
+@use "components/citation-options";
+@use "components/copy-citation";
+@use "components/collection-tree";
+@use "components/dropdown"; // switch to "../../modules/web-common/scss/dropdown" but with scopedVariant
+@use "components/editable";
+@use "components/icon-extra";
+@use "components/panel";
+@use "components/tabs"; // "../../modules/web-common/scss/tabs" does not support scopedVariant and touch-specific shenanigans
+@use "components/toolbar";
+@use "components/touch-header";
+@use "components/touch-footer";
+@use "components/touch-nav";
+@use "components/search";
+@use "components/searchbar";
+@use "components/auto-resizer";
+@use "components/color-picker";
+@use "components/library";
+@use "components/navbar";
+@use "components/nav-sidebar";
+@use "components/item/list";
+@use "components/item/table";
+@use "components/item/details";
+@use "components/item/drilldown";
+@use "components/metadata/list" as list2;
+@use "components/metadata/pane";
+@use "components/metadata/abstract";
+@use "components/metadata/title";
+@use "components/metadata/creators";
+@use "components/note/pane" as pane2;
+@use "components/note/list" as list3;
+@use "components/tag/pane" as pane3;
+@use "components/tag/list" as list4;
+@use "components/tag/selector";
+@use "components/tag/touch-selector";
+@use "components/tag/tag-color-manager";
+@use "components/attachment/pane" as pane4;
+@use "components/attachment/list" as list5;
+@use "components/related";
+@use "components/modal/react-modal";
+@use "components/modal/collection-select";
+@use "components/modal/bibliography" as bibliography2;
+@use "components/modal/settings";
+@use "components/modal/style-installer";
+@use "components/modal/note";
+@use "components/modal/identifier-picker";
+@use "components/modal/manage-tags";
+@use "components/modal/metadata-retrieval";
+@use "components/modal/modal-item-picker";
+@use "components/drag-layer";
+@use "components/rich-editor";
+@use "components/popover";
+@use "components/messages";
+@use "components/ongoing";
+@use "components/new-item-selector";
+@use "components/crash-handler";
+@use "components/reader";
 
-#{$scope} {
-	@import "components/button";
-	@import "components/bibliography";
-	@import "components/citation-options";
-	@import "components/copy-citation";
-	@import "components/collection-tree";
-	@import "components/dropdown"; // switch to "../../modules/web-common/scss/dropdown" but with scopedVariant
-	@import "components/editable";
-	@import "components/icon-extra";
-	@import "components/panel";
-	@import "components/tabs"; // "../../modules/web-common/scss/tabs" does not support scopedVariant and touch-specific shenanigans
-	@import "components/toolbar";
-	@import "components/touch-header";
-	@import "components/touch-footer";
-	@import "components/touch-nav";
-	@import "components/search";
-	@import "components/searchbar";
-	@import "components/auto-resizer";
-	@import "components/color-picker";
-	@import "components/library";
-	@import "components/navbar";
-	@import "components/nav-sidebar";
-	@import "components/item/list";
-	@import "components/item/table";
-	@import "components/item/details";
-	@import "components/item/drilldown";
-	@import "components/metadata/list";
-	@import "components/metadata/pane";
-	@import "components/metadata/abstract";
-	@import "components/metadata/title";
-	@import "components/metadata/creators";
-	@import "components/note/pane";
-	@import "components/note/list";
-	@import "components/tag/pane";
-	@import "components/tag/list";
-	@import "components/tag/selector";
-	@import "components/tag/touch-selector";
-	@import "components/tag/tag-color-manager";
-	@import "components/attachment/pane";
-	@import "components/attachment/list";
-	@import "components/related";
-	@import "components/modal/react-modal";
-	@import "components/modal/collection-select";
-	@import "components/modal/bibliography";
-	@import "components/modal/settings";
-	@import "components/modal/style-installer";
-	@import "components/modal/note";
-	@import "components/modal/identifier-picker";
-	@import "components/modal/manage-tags";
-	@import "components/modal/metadata-retrieval";
-	@import "components/modal/modal-item-picker";
-	@import "components/drag-layer";
-	@import "components/rich-editor";
-	@import "components/popover";
-	@import "components/messages";
-	@import "components/ongoing";
-	@import "components/new-item-selector";
-	@import "components/crash-handler";
-	@import "components/reader";
-}
 
-#{$scope} {
-	// stylesheets from web-common should be included last because some mixins are overridden and
-	// use default variable values, instead of web-library-specific
-	@import "../../modules/web-common/scss/select";
-	@import "../../modules/web-common/scss/icon";
-}

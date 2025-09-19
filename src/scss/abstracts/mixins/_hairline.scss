@@ -1,3 +1,5 @@
+@use "../variables";
+
 @use 'sass:color';
 @use "sass:map";
 
@@ -58,15 +60,15 @@ $-colors-bg-lookup: (
 		)
 	);
 
-	$top: map-get(map-get($specs, $side), top);
-	$right: map-get(map-get($specs, $side), right);
-	$bottom: map-get(map-get($specs, $side), bottom);
-	$left: map-get(map-get($specs, $side), left);
-	$direction: map-get(map-get($specs, $side), direction);
-	$position: map-get(map-get($specs, $side), position);
-	$size: map-get(map-get($specs, $side), size);
-	$width: map-get(map-get($specs, $side), width);
-	$height: map-get(map-get($specs, $side), height);
+	$top: map.get(map.get($specs, $side), top);
+	$right: map.get(map.get($specs, $side), right);
+	$bottom: map.get(map.get($specs, $side), bottom);
+	$left: map.get(map.get($specs, $side), left);
+	$direction: map.get(map.get($specs, $side), direction);
+	$position: map.get(map.get($specs, $side), position);
+	$size: map.get(map.get($specs, $side), size);
+	$width: map.get(map.get($specs, $side), width);
+	$height: map.get(map.get($specs, $side), height);
 	$pseudo-element: if($side == top or $side == left, "&::before", "&::after");
 
 	& {
@@ -76,7 +78,7 @@ $-colors-bg-lookup: (
 	#{$pseudo-element} {
 		content: "";
 		position: absolute;
-		z-index: $z-index-hairline;
+		z-index: variables.$z-index-hairline;
 		top: $top;
 		right: $right;
 		bottom: $bottom;

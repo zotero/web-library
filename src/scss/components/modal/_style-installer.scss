@@ -1,3 +1,9 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Style installer
 //
@@ -8,11 +14,11 @@
 		padding-bottom: 0;
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
-				padding-left: $modal-inner-padding - $outline-width;
-				padding-right: $modal-inner-padding - $outline-width;
-				border-bottom-left-radius: $modal-border-radius;
-				border-bottom-right-radius: $modal-border-radius;
+			.keyboard & {
+				padding-left: variables.$modal-inner-padding - variables.$outline-width;
+				padding-right: variables.$modal-inner-padding - variables.$outline-width;
+				border-bottom-left-radius: variables.$modal-border-radius;
+				border-bottom-right-radius: variables.$modal-border-radius;
 			}
 		}
 	}
@@ -20,59 +26,59 @@
 	.style-search {
 		position: sticky;
 		top: 0;
-		z-index: $z-index-search-bar;
-		padding: $modal-inner-padding 0;
-		background-color: $modal-content-bg;
+		z-index: variables.$z-index-search-bar;
+		padding: variables.$modal-inner-padding 0;
+		background-color: common.$modal-content-bg;
 
-		@include touch-or-bp-down(sm) {
-			margin-left: -$modal-inner-padding;
-			margin-right: -$modal-inner-padding;
-			padding-left: $modal-inner-padding;
-			padding-right: $modal-inner-padding;
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin-left: -(variables.$modal-inner-padding);
+			margin-right: -(variables.$modal-inner-padding);
+			padding-left: variables.$modal-inner-padding;
+			padding-right: variables.$modal-inner-padding;
 		}
 
-		@include state(".keyboard .style-installer .modal-body:focus") {
-			padding-top: $modal-inner-padding - $outline-width;
+		@include selectors.state(".keyboard .style-installer .modal-body:focus") {
+			padding-top: variables.$modal-inner-padding - variables.$outline-width;
 		}
 	}
 
 	.style-list {
-		margin-bottom: $modal-inner-padding;
+		margin-bottom: variables.$modal-inner-padding;
 
-		@include mouse-and-bp-up(md) {
-			padding: 0 $space-xs;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding: 0 variables.$space-xs;
 		}
 
 		&:empty {
 			display: none;
 		}
 
-		@include state(".keyboard .style-installer .modal-body:focus") {
-			margin-bottom: $modal-inner-padding - $outline-width;
+		@include selectors.state(".keyboard .style-installer .modal-body:focus") {
+			margin-bottom: variables.$modal-inner-padding - variables.$outline-width;
 		}
 
 		.style {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: $space-xs 0;
+			padding: variables.$space-xs 0;
 
-			@include touch-or-bp-down(sm) {
-				padding-top: $space-xs + $border-width;
-				@include hairline(top, "color-shade-4", $start: ($space-lg + $default-padding-x-touch), $end: -16px);
+			@include breakpoints.touch-or-bp-down(sm) {
+				padding-top: variables.$space-xs + variables.$border-width;
+				@include hairline.hairline(top, "color-shade-4", $start: (variables.$space-lg + variables.$default-padding-x-touch), $end: -16px);
 			}
 
-			@include mouse-and-bp-up(md) {
-				border-top: $border-width solid $modal-border-color;
+			@include breakpoints.mouse-and-bp-up(md) {
+				border-top: variables.$border-width solid common.$modal-border-color;
 			}
 
 			&:first-child {
-				@include touch-or-bp-down(sm) {
-					padding-top: $space-xs;
-					@include hairline-disabled(top);
+				@include breakpoints.touch-or-bp-down(sm) {
+					padding-top: variables.$space-xs;
+					@include hairline.hairline-disabled(top);
 				}
 
-				@include mouse-and-bp-up(md) {
+				@include breakpoints.mouse-and-bp-up(md) {
 					border-top: none;
 				}
 			}
@@ -84,12 +90,12 @@
 			.btn {
 				flex: 0 0 auto;
 
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					order: -1;
-					margin-right: $default-padding-x-touch;
+					margin-right: variables.$default-padding-x-touch;
 				}
 
-				@include mouse-and-bp-up(md) {
+				@include breakpoints.mouse-and-bp-up(md) {
 					min-width: 70px;
 				}
 			}

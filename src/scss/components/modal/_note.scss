@@ -1,14 +1,16 @@
+@use "../../abstracts/variables";
+
 .modal-notes {
 	.icon-previous {
 		color: var(--accent-blue);
 		position: absolute;
-		left: $default-padding-x-touch;
-		top: ($line-height-large-touch - $space-md) * 0.5;
+		left: variables.$default-padding-x-touch;
+		top: (variables.$line-height-large-touch - variables.$space-md) * 0.5;
 		z-index: 2;
 		transform: rotate(-90deg);
 	}
 
 	.btn-link-label {
-		padding-left: $default-padding-x-touch;
+		padding-left: variables.$default-padding-x-touch;
 	}
 }

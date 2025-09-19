@@ -1,3 +1,7 @@
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Touch navigation
 // --------------------------------------------------
@@ -7,7 +11,7 @@
 	left: 0;
 	top: 0;
 	width: 100%;
-	height: $line-height-large-touch;
+	height: variables.$line-height-large-touch;
 	z-index: 0;
 	overflow: hidden;
 
@@ -19,8 +23,8 @@
 	.icon-previous {
 		color: var(--accent-blue);
 		position: absolute;
-		left: $default-padding-x-touch;
-		top: ($line-height-large-touch - $space-md) * 0.5;
+		left: variables.$default-padding-x-touch;
+		top: (variables.$line-height-large-touch - variables.$space-md) * 0.5;
 		z-index: 2;
 		transform: rotate(-90deg);
 	}
@@ -32,9 +36,9 @@
 	.center-axis,
 	.inner {
 		height: 100%;
-		transition: transform $nav-transition;
+		transition: transform variables.$nav-transition;
 
-		@include scopedVariant(".search-cancel") {
+		.search-cancel & {
 			transition: none;
 		}
 	}
@@ -44,10 +48,10 @@
 		left: 0;
 		top: 0;
 		width: 100%;
-		transition: transform $nav-transition, color $nav-transition,
-			opacity $nav-transition-duration ease;
+		transition: transform variables.$nav-transition, color variables.$nav-transition,
+			opacity variables.$nav-transition-duration ease;
 
-		@include scopedVariant(".search-cancel") {
+		.search-cancel & {
 			transition: none;
 		}
 	}
@@ -61,26 +65,26 @@
 		transform: translate3d(-50%, 0, 0);
 		display: flex;
 		align-items: center;
-		max-width: calc((100% - 4 * #{$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
+		max-width: calc((100% - 4 * #{variables.$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
 	}
 
 	.before-last {
 		transform: translate3d(-100%, 0, 0);
 		opacity: 0;
-		transition: transform $nav-transition, color $nav-transition,
-			opacity $nav-transition;
+		transition: transform variables.$nav-transition, color variables.$nav-transition,
+			opacity variables.$nav-transition;
 
-		@include scopedVariant(".search-cancel") {
+		.search-cancel & {
 			transition: none;
 		}
 	}
 
 	.previous {
 		z-index: 1;
-		color: $touch-header-link-color;
+		color: common.$touch-header-link-color;
 
 		.center-axis {
-			transform: translate3d(($default-padding-x-touch + $space-md), 0, 0);
+			transform: translate3d((variables.$default-padding-x-touch + variables.$space-md), 0, 0);
 		}
 
 		.inner {
@@ -92,9 +96,9 @@
 	.next {
 		transform: translate3d(100%, 0, 0);
 		opacity: 0;
-		transition: transform $nav-transition, opacity $nav-transition;
+		transition: transform variables.$nav-transition, opacity variables.$nav-transition;
 
-		@include scopedVariant(".search-cancel") {
+		.search-cancel & {
 			transition: none;
 		}
 	}
@@ -106,17 +110,17 @@
 		position: absolute;
 		top: 0;
 		height: 100%;
-		z-index: $z-index-menu;
+		z-index: variables.$z-index-menu;
 	}
 
 	.btn {
-		color: $btn-options-color;
-		background: $btn-options-bg;
+		color: common.$btn-options-color;
+		background: common.$btn-options-bg;
 	}
 
 	// Options menu
 	.dropdown {
-		right: $default-padding-x-touch;
+		right: variables.$default-padding-x-touch;
 		display: flex;
 		align-items: center;
 

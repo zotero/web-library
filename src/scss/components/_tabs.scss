@@ -1,6 +1,13 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/mixins/utilities";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .tabs {
 	display: flex;
-	border-bottom: $border-width solid $tabs-border-color;
+	border-bottom: variables.$border-width solid common.$tabs-border-color;
 
 	&.justified {
 		flex: 1 1 auto;
@@ -14,72 +21,72 @@
 		appearance: none;
 		background: none;
 		border: none;
-		color: $tab-inactive-color;
+		color: common.$tab-inactive-color;
 		cursor: pointer;
 		display: inline;
 		font-family: inherit;
-		font-size: $font-size-base;
+		font-size: variables.$font-size-base;
 		font-weight: inherit;
-		height: $tabs-height;
+		height: variables.$tabs-height;
 		justify-content: center;
-		padding: 0 $tabs-padding-x;
+		padding: 0 variables.$tabs-padding-x;
 		text-decoration: none;
 
-		@include text-truncate;
+		@include utilities.text-truncate;
 
-		@include touch-or-bp-down(sm) {
-			height: $tabs-height-touch;
+		@include breakpoints.touch-or-bp-down(sm) {
+			height: variables.$tabs-height-touch;
 		}
 
 		&:hover {
-			color: $tab-active-color;
+			color: common.$tab-active-color;
 		}
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
-				outline-offset: -$outline-width;
+			.keyboard & {
+				outline-offset: -(variables.$outline-width);
 			}
 		}
 
 		&.active {
-			color: $tab-active-color;
-			box-shadow: inset 0 -1px $tab-active-color, 0 1px $tab-active-color;
+			color: common.$tab-active-color;
+			box-shadow: inset 0 -1px common.$tab-active-color, 0 1px common.$tab-active-color;
 
-			@include scopedVariant(".keyboard") {
+			.keyboard & {
 				&:focus-within {
 					box-shadow: none;
 				}
 			}
 		}
 
-		@include variant(".tabs.compact") {
-			padding: 0 $tabs-compact-padding-x;
+		@include selectors.state(".tabs.compact") {
+			padding: 0 variables.$tabs-compact-padding-x;
 		}
 
-		@include variant(".tabs.justified") {
+		@include selectors.state(".tabs.justified") {
 			flex: 1 1 0;
 		}
 	}
 
 	.icon {
-		margin-right: $space-xs;
+		margin-right: variables.$space-xs;
 	}
 }
 
 .tab-pane {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		display: none;
 	}
 
 	&.active {
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			flex: 1 1 auto;
 			display: flex;
 			flex-direction: column;
 		}
 
 		&.loading {
-			@include scopedVariant("html:not(.specifity)") {
+			html:not(.specifity) & {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -90,21 +97,21 @@
 	}
 
 	.tab-pane-heading {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			margin: 0;
-			line-height: $line-height-large-touch;
-			padding: $border-width $default-padding-x-touch;
+			line-height: variables.$line-height-large-touch;
+			padding: variables.$border-width variables.$default-padding-x-touch;
 			background: var(--material-toolbar);
 
-			@include hairline(top, "color-shade-4");
-			@include hairline(bottom, "color-shade-4");
+			@include hairline.hairline(top, "color-shade-4");
+			@include hairline.hairline(bottom, "color-shade-4");
 		}
 	}
 
 	.rich-editor {
-		@include mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-and-bp-up(lg) {
 			&:not(:only-child) {
-				border-top: $border-width solid $editor-border-color;
+				border-top: variables.$border-width solid common.$editor-border-color;
 			}
 		}
 	}

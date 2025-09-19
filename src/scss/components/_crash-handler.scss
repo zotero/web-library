@@ -1,6 +1,10 @@
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 .crash-handler {
 	align-items: center;
-	color: $shade-9;
+	color: common.$shade-9;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -8,19 +12,19 @@
 	text-align: center;
 	width: 100%;
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		justify-content: center;
 		max-width: 640px;
 		padding: 2em 1em;
 	}
 
 	h1 {
-		font-size: $font-size-h1;
+		font-size: variables.$font-size-h1;
 		flex: 0 0 auto;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			background: var(--accent-asphalt);
-			color: $shade-1;
+			color: common.$shade-1;
 			display: block;
 			width: 100%;
 			padding: 1em;
@@ -29,19 +33,19 @@
 
 	p {
 		flex: 0 0 auto;
-		font-size: $font-size-lg;
+		font-size: variables.$font-size-lg;
 		margin: 1.5em 1em 2.5em;
 	}
 
 	textarea {
-		font-size: $font-size-small;
-		border: 1px solid $shade-3;
-		color: $shade-9;
+		font-size: variables.$font-size-small;
+		border: 1px solid common.$shade-3;
+		color: common.$shade-9;
 		flex: 1 1 auto;
 		max-width: calc(100% - 2em);
 		resize: none;
 
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			margin: 1em auto;
 		}
 	}

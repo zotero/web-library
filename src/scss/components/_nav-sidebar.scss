@@ -1,3 +1,7 @@
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Nav sidebar
 // --------------------------------------------------
@@ -7,28 +11,28 @@
 	top: 0;
 	right: 0;
 	bottom: 0;
-	width: $navbar-nav-mobile-width;
-	z-index: $z-index-mobile-nav;
+	width: variables.$navbar-nav-mobile-width;
+	z-index: variables.$z-index-mobile-nav;
 	background-color: var(--color-nav-sidebar);
 	overflow-y: scroll;
-	font-family: "AvenirNextLTPro", $font-family-sans-serif;
+	font-family: "AvenirNextLTPro", variables.$font-family-sans-serif;
 	-webkit-font-smoothing: auto;
 	-moz-osx-font-smoothing: auto;
-	font-size: $navbar-font-size;
-	transform: $mobile-navbar-nav-transform;
+	font-size: variables.$navbar-font-size;
+	transform: variables.$mobile-navbar-nav-transform;
 	visibility: hidden;
 	transition:
-		transform $mobile-navbar-nav-transition,
-		visibility 0s linear $nav-transition-duration;
+		transform variables.$mobile-navbar-nav-transition,
+		visibility 0s linear variables.$nav-transition-duration;
 
-	@include scopedVariant(".navbar-nav-opened") {
+	.navbar-nav-opened & {
 		transform: translate3d(0, 0, 0);
 		visibility: visible;
-		transition: transform $mobile-navbar-nav-transition;
+		transition: transform variables.$mobile-navbar-nav-transition;
 	}
 
 	.mobile-nav {
-		margin: ($space-xxl - 6px) 0 ($space-xxl - 2px);
+		margin: (variables.$space-xxl - 6px) 0 (variables.$space-xxl - 2px);
 	}
 
 	.nav-link {
@@ -36,23 +40,23 @@
 		align-items: center;
 		justify-content: space-between;
 		color: var(--color-nav-sidebar-link);
-		padding: $navbar-padding-y-touch $navbar-padding-x-touch;
+		padding: variables.$navbar-padding-y-touch variables.$navbar-padding-x-touch;
 		position: relative;
 
 		&:focus {
-			@include scopedVariant(".keyboard") {
-				outline-offset: -$outline-width;
+			.keyboard & {
+				outline-offset: -(variables.$outline-width);
 			}
 		}
 
 		&.separated {
-			padding-top: $navbar-padding-y-touch + 1px;
+			padding-top: variables.$navbar-padding-y-touch + 1px;
 
 			&::before {
 				content: "";
 				position: absolute;
 				top: 0;
-				left: $space-xl;
+				left: variables.$space-xl;
 				right: 0;
 				border-top: 1px solid var(--color-nav-sidebar-border);
 				z-index: -1;
@@ -66,6 +70,6 @@
 	}
 
 	.active .nav-link {
-		color: $navbar-link-mobile-active-color;
+		color: common.$navbar-link-mobile-active-color;
 	}
 }

@@ -1,3 +1,10 @@
+@use "sass:selector";
+@use "../abstracts/mixins/breakpoints";
+@use "../abstracts/mixins/hairline";
+@use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
+@use "../themes/common";
+
 //
 // Collection tree
 // --------------------------------------------------
@@ -5,41 +12,41 @@
 .collection-tree {
 	flex: 1 1 0;
 
-	@include touch-or-bp-down(sm) {
+	@include breakpoints.touch-or-bp-down(sm) {
 		display: flex;
 		flex-direction: column;
-		line-height: $line-height-large-touch;
+		line-height: variables.$line-height-large-touch;
 		min-height: 0; // #290 Fix height in short viewports
 	}
 
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
 		padding: 8px;
 		overflow: auto;
-		line-height: $line-height-large;
+		line-height: variables.$line-height-large;
 		z-index: 1; // Fix #531
 	}
 
 	section + section {
-		@include touch-or-bp-down(sm) {
-			margin-top: $collection-tree-section-spacing;
+		@include breakpoints.touch-or-bp-down(sm) {
+			margin-top: variables.$collection-tree-section-spacing;
 		}
 	}
 
 	h4 {
-		color: $collection-tree-headings-color;
+		color: common.$collection-tree-headings-color;
 		margin: 0;
-		padding: 0 $collection-tree-padding-x 0 $collection-tree-padding-left;
+		padding: 0 variables.$collection-tree-padding-x 0 variables.$collection-tree-padding-left;
 
 
-		@include touch-or-bp-down(sm) {
-			padding: $border-width $collection-tree-padding-x-touch 0;
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding: variables.$border-width variables.$collection-tree-padding-x-touch 0;
 			background: var(--material-toolbar);
-			@include hairline(top, "color-shade-4");
+			@include hairline.hairline(top, "color-shade-4");
 		}
 
-		@include mouse-and-bp-up(md) {
-			@include state(".collection-tree.picker-mode") {
-				padding-left: $collection-tree-picker-padding-left;
+		@include breakpoints.mouse-and-bp-up(md) {
+			@include selectors.state(".collection-tree.picker-mode") {
+				padding-left: variables.$collection-tree-picker-padding-left;
 			}
 		}
 	}
@@ -47,34 +54,34 @@
 	.item-container {
 		display: flex;
 		align-items: center;
-		outline-offset: -$outline-width;
+		outline-offset: -(variables.$outline-width);
 		position: relative;
 
-		@include touch-or-bp-down(sm) {
-			padding: $border-width $default-padding-x-touch 0;
-			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding: variables.$border-width variables.$default-padding-x-touch 0;
+			@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$default-padding-x-touch + 28px));
 		}
 
-		@include mouse-and-bp-up(md) {
-			height: $line-height-large;
-			padding-right: $default-padding-x;
+		@include breakpoints.mouse-and-bp-up(md) {
+			height: variables.$line-height-large;
+			padding-right: variables.$default-padding-x;
 			border-radius: 5px;
 		}
 
-		@include variant("li:first-child > .item-container") {
-			@include touch-or-bp-down(sm) {
-	 			@include hairline-disabled(top);
+		@include selectors.state("li:first-child > .item-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
+	 			@include hairline.hairline-disabled(top);
 	 		}
 		}
 
-		@include variant(".level-0:nth-child(3) > ul > li:first-child > .item-container") {
-			@include touch-or-bp-down(sm) {
-	 			@include hairline(top, "color-shade-4");
+		@include selectors.state(".level-0:nth-child(3) > ul > li:first-child > .item-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
+	 			@include hairline.hairline(top, "color-shade-4");
 	 		}
 		}
 
-		@include variant(".collection-tree:not(.picker-mode) li:last-child > .item-container") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state(".collection-tree:not(.picker-mode) li:last-child > .item-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
 
 				&::after {
 					content: "";
@@ -82,88 +89,88 @@
 					z-index: -1;
 					right: 0;
 					bottom: 0;
-					left: 2 * $default-padding-x-touch + 28px;
+					left: 2 * variables.$default-padding-x-touch + 28px;
 					height: 1px;
 					box-shadow: 0 1px var(--color-collection-tree-shadow);
 
 					@media (min-resolution: 2dppx) {
-						box-shadow: 0 1px $touch-collection-tree-border;
+						box-shadow: 0 1px common.$touch-collection-tree-border;
 						transform: translateY(-0.5px);
 					}
 				}
 			}
 		}
 
-		@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
-			@include touch-or-bp-down(sm) {
+		@include selectors.state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
 				background: var(--accent-blue);
-				@include hairline-disabled(top);
+				@include hairline.hairline-disabled(top);
 			}
 		}
 
-		@include state("li.selected + li > .item-container", ".collection-tree:not(.picker-mode) li.open + li > .item-container") {
-			@include touch-or-bp-down(sm) {
-				@include hairline-disabled(top);
+		@include selectors.state("li.selected + li > .item-container", ".collection-tree:not(.picker-mode) li.open + li > .item-container") {
+			@include breakpoints.touch-or-bp-down(sm) {
+				@include hairline.hairline-disabled(top);
 			}
 		}
 
-		@include state("li.selected > .item-container") {
-			@include mouse-and-bp-up(md) {
+		@include selectors.state("li.selected > .item-container") {
+			@include breakpoints.mouse-and-bp-up(md) {
 				background: var(--color-quarternary-on-sidepane);
 			}
 		}
 
-		@include state(".collection-tree:focus-within li.selected > .item-container") {
-			@include mouse-and-bp-up(md) {
+		@include selectors.state(".collection-tree:focus-within li.selected > .item-container") {
+			@include breakpoints.mouse-and-bp-up(md) {
 				background-color: var(--color-accent);
 			}
 		}
 
-		@include state("li.highlighted > .item-container") {
-			@include mouse-and-bp-up(md) {
+		@include selectors.state("li.highlighted > .item-container") {
+			@include breakpoints.mouse-and-bp-up(md) {
 
 				background: var(--accent-highlight);
 			}
 		}
 
-		@include state("li.picked > .item-container") {
-			@include mouse-and-bp-up(md) {
+		@include selectors.state("li.picked > .item-container") {
+			@include breakpoints.mouse-and-bp-up(md) {
 				background: var(--color-accent);
 			}
 		}
 
-		@include state(".item-container:focus") {
-			@include touch-keyboard-or-bp-down(sm) {
-				@include hairline-disabled(top);
+		@include selectors.state(".item-container:focus") {
+			@include breakpoints.touch-keyboard-or-bp-down(sm) {
+				@include hairline.hairline-disabled(top);
 
-				@include state("li.selected > .item-container", "li.open > .item-container") {
+				@include selectors.state("li.selected > .item-container", "li.open > .item-container") {
 					outline-color: var(--color-sidepane);
 				}
 			}
 		}
 
-		@include state("li.focus + li > .item-container") {
-			@include touch-keyboard-or-bp-down(sm) {
-				@include hairline-disabled(top);
+		@include selectors.state("li.focus + li > .item-container") {
+			@include breakpoints.touch-keyboard-or-bp-down(sm) {
+				@include hairline.hairline-disabled(top);
 			}
 		}
 
-		@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
-			@include mouse-and-bp-up(md) {
+		@include selectors.state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
+			@include breakpoints.mouse-and-bp-up(md) {
 				color: var(--material-background);
 				background: var(--fill-secondary);
 			}
 		}
 
 		.twisty {
-			margin-left: -$collection-tree-padding-left;
+			margin-left: -(variables.$collection-tree-padding-left);
 
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				display: none;
 			}
 
 			.icon-triangle {
-				@include state(".open > .item-container") {
+				@include selectors.state(".open > .item-container") {
 					transform: scaleY(-1);
 				}
 			}
@@ -177,11 +184,11 @@
 
 			&.icon-library,
 			&.icon-library-read-only {
-				@include state("li.library-node.my-library > .item-container") {
+				@include selectors.state("li.library-node.my-library > .item-container") {
 					color: var(--accent-blue);
 				}
 
-				@include state("li.library-node:not(.my-library) > .item-container") {
+				@include selectors.state("li.library-node:not(.my-library) > .item-container") {
 					color: var(--accent-teal);
 				}
 			}
@@ -193,33 +200,33 @@
 			}
 
 			&.icon-document {
-				@include state("li.items-node > .item-container") {
+				@include selectors.state("li.items-node > .item-container") {
 					color: var(--accent-blue);
 				}
 
-				@include state("li.publications > .item-container") {
+				@include selectors.state("li.publications > .item-container") {
 					color: var(--accent-green);
 				}
 			}
 
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				color: var(--color-accent);
 
-				@include state("li.selected > .item-container") {
+				@include selectors.state("li.selected > .item-container") {
 					color: var(--primary-on-accent);
 				}
 			}
 
-			@include mouse-and-bp-up(md) {
+			@include breakpoints.mouse-and-bp-up(md) {
 				&:not(.icon-spin) {
-					@include state(".collection-tree:focus-within li.selected > .item-container") {
+					@include selectors.state(".collection-tree:focus-within li.selected > .item-container") {
 						color: var(--primary-on-accent);
 					}
 
-					@include state("li.picked > .item-container") {
+					@include selectors.state("li.picked > .item-container") {
 						color: var(--primary-on-accent);
 					}
-					@include state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
+					@include selectors.state(".item-container.dnd-target", "li.selected > .item-container.dnd-target") {
 						color: var(--material-background);
 					}
 				}
@@ -228,22 +235,22 @@
 
 		> .icon {
 			flex: 0 0 auto;
-			margin-right: $space-xs;
+			margin-right: variables.$space-xs;
 
 			&.touch {
-				margin-right: $space-md;
+				margin-right: variables.$space-md;
 			}
 
 			&.icon-library-read-only {
-				margin-right: $space-xs - 2px;
+				margin-right: variables.$space-xs - 2px;
 
 				&.touch {
-					margin-right: $space-md - 2px;
+					margin-right: variables.$space-md - 2px;
 				}
 			}
 
-			@include state("li.disabled > .item-container") {
-				@include touch-or-bp-down(sm) {
+			@include selectors.state("li.disabled > .item-container") {
+				@include breakpoints.touch-or-bp-down(sm) {
 					color: var(--color-shade-10-50);
 				}
 			}
@@ -254,36 +261,36 @@
 			color: var(--color-primary);
 			position: relative;
 
-			@include state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
-				@include touch-or-bp-down(sm) {
+			@include selectors.state("li.selected > .item-container", ".collection-tree:not(.picker-mode) li.open > .item-container") {
+				@include breakpoints.touch-or-bp-down(sm) {
 					color: var(--primary-on-accent);
 				}
 			}
 
-			@include state("li.selected > .item-container") {
-				@include mouse-and-bp-up(md) {
+			@include selectors.state("li.selected > .item-container") {
+				@include breakpoints.mouse-and-bp-up(md) {
 					color: var(--color-primary);
 				}
 			}
 
-			@include state(".collection-tree:focus-within li.selected > .item-container") {
-				@include mouse-and-bp-up(md) {
+			@include selectors.state(".collection-tree:focus-within li.selected > .item-container") {
+				@include breakpoints.mouse-and-bp-up(md) {
 					color: var(--primary-on-accent);
 				}
 			}
 
-			@include state("li.picker-skip > .item-container") {
-				@include mouse-and-bp-up(md) {
+			@include selectors.state("li.picker-skip > .item-container") {
+				@include breakpoints.mouse-and-bp-up(md) {
 					color: var(--color-shade-10-50);
 				}
 			}
 
-			@include state("li.disabled > .item-container") {
+			@include selectors.state("li.disabled > .item-container") {
 				color: var(--color-shade-10-50);
 			}
 
-			@include state("li.picked > .item-container") {
-				@include mouse-and-bp-up(md) {
+			@include selectors.state("li.picked > .item-container") {
+				@include breakpoints.mouse-and-bp-up(md) {
 					color: var(--primary-on-accent);
 				}
 			}
@@ -291,44 +298,44 @@
 
 		.icon-spin {
 			margin-right: 0;
-			margin-left: $space-xs;
+			margin-left: variables.$space-xs;
 		}
 
 		.btn-icon-plus {
-			@include mouse-and-bp-up(md) {
-				margin-right: -$space-min - $input-border-width;
+			@include breakpoints.mouse-and-bp-up(md) {
+				margin-right: -(variables.$space-min) - variables.$input-border-width;
 
-				@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
+				@include selectors.state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
 					visibility: hidden;
 				}
 
-				@include state(".item-container:hover") {
+				@include selectors.state(".item-container:hover") {
 					visibility: visible;
 				}
 			}
 		}
 
 		.dropdown {
-			@include touch-or-bp-down(sm) {
-				margin-left: $space-sm;
+			@include breakpoints.touch-or-bp-down(sm) {
+				margin-left: variables.$space-sm;
 				margin-right: 0;
 			}
 
-			@include mouse-and-bp-up(md) {
-				margin-left: $space-xs;
-				margin-right: -$space-min - $input-border-width;
+			@include breakpoints.mouse-and-bp-up(md) {
+				margin-left: variables.$space-xs;
+				margin-right: -(variables.$space-min) - variables.$input-border-width;
 			}
 
 			.dropdown-toggle {
 				display: block;
 				border-radius: 0;
 
-				@include touch-or-bp-down(sm) {
+				@include breakpoints.touch-or-bp-down(sm) {
 					padding: 0; // Simulate btn-link
 					border: 0;
 
-					@include state(".dropdown.show .dropdown-toggle") {
-						@include state("li.selected > .item-container") {
+					@include selectors.state(".dropdown.show .dropdown-toggle") {
+						@include selectors.state("li.selected > .item-container") {
 							background-color: var(--color-background);
 
 							.icon {
@@ -338,53 +345,53 @@
 					}
 				}
 
-				@include touch-keyboard-or-bp-down(sm) {
+				@include breakpoints.touch-keyboard-or-bp-down(sm) {
 					&:focus {
-						outline-offset: $outline-offset; // Simulate btn-link
+						outline-offset: variables.$outline-offset; // Simulate btn-link
 
-						@include state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
+						@include selectors.state("li.selected > .item-container .dropdown-toggle", "li.open > .item-container .dropdown-toggle") {
 							outline-color: var(--primary-on-accent);
 						}
 					}
 				}
 
-				@include mouse-and-bp-up(md) {
-					@include state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
+				@include breakpoints.mouse-and-bp-up(md) {
+					@include selectors.state(".item-container:not(:focus-within)", "html:not(.keyboard)") {
 						visibility: hidden;
 					}
 
-					@include state(".item-container:hover") {
+					@include selectors.state(".item-container:hover") {
 						visibility: visible;
 					}
 
-					@include state(".dropdown.show .dropdown-toggle") {
+					@include selectors.state(".dropdown.show .dropdown-toggle") {
 						visibility: visible;
 
 						.icon {
-							color: $icon-active-color;
+							color: common.$icon-active-color;
 						}
 					}
 				}
 
-				@include mouse-keyboard-and-bp-up(md) {
+				@include breakpoints.mouse-keyboard-and-bp-up(md) {
 					&:focus {
-						box-shadow: inset 0 0 0 $input-btn-focus-width var(--accent-blue); // Align with twisty and item-container outline
+						box-shadow: inset 0 0 0 variables.$input-btn-focus-width var(--accent-blue); // Align with twisty and item-container outline
 					}
 				}
 			}
 		}
 	}
 
-	@include mouse-and-bp-up(md) {
-		@for $i from 1 through $collection-tree-max-levels {
-			$sel: if($i == 1, "ul", selector-nest($sel, "ul"));
+	@include breakpoints.mouse-and-bp-up(md) {
+		@for $i from 1 through variables.$collection-tree-max-levels {
+			$sel: if($i == 1, "ul", selector.nest($sel, "ul"));
 
 			#{$sel} {
 				.item-container {
-					padding-left: $collection-tree-padding-left + $collection-tree-indent * ($i - 1);
+					padding-left: variables.$collection-tree-padding-left + variables.$collection-tree-indent * ($i - 1);
 
-					@include state(".collection-tree.picker-mode") {
-						padding-left: $collection-tree-picker-padding-left + $collection-tree-indent * ($i - 1);
+					@include selectors.state(".collection-tree.picker-mode") {
+						padding-left: variables.$collection-tree-picker-padding-left + variables.$collection-tree-indent * ($i - 1);
 					}
 				}
 			}
@@ -392,19 +399,19 @@
 	}
 
 	.level-root {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			flex: 1 1 100%;
 			height: 100%;
 			transform: translate3d(-25%, 0, 0);
-			transition: transform $nav-transition;
+			transition: transform variables.$nav-transition;
 
 			&.active {
 				transform: translate3d(0, 0, 0);
 			}
 
 			// Always translate root level on phones
-			@include scopedVariant(".view-item-list-active") {
-				@include bp-down(xs) {
+			.view-item-list-active & {
+				@include breakpoints.bp-down(xs) {
 					transform: translate3d(-25%, 0, 0);
 				}
 			}
@@ -413,7 +420,7 @@
 				overflow: hidden; // Prevent scrolling of inactive levels
 				height: 100%;
 
-				@include state(".level-root.active") {
+				@include selectors.state(".level-root.active") {
 					overflow: scroll;
 				}
 			}
@@ -421,8 +428,8 @@
 	}
 
 	.level {
-		z-index: $z-index-level;
-		transition: transform $nav-transition;
+		z-index: variables.$z-index-level;
+		transition: transform variables.$nav-transition;
 
 		&.loading {
 			display: flex;
@@ -433,7 +440,7 @@
 		}
 
 		.level {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				position: absolute;
 				left: 0;
 				top: 0;
@@ -449,13 +456,13 @@
 				}
 			}
 
-			@include mouse-and-bp-up(md) {
+			@include breakpoints.mouse-and-bp-up(md) {
 				display: none;
 			}
 		}
 
 		.level-2 {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				transform: translate3d(125%, 0, 0);
 			}
 		}
@@ -464,9 +471,9 @@
 	.open,
 	.selected {
 		> .level {
-			@include touch-or-bp-down(sm) {
+			@include breakpoints.touch-or-bp-down(sm) {
 				transform: translate3d(25%, 0, 0);
-				z-index: $z-index-level-active;
+				z-index: variables.$z-index-level-active;
 
 				&.has-open {
 					transform: translate3d(0, 0, 0);
@@ -481,7 +488,7 @@
 		// Do not translate last level on tablets and in touch mode
 		.level-last {
 			&.has-open {
-				@include touch-or-bp-only(sm) {
+				@include breakpoints.touch-or-bp-only(sm) {
 					transform: translate3d(25%, 0, 0);
 				}
 			}
@@ -489,7 +496,7 @@
 	}
 
 	.open {
-		@include mouse-and-bp-up(md) {
+		@include breakpoints.mouse-and-bp-up(md) {
 			> .level {
 				display: block;
 			}
@@ -499,16 +506,16 @@
 
 .picker-mode {
 	.icon-spin {
-		@include mouse-and-bp-up(md) {
-			margin-right: $space-sm;
+		@include breakpoints.mouse-and-bp-up(md) {
+			margin-right: variables.$space-sm;
 		}
 	}
 
 	input[type=checkbox] {
-		margin-right: $space-sm;
+		margin-right: variables.$space-sm;
 	}
 
 	.picker-checkbox-placeholder {
-		width: $space-lg + $space-sm; // width of checkbox + margin
+		width: variables.$space-lg + variables.$space-sm; // width of checkbox + margin
 	}
 }

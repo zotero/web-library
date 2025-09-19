@@ -1,9 +1,14 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Note pane
 // --------------------------------------------------
 
 .tab-pane.notes {
-	@include mouse-and-bp-only(md) {
+	@include breakpoints.mouse-and-bp-only(md) {
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: min-content auto;
 		grid-auto-flow: column;
@@ -14,29 +19,29 @@
 		}
 	}
 
-	@include mouse-and-bp-up(lg) {
+	@include breakpoints.mouse-and-bp-up(lg) {
 		height: 100%; // Fix rich-editor height in Safari
 	}
 
 	> .toolbar {
-		height: $toolbar-height-touch;
+		height: variables.$toolbar-height-touch;
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-			@include scopedVariant(".scrollbar-style-permanent") {
-				height: $toolbar-height-touch + $border-width;
-				border-bottom: $border-width solid $notes-toolbar-border-color;
+			.scrollbar-style-permanent & {
+				height: variables.$toolbar-height-touch + variables.$border-width;
+				border-bottom: variables.$border-width solid common.$notes-toolbar-border-color;
 			}
 		}
 
 		.counter {
-			margin-right: $space-xs;
+			margin-right: variables.$space-xs;
 		}
 	}
 
 	.scroll-container-mouse {
 		display: flex;
 		flex-direction: column;
-		@include mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-and-bp-up(lg) {
 			flex: 1 0 0;
 			min-height: 62px;
 			max-height: 62px * 3;
@@ -47,28 +52,28 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		color: $note-placeholder-color;
-		font-size: $font-size-h1;
+		color: common.$note-placeholder-color;
+		font-size: variables.$font-size-h1;
 
-		@include mouse-and-bp-only(md) {
-			border-left: $border-width solid $editor-border-color;
+		@include breakpoints.mouse-and-bp-only(md) {
+			border-left: variables.$border-width solid common.$editor-border-color;
 			grid-column: 2;
 			grid-row: 1 / 3;
 		}
 
-		@include mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-and-bp-up(lg) {
 			flex: 1 0 33%;
-			border-top: $border-width solid $editor-border-color;
+			border-top: variables.$border-width solid common.$editor-border-color;
 		}
 	}
 
 	.rich-editor {
-		@include mouse-and-bp-only(md) {
+		@include breakpoints.mouse-and-bp-only(md) {
 			grid-column: 2;
 			grid-row: 1 / 3;
 
 			&:not(:only-child) {
-				border-left: $border-width solid $editor-border-color;
+				border-left: variables.$border-width solid common.$editor-border-color;
 			}
 
 			&:only-child {
@@ -76,7 +81,7 @@
 			}
 		}
 
-		@include mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-and-bp-up(lg) {
 			&:not(:only-child) {
 				flex: 1 0 33%;
 			}

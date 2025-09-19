@@ -1,48 +1,55 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/mixins/hairline";
+@use "../../abstracts/mixins/selectors";
+@use "../../abstracts/mixins/utilities";
+@use "../../abstracts/variables";
+@use "../../themes/common";
+
 //
 // Note list
 // --------------------------------------------------
 
 .note-list {
 	.note {
-		@include touch-or-bp-down(sm) {
+		@include breakpoints.touch-or-bp-down(sm) {
 			display: flex;
-			padding: $note-list-padding-top $default-padding-x-touch $note-list-padding-bottom;
-			@include hairline(top, "color-shade-4", $start: (2 * $default-padding-x-touch + 28px));
+			padding: variables.$note-list-padding-top variables.$default-padding-x-touch variables.$note-list-padding-bottom;
+			@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$default-padding-x-touch + 28px));
 
 			&:first-child {
-				padding-top: $note-list-padding-top - $border-width;
-				@include hairline-disabled(top);
+				padding-top: variables.$note-list-padding-top - variables.$border-width;
+				@include hairline.hairline-disabled(top);
 			}
 
 			.icon-note {
 				align-self: center;
-				margin-right: $default-padding-x-touch;
+				margin-right: variables.$default-padding-x-touch;
 			}
 
 			.multiline-truncate {
 				flex: 1 1 auto;
-				@include multiline-truncate(2);
+				@include utilities.multiline-truncate(2);
 			}
 
 			.icon-chevron-13 {
 				align-self: center;
 				transform: rotate(90deg);
-				color: $note-list-chevron-color;
-				margin: 0 (-$space-min) 0 ($space-md - 5px);
+				color: common.$note-list-chevron-color;
+				margin: 0 (-(variables.$space-min)) 0 (variables.$space-md - 5px);
 
-				@include state(".editing .note-list") {
+				@include selectors.state(".editing .note-list") {
 					display: none;
 				}
 			}
 
 			.dropdown {
 				align-self: center;
-				margin-left: $default-padding-x-touch;
+				margin-left: variables.$default-padding-x-touch;
 			}
 		}
 
-		@include mouse-and-bp-up(md) {
-			padding: ($space-md - 5px) $default-padding-x;
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding: (variables.$space-md - 5px) variables.$default-padding-x;
 			position: relative;
 
 			&:focus {
@@ -51,17 +58,17 @@
 
 			&:first-child {
 				@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-					padding-top: $space-md - 5px - $border-width;
+					padding-top: variables.$space-md - 5px - variables.$border-width;
 				}
 			}
 
 			&::before,
 			&::after {
 				position: absolute;
-				left: $default-padding-x;
-				right: $default-padding-x;
-				height: $border-width;
-				background-color: $note-border-color;
+				left: variables.$default-padding-x;
+				right: variables.$default-padding-x;
+				height: variables.$border-width;
+				background-color: common.$note-border-color;
 			}
 
 			&::before {
@@ -70,9 +77,9 @@
 			}
 
 			&::before {
-				@include variant(".note:first-child") {
+				@include selectors.state(".note:first-child") {
 					@supports not (-webkit-font-smoothing: subpixel-antialiased) {
-						@include variant("html.scrollbar-style-permanent") {
+						html.scrollbar-style-permanent & {
 							content: none;
 						}
 					}
@@ -80,20 +87,20 @@
 			}
 
 			&::after {
-				@include variant(".note:last-child") {
+				@include selectors.state(".note:last-child") {
 					content: "";
 					bottom: 0;
 					background-color: transparent;
-					box-shadow: 0 1px $note-border-color;
+					box-shadow: 0 1px common.$note-border-color;
 				}
 			}
 
 			&.selected {
-				background-color: $note-active-bg;
+				background-color: common.$note-active-bg;
 
 				&:focus {
-					color: $note-focus-color;
-					background-color: $note-focus-bg;
+					color: common.$note-focus-color;
+					background-color: common.$note-focus-bg;
 				}
 
 				&::before,
@@ -102,11 +109,11 @@
 				}
 
 				& + .note {
-					border-top: $border-width solid $note-active-bg;
-					padding-top: $space-md - 6px;
+					border-top: variables.$border-width solid common.$note-active-bg;
+					padding-top: variables.$space-md - 6px;
 
-					@include state(".selected:focus") {
-						border-top-color: $note-focus-bg;
+					@include selectors.state(".selected:focus") {
+						border-top-color: common.$note-focus-bg;
 					}
 
 					&::before {
@@ -118,33 +125,33 @@
 			.dropdown {
 				position: absolute;
 				top: 9px;
-				right: $default-padding-x - $space-min - $input-border-width;
+				right: variables.$default-padding-x - variables.$space-min - variables.$input-border-width;
 				opacity: 0.01;
 
-				@include state(".note:hover", ".dropdown.show", '.note.selected', ".note:focus") {
+				@include selectors.state(".note:hover", ".dropdown.show", '.note.selected', ".note:focus") {
 					opacity: 1;
 				}
 
-				@include state(".note.selected + .note") {
-					top: 9px - $border-width;
+				@include selectors.state(".note.selected + .note") {
+					top: 9px - variables.$border-width;
 				}
 
 				.dropdown-toggle {
-					background-color: $panel-bg;
+					background-color: common.$panel-bg;
 					transition:
-						color $input-btn-transition,
-						border-color $input-btn-transition,
-						box-shadow $input-btn-transition;
+						color variables.$input-btn-transition,
+						border-color variables.$input-btn-transition,
+						box-shadow variables.$input-btn-transition;
 
-					@include state(".note.selected") {
-						background-color: $note-active-bg;
+					@include selectors.state(".note.selected") {
+						background-color: common.$note-active-bg;
 					}
 
-					@include state(".note.selected:focus-within") {
-						background-color: $note-focus-bg;
+					@include selectors.state(".note.selected:focus-within") {
+						background-color: common.$note-focus-bg;
 
 						.icon {
-							color: $note-focus-color;
+							color: common.$note-focus-color;
 						}
 					}
 				}
@@ -153,6 +160,6 @@
 	}
 
 	.multiline-truncate {
-		@include multiline-truncate(2);
+		@include utilities.multiline-truncate(2);
 	}
 }

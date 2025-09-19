@@ -1,3 +1,5 @@
+@use "../variables";
+
 @mixin button-variant($color-name, $outline: null) {
 	background-color: if($outline, transparent, var(--#{$color-name}));
 	border-color: if($outline, var(--#{$color-name}), transparent);
@@ -53,24 +55,24 @@
 
 	&:focus {
 		.keyboard & {
-			box-shadow: 0 0 0 $input-btn-focus-width var(--#{$color-name});
+			box-shadow: 0 0 0 variables.$input-btn-focus-width var(--#{$color-name});
 
 			&:hover {
 				border-color: if($outline, var(--#{$color-name}-lighter), transparent);
 				box-shadow:
-					0 0 0 $input-btn-focus-width var(--#{$color-name}-lighter),
+					0 0 0 variables.$input-btn-focus-width var(--#{$color-name}-lighter),
 					0 4px 4px var(--color-button-shadow);
 			}
 
 			&:active {
-				box-shadow: 0 0 0 $input-btn-focus-width var(--#{$color-name}-darker);
+				box-shadow: 0 0 0 variables.$input-btn-focus-width var(--#{$color-name}-darker);
 			}
 		}
 	}
 
 	&.success,
 	.btn-group.success > & {
-		background-color: $btn-success-color;
+		background-color: variables.$btn-success-color;
 
 		&:hover {
 			@media (hover: hover) {
@@ -84,17 +86,17 @@
 
 		&:focus {
 			.keyboard & {
-				box-shadow: 0 0 0 $input-btn-focus-width var(--accent-green);
+				box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-green);
 
 				&:hover {
 					border-color: if($outline, var(--#{$color-name}-lighter), transparent);
 					box-shadow:
-						0 0 0 $input-btn-focus-width var(--accent-green-lighter),
+						0 0 0 variables.$input-btn-focus-width var(--accent-green-lighter),
 						0 4px 4px var(--color-button-shadow);
 				}
 
 				&:active {
-					box-shadow: 0 0 0 $input-btn-focus-width var(--accent-green-darker);
+					box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-green-darker);
 				}
 			}
 		}

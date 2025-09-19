@@ -1,3 +1,5 @@
+@use "../abstracts/mixins/breakpoints";
+
 //
 // Scroll container
 // --------------------------------------------------
@@ -9,7 +11,7 @@
 }
 
 .scroll-container-touch {
-	@include touch-or-bp-down(sm) {
+	@include breakpoints.touch-or-bp-down(sm) {
 		flex: 1 1 0;
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
@@ -17,7 +19,7 @@
 }
 
 .scroll-container-mouse {
-	@include mouse-and-bp-up(md) {
+	@include breakpoints.mouse-and-bp-up(md) {
   	flex: 1 1 0;
   	overflow-y: scroll;
   }
