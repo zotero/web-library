@@ -50,6 +50,16 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 	return server;
 }
 
+export async function closeServer(server) {
+	if (!server || !server.listening) {
+		return;
+	}
+	return Promise.race([
+		new Promise((resolve) => server.close(resolve)),
+		new Promise((_, reject) => setTimeout(() => reject(new Error('server.close timeout')), 2000))
+	]);
+}
+
 export function makeCustomHandler(url, jsonResponse, { totalResults = null, version = 10^6 } = {}) {
 	const handler = (req, resp) => {
 		if (req.url.startsWith(url)) {

@@ -1,108 +1,82 @@
-import { getPort, getServer, makeCustomHandler } from '../utils/fixed-state-server.js';
-import { BrowserStackManager, mobileContexts, singleColumnMobileContexts } from '../utils/browserstack.js';
-import { screenshot } from '../utils/screenshot.js';
-import { expect } from '@playwright/test';
-import { waitForLoad, wait } from '../utils/common.js';
-import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json';
+import { getServer, closeServer, makeCustomHandler } from '../utils/fixed-state-server.js';
+import { test, expect } from '../utils/playwright-fixtures.js';
+import { waitForLoad, wait, isSingleColumn } from '../utils/common.js';
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
 
-jest.setTimeout(60000);
+test.describe('Mobile Snapshots', () => {
+	let server;
 
-describe('Mobile Snapshots', () => {
-	let browsers, server, port, context;
-
-	beforeAll(() => {
-		port = getPort(parseInt(process.env.JEST_WORKER_ID) ?? 1);
-		browsers = new BrowserStackManager();
+	test.afterEach(async () => {
+		await closeServer(server);
 	});
 
-	afterAll(async () => {
-		browsers.closeConnections();
-	});
+	test(`should render a list of items`, async ({ page, serverPort }) => {
+		server = await getServer('mobile-test-user-item-list-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/item-list`);
+		await waitForLoad(page);
+		const itemsList = page.getByRole('list', { name: 'items' });
+		await expect(itemsList.getByRole('listitem')).toHaveCount(7);
+		await wait(500); // avoid flaky screenshot with missing icons
+		await expect(page).toHaveScreenshot(`mobile-items-list.png`);
 
-	afterEach(async () => {
-		if (server) {
-			await new Promise(r => server.close(r));
-			server = null;
+		if (isSingleColumn(test.info())) {
+			// on small screens, enable search mode and take a screenshot
+			const toggleSearch = await page.getByRole('button', { name: 'Toggle search' });
+			await toggleSearch.click();
+			expect(await page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeVisible();
+			// avoid flaky screenshot with half-faded search bar
+			await page.waitForFunction(() => document.querySelector('.searchbar').classList.contains('fade-enter-done'));
+			await expect(page).toHaveScreenshot(`mobile-items-list-search-enabled.png`);
 		}
-		if (context) {
-			await context.close();
-			context = null;
-		}
+
+		await page.close();
 	});
 
-	mobileContexts.forEach((browserName) => {
-		test(`should render a list of items on "${browserName}"`, async () => {
-			server = await getServer('mobile-test-user-item-list-view', port);
-			context = await browsers.getBrowserContext(browserName);
-			const page = await context.newPage();
-			await page.goto(`http://localhost:${port}/testuser/collections/WTTJ2J56/item-list`);
-			await waitForLoad(page);
-			const itemsList = page.getByRole('list', { name: 'items' });
-			await expect(itemsList.getByRole('listitem')).toHaveCount(7);
-			await wait(500); // avoid flaky screenshot with missing icons
-			expect(await screenshot(page, `mobile-items-list-${browserName}`)).toBeTruthy();
+	test('should render item details', async ({ page, serverPort }) => {
+		server = await getServer('mobile-test-user-item-details-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`);
+		await waitForLoad(page);
+		await expect(await page.getByRole('heading', { name: 'Cooperative pathfinding' })).toBeVisible();
+		await wait(500); // avoid flaky screenshot with missing icons
+		await expect(page).toHaveScreenshot(`mobile-item-details.png`);
+		await page.close();
+	});
 
-			if (singleColumnMobileContexts.includes(browserName)) {
-				// on small screens, enable search mode and take a screenshot
-				const toggleSearch = await page.getByRole('button', { name: 'Toggle search' });
-				await toggleSearch.click();
-				expect(await page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeVisible();
-				// avoid flaky screenshot with half-faded search bar
-				await page.waitForFunction(() => document.querySelector('.searchbar').classList.contains('fade-enter-done'));
-				expect(await screenshot(page, `mobile-items-list-search-enabled-${browserName}`)).toBeTruthy();
-			}
+	test('should render collection in trash on', async ({ page, serverPort }) => {
+		server = await getServer('mobile-test-user-trash-collection-details-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/trash/items/Z7B4P73I/item-details`);
+		await waitForLoad(page);
 
-			await page.close();
-		});
+		if (isSingleColumn(test.info())) {
+			await page.getByRole('button', { name: 'Collection Trash Options' }).click();
+		}
 
-		test(`should render item details on "${browserName}"`, async () => {
-			server = await getServer('mobile-test-user-item-details-view', port);
-			context = await browsers.getBrowserContext(browserName);
-			const page = await context.newPage();
-			await page.goto(`http://localhost:${port}/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`);
-			await waitForLoad(page);
-			await expect(await page.getByRole('heading', { name: 'Cooperative pathfinding' })).toBeVisible();
-			await wait(500); // avoid flaky screenshot with missing icons
-			expect(await screenshot(page, `mobile-item-details-${browserName}`)).toBeTruthy();
-			await page.close();
-		});
+		const role = isSingleColumn(test.info()) ? 'menuitem' : 'button';
+		await expect(page.getByRole(role, { name: 'Restore to Library' })).toBeVisible();
+		await expect(page.getByRole(role, { name: 'Delete Permanently' })).toBeVisible();
+		await wait(500); // avoid flaky screenshot with missing icons
+		await expect(page).toHaveScreenshot(`mobile-trash-collection-details.png`);
+		await page.close();
+	});
 
-		test(`should render collection in trash on "${browserName}"`, async () => {
-			server = await getServer('mobile-test-user-trash-collection-details-view', port);
-			context = await browsers.getBrowserContext(browserName);
-			const page = await context.newPage();
-			await page.goto(`http://localhost:${port}/testuser/trash/items/Z7B4P73I/item-details`);
-			await waitForLoad(page);
+	test('should render "Add Related" modal on', async ({ page, serverPort }) => {
+		expect(itemsInCollectionAlgorithms.length).toBe(22);
+		const customHandler = makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms);
+		server = await getServer('mobile-test-user-item-details-view-edit', serverPort, customHandler);
 
-			if (singleColumnMobileContexts.includes(browserName)) {
-				await page.getByRole('button', { name: 'Collection Trash Options' }).click();
-			}
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`);
+		await waitForLoad(page);
 
-			const role = singleColumnMobileContexts.includes(browserName) ? 'menuitem' : 'button';
-			await expect(page.getByRole(role, { name: 'Restore to Library' })).toBeVisible();
-			await expect(page.getByRole(role, { name: 'Delete Permanently' })).toBeVisible();
-			await wait(500); // avoid flaky screenshot with missing icons
-			expect(await screenshot(page, `mobile-trash-collection-details-${browserName}`)).toBeTruthy();
-			await page.close();
-		});
+		const addRelatedButton = await page.getByRole('button', { name: 'Add Related Item' });
+		await addRelatedButton.dispatchEvent('click'); // Use dispatchEvent to avoid switching to desktop mode on ipad-pro-landscape-emulator
 
-		test(`should render "Add Related" modal on "${browserName}"`, async () => {
-			expect(itemsInCollectionAlgorithms.length).toBe(22);
-			const customHandler = makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms);
-			server = await getServer('mobile-test-user-item-details-view-edit', port, customHandler);
-			context = await browsers.getBrowserContext(browserName);
-			const page = await context.newPage();
-			await page.goto(`http://localhost:${port}/testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`);
-			await waitForLoad(page);
+		const modal = page.getByRole('dialog', { name: 'Add Related Items' });
+		await expect(modal).toBeVisible();
 
-			const addRelatedButton = await page.getByRole('button', { name: 'Add Related Item' });
-			await addRelatedButton.dispatchEvent('click'); // Use dispatchEvent to avoid switching to desktop mode on ipad-pro-landscape-emulator
-
-			await page.waitForFunction(() => document.querySelector('.add-related-modal').classList.contains('ReactModal__Content--after-open'));
-			await page.waitForFunction(() => document.querySelector('.add-related-modal').querySelectorAll('.item').length > 0); // 22 items is enough to trigger virtual scrolling so we cannot check for exact count
-			await wait(500); // ensure animation has settled and icons are loaded
-			expect(await screenshot(page, `mobile-item-add-related-${browserName}`)).toBeTruthy();
-			await page.close();
-		});
+		await page.waitForFunction(() => document.querySelector('.add-related-modal').classList.contains('ReactModal__Content--after-open'));
+		await page.waitForFunction(() => document.querySelector('.add-related-modal').querySelectorAll('.item').length > 0); // 22 items is enough to trigger virtual scrolling so we cannot check for exact count
+		await wait(500); // ensure animation has settled and icons are loaded
+		await expect(page).toHaveScreenshot(`mobile-item-add-related.png`);
+		await page.close();
 	});
 });

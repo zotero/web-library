@@ -5,9 +5,9 @@
 
 export default {
 	coverageProvider: "v8",
+	maxWorkers: process.env.CI ? '50%' : '100%',
 	projects: [{
 		displayName: "components",
-		maxWorkers: "50%",
 		moduleDirectories: [
 			"src/js/",
 			"modules",
@@ -26,21 +26,10 @@ export default {
 		},
 		testMatch: [
 			"<rootDir>/test/*.test.js?(x)",
-			//   "**/__tests__/**/*.[jt]s?(x)",
-			//   "**/?(*.)+(spec|test).[tj]s?(x)"
 		],
 		transformIgnorePatterns: [
 			"/node_modules/(?!react-dnd|dnd-core|@react-dnd|dnd-multi-backend|rdndmb-html5-to-touch)",
 			"\\.pnp\\.[^\\/]+$"
-		],
-	}, {
-		displayName: "snapshots",
-		maxWorkers: "50%",
-		globalSetup: "./test/utils/browserstack-global-setup.js",
-		globalTeardown: "./test/utils/browserstack-global-teardown.js",
-		setupFiles: ['./test/utils/jest-snapshots-setup.js'],
-		testMatch: [
-			"<rootDir>/test/playwright/*.test.js?(x)",
 		],
 	}],
 };

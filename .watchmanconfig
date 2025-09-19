@@ -1,0 +1,7 @@
+{
+    "ignore_dirs": [
+        "node_modules",
+        "build"
+    ],
+    "suppress_recrawl_warnings": true
+}

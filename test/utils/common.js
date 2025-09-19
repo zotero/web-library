@@ -96,3 +96,7 @@ export const getAccessibleLabel = (element) => {
 export const wait = (ms = 0) => new Promise(resolve => {
 	setTimeout(resolve, ms);
 });
+
+export const isSingleColumn = (testInfo) => {
+	return testInfo.project.name.includes('Mobile iPhone') || testInfo.project.name.includes('Mobile Android');
+}
