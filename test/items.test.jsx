@@ -30,6 +30,7 @@ import testUserSearchResults from './fixtures/response/test-user-search-results.
 import testUserSearchResultsTags from './fixtures/response/test-user-search-results-tags.json';
 import testUserItemsGolden from './fixtures/response/test-user-get-items-golden.json';
 import testUserItemsGoldenTags from './fixtures/response/test-user-get-items-golden-tags.json';
+import minimalState from './fixtures/state/minimal.json';
 
 const state = JSONtoState(stateRaw);
 const libraryViewState = JSONtoState(stateLibraryView);
@@ -417,4 +418,64 @@ describe('Items', () => {
 		const row = screen.getByRole('row', { name: 'Retriever' });
 		expect(getByText(row, '🐕')).toBeInTheDocument();
 	});
+
+	test("Loads items around the item from the URL", async () => {
+		let counter = 0;
+		server.use(
+			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
+				return HttpResponse.json({ "version": 1, "value": [{ "name": "green", "color": "#00FF00" }, { "name": "violet", "color": "#8A2BE2" }] });
+			}),
+			http.get('https://api.zotero.org/users/475425/collections', async ({ request }) => {
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' },
+				});
+			}),
+			http.get('https://api.zotero.org/users/475425/items', ({ request }) => {
+				const url = new URL(request.url);
+				const itemKey = url.searchParams.get('itemKey');
+				expect(itemKey).toBe('QWERTY12');
+				return HttpResponse.json([{ "key": "QWERTY12", "version": 1, itemType: "book", title: "", creators: [] }]);
+			}),
+			http.get('https://api.zotero.org/users/475425/items/top', ({ request }) => {
+				const url = new URL(request.url);
+				const format = url.searchParams.get('format');
+
+				if(counter === 0) {
+					// First request to items should be for keys, return 5000 + QWERTY12
+					expect(format).toBe('keys');
+					const arr = Array.from({ length: 5000 }, (_, i) => `ABCD${String(i + 1).padStart(4, '0')}`);
+					arr.splice(1489, 0, 'QWERTY12');
+					counter++;
+					return HttpResponse.text(arr.join('\n'), {
+						headers: { 'Total-Results': '5001', 'Content-Type': 'text/plain' },
+					});
+				} else {
+					// Second request to items should be for json, starting around where the item was found
+					expect(format).toBe('json');
+					expect(parseInt(url.searchParams.get('start'))).toBeGreaterThan(1400);
+					counter++;
+					return HttpResponse.json(testUserItemsGolden, {
+						headers: {
+							'Total-Results': '5001',
+						},
+					});
+				}
+			}),
+			http.get('https://api.zotero.org/users/475425/items/top/tags', () => {
+				return HttpResponse.json([], {
+					headers: {
+						'Total-Results': '0',
+					},
+				});
+			})
+		);
+
+		delete window.location;
+		window.location = new URL('http://localhost/testuser/items/QWERTY12/library');
+		renderWithProviders(<MainZotero />, { preloadedState: minimalState });
+		await waitForPosition();
+		// Ensure that we fetched items twice: first keys, then json.
+		await waitFor(() => expect(counter).toBeGreaterThan(1), { timeout: 3000 });
+	});
 });
+

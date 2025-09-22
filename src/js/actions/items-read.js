@@ -407,7 +407,7 @@ const findRowIndexInSource = () => {
 		}
 
 		try {
-			await fetchItemKeys(type, libraryKey, queryConfig, queryOptions);
+			keys = await dispatch(fetchItemKeys(type, libraryKey, queryConfig, queryOptions));
 			if(keys.indexOf(itemKey) !== -1) {
 				return keys.indexOf(itemKey);
 			}
