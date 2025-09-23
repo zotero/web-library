@@ -46,7 +46,6 @@
 	position: fixed;
 	inset: 0;
 	background-color: var(--color-backdrop);
-	overflow-y: auto;
 	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 	z-index: variables.$z-index-modal;
 

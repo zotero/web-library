@@ -45,10 +45,10 @@ const ItemsSortModal = () => {
 	return (
 		<Modal
 			className="modal-touch modal-form"
-			contentLabel="Collection Editor"
+			contentLabel="Sort By"
 			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
-			overlayClassName="modal-centered modal-slide"
+			overlayClassName="modal-touch modal-centered modal-slide"
 		>
 			<div className="modal-header">
 				<div className="modal-header-left">
