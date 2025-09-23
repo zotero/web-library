@@ -3,10 +3,6 @@
 @use "../abstracts/mixins/selectors";
 @use "../abstracts/variables";
 
-//
-// Sidebar
-// --------------------------------------------------
-
 .sidebar {
 	display: flex;
 	flex-direction: column;
@@ -21,11 +17,9 @@
 
 	@include breakpoints.bp-down-normalized(xs) {
 		position: absolute;
-		top: variables.$touch-header-height;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		inset: variables.$touch-header-height 0 0 0;
 		overflow: visible; // Allow touch-tag-selector to overflow
+
 		@include hairline.hairline-disabled(right);
 	}
 

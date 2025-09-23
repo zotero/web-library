@@ -1,9 +1,5 @@
 @use "../abstracts/functions/asset-url";
 
-//
-// Fonts
-//
-
 /**
  * @license
  * MyFonts Webfont Build ID 3582978, 2018-05-18T05:46:06-0400
@@ -46,10 +42,10 @@
 */
 
 /* @import must be at top of file, otherwise CSS will not work */
-@import url("//hello.myfonts.net/count/36ac02");
+@import "//hello.myfonts.net/count/36ac02";
 
 @font-face {
-  font-family: 'AvenirNextLTPro';
+  font-family: AvenirNextLTPro;
   font-weight: 400;
   font-style: normal;
   src: asset-url.font-url('36AC02_5_0.eot');

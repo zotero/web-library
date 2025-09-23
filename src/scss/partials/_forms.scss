@@ -7,10 +7,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Forms
-// --------------------------------------------------
-
 ::placeholder {
 	color: var(--color-shade-4);
 }
@@ -55,6 +51,19 @@ fieldset {
 	padding: 0;
 }
 
+.form-control-lg + .icon-spin {
+	@include breakpoints.mouse-and-bp-up(md) {
+		top: variables.$icon-spin-spacing-lg;
+		right: variables.$icon-spin-spacing-lg;
+		width: variables.$icon-spin-size-sm;
+		height: variables.$icon-spin-size-sm;
+
+		path {
+			stroke-width: 1.2px;
+		}
+	}
+}
+
 .form-group {
 	@include breakpoints.touch-or-bp-down(sm) {
 		display: flex;
@@ -62,6 +71,7 @@ fieldset {
 		margin-bottom: variables.$form-group-margin-touch;
 		background-color: common.$input-bg;
 		position: relative;
+
 		@include hairline.hairline(top, "color-shade-5");
 		@include hairline.hairline(bottom, "color-shade-5");
 
@@ -76,13 +86,14 @@ fieldset {
 
 			&:not(:last-child) {
 				padding-bottom: 0;
+
 				@include hairline.hairline-disabled(bottom);
 			}
 		}
 	}
 
 	@include breakpoints.touch-keyboard-or-bp-down(sm) {
-		&:focus-within:not(.checkboxes):not(.radios) {
+		&:focus-within:not(.checkboxes, .radios) {
 			&::before,
 			&::after {
 				content: "";
@@ -94,11 +105,11 @@ fieldset {
 				z-index: 2;
 			}
 
-			&:before {
+			&::before {
 				bottom: calc(100% - #{variables.$input-border-width});
 			}
 
-			&:after {
+			&::after {
 				top: calc(100% - #{variables.$input-border-width});
 			}
 		}
@@ -175,8 +186,7 @@ label {
 
 	&.textarea {
 		@include breakpoints.touch-or-bp-down(sm) {
-			$textarea-padding:
-				(variables.$space-thumb - variables.$font-size-mobile * variables.$line-height-base-mobile) * 0.5;
+			$textarea-padding: (variables.$space-thumb - variables.$font-size-mobile * variables.$line-height-base-mobile) * 0.5;
 
 			padding-top: $textarea-padding;
 			padding-bottom: $textarea-padding;
@@ -287,19 +297,6 @@ label {
 	}
 }
 
-.form-control-lg + .icon-spin {
-	@include breakpoints.mouse-and-bp-up(md) {
-		top: variables.$icon-spin-spacing-lg;
-		right: variables.$icon-spin-spacing-lg;
-		width: variables.$icon-spin-size-sm;
-		height: variables.$icon-spin-size-sm;
-
-		path {
-			stroke-width: 1.2px;
-		}
-	}
-}
-
 textarea {
 	resize: vertical;
 
@@ -315,6 +312,18 @@ textarea {
 		align-items: center;
 		min-width: 0;
 		position: relative;
+
+		.form-control {
+			@include utilities.text-truncate(ellipsis);
+
+			padding-right: 0;
+			margin-right: variables.$input-btn-padding-x-touch;
+			line-height: variables.$input-btn-height-touch; // Center text vertically
+
+			&.is-disabled {
+				color: var(--color-text-disabled);
+			}
+		}
 
 		select {
 			appearance: none;
@@ -334,17 +343,6 @@ textarea {
 				}
 			}
 		}
-
-		.form-control {
-			@include utilities.text-truncate(ellipsis);
-			padding-right: 0;
-			margin-right: variables.$input-btn-padding-x-touch;
-			line-height: variables.$input-btn-height-touch; // Center text vertically
-
-			&.is-disabled {
-				color: var(--color-text-disabled);
-			}
-		}
 	}
 }
 
@@ -354,6 +352,7 @@ textarea {
 	@include breakpoints.touch-or-bp-down(sm) {
 		display: block;
 		padding: 0;
+
 		@include hairline.hairline-disabled(top);
 		@include hairline.hairline-disabled(bottom);
 	}
@@ -372,6 +371,7 @@ textarea {
 		display: flex;
 		align-items: center;
 		padding: variables.$border-width variables.$input-btn-padding-x-touch;
+
 		@include hairline.hairline(top, "color-shade-5");
 		@include hairline.hairline(bottom, "color-shade-5");
 
@@ -381,6 +381,7 @@ textarea {
 
 		&:not(:last-child) {
 			padding-bottom: 0;
+
 			@include hairline.hairline-disabled(bottom);
 		}
 
@@ -411,11 +412,11 @@ textarea {
 				width: 100%; // Reset hairline styles
 			}
 
-			&:before {
+			&::before {
 				bottom: calc(100% - #{variables.$input-border-width});
 			}
 
-			&:after {
+			&::after {
 				top: calc(100% - #{variables.$input-border-width});
 			}
 
@@ -438,7 +439,6 @@ textarea {
 
 input[type="checkbox"] {
 	@include breakpoints.touch-or-bp-down(sm) {
-		-webkit-appearance: none;
 		appearance: none;
 		flex: 0 0 auto;
 		width: variables.$space-lg;
@@ -455,7 +455,6 @@ input[type="checkbox"] {
 
 	// todo
 	@include breakpoints.mouse-and-bp-up(md) {
-		-webkit-appearance: none;
 		appearance: none;
 		flex: 0 0 auto;
 		width: variables.$space-md;
@@ -485,7 +484,6 @@ input[type="checkbox"] {
 
 input[type="radio"] {
 	@include breakpoints.touch-or-bp-down(sm) {
-		-webkit-appearance: none;
 		appearance: none;
 		flex: 0 0 auto;
 		width: variables.$space-lg;

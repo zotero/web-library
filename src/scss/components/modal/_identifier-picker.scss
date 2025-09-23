@@ -41,11 +41,6 @@
 
 		&:hover {
 			background-color: common.$result-hover-bg;
-
-			.badge {
-				background-color: common.$result-hover-bg;
-				border-color: var(--color-identifier-badge-hover-border);
-			}
 		}
 
 		&:focus, &:focus-within {
@@ -61,6 +56,26 @@
 
 		.badge {
 			margin-bottom: 6px;
+			display: inline-block;
+			font-size: variables.$badge-font-size;
+			font-weight: 400;
+			line-height: 1;
+			padding: variables.$badge-padding-y variables.$badge-padding-x;
+			border-radius: variables.$border-radius-sm;
+
+			&:empty {
+				display: none;
+			}
+
+			@include selectors.state(".result:hover") {
+				background-color: common.$result-hover-bg;
+				border-color: var(--color-identifier-badge-hover-border);
+			}
+		}
+
+		.badge-light {
+			border: 1px solid common.$badge-light-border-color;
+			background-color: common.$badge-light-bg;
 		}
 
 		.title {
@@ -84,25 +99,6 @@
 			justify-content: center;
 			align-items: center;
 		}
-
-		.badge {
-			display: inline-block;
-			font-size: variables.$badge-font-size;
-			font-weight: 400;
-			line-height: 1;
-			padding: variables.$badge-padding-y variables.$badge-padding-x;
-			border-radius: variables.$border-radius-sm;
-
-			&:empty {
-				display: none;
-			}
-		}
-
-		.badge-light {
-			border: 1px solid common.$badge-light-border-color;
-			background-color: common.$badge-light-bg;
-		}
-
 	}
 
 	.more-button-wrap {

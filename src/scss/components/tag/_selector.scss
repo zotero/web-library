@@ -4,10 +4,6 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Tag selector
-// --------------------------------------------------
-
 .tag-selector {
 	@include breakpoints.mouse-and-bp-up(md) {
 		flex: 0 0 variables.$tag-selector-height;
@@ -75,12 +71,12 @@
 			cursor: pointer;
 			min-width: 0;
 
-			&:hover:not(.disabled) {
-				background-color: common.$tag-hover-bg;
-			}
-
 			&:active {
 				background-color: common.$tag-selected-bg;
+			}
+
+			&:hover:not(.disabled) {
+				background-color: common.$tag-hover-bg;
 			}
 
 			&.selected {
@@ -96,9 +92,9 @@
 
 				&.selected,
 				&:active {
-					background-color: currentColor;
+					background-color: currentcolor;
 
-					@each $colorHex, $colorVar in variables.$tagColorsLookup {
+					@each $colorHex, $colorVar in variables.$tag-colors-lookup {
 						@include selectors.state('.tag[data-color="#{$colorHex}"]') {
 							background-color: var($colorVar);
 						}
@@ -122,6 +118,7 @@
 
 			.tag-label {
 				color: var(--fill-primary);
+
 				@include utilities.text-truncate;
 
 				@include selectors.state(".tag.selected", ".tag:active") {
@@ -139,12 +136,12 @@
 					display: block;
 					width: 10px;
 					height: 10px;
-					background-color: currentColor;
+					background-color: currentcolor;
 					margin-right: variables.$space-min;
 					border-radius: 5px;
 					border: variables.$border-width solid var(--tag-color-border);
 
-					@each $colorHex, $colorVar in variables.$tagColorsLookup {
+					@each $colorHex, $colorVar in variables.$tag-colors-lookup {
 						@include selectors.state('.tag[data-color="#{$colorHex}"]') {
 							background-color: var($colorVar);
 						}

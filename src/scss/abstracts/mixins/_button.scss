@@ -1,3 +1,4 @@
+// stylelint-disable no-descending-specificity
 @use "../variables";
 
 @mixin button-variant($color-name, $outline: null) {

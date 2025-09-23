@@ -1,10 +1,4 @@
 @use "../functions/strings";
-
-//
-// Selectors
-// --------------------------------------------------
-//
-
 @use "sass:selector";
 @use "sass:list";
 @use "sass:string";
@@ -19,11 +13,10 @@
 		}
 
 		$string: strings.str-replace($string, "  ", " ");
-
 		$selectors: strings.str-parse($string, " ");
 
 		@each $sel in $selectors {
-			@if string.index(#{&}, $sel) != null {
+			@if string.index(#{&}, $sel) {
 				@at-root #{selector.replace(&, $sel, $state)} {
 					@content;
 				}

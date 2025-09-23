@@ -4,10 +4,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Editable
-// --------------------------------------------------
-
 .editable {
 	flex: 1 1 auto;
 	min-width: 0; // Fix truncation
@@ -37,7 +33,7 @@
 		}
 
 		@include selectors.state(".empty .editable") {
-			&:before {
+			&::before {
 				content: "\00a0";
 			}
 		}
@@ -106,6 +102,10 @@
 	&.textarea {
 		.editable-content {
 			word-wrap: break-word;
+
+			// Compensate border
+			margin-top: -1px;
+			margin-bottom: -1px;
 		}
 
 		// Correct shade for 'backdrop'
@@ -130,12 +130,6 @@
 			line-height: variables.$line-height-base;
 			padding-top: 0;
 			padding-bottom: 0;
-		}
-
-		// Compensate border
-		.editable-content {
-			margin-top: -1px;
-			margin-bottom: -1px;
 		}
 
 		// Compensate border

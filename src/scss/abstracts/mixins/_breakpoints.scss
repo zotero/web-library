@@ -1,12 +1,9 @@
 @use "../functions/breakpoints";
 @use "../variables";
 
-//
-// Breakpoints
-// --------------------------------------------------
-
 @mixin bp-up($name, $breakpoints: variables.$grid-breakpoints) {
   $min: breakpoints.breakpoint-min($name, $breakpoints);
+
   @if $min {
     @media (min-width: $min) {
       @content;
@@ -18,6 +15,7 @@
 
 @mixin bp-down($name, $breakpoints: variables.$grid-breakpoints) {
   $max: breakpoints.breakpoint-max($name, $breakpoints);
+
   @if $max {
     @media (max-width: $max) {
       @content;

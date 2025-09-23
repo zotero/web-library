@@ -4,27 +4,23 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Touch Tag selector
-// --------------------------------------------------
-
 .touch-tag-selector {
 	display: flex;
 	flex-direction: column;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	inset: 0;
 	z-index: variables.$z-index-touch-tag-selector;
 	background-color: common.$touch-tag-selector-pane-bg;
+
 	@include hairline.hairline(right, "color-shade-4");
 
-	& {
-		position: absolute; // Override position relative from hairline mixin
+	// Use a duplicate selector to override the `position: relative` set by the hairline mixin. A duplicate selector (which stylelint flags) is necessary; see #553.
+	& { // stylelint-disable-line no-duplicate-selectors
+		position: absolute;
 	}
 
 	@include breakpoints.bp-down(xs) {
 		top: -(variables.$touch-header-height) - variables.$navbar-height-xs;
+
 		@include hairline.hairline-disabled(right);
 	}
 
@@ -35,6 +31,7 @@
 		@include breakpoints.bp-down(xs) {
 			padding-top: 0;
 			height: variables.$line-height-large-touch + variables.$border-width;
+
 			@include hairline.hairline-disabled(top);
 		}
 	}
@@ -45,6 +42,7 @@
 		align-items: center;
 		height: variables.$line-height-large-touch + variables.$border-width;
 		padding: 0 variables.$space-min variables.$border-width;
+
 		@include hairline.hairline(bottom, "color-shade-4");
 	}
 
@@ -94,10 +92,10 @@
 		margin-right: variables.$default-padding-x-touch;
 
 		&[style*="color"] {
-			background-color: currentColor;
+			background-color: currentcolor;
 			border: variables.$border-width solid var(--tag-color-border);
 
-			@each $colorHex, $colorVar in variables.$tagColorsLookupItemsTable {
+			@each $colorHex, $colorVar in variables.$tag-colors-lookup-items-table {
 				&[data-color="#{$colorHex}"] {
 					// for known tag colors we're overriding the color set with style
 					// attribute to match equivalent theme color, hence !important
@@ -127,7 +125,7 @@
 					height: 1px;
 					box-shadow: 0 1px var(--color-shade-2);
 
-					@media (min-resolution: 2dppx) {
+					@media (resolution >= 2dppx) {
 						box-shadow: 0 1px var(--color-shade-4);
 						transform: translateY(-0.5px);
 					}

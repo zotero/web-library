@@ -1,10 +1,6 @@
 @use "../variables";
 @use "breakpoints";
 
-//
-// Utilities
-// --------------------------------------------------
-
 @mixin text-truncate($text-overflow: ellipsis) {
   white-space: nowrap;
   overflow: hidden;

@@ -2,10 +2,6 @@
 @use "../../abstracts/mixins/selectors";
 @use "../../abstracts/variables";
 
-//
-// Title
-// --------------------------------------------------
-
 .metadata-list {
 	.title {
 		@include breakpoints.touch-or-bp-down(sm) {

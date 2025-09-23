@@ -3,10 +3,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Panel
-// --------------------------------------------------
-
 .panel {
 	flex: 1 1 0;
 	display: flex;
@@ -71,10 +67,7 @@
 
 	.panel-backdrop {
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		inset: 0;
 		background-color: common.$panel-backdrop-bg;
 	}
 }

@@ -1,4 +1,5 @@
 @use "../abstracts/variables";
+@use "../abstracts/mixins/selectors";
 @use "../themes/common";
 
 .ongoing-pane {
@@ -24,25 +25,6 @@
 				background-color: var(transparent);
 			}
 		}
-
-		.process {
-			animation: .33s 2 flash-foreground;
-
-			@keyframes flash-foreground {
-				0% {
-					color: common.$ongoing-color;
-				}
-
-				50% {
-
-					color: var(--color-accent);
-				}
-
-				100% {
-					color: common.$ongoing-color;
-				}
-			}
-		}
 	}
 
 	&:empty {
@@ -51,6 +33,24 @@
 
 	.process {
 		border-top: variables.$border-width solid common.$ongoing-border-color;
+
+		@include selectors.state('.ongoing-pane.flash') {
+			animation: .33s 2 flash-foreground;
+
+			@keyframes flash-foreground {
+				0% {
+					color: common.$ongoing-color;
+				}
+
+				50% {
+					color: var(--color-accent);
+				}
+
+				100% {
+					color: common.$ongoing-color;
+				}
+			}
+		}
 	}
 }
 

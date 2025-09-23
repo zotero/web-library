@@ -1,6 +1,5 @@
 @use "sass:map";
 @use "sass:math";
-
 @use "../../../modules/web-common/scss/abstracts/defaults" with (
 	$space-max: 64px,
 	$font-size-base: 13px,
@@ -51,32 +50,25 @@
 @use "../../../modules/web-common/scss/abstracts/defaults" as *;
 
 // Typography
-$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-monospace: Menlo, Consolas, monospace;
+$font-family-sans-serif: -apple-system, blinkmacsystemfont, "Segoe UI", "Helvetica Neue", helvetica, arial, sans-serif;
+$font-family-monospace: menlo, consolas, monospace;
 $font-family-base: $font-family-sans-serif;
-
 $font-size-small: 12px;
 $font-size-base: 13px;
 $font-size-mobile: 16px;
-
 $font-size-lg: 16px;
-
 $font-size-h1: 20px;
 $font-size-h2: 16px;
 $font-size-h3: 14px;
-
 $line-height-base: 1.539;
 $line-height-computed: math.round($font-size-base * $line-height-base);
-
 $line-height-base-mobile: 1.5;
 $line-height-computed-mobile: math.floor($font-size-mobile * $line-height-base);
 
 // todo: line-height-small
 $line-height-large: 26px;
 $line-height-large-touch: $space-thumb;
-
 $link-hover-decoration: underline;
-
 $headings-font-family: inherit;
 $headings-font-weight: 400;
 $headings-line-height: 1.2;
@@ -85,10 +77,8 @@ $headings-line-height: 1.2;
 // Components
 $padding-x-sm: $space-sm;
 $padding-x-md: $space-md;
-
 $default-padding-x: $space-sm;
 $default-padding-x-touch: $space-md;
-
 $border-width: 1px;
 $border-radius: 4px;
 $border-radius-sm: 3px;
@@ -186,7 +176,6 @@ $item-list-padding-top: ($space-sm - 5px); // Hairline
 $item-list-padding-bottom: ($space-sm - 6px);
 $item-list-padding-x: $default-padding-x-touch;
 $item-list-padding-right: 39px;
-
 $item-table-head-height: $space-lg;
 $item-table-row-height: $line-height-large;
 
@@ -244,11 +233,8 @@ $input-btn-transition: 0.15s ease;
 $form-group-margin: $space-sm;
 $form-group-margin-touch: 20px; // todo
 $input-border-radius: $input-btn-border-radius;
-
 $form-grid-gutter-width: $space-xs;
-
 $icon-spin-spacing-lg: (math.floor($font-size-lg * $line-height-base) + 2 * $input-btn-padding-y-lg + 2 * $input-border-width - $icon-spin-size-sm) * 0.5;
-
 $input-transition: 0.15s ease;
 
 
@@ -303,21 +289,21 @@ $bp-lists-lg: 1500px;
 
 // Note styles
 $note-h1-font-size: 1.5em;
+
 /* h1–h3 sizing is interpolated */
 $note-h2-font-size: 1.28em;
 $note-h3-font-size: 1.1em;
+
 /* h4–h6 sizing is linear */
 $note-h4-font-size: 1em;
 $note-h5-font-size: 0.9em;
 $note-h6-font-size: 0.8em;
-
 $note-h1-margin: 0.79em;
 $note-h2-margin: 0.98em;
 $note-h3-margin: 1.19em;
 $note-h4-margin: 1.31em;
 $note-h5-margin: 1.53em;
 $note-h6-margin: 1.72em;
-
 $note-line-height-base: 1.33;
 $note-headings-font-weight: 700;
 
@@ -360,22 +346,22 @@ $result-padding: $space-md;
 // match popups from reader
 $reader-popup-border-radius: 5px;
 $reader-popup-padding: 5px 0;
-
-$tagColorsLookup: ('#ff6666': --tag-red,
-		'#ff8c19': --tag-orange,
-		'#999999': --tag-gray,
-		'#5fb236': --tag-green,
-		'#009980': --tag-teal,
-		'#2ea8e5': --tag-blue,
-		'#576dd9': --tag-indigo,
-		'#a28ae5': --tag-purple,
-		'#a6507b': --tag-plum,
-	);
+$tag-colors-lookup: (
+	'#ff6666': --tag-red,
+	'#ff8c19': --tag-orange,
+	'#999999': --tag-gray,
+	'#5fb236': --tag-green,
+	'#009980': --tag-teal,
+	'#2ea8e5': --tag-blue,
+	'#576dd9': --tag-indigo,
+	'#a28ae5': --tag-purple,
+	'#a6507b': --tag-plum,
+);
 
 // When a color with an alpha channel is used as `fill` in an SVG, it doesn't
 // seem to be mixed correctly with the HTML background. Instead, we're using
 // these pre-calculated opaque colors.
-$tagColorsLookupItemsTable: ('#ff6666': --tag-red-on-background,
+$tag-colors-lookup-items-table: ('#ff6666': --tag-red-on-background,
 		'#ff8c19': --tag-orange-on-background,
 		'#999999': --tag-gray-on-background,
 		'#5fb236': --tag-green-on-background,
@@ -402,12 +388,9 @@ $shade-10: var(--color-shade-10);
 // Scaffolding
 $body-bg: $shade-0;
 $text-color: $shade-9;
-
 $headings-color: $shade-8;
-
 $link-color: var(--accent-blue);
 $link-hover-color: var(--accent-blue);
-
 $focus-color: var(--accent-blue);
 
 // Typography
@@ -558,7 +541,7 @@ $menu-color-disabled: var(--color-text-disabled);
 $menu-bg: var(--color-shade-0);
 $menu-item-hover-color: var(--primary-on-accent);
 $menu-item-hover-bg: var(--color-accent);
-$menu-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$menu-box-shadow: 0 0 0 1px rgb(0 0 0 / 8%), 0 3px 8px rgb(0 0 0 / 20%);
 $menu-item-selected-bg: $shade-2;
 $menu-item-selected-hover-bg: var(--color-accent);
 $menu-devider: $shade-2;
@@ -607,9 +590,9 @@ $popover-body-color: $text-color;
 $popover-header-bg: $body-bg;
 $popover-header-color: $shade-8;
 $popover-header-border-color: $shade-2;
-$popover-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$popover-box-shadow: 0 0 0 1px rgb(0 0 0 / 8%), 0 3px 8px rgb(0 0 0 / 20%);
 $popover-arrow-color: $body-bg;
-$popover-arrow-outer-color: rgba(0, 0, 0, 0.2);
+$popover-arrow-outer-color: rgb(0 0 0 / 20%);
 
 // Oncoing
 $ongoing-border-color: $shade-3;
@@ -621,7 +604,6 @@ $result-hover-color: $shade-0;
 $result-hover-bg: $shade-1;
 $badge-light-border-color: $shade-3;
 $badge-light-bg: $shade-0;
-
 $select-chevron-icon: "icons/chevron-7.svg";
 
 // match popups from reader

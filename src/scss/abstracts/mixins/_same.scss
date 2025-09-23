@@ -1,7 +1,4 @@
 @use "sass:list";
-//
-// Same
-// --------------------------------------------------
 
 @mixin same($values...){
     $length: list.length($values);

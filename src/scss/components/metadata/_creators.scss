@@ -1,16 +1,11 @@
+@use "sass:math";
 @use "../../abstracts/functions/asset-url";
 @use "../../abstracts/mixins/breakpoints";
 @use "../../abstracts/mixins/selectors";
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Creators entry
-// --------------------------------------------------
-
 // Creators field
-@use "sass:math";
-
 .creators-entry {
 	position: relative;
 
@@ -93,8 +88,7 @@
 	.key {
 		@include breakpoints.touch-or-bp-down(sm) {
 			@include selectors.state(".editing .creators-entry.virtual") {
-				flex-basis: calc((100% - #{2 * variables.$default-padding-x-touch
-					+ variables.$input-border-width + variables.$space-lg}) * #{math.div(variables.$metadata-list-offset, 100%)}
+				flex-basis: calc((100% - #{2 * variables.$default-padding-x-touch + variables.$input-border-width + variables.$space-lg}) * #{math.div(variables.$metadata-list-offset, 100%)}
 				); // Align with creators
 			}
 		}

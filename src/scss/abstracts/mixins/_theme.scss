@@ -28,8 +28,6 @@
 	--color-shade-0-50: #{color.adjust(map.get($colors, "color-shade-0"), $alpha: -0.5)};
 	--color-shade-10-50: #{color.adjust(map.get($colors, "color-shade-10"), $alpha: -0.5)};
 	--color-shade-2-50: #{color.adjust(map.get($colors, "color-shade-2"), $alpha: -0.5)};
-
-	--color-text-selection-bg: #{rgba(map.get($colors, "accent-blue"), 0.2)};
 	--color-text-selection-bg: #{rgba(map.get($colors, "accent-blue"), 0.2)};
 
 	// composite (opaque) colors
@@ -48,7 +46,6 @@
 	--color-stripe-on-background: #{color.mix(
 		map.get($colors, "color-background"), color.change(map.get($colors, "color-stripe"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "color-stripe")))
 	)};
-
 	--tag-blue-on-background: #{color.mix(
 		map.get($colors, "color-background"), color.change(map.get($colors, "tag-blue"), $alpha: 1), 100% * (1 - color.alpha(map.get($colors, "tag-blue")))
 	)};

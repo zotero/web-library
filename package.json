@@ -48,7 +48,7 @@
     "devbuild:scss:post": "postcss build/static/web-library/*.css --use autoprefixer -r",
     "start:all": "run-p \"serve -s {@}\" \"devel -s {@}\"",
     "start": "run-s \"build:prepare\" \"start:all\"",
-    "stylelint": "stylelint src/scss/**/*.scss || true",
+    "stylelint": "stylelint \"src/scss/**/*.scss\"",
     "eslint": "eslint \"src/js/**/*.+(js|jsx)\" || true",
     "lint": "run-p stylelint eslint",
     "watch:stylelint": "nodemon -q -w src/scss --ext 'scss' --exec 'npm run stylelint'",

@@ -4,10 +4,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Navbar
-// --------------------------------------------------
-
 .navbar {
 	flex: 0 0 auto;
 	display: flex;
@@ -75,6 +71,10 @@
 		.nav-link {
 			color: common.$navbar-link-color;
 
+			@include selectors.state(".active .nav-link") {
+				color: common.$navbar-link-active-color;
+			}
+
 			html:not(.specifity) & {
 				padding: variables.$navbar-padding-y variables.$navbar-padding-x;
 			}
@@ -84,10 +84,6 @@
 					outline-offset: -(variables.$outline-width);
 				}
 			}
-		}
-
-		.active .nav-link {
-			color: common.$navbar-link-active-color;
 		}
 
 		.dropdown-toggle {
@@ -104,6 +100,7 @@
 
 		.truncate {
 			@include utilities.text-truncate;
+
 			display: inline-block;
 			vertical-align: bottom;
 			max-width: 9vw;
@@ -166,7 +163,7 @@
 			margin: 2px 0 0;
 			box-shadow: none;
 			background-clip: padding-box;
-			border: 1px solid rgba(0, 0, 0, 0.15);
+			border: 1px solid rgb(0 0 0 / 15%);
 			border-radius: 4px;
 
 			@include selectors.state(".search .dropdown-menu") {
@@ -218,19 +215,16 @@
 
 .nav-cover {
 	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	inset: 0;
 	z-index: variables.$z-index-navbar;
-	background-color: rgba(0, 0, 0, 0);
+	background-color: rgb(0 0 0 / 0%);
 	visibility: hidden;
 		transition:
 			background-color variables.$mobile-navbar-nav-transition,
 			visibility 0s linear variables.$nav-transition-duration;
 
 	.navbar-nav-opened & {
-		background-color: rgba(0, 0, 0, 0.1);
+		background-color: rgb(0 0 0 / 10%);
 		visibility: visible;
 		transition: background-color variables.$mobile-navbar-nav-transition;
 	}

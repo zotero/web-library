@@ -3,10 +3,6 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Abstract
-// --------------------------------------------------
-
 .abstract {
 	@include breakpoints.touch-or-bp-down(sm) {
 		margin: 8px variables.$default-padding-x-touch 8px;
@@ -41,7 +37,7 @@
 		}
 
 		@include breakpoints.bp-down-normalized(xs) {
-			margin: 0 0 10px 0;
+			margin: 0 0 10px;
 			border-radius: 0;
 			border-top: variables.$separator-width solid common.$separator-color;
 			border-bottom: variables.$separator-width solid common.$separator-color;

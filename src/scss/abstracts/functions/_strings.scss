@@ -1,18 +1,14 @@
 @use "sass:list";
 @use "sass:selector";
 @use "sass:string";
-//
-// String functions
-// --------------------------------------------------
 
 @function str-replace($string, $token, $replace: "") {
 	$i: string.index($string, $token);
 
-	@while (string.index($string, $token) != null) {
+	@while string.index($string, $token) != null {
 		$first-part: string.slice($string, 1, ($i - 1));
 		$last-part: string.slice($string, ($i + string.length($token)));
 		$string: string.slice($string, 1, ($i - 1)) + $replace + $last-part;
-
 		$i: string.index($string, $token);
 	}
 

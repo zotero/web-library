@@ -1,11 +1,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Type
-// --------------------------------------------------
-
-
 // Font Smoohting
 
 body {
@@ -32,8 +27,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .h1 {
 	font: {
-		family: BlinkMacSystemFont, "HelveticaNeue-Light", "Helvetica Neue Light",
-			"Helvetica Neue", Helvetica, Arial, sans-serif;
+		family: blinkmacsystemfont, "HelveticaNeue-Light", "Helvetica Neue Light",
+			"Helvetica Neue", helvetica, arial, sans-serif;
 		size: variables.$font-size-h1;
 		weight: 300;
 	}

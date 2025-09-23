@@ -5,19 +5,17 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Note list
-// --------------------------------------------------
-
 .note-list {
 	.note {
 		@include breakpoints.touch-or-bp-down(sm) {
 			display: flex;
 			padding: variables.$note-list-padding-top variables.$default-padding-x-touch variables.$note-list-padding-bottom;
+
 			@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$default-padding-x-touch + 28px));
 
 			&:first-child {
 				padding-top: variables.$note-list-padding-top - variables.$border-width;
+
 				@include hairline.hairline-disabled(top);
 			}
 
@@ -28,6 +26,7 @@
 
 			.multiline-truncate {
 				flex: 1 1 auto;
+
 				@include utilities.multiline-truncate(2);
 			}
 
@@ -74,9 +73,7 @@
 			&::before {
 				content: "";
 				top: 0;
-			}
 
-			&::before {
 				@include selectors.state(".note:first-child") {
 					@supports not (-webkit-font-smoothing: subpixel-antialiased) {
 						html.scrollbar-style-permanent & {

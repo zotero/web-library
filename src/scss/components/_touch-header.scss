@@ -3,10 +3,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Touch header
-// --------------------------------------------------
-
 .touch-header {
 	flex: 0 0 auto;
 	line-height: variables.$line-height-base; // Reset for correct outline size
@@ -15,6 +11,7 @@
 	height: variables.$touch-header-height;
 	position: relative;
 	padding: variables.$border-width 0;
+
 	@include hairline.hairline(top, "color-shade-4");
 	@include hairline.hairline(bottom, "color-shade-4");
 

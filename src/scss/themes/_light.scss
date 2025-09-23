@@ -1,6 +1,5 @@
 @use 'sass:color';
 @use "sass:map";
-
 @use "../abstracts/mixins/theme";
 
 $-colors: (
@@ -37,8 +36,8 @@ $-colors: (
 	color-sidepane: #f2f2f2,
 	color-tabbar: #f2f2f2,
 	color-toolbar: #f9f9f9,
-	color-scrollbar: rgb(194, 194, 194),
-	color-scrollbar-hover: rgb(125, 125, 125),
+	color-scrollbar: rgb(194 194 194),
+	color-scrollbar-hover: rgb(125 125 125),
 	color-scrollbar-background: transparent,
 	color-stripe: #0000000a,
 	tag-blue: #2ea8e5,
@@ -49,7 +48,7 @@ $-colors: (
 	tag-orange: #f19837,
 	tag-plum: #a6507b,
 	tag-purple: #a28ae5,
-	tag-red: #ff6666,
+	tag-red: #f66,
 	tag-teal: #009980,
 	tag-yellow: #ffd400,
 
@@ -70,22 +69,22 @@ $-colors: (
 	color-shade-10: #000,
 
 	color-dnd-target-outline: #393939,
-	color-collection-tree-shadow: #e3e3e3, //mix($shade-4, $sidebar-bg, 50%)
-	color-tab-headings-bg: #f0f0f0, //shade($shade-1, 4%);
-	color-item-list-second-row: #888, //mix($body-bg, $text-color, 50%);
-	color-panel-backdrop-bg: rgba(0, 0, 0, 0.1), //rgba($shade-10, 0.1)
-	color-editable-hover-bg: rgba(0, 0, 0, 0.04),
+	color-collection-tree-shadow: #e3e3e3, // mix($shade-4, $sidebar-bg, 50%)
+	color-tab-headings-bg: #f0f0f0, // shade($shade-1, 4%);
+	color-item-list-second-row: #888, // mix($body-bg, $text-color, 50%);
+	color-panel-backdrop-bg: rgba(0 0 0 / 0.1), // rgba($shade-10, 0.1)
+	color-editable-hover-bg: rgba(0 0 0 / 0.04),
 	color-editable-backdrop-hover-bg: #f0f0f0, // darken($shade-1, ($editable-hover-percent * 100%));, $editable-hover-percent = 0.04
 	color-shade-1-darker: #f5f5f5, // shade($shade-1, 2%) or mix($shade-10, $shade-1, 2%) or html whitesmoke
 	color-button-active-bg: #f0f0f0,
-	color-button-shadow: rgba(0, 0, 0, 0.2),
-	color-button-shadow-lighter: rgba(0, 0, 0, 0.06),
-	color-drag-preview-shadow: rgba(0, 0, 0, 0.2),
-	tag-color-border: rgba(0, 0, 0, 0.08),
+	color-button-shadow: rgba(0 0 0 / 0.2),
+	color-button-shadow-lighter: rgba(0 0 0 / 0.06),
+	color-drag-preview-shadow: rgba(0 0 0 / 0.2),
+	tag-color-border: rgba(0 0 0 / 0.08),
 	color-text-disabled: #656565, // lighten($text-color, 33%);
 	color-nav-sidebar-border: #252525,
 	color-identifier-badge-hover-border: #b9b8b5,
-	color-backdrop: rgba(0, 0, 0, 0.4),
+	color-backdrop: rgba(0 0 0 / 0.4),
 	color-backdrop-spinner: #fff,
 	accent-red-on-shade-1: #db2c3a, // only differs from accent-red in dark theme
 	primary-on-shade-1: #252525,
@@ -98,8 +97,9 @@ $-colors: (
 	@include theme.derive-colors($-colors);
 }
 
-:root[data-color-scheme=light] {
+:root[data-color-scheme="light"] {
 	color-scheme: light;
+
 	@include theme.derive-colors($-colors);
 }
 

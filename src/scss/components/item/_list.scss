@@ -6,10 +6,6 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Item list
-// --------------------------------------------------
-
 .items-list-wrap {
 	height: 100%;
 	flex: 1 1 auto;
@@ -36,6 +32,7 @@
 		display: flex;
 		padding: variables.$item-list-padding-top variables.$item-list-padding-x variables.$item-list-padding-bottom;
 		position: relative;
+
 		@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$item-list-padding-x + 28px));
 
 		@include breakpoints.bp-down(xs) {
@@ -48,6 +45,7 @@
 			&.active {
 				color: var(--primary-on-accent);
 				background-color: var(--accent-blue);
+
 				@include hairline.hairline-disabled(top);
 
 				& + .item {
@@ -59,6 +57,7 @@
 		@include selectors.state(".items-list.select-mode") {
 			padding-left: 2 * variables.$item-list-padding-x + variables.$space-lg;
 			padding-right: variables.$item-list-padding-x;
+
 			@include hairline.hairline(top, "color-shade-4", $start: (3 * variables.$item-list-padding-x + variables.$space-lg + 28px));
 
 			@include breakpoints.bp-down(xs) {
@@ -69,6 +68,7 @@
 		&:focus {
 			.keyboard & {
 				outline-offset: -(variables.$outline-width);
+
 				@include hairline.hairline-disabled(top);
 
 				&.active {
@@ -93,7 +93,7 @@
 			}
 		}
 
-		&:last-child:not(.active):not(:focus) {
+		&:last-child:not(.active, :focus) {
 			background-color: var(--color-background);
 
 			// Use box shadow once Safari is able to render 0.5px box-shadow
@@ -107,7 +107,7 @@
 				height: 1px;
 				box-shadow: 0 1px var(--color-shade-2);
 
-				@media (min-resolution: 2dppx) {
+				@media (resolution >= 2dppx) {
 					box-shadow: 0 1px var(--color-shade-4);
 					transform: translateY(-0.5px);
 				}
@@ -145,6 +145,7 @@
 
 		.metadata {
 			@include utilities.text-truncate;
+
 			position: relative;
 
 			@include selectors.state(".item.placeholder") {

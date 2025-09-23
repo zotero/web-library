@@ -2,15 +2,12 @@
 @use "../../abstracts/mixins/selectors";
 @use "../../abstracts/variables";
 
-//
-// Tag list
-// --------------------------------------------------
-
 .tag-selector-list {
 	.tag {
 		&:focus {
 			.keyboard & {
 				outline-offset: -(variables.$outline-width);
+
 				@include hairline.hairline-disabled(top);
 			}
 		}

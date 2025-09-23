@@ -29,7 +29,7 @@
 		margin: 1em 0;
 
 		& + .info {
-			margin: 0 0 1em 0;
+			margin: 0 0 1em;
 		}
 
 		@include breakpoints.touch-or-bp-down(sm) {

@@ -5,14 +5,16 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Metadata list
-// --------------------------------------------------
-
 .metadata-list {
 	@include breakpoints.mouse-and-bp-up(md) {
 		margin-top: 15px - 8px;
 		margin-bottom: 15px - 7px;
+	}
+
+	.attachment-details &,
+	.standalone-attachment & {
+		user-select: text;
+		cursor: auto;
 	}
 
 	.panel.editing & {
@@ -32,12 +34,6 @@
 			margin: (variables.$form-group-margin-touch - variables.$modal-inner-padding)
 				(-(variables.$modal-inner-padding));
 		}
-	}
-
-	.attachment-details &,
-	.standalone-attachment & {
-		user-select: text;
-		cursor: auto;
 	}
 
 	.metadata {
@@ -140,7 +136,7 @@
 						left: 0;
 					}
 
-					html:not(specifity) .modal & {
+					@include selectors.state("html:not(.specifity) .modal .metadata-list") {
 						left: 0;
 					}
 
@@ -154,6 +150,7 @@
 
 			&:last-child {
 				padding-bottom: variables.$input-border-width;
+
 				@include selectors.state("main .metadata-list") {
 					@include breakpoints.bp-up(sm) {
 						padding-bottom: 0;
@@ -170,7 +167,7 @@
 						bottom: 0;
 					}
 
-					html:not(.specifity) .modal & {
+					@include selectors.state("html:not(.specifity) .modal .metadata-list") {
 						content: "";
 						left: 0;
 						top: auto;
@@ -390,7 +387,6 @@
 
 	.key {
 		color: common.$key-color;
-		margin-top: variables.$space-xs;
 		flex: 0 0 variables.$metadata-list-offset;
 		margin-top: 0;
 		align-items: center;
@@ -425,6 +421,7 @@
 
 	label {
 		@include utilities.text-truncate;
+
 		line-height: normal; // Flex alignment is more stable
 		user-select: none; // Reset
 

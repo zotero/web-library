@@ -5,10 +5,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Details list
-// --------------------------------------------------
-
 .details-list {
 	@include breakpoints.mouse-and-bp-up(md) {
 		margin-bottom: variables.$space-xs;
@@ -21,6 +17,7 @@
 		@include breakpoints.touch-or-bp-down(sm) {
 			height: variables.$line-height-large-touch + variables.$border-width;
 			padding: variables.$border-width variables.$default-padding-x-touch 0;
+
 			@include hairline.hairline(top, "color-shade-4", $start: (2 * variables.$default-padding-x-touch + 28px));
 		}
 
@@ -32,6 +29,7 @@
 		&:first-child {
 			@include breakpoints.touch-or-bp-down(sm) {
 				padding-top: 0;
+
 				@include hairline.hairline-disabled(top);
 			}
 		}
@@ -40,11 +38,13 @@
 			@include breakpoints.touch-or-bp-down(sm) {
 				background-color: var(--color-accent);
 				color: var(--primary-on-accent);
+
 				@include hairline.hairline-disabled(top);
 
 				& + li {
 					padding-top: 0;
 					border-top: variables.$border-width solid common.$focus-color;
+
 					@include hairline.hairline-disabled(top);
 				}
 			}
@@ -128,6 +128,13 @@
 			}
 		}
 
+		a {
+			flex: 1 1 auto;
+			color: var(--color-shade-9);
+
+			@include utilities.text-truncate;
+		}
+
 		.truncate,
 		a:not(.btn-icon) {
 			margin-right: variables.$space-xs;
@@ -135,12 +142,6 @@
 
 		.truncate {
 			flex: 1 1 auto;
-		}
-
-		a {
-			flex: 1 1 auto;
-			color: var(--color-shade-9);
-			@include utilities.text-truncate;
 		}
 
 		.editable {

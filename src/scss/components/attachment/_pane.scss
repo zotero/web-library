@@ -3,10 +3,6 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// Attachment pane
-// --------------------------------------------------
-
 .tab-pane.attachments {
 	position: relative;
 
@@ -23,12 +19,6 @@
 
 	@include breakpoints.mouse-and-bp-up(lg) {
 		height: 100%; // Fix rich-editor height in Safari
-	}
-
-	&.dnd-target .scroll-container-mouse {
-		position: relative;
-		color: var(--material-background);
-		background: var(--fill-secondary);
 	}
 
 	> .toolbar {
@@ -54,6 +44,12 @@
 
 	.scroll-container-mouse {
 		flex: 1 1 0;
+
+		@include selectors.state(".tab-pane.attachments.dnd-target") {
+			position: relative;
+			color: var(--material-background);
+			background: var(--fill-secondary);
+		}
 
 		@supports not (-webkit-font-smoothing: subpixel-antialiased) {
 			.scrollbar-style-permanent & {
@@ -93,25 +89,7 @@
 			border-top: variables.$border-width solid common.$editor-border-color;
 		}
 	}
-
-	.add-linked-url {
-		background-color: common.$panel-bg;
-		padding: variables.$space-sm;
-		position: absolute;
-		width: 100%;
-		border-bottom: variables.$border-width solid common.$attachment-details-border-color;
-		z-index: 2;
-
-		.toolbar {
-			background: unset;
-		}
-
-		.btn {
-			margin-left: variables.$space-min;
-		}
-	}
 }
-
 
 .attachment-details,
 .standalone-attachment,
@@ -158,4 +136,21 @@
 				margin-left: variables.$space-xs;
 			}
 		}
+}
+
+.tab-pane.attachments .add-linked-url {
+	background-color: common.$panel-bg;
+	padding: variables.$space-sm;
+	position: absolute;
+	width: 100%;
+	border-bottom: variables.$border-width solid common.$attachment-details-border-color;
+	z-index: 2;
+
+	.toolbar {
+		background: unset;
+	}
+
+	.btn {
+		margin-left: variables.$space-min;
+	}
 }

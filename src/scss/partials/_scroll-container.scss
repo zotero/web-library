@@ -1,9 +1,5 @@
 @use "../abstracts/mixins/breakpoints";
 
-//
-// Scroll container
-// --------------------------------------------------
-
 .scroll-container {
   flex: 1 1 0;
   overflow-y: scroll;

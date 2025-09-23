@@ -17,12 +17,9 @@ $shade-10: var(--color-shade-10);
 
 $body-bg: $shade-0;
 $text-color: $shade-9;
-
 $headings-color: $shade-8;
-
 $link-color: var(--accent-blue);
 $link-hover-color: var(--accent-blue);
-
 $focus-color: var(--accent-blue);
 
 
@@ -187,7 +184,7 @@ $menu-color-disabled: var(--color-text-disabled);
 $menu-bg: var(--color-shade-0);
 $menu-item-hover-color: var(--primary-on-accent);
 $menu-item-hover-bg: var(--color-accent);
-$menu-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$menu-box-shadow: 0 0 0 1px rgb(0 0 0 / 8%), 0 3px 8px rgb(0 0 0 / 20%);
 $menu-item-selected-bg: $shade-2;
 $menu-item-selected-hover-bg: var(--color-accent);
 $menu-devider: $shade-2;
@@ -236,9 +233,9 @@ $popover-body-color: $text-color;
 $popover-header-bg: $body-bg;
 $popover-header-color: $shade-8;
 $popover-header-border-color: $shade-2;
-$popover-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.2);
+$popover-box-shadow: 0 0 0 1px rgb(0 0 0 / 8%), 0 3px 8px rgb(0 0 0 / 20%);
 $popover-arrow-color: $body-bg;
-$popover-arrow-outer-color: rgba(0, 0, 0, 0.2);
+$popover-arrow-outer-color: rgb(0 0 0 / 20%);
 
 // Oncoing
 $ongoing-border-color: $shade-3;
@@ -250,7 +247,6 @@ $result-hover-color: $shade-0;
 $result-hover-bg: $shade-1;
 $badge-light-border-color: $shade-3;
 $badge-light-bg: $shade-0;
-
 $select-chevron-icon: "icons/chevron-7.svg";
 
 // match popups from reader

@@ -27,10 +27,7 @@
 
 	@include breakpoints.bp-down(xs) {
 		position: absolute;
-		left: 0;
-		top: variables.$touch-header-height;
-		right: 0;
-		bottom: 0;
+		inset: variables.$touch-header-height 0 0 0;
 		background-color: common.$items-bg;
 		transform: translate3d(100%, 0, 0);
 		transition: transform variables.$nav-transition;
@@ -50,17 +47,14 @@
 
 		.search-backdrop {
 			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
+			inset: 0;
 			background-color: var(--color-backdrop);
-			z-index: variables.$z-index-search-backdrop
+			z-index: variables.$z-index-search-backdrop;
+
+			.search-results.view-item-list-active & {
+				transform: translate3d(0, 0, 0);
+			}
 		}
-
-		// Start searching in library view
-
-		// Init
 
 		.search-active.view-library-active & {
 			transform: translate3d(0, 0, 0);
@@ -68,15 +62,21 @@
 			transition: none;
 		}
 
-		// Search results
+		.search-cancel.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			transition: none;
+		}
+
+		.search-active.view-item-details-active & {
+			transform: translate3d(0, 0, 0);
+			transition: none;
+		}
 
 		.search-results.search-init.view-item-list-active & {
 			background-color: common.$items-bg;
 			transform: translate3d(0, 0, 0);
 			transition: background-color variables.$fade-transition;
 		}
-
-		// Cancel search
 
 		.search-cancel.search-active.view-library-active & {
 			transform: translate3d(0, 0, 0);
@@ -96,39 +96,6 @@
 				transition: none;
 			}
 		}
-
-		// Start searching in item list view
-		// => No styles needed
-
-		// Start searching in item details view
-
-		// Init
-
-		.search-active.view-item-details-active & {
-			transform: translate3d(0, 0, 0);
-			transition: none;
-		}
-
-		// Search results
-
-		.search-results.search-init.view-item-list-active & {
-			background-color: common.$items-bg;
-			transform: translate3d(0, 0, 0);
-			transition: background-color variables.$fade-transition;
-		}
-
-		.search-backdrop {
-			.search-results.view-item-list-active & {
-				transform: translate3d(0, 0, 0);
-			}
-		}
-
-		// Cancel search
-
-		.search-cancel.view-item-details-active & {
-			transform: translate3d(0, 0, 0);
-			transition: none;
-		}
 	}
 
 	@include breakpoints.bp-up(sm) {
@@ -137,22 +104,23 @@
 
 	@include breakpoints.tablet {
 		height: 100%;
-  	overflow: hidden;
+		overflow: hidden;
 
-  	// Start searching in item details view
+		// Start searching in item details view
 
-  	// Init
+		// Init
 
-  	@include selectors.state(".search-init .items") {
-	  	.touch-nav {
-		  	.center-axis,
-		  	.inner {
-			  	transition: none;
-		  	}
+		@include selectors.state(".search-init .items") {
+			.touch-nav {
+				.center-axis,
+				.inner {
+					transition: none;
+				}
 
 				.icon-previous + ul .current { // Hack: restrict animation to searches started in item details view on tablets
 					.center-axis {
 						animation: fade-in-search-results variables.$fade-transition-duration ease-in-out forwards;
+
 						@keyframes fade-in-search-results {
 							0% {
 								opacity: 0;
@@ -164,8 +132,8 @@
 						}
 					}
 				}
-	  	}
-  	}
+			}
+		}
 	}
 
 	@include breakpoints.bp-only(md) {
@@ -195,10 +163,7 @@
 .items-container {
 	@include breakpoints.tablet {
 		position: absolute;
-		top: variables.$touch-header-height;
-		right: 0;
-		bottom: 0;
-		left: 0;
+		inset: variables.$touch-header-height 0 0 0;
 		transition: transform variables.$nav-transition;
 	}
 

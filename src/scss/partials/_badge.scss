@@ -2,10 +2,6 @@
 @use "../abstracts/mixins/selectors";
 @use "../abstracts/variables";
 
-//
-// Badge
-// --------------------------------------------------
-
 .badge {
 	display: inline-block;
 	font-weight: variables.$badge-font-weight;

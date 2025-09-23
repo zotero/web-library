@@ -1,5 +1,4 @@
 @use "../variables";
-
 @use 'sass:color';
 @use "sass:map";
 
@@ -59,7 +58,6 @@ $-colors-bg-lookup: (
 			height: calc(100% - #{if($start, $start, 0px)} - #{if($end, $end, 0px)})
 		)
 	);
-
 	$top: map.get(map.get($specs, $side), top);
 	$right: map.get(map.get($specs, $side), right);
 	$bottom: map.get(map.get($specs, $side), bottom);
@@ -79,16 +77,13 @@ $-colors-bg-lookup: (
 		content: "";
 		position: absolute;
 		z-index: variables.$z-index-hairline;
-		top: $top;
-		right: $right;
-		bottom: $bottom;
-		left: $left;
+		inset: $top $right $bottom $left;
 		width: $width;
 		height: $height;
-		background-color: var(--#{map.get($-colors-bg-lookup, $color-name)});
+		background-color: var(--#{map.get($-colors-bg-lookup, $color-name)}); // stylelint-disable-line custom-property-pattern
 	}
 
-	@media (min-resolution: 2dppx) {
+	@media (resolution >= 2dppx) {
 		#{$pseudo-element} {
 			background: linear-gradient(
 				$direction,

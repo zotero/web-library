@@ -2,10 +2,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Nav sidebar
-// --------------------------------------------------
-
 .nav-sidebar {
 	position: fixed;
 	top: 0;
@@ -43,6 +39,10 @@
 		padding: variables.$navbar-padding-y-touch variables.$navbar-padding-x-touch;
 		position: relative;
 
+		@include selectors.state(".active .nav-link") {
+			color: common.$navbar-link-mobile-active-color;
+		}
+
 		&:focus {
 			.keyboard & {
 				outline-offset: -(variables.$outline-width);
@@ -67,9 +67,5 @@
 			color: var(--color-nav-sidebar);
 			background-color: var(--color-nav-sidebar-link);
 		}
-	}
-
-	.active .nav-link {
-		color: common.$navbar-link-mobile-active-color;
 	}
 }

@@ -4,7 +4,6 @@
 @use "../abstracts/mixins/selectors";
 @use "../abstracts/variables";
 @use "../themes/common";
-
 @use "sass:map";
 
 .btn {
@@ -27,6 +26,7 @@
 		&.hairline-top {
 			border-top: none;
 			padding-top: variables.$input-btn-padding-y-touch + 2 * variables.$input-border-width;
+
 			@include hairline.hairline(top, "color-shade-4");
 		}
 
@@ -56,17 +56,43 @@
 		border-radius: variables.$input-btn-border-radius;
 	}
 
-	&:focus:not(.btn-link) {
-		outline: none;
+	@include selectors.state(".btn-group > .btn") {
+		position: relative;
+
+		&:hover,
+		&:focus {
+			z-index: 1;
+		}
+
+		&:not(:last-child) {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		&:not(:first-child) {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			margin-left: -(variables.$input-border-width);
+		}
+
+		// Prevent dark border due to overlap
+		& + .btn:disabled {
+			margin-left: 0;
+			border-left-width: 0;
+		}
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: default;
 	}
 
 	&:not(:disabled) {
 		cursor: pointer;
 	}
 
-	&:disabled {
-		opacity: 0.5;
-		cursor: default;
+	&:focus:not(.btn-link) {
+		outline: none;
 	}
 
 	.icon {
@@ -79,15 +105,6 @@
 			@include breakpoints.mouse-and-bp-up(md) {
 				margin-right: variables.$space-min;
 			}
-		}
-	}
-}
-
-.btn-circle,
-.btn-icon {
-	.icon {
-		html:not(.specifity) & {
-			vertical-align: top;
 		}
 	}
 }
@@ -152,12 +169,21 @@
 	color: common.$link-color;
 	background-color: transparent;
 
+	.icon {
+		color: inherit;
+	}
+
 	html:not(.specifity) & {
 		padding: 0;
 	}
+}
 
+.btn-circle,
+.btn-icon {
 	.icon {
-		color: inherit;
+		html:not(.specifity) & {
+			vertical-align: top;
+		}
 	}
 }
 
@@ -283,34 +309,7 @@
 .btn-group {
 	display: inline-flex;
 
-	> .btn {
-		position: relative;
-
-		&:hover,
-		&:focus {
-			z-index: 1;
-		}
-
-		&:not(:last-child) {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		&:not(:first-child) {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-			margin-left: -(variables.$input-border-width);
-		}
-
-		// Prevent dark border due to overlap
-		& + .btn:disabled {
-			margin-left: 0;
-			border-left-width: 0;
-		}
-	}
-
 	> .dropdown-toggle {
-
 		&.btn-lg {
 			padding-left: variables.$input-btn-padding-x-lg - 3px; // Square button
 			padding-right: variables.$input-btn-padding-x-lg - 3px;
@@ -322,7 +321,7 @@
 
 ::-webkit-file-upload-button {
 	@include breakpoints.mouse-and-bp-up(md) {
-  	-webkit-appearance: initial; // Reset normalize
+  	appearance: initial; // Reset normalize
   	font: initial; // Reset normalize
   }
 }

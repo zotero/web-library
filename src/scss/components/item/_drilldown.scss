@@ -3,17 +3,13 @@
 @use "../../abstracts/mixins/selectors";
 @use "../../abstracts/variables";
 @use "../../themes/common";
-
 @use "sass:map";
 
 .touch-details-drilldown {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
-	top: variables.$touch-header-height;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	inset: variables.$touch-header-height 0 0 0;
 	z-index: variables.$z-index-details-drilldown;
 	background-color: common.$panel-bg;
 	transform: translate3d(100%, 0, 0);
@@ -79,6 +75,7 @@
 		.metadata .value {
 			@include breakpoints.touch-or-bp-down(sm) {
 				$textarea-padding: (variables.$space-thumb - variables.$font-size-mobile * variables.$line-height-base-mobile) * 0.5;
+
 				padding-top: $textarea-padding;
 				padding-bottom: $textarea-padding;
 			}

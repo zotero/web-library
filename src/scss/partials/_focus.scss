@@ -1,10 +1,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Keyboard focus
-// --------------------------------------------------
-
 // Outline of checkboxes/radios can’t be restored in Edge once it is disabled
 .mouse:not(.keyboard) :focus,
 .touch:not(.keyboard) :focus {

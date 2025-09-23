@@ -1,7 +1,6 @@
 @use "../../abstracts/mixins/selectors";
 @use "../../abstracts/variables";
 @use "../../themes/common";
-
 @use "sass:map";
 
 .items-table-wrap {
@@ -11,7 +10,6 @@
 
 	&.reordering {
 		cursor: move; // IE
-		//cursor: grabbing; // Use when columns can be dragged
 	}
 
 	&.resizing {
@@ -58,12 +56,6 @@
 			position: relative;
 			min-width: 0; // Fix truncation
 
-			&:active {
-				.items-table-wrap:not(.resizing) & {
-					background-color: common.$item-table-head-active-bg;
-				}
-			}
-
 			&:focus {
 				.keyboard & {
 					outline-offset: -(variables.$outline-width);
@@ -96,22 +88,6 @@
 				box-shadow: variables.$border-width 0 common.$item-table-head-border;
 			}
 
-			&:active {
-				.items-table-wrap:not(.resizing) & {
-					&::before {
-						top: 0;
-						bottom: 0;
-					}
-
-					& + div {
-						&::before {
-							top: 0;
-							bottom: 0;
-						}
-					}
-				}
-			}
-
 			&:first-child {
 				&::before {
 					content: none;
@@ -122,6 +98,24 @@
 				&::after {
 					html:not(.scrollbar-style-permanent) & {
 						content: none;
+					}
+				}
+			}
+
+			&:active {
+				.items-table-wrap:not(.resizing) & {
+					background-color: common.$item-table-head-active-bg;
+
+					&::before {
+						top: 0;
+						bottom: 0;
+					}
+
+					& + div {
+						&::before {
+							top: 0;
+							bottom: 0;
+						}
 					}
 				}
 			}
@@ -216,6 +210,12 @@
 
 		&.active {
 			border-radius: 0;
+			background-color: common.$item-table-active-bg;
+
+			@include selectors.state(".items-table:focus-within") {
+				color: var(--primary-on-accent);
+				background-color: var(--color-accent);
+			}
 
 			&.first-active {
 				border-top-left-radius: 5px;
@@ -228,22 +228,13 @@
 			}
 		}
 
-		&.active {
-			background-color: common.$item-table-active-bg;
-
-			@include selectors.state(".items-table:focus-within") {
-				color: var(--primary-on-accent);
-				background-color: var(--color-accent);
-			}
-		}
-
 		&:focus {
 			.keyboard & {
 				outline: none;
 			}
 		}
 
-		&.dnd-target:not(.specifity):not(.specifity) {
+		&.dnd-target:not(.specifity, .specifity) {
 			color: var(--material-background);
 			background: var(--fill-secondary);
 		}
@@ -265,6 +256,7 @@
 		.focused-selected-icon,
 		.focused-selected-tag-circles {
 			display: none;
+
 			@include selectors.state(".items-table:focus-within .item.active") {
 				display: block;
 			}
@@ -273,6 +265,7 @@
 		.unfocused-icon,
 		.unfocused-tag-circles {
 			display: block;
+
 			@include selectors.state(".items-table:focus-within .item.active") {
 				display: none;
 			}

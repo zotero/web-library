@@ -2,16 +2,9 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Drag layer
-// --------------------------------------------------
-
 .drag-layer {
 	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	inset: 0;
 	z-index: variables.$z-index-drag-layer;
 	pointer-events: none;
 	touch-action: none;

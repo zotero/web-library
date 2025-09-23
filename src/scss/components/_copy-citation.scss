@@ -36,8 +36,7 @@
 		--bubble-rows-gap: 5px;
 
 		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
+		flex-flow: row wrap;
 		gap: var(--bubble-rows-gap);
 		row-gap: var(--bubble-rows-gap);
 		max-height: calc(3.5 * (var(--bubble-height) + var(--bubble-rows-gap)));
@@ -130,6 +129,7 @@
 
 		h5 {
 			@include utilities.text-truncate(ellipsis);
+
 			margin-top: variables.$space-xs;
 			padding: 0 variables.$space-sm;
 			text-align: center;
@@ -181,7 +181,6 @@
 	}
 
 	.drag-handle {
-		align-items: center;
 		align-items: center;
 		align-self: stretch;
 		border-left: 1px solid common.$input-border-color;

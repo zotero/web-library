@@ -2,10 +2,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Touch navigation
-// --------------------------------------------------
-
 .touch-nav {
 	position: absolute;
 	left: 0;
@@ -33,6 +29,18 @@
 		position: relative;
 	}
 
+	.center-axis {
+		transform: translate3d(50%, 0, 0);
+	}
+
+	.inner {
+		position: absolute;
+		transform: translate3d(-50%, 0, 0);
+		display: flex;
+		align-items: center;
+		max-width: calc((100% - 4 * #{variables.$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
+	}
+
 	.center-axis,
 	.inner {
 		height: 100%;
@@ -56,17 +64,7 @@
 		}
 	}
 
-	.center-axis {
-		transform: translate3d(50%, 0, 0);
-	}
 
-	.inner {
-		position: absolute;
-		transform: translate3d(-50%, 0, 0);
-		display: flex;
-		align-items: center;
-		max-width: calc((100% - 4 * #{variables.$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
-	}
 
 	.before-last {
 		transform: translate3d(-100%, 0, 0);
@@ -128,21 +126,4 @@
 			vertical-align: top;
 		}
 	}
-
-	// Edit button
-	//.btn-edit,
-	//.btn-cancel {
-	//	position: absolute;
-	//	right: $default-padding-x-touch;
-	//	top:
-	//	($line-height-large-touch
-	//	- $font-size-mobile
-	//	* $line-height-base)
-	//	/ 2;
-	//	height: $font-size-mobile * $line-height-base;
-	//
-	//	&:active {
-	//		color: $btn-options-focus-color;
-	//	}
-	//}
 }

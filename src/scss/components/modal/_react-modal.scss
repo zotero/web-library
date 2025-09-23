@@ -4,45 +4,8 @@
 @use "../../abstracts/variables";
 @use "../../themes/common";
 
-//
-// React-modal
-//
-
-.ReactModal__Body--open {
+.ReactModal__Body--open { // stylelint-disable-line selector-class-pattern
 	overflow: hidden;
-}
-
-.modal-backdrop {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	background-color: var(--color-backdrop);
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
-	z-index: variables.$z-index-modal;
-
-	@include breakpoints.bp-down(xs) {
-		overflow-y: hidden;
-	}
-
-	&.loading {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		.modal {
-			border: none;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.icon-spin {
-			color: var(--color-backdrop-spinner);
-		}
-	}
 }
 
 .modal {
@@ -73,14 +36,42 @@
 
 	.fade-overlay {
 		position: absolute;
-		left: 0;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0, 0, 0, .5);
+		inset: 0;
+		background-color: rgb(0 0 0 / 50%);
 		z-index: variables.$z-index-modal + 1;
 	}
 }
+
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background-color: var(--color-backdrop);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
+	z-index: variables.$z-index-modal;
+
+	@include breakpoints.bp-down(xs) {
+		overflow-y: hidden;
+	}
+
+	&.loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.modal {
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.icon-spin {
+			color: var(--color-backdrop-spinner);
+		}
+	}
+}
+
 
 .modal-content {
 	display: flex;
@@ -185,9 +176,41 @@
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS
 	}
 
+	.modal-form & {
+		@include breakpoints.touch-or-bp-down(sm) {
+			background-color: common.$form-bg-touch;
+		}
+	}
+
+	@include selectors.state(".modal-contains-picker .modal-body") {
+		padding: 0;
+
+		// On touch devices, the picker inside the modal uses the small-screen behavior at all screen sizes
+		@include breakpoints.touch-or-bp-down(sm) {
+			.sidebar {
+				inset: 44px 0;
+				height: calc(100% - 88px);
+				overflow: visible;
+				position: absolute;
+			}
+
+			.items {
+				height: calc(100% - 88px);
+				background-color: var(--color-shade-0);
+				inset: 44px 0;
+				position: absolute;
+				transform: translate3d(100%, 0, 0);
+				transition: transform variables.$nav-transition;
+			}
+
+			&.view-item-list-active .items {
+				transform: translate3d(0, 0, 0);
+			}
+		}
+	}
+
 	.modal-scrollable & {
-		overflow-y: auto;
-		overflow-x: clip;
+		overflow: clip auto;
 		-webkit-overflow-scrolling: touch; // Momentum scrolling for iOS 10–
 
 		&:focus {
@@ -198,11 +221,6 @@
 		}
 	}
 
-	.modal-form & {
-		@include breakpoints.touch-or-bp-down(sm) {
-			background-color: common.$form-bg-touch;
-		}
-	}
 }
 
 .modal-footer {
@@ -252,49 +270,16 @@
 			width: 100%;
 		}
 	}
-
-	.modal-body {
-		padding: 0;
-
-		// On touch devices, the picker inside the modal uses the small-screen behavior at all screen sizes
-		@include breakpoints.touch-or-bp-down(sm) {
-			.sidebar {
-				bottom: 44px;
-				height: calc(100% - 88px);
-				left: 0;
-				overflow: visible;
-				position: absolute;
-				right: 0;
-				top: 44px;
-			}
-
-			.items {
-				height: calc(100% - 88px);
-				background-color: var(--color-shade-0);
-				bottom: 44px;
-				left: 0;
-				position: absolute;
-				right: 0;
-				top: 44px;
-				transform: translate3d(100%, 0, 0);
-				transition: transform variables.$nav-transition;
-			}
-
-			&.view-item-list-active .items {
-				transform: translate3d(0, 0, 0);
-			}
-		}
-	}
 }
 
 .modal-slide {
-	&.ReactModal {
+	&.ReactModal { // stylelint-disable-line selector-class-pattern
 		// Transitioning opacity yields a smoother animation but triggers a Safari glitch (see
 		// #628). To work around this, we transition background-color when the modal opens and
 		// opacity when it closes (Safari doesn't glitch on close).
 		&__Overlay {
 			@include breakpoints.touch-or-bp-down(sm) {
-				background-color: rgba(0, 0, 0, 0);
+				background-color: rgb(0 0 0 / 0%);
 			}
 
 			.modal-content {

@@ -1,10 +1,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Icon
-// --------------------------------------------------
-
 .icon-remove-from-collection,
 .icon-library-read-only {
 	&[width="20"] {
@@ -33,7 +29,7 @@
 .icon-circle, .icon-crescent-circle {
 	color: common.$icon-circle-color;
 
-	@each $colorHex, $colorVar in variables.$tagColorsLookupItemsTable {
+	@each $colorHex, $colorVar in variables.$tag-colors-lookup-items-table {
 		&[data-color="#{$colorHex}"] {
 			// for known tag colors we're overriding the color set with style
 			// attribute to match equivalent theme color, hence !important

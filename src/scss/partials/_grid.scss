@@ -1,11 +1,6 @@
+@use "sass:math";
 @use "../abstracts/mixins/breakpoints";
 @use "../abstracts/variables";
-
-//
-// Grid
-//
-
-@use "sass:math";
 
 .col {
 	flex: 1 1 0;

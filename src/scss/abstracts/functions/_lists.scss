@@ -3,7 +3,7 @@
 @function nth-delete($list, $n) {
 	$result: ();
 	$n: if($n < 0, list.length($list) + $n + 1, $n);
-	$isBracketed: list.is-bracketed($list);
+	$is-bracketed: list.is-bracketed($list);
 	$separator: list.separator($list);
 
 	@for $i from 1 through list.length($list) {
@@ -12,5 +12,5 @@
 		}
 	}
 
-	@return list.join((), $result, $separator, $isBracketed);
+	@return list.join((), $result, $separator, $is-bracketed);
 }

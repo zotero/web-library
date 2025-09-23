@@ -3,10 +3,6 @@
 @use "../abstracts/variables";
 @use "../themes/common";
 
-//
-// Search
-// --------------------------------------------------
-
 .input-group.search {
 	.dropdown {
 		position: absolute;
@@ -29,7 +25,7 @@
 	.form-control {
 		@include breakpoints.touch-or-bp-down(sm) {
 			min-height: auto; // Reset
-			padding: 4px 0px 4px variables.$input-btn-padding-x-touch;
+			padding: 4px 0 4px variables.$input-btn-padding-x-touch;
 			border: variables.$input-border-width solid common.$input-border-color; // …
 			background-color: common.$input-bg; // …
 			border-radius: variables.$input-btn-border-radius;

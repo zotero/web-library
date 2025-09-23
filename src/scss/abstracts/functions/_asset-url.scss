@@ -1,12 +1,9 @@
 @use "sass:string";
-//
-// Asset URLs
-// --------------------------------------------------
 
-$staticPath: '/static/web-library';
+$-static-path: '/static/web-library';
 
 @function asset-url($type, $path) {
-	@return url($staticPath + string.unquote("/#{$type}/#{$path}"));
+	@return url($-static-path + string.unquote("/#{$type}/#{$path}"));
 }
 
 @function image-url($path) {
