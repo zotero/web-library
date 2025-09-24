@@ -1,5 +1,3 @@
-import { LOCATION_CHANGE } from 'connected-react-router';
-
 import {
 	REQUEST_ITEMS_BY_QUERY,
 	RECEIVE_ITEMS_BY_QUERY,
@@ -32,6 +30,7 @@ import {
 	RECEIVE_DELETE_COLLECTIONS,
 	RECEIVE_UPDATE_COLLECTIONS_TRASH,
 	RECEIVE_ITEMS_SECONDARY,
+	LOCATION_CHANGE,
 } from '../constants/actions.js';
 import { injectTrashedCollections } from '../common/reducers';
 

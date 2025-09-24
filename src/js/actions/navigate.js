@@ -1,6 +1,6 @@
 import { makePath } from '../common/navigation';
 import { getItemKeysPath } from '../common/state';
-import { LOCATION_CHANGE, push } from 'connected-react-router';
+import { LOCATION_CHANGE } from '../constants/actions';
 import { TRIGGER_VIEWPORT_CHANGE } from '../constants/actions';
 import { get } from '../utils';
 import { selectItemsKeyboard, selectItemsMouse } from '../common/selection';
@@ -18,6 +18,11 @@ const pushEmbedded = (path) => ({
 		isFirstRendering: false
 	}
 });
+
+const push = (path) => {
+	window.history.pushState({}, '', path);
+	return pushEmbedded(path);
+}
 
 const currentToPath = current => ({
 	attachmentKey: current.attachmentKey,

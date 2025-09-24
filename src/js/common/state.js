@@ -1,7 +1,4 @@
-import memoize from 'memoize-one';
-import deepEqual from 'deep-equal';
-import { createMatchSelector } from 'connected-react-router';
-import { routes, redirects } from '../routes';
+import { routes } from '../routes';
 
 const getCollectionsPath = (libraryKey, collectionKey, collectionsData = {}) => {
 	const path = [];
@@ -54,28 +51,6 @@ const getSerializedQuery = ({ collection = null, tag = [], q = null, qmode = nul
 	return `${collection}-${tag.join('-')}-${q}-${qmode}`;
 }
 
-//@NOTE: ideally we shouldn't need to match or at least should know which path
-//		 has been matched, see discussion:
-//		 https://github.com/supasate/connected-react-router/issues/38
-//		 https://github.com/supasate/connected-react-router/issues/85
-//		 https://github.com/supasate/connected-react-router/issues/97
-const getParamsFromRoute = memoize(state => {
-	for(const redirect of redirects) {
-		const match = createMatchSelector(redirect.from)(state);
-		if(match !== null && match.isExact) {
-			return match.params;
-		}
-	}
-	for(const route of routes) {
-		const match = createMatchSelector(route)(state);
-		if(match !== null) {
-			return match.params;
-		}
-	}
-
-	return {};
-}, deepEqual);
-
 const getItemsSource = navStateLikeObject => {
 	let itemsSource;
 	if (navStateLikeObject.tags?.length || navStateLikeObject.search?.length) {
@@ -92,5 +67,15 @@ const getItemsSource = navStateLikeObject => {
 	return itemsSource;
 }
 
+const getParamsFromPath = (path) => {
+	for (const routeFn of routes) {
+		const matched = routeFn(path);
+		if(matched) {
+			return matched.params;
+		}
+	}
+	return {};
+};
 
-export { getItemsSource, getCollectionsPath, getItemKeysPath, getSerializedQuery, getParamsFromRoute };
+
+export { getItemsSource, getCollectionsPath, getItemKeysPath, getSerializedQuery, getParamsFromPath };

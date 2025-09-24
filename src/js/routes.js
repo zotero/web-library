@@ -1,8 +1,7 @@
+import { match, compile } from 'path-to-regexp';
+
 const singleIdRe = '[a-zA-Z0-9]{8}';
-// const multipleIdRe = '(?:[a-zA-Z0-9]{8},?)+';
-// @TODO: Use above once path-to-regex gets updated in react-router. Also remove workaround in reducers/current
-// 		  https://github.com/ReactTraining/react-router/issues/6899
-const multipleIdRe = '[A-Z0-9,]+';
+const multipleIdRe = '(?:[a-zA-Z0-9]{8},?)+';
 
 const getVariants = prefix => {
 	return [
@@ -29,7 +28,7 @@ const getVariants = prefix => {
 	];
 };
 
-export const routes = [
+const routePaths = [
 	'/:view(libraries)',
 	...getVariants(`/groups/:groupid/:groupslug/:source(collections)/:collection(${singleIdRe})`),
 	...getVariants('/groups/:groupid/:groupslug/:source(trash)'),
@@ -39,7 +38,7 @@ export const routes = [
 	...getVariants('/:userslug'),
 ];
 
-export const redirects = [
+const redirectPairs = [
 	{ 	from: 	 `/:userslug/items/collectionKey/trash/itemKey/:items(${singleIdRe})/:optional?/:mode?`,
 		to: 	 '/:userslug/trash/items/:items'
 	},
@@ -140,3 +139,15 @@ export const redirects = [
 		to: '/libraries'
 	},
 ];
+
+export const routes = routePaths.map(route => match(route));
+export const redirects = redirectPairs.map(redirectPair => ({
+	...redirectPair,
+	fn: match(redirectPair.from)
+}));
+
+
+export const makeRedirectedPath = (redirect, match) => {
+	const toPathFn = compile(redirect.to);
+	return toPathFn(match.params);
+}

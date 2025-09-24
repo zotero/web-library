@@ -4,8 +4,6 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { thunk } from 'redux-thunk';
 import { Provider } from 'react-redux';
 
-import { LOCATION_CHANGE } from 'connected-react-router';
-
 import './wdyr';
 import * as defaults from './constants/defaults';
 import createReducers from './reducers';

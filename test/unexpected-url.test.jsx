@@ -85,19 +85,23 @@ describe('Unexpected URL', () => {
 	afterAll(() => server.close());
 
 	test(`Should redirect if URL contains invalid collection key`, async () => {
+		const pushStateSpy = jest.spyOn(window.history, "pushState");
 		window.location = new URL('http://localhost/testuser/collections/12345678');
-		const { history } = renderWithProviders(<MainZotero />, { preloadedState: minState });
+		renderWithProviders(<MainZotero />, { preloadedState: minState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
 		await screen.findByRole('grid', { name: 'items' });
-		expect(history.location.pathname).toBe('/testuser/library');
+
+		expect(pushStateSpy).toHaveBeenCalledTimes(1);
+		expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/testuser/library');
 	});
 
 	test(`Shouldn't change URL when opening another library`, async () => {
+		const pushStateSpy = jest.spyOn(window.history, "pushState");
 		window.location = new URL('http://localhost/testuser/collections/KCUHMRNZ');
 		const tweakedState = { ...minState };
 		tweakedState.config.includeUserGroups = true;
 		const user = userEvent.setup();
-		const { history } = renderWithProviders(<MainZotero />, { preloadedState: tweakedState });
+		renderWithProviders(<MainZotero />, { preloadedState: tweakedState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
 		await screen.findByRole('grid', { name: 'items' });
 		expect(screen.queryByRole('treeitem', { name: 'group library collection', expanded: false })).not.toBeInTheDocument();
@@ -105,6 +109,7 @@ describe('Unexpected URL', () => {
 		await user.click(getByRole(groupLibTreeItem, 'button', { name: 'Expand' }));
 
 		expect(await screen.findByRole('treeitem', { name: 'group library collection' })).toBeInTheDocument();
-		expect(history.location.pathname).toBe('/testuser/collections/KCUHMRNZ');
+
+		expect(pushStateSpy).toHaveBeenCalledTimes(0);
 	});
 });

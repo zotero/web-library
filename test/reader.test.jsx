@@ -98,6 +98,7 @@ describe('Reader', () => {
 	test('Redirects to the best attachment if URL points at a top-level item, saves annotations against correct item', async () => {
 		delete window.location;
 		window.location = new URL('http://localhost/testuser/items/KBFTPTI4/reader')
+		const pushStateSpy = jest.spyOn(window.history, "pushState");
 
 		let requestedAttachmentChildItems = false;
 		let requestedTpl = false;
@@ -129,13 +130,14 @@ describe('Reader', () => {
 			})
 		);
 
-		const { history, container } = renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(parentState, 'libraries.u1.itemsByParent.N2PJUHD6') });
+		const { container } = renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(parentState, 'libraries.u1.itemsByParent.N2PJUHD6') });
 
 		await waitFor(() => expect(container.querySelector('iframe')).toBeInTheDocument(), { timeout: 3000 });
 
 		// URL has changed and child items for the correct attachment have been requested
 		expect(requestedAttachmentChildItems).toBe(true);
-		expect(history.location.pathname).toBe('/testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader');
+		expect(pushStateSpy).toHaveBeenCalledTimes(1);
+		expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader');
 
 		const iframe = container.querySelector('iframe');
 		let readerConfig;

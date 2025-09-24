@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
 import { configureZoteroShim } from 'web-common/zotero';
 import schema from 'zotero-schema/schema.json';
 
@@ -13,16 +12,14 @@ export function renderWithProviders(
 		...renderOptions
 	} = {}
 ) {
-	const { store, history } = setupStore(preloadedState);
+	const store = setupStore(preloadedState);
 	const mockIntl = { locale: navigator?.language || 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
 	configureZoteroShim(schema, mockIntl);
 	// eslint-disable-next-line react/prop-types
 	function Wrapper({ children }) {
 		return (
 			<Provider store={store}>
-				<ConnectedRouter history={history}>
-					{children}
-				</ConnectedRouter>
+				{children}
 			</Provider>
 		)
 	}
@@ -33,5 +30,5 @@ export function renderWithProviders(
 	});
 
 	// Return an object with the store and all of RTL's query functions
-	return { history, store, ...renderResult }
+	return { store, ...renderResult }
 }

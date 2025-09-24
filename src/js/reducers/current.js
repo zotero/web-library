@@ -1,14 +1,13 @@
-import { LOCATION_CHANGE } from 'connected-react-router';
 import { shallowEqual } from 'react-redux';
 
 import { CONFIGURE, FILTER_TAGS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
 	TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_SEARCH_MODE,
-	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, TRIGGER_VIEWPORT_CHANGE
+	TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, TRIGGER_VIEWPORT_CHANGE, LOCATION_CHANGE
 } from '../constants/actions';
 
 import { tagsFromUrlPart } from '../common/navigation';
-import { getItemsSource, getParamsFromRoute } from '../common/state';
+import { getItemsSource, getParamsFromPath } from '../common/state';
 
 const stateDefault = {
 	collectionKey: null,
@@ -79,16 +78,13 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 			}
 		case LOCATION_CHANGE:
 			if(!config) { return state; }
-			var params = getParamsFromRoute({ router: { ...action.payload } });
-
-			// need to validate params.items because routes is incapable of handling groups in regexp, see routes.js
-			var isValidItemsKey = !(params.items && params.items.match(/^(?:[a-zA-Z0-9]{8},?)+$/) === null);
+			var params = getParamsFromPath(action.payload.location.pathname);
 			var search = params.search ? decodeURIComponent(params.search) : '';
 			var qmode = params.qmode || 'titleCreatorYear';
 			var isTrash = params.source === 'trash';
 			var isMyPublications = params.source === 'publications';
 			var collectionKey = params.collection || null;
-			var itemKeys = params.items && isValidItemsKey ? params.items.split(',') : [];
+			var itemKeys = params.items ? params.items.split(',') : [];
 			var noteKey = params.note || null;
 			var attachmentKey = params.attachment || null;
 			var tags = tagsFromUrlPart(params.tags) || [];

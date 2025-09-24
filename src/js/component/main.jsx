@@ -1,54 +1,30 @@
-import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
 import { StaticContext } from 'web-common/components';
 import PropTypes from 'prop-types';
 
-import { routes, redirects } from '../routes';
 import ErrorBoundary from './error-boundry'
 import Loader from './loader';
 import UserTypeDetector from './user-type-detector';
 import ViewPortDetector from './viewport-detector';
+import Router from './router';
 
-
-export const MainEmbedded = () => {
+export const MainZotero = () => {
 	return (
-		<StaticContext.Provider value="/static/web-library">
-			<UserTypeDetector />
-			<ViewPortDetector />
-			<Loader />
-		</StaticContext.Provider>
-    );
+		<Router>
+			<StaticContext.Provider value="/static/web-library">
+				<UserTypeDetector />
+				<ViewPortDetector />
+				<Loader />
+			</StaticContext.Provider>
+		</Router>
+	);
 }
 
-export const MainZotero = () => (
-	<StaticContext.Provider value="/static/web-library">
-		<BrowserRouter>
-			<Switch>
-				{redirects.map(redirect =>
-					<Redirect exact key={redirect.from} from={redirect.from} to={redirect.to} />
-				)}
-				{routes.map(route =>
-					<Route key={route} path={route} component={MainEmbedded} exact />
-				)}
-				<Redirect from="/*" to="/" />
-			</Switch>
-		</BrowserRouter>
-	</StaticContext.Provider>
-);
-
-const Main = ({ store, history }) => {
-	const isEmbedded = store.getState().config.isEmbedded;
+const Main = ({ store }) => {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				{isEmbedded ?
-					<MainEmbedded /> :
-					(
-					<ConnectedRouter history={history}>
-						<MainZotero />
-					</ConnectedRouter>
-				)}
+				<MainZotero />
 			</Provider>
 		</ErrorBoundary>
 	);

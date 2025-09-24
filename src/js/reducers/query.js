@@ -1,6 +1,5 @@
 import deepEqual from 'deep-equal';
 import { shallowEqual } from 'react-redux';
-import { LOCATION_CHANGE } from 'connected-react-router'
 import { omit, pick } from 'web-common/utils';
 
 import { ERROR_ITEMS_BY_QUERY, ERROR_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_ADD_TAGS_TO_ITEMS,
@@ -10,9 +9,10 @@ RECEIVE_REMOVE_ITEMS_FROM_COLLECTION, RECEIVE_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_UP
 REQUEST_ITEMS_BY_QUERY, REQUEST_TAGS_IN_ITEMS_BY_QUERY, SORT_ITEMS, RESET_QUERY,
 DROP_TAGS_IN_ITEMS_BY_QUERY, DROP_ITEMS_BY_QUERY, REQUEST_COLORED_TAGS_IN_ITEMS_BY_QUERY,
 ERROR_COLORED_TAGS_IN_ITEMS_BY_QUERY, DROP_COLORED_TAGS_IN_ITEMS_BY_QUERY, RECEIVE_LIBRARY_SETTINGS,
-RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS } from '../constants/actions.js';
+RECEIVE_UPDATE_LIBRARY_SETTINGS, RECEIVE_DELETE_LIBRARY_SETTINGS, RECEIVE_UPDATE_MULTIPLE_ITEMS,
+LOCATION_CHANGE } from '../constants/actions.js';
 
-import { getParamsFromRoute } from '../common/state';
+import { getParamsFromPath } from '../common/state';
 import { getQueryFromParams } from '../common/navigation';
 import { filterItemKeys, filterTags, populateTags, populateItemKeys, sortItemKeysOrClear, updateFetchingState } from '../common/reducers';
 
@@ -39,7 +39,7 @@ const query = (state = defaultState, action, entireState) => {
 	const meta = entireState?.meta;
 	switch(action.type) {
 		case LOCATION_CHANGE:
-			var params = getParamsFromRoute({ router: { ...action.payload } });
+			var params = getParamsFromPath(action.payload.location.pathname);
 			var query = getQueryFromParams(params);
 			var isChanged = !deepEqual(query, state.current);
 			return {
