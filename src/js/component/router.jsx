@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { redirects, routes, makeRedirectedPath } from '../routes';
 import { useForceUpdate } from 'web-common/hooks';
-import { LOCATION_CHANGE } from '../constants/actions';
+import { locationChange } from '../actions';
 
 const Router = (props) => {
 	const { children } = props;
@@ -12,10 +12,9 @@ const Router = (props) => {
 	const forceUpdate = useForceUpdate();
 	const isFirstRender = useRef(true);
 
-	const handlePopState = useCallback((ev) => {
-		// Handle pop state event
-		console.log('popstate', ev, window.location.href);
-	}, []);
+	const handlePopState = useCallback(() => {
+		dispatch(locationChange(window.location.pathname));
+	}, [dispatch]);
 
 	useEffect(() => {
 		for (const redirect of redirects) {
@@ -35,18 +34,7 @@ const Router = (props) => {
 		}
 
 		if(isFirstRender.current) {
-			dispatch({
-				type: LOCATION_CHANGE,
-				payload: {
-					location: {
-						pathname: window.location.pathname,
-						search: window.location.search,
-						hash: window.location.hash,
-					},
-					action: 'POP',
-					isFirstRendering: isFirstRender.current,
-				}
-			});
+			dispatch(locationChange(window.location.pathname, { isFirstRendering: true }));
 			isFirstRender.current = false;
 			forceUpdate();
 		}

@@ -5,23 +5,18 @@ import { TRIGGER_VIEWPORT_CHANGE } from '../constants/actions';
 import { get } from '../utils';
 import { selectItemsKeyboard, selectItemsMouse } from '../common/selection';
 
-const pushEmbedded = (path) => ({
+const locationChange = (pathname, { action = 'POP', search = '', hash = '', key = '', isFirstRendering = false } = {}) => ({
 	type: LOCATION_CHANGE,
 	payload: {
-		location: {
-			pathname: path,
-			search: '',
-			hash: '',
-			key: '',
-		},
-		action: 'POP',
-		isFirstRendering: false
+		action,
+		isFirstRendering,
+		location: { pathname, search, hash, key },
 	}
 });
 
 const push = (path) => {
 	window.history.pushState({}, '', path);
-	return pushEmbedded(path);
+	return locationChange(path);
 }
 
 const currentToPath = current => ({
@@ -53,7 +48,7 @@ const navigate = (path, isAbsolute = false, viewportChange = false) => {
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
 		const isEmbedded = config.isEmbedded;
-		const pushFn = isEmbedded ? pushEmbedded : push;
+		const pushFn = isEmbedded ? locationChange : push;
 		if(isAbsolute) {
 			const configuredPath = makePath(config, path);
 			dispatch(pushFn(configuredPath));
@@ -193,4 +188,4 @@ const redirectIfCollectionNotFound = () => {
 	}
 }
 
-export { navigate, navigateExitSearch, openInReader, redirectIfCollectionNotFound, selectFirstItem, navigateSelectItemsKeyboard, navigateSelectItemsMouse, selectLastItem };
+export { locationChange, navigate, navigateExitSearch, navigateSelectItemsKeyboard, navigateSelectItemsMouse, openInReader, redirectIfCollectionNotFound, selectFirstItem, selectLastItem};
