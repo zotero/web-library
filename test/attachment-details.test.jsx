@@ -39,7 +39,7 @@ describe('Attachment Details', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/K24TUDDL/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/K24TUDDL/item-details' });;
 	});
 
 	afterEach(() => server.resetHandlers());

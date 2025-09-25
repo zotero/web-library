@@ -31,8 +31,7 @@ const TableRow = props => {
 	const ref = useRef();
 	const ignoreClicks = useRef({});
 	const [dropZone, setDropZone] = useState(null);
-	const { data, index, style } = props;
-	const { columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, q, qmode } = data;
+	const { index, style, columns, onFileHoverOnRow, libraryKey, collectionKey, itemsSource, selectedItemKeys, pickerMode, pickerNavigate, q, qmode } = props;
 	const keys = useItemsKeys({ libraryKey, collectionKey, itemsSource });
 	const itemKey = keys && keys[index] ? keys[index] : null;
 	const isFileUploadAllowedInLibrary = useSelector(
@@ -62,7 +61,7 @@ const TableRow = props => {
 	// causing two "ghosts" to appear - the native one (which we don't want) and the one web library renders
 	const useDragOptions = useMemo(() => ({ dropEffect: 'copy' }), []);
 
-	const [_, drag, preview] = useDrag({ // eslint-disable-line no-unused-vars
+	const [_, dragRef, previewRef] = useDrag({ // eslint-disable-line no-unused-vars
 		type: ITEM,
 		options: useDragOptions,
 		item: () => {
@@ -86,7 +85,7 @@ const TableRow = props => {
 		}
 	});
 
-	const [{ isOver, canDrop }, drop] = useDrop({
+	const [{ isOver, canDrop }, dropRef] = useDrop({
 		accept: [ATTACHMENT, NativeTypes.FILE],
 		canDrop: () => isFileUploadAllowed,
 		collect: monitor => ({
@@ -193,14 +192,17 @@ const TableRow = props => {
 	}, [dispatch, isSelected, itemData, itemKey, selectItem, selectedItemKeysLength]);
 
 	useEffect(() => {
-		preview(getEmptyImage(), { captureDraggingState: true })
-	}, [preview]);
+		previewRef(getEmptyImage(), { captureDraggingState: true })
+	}, [previewRef]);
 
 	useEffect(() => {
 		isFileUploadAllowed && onFileHoverOnRow(isOver, dropZone);
 	}, [isOver, dropZone, isFileUploadAllowed, onFileHoverOnRow]);
 
-	return drag(drop(
+	dragRef(ref);
+	dropRef(ref);
+
+	return (
 		<div
 			aria-selected={isSelected}
 			aria-rowindex={index + 1}
@@ -258,7 +260,7 @@ const TableRow = props => {
 				columnName={c.field}
 			/>)}
 		</div>
-	));
+	);
 };
 
 TableRow.propTypes = {

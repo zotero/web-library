@@ -35,7 +35,6 @@ const ItemsTable = props => {
 	const tableRef = useRef(null);
 	const listRef = useRef(null);
 	const outerRef = useRef(null);
-	const loader = useRef(null);
 	const lastRequest = useRef({});
 	const [isHoveringBetweenRows, setIsHoveringBetweenRows] = useState(false);
 	const {
@@ -302,11 +301,6 @@ const ItemsTable = props => {
 					);
 				}
 			}, 0)
-		} else if (loader.current) {
-			// if we are not fetching, we can reset the loader cache and have InfiniteLoader trigger `loadMoreItems`
-			setTimeout(() => {
-				loader.current.resetloadMoreItemsCache(true)
-			}, 0);
 		}
 	}, [collectionKey, dispatch, isFetching, isMyPublications, isTrash, itemsSource, libraryKey, prevSortByPreference, prevSortDirectionPreference, qmode, requestType, q, sortBy, sortByPreference, sortDirection, sortDirectionPreference, tags]);
 
@@ -344,7 +338,7 @@ const ItemsTable = props => {
 			isReady={hasChecked}
 			isItemLoaded={handleIsItemLoaded}
 			itemCount={itemCount}
-			loaderRef={loader}
+			listRef={listRef}
 			onChangeSortOrder={handleSortOrderChange}
 			onKeyDown={handleKeyDown}
 			onLoadMore={handleLoadMore}

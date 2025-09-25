@@ -34,8 +34,7 @@ describe('Basic UI', () => {
 	});
 
 	beforeEach(() => {
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/library');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/library' });
 	});
 
 	afterEach(() => server.resetHandlers());

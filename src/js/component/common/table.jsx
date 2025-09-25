@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import InfiniteLoader from "react-window-infinite-loader";
-import { FixedSizeList as ReactWindowList } from 'react-window';
+import { useInfiniteLoader } from "react-window-infinite-loader";
 import { noop } from 'web-common/utils';
 
+import ReactWindowList from './react-window-list';
 import { alwaysTrue, resizeVisibleColumns } from '../../utils';
 import { useThrottledCallback } from 'use-debounce';
 import HeaderRow from './table-header-row';
@@ -36,7 +36,6 @@ const Table = props => {
 		isReady = true,
 		isItemLoaded = alwaysTrue,
 		itemCount,
-		loaderRef = null,
 		onChangeSortOrder = noop,
 		onColumnsReorder = noop,
 		onColumnsResize = noop,
@@ -69,9 +68,7 @@ const Table = props => {
 
 	const containerRef = useRef(null);
 	const tableRef = useRef(null);
-	const listRef = useRef(null);
 	const outerRef = useRef(null);
-	const innerRef = useRef(null);
 
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -81,14 +78,41 @@ const Table = props => {
 	const [isReordering, setIsReordering] = useState(false);
 	const [reorderTarget, setReorderTarget] = useState(null);
 
-	const handleTableFocus = useCallback(ev => {
+	const onRowsRendered = useInfiniteLoader({
+		isRowLoaded: isItemLoaded,
+		loadMoreRows: onLoadMore,
+		rowCount: itemCount,
+	});
+
+	const handleListRef = useCallback(r => {
+		if (props.listRef) {
+			if (typeof props.listRef === 'function') {
+				props.listRef(r);
+			}
+			else if (typeof props.listRef === 'object') {
+				props.listRef.current = r;
+			}
+		}
+
+		// With react-window 2.x it's no longer possible to get the ref to the outer element it
+		// renders, so instead we query for it as soon as it signals listRef is ready
+		outerRef.current = tableRef.current?.querySelector('[role="rowgroup"]');
+
 		// The overflow list is made focusable by default in most browsers and to prevent this we
 		// need to set `tabIndex` to -1. However, since this element is rendered by react-window, we
 		// cannot pass it as a prop. As a workaround, we set the tabIndex attribute directly here.
 		// This fixes issue #519.
 		outerRef.current?.setAttribute?.('tabindex', '-1');
-		onReceiveFocus(ev);
-	}, [onReceiveFocus]);
+
+		if (props.outerRef) {
+			if (typeof props.outerRef === 'function') {
+				props.outerRef(outerRef.current);
+			}
+			else if (typeof props.outerRef === 'object') {
+				props.outerRef.current = outerRef.current;
+			}
+		}
+	}, [props]);
 
 	const handleResize = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);
@@ -241,60 +265,47 @@ const Table = props => {
 			{isReady && (
 				<AutoSizer>
 					{({ height, width }) => (
-						<InfiniteLoader
-							isItemLoaded={isItemLoaded}
-							itemCount={itemCount}
-							loadMoreItems={onLoadMore}
-							ref={loaderRef}
+						<div
+							tabIndex={0}
+							onFocus={onReceiveFocus}
+							onBlur={onReceiveBlur}
+							onKeyDown={onKeyDown}
+							ref={ r => { tableRef.current = r; props.tableRef && (props.tableRef.current = r); } }
+							className={cx('items-table', tableClassName)}
+							style={getColumnCssVars(columns, width, scrollbarWidth)}
+							role="grid"
+							aria-multiselectable="true"
+							aria-readonly="true"
+							aria-label={ariaLabel}
+							data-width={width}
+							aria-rowcount={totalResults}
 						>
-							{({ onItemsRendered, ref }) => (
-								<div
-									tabIndex={0}
-									onFocus={handleTableFocus}
-									onBlur={onReceiveBlur}
-									onKeyDown={onKeyDown}
-									ref={ r => { tableRef.current = r; props.tableRef && (props.tableRef.current = r); } }
-									className={cx('items-table', tableClassName)}
-									style={getColumnCssVars(columns, width, scrollbarWidth)}
-									role="grid"
-									aria-multiselectable="true"
-									aria-readonly="true"
-									aria-label={ariaLabel}
-									data-width={width}
-									aria-rowcount={totalResults}
-								>
-									<HeaderRow
-										ref={headerRef}
-										columns={columns}
-										width={width}
-										onResize={handleResize}
-										onReorder={handleReorder}
-										sortBy={sortBy}
-										sortDirection={sortDirection}
-										isResizing={isResizing}
-										isReordering={isReordering}
-										reorderTarget={reorderTarget}
-										onChangeSortOrder={onChangeSortOrder}
-									/>
-									<ReactWindowList
-										initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * ROW_HEIGHT}
-										outerElementType={TableBody}
-										className={cx("items-table-body", bodyClassName)}
-										height={height - ROW_HEIGHT} // add margin for HeaderRow
-										itemCount={itemCount}
-										itemData={itemData}
-										itemSize={ROW_HEIGHT}
-										onItemsRendered={onItemsRendered}
-										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
-										outerRef={r => { outerRef.current = r; props.outerRef && (props.outerRef.current = r); } }
-										innerRef={r => { innerRef.current = r; props.innerRef && (props.innerRef.current = r); } }
-										width={width}
-									>
-										{RowComponent}
-									</ReactWindowList>
-								</div>
-							)}
-						</InfiniteLoader>
+							<HeaderRow
+								ref={headerRef}
+								columns={columns}
+								width={width}
+								onResize={handleResize}
+								onReorder={handleReorder}
+								sortBy={sortBy}
+								sortDirection={sortDirection}
+								isResizing={isResizing}
+								isReordering={isReordering}
+								reorderTarget={reorderTarget}
+								onChangeSortOrder={onChangeSortOrder}
+							/>
+							<ReactWindowList
+								rowComponent={RowComponent}
+								initialScrollToRow={Math.max(scrollToRow - SCROLL_BUFFER, 0)}
+								tagName={TableBody}
+								className={cx("items-table-body", bodyClassName)}
+								rowHeight={ROW_HEIGHT} // add margin for HeaderRow
+								rowCount={itemCount}
+								rowProps={itemData}
+								onRowsRendered={onRowsRendered}
+								listRef={handleListRef}
+								style={{ width, height: `${height - ROW_HEIGHT}px` }}
+							/>
+						</div>
 					)}
 				</AutoSizer>
 			)}
@@ -318,12 +329,10 @@ Table.propTypes = {
 	getItemData: PropTypes.func.isRequired,
 	handleKeyDown: PropTypes.func,
 	headerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	innerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
 	isItemLoaded: PropTypes.func,
 	isReady: PropTypes.bool,
 	itemCount: PropTypes.number.isRequired,
 	listRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	loaderRef: PropTypes.shape({ current: PropTypes.instanceOf(Object) }),
 	outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
 	onChangeSortOrder: PropTypes.func,
 	onColumnsReorder: PropTypes.func,

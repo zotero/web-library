@@ -12,8 +12,7 @@ const SELECT_MODE_DELAY = 600; // ms, delay before long press touch triggers sel
 const SELECT_MODE_DEAD_ZONE = 10; // px, moving more than this won't trigger select mode
 
 const ListRow = memo(props => {
-	const { data, index, style } = props;
-	const { getItemData, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey, q, qmode } = data;
+	const { index, style, getItemData, selectedItemKeys, pickerMode, pickerNavigate, view, libraryKey, collectionKey, q, qmode } = props;
 	const itemKey = getItemData(index);
 	const dispatch = useDispatch();
 	const itemData = useSelector(
@@ -24,7 +23,7 @@ const ListRow = memo(props => {
 
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
-	const isSelectMode = data.isSelectMode || [PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM].includes(pickerMode);
+	const isSelectMode = props.isSelectMode || [PICKS_MULTIPLE_ITEMS, PICKS_SINGLE_ITEM].includes(pickerMode);
 	const triggerSelectTimeout = useRef(null);
 	const tiggerSelectPosStart = useRef(null);
 	const tiggerSelectPosLatest = useRef(null);

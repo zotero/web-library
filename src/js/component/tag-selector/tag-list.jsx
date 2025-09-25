@@ -1,19 +1,19 @@
 import AutoSizer from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
-import InfiniteLoader from "react-window-infinite-loader";
 import PropTypes from 'prop-types';
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState, memo, } from 'react';
-import { FixedSizeList as List } from 'react-window';
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
+import { useInfiniteLoader } from "react-window-infinite-loader";
 
 import { checkColoredTags, fetchTags, navigate, removeColorAndDeleteTag, removeTagColor } from '../../actions';
 import { maxColoredTags } from '../../constants/constants';
 import { useTags } from '../../hooks';
 import { makeRequestsUpTo } from '../../utils';
+import ReactWindowList from '../common/react-window-list';
 
 const PAGESIZE = 100;
 
@@ -204,12 +204,12 @@ TagListItem.propTypes = {
 	onFocusPrev: PropTypes.func,
 };
 
-const TagListRow = memo(({ data, index, ...rest }) => (
+const TagListRow = memo(({ index, tags, ...rest }) => (
 	<TagListItem
 		index={ index }
-		tag={ data.tags?.[index] }
+		tag={ tags?.[index] }
 		className={ cx({ odd: (index + 1) % 2 === 1 }) }
-		{ ...omit(data, ['tags', 'index']) }
+		{ ...omit(tags, ['tags', 'index']) }
 		{ ...rest }
 	/>
 ));
@@ -217,7 +217,7 @@ const TagListRow = memo(({ data, index, ...rest }) => (
 TagListRow.displayName = 'TagListRow';
 
 TagListRow.propTypes = {
-	data: PropTypes.object.isRequired,
+	tags: PropTypes.array,
 	index: PropTypes.number.isRequired,
 };
 
@@ -259,8 +259,6 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 		return requests.some(r => index >= r[0] && index < r[1]); // loading
 	}, [requests, tags]);
 
-
-
 	const handleLoadMore = useCallback((_startIndex, stopIndex) => {
 		// @NOTE: Pagination only happens if filtering disabled
 		// @NOTE: Fetches entire pages of results, paralleled as needed, rather than what
@@ -279,6 +277,15 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 
 		return Promise.all(nextRequests.map(r => dispatch(fetchTags(r.start, r.stop))))
 	}, [dispatch, duplicatesCount, pointer]);
+
+	let itemCount = isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0;
+	let previousItemCount = usePrevious(itemCount);
+
+	const onRowsRendered = useInfiniteLoader({
+		isRowLoaded: handleIsItemLoaded,
+		loadMoreRows: handleLoadMore,
+		rowCount: itemCount,
+	});
 
 	const handleDotMenuToggle = useCallback(ev => {
 		if(ev === null) {
@@ -317,9 +324,6 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 		}
 	}, [dispatch, hasCheckedColoredTags, isFetchingColoredTags]);
 
-	let itemCount = isFilteringOrHideAutomatic ? tags.length : hasChecked ? totalResults - duplicatesCount - selectedTagsCount : 0;
-	let previousItemCount = usePrevious(itemCount);
-
 	useEffect(() => {
 		// As more pages are fetched, duplicates counter goes up causing itemCount goes down.
 		// Infinite loader gets confused by this and ends up displaying rows that are not there.
@@ -336,41 +340,30 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 			{ !isBusy ? (
 				<AutoSizer>
 				{({ height, width }) => (
-					<InfiniteLoader
-						ref={ loader }
-						isItemLoaded={ handleIsItemLoaded }
-						itemCount={ itemCount }
-						loadMoreItems={ handleLoadMore }
+					<div
+						tabIndex={ tags.length > 0 ? 0 : null }
+						onFocus={ tags.length > 0 ? receiveFocus : noop }
+						onBlur={ tags.length > 0 ? receiveBlur : noop }
+						ref={ listRef }
+						role="list"
+						aria-multiselectable="true"
+						aria-readonly="true"
+						aria-label="Tags"
+						aria-rowcount={ totalResults }
 					>
-						{({ onItemsRendered, ref }) => (
-							<div
-								tabIndex={ tags.length > 0 ? 0 : null }
-								onFocus={ tags.length > 0 ? receiveFocus : noop }
-								onBlur={ tags.length > 0 ? receiveBlur : noop }
-								ref={ listRef }
-								role="list"
-								aria-multiselectable="true"
-								aria-readonly="true"
-								aria-label="Tags"
-								aria-rowcount={ totalResults }
-							>
-								<List
-									className="tag-selector-list"
-									height={ height }
-									itemCount={ itemCount }
-									itemData={ { tags, toggleTag, isManager, onFocusNext: focusNext, onFocusPrev: focusPrev,
-										dotMenuFor, onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
-									}
-									itemSize={ isTouchOrSmall ? 43 : 28 }
-									onItemsRendered={ onItemsRendered }
-									ref={ ref }
-									width={ width }
-								>
-									{ TagListRow }
-								</List>
-							</div>
-						)}
-					</InfiniteLoader>
+						<ReactWindowList
+							rowComponent={TagListRow}
+							className="tag-selector-list"
+							rowCount={ itemCount }
+							rowProps={ { tags, toggleTag, isManager, onFocusNext: focusNext, onFocusPrev: focusPrev,
+								dotMenuFor, onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
+							}
+							rowHeight={ isTouchOrSmall ? 43 : 28 }
+							onRowsRendered={onRowsRendered}
+							listRef={ ref }
+							style={{ width, height }}
+						/>
+					</div>
 				)}
 				</AutoSizer>
 			) : (

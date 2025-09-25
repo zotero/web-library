@@ -107,11 +107,10 @@ MetadataRetrievalTitleCell.propTypes = {
 }
 
 const MetadataRetrievalTableRow = memo(props => {
-	const { data, index, style } = props;
+	const { index, style, columns, getItemData } = props;
 	const id = useId();
 	const labelledById = `${id}-title`;
 
-	const { columns, getItemData } = data;
 	const itemData = getItemData(index);
 
 	return (
@@ -152,9 +151,11 @@ const MetadataRetrievalTableRow = memo(props => {
 
 MetadataRetrievalTableRow.displayName = 'MetadataRetrievalTableRow';
 MetadataRetrievalTableRow.propTypes = {
+	columns: PropTypes.array,
 	data: PropTypes.object.isRequired,
+	getItemData: PropTypes.func.isRequired,
 	index: PropTypes.number.isRequired,
-	style: PropTypes.object.isRequired
+	style: PropTypes.object.isRequired,
 }
 
 

@@ -35,7 +35,7 @@ describe('', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details' });;
 	});
 
 	afterEach(() => server.resetHandlers());

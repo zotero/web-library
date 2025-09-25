@@ -80,7 +80,7 @@ describe('Reader', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader' });;
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -97,7 +97,7 @@ describe('Reader', () => {
 
 	test('Redirects to the best attachment if URL points at a top-level item, saves annotations against correct item', async () => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/items/KBFTPTI4/reader')
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/items/KBFTPTI4/reader' });
 		const pushStateSpy = jest.spyOn(window.history, "pushState");
 
 		let requestedAttachmentChildItems = false;

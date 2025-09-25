@@ -33,7 +33,7 @@ describe('Note Editor', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/CSB4KZUU/items/BLVYJQMH/note/GNVWD3U4/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/BLVYJQMH/note/GNVWD3U4/item-details' });;
 	});
 
 	afterEach(() => server.resetHandlers());

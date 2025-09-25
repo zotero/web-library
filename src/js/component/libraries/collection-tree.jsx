@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { Fragment, memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect, } from 'react';
+import { flushSync } from 'react-dom';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -154,6 +155,7 @@ const VirtualCollectionNode = memo(props => {
 	const shouldIgnoreNextBlur = useRef(false);
 
 	const handleEditableCommit = useCallback((newValue, hasChanged, ev) => {
+		console.trace('commit', ev);
 		const upNode = parentCollectionKey ?
 			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${parentCollectionKey}"`) :
 			null;
@@ -409,15 +411,18 @@ const DotMenu = memo(props => {
 			return;
 		}
 		ev.stopPropagation();
+
 		if(isTouchOrSmall) {
 			dispatch(toggleModal(COLLECTION_ADD, true, { parentCollectionKey: collection.key }));
 		} else {
-			setTimeout(() => {
-				setOpened([...opened, collection.key ]);
-				addVirtual(parentLibraryKey, collection.key);
-			}, 0);
+			// close the dot menu and open the collection synchroneusly so it doesn't interfere with focus
+			flushSync(() => {
+				setDotMenuFor(null);
+				setOpened([...opened, collection.key]);
+			});
+			addVirtual(parentLibraryKey, collection.key);
 		}
-	}, [addVirtual, closeOnXArrowKey, collection, dispatch, isTouchOrSmall, opened, parentLibraryKey, setOpened]);
+	}, [addVirtual, closeOnXArrowKey, collection.key, dispatch, isTouchOrSmall, opened, parentLibraryKey, setDotMenuFor, setOpened]);
 
 	const handleMoveCollectionClick = useCallback(ev => {
 		if(closeOnXArrowKey(ev)) {

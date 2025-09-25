@@ -58,7 +58,7 @@ describe('Loading Screen', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/');
+		window.jsdom.reconfigure({ url: 'http://localhost/' });;
 		settingsRequested = false;
 		collectionsRequestCounter = 0;
 	});

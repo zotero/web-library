@@ -1,11 +1,11 @@
-import { memo, useRef } from 'react';
+import { memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import InfiniteLoader from "react-window-infinite-loader";
-import { FixedSizeList as ReactWindowList } from 'react-window';
+import { useInfiniteLoader } from "react-window-infinite-loader";
 import { noop } from 'web-common/utils';
 
+import ReactWindowList from './react-window-list';
 import ListRow from './list-row';
 import { alwaysTrue } from '../../utils';
 import { SCROLL_BUFFER, LIST_ROW_HEIGHT } from '../../constants/constants';
@@ -20,8 +20,8 @@ const List = props => {
 		getItemData,
 		isReady = true,
 		itemCount,
+		listRef = null,
 		listClassName = null,
-		loaderRef = null,
 		onDoubleClick = noop,
 		isItemLoaded = alwaysTrue,
 		onLoadMore = noop,
@@ -34,7 +34,6 @@ const List = props => {
 	} = props;
 
 	const ListItemComponent = listItemComponent || ListRow;
-	const listRef = useRef(null);
 
 	const itemData = {
 		selectedIndexes,
@@ -44,41 +43,34 @@ const List = props => {
 		...extraItemData
 	};
 
+	const onRowsRendered = useInfiniteLoader({
+		isRowLoaded: isItemLoaded,
+		rowCount: itemCount,
+		loadMoreRows: onLoadMore
+	});
+
 	return (
 		<div className={cx("items-list-wrap", containerClassName)}>
 			{ isReady && (
 				<AutoSizer>
 					{({ height, width }) => (
-						<InfiniteLoader
-							ref={loaderRef}
-							listRef={listRef}
-							isItemLoaded={isItemLoaded}
-							itemCount={itemCount}
-							loadMoreItems={onLoadMore}
+						<div
+							aria-label={ariaLabel}
+							className={cx('items-list', listClassName)}
+							role={role}
+							aria-rowcount={totalResults}
 						>
-							{({ onItemsRendered, ref }) => (
-								<div
-									aria-label={ariaLabel}
-									className={cx('items-list', listClassName)}
-									role={role}
-									aria-rowcount={totalResults}
-								>
-									<ReactWindowList
-										initialScrollOffset={Math.max(scrollToRow - SCROLL_BUFFER, 0) * LIST_ROW_HEIGHT}
-										height={height}
-										itemCount={itemCount}
-										itemData={itemData}
-										itemSize={LIST_ROW_HEIGHT}
-										onItemsRendered={onItemsRendered}
-										ref={r => { ref(r); listRef.current = r; props.listRef && (props.listRef.current = r); }}
-
-										width={width}
-									>
-										{ ListItemComponent }
-									</ReactWindowList>
-								</div>
-							)}
-						</InfiniteLoader>
+							<ReactWindowList
+								rowComponent={ListItemComponent}
+								initialScrollToRow={Math.max(scrollToRow - SCROLL_BUFFER, 0)}
+								rowCount={itemCount}
+								rowProps={itemData}
+								rowHeight={LIST_ROW_HEIGHT}
+								onRowsRendered={onRowsRendered}
+								listRef={listRef}
+								style={{ width, height }}
+							/>
+						</div>
 					)}
 				</AutoSizer>
 			) }
@@ -99,9 +91,6 @@ List.propTypes = {
 	listClassName: PropTypes.string,
 	listItemComponent: PropTypes.elementType,
 	listRef: PropTypes.shape({
-		current: PropTypes.object,
-	}),
-	loaderRef: PropTypes.shape({
 		current: PropTypes.object,
 	}),
 	onDoubleClick: PropTypes.func,

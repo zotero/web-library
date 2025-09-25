@@ -1,5 +1,6 @@
 import { Fragment, forwardRef, memo, useCallback, useState, useEffect, useImperativeHandle,
 	useMemo, useRef, } from 'react';
+import { flushSync } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Icon, Spinner } from 'web-common/components';
@@ -262,9 +263,10 @@ const Libraries = forwardRef((props, ref) => {
 
 	const addVirtual = useCallback((libraryKey, collectionKey) => {
 		if(!opened.includes(libraryKey)) {
-			toggleOpen(libraryKey);
+			// toggle library open synchroneusly so that input field can be correctly scrolled into view
+			flushSync(() => { toggleOpen(libraryKey) });
 		}
-		window.setTimeout(() => setVirtual({ libraryKey, collectionKey }));
+		 setVirtual({ libraryKey, collectionKey });
 	}, [opened, toggleOpen]);
 
 

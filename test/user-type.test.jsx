@@ -32,7 +32,7 @@ describe('User Type', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/');
+		window.jsdom.reconfigure({ url: 'http://localhost/' });;
 	});
 
 	afterEach(() => {

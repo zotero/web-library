@@ -42,7 +42,7 @@ describe('Read-only', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -144,10 +144,10 @@ describe('Read-only', () => {
 	test('Open reader in a new tab with a double click', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
-		global.open = jest.fn();
+		window.open = jest.fn();
 
 		await userEvent.dblClick(screen.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' }));
-		await waitFor(() => expect(global.open).toBeCalledWith('/testuser/collections/WTTJ2J56/items/VR82JUX8/attachment/VG79HDDM/reader'));
+		await waitFor(() => expect(window.open).toHaveBeenCalledWith('/testuser/collections/WTTJ2J56/items/VR82JUX8/attachment/VG79HDDM/reader'));
 	});
 
 	test('Open and download an attachment in the attachment pane', async () => {
@@ -180,9 +180,6 @@ describe('Read-only', () => {
 		await findByRole(attachmentsList, 'listitem', { name: 'Full Text', current: true });
 
 		expect(await screen.findByRole('link', { name: 'URL' })).toBeInTheDocument();
-
-		global.open = jest.fn();
-
 		expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('href', '/testuser/collections/WTTJ2J56/items/VR82JUX8/attachment/VG79HDDM/reader');
 
 		server.use(

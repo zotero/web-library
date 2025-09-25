@@ -16,10 +16,11 @@ const Node = props => {
 		noop, onRenameCancel = noop, onSelect = noop, showTwisty, onFocusNext = noop, onFocusPrev =
 		noop, onKeyDown = noop, subtree, shouldBeDraggable, ...rest } = props;
 	const [isFocused, setIsFocused] = useState(false);
+	const ref = useRef(null);
 	const containerRef = useRef(null);
 	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(containerRef, { isFocusable: true, targetTabIndex: -3 });
 
-	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
+	const [_, dragRef] = useDrag({ // eslint-disable-line no-unused-vars
 		type: COLLECTION,
 		canDrag: () => shouldBeDraggable,
 		item: () => {
@@ -36,7 +37,7 @@ const Node = props => {
 		}
 	});
 
-	const [{ isOver, canDrop }, drop] = useDrop({
+	const [{ isOver, canDrop }, dropRef] = useDrop({
 		accept: [ATTACHMENT, COLLECTION, ITEM, NativeTypes.FILE],
 		collect: (monitor) => ({
 			isOver:  monitor.isOver({ shallow: true }),
@@ -177,11 +178,14 @@ const Node = props => {
 		receiveBlur(ev);
 	}, [receiveBlur]);
 
-	return drag(drop(
+	dragRef(ref);
+	dropRef(ref);
+
+	return (
 		// NOTE: Node can end up having both 'focus' and 'focused' classes.
 		// Former is when node has a keyboard focus, latter is when collection
 		// tree is focused. Admittedly, naming could be better.
-		<li className={ cx(className, { focus: isFocused }) }>
+		<li ref={ref} className={ cx(className, { focus: isFocused }) }>
 			<div
 				{ ...pick(rest, propName => propName.startsWith('data-') ||
 					propName.startsWith('aria-') || propName === 'tabIndex') }
@@ -212,7 +216,7 @@ const Node = props => {
 			</div>
 			{ subtree }
 		</li>
-	));
+	);
 }
 
 Node.propTypes = {

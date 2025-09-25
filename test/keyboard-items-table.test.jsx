@@ -18,7 +18,7 @@ applyAdditionalJestTweaks({ timeout: 240000 });
 
 test('Navigate through items table using keyboard', async () => {
 	delete window.location;
-	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+	window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 	const user = userEvent.setup()
 	renderWithProviders(<MainZotero />, { preloadedState: state });
 	await waitForPosition();

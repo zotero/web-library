@@ -27,7 +27,7 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 
 		if (!skipScroll) {
 			let bufferedScrollToRow = Math.max(nextScrollToRow - SCROLL_BUFFER, 0);
-			listRef.current?.scrollToItem?.(bufferedScrollToRow, 'start');
+			listRef.current?.scrollToRow?.({ index: bufferedScrollToRow, align: 'start' });
 		}
 	}, [dispatch, listRef, setScrollToRow])
 
@@ -51,7 +51,7 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 			const itemKey = selectedItemKeys[selectedItemKeys.length - 1];
 			const itemKeyIndex = keys.findIndex(k => k === itemKey);
 			if (itemKeyIndex !== -1) {
-				listRef.current.scrollToItem(itemKeyIndex, 'smart');
+				listRef.current.scrollToRow({ index: itemKeyIndex, align: 'smart' });
 			}
 		}
 	}, [selectedItemKeys, keys, listRef, previousSelectedItemKeys]);

@@ -6,13 +6,12 @@ import { TitleCell, AttachmentCell, GenericDataCell, PlaceholderCell } from './t
 import { noop } from 'web-common/utils';
 
 const TableRow = props => {
-	const { data, index, style, className = "item" } = props;
+	const { index, style, className = "item", columns, selectedIndexes, getItemData, onSelect = noop, onDoubleClick = noop } = props;
 	const id = useId();
 	const labelledById = `${id}-title`;
 	const ref = useRef();
 	const ignoreClicks = useRef({});
 
-	const { columns, selectedIndexes, getItemData, onSelect = noop, onDoubleClick = noop } = data;
 	const itemData = getItemData(index);
 	const isSelected = selectedIndexes.includes(index);
 	const selectedItemKeysLength = selectedIndexes.length;

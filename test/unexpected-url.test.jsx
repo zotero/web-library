@@ -86,7 +86,7 @@ describe('Unexpected URL', () => {
 
 	test(`Should redirect if URL contains invalid collection key`, async () => {
 		const pushStateSpy = jest.spyOn(window.history, "pushState");
-		window.location = new URL('http://localhost/testuser/collections/12345678');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/12345678' });;
 		renderWithProviders(<MainZotero />, { preloadedState: minState });
 		expect(screen.getByRole('img', { name: 'Loading' })).toBeInTheDocument();
 		await screen.findByRole('grid', { name: 'items' });
@@ -97,7 +97,7 @@ describe('Unexpected URL', () => {
 
 	test(`Shouldn't change URL when opening another library`, async () => {
 		const pushStateSpy = jest.spyOn(window.history, "pushState");
-		window.location = new URL('http://localhost/testuser/collections/KCUHMRNZ');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/KCUHMRNZ' });;
 		const tweakedState = { ...minState };
 		tweakedState.config.includeUserGroups = true;
 		const user = userEvent.setup();

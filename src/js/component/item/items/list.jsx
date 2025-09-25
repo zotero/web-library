@@ -19,7 +19,6 @@ const ItemsList = memo(props => {
 	const { isSearchModeTransitioning, columnsKey, libraryKey, collectionKey, itemsSource,
 		isSearchMode, pickerNavigate = noop, pickerPick = noop, pickerMode,
 		selectedItemKeys = [], isTrash, isMyPublications, q, qmode, tags, view } = props
-	const loader = useRef(null);
 	const listRef = useRef(null);
 	const lastRequest = useRef({});
 	const dispatch = useDispatch();
@@ -106,10 +105,6 @@ const ItemsList = memo(props => {
 			return;
 		}
 
-		if (loader.current) {
-			loader.current.resetloadMoreItemsCache(true);
-		}
-
 		if (isFetching) {
 			dispatch(abortAllRequests(requestType));
 			setTimeout(() => {
@@ -131,7 +126,6 @@ const ItemsList = memo(props => {
 			getItemData={getItemData}
 			isItemLoaded={isItemLoaded}
 			itemCount={itemCount}
-			loaderRef={loader}
 			listClassName={cx({ 'select-mode': isSelectMode })}
 			onLoadMore={handleLoadMore}
 			setScrollToRow={setScrollToRow}

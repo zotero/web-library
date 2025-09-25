@@ -51,8 +51,7 @@ describe('Items', () => {
 	});
 
 	beforeEach(() => {
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -317,8 +316,7 @@ describe('Items', () => {
 	});
 
 	test('Renders formatted titles in the items list', async () => {
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/5PB9WKTC/items/MNRM7HER/collection');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/5PB9WKTC/items/MNRM7HER/collection' });
 		renderWithProviders(<MainZotero />, { preloadedState: formattingState });
 		await waitForPosition();
 		expect(screen.getByRole('grid', { name: 'items' })).toBeInTheDocument();
@@ -355,8 +353,7 @@ describe('Items', () => {
 	});
 
 	test("Renders correctly ordered tag color swatches in the items list", async () => {
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/' });
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
@@ -390,8 +387,7 @@ describe('Items', () => {
 	});
 
 	test("Includes emoji from non-colored tags in the items list", async () => {
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/' });
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
@@ -470,8 +466,7 @@ describe('Items', () => {
 			})
 		);
 
-		delete window.location;
-		window.location = new URL('http://localhost/testuser/items/QWERTY12/library');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/items/QWERTY12/library' });
 		renderWithProviders(<MainZotero />, { preloadedState: minimalState });
 		await waitForPosition();
 		// Ensure that we fetched items twice: first keys, then json.

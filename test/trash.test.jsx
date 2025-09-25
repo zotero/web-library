@@ -33,7 +33,7 @@ describe('Trash', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/trash');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/trash' });;
 	});
 
 	afterEach(() => server.resetHandlers());

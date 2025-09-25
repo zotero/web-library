@@ -88,6 +88,8 @@ const config = {
 				'node_modules/@reduxjs/**',
 				'node_modules/immer/**',
 				'node_modules/reselect/**',
+				'node_modules/react-window/**',
+
 			],
 			babelHelpers: 'bundled'
 		}),

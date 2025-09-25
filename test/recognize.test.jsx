@@ -56,7 +56,7 @@ describe('Metadata Retrieval', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });;
 	});
 
 	afterEach(() => {

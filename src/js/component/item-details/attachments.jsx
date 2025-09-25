@@ -284,7 +284,7 @@ const Attachment = memo(props => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
 	const [isFocused, setIsFocused] = useState(false);
-	const [_, drag] = useDrag({ // eslint-disable-line no-unused-vars
+	const [_, dragRef] = useDrag({ // eslint-disable-line no-unused-vars
 		type: ATTACHMENT,
 		item: { itemKey, libraryKey },
 		end: (item, monitor) => {
@@ -341,7 +341,9 @@ const Attachment = memo(props => {
 		setIsFocused(false);
 	}, [isTouchOrSmall, receiveBlur]);
 
-	return drag(
+	dragRef(ref);
+
+	return (
 		<li
 			aria-labelledby={id.current}
 			aria-current={isSelected}

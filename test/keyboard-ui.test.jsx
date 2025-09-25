@@ -18,7 +18,7 @@ applyAdditionalJestTweaks({ timeout: 240000 });
 
 test('Tabulate through the UI', async () => {
 	delete window.location;
-	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+	window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 	const user = userEvent.setup()
 	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
 
@@ -59,7 +59,7 @@ test('Tabulate through the UI', async () => {
 
 test('Tabbing back to item details tabs should focus on the last selected tab', async () => {
 	delete window.location;
-	window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+	window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 	const user = userEvent.setup()
 	renderWithProviders(<MainZotero />, { preloadedState: state, includeStyles: true });
 

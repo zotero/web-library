@@ -14,6 +14,8 @@ class FetchEnvironment extends TestEnvironment {
 		this.global.WritableStream = WritableStream;
 		this.global.ByteLengthQueuingStrategy = ByteLengthQueuingStrategy;
 		this.global.CountQueuingStrategy = CountQueuingStrategy;
+		this.global.BroadcastChannel = BroadcastChannel;
+		this.global.jsdom = this.dom;
 	}
 }
 

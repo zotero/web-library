@@ -41,7 +41,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list' });;
 		server.use(
 			http.get('https://www.zotero.org/styles/modern-language-association', () => {
 				return HttpResponse.text(modernLanguageAssociationStyle, {
@@ -170,12 +170,14 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 			{ name: 'More', expanded: true })
 		).toBeInTheDocument();
 
-		global.open = jest.fn();
+		window.open = jest.fn();
 
 		const subscribeToFeedBtn = screen.getByRole('menuitem', { name: 'Subscribe To Feed' });
 		await userEvent.click(subscribeToFeedBtn);
 
-		await waitFor(() => expect(global.open).toBeCalledWith('https://www.zotero.org/settings/keys/new?name=Private%20Feed&library_access=1&notes_access=1&redirect=https%3A%2F%2Fapi.zotero.org%2Fusers%2F1%2Fitems%2Ftop%3Fdirection%3Dasc%26format%3Datom%26q%3Dpathfinding%26qmode%3DtitleCreatorYear%26sort%3Dtitle%26tag%3Dto%2520read'));
+		await waitFor(() => expect(window.open)
+			.toHaveBeenCalledWith('https://www.zotero.org/settings/keys/new?name=Private%20Feed&library_access=1&notes_access=1&redirect=https%3A%2F%2Fapi.zotero.org%2Fusers%2F1%2Fitems%2Ftop%3Fdirection%3Dasc%26format%3Datom%26q%3Dpathfinding%26qmode%3DtitleCreatorYear%26sort%3Dtitle%26tag%3Dto%2520read')
+		);
 	});
 
 });

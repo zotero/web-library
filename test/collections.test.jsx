@@ -35,7 +35,7 @@ describe('Test User: Collections', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -225,7 +225,7 @@ describe('Test User: Collections', () => {
 
 			jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue(userAgent);
 			delete window.location;
-			window.location = new URL('http://localhost/testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list');
+			window.jsdom.reconfigure({ url: 'http://localhost/testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list' });;
 
 			renderWithProviders(<MainZotero />, { preloadedState: stateSearch });
 			await waitForPosition();

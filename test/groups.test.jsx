@@ -47,7 +47,7 @@ describe('Group libraries', () => {
 	afterAll(() => server.close());
 
 	test('should copy an item to a group library', async () => {
-		window.location = new URL('http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details');
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: getPatchedStateArray(state, 'config.libraries', 1, { isFileUploadAllowed: true })});
 		await waitForPosition();
@@ -163,7 +163,7 @@ describe('Group libraries', () => {
 	});
 
 	test('should sort locally by addedBy', async () => {
-		window.location = new URL('http://localhost/groups/5119976/animals/items/X9WEHDAN/item-list');
+		window.jsdom.reconfigure({ url: 'http://localhost/groups/5119976/animals/items/X9WEHDAN/item-list' });;
 		const user = userEvent.setup();
 		const preloadedState = getPachtedStateMultiple(stateGroup, [
 			['libraries.g5119976.dataObjects.RQW7ZKYL.@@meta@@.createdByUser', { username: 'zotero' }],
