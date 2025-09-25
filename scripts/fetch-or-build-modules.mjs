@@ -77,7 +77,7 @@ async function buildModule({ moduleConfig, srcPath, targetDir }) {
   let modulesData = {};
   try {
     modulesData = await fs.readJson(modulesFilePath);
-  } catch (_) {
+  } catch {
     // modules data file is missing or invalid json, ignore.
   }
 
@@ -102,7 +102,7 @@ async function buildModule({ moduleConfig, srcPath, targetDir }) {
         try {
           await fetchModule({ actualHash, moduleConfig, tmpDir, targetDir });
           modulesData[moduleConfig.key] = actualHash;
-        } catch (e) {
+        } catch {
           console.log(
             `Unable to fetch ${moduleConfig.name}, will build instead...`,
           );

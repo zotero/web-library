@@ -61,4 +61,15 @@ export default [
 			...(jestDom.configs?.recommended?.rules ?? {}),
 		},
 	},
+	// Build tools (/scripts)
+	{
+		files: ["scripts/**/*.mjs"],
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+			ecmaVersion: 14,
+			sourceType: "module",
+		}
+	}
 ];

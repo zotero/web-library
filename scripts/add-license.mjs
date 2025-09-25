@@ -1,0 +1,24 @@
+import fs from 'fs-extra';
+import { glob } from 'glob';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const licenseString = '<!-- This file is part of Zotero. It is distributed under the GNU Affero General Public License version 3. -->';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+let filesChanged = 0;
+
+const addLicense = async (file) => {
+	const content = await fs.readFile(file, 'utf8');
+	if (content.includes(licenseString)) {
+		return;
+	}
+	await fs.writeFile(file, licenseString + '\n' + content);
+	filesChanged++;
+};
+
+const files = await glob(`${path.join(__dirname, '..', 'src', 'static', 'icons')}/**/*.svg`);
+await Promise.all(files.map(f => addLicense(f)));
+console.log(`Injected license into ${filesChanged}/${files.length} files.`);
