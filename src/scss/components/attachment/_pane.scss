@@ -43,7 +43,9 @@
 	}
 
 	.scroll-container-mouse {
-		flex: 1 1 0;
+		@include breakpoints.mouse-and-bp-up(md) {
+			flex: 1 0 (2.5 * variables.$line-height-large);
+		}
 
 		@include selectors.state(".tab-pane.attachments.dnd-target") {
 			position: relative;
