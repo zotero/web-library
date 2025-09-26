@@ -11,7 +11,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts/iron'
+          node-version: 'lts/jod'
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npm test
