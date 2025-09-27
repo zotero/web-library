@@ -74,7 +74,7 @@
     "@babel/runtime-corejs3": "^7.28.4",
     "@floating-ui/react-dom": "^2.1.6",
     "@reduxjs/toolkit": "^2.9.0",
-    "@tnajdek/react-window": "^2.1.1",
+    "react-window": "^2.1.2",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
     "core-js": "^3.45.1",

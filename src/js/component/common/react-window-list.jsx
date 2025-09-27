@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useCallback, useRef } from 'react';
-import { List as UpstreamReactWindowList } from '@tnajdek/react-window';
+import { List as UpstreamReactWindowList } from 'react-window';
 
 // This wrapper adds support for initialScrollToRow, and will skip calls to onRowsRendered until after the initial scroll
 const ReactWindowList = ({ initialScrollToRow, listRef: listRefFromProps, onRowsRendered, ...rest}) => {
