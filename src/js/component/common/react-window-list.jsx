@@ -20,7 +20,7 @@ const ReactWindowList = ({ initialScrollToRow, listRef: listRefFromProps, onRows
 			}
 		}
 		if (initialScrollToRow && r && !isScrolled.current) {
-			r.scrollToRow({ index: initialScrollToRow, behavior: 'instant' });
+			r.scrollToRow({ index: initialScrollToRow, behavior: 'instant', align: 'start' });
 			setTimeout(() => {
 				isScrolled.current = true;
 			}, 0);
