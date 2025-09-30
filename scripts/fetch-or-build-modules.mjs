@@ -12,7 +12,7 @@ const modulesFilePath = join(ROOT, "data", "modules.json");
 const modulesConfig = [
   {
     forceBuild: false,
-    name: "pdf-reader",
+    name: "reader",
     key: "pdfReader",
     URLpath: "client-pdf-reader",
     buildPath: ["build", "web"],

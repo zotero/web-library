@@ -4,7 +4,7 @@
 
 /**
  * @param {Object} item
- * @returns {Object} pdf-reader compatible annotation data
+ * @returns {Object} reader compatible annotation data
  */
 const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser, isGroup, isReadOnly, libraryKey, lastModifiedByUser, tagColors = new Set() } = {}) => {
 	const o = {};
@@ -74,7 +74,7 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 };
 
 /**
- * @param {Object} json pdf-reader compatible annotation data
+ * @param {Object} json reader compatible annotation data
  * @return {Object} Annotation item
  */
 const annotationItemFromJSON = function (json) {

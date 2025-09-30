@@ -1,6 +1,6 @@
-[submodule "modules/pdf-reader"]
-	path = modules/pdf-reader
-	url = https://github.com/zotero/pdf-reader.git
+[submodule "modules/reader"]
+	path = modules/reader
+	url = https://github.com/zotero/reader.git
 
 [submodule "modules/pdf-worker"]
 	path = modules/pdf-worker

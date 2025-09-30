@@ -12,7 +12,7 @@ visualizer
 .nyc_output
 .secret.json
 
-src/static/pdf-reader/
+src/static/reader/
 src/static/pdf-worker/
 src/static/note-editor/
 src/static/fonts/

@@ -8,7 +8,6 @@ import { getLastPageIndexSettingKey } from '../common/item';
 import { Spinner } from 'web-common/components';
 import { useFloating, flip, shift } from '@floating-ui/react-dom';
 import PropTypes from 'prop-types';
-import strings from "pdf-reader/src/en-us.strings";
 
 import { annotationItemToJSON } from '../common/annotations';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
@@ -345,7 +344,6 @@ const Reader = () => {
 			sidebarOpen: isReaderSidebarOpen ?? true,
 			bottomPlaceholderHeight: 0,
 			rtl: false,
-			localizedStrings: strings,
 			showAnnotations: true,
 			onSaveAnnotations: (annotations) => {
 				const annotationKeys = annotations.map(a => a.id);
@@ -363,7 +361,7 @@ const Reader = () => {
 				}, 0);
 			},
 			onClosePopup: () => {
-				// Note: This currently only closes tags popup when annotations are disappearing from pdf-reader sidebar.
+				// Note: This currently only closes tags popup when annotations are disappearing from reader sidebar.
 				// Normal popup closing is handled by PopupPortal.
 				setTagPicker(null);
 			},

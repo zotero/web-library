@@ -41,7 +41,7 @@
             "mobile": []
         },
         "noteEditorURL": "/static/note-editor/editor.html",
-        "pdfReaderURL": "/static/pdf-reader/viewer.html",
+        "pdfReaderURL": "/static/reader/viewer.html",
         "stylesSourceUrl": "https://www.zotero.org/styles-files/styles.json",
         "translateUrl": "http://localhost",
         "userSlug": "testuser",
