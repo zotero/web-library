@@ -21,7 +21,7 @@
     "clean:depbuild": "rimraf modules/reader/build modules/reader/locales modules/pdf-worker/build modules/note-editor/build modules/note-editor/locales",
     "clean:all": "run-p clean clean:data clean:static clean:depbuild",
     "purge:submodules": "rimraf modules && git submodule update --init --recursive",
-    "build": "NODE_ENV=production npm run build:prepare && NODE_ENV=production npm run build:all && npm run build:postprocess",
+    "build": "npm run build:prepare && NODE_ENV=production npm run build:all && npm run build:postprocess",
     "build:tests": "NODE_ENV=testing run-s \"build:prepare\" \"build:all\" \"build:postprocess\" \"build:layout-only-css\"",
     "build:all": "run-p 'build:js -s' 'build:scss -s' 'build:html -s' 'build:static -s'",
     "build:js": "mkdir -p build/static/web-library && rollup -c",
