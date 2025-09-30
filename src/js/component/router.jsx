@@ -21,7 +21,6 @@ const Router = (props) => {
 			const match = redirect.fn(window.location.pathname);
 			if(match) {
 				const toPath = makeRedirectedPath(redirect, match);
-				console.log(`Redirecting from ${window.location.pathname} to ${toPath}`);
 				history.replaceState({}, '', toPath);
 				break;
 			}
@@ -29,7 +28,6 @@ const Router = (props) => {
 
 		const isRouteMatched = routes.some(route => !!route(window.location.pathname));
 		if(!isRouteMatched) {
-			console.log('Invalid URL, redirecting to /libraries');
 			history.replaceState({}, '', '/libraries');
 		}
 
