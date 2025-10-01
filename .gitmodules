@@ -10,7 +10,7 @@
 	url = https://github.com/zotero/note-editor.git
 [submodule "modules/web-common"]
 	path = modules/web-common
-	url = https://github.com/tnajdek/web-common.git
+	url = https://github.com/zotero/web-common.git
 [submodule "modules/zotero-schema"]
 	path = modules/zotero-schema
 	url = https://github.com/zotero/zotero-schema.git
