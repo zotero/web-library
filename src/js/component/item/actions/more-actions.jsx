@@ -15,6 +15,8 @@ const MoreActionsItems = ({ divider = false }) => {
 	const { attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi, isViewFile,
 		isViewOnline, item, selectedCount, url } = useItemsActions();
 
+	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
+
 	const handleViewFileClick = useCallback(() => {
 		if (item.itemType === 'attachment') {
 			dispatch(pickBestAttachmentItemAction(item.key));
@@ -54,7 +56,7 @@ const MoreActionsItems = ({ divider = false }) => {
 
 			{canDuplicate && (canRecognize || canCreateParent || canUnregonize) && <DropdownItem divider />}
 
-			{(isTouchOrSmall && canRecognize) && (
+			{(isTouchOrSmall && isRecognizerAvailable && canRecognize) && (
 				<DropdownItem onClick={handleRetrieveMetadata}>
 					Retrieve Metadata
 				</DropdownItem>
@@ -74,7 +76,7 @@ const MoreActionsItems = ({ divider = false }) => {
 					Undo Retrieve Metadata
 				</DropdownItem>
 			)}
-			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && canRecognize) || canCreateParent || canUnregonize) && <DropdownItem divider />}
+			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && isRecognizerAvailable && canRecognize) || canCreateParent || canUnregonize) && <DropdownItem divider />}
 		</Fragment>
 	);
 }

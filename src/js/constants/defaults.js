@@ -24,6 +24,8 @@ export const noteEditorURL = '/static/web-library/note-editor/editor.html';
 export const citeprocURL = '/static/web-library/js/citeproc.js';
 export const localesURL = '/static/web-library/locales/';
 
+export const isRecognizerAvailable = true;
+
 
 export const libraries = {
 	includeMyLibrary: true,

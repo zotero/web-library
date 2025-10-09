@@ -127,6 +127,7 @@ const ItemActionsDesktop = memo(props => {
 	const { onFocusNext, onFocusPrev } = props;
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
+	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedCount = useSelector(state => state.current.itemKeys.length);
@@ -197,16 +198,18 @@ const ItemActionsDesktop = memo(props => {
 					<ToolGroup>
 						{!(isTrash || isMyPublications) && (
 							<Fragment>
-								<Button
-									disabled={!canRecognize}
-									icon
-									onClick={handleRetrieveMetadata}
-									onKeyDown={handleKeyDown}
-									tabIndex={-2}
-									title="Retrieve Metadata"
-								>
-									<Icon type="16/retrieve-metadata" width="16" height="16" />
-								</Button>
+								{isRecognizerAvailable && (
+									<Button
+										disabled={!canRecognize}
+										icon
+										onClick={handleRetrieveMetadata}
+										onKeyDown={handleKeyDown}
+										tabIndex={-2}
+										title="Retrieve Metadata"
+									>
+										<Icon type="16/retrieve-metadata" width="16" height="16" />
+									</Button>
+								)}
 								<Button
 									disabled={selectedCount === 0}
 									icon
