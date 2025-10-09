@@ -172,9 +172,11 @@ const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, ta
 					md5: action.response.getData().md5sum,
 					[Symbol.for('links')]: {
 						...(state[action.itemKey][Symbol.for('links')] || {}),
-						//@TODO: could copy actual value from action.response.registerResponse for responses with register step
-						//		 (i.e. where file did not exist before)
-						enclosure: true
+						enclosure: {
+							length: action.response.getData().fileSize,
+							title: action.response.getData().fileName,
+							type: action.fileData.contentType,
+						}
 					}
 				}
 			}

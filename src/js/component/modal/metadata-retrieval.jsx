@@ -13,8 +13,7 @@ import Items from '../common/items';
 import { GenericDataCell, default as Cell } from '../common/table-cell';
 
 const MetadataRetrievalListItem = props => {
-	const { data, index, style, className } = props;
-	const { getItemData } = data;
+	const { className, getItemData, index, style } = props;
 	const itemData = getItemData(index);
 	const { parentItemTitle, title, iconName, } = itemData;
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
@@ -59,10 +58,11 @@ const MetadataRetrievalListItem = props => {
 }
 
 MetadataRetrievalListItem.propTypes = {
-	data: PropTypes.object.isRequired,
-	index: PropTypes.number.isRequired,
-	style: PropTypes.object.isRequired,
-	className: PropTypes.string
+    className: PropTypes.string,
+    data: PropTypes.object.isRequired,
+    getItemData: PropTypes.func,
+    index: PropTypes.number.isRequired,
+    style: PropTypes.object.isRequired
 };
 
 
@@ -202,7 +202,7 @@ const MetadataRetrievalModal = () => {
 	}, [recognizeEntries]);
 
 	const handleCancel = useCallback(() => {
-		if(isTouchOrSmall && !isDone) {
+		if (isTouchOrSmall && !isDone) {
 			return;
 		}
 		// if recognition is done, clear the modal and the recognition state when closing
@@ -251,13 +251,13 @@ const MetadataRetrievalModal = () => {
 								</h4>
 							</div>
 							<div className="modal-header-right">
-								{ isDone && (
-								<Button
-									className="btn-link"
-									onClick={handleCancel}
-								>
-									Close
-								</Button>
+								{isDone && (
+									<Button
+										className="btn-link"
+										onClick={handleCancel}
+									>
+										Close
+									</Button>
 								)}
 							</div>
 						</Fragment>
@@ -296,7 +296,7 @@ const MetadataRetrievalModal = () => {
 					containerClassName="recognize-list"
 					listItemComponent={MetadataRetrievalListItem}
 					rowComponent={MetadataRetrievalTableRow}
-					{ ...sharedProps }
+					{...sharedProps}
 				/>
 			</div>
 		</Modal>
