@@ -1,20 +1,44 @@
 name: CI
 on: [push]
-jobs:
-  build:
-    name: Test
+jobs:  
+  test-jest:
+    name: Test (Jest)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Install Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 'lts/jod'
+          node-version: 'lts/iron'
       - run: npm ci
+      - run: npm run build:tests
+      - run: npm run test:jest  
+  test-playwright:
+    name: Test (Playwright in Docker)
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.0-noble
+      env:
+        CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/iron'
+      - name: Install rsync
+        run: |
+          apt-get update
+          apt-get install -y rsync
+      - run: npm ci
+      - run: npm run build:tests
       - run: npx playwright install --with-deps
-      - run: npm test
+      - run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

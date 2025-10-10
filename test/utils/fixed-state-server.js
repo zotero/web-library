@@ -3,9 +3,12 @@ import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import serveStatic from 'serve-static';
+import { getPatchedState } from './state.js';
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
-import { getPatchedState } from './state.js';
+let serverSockets = new Map();
+let nextSocketId = 0;
 
 export function getPort(increment = 0) {
 	return (process.env.PORT ?? 8100) + increment;
@@ -46,6 +49,20 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 		serve(req, resp, fallback);
 	}
 	const server = http.createServer(handler);
+	let sockets = {};
+	serverSockets.set(server, sockets);
+
+	server.on('connection', function (socket) {
+		// Add a newly connected socket
+		var socketId = nextSocketId++;
+		sockets[socketId] = socket;
+
+		// Remove the socket when it closes
+		socket.on('close', function () {
+			delete sockets[socketId];
+		});
+	});
+
 	await new Promise(resolve => server.listen(port, resolve));
 	return server;
 }
@@ -54,8 +71,16 @@ export async function closeServer(server) {
 	if (!server || !server.listening) {
 		return;
 	}
+
 	return Promise.race([
-		new Promise((resolve) => server.close(resolve)),
+		new Promise((resolve) => {
+			server.close(resolve);
+			const sockets = serverSockets.get(server);
+			for (var socketId in sockets) {
+				sockets[socketId].destroy();
+			}
+			serverSockets.delete(server);
+		}),
 		new Promise((_, reject) => setTimeout(() => reject(new Error('server.close timeout')), 2000))
 	]);
 }

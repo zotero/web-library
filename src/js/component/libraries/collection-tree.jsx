@@ -155,7 +155,6 @@ const VirtualCollectionNode = memo(props => {
 	const shouldIgnoreNextBlur = useRef(false);
 
 	const handleEditableCommit = useCallback((newValue, hasChanged, ev) => {
-		console.trace('commit', ev);
 		const upNode = parentCollectionKey ?
 			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${parentCollectionKey}"`) :
 			null;
