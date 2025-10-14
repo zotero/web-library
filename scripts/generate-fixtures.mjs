@@ -42,6 +42,7 @@ const fixtures = [
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
 	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/UMPPCXU4`, 'desktop-test-user-top-level-attachment-view'],
+	[`${URL}testuser/collections/CSB4KZUU/items/ZKT5WURW`, 'desktop-test-user-top-level-attachment-view-2'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
 	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view-edit', clickEditBtn],
 	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view'],

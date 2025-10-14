@@ -14,8 +14,10 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view.json';
+import bitcoinStateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view-2.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier-recognize.json';
 import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier-recognize.json';
+import bitcoinResponseAddByIdentifier from './fixtures/response/test-user-add-by-identifier-recognize-2.json';
 
 const mockedGetRecognizerData = jest.fn().mockReturnValue({
 	filename: 'attention-is-all-you-need.pdf',
@@ -25,10 +27,19 @@ const mockedGetRecognizerData = jest.fn().mockReturnValue({
 	totalPages: 15
 });
 
+const mockedBitcoinGetRecognizerData = jest.fn().mockReturnValue({
+	filename: 'bitcoin.pdf',
+	metadata: {},
+	// must pretend to have at least one word on page, otherwise pdf worker will skip recognition
+	pages: [[612, 792, [[[[0, 0, 0, 0, [[[[134.3, 93.7982, 187.472, 110.6283, 14, 0, 107.6, 0, 0, 0, 0, 0, 0, "Bitcoin"]]]]]]]]]],
+	totalPages: 9
+});
+
 jest.mock('../src/js/common/pdf-worker.js');
 
 
 const state = JSONtoState(stateRaw);
+const bitcoinState = JSONtoState(bitcoinStateRaw);
 
 describe('Metadata Retrieval', () => {
 	const handlers = [
@@ -36,6 +47,12 @@ describe('Metadata Retrieval', () => {
 			return HttpResponse.text('https://files.zotero.net/attention-is-all-you-need.pdf');
 		}),
 		http.get('https://files.zotero.net/attention-is-all-you-need.pdf', () => {
+			return HttpResponse.text('');
+		}),
+		http.get('https://api.zotero.org/users/1/items/ZKT5WURW/file/view/url', () => {
+			return HttpResponse.text('https://files.zotero.net/bitcoin.pdf');
+		}),
+		http.get('https://files.zotero.net/bitcoin.pdf', () => {
 			return HttpResponse.text('');
 		}),
 		http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top/tags', () => {
@@ -54,18 +71,14 @@ describe('Metadata Retrieval', () => {
 		});
 	});
 
-	beforeEach(() => {
-		delete window.location;
-		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });;
-	});
-
 	afterEach(() => {
 		server.resetHandlers();
-		mockedGetRecognizerData.mockClear();
+		// mockedGetRecognizerData.mockClear();
 	});
 	afterAll(() => server.close());
 
-	test('', async () => {
+	test('Recognize and Unrecognize PDF with an identifier', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
 		const user = userEvent.setup();
@@ -222,4 +235,114 @@ describe('Metadata Retrieval', () => {
 		expect(renameCounter).toBe(2);
 		expect(hasDeleted).toBe(true);
 	});
+
+	test('Recognize PDF without an identifier', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/ZKT5WURW' });
+		renderWithProviders(<MainZotero />, { preloadedState: bitcoinState });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasPostedToRecognizeService = false;
+		let hasCreatedParentItem = false;
+		let hasPatchedAttachmentItem = false;
+		let hasRenamed = false;
+		let version = state.libraries.u1.sync.version;
+
+		server.use(
+			http.post('https://recognizer.zotero.org/recognize', async ({ request }) => {
+				const inputData = await request.json();
+				expect(inputData.fileName).toBe('bitcoin.pdf');
+				expect(inputData.totalPages).toBe(9);
+				hasPostedToRecognizeService = true;
+				await delay(100);
+				return HttpResponse.json({
+					"type": "journal-article",
+					"title": "Bitcoin: A Peer-to-Peer Electronic Cash System",
+					"authors": [
+						{
+							"firstName": "Satoshi",
+							"lastName": "Nakamoto"
+						}
+					],
+				});
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items[0].itemType).toBe('journalArticle');
+				expect(items[0].title).toEqual('Bitcoin: A Peer-to-Peer Electronic Cash System');
+				expect(items[0].collections).toEqual(["CSB4KZUU"]);
+				hasCreatedParentItem = true;
+				version++;
+				await delay(100);
+				return HttpResponse.json(bitcoinResponseAddByIdentifier, { headers: { 'Last-Modified-Version': version } });
+			}),
+			// patch attachment to point to new parent
+			http.patch('https://api.zotero.org/users/1/items/ZKT5WURW', async ({ request }) => {
+				const item = await request.json();
+				expect(item.parentItem).toBe('9X9T5K4Z');
+				expect(item.title).toBe('PDF');
+				expect(item.collections).toEqual([]);
+				hasPatchedAttachmentItem = true;
+				version++;
+				await delay(100);
+				return new HttpResponse(null, { status: 204, headers: { 'Last-Modified-Version': version } });
+			}),
+			// rename attachment file
+			http.post('https://api.zotero.org/users/1/items/ZKT5WURW/file', async ({ request }) => {
+				const bodyParams = (await request.text()).split('&');
+				expect(bodyParams).toContain('filename=Nakamoto - Bitcoin A Peer-to-Peer Electronic Cash System.pdf');
+				expect(bodyParams).toContain('md5=d56d71ecadf2137be09d8b1d35c6c042');
+				hasRenamed = true;
+				return HttpResponse.json({ 'exists': 1 });
+			}),
+		);
+
+		PDFWorker.mockImplementation(() => {
+			return { getRecognizerData: mockedBitcoinGetRecognizerData };
+		});
+
+		expect(screen.getByRole('row', { name: 'bitcoin.pdf' })).toHaveAttribute('aria-selected', 'true');
+		const recognizeBtn = screen.getByRole('button',
+			{ name: 'Retrieve Metadata' }
+		);
+		await user.click(recognizeBtn);
+		const dialog = screen.getByRole('dialog', { name: 'Metadata Retrieval' });
+		const row = screen.getByRole('row', { name: 'bitcoin.pdf' });
+		getByRole(row, 'status', { name: 'Processing' });
+
+		expect(
+			getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
+		).toHaveAttribute('aria-valuenow', '0');
+
+		// Progress is 25% after PDFWorker.getRecognizerData returns data extracted from the PDF
+		await waitFor(() => {
+			expect(
+				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
+			).toHaveAttribute('aria-valuenow', '25');
+		});
+		expect(mockedBitcoinGetRecognizerData).toHaveBeenCalledTimes(1);
+
+		// Progress is 50% after the recognizer server returns data
+		await waitFor(() => {
+			expect(
+				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
+			).toHaveAttribute('aria-valuenow', '50');
+		});
+		expect(hasPostedToRecognizeService).toBe(true);
+
+		// Progress is 100% after the item is created
+		await waitFor(() => {
+			expect(
+				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
+			).toHaveAttribute('aria-valuenow', '100');
+		});
+		getByRole(row, 'status', { name: 'Completed' });
+		expect(hasCreatedParentItem).toBe(true);
+		expect(hasPatchedAttachmentItem).toBe(true);
+		expect(hasRenamed).toBe(true);
+
+		await user.click(screen.getByRole('button', { name: 'Close Dialog' }));
+		expect(await screen.findByRole('row', { name: 'Bitcoin: A Peer-to-Peer Electronic Cash System' })).toBeInTheDocument();
+		expect(screen.queryByRole('row', { name: 'bitcoin.pdf' })).not.toBeInTheDocument();
+	});
+
 });

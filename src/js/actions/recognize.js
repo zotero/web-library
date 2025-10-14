@@ -143,14 +143,14 @@ const recognizePDF = (recognizerData) => {
 
 		// no identifier found, or translation failed
 		if (recognizerData.title) {
-			let type = 'journalArticle';
+			let itemType = 'journalArticle';
 
 			if (recognizerData.type === 'book-chapter') {
-				type = 'bookSection';
+				itemType = 'bookSection';
 			}
 
 			const newItem = {
-				type,
+				itemType,
 				creators: recognizerData.authors.map(author => ({
 					creatorType: 'author', ...pick(author, ['firstName', 'lastName'])
 				})),
@@ -159,8 +159,8 @@ const recognizePDF = (recognizerData) => {
 				date: recognizerData.year,
 				libraryCatalog: 'Zotero',
 				...pick(recognizerData, ['pages', 'volume', 'url', 'language']),
-				...(type === 'journalArticle' ? { issue: recognizerData.issue, issn: recognizerData.ISSN, publicationTitle: recognizerData.container } : {}),
-				...(type === 'bookSection' ? { bookTitle: recognizerData.container, publisher: recognizerData.publisher } : {}),
+				...(itemType === 'journalArticle' ? { issue: recognizerData.issue, issn: recognizerData.ISSN, publicationTitle: recognizerData.container } : {}),
+				...(itemType === 'bookSection' ? { bookTitle: recognizerData.container, publisher: recognizerData.publisher } : {}),
 			};
 
 			return newItem;
