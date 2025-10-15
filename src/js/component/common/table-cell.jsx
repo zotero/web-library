@@ -144,11 +144,11 @@ TitleCell.propTypes = {
 
 export const AttachmentCell = memo(props => {
 	const { columnName, itemData } = props;
-
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
 	return (
 		<Cell
+			aria-label={itemData.attachmentTypeLabel}
 			columnName={columnName}
 			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
 		>

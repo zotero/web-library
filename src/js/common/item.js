@@ -96,6 +96,33 @@ const getAttachmentColumnIcon = item => {
 	return null;
 }
 
+// https://github.com/zotero/zotero/blob/d1f478fc4eb6fdb100598dc76d3bab7f59610393/chrome/content/zotero/itemTree.jsx#L3008-L3031
+const getAttachmentTypeLabel = iconName => {
+	switch(iconName) {
+		case 'attachment-pdf':
+		case 'attachment-pdf-link':
+			return 'Has PDF Attachment';
+		case 'attachment-epub':
+		case 'attachment-epub-link':
+			return 'Has EPUB Attachment';
+		case 'attachment-image':
+		case 'attachment-image-link':
+			return 'Has Image Attachment';
+		case 'attachment-video':
+		case 'attachment-video-link':
+			return 'Has Video Attachment';
+		case 'attachment-snapshot':
+			return 'Has Snapshot Attachment';
+		case 'attachment-web-link':
+			return 'Has Web Link Attachment';
+		case 'attachment-link':
+		case 'document':
+			return 'Has Attachment';
+		default:
+			return null;
+	}
+}
+
 const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	const { itemType, dateAdded, dateModified, extra, journalAbbreviation, language, libraryCatalog,
 	callNumber, rights } = item;
@@ -143,8 +170,12 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	// same logic as https://github.com/zotero/zotero/blob/6abfd3b5b03969564424dc03313d63ae1de86100/chrome/content/zotero/xpcom/itemTreeView.js#L1062
 	const year = date.substr(0, 4);
 
+	const attachmentIconName = getAttachmentColumnIcon(item);
+	const attachmentTypeLabel = getAttachmentTypeLabel(attachmentIconName);
+
 	return {
-		attachmentIconName: getAttachmentColumnIcon(item),
+		attachmentIconName,
+		attachmentTypeLabel,
 		colors,
 		createdByUser,
 		creator,
