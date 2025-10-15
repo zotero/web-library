@@ -157,7 +157,7 @@ describe('Attachment Details', () => {
 		expect(getByRole(attachmentsTabPanel, 'textbox', { name: 'Filename' }))
 			.toHaveTextContent('hello.pdf');
 
-			expect(hasBeenUploaded).toBe(true);
+		expect(hasBeenUploaded).toBe(true);
 		expect(hasBeenPatched).toBe(true);
 	});
 });

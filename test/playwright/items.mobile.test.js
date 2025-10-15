@@ -60,7 +60,7 @@ test.describe('Mobile Snapshots', () => {
 	});
 
 	test('should render "Add Related" modal on', async ({ page, serverPort }) => {
-		expect(itemsInCollectionAlgorithms.length).toBe(22);
+		expect(itemsInCollectionAlgorithms.length).toBe(23);
 		const customHandler = makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms);
 		server = await getServer('mobile-test-user-item-details-view-edit', serverPort, customHandler);
 
@@ -74,7 +74,7 @@ test.describe('Mobile Snapshots', () => {
 		await expect(modal).toBeVisible();
 
 		await page.waitForFunction(() => document.querySelector('.add-related-modal').classList.contains('ReactModal__Content--after-open'));
-		await page.waitForFunction(() => document.querySelector('.add-related-modal').querySelectorAll('.item').length > 0); // 22 items is enough to trigger virtual scrolling so we cannot check for exact count
+		await page.waitForFunction(() => document.querySelector('.add-related-modal').querySelectorAll('.item').length > 0); // 23 items is enough to trigger virtual scrolling so we cannot check for exact count
 		await wait(500); // ensure animation has settled and icons are loaded
 		await expect(page).toHaveScreenshot(`mobile-item-add-related.png`);
 		await page.close();

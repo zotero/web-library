@@ -38,13 +38,18 @@ const process = (kind, dataObject, ...args) => {
 const processCollection = process.bind(null, 'collection');
 const processItem = process.bind(null, 'item');
 
-// Executed on RECEIVE_UPDATE_ITEM. Checks the patch for a change of contentType or parentItem and updates parentItem accordingly.
-// NOTE: For parentItem change, this function only checks if the best attachment was removed from its parent item because attaching
-//       an existing attachment to an item is not yet implemented (see #454). Once it's implemented, this function might need an overhaul.
-const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup) => {
-	const updatedItem = state[action.item.key];
-	const parentItemKey = bestAttachmentReverseLookup[action.item.key];
-	if (!updatedItem || !updatedItem.contentType) {
+
+
+// Executed on RECEIVE_UPDATE_ITEM. If updated item is a best attachment on
+// another item, update that item to reflect this change. E.g. if user
+// re-uploads an attachment, changing its contentType, we need to update the
+// parent item's best attachment as well. If user moves the attachment to
+// another parent item, we need to remove the best attachment from the old
+// parent item.
+const updateBestAttachmentsCurrentParent = (state, key, patch, bestAttachmentReverseLookup) => {
+	const updatedItem = state[key];
+	const parentItemKey = bestAttachmentReverseLookup[key];
+	if (!updatedItem || updatedItem.itemType !== 'attachment' || !updatedItem.contentType) {
 		return state;
 	}
 
@@ -53,7 +58,7 @@ const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup)
 	}
 
 	if (state[parentItemKey]?.[Symbol.for('links')]?.attachment) {
-		if (action.patch.contentType) {
+		if (patch.contentType) {
 			return {
 				...state,
 				[parentItemKey]: processItem({
@@ -62,13 +67,13 @@ const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup)
 						...state[parentItemKey][Symbol.for('links')],
 						attachment: {
 							...state[parentItemKey][Symbol.for('links')].attachment,
-							attachmentType: action.patch.contentType
+							attachmentType: patch.contentType
 						}
 					}
 				})
 			}
 		}
-		if ('parentItem' in action.patch && (!action.patch.parentItem || action.patch.parentItem !== parentItemKey)) {
+		if ('parentItem' in patch && (!patch.parentItem || patch.parentItem !== parentItemKey)) {
 			return {
 				...state,
 				[parentItemKey]: processItem({
@@ -79,6 +84,63 @@ const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup)
 		}
 	}
 	return state;
+}
+
+// Executed on RECEIVE_UPDATE_ITEM. If updated item was moved to a new parent item, update that parent item's best attachment to reflect this change.
+const updateBestAttachmentsNewParent = (state, key, patch) => {
+	const updatedItem = state[key];
+	if (!updatedItem || updatedItem.itemType !== 'attachment' || !updatedItem.contentType) {
+		return state;
+	}
+
+	if(!patch.parentItem) {
+		return state;
+	}
+
+	const newParentItemKey = patch.parentItem;
+	const parentItem = state[newParentItemKey];
+	if(!parentItem) {
+		return state;
+	}
+
+	// only add the attachment as "best attachment" if the parent item does not already have one
+	parentItem[Symbol.for('links')] = parentItem[Symbol.for('links')] || {};
+	if (!parentItem[Symbol.for('links')].attachment) {
+		return {
+			...state,
+			[newParentItemKey]: processItem({
+				...parentItem,
+				[Symbol.for('links')]: {
+					...parentItem[Symbol.for('links')],
+					attachment: {
+						href: updatedItem.key,
+						title: updatedItem.filename,
+						attachmentType: updatedItem.contentType,
+						length: updatedItem[Symbol.for('links')]?.enclosure?.length || 0,
+					}
+				}
+			})
+		}
+	}
+	return state;
+}
+
+const updateBestAttachmentsParent = (state, action, bestAttachmentReverseLookup) => {
+	switch(action.type) {
+		case RECEIVE_UPDATE_ITEM:
+			state = updateBestAttachmentsCurrentParent(state, action.item.key, action.patch, bestAttachmentReverseLookup);
+			state = updateBestAttachmentsNewParent(state, action.item.key, action.patch);
+			return state;
+		case RECEIVE_UPDATE_MULTIPLE_ITEMS:
+			action.itemKeys.forEach((itemKey, index) => {
+				const patch = action.multiPatch?.[index] || {};
+				state = updateBestAttachmentsCurrentParent(state, itemKey, patch, bestAttachmentReverseLookup);
+				state = updateBestAttachmentsNewParent(state, itemKey, patch);
+			});
+			return state;
+		default:
+			return state;
+	}
 }
 
 const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, tagColors }) => {
@@ -140,14 +202,14 @@ const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, ta
 		case RECEIVE_ADD_ITEMS_TO_COLLECTION:
 		case RECEIVE_REMOVE_ITEMS_FROM_COLLECTION:
 		case RECEIVE_ADD_TAGS_TO_ITEMS:
-			return {
+			return updateBestAttachmentsParent({
 				...state,
 				...indexByKey(Object.values(action.items), 'key', item => (processItem({
 					...state[item.key],
 					...item,
 					version: action.response.getVersion() || state[item.key].version,
 				}, { meta, tagColors })))
-			}
+			}, action, bestAttachmentReverseLookup);
 		case RECEIVE_CHILD_ITEMS:
 		case RECEIVE_CREATE_ITEMS:
 		case RECEIVE_FETCH_ITEM_DETAILS:

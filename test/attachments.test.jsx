@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse, delay } from 'msw'
 import { setupServer } from 'msw/node';
-import { findByRole, getByRole, screen, waitFor } from '@testing-library/react';
+import { findByRole, getByRole, screen, waitFor, queryByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -18,11 +18,15 @@ import newItemLinkedAttachment from './fixtures/response/new-item-linked-attachm
 import testUserAddNewAttachmentFile from './fixtures/response/test-user-add-new-attachment-file.json';
 import testUserAddAttachamentFileRefetchParent from './fixtures/response/test-user-add-attachment-file-refetch-parent.json';
 import testUserAddNewLinkedURLAttachment from './fixtures/response/test-user-add-new-linked-url-attachment.json';
+import topLevelAttachmentStateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view.json';
+import itemsInCollectionAlgorithms from './fixtures/response/test-user-get-items-in-collection-algorithms.json';
+import responseUpdateAttachment from './fixtures/response/test-user-update-top-level-attachment-set-parent.json';
 
 // need to mock structuredClone, otherwise web library hides export/open related to reader/pdf.js. See #548
 global.structuredClone = jest.fn();
 
 const state = JSONtoState(stateRaw);
+const topLevelAttachmentState = JSONtoState(topLevelAttachmentStateRaw);
 
 describe('Attachments', () => {
 	const handlers = [];
@@ -40,7 +44,7 @@ describe('Attachments', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });;
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });
 	});
 
 	afterEach(() => server.resetHandlers());
@@ -238,5 +242,50 @@ describe('Attachments', () => {
 
 		expect(hasBeenPosted).toBe(true);
 		expect(hasBeenUploaded).toBe(true);
+	});
+	test('Change parent item', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/UMPPCXU4/file/view/url', () => {
+				return HttpResponse.text('https://files.zotero.net/attention-is-all-you-need.pdf');
+			}),
+			http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top', () => {
+				return HttpResponse.json(itemsInCollectionAlgorithms, {
+					headers: { 'Total-Results': '23' }
+				});
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items[0].parentItem).toBe('UICI7HS9');
+				return HttpResponse.json(responseUpdateAttachment);
+			}),
+			http.get('https://api.zotero.org/users/1/items/UICI7HS9/children', () => {
+				// This would return the updated item but it's irrelevant for this test
+				return HttpResponse.json([], {
+					headers: { 'Total-Results': '0' }
+				});
+			}),
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: topLevelAttachmentState });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		expect(queryByRole(await screen.findByRole('row', { name: 'Marching in Squares' }), 'gridcell', { name: 'Has PDF Attachment' })).not.toBeInTheDocument();
+
+		const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
+		await user.click(getByRole(toolbar, 'button', { name: 'More' }));
+		await waitForPosition();
+		await user.click(screen.getByRole('menuitem', { name: 'Change Parent Item' }));
+		const dialog = await screen.findByRole('dialog', { name: 'Change Parent Item' });
+		const items = getByRole(dialog, 'grid', { name: 'items' });
+		const row = getByRole(items, 'row', { name: 'Marching in Squares' });
+		await user.click(row);
+		await waitFor(() => expect(getByRole(dialog, 'button', { name: 'Select' })).toBeEnabled());
+		await user.click(getByRole(dialog, 'button', { name: 'Select' }));
+		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Change Parent Item' })).not.toBeInTheDocument());
+
+		expect(getByRole(await screen.findByRole('row', { name: 'Marching in Squares' }), 'gridcell', { name: 'Has PDF Attachment' })).toBeInTheDocument();
 	});
 });

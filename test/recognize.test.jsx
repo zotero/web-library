@@ -170,8 +170,8 @@ describe('Metadata Retrieval', () => {
 		);
 		await user.click(recognizeBtn);
 		const dialog = screen.getByRole('dialog', { name: 'Metadata Retrieval' });
-		const row = screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' });
-		getByRole(row, 'status', { name: 'Processing' });
+		const recognizerDialogRow = screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' });
+		getByRole(recognizerDialogRow, 'status', { name: 'Processing' });
 
 		expect(
 			getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
@@ -207,13 +207,16 @@ describe('Metadata Retrieval', () => {
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
 			).toHaveAttribute('aria-valuenow', '100');
 		});
-		getByRole(row, 'status', { name: 'Completed' });
+		getByRole(recognizerDialogRow, 'status', { name: 'Completed' });
 		expect(hasCreatedParentItem).toBe(true);
 		expect(hasPatchedAttachmentItem).toBe(true);
 
 		await user.click(screen.getByRole('button', { name: 'Close Dialog' }));
 		expect(await screen.findByRole('row', { name: 'Attention Is All You Need' })).toBeInTheDocument();
 		expect(screen.queryByRole('row', { name: 'attention-is-all-you-need.pdf' })).not.toBeInTheDocument();
+
+		const createdItemRow = screen.getByRole('row', { name: 'Attention Is All You Need' });
+		expect(getByRole(createdItemRow, 'gridcell', { name: 'Has PDF Attachment' })).toBeInTheDocument();
 
 		await user.click(screen.getByRole('row', { name: 'Attention Is All You Need' }));
 		expect(patchCounter).toBe(1);
@@ -231,6 +234,10 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(screen.queryByRole('row', { name: 'Attention Is All You Need' })).not.toBeInTheDocument();
 		});
+
+		const unrecognizedItemRow = screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' });
+		expect(getByRole(unrecognizedItemRow, 'gridcell', { name: 'Has PDF Attachment' })).toBeInTheDocument();
+
 		expect(patchCounter).toBe(2);
 		expect(renameCounter).toBe(2);
 		expect(hasDeleted).toBe(true);

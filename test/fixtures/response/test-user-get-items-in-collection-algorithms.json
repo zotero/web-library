@@ -506,6 +506,62 @@
         }
     },
     {
+        "key": "ZKT5WURW",
+        "version": 384,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/testuser",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/users/1/items/ZKT5WURW",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/testuser/items/ZKT5WURW",
+                "type": "text/html"
+            },
+            "enclosure": {
+                "type": "application/pdf",
+                "href": "https://api.zotero.org/users/1/items/ZKT5WURW/file/view",
+                "title": "bitcoin.pdf",
+                "length": 184292
+            }
+        },
+        "meta": {
+            "numChildren": 0
+        },
+        "data": {
+            "key": "ZKT5WURW",
+            "version": 384,
+            "itemType": "attachment",
+            "linkMode": "imported_file",
+            "title": "bitcoin.pdf",
+            "accessDate": "",
+            "url": "",
+            "note": "",
+            "contentType": "application/pdf",
+            "charset": "",
+            "filename": "bitcoin.pdf",
+            "md5": "d56d71ecadf2137be09d8b1d35c6c042",
+            "mtime": 1760472025624,
+            "tags": [],
+            "collections": [
+                "CSB4KZUU"
+            ],
+            "relations": {},
+            "dateAdded": "2025-10-14T20:00:25Z",
+            "dateModified": "2025-10-14T20:00:25Z"
+        }
+    },
+    {
         "key": "3JCLFUG4",
         "version": 219,
         "library": {
