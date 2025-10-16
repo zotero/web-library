@@ -1,5 +1,6 @@
-// @TODO: migrate all these variables to css vars
+@use "../abstracts/functions/asset-url";
 
+// @TODO: migrate all these variables to css vars
 $shade-0: var(--color-shade-0);
 $shade-1: var(--color-shade-1);
 $shade-2: var(--color-shade-2);
@@ -247,7 +248,7 @@ $result-hover-color: $shade-0;
 $result-hover-bg: $shade-1;
 $badge-light-border-color: $shade-3;
 $badge-light-bg: $shade-0;
-$select-chevron-icon: "icons/chevron-7.svg";
+$select-chevron-icon: asset-url.image-url("icons/chevron-7.svg");
 
 // match popups from reader
 $reader-popup-shadow: 0 0 0 1px #0000001a, 0 5px 10px #0009;

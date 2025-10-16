@@ -63,7 +63,7 @@ export default [
 	},
 	// Build tools (/scripts)
 	{
-		files: ["scripts/**/*.mjs"],
+		files: ["scripts/**/*.mjs", "playwright.config.mjs", "jest.config.mjs"],
 		languageOptions: {
 			globals: {
 				...globals.node,

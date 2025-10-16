@@ -42,7 +42,7 @@ test.describe('Mobile Snapshots', () => {
 		await page.close();
 	});
 
-	test('should render collection in trash on', async ({ page, serverPort }) => {
+	test('should render collection in trash', async ({ page, serverPort }) => {
 		server = await getServer('mobile-test-user-trash-collection-details-view', serverPort);
 		await page.goto(`http://localhost:${serverPort}/testuser/trash/items/Z7B4P73I/item-details`);
 		await waitForLoad(page);
@@ -59,7 +59,7 @@ test.describe('Mobile Snapshots', () => {
 		await page.close();
 	});
 
-	test('should render "Add Related" modal on', async ({ page, serverPort }) => {
+	test('should render "Add Related" modal', async ({ page, serverPort }) => {
 		expect(itemsInCollectionAlgorithms.length).toBe(23);
 		const customHandler = makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms);
 		server = await getServer('mobile-test-user-item-details-view-edit', serverPort, customHandler);

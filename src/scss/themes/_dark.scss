@@ -1,6 +1,7 @@
 @use 'sass:color';
 @use "sass:map";
 @use "../abstracts/mixins/theme";
+@use "../abstracts/functions/asset-url";
 
 $-colors: (
 	accent-azure: #66adffd9,
@@ -91,6 +92,8 @@ $-colors: (
 	primary-on-shade-1: #e3e3e3,
 	color-nav-sidebar: #111,
 	color-nav-sidebar-link: #fff,
+
+	select-chevron-icon: asset-url.image-url("icons/chevron-7-777.svg")
 );
 
 :root[data-color-scheme="dark"] {

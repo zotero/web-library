@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const commonContextDesc = { locale: 'en-US', timezoneId: 'America/New_York', geolocation: { longitude: -73.935242, latitude: 40.730610 }, };
+const commonContextDesc = { 
+	locale: 'en-US', 
+	timezoneId: 'America/New_York', 
+	geolocation: { longitude: -73.935242, latitude: 40.730610 }, 
+};
 
 export default defineConfig({
 	testDir: './test/playwright',
@@ -22,6 +26,15 @@ export default defineConfig({
 			use: {
 				...devices['Desktop Chrome'],
 				...commonContextDesc,
+			},
+		},
+		{
+			name: 'Desktop Chrome Dark',
+			testMatch: /.*\.desktop\.test\.js/,
+			use: {
+				...devices['Desktop Chrome'],
+				...commonContextDesc,
+				colorScheme: 'dark',
 			},
 		},
 		{
@@ -55,6 +68,15 @@ export default defineConfig({
 			use: {
 				...devices['iPad (gen 7)'],
 				...commonContextDesc,
+			},
+		},
+		{
+			name: 'Mobile iPad Dark',
+			testMatch: /.*\.mobile\.test\.js/,
+			use: {
+				...devices['iPad (gen 7)'],
+				...commonContextDesc,
+				colorScheme: 'dark',
 			},
 		},
 		{

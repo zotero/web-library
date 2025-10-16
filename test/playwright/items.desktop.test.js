@@ -10,7 +10,7 @@ test.describe('Desktop Snapshots', () => {
 		await closeServer(server);
 	});
 
-	test(`should render a list of items on"`, async ({ page, serverPort }) => {
+	test(`should render a list of items"`, async ({ page, serverPort }) => {
 		server = await getServer('desktop-test-user-item-view', serverPort);
 		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
 		await waitForLoad(page);
@@ -22,7 +22,7 @@ test.describe('Desktop Snapshots', () => {
 		await page.close();
 	});
 
-	test(`should render "Add Related" modal on`, async ({ page, serverPort }) => {
+	test(`should render "Add Related" modal`, async ({ page, serverPort }) => {
 		expect(itemsInCollectionDogs.length).toBe(7);
 		const customHandler = makeCustomHandler('/api/users/1/collections/WTTJ2J56/items/top', itemsInCollectionDogs);
 		server = await getServer('desktop-test-user-item-view', serverPort, customHandler);
@@ -45,6 +45,38 @@ test.describe('Desktop Snapshots', () => {
 		expect(await dialog.getByRole('row').count()).toBe(8) // +1 for header row
 		await wait(500); // avoid flaky screenshot with missing icons
 		await expect(page).toHaveScreenshot(`desktop-item-add-related.png`);
+		await page.close();
+	});
+
+	test('should render citations dialog', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-item-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
+		await waitForLoad(page);
+
+		const citeButton = await page.getByRole('button', { name: 'Create Citations' });
+		await citeButton.click();
+
+		const dialog = await page.getByRole('dialog', { name: 'Copy Citation' });
+		await expect(dialog).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.copy-citation-modal').classList.contains('ReactModal__Content--after-open'));
+		await wait(500); // avoid flaky screenshot with missing icons
+		await expect(page).toHaveScreenshot(`desktop-item-copy-citations.png`);
+		await page.close();
+	});
+
+	test('should render bibliography dialog', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-item-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
+		await waitForLoad(page);
+
+		const citeButton = await page.getByRole('button', { name: 'Create Bibliography' });
+		await citeButton.click();
+
+		const dialog = await page.getByRole('dialog', { name: 'Bibliography' });
+		await expect(dialog).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.bibliography-modal').classList.contains('ReactModal__Content--after-open'));
+		await wait(500); // avoid flaky screenshot with missing icons
+		await expect(page).toHaveScreenshot(`desktop-item-bibliography.png`);
 		await page.close();
 	});
 });
