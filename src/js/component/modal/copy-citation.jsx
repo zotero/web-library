@@ -283,7 +283,7 @@ const Bubble = memo((props => {
 			</Button>
 			<FocusTrap disabled={!isOpen}>
 				<div
-					inert={isOpen ? undefined : ''}
+					inert={!isOpen}
 					aria-label="Citation Options"
 					aria-hidden={!isOpen}
 					id={`${id}-dialog`}
