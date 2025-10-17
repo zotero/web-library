@@ -23,6 +23,8 @@ const LibraryNode = props => {
 	const totalResults = useSelector(state => get(state, ['libraries', libraryKey, 'collections', 'totalResults'], null));
 	const isCurrent = useSelector(state => libraryKey === state.current.libraryKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const id = useRef(getUniqueId('library-'));
 	const hasChecked = totalResults !== null;
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
@@ -84,7 +86,7 @@ const LibraryNode = props => {
 			...pick(props, ['addVirtual', 'cancelAdd', 'commitAdd', 'disabledCollections',
 				'focusBySelector', 'onFocusNext', 'onFocusPrev', 'pickerSkipCollections', 'collectionKey', 'itemsSource', 'view']),
 				pickerMode, onNodeSelected, parentLibraryKey, picked, pickerNavigate, pickerPick,
-			virtual: isVirtualInThisTree ? virtual : null, libraryKey
+				virtual: isVirtualInThisTree ? virtual : null, isTrash, isMyPublications
 		}
 	}
 

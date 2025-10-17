@@ -873,13 +873,15 @@ CollectionsNodeList.propTypes = {
 CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
-	const { onNodeSelected = noop, parentLibraryKey, libraryKey: currentLibraryKey,
-		collectionKey: currentCollectionKey, itemsSource, isTrash, isMyPublications,
-		pickerMode, pickerNavigate = noop, ...rest } = props;
+	const { onNodeSelected = noop, parentLibraryKey, collectionKey: currentCollectionKey,
+		itemsSource, pickerMode, pickerNavigate = noop, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
 	const dataObjects = useSelector(state => state.libraries[parentLibraryKey]?.dataObjects);
 	const libraries = useSelector(state => state.config.libraries);
+	const isTrash = useSelector(state => state.current.isTrash);
+	const isMyPublications = useSelector(state => state.current.isMyPublications);
+	const stateSelectedLibraryKey = useSelector(state => state.current.libraryKey);
 	const isFetchingAllCollections = useSelector(
 		state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].collections.isFetchingAll : false
 	);
@@ -895,7 +897,7 @@ const CollectionTree = props => {
 	const highlightedCollections = useSelector(state => state.current.highlightedCollections);
 	const prevHighlightedCollections = usePrevious(highlightedCollections);
 
-	const isCurrentLibrary = parentLibraryKey === currentLibraryKey;
+	const isCurrentLibrary = !pickerMode && parentLibraryKey === stateSelectedLibraryKey;
 	const usesItemsNode = (!pickerMode && isSingleColumn) || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 	const allCollections = useMemo(() => Object.values(dataObjects ?? {}).filter(dataObject => dataObject[Symbol.for('type')] === 'collection'), [dataObjects]);
 
