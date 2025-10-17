@@ -188,4 +188,24 @@ const redirectIfCollectionNotFound = () => {
 	}
 }
 
-export { locationChange, navigate, navigateExitSearch, navigateSelectItemsKeyboard, navigateSelectItemsMouse, openInReader, redirectIfCollectionNotFound, selectFirstItem, selectLastItem};
+// navigate to given item, if we know that the target item belongs to current collection, keep the collection view and scroll to the item. Otherwise, exit the collection.
+const navigateToItemInSharedCollection = (itemKey, other = {}) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const collectionKey = state.current.collectionKey;
+		const libraryKey = state.current.libraryKey;
+		const dataObjects = state.libraries[libraryKey]?.dataObjects;
+		const item = dataObjects?.[itemKey];
+		if (item) {
+			if (collectionKey && item.collections.includes(collectionKey)) {
+				// navigate within the collection, scroll to the item
+				dispatch(navigate({ items: [itemKey], ...other }, false, true));
+			} else {
+				// navigate to the root library view with the item selected
+				dispatch(navigate({ items: [itemKey], ...other }, true, true));
+			}
+		}
+	}
+}
+
+export { locationChange, navigate, navigateExitSearch, navigateSelectItemsKeyboard, navigateSelectItemsMouse, openInReader, redirectIfCollectionNotFound, selectFirstItem, selectLastItem, navigateToItemInSharedCollection };

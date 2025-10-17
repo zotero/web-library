@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { Fragment, useCallback, memo, useEffect, useId } from 'react';
+import { Fragment, useCallback, memo, useEffect, useId, useState } from 'react';
 import { Button, Icon } from 'web-common/components';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -8,7 +8,7 @@ import { pick } from 'web-common/utils';
 
 import Modal from '../ui/modal';
 import { METADATA_RETRIEVAL } from '../../constants/modals';
-import { currentRetrieveMetadata, toggleModal, navigate } from '../../actions';
+import { currentRetrieveMetadata, toggleModal, navigate, navigateToItemInSharedCollection } from '../../actions';
 import Items from '../common/items';
 import { GenericDataCell, default as Cell } from '../common/table-cell';
 
@@ -107,21 +107,40 @@ MetadataRetrievalTitleCell.propTypes = {
 }
 
 const MetadataRetrievalTableRow = memo(props => {
-	const { index, style, columns, getItemData } = props;
+	const dispatch = useDispatch();
+	const { index, style, columns, getItemData, onSelect, selectedIndexes, onCancel } = props;
+	const isSelected = selectedIndexes.includes(index);
 	const id = useId();
 	const labelledById = `${id}-title`;
-
 	const itemData = getItemData(index);
+
+	const handleDoubleClick = useCallback(() => {
+		if(!itemData.completed || itemData.error) {
+			return;
+		}
+		onCancel();
+		dispatch(navigateToItemInSharedCollection(itemData.parentItemKey, { view: 'item-details' }));
+	}, [dispatch, itemData.completed, itemData.error, itemData.parentItemKey, onCancel]);
+
+	const handleClick = useCallback((ev) => {
+		onSelect(index, ev);
+	}, [index, onSelect]);
 
 	return (
 		<div
 			aria-rowindex={index + 1}
 			aria-labelledby={labelledById}
-			className="item"
+			className={cx("item", {
+				'active': isSelected,
+				'first-active': isSelected,
+				'last-active': isSelected
+			})}
 			style={style}
 			data-index={index}
 			role="row"
 			tabIndex={-2}
+			onDoubleClick={handleDoubleClick}
+			onClick={handleClick}
 		>
 			{columns.map((c, colIndex) => c.field === "title" ? (
 				<MetadataRetrievalTitleCell
@@ -156,6 +175,9 @@ MetadataRetrievalTableRow.propTypes = {
 	getItemData: PropTypes.func.isRequired,
 	index: PropTypes.number.isRequired,
 	style: PropTypes.object.isRequired,
+	onSelect: PropTypes.func.isRequired,
+	onCancel: PropTypes.func.isRequired,
+	selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired
 }
 
 
@@ -167,8 +189,9 @@ const MetadataRetrievalModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const recognizeProgress = useSelector(state => state.recognize.progress);
 	const backgroundTaskId = useSelector(state => state.recognize.backgroundTaskId);
-	const recognizeEntries = useSelector(state => state.recognize.entries, shallowEqual);
+	const recognizedEntries = useSelector(state => state.recognize.entries, shallowEqual);
 	const isDone = recognizeProgress === 1;
+	const [selectedIndex, setSelectedIndex] = useState(null);
 	const columns = [
 		{
 			field: 'title',
@@ -188,29 +211,54 @@ const MetadataRetrievalModal = () => {
 		}
 	];
 
-	const getItemData = useCallback((index) => {
-		const item = recognizeEntries[index] ?? {};
-		const iconName = item.completed ? 'tick' : item.error ? 'cross' : 'refresh';
-
-		return {
-			title: item.itemTitle,
-			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing',
-			iconName,
-			completed: item.completed,
-			error: item.error
-		}
-	}, [recognizeEntries]);
-
 	const handleCancel = useCallback(() => {
 		if (isTouchOrSmall && !isDone) {
 			return;
 		}
 		// if recognition is done, clear the modal and the recognition state when closing
-		if ((isDone || recognizeEntries.length === 0) && backgroundTaskId) {
+		if ((isDone || recognizedEntries.length === 0) && backgroundTaskId) {
 			dispatch({ type: 'CLEAR_ONGOING', id: backgroundTaskId });
 		}
 		dispatch(toggleModal());
-	}, [backgroundTaskId, dispatch, isDone, isTouchOrSmall, recognizeEntries]);
+	}, [backgroundTaskId, dispatch, isDone, isTouchOrSmall, recognizedEntries]);
+
+	const getItemData = useCallback((index) => {
+		const item = recognizedEntries[index] ?? {};
+		const iconName = item.completed ? 'tick' : item.error ? 'cross' : 'refresh';
+
+		return {
+			key: item.itemKey,
+			title: item.itemTitle,
+			parentItemKey: item.parentItemKey,
+			parentItemTitle: item.completed ? item.parentItemTitle : item.error ? 'Error' : 'Processing',
+			iconName,
+			completed: item.completed,
+			error: item.error,
+		}
+	}, [recognizedEntries]);
+
+	const handleKeyDown = useCallback(async ev => {
+		if (ev.key === 'ArrowDown') {
+			ev.preventDefault();
+			const nextIndex = selectedIndex + 1;
+			if (nextIndex < recognizedEntries.length) {
+				setSelectedIndex(nextIndex);
+			}
+		} else if (ev.key === 'ArrowUp') {
+			ev.preventDefault();
+			const prevIndex = selectedIndex - 1;
+			if (prevIndex >= 0) {
+				setSelectedIndex(prevIndex);
+			}
+		} else if (ev.key === 'Enter') {
+			ev.preventDefault();
+			const itemData = getItemData(selectedIndex);
+			if (itemData.completed && !itemData.error) {
+				handleCancel();
+				dispatch(navigateToItemInSharedCollection(itemData.parentItemKey, { view: 'item-details' }));
+			}
+		}
+	}, [dispatch, getItemData, handleCancel, recognizedEntries.length, selectedIndex]);
 
 	useEffect(() => {
 		if (isOpen && !wasOpen) {
@@ -230,7 +278,14 @@ const MetadataRetrievalModal = () => {
 	}, [backgroundTaskId, dispatch, isOpen, recognizeSelected, wasOpen]);
 
 	const sharedProps = {
-		columns, totalResults: recognizeEntries.length, itemCount: recognizeEntries.length, getItemData
+		extraItemData: { onCancel: handleCancel },
+		columns,
+		totalResults: recognizedEntries.length,
+		itemCount: recognizedEntries.length,
+		getItemData,
+		selectedIndexes: [selectedIndex],
+		onSelect: setSelectedIndex,
+		onKeyDown: handleKeyDown
 	};
 
 	return (
