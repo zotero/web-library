@@ -51,6 +51,9 @@ export default [
 	{
 		files: ["test/**/*.{js,jsx}"],
 		languageOptions,
+		globals: {
+			...globals.jest,
+		},
 		plugins: {
 			react: reactPlugin,
 			"jest-dom": jestDom,

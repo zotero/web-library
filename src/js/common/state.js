@@ -1,4 +1,4 @@
-import { routes } from '../routes';
+import { routeRegexp } from '../routes';
 
 const getCollectionsPath = (libraryKey, collectionKey, collectionsData = {}) => {
 	const path = [];
@@ -68,13 +68,18 @@ const getItemsSource = navStateLikeObject => {
 }
 
 const getParamsFromPath = (path) => {
-	for (const routeFn of routes) {
-		const matched = routeFn(path);
-		if(matched) {
-			return matched.params;
+	const match = routeRegexp.exec(path);
+	if(match && match.groups) {
+		const params = { ...match.groups };
+		// Decode URI components
+		for(const key of Object.keys(params)) {
+			if(params[key] !== undefined) {
+				params[key] = decodeURIComponent(params[key]);
+			}
 		}
+		return params;
 	}
-	return {};
+	return null;
 };
 
 

@@ -44,7 +44,7 @@ const stateDefault = {
 };
 
 const getLibraryKey = (params, config) => {
-	if(params.groupid && params.groupslug) {
+	if(params.groupid) {
 		return `g${params.groupid}`;
 	}
 	if(params.userslug) {
@@ -63,7 +63,7 @@ const getLibraryKey = (params, config) => {
 const tryParse = (value) => {
 	try {
 		return JSON.parse(value);
-	} catch(e) {
+	} catch {
 		return null;
 	}
 };

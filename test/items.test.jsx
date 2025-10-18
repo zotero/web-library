@@ -353,7 +353,7 @@ describe('Items', () => {
 	});
 
 	test("Renders correctly ordered tag color swatches in the items list", async () => {
-		window.jsdom.reconfigure({ url: 'http://localhost/testuser/' });
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser' });
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();
@@ -387,7 +387,7 @@ describe('Items', () => {
 	});
 
 	test("Includes emoji from non-colored tags in the items list", async () => {
-		window.jsdom.reconfigure({ url: 'http://localhost/testuser/' });
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser' });
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		await waitForPosition();

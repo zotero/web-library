@@ -27,7 +27,7 @@ describe('Unexpected Item Types', () => {
 
 	beforeEach(() => {
 		delete window.location;
-		window.jsdom.reconfigure({ url: 'http://localhost/' });;
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser' });
 		server.use(
 			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				return HttpResponse.json({});
