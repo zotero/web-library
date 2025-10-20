@@ -5,7 +5,7 @@ import { Button, Icon, TabPane } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
 import { isTriggerEvent, noop, pick } from 'web-common/utils';
 
-import { fetchRelatedItems, navigate, removeRelatedItem, toggleModal } from '../../actions';
+import { fetchRelatedItems, navigateToItemInSharedCollection, removeRelatedItem, toggleModal } from '../../actions';
 import { getItemTitle } from '../../common/item';
 import { Toolbar, ToolGroup } from 'component/ui/toolbars';
 import { get, getScrollContainerPageCount, getUniqueId, mapRelationsToItemKeys, sortItemsByKey, } from '../../utils';
@@ -29,10 +29,7 @@ const RelatedItem = memo(props => {
 
 	const handleSelect = useCallback(ev => {
 		const relatedItemKey = ev.currentTarget.closest('[data-key]').dataset.key;
-		dispatch(navigate({
-			library: libraryKey,
-			items: relatedItemKey
-		}, true, true));
+		dispatch(navigateToItemInSharedCollection(relatedItemKey, { library: libraryKey }));
 	}, [dispatch, libraryKey]);
 
 	const handleDelete = useCallback(ev => {
@@ -240,7 +237,8 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 
 Related.propTypes = {
 	id: PropTypes.string,
-	isActive: PropTypes.bool
+	isActive: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
 }
 
 export default memo(Related);

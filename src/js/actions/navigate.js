@@ -196,8 +196,9 @@ const navigateToItemInSharedCollection = (itemKey, other = {}) => {
 		const libraryKey = state.current.libraryKey;
 		const dataObjects = state.libraries[libraryKey]?.dataObjects;
 		const item = dataObjects?.[itemKey];
+		const sameLibrary = !('libraryKey' in other) || other.libraryKey === libraryKey;
 		if (item) {
-			if (collectionKey && item.collections.includes(collectionKey)) {
+			if (sameLibrary && collectionKey && item.collections.includes(collectionKey)) {
 				// navigate within the collection, scroll to the item
 				dispatch(navigate({ items: [itemKey], ...other }, false, true));
 			} else {
