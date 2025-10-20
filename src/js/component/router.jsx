@@ -43,7 +43,6 @@ const Router = (props) => {
 			}
 			console.log('No route matched, redirecting to default library:', newPath);
 			history.replaceState({}, '', newPath);
-			return;
 		}
 
 		if (isFirstRender.current) {
