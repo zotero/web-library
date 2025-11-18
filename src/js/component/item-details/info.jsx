@@ -33,7 +33,7 @@ const Info = ({ isActive, isReadOnly, id, ...rest }) => {
 			isLoading={ false }
 			{...pick(rest, p => p === 'role' || p.startsWith('data-') || p.startsWith('aria-'))}
 		>
-			<div className="scroll-container-mouse">
+			<div className="scroll-container-mouse" tabIndex={-1}>
 				<div className="row">
 					<div className="col">
 						{ !isEditing && (
