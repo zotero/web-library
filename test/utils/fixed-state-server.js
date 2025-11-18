@@ -1,9 +1,11 @@
 import http from 'http';
 import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import {fileURLToPath} from 'url';
+import {dirname, join} from 'path';
 import serveStatic from 'serve-static';
-import { getPatchedState } from './state.js';
+import {getPatchedState} from './state.js';
+import {waitForLoad} from "./common.js";
+import {fixturePathLookup} from '../../scripts/fixtures.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -35,8 +37,8 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 			<div id="zotero-web-library" class="zotero-wl"></div>
 			<script src='/static/web-library/zotero-web-library-testing.js'></script>
 			<script>
-				var root = createRoot(document.getElementById('zotero-web-library'));
-				var state = ${JSON.stringify(statePatched)};
+				const root = createRoot(document.getElementById('zotero-web-library'));
+				const state = ${JSON.stringify(statePatched)};
 				root.render(createElement(MainWithState, { state }, null))
 			</script></body></html>`);
 		};
@@ -54,7 +56,7 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 
 	server.on('connection', function (socket) {
 		// Add a newly connected socket
-		var socketId = nextSocketId++;
+		const socketId = nextSocketId++;
 		sockets[socketId] = socket;
 
 		// Remove the socket when it closes
@@ -64,6 +66,21 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 	});
 
 	await new Promise(resolve => server.listen(port, resolve));
+	return server;
+}
+
+export async function loadFixtureState(stateName, serverPort, page, ...rest){
+	if(typeof stateName !== 'string') {
+		throw new Error('loadFixtureState expects a string state name');
+	}
+	const path = fixturePathLookup.get(stateName);
+	if(!path) {
+		throw new Error(`No fixture found for state ${stateName}`);
+	}
+	const server = await getServer(stateName, serverPort, ...rest);
+	await page.goto(`http://localhost:${serverPort}/${path}`);
+	await waitForLoad(page);
+	await page.waitForLoadState('networkidle');
 	return server;
 }
 
@@ -86,7 +103,7 @@ export async function closeServer(server) {
 }
 
 export function makeCustomHandler(url, jsonResponse, { totalResults = null, version = 10^6 } = {}) {
-	const handler = (req, resp) => {
+	return (req, resp) => {
 		if (req.url.startsWith(url)) {
 			resp.statusCode = 200;
 			resp.setHeader('Access-Control-Allow-Origin', '*');
@@ -105,6 +122,4 @@ export function makeCustomHandler(url, jsonResponse, { totalResults = null, vers
 		}
 		return false;
 	};
-
-	return handler;
 }

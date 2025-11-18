@@ -7,6 +7,8 @@ import secret from '../.secret.json' with { type: "json" };
 import child_process from "child_process";
 import psTree from 'ps-tree';
 
+import {fixtures as fixturesRaw} from "./fixtures.mjs";
+
 // This script can be used to generate/update state fixtures used in tests.
 // It starts the web library configured to use the test library and generates state
 // fixtures for the URLs in the fixtures array.
@@ -23,31 +25,7 @@ const URL = 'http://localhost:8001/';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const NPMST_TIMEOUT = 120000; // allow for the worst-case scenario where submodules must be built
 
-const clickEditBtn = async (page) => {
-	const editBtn = page.getByRole('button', { name: 'Edit' });
-	await editBtn.click();
-};
-
-const fixtures = [
-	[`${URL}groups/5119976/animals/items/X9WEHDAN/item-list`, 'desktop-test-group-item-view'],
-	[`${URL}testuser/collections/5PB9WKTC/items/MNRM7HER/collection`, 'desktop-test-user-formatting-collection'],
-	[`${URL}testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`, 'desktop-test-user-item-view'],
-	[`${URL}testuser`, 'desktop-test-user-library-view'],
-	[`${URL}testuser/collections/CSB4KZUU/items/BLVYJQMH/note/GNVWD3U4/item-details`, 'desktop-test-user-note-view'],
-	[`${URL}testuser/items/KBFTPTI4/reader`, 'desktop-test-user-reader-parent-item-view'],
-	[`${URL}testuser/items/KBFTPTI4/attachment/N2PJUHD6/reader`, 'desktop-test-user-reader-view'],
-	[`${URL}testuser/search/retriever/titleCreatorYear/items/KBFTPTI4/item-list`, 'desktop-test-user-search-phrase-selected'],
-	[`${URL}testuser/tags/to%20read/search/pathfinding/titleCreatorYear/items/J489T6X3,3JCLFUG4/item-list`, 'desktop-test-user-search-selected'],
-	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/K24TUDDL/item-details`, 'desktop-test-user-pdf-attachment-view-in-collection-view'],
-	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/attachment/37V7V4NT/item-details`, 'desktop-test-user-attachment-in-collection-view'],
-	[`${URL}testuser/trash`, 'desktop-test-user-trash-view'],
-	[`${URL}testuser/collections/CSB4KZUU/items/UMPPCXU4`, 'desktop-test-user-top-level-attachment-view'],
-	[`${URL}testuser/collections/CSB4KZUU/items/ZKT5WURW`, 'desktop-test-user-top-level-attachment-view-2'],
-	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view'],
-	[`${URL}testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view-edit', clickEditBtn],
-	[`${URL}testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view'],
-	[`${URL}testuser/trash/items/Z7B4P73I/item-details`, 'mobile-test-user-trash-collection-details-view'],
-];
+const fixtures = fixturesRaw.map(([path, ...rest]) => [`${URL}${path}`, ...rest]);
 
 const config = JSON.stringify({
 	translateUrl: secret.translateServerUrl,
