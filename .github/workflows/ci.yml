@@ -20,7 +20,8 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.56.0-noble
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+      options: --user 1001
       env:
         CI: "true"
     steps:
@@ -31,13 +32,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/iron'
-      - name: Install rsync
-        run: |
-          apt-get update
-          apt-get install -y rsync
       - run: npm ci
       - run: npm run build:tests
-      - run: npx playwright install --with-deps
       - run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
