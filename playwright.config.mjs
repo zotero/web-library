@@ -23,7 +23,7 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'Desktop Chrome',
-			testMatch: /.*\.desktop\.test\.js/,
+			testMatch: /.*\.(desktop|keyboard)\.test\.js/,
 			use: {
 				...devices['Desktop Chrome'],
 				...commonContextDesc,
@@ -40,7 +40,7 @@ export default defineConfig({
 		},
 		{
 			name: 'Desktop Safari',
-			testMatch: /.*\.desktop\.test\.js/,
+			testMatch: /.*\.(desktop|keyboard)\.test\.js/,
 			use: {
 				...devices['Desktop Safari'],
 				...commonContextDesc,
@@ -55,6 +55,14 @@ export default defineConfig({
 				...commonContextDesc,
 			},
 		},
+        {
+            name: 'Desktop Firefox',
+            testMatch: /.*\.keyboard\.test\.js/,
+            use: {
+                ...devices['Desktop Firefox'],
+                ...commonContextDesc,
+            },
+        },
 		{
 			name: 'Mobile iPhone',
 			testMatch: /.*\.mobile\.test\.js/,
@@ -95,6 +103,6 @@ export default defineConfig({
 				...devices['Galaxy S24'],
 				...commonContextDesc,
 			},
-		}
+		},
 	],
 });

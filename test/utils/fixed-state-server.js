@@ -16,7 +16,10 @@ export function getPort(increment = 0) {
 	return (process.env.PORT ?? 8100) + increment;
 }
 
-export async function getServer(stateRawOrName, port, customHandler = () => false) {
+export async function getServer(stateRawOrName, port, customHandlers = []) {
+	if (typeof customHandlers === 'function') {
+		customHandlers = [customHandlers];
+	}
 	const stateRaw = typeof stateRawOrName === 'string' ?
 		await fs.readFile(join(ROOT, 'test', 'fixtures', 'state', `${stateRawOrName}.json`), 'utf-8') :
 		stateRawOrName;
@@ -42,8 +45,10 @@ export async function getServer(stateRawOrName, port, customHandler = () => fals
 				root.render(createElement(MainWithState, { state }, null))
 			</script></body></html>`);
 		};
-		if (customHandler(req, resp)) {
-			return;
+		for(let customHandler of customHandlers) {
+			if (customHandler(req, resp)) {
+				return;
+			}
 		}
 		if(req.url.startsWith('/api')) {
 			console.warn(`Potentially unhandled API request: ${req.url}`);
@@ -102,14 +107,18 @@ export async function closeServer(server) {
 	]);
 }
 
+function setCommonHeaders(resp) {
+	resp.statusCode = 200;
+	resp.setHeader('Access-Control-Allow-Origin', '*');
+	resp.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+	resp.setHeader('Access-Control-Allow-Headers', '*');
+	resp.setHeader('Access-Control-Expose-Headers', '*');
+}
+
 export function makeCustomHandler(url, jsonResponse, { totalResults = null, version = 10^6 } = {}) {
 	return (req, resp) => {
 		if (req.url.startsWith(url)) {
-			resp.statusCode = 200;
-			resp.setHeader('Access-Control-Allow-Origin', '*');
-			resp.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-			resp.setHeader('Access-Control-Allow-Headers', '*');
-			resp.setHeader('Access-Control-Expose-Headers', '*');
+			setCommonHeaders(resp);
 			if (req.method === 'OPTIONS') {
 				resp.end();
 				return true;
@@ -122,4 +131,19 @@ export function makeCustomHandler(url, jsonResponse, { totalResults = null, vers
 		}
 		return false;
 	};
+}
+
+export function makeTextHandler(url, textResponse) {
+	return (req, resp) => {
+		if (req.url.startsWith(url)) {
+			setCommonHeaders(resp);
+			if (req.method === 'OPTIONS') {
+				resp.end();
+				return true;
+			}
+			resp.setHeader('Content-Type', 'text/plain');
+			resp.end(textResponse);
+			return true;
+		}
+	}
 }
