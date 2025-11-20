@@ -10,7 +10,6 @@ export default defineConfig({
 	testDir: './test/playwright',
 	timeout: (process.env.CI ? 30 : 10) * 1000,
 	retries: process.env.CI ? 3 : 0,
-	workers: process.env.CI ? 1 : undefined,
 	outputDir: './playwright',
 	fullyParallel: true,
 	expect: {
