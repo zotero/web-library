@@ -81,7 +81,7 @@ const ListRow = props => {
 			className={cx('item', className, {
 				active: isActive,
 				odd: (index + 1) % 2 === 1,
-				placeholder: !!itemData === null,
+				placeholder: itemData === null,
 			})}
 			style={style}
 			onClick={handleClick}

@@ -24,7 +24,7 @@ const fetchItemTemplate = (itemType, subType = null, opts = {}) => {
 						.template(itemType, subType)
 						.get({ ...opts, cache: 'force-cache' }))
 					.getData();
-				} catch(e) {
+				} catch {
 					apiResetCache(cacheKey);
 				}
 			}

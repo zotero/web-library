@@ -371,7 +371,7 @@ const Reader = () => {
 			onToggleSidebar: handleToggleSidebar,
 			onChangeSidebarWidth: handleResizeSidebar,
 			onConfirm: (_title, text, _confirmationButtonTitle) => { // eslint-disable-line no-unused-vars
-				return window.confirm(strings[text] ?? text);
+				return window.confirm(text);
 			},
 			onRotatePages: async (pageIndexes, degrees) => {
 				dispatchState({ type: 'ROTATE_PAGES', pageIndexes, degrees });
@@ -461,7 +461,7 @@ const Reader = () => {
 			try {
 				const viewState = await getItemViewState(attachmentKey, libraryKey);
 				dispatchState({ type: 'COMPLETE_READ_VIEWSTATE', viewState });
-			} catch (e) {
+			} catch {
 				dispatchState({ type: 'ERROR_READ_VIEWSTATE'});
 			}
 		};

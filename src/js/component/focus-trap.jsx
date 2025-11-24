@@ -30,17 +30,18 @@ const FocusTrap = ({ children, disabled = false }) => {
 	}, []);
 
 	return (
-        <Fragment>
+		<Fragment>
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-before onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 			{ children }
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-after onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 		</Fragment>
-    );
+	);
 }
 
 FocusTrap.propTypes = {
-	targetRef: PropTypes.object,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	disabled: PropTypes.bool,
+	targetRef: PropTypes.object,
 }
 
 export default memo(FocusTrap);

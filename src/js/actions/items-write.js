@@ -111,7 +111,7 @@ const postItemsMultiPatch = async (state, multiPatch, libraryKey = null) => {
 			if(!state.libraries[libraryKey].items[updatedItem.key].parentItem) {
 				itemKeysTop.push(updatedItem.key);
 			}
-		} catch(e) {
+		} catch {
 			// ignore single-item failure as we're dispatching aggregated ERROR
 			// containing all keys that failed to update
 		}

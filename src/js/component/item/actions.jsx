@@ -4,15 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
 import { ToolGroup } from '../ui/toolbars';
-import NewItemSelector from 'component/item/actions/new-item';
-import ImportAction from 'component/item/actions/import';
-import ExportActions from 'component/item/actions/export';
-import UploadAction from 'component/item/actions/upload';
+import NewItemSelector from './actions/new-item';
+import ImportAction from './actions/import';
+import ExportActions from './actions/export';
+import UploadAction from './actions/upload';
 import columnProperties from '../../constants/column-properties';
-import AddByIdentifier from 'component/item/actions/add-by-identifier';
+import AddByIdentifier from './actions/add-by-identifier';
 import { useCanRecognize, useCanReparent, useItemActionHandlers } from '../../hooks';
 import { currentGoToSubscribeUrl, toggleSelectMode } from '../../actions';
-import { MoreActionsDropdownDesktop } from 'component/item/actions/more-actions';
+import { MoreActionsDropdownDesktop } from './actions/more-actions.jsx';
 
 const ItemActionsTouch = memo(() => {
 	const dispatch = useDispatch();

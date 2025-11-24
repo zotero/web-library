@@ -566,15 +566,15 @@ const CreatorField = forwardRef((props, outerRef) => {
 		</Fragment>
 		</Field>
 		</Fragment>
-    );
+	);
 });
 
 CreatorField.displayName = 'CreatorField';
 CreatorField.propTypes = {
 	className: PropTypes.string,
 	creator: PropTypes.object,
-	creatorsCount: PropTypes.number,
 	creatorTypes: PropTypes.array,
+	creatorsCount: PropTypes.number,
 	index: PropTypes.number,
 	isCreateAllowed: PropTypes.bool,
 	isDeleteAllowed: PropTypes.bool,
@@ -582,6 +582,7 @@ CreatorField.propTypes = {
 	isReadOnly: PropTypes.bool,
 	isSingle: PropTypes.bool,
 	isVirtual: PropTypes.bool,
+	onAddMany: PropTypes.func,
 	onChange: PropTypes.func,
 	onCreatorAdd: PropTypes.func,
 	onCreatorRemove: PropTypes.func,

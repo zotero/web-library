@@ -140,7 +140,7 @@ const apiCheckCache = key => {
 	var cacheTimes = {}, okToUseCache = false;
 	try {
 		cacheTimes = JSON.parse(localStorageWrapper.getItem(CACHE_TIMES_KEY)) || {};
-	} catch(_) {
+	} catch {
 		// ignore
 	}
 
@@ -162,7 +162,7 @@ const apiResetCache = key => {
 		cacheTimes = JSON.parse(localStorageWrapper.getItem(CACHE_TIMES_KEY)) || {};
 		delete cacheTimes[key];
 		localStorageWrapper.setItem(CACHE_TIMES_KEY, JSON.stringify(cacheTimes));
-	} catch(_) {
+	} catch {
 		// reset all cache times
 		localStorageWrapper.removeIem(CACHE_TIMES_KEY);
 	}
@@ -187,7 +187,7 @@ const requestWithCacheAndBackoff = async (dispatch, request, { id, type, payload
 				dispatch, request, { id, type, payload }, { useCache: true }
 			);
 			return result;
-		} catch(e) {
+		} catch {
 			apiResetCache(key);
 		}
 	}
@@ -203,7 +203,7 @@ const requestWithCache = async (dispatch, request, { id, type, payload }) => {
 				dispatch, request, { id, type, payload }, { useCache: true }
 			);
 			return result;
-		} catch(e) {
+		} catch {
 			apiResetCache(key);
 		}
 	}

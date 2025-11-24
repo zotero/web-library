@@ -56,7 +56,7 @@ const doResilientParallelisedCollectionsFetching = async (dispatch, getState, li
 	const limit = 100; // collections fetched per page
 
 	// get the first page
-	while(true) { // eslint-disable-line no-constant-condition
+	while(true) {
 		await dispatch(fetchCollections(libraryKey, { start: 0, limit, ...args }));
 		const updatedState = getState();
 		const errorCount = get(updatedState, ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errorCount'], 0);
@@ -89,8 +89,8 @@ const doResilientParallelisedCollectionsFetching = async (dispatch, getState, li
 	}
 
 	// subsequent pages are requested in parallel. Any request dropped or errored is re-requested
-	// this will respect request schedule (see request.js) but it will never give up.
-	while(remainingRequestsNumber > 0) { // eslint-disable-line no-constant-condition
+	// this will respect the request schedule (see request.js), but it will never give up.
+	while(remainingRequestsNumber > 0) {
 		const promises = Object.values(requests).map(r => r.promise);
 		await Promise.allSettled(promises);
 		const errored = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errored'], null);

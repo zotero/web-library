@@ -34,7 +34,7 @@ const AddByIdentifierModal = () => {
 			await dispatch(currentAddTranslatedItem(translatedItem));
 			setIsBusy(false);
 			dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
-		} catch(_) {
+		} catch {
 			setIsBusy(false);
 			setIdentifier('');
 			inputEl.current.focus();

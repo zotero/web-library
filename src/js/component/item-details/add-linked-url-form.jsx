@@ -58,7 +58,12 @@ const AddLinkedUrlFormToolbar = props => {
 				</Fragment>
 			</div>
 		</Toolbar>
-    );
+	);
+}
+
+AddLinkedUrlFormToolbar.propTypes = {
+	onClose: PropTypes.func.isRequired,
+	onSubmit: PropTypes.func.isRequired,
 }
 
 const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {

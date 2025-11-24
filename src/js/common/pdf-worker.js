@@ -207,8 +207,8 @@ export class PDFWorker {
 				try {
 					error.name = JSON.parse(e.message).name;
 				}
-				catch (e) {
-					//
+				catch {
+					// ignore
 				}
 				throw error;
 			}

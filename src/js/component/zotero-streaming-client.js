@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { remoteLibraryUpdate } from '../actions';
 import { getLibraryKeyFromTopic } from '../utils';
 
-// 10 seconds timeout for subscription creation, after that connection is reset
+// 10-second timeout for subscription creation, after that connection is reset
 const SUBSCRIPTION_TIMEOUT = 10000;
 
 // same as intervals in Zotero.Streamer_Module
@@ -24,7 +24,7 @@ const intervals = [
 
 // Streaming client configures WS connection once, based on config
 // that never changes. There is no need to recreate handle* or connect
-// methods at any point therefore exhaustive-deps rule can be disabled
+// methods at any point; therefore, the exhaustive-deps rule can be disabled
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const ZoteroStreamingClient = () => {
@@ -73,8 +73,7 @@ const ZoteroStreamingClient = () => {
 					dispatch(remoteLibraryUpdate(libraryKey, message.version))
 				}
 			}
-		} catch(c) {
-			// console.error(c);
+		} catch {
 			//
 		}
 	}, [])
@@ -97,8 +96,8 @@ const ZoteroStreamingClient = () => {
 			ws.current.onmessage = handleMessage;
 			ws.current.onerror = handleError;
 			ws.current.onclose = handleClose;
-		} catch(e) {
-			console.warn(`Failed to estabilish connection to the streaming API. Retrying in ${intervals[retryIntervalIndex.current] / 1000} seconds`);
+		} catch {
+			console.warn(`Failed to establish connection to the streaming API. Retrying in ${intervals[retryIntervalIndex.current] / 1000} seconds`);
 			setTimeout(connect, intervals[retryIntervalIndex.current]);
 			retryIntervalIndex.current = Math.min(retryIntervalIndex.current + 1, intervals.length - 1);
 		}

@@ -101,7 +101,7 @@ const IdentifierList = ({ selectedKeys, setSelectedKeys, processedItems }) => {
 		try {
 			const key = ev.currentTarget.closest('[data-key]').dataset.key;
 			setSelectedKeys(selectedKeys.includes(key) ? selectedKeys.filter(k => k !== key) : [...selectedKeys, key]);
-		} catch (e) { } // eslint-disable-line no-empty
+		} catch { } // eslint-disable-line no-empty
 	}, [selectedKeys, setSelectedKeys]);
 
 	const handleListKeyDown = useCallback(ev => {

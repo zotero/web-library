@@ -81,15 +81,10 @@ const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotM
 });
 
 TagDotMenu.propTypes = {
-	collection: PropTypes.object,
-	dotMenuFor: PropTypes.string,
-	isReadOnly: PropTypes.bool,
-	opened: PropTypes.array,
-	parentLibraryKey: PropTypes.string,
-	setDotMenuFor: PropTypes.func,
-	setOpened: PropTypes.func,
-	setRenaming: PropTypes.func,
-	addVirtual: PropTypes.func,
+	onDotMenuToggle: PropTypes.func,
+	onToggleTagManager: PropTypes.func,
+	hasColor: PropTypes.bool,
+	isDotMenuOpen: PropTypes.bool,
 };
 
 TagDotMenu.displayName = 'TagDotMenu';
@@ -194,14 +189,15 @@ TagListItem.displayName = 'TagListItem';
 TagListItem.propTypes = {
 	className: PropTypes.string,
 	dotMenuFor: PropTypes.string,
+	index: PropTypes.number.isRequired,
 	isManager: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	onDotMenuToggle: PropTypes.func,
+	onFocusNext: PropTypes.func,
+	onFocusPrev: PropTypes.func,
 	style: PropTypes.object,
 	tag: PropTypes.object,
 	toggleTag: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
 };
 
 const TagListRow = memo(({ index, tags, ...rest }) => (

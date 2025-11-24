@@ -1,15 +1,15 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { memo, useCallback, useRef, useState } from 'react';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { useDrag, useDrop } from 'react-dnd'
-import { useDebouncedCallback } from 'use-debounce';
-import { isTriggerEvent, noop, pick } from 'web-common/utils';
-import { Icon } from 'web-common/components';
-import { useFocusManager } from 'web-common/hooks'
+import {memo, useCallback, useRef, useState} from 'react';
+import {NativeTypes} from 'react-dnd-html5-backend';
+import {useDrag, useDrop} from 'react-dnd'
+import {useDebouncedCallback} from 'use-debounce';
+import {isTriggerEvent, noop, pick} from 'web-common/utils';
+import {Icon} from 'web-common/components';
+import {useFocusManager} from 'web-common/hooks'
 
-import { ATTACHMENT, ITEM, COLLECTION } from '../../constants/dnd';
-import { stopPropagation } from '../../utils';
+import {ATTACHMENT, COLLECTION, ITEM} from '../../constants/dnd';
+import {stopPropagation} from '../../utils';
 
 const Node = props => {
 	const { className, children, dndData, isOpen, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, onOpen = noop, onRename =
@@ -30,9 +30,7 @@ const Node = props => {
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult();
 			if(dropResult) {
-				const src = dndData;
-				const dest = dropResult;
-				onNodeDrop(src, dest);
+				onNodeDrop(dndData, dropResult);
 			}
 		}
 	});
@@ -111,10 +109,7 @@ const Node = props => {
 				if (!isFileUploadAllowed) {
 					return false;
 				}
-				if(!['collection', 'library'].includes(dndData.targetType)) {
-					return false;
-				}
-				return true;
+				return ['collection', 'library'].includes(dndData.targetType);
 			}
 			return false;
 		},
@@ -126,7 +121,7 @@ const Node = props => {
 				if(srcItem.files && srcItem.files.length) {
 					onFileDrop(srcItem.files);
 				}
-				return;
+				return {};
 			} else if(srcItemType === ATTACHMENT) {
 				return { library: dndData.libraryKey, collection: dndData.collectionKey };
 			} else if(srcItemType === ITEM || srcItemType === COLLECTION) {
@@ -223,8 +218,10 @@ Node.propTypes = {
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 	className: PropTypes.string,
 	dndData: PropTypes.object,
+	isFileUploadAllowed: PropTypes.bool,
 	isOpen: PropTypes.bool,
 	isOver: PropTypes.bool,
+	isReadOnly: PropTypes.bool,
 	onFileDrop: PropTypes.func,
 	onFocusNext: PropTypes.func,
 	onFocusPrev: PropTypes.func,
@@ -232,7 +229,9 @@ Node.propTypes = {
 	onNodeDrop: PropTypes.func,
 	onOpen: PropTypes.func,
 	onRename: PropTypes.func,
+	onRenameCancel: PropTypes.func,
 	onSelect: PropTypes.func,
+	shouldBeDraggable: PropTypes.bool,
 	showTwisty: PropTypes.bool,
 	subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 }

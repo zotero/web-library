@@ -249,7 +249,6 @@ const Bubble = memo((props => {
 		if (isTriggerEvent(ev) || (ev.type === 'keydown' && ev.key === 'ArrowDown')) {
 			ev.preventDefault();
 			onOpenPopover(ev.currentTarget.dataset.key);
-			return;
 		}
 	}, [onOpenPopover]);
 
@@ -461,7 +460,7 @@ CitationTouchEditor.propTypes = {
 		suffix: PropTypes.string
 	}).isRequired,
 	isOpen: PropTypes.bool.isRequired,
-	itemKey: PropTypes.string.isRequired,
+	item: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onModifierChange: PropTypes.func.isRequired,
 };
@@ -575,7 +574,7 @@ const CopyCitationModal = () => {
 			dispatchState({ type: 'BEGIN_UPDATE' });
 			const { html, plain } = await dispatch(citationFromItems(state.currentOrder, state.modifiers, libraryKey));
 			dispatchState({ type: 'COMPLETE_UPDATE', citationsHTML: html, citationsPlain: plain });
-		} catch (error) {
+		} catch {
 			dispatchState({ type: 'ERROR_UPDATE' });
 		}
 	}, [dispatch, state.currentOrder, libraryKey, state.modifiers]);

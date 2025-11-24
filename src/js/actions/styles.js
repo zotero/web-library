@@ -22,9 +22,9 @@ const fetchStyles = () => {
 				stylesData,
 			});
 			return stylesData;
-		} catch(_) {
+		} catch {
 			try {
-				// try to fallback for a cached version
+				// try to fall back for a cached version
 				const response = await fetch(stylesSourceUrl, { 'cache': 'force-cache' });
 				const stylesData = await response.json();
 

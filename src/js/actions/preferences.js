@@ -65,7 +65,7 @@ const preferencesLoad = () => {
 			}
 		}
 		preferences = { ...defaultPreferences,...userPreferences };
-	} catch(e) {
+	} catch {
 		console.error('Preferences from localStorage appear to be corrupted.');
 		preferences = { ...defaultPreferences };
 	}

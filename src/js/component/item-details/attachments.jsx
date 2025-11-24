@@ -40,7 +40,7 @@ const AttachmentIcon = memo(({ isActive, item, size }) => {
 		width={size}
 		height={size}
 		usePixelRatio={!isTouchOrSmall}
-		useColorScheme={isActive ? false : true}
+		useColorScheme={!isActive}
 		colorScheme={colorScheme}
 	/>
 });
@@ -267,8 +267,10 @@ AttachmentActions.displayName = 'AttachmentDownloadIcon';
 
 AttachmentActions.propTypes = {
 	attachment: PropTypes.object,
-	itemKey: PropTypes.string,
+	focusBySelector: PropTypes.func.isRequired,
+	isReadOnly: PropTypes.bool,
 	isUploading: PropTypes.bool,
+	itemKey: PropTypes.string,
 };
 
 const Attachment = memo(props => {

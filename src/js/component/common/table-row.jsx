@@ -125,6 +125,10 @@ const TableRow = props => {
 };
 
 TableRow.propTypes = {
+	className: PropTypes.string,
+	columns: PropTypes.arrayOf(PropTypes.shape({
+		field: PropTypes.string.isRequired
+	})).isRequired,
 	data: PropTypes.shape({
 		columns: PropTypes.arrayOf(PropTypes.shape({
 			field: PropTypes.string.isRequired
@@ -134,9 +138,12 @@ TableRow.propTypes = {
 		onSelect: PropTypes.func,
 		onDoubleClick: PropTypes.func
 	}).isRequired,
+	getItemData: PropTypes.func.isRequired,
 	index: PropTypes.number.isRequired,
-	style: PropTypes.object,
-	className: PropTypes.string
+	onDoubleClick: PropTypes.func,
+	onSelect: PropTypes.func,
+	selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
+	style: PropTypes.object
 };
 
 export default memo(TableRow);

@@ -1,4 +1,3 @@
-import { unescapeHTML } from '../utils';
 import { getItemTitle } from './item';
 
 const entityToChar = str => {

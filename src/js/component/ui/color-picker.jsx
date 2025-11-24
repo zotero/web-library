@@ -69,7 +69,7 @@ const ColorPicker = props => {
 	}, [focusNext, focusPrev, handleClick]);
 
 	const lookup = useCallback(
-		color => useTagColorLookup ? `var(${colorTagLookup[color]})` || color : color,
+		color => useTagColorLookup ? color in colorTagLookup ? `var(${colorTagLookup[color]})` : color : color,
 		[useTagColorLookup]
 	);
 

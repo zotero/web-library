@@ -15,7 +15,7 @@ const UserTypeDetector = () => {
 		if(keysToTriggerKeyboardMode.includes(ev.key)) {
 			dispatch(triggerUserTypeChange({ 'isKeyboardUser': true, }));
 		}
-	});
+	}, [dispatch]);
 
 	const handleMouse = useCallback(ev => {
 		// prevent simulated mouse events triggering mouse user
@@ -27,7 +27,7 @@ const UserTypeDetector = () => {
 				'userType': 'mouse'
 			}));
 		}
-	});
+	}, [dispatch]);
 
 	const handleTouch = useCallback(ev => {
 		lastTouchStartEvent.current = ev.timeStamp;
@@ -37,7 +37,7 @@ const UserTypeDetector = () => {
 			'isTouchUser': true,
 			'userType': 'touch'
 		}));
-	});
+	}, [dispatch]);
 
 	useEffect(() => {
 		document.addEventListener('keyup', handleKeyboard);
@@ -49,7 +49,7 @@ const UserTypeDetector = () => {
 			document.removeEventListener('mousedown', handleMouse);
 			document.removeEventListener('touchstart', handleTouch);
 		}
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return null;
 }

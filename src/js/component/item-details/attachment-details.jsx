@@ -110,7 +110,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			clearTimeout(timeoutRef.current);
 			timeoutRef.current = setTimeout(forceRerender, urlExpriesFromNow);
 		}
-		return () => clearTimeout(timeoutRef.current); // eslint-disable-line react-hooks/exhaustive-deps
+		return () => clearTimeout(timeoutRef.current);
 	}, [forceRerender, urlIsFresh, timestamp, attachmentKey, dispatch, isFetchingUrl]);
 
 	useEffect(() => {
@@ -209,7 +209,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 				) : (
 					<a
 						className="btn btn-default"
-						disabled={!url}
 						href={url}
 						rel="noreferrer"
 						role="button"
@@ -247,7 +246,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			</div>
 		) }
 		<RichEditor
-			autoresize={ shouldUseTabs ? false : true }
+			autoresize={ !shouldUseTabs }
 			id={ attachment.key }
 			isAttachmentNote={ true }
 			isReadOnly={ isReadOnly }

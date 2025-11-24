@@ -50,7 +50,7 @@ const AddByIdentifier = props => {
 			setIsBusy(false);
 			ref.current.focus();
 			setIsOpen(false);
-		} catch(_) {
+		} catch {
 			setIsBusy(false);
 			setIdentifier('');
 			inputEl.current.focus();
@@ -169,7 +169,7 @@ const AddByIdentifier = props => {
 	}, [isOpen, handleDocumentEvent]);
 
 	return (
-        <Fragment>
+		<Fragment>
 			<Button
 				aria-controls={ `${id.current}-dialog` }
 				icon

@@ -158,7 +158,7 @@ const updating = (state = stateDefault, action) => {
 		}
 		case RECEIVE_UPDATE_COLLECTION:
 		case ERROR_UPDATE_COLLECTION:
-			var newState = { // eslint-disable-line no-redeclare
+			var newState = {
 				...state,
 				collections: {
 					...state.collections,

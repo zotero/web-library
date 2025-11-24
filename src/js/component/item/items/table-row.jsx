@@ -264,11 +264,21 @@ const TableRow = props => {
 };
 
 TableRow.propTypes = {
+	collectionKey: PropTypes.string,
+	columns: PropTypes.array,
 	data: PropTypes.shape({
 		onFileHoverOnRow: PropTypes.func,
 		columns: PropTypes.array,
 	}),
 	index: PropTypes.number,
+	itemsSource: PropTypes.string,
+	libraryKey: PropTypes.string,
+	onFileHoverOnRow: PropTypes.func,
+	pickerMode: PropTypes.bool,
+	pickerNavigate: PropTypes.func,
+	q: PropTypes.string,
+	qmode: PropTypes.string,
+	selectedItemKeys: PropTypes.array,
 	style: PropTypes.object,
 };
 

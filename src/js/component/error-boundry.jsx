@@ -22,6 +22,11 @@ const CrashHandler = ({ error = {}, info = {} }) => (
 	</div>
 );
 
+CrashHandler.propTypes = {
+	error: PropTypes.object,
+	info: PropTypes.object,
+}
+
 class ErrorBoundary extends PureComponent {
 	constructor(props) {
 		super(props);

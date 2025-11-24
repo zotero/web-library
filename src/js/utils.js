@@ -348,7 +348,7 @@ const JSONTryParse = (json, fallback = {}) => {
 	var output;
 	try {
 		output = JSON.parse(json);
-	} catch(_) {
+	} catch {
 		output = fallback
 	}
 	return output;
@@ -374,11 +374,11 @@ const cleanURL = (url, shouldTryHttp = false) => {
 
 	try {
 		return (new URL(url)).href;
-	} catch(e) {
+	} catch {
 		if (shouldTryHttp && /\w\.\w/.test(url)) {
 			try {
 				return (new URL('http://' + url)).href;
-			} catch(e) {
+			} catch {
 				// unable to cleanURL, fall through and return false
 			}
 		}

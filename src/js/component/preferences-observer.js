@@ -25,7 +25,7 @@ const PreferencesObserver = () => {
 				isRemote: true,
 				preferences
 			});
-		} catch (e) {
+		} catch {
 			// ignore
 		}
 	}, [dispatch]);

@@ -412,7 +412,7 @@ const findRowIndexInSource = () => {
 				return keys.indexOf(itemKey);
 			}
 			return 0;
-		} catch (error) {
+		} catch {
 			return 0;
 		}
 	}

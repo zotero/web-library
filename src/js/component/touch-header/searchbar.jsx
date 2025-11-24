@@ -50,7 +50,8 @@ const SearchBar = ({ isActive, onCancel, search }) => {
 
 SearchBar.propTypes = {
 	isActive: PropTypes.bool.isRequired,
-	onCancel: PropTypes.func.isRequired
+	onCancel: PropTypes.func.isRequired,
+	search: PropTypes.node,
 }
 
 export default memo(SearchBar);
