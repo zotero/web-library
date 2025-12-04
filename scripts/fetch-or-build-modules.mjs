@@ -14,7 +14,7 @@ const modulesConfig = [
     forceBuild: false,
     name: "reader",
     key: "pdfReader",
-    URLpath: "client-pdf-reader",
+    URLpath: "reader",
     buildPath: ["build", "web"],
     exec: (url, filename, tmpDir, targetDir) =>
       `cd ${tmpDir}` +
@@ -28,7 +28,7 @@ const modulesConfig = [
     forceBuild: false,
     name: "pdf-worker",
     key: "pdfWorker",
-    URLpath: "client-pdf-worker",
+    URLpath: "document-worker",
     buildPath: ["build"],
     exec: (url, filename, tmpDir, targetDir) =>
       `cd ${tmpDir}` +
@@ -40,19 +40,20 @@ const modulesConfig = [
     forceBuild: false,
     name: "note-editor",
     key: "noteEditor",
-    URLpath: "client-note-editor",
+    URLpath: "note-editor",
     buildPath: ["build", "web"],
     exec: (url, filename, tmpDir, targetDir) =>
       `cd ${tmpDir}` +
       ` && (test -f ${filename} || curl -f ${url} -o ${filename})` +
-      ` && unzip ${filename} zotero/* -d ${targetDir}` +
-      ` && mv ${join(targetDir, "zotero", "*")} ${targetDir}`,
+      ` && unzip ${filename} web/* -d ${targetDir}` +
+      ` && mv ${join(targetDir, "web", "*")} ${targetDir}`,
   },
 ];
 
 async function fetchModule({ actualHash, moduleConfig, tmpDir, targetDir }) {
   const filename = actualHash + ".zip";
   const url = buildsURL + moduleConfig.URLpath + "/" + filename;
+  console.log(`Fetching ${moduleConfig.name} from ${url}`);
 
   await fs.remove(targetDir);
   await fs.ensureDir(targetDir);
