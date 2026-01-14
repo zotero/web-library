@@ -1,6 +1,6 @@
 import { getZotero } from 'web-common/zotero';
 
-import { cleanURL, get, containsEmoji, extractEmoji } from '../utils';
+import { cleanURL, get, extractEmoji } from '../utils';
 import { dateLocalized } from './format';
 import { itemTypesWithIcons } from '../../../data/item-types-with-icons.json';
 
@@ -147,8 +147,9 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 		if(!(item?.tags ?? []).some(({ tag }) => tag === name)) {
 			return;
 		}
-		if (containsEmoji(name)) {
-			emojis.push(extractEmoji(name));
+		const emoji = extractEmoji(name);
+		if (emoji.length > 0) {
+			emojis.push(emoji);
 		} else {
 			colors.push(color);
 		}
@@ -156,7 +157,7 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 
 	// non-colored tags containing emoji, sorted alphabetically (item.tags should already be sorted)
 	(item?.tags ?? []).forEach(({ tag }) => {
-		if (!(tag in tagColors.lookup) && containsEmoji(tag)) {
+		if (!(tag in tagColors.lookup)) {
 			emojis.push(extractEmoji(tag));
 		}
 	});

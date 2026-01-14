@@ -517,19 +517,25 @@ const getPrevSibling = (elem, selector) => {
 	}
 };
 
-// https://github.com/zotero/zotero/blob/214a668286d35a630db293bb835f544693698297/chrome/content/zotero/xpcom/utilities_internal.js#L399-L408
-const containsEmoji = str => {
-	let re = /\p{Extended_Pictographic}/gu;
-	return !!str.match(re);
-}
 
-// https://github.com/abaevbog/zotero/blob/f8fd90945663d4745306d88be298633f8c7229de/chrome/content/zotero/xpcom/data/tags.js#L1000
+// https://github.com/zotero/zotero/blob/d1d4065dae77786cf3312d88f86502182a63c3ee/chrome/content/zotero/xpcom/data/tags.js#L844
 const extractEmoji = str => {
-	// Split by anything that is not an emoji, Zero Width Joiner, or Variation Selector-16
-	// And return first continuous span of emojis
-	let re = /[^\p{Extended_Pictographic}\u200D\uFE0F]+/gu; //eslint-disable-line no-misleading-character-class
-	return str.split(re).filter(Boolean)[0] || null;
+	try {
+		// Either match RGI_Emoji (which includes country flags) or any character followed by the Variation Selector-16
+		// Requires "v" flag which is only available in modern browsers
+		let re = new RegExp(String.raw`(?:\p{RGI_Emoji}(?!\uFE0F)|.\uFE0F)+`, "gv");
+		return str.match(re)?.[0] ?? [];
+	} catch {
+		// Fallback for older browsers; will not extract country flags
+		let re = new RegExp(String.raw`(?:\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
+		return str.match(re)?.[0] ?? [];
+	}
 };
+
+const containsEmoji = str => {
+	let emoji = extractEmoji(str);
+	return emoji.length > 0;
+}
 
 const isReaderCompatibleBrowser = () => {
 	if (typeof structuredClone !== "function") {
@@ -581,55 +587,55 @@ const alwaysTrue = () => true;
 
 export {
 	alwaysTrue,
-    applyChangesToVisibleColumns,
+	applyChangesToVisibleColumns,
 	binarySearch,
-    cede,
-    clamp,
-    cleanURL,
-    compare,
-    compareItem,
+	cede,
+	clamp,
+	cleanURL,
+	compare,
+	compareItem,
 	containsEmoji,
-    deduplicate,
-    deduplicateByHash,
-    deduplicateByKey,
-    enumerateObjects,
+	deduplicate,
+	deduplicateByHash,
+	deduplicateByKey,
+	enumerateObjects,
 	extractEmoji,
-    get,
-    getAbortController,
-    getDOIURL,
-    getFieldNameFromSortKey,
-    getItemCanonicalUrl,
-    getItemFromCanonicalUrl,
+	get,
+	getAbortController,
+	getDOIURL,
+	getFieldNameFromSortKey,
+	getItemCanonicalUrl,
+	getItemFromCanonicalUrl,
 	getItemFromApiUrl,
-    getLibraryKeyFromTopic,
-    getNextSibling,
-    getPrevSibling,
-    getRequestTypeFromItemsSource,
-    getScrollContainerPageCount,
-    getSortKeyValue,
-    getUniqueId,
-    indexByGeneratedKey,
-    indexByKey,
-    isLikeURL,
+	getLibraryKeyFromTopic,
+	getNextSibling,
+	getPrevSibling,
+	getRequestTypeFromItemsSource,
+	getScrollContainerPageCount,
+	getSortKeyValue,
+	getUniqueId,
+	indexByGeneratedKey,
+	indexByKey,
+	isLikeURL,
 	isReaderCompatibleBrowser,
-    JSONTryParse,
-    localStorageWrapper,
+	JSONTryParse,
+	localStorageWrapper,
 	makeRequestsUpTo,
 	mapItemKeysToRelations,
-    mapRelationsToItemKeys,
+	mapRelationsToItemKeys,
 	mergeItemKeysRelations,
 	maxByKey,
-    openDelayedURL,
-    parseBase64File,
-    processIdentifierMultipleItems,
-    removeRelationByItemKey,
-    resizeVisibleColumns,
-    reverseMap,
-    sortByKey,
-    sortItemsByKey,
-    splice,
-    stopPropagation,
-    transform,
+	openDelayedURL,
+	parseBase64File,
+	processIdentifierMultipleItems,
+	removeRelationByItemKey,
+	resizeVisibleColumns,
+	reverseMap,
+	sortByKey,
+	sortItemsByKey,
+	splice,
+	stopPropagation,
+	transform,
 	unescapeHTML,
-    vec2dist
+	vec2dist
 };
