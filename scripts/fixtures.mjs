@@ -22,6 +22,7 @@ export const fixtures = [
     [`testuser/collections/CSB4KZUU/items/3JCLFUG4/item-details`, 'mobile-test-user-item-details-view-edit', clickEditBtn],
     [`testuser/collections/WTTJ2J56/item-list`, 'mobile-test-user-item-list-view'],
     [`testuser/trash/items/Z7B4P73I/item-details`, 'mobile-test-user-trash-collection-details-view'],
+    ['testuser/collections/4VM2BFHN/items/IY45CHYB/collection', 'item-with-emoji-and-flags']
 ];
 
 export const fixturePathLookup = new Map(

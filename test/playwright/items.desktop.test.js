@@ -79,4 +79,16 @@ test.describe('Desktop Snapshots', () => {
 		await expect(page).toHaveScreenshot(`desktop-item-bibliography.png`);
 		await page.close();
 	});
+
+	test('should render flags, symbols and emoji in the items table', async ({ page, serverPort }) => {
+		server = await getServer('item-with-emoji-and-flags', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/4VM2BFHN/items/IY45CHYB/collection`);
+		await waitForLoad(page);
+		await wait(500); // avoid flaky screenshot with missing icons
+
+		const row = await page.getByRole('row', { name: 'Hip Hop in the United States'});
+		await expect(row.locator('css=.emoji')).toHaveText('♫🎶🇺🇸');
+		await expect(page).toHaveScreenshot(`desktop-item-flags-symbols-emoji.png`);
+		await page.close();
+	});
 });
