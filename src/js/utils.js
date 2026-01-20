@@ -524,11 +524,11 @@ const extractEmoji = str => {
 		// Either match RGI_Emoji (which includes country flags) or any character followed by the Variation Selector-16
 		// Requires "v" flag which is only available in modern browsers
 		let re = new RegExp(String.raw`(?:(?:\p{RGI_Emoji}|\p{Extended_Pictographic})(?!\uFE0F)|.\uFE0F)+`, "gv");
-		return str.match(re)?.[0] ?? [];
+		return str.match(re)?.[0] ?? '';
 	} catch {
 		// Fallback for older browsers; will not extract country flags
 		let re = new RegExp(String.raw`(?:\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
-		return str.match(re)?.[0] ?? [];
+		return str.match(re)?.[0] ?? '';
 	}
 };
 

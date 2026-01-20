@@ -158,7 +158,10 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 	// non-colored tags containing emoji, sorted alphabetically (item.tags should already be sorted)
 	(item?.tags ?? []).forEach(({ tag }) => {
 		if (!(tag in tagColors.lookup)) {
-			emojis.push(extractEmoji(tag));
+			const emoji = extractEmoji(tag);
+			if( emoji.length > 0) {
+				emojis.push(emoji);
+			}
 		}
 	});
 
