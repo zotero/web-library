@@ -7,7 +7,7 @@ import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop, pick } from 'web-common/utils';
 
 import Editable from '../editable';
-import { deduplicateByKey, get, getScrollContainerPageCount, sortByKey } from '../../utils';
+import { deduplicateByKey, get, getScrollContainerPageCount, sortByKey, stopPropagation } from '../../utils';
 import { fetchTagSuggestions, updateItem } from '../../actions';
 import { Toolbar, ToolGroup } from '../ui/toolbars';
 import { pluralize } from '../../common/format';
@@ -59,6 +59,7 @@ const TagPickerItem = memo(({ isReadOnly, onCancel, onChange, onCommit, onDelete
 				onChange={onChange}
 				onClick={onEdit}
 				onCommit={onCommit}
+				onKeyDown={stopPropagation}
 				onBlur={onEditableBlur}
 				selectOnFocus
 				suggestions={suggestions}
