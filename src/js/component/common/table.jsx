@@ -52,6 +52,8 @@ const Table = props => {
 		sortDirection = null,
 		tableClassName = null,
 		totalResults,
+		listRef,
+		outerRef,
 	} = props;
 
 	const RowComponent = rowComponent || TableRow;
@@ -68,7 +70,7 @@ const Table = props => {
 
 	const containerRef = useRef(null);
 	const tableRef = useRef(null);
-	const outerRef = useRef(null);
+	const outerRefTracker = useRef(null);
 
 	const resizing = useRef(null);
 	const reordering = useRef(null);
@@ -85,34 +87,34 @@ const Table = props => {
 	});
 
 	const handleListRef = useCallback(r => {
-		if (props.listRef) {
-			if (typeof props.listRef === 'function') {
-				props.listRef(r);
+		if (listRef) {
+			if (typeof listRef === 'function') {
+				listRef(r);
 			}
-			else if (typeof props.listRef === 'object') {
-				props.listRef.current = r;
+			else if (typeof listRef === 'object') {
+				listRef.current = r;
 			}
 		}
 
 		// With react-window 2.x it's no longer possible to get the ref to the outer element it
 		// renders, so instead we query for it as soon as it signals listRef is ready
-		outerRef.current = tableRef.current?.querySelector('[role="rowgroup"]');
+		outerRefTracker.current = tableRef.current?.querySelector('[role="rowgroup"]');
 
-		// The overflow list is made focusable by default in most browsers and to prevent this we
+		// The overflow list is made focusable by default in most browsers, and to prevent this, we
 		// need to set `tabIndex` to -1. However, since this element is rendered by react-window, we
 		// cannot pass it as a prop. As a workaround, we set the tabIndex attribute directly here.
 		// This fixes issue #519.
-		outerRef.current?.setAttribute?.('tabindex', '-1');
+		outerRefTracker.current?.setAttribute?.('tabindex', '-1');
 
-		if (props.outerRef) {
-			if (typeof props.outerRef === 'function') {
-				props.outerRef(outerRef.current);
+		if (outerRef) {
+			if (typeof outerRef === 'function') {
+				outerRef(outerRefTracker.current);
 			}
-			else if (typeof props.outerRef === 'object') {
-				props.outerRef.current = outerRef.current;
+			else if (typeof outerRef === 'object') {
+				outerRef.current = outerRefTracker.current;
 			}
 		}
-	}, [props]);
+	}, [listRef, outerRef]);
 
 	const handleResize = useCallback(ev => {
 		const columnDom = ev.target.closest(['[data-colindex]']);

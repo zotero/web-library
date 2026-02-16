@@ -2,16 +2,14 @@ import PropTypes from 'prop-types';
 import { useCallback, useRef } from 'react';
 import { List as UpstreamReactWindowList } from 'react-window';
 
-// This wrapper adds support for initialScrollToRow, and will skip calls to onRowsRendered until after the initial scroll
+// This wrapper adds support for initialScrollToRow and will skip calls to onRowsRendered until after the initial scroll
 const ReactWindowList = ({ initialScrollToRow, listRef: listRefFromProps, onRowsRendered, ...rest}) => {
 	const listRef = useRef(null);
-	const isScrolled = useRef(false);
+	const isScrollInitiated = useRef(false);
+	const isScrollCompleted = useRef(false);
 
 	const handleListRef = useCallback(r => {
 		listRef.current = r;
-		if (listRef) {
-			listRef.current = r;
-		}
 		if (listRefFromProps) {
 			if(typeof listRefFromProps === 'function') {
 				listRefFromProps(r);
@@ -19,16 +17,18 @@ const ReactWindowList = ({ initialScrollToRow, listRef: listRefFromProps, onRows
 				listRefFromProps.current = r;
 			}
 		}
-		if (initialScrollToRow && r && !isScrolled.current) {
+		// Ensure `scrollToRow` happens only once. Possibly fixes #648
+		if (initialScrollToRow && r && r.element && !isScrollInitiated.current) {
+			isScrollInitiated.current = true;
 			r.scrollToRow({ index: initialScrollToRow, behavior: 'instant', align: 'start' });
 			setTimeout(() => {
-				isScrolled.current = true;
+				isScrollCompleted.current = true;
 			}, 0);
 		}
 	}, [listRefFromProps, initialScrollToRow]);
 
 	const handleRowsRendered = useCallback(args => {
-		if(initialScrollToRow && !isScrolled.current) {
+		if(initialScrollToRow && !isScrollCompleted.current) {
 			// ignore calls to onRowsRendered until after the initial scroll
 			return;
 		}
