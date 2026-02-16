@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { AutoSizer } from 'react-virtualized-auto-sizer';
 import { useInfiniteLoader } from "react-window-infinite-loader";
 import { noop } from 'web-common/utils';
 
@@ -52,8 +52,11 @@ const List = props => {
 	return (
 		<div className={cx("items-list-wrap", containerClassName)}>
 			{ isReady && (
-				<AutoSizer>
-					{({ height, width }) => (
+				<AutoSizer renderProp={({ height, width }) => {
+					if(typeof width === 'undefined' || typeof height === 'undefined') {
+						return null;
+					}
+					return (
 						<div
 							aria-label={ariaLabel}
 							className={cx('items-list', listClassName)}
@@ -71,9 +74,9 @@ const List = props => {
 								style={{ width, height }}
 							/>
 						</div>
-					)}
-				</AutoSizer>
-			) }
+					)
+				}} />
+			)}
 			{ children }
 		</div>
 	);

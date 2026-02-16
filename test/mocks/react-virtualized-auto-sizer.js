@@ -1,1 +1,1 @@
-export default ({ children }) => children({ height: 600, width: 640 });
+export const AutoSizer = ({ renderProp }) => renderProp({ height: 600, width: 640 });

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { AutoSizer } from 'react-virtualized-auto-sizer';
 import { useInfiniteLoader } from "react-window-infinite-loader";
 import { noop } from 'web-common/utils';
 
@@ -265,8 +265,11 @@ const Table = props => {
 			})}
 		>
 			{isReady && (
-				<AutoSizer>
-					{({ height, width }) => (
+				<AutoSizer renderProp={({ height, width }) => {
+					if(typeof width === 'undefined' || typeof height === 'undefined') {
+						return <div />;
+					}
+					return (
 						<div
 							tabIndex={0}
 							onFocus={onReceiveFocus}
@@ -280,6 +283,7 @@ const Table = props => {
 							aria-readonly="true"
 							aria-label={ariaLabel}
 							data-width={width}
+							data-height={height}
 							aria-rowcount={totalResults}
 						>
 							<HeaderRow
@@ -308,8 +312,8 @@ const Table = props => {
 								style={{ width, height: `${height - ROW_HEIGHT}px` }}
 							/>
 						</div>
-					)}
-				</AutoSizer>
+					);}
+				} />
 			)}
 			{children}
 		</div>

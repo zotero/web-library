@@ -10,6 +10,7 @@
 	height: 100%;
 	flex: 1 1 auto;
 	flex-direction: column;
+	overflow: hidden;
 
 	.icon-spin {
 		color: var(--color-accent);

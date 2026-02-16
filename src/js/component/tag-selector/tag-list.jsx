@@ -1,4 +1,4 @@
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { AutoSizer } from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState, memo, } from 'react';
@@ -334,34 +334,37 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 	return (
 		<div className="scroll-container">
 			{ !isBusy ? (
-				<AutoSizer>
-				{({ height, width }) => (
-					<div
-						tabIndex={ tags.length > 0 ? 0 : null }
-						onFocus={ tags.length > 0 ? receiveFocus : noop }
-						onBlur={ tags.length > 0 ? receiveBlur : noop }
-						ref={ listRef }
-						role="list"
-						aria-multiselectable="true"
-						aria-readonly="true"
-						aria-label="Tags"
-						aria-rowcount={ totalResults }
-					>
-						<ReactWindowList
-							rowComponent={TagListRow}
-							className="tag-selector-list"
-							rowCount={ itemCount }
-							rowProps={ { tags, toggleTag, isManager, onFocusNext: focusNext, onFocusPrev: focusPrev,
-								dotMenuFor, onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
-							}
-							rowHeight={ isTouchOrSmall ? 43 : 28 }
-							onRowsRendered={onRowsRendered}
-							listRef={ ref }
-							style={{ width, height }}
-						/>
-					</div>
-				)}
-				</AutoSizer>
+				<AutoSizer renderProp={ ({ height, width }) => {
+					if(typeof width === 'undefined' || typeof height === 'undefined') {
+						return null;
+					}
+					return (
+						<div
+							tabIndex={ tags.length > 0 ? 0 : null }
+							onFocus={ tags.length > 0 ? receiveFocus : noop }
+							onBlur={ tags.length > 0 ? receiveBlur : noop }
+							ref={ listRef }
+							role="list"
+							aria-multiselectable="true"
+							aria-readonly="true"
+							aria-label="Tags"
+							aria-rowcount={ totalResults }
+						>
+							<ReactWindowList
+								rowComponent={TagListRow}
+								className="tag-selector-list"
+								rowCount={ itemCount }
+								rowProps={ { tags, toggleTag, isManager, onFocusNext: focusNext, onFocusPrev: focusPrev,
+									dotMenuFor, onDotMenuToggle: handleDotMenuToggle, ...pick(rest, ['onToggleTagManager']) }
+								}
+								rowHeight={ isTouchOrSmall ? 43 : 28 }
+								onRowsRendered={onRowsRendered}
+								listRef={ ref }
+								style={{ width, height }}
+							/>
+						</div>
+					)
+				}} />
 			) : (
 				<Spinner className="large centered" />
 			) }
