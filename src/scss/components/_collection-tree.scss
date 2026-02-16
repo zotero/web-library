@@ -388,7 +388,7 @@
 
 	@include breakpoints.mouse-and-bp-up(md) {
 		@for $i from 1 through variables.$collection-tree-max-levels {
-			$sel: if($i == 1, "ul", selector.nest($sel, "ul"));
+			$sel: if(sass($i == 1): "ul"; else: selector.nest($sel, "ul"));
 
 			#{$sel} {
 				.item-container {

@@ -2,20 +2,20 @@
 @use "../variables";
 
 @mixin button-variant($color-name, $outline: null) {
-	background-color: if($outline, transparent, var(--#{$color-name}));
-	border-color: if($outline, var(--#{$color-name}), transparent);
+	background-color: if(sass($outline): transparent; else: var(--#{$color-name}));
+	border-color: if(sass($outline): var(--#{$color-name}); else: transparent);
 
 	&,
 	.icon {
 		&:not(.specifity) {
-			color: if($outline, var(--#{$color-name}), var(--primary-on-accent));
+			color: if(sass($outline): var(--#{$color-name}); else: var(--primary-on-accent));
 		}
 	}
 
 	&:hover {
 		@media (hover: hover) {
 			background-color: var(--#{$color-name}-lighter);
-			border-color: if($outline, var(--#{$color-name}-lighter), transparent);
+			border-color: if(sass($outline): var(--#{$color-name}-lighter); else: transparent);
 			box-shadow: 0 2px 4px var(--color-button-shadow);
 		}
 
@@ -30,7 +30,7 @@
 	&:active,
 	.show > &.dropdown-toggle {
 		background-color: var(--#{$color-name}-darker);
-		border-color: if($outline, var(--#{$color-name}-darker), transparent);
+		border-color: if(sass($outline): var(--#{$color-name}-darker); else: transparent);
 		box-shadow: none;
 
 		&,
@@ -42,14 +42,14 @@
 	}
 
 	&:disabled {
-		background-color: if($outline, transparent, var(--#{$color-name}));
-		border-color: if($outline, var(--#{$color-name}), transparent);
+		background-color: if(sass($outline): transparent; else: var(--#{$color-name}));
+		border-color: if(sass($outline): var(--#{$color-name}); else: transparent);
 		box-shadow: none;
 
 		&,
 		.icon {
 			&:not(.specifity) {
-				color: if($outline, var(--#{$color-name}), var(--primary-on-accent));
+				color: if(sass($outline): var(--#{$color-name}); else: var(--primary-on-accent));
 			}
 		}
 	}
@@ -59,7 +59,7 @@
 			box-shadow: 0 0 0 variables.$input-btn-focus-width var(--#{$color-name});
 
 			&:hover {
-				border-color: if($outline, var(--#{$color-name}-lighter), transparent);
+				border-color: if(sass($outline): var(--#{$color-name}-lighter); else: transparent);
 				box-shadow:
 					0 0 0 variables.$input-btn-focus-width var(--#{$color-name}-lighter),
 					0 4px 4px var(--color-button-shadow);
@@ -90,7 +90,7 @@
 				box-shadow: 0 0 0 variables.$input-btn-focus-width var(--accent-green);
 
 				&:hover {
-					border-color: if($outline, var(--#{$color-name}-lighter), transparent);
+					border-color: if(sass($outline): var(--#{$color-name}-lighter); else: transparent);
 					box-shadow:
 						0 0 0 variables.$input-btn-focus-width var(--accent-green-lighter),
 						0 4px 4px var(--color-button-shadow);

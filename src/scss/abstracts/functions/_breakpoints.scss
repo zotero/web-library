@@ -5,17 +5,17 @@
 @function breakpoint-next($name, $breakpoints: variables.$grid-breakpoints, $breakpoint-names: map.keys($breakpoints)) {
   $n: list.index($breakpoint-names, $name);
 
-  @return if($n < list.length($breakpoint-names), list.nth($breakpoint-names, $n + 1), null);
+  @return if(sass($n < list.length($breakpoint-names)): list.nth($breakpoint-names, $n + 1); else: null);
 }
 
 @function breakpoint-min($name, $breakpoints: variables.$grid-breakpoints) {
   $min: map.get($breakpoints, $name);
 
-  @return if($min != 0, $min, null);
+  @return if(sass($min != 0): $min; else: null);
 }
 
 @function breakpoint-max($name, $breakpoints: variables.$grid-breakpoints) {
   $next: breakpoint-next($name, $breakpoints);
 
-  @return if($next, breakpoint-min($next, $breakpoints) - 1px, null);
+  @return if(sass($next): breakpoint-min($next, $breakpoints) - 1px; else: null);
 }
