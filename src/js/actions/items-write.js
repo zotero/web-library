@@ -387,7 +387,6 @@ const queueUpdateItem = (itemKey, patch, libraryKey, { resolve, reject, id }) =>
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
-			const { libraryKey } = state.current;
 			const config = state.config;
 			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
 			const itemVersion = item.version;
