@@ -517,19 +517,28 @@ const getPrevSibling = (elem, selector) => {
 	}
 };
 
+let emojiRegex;
+
+try {
+	// Either match RGI_Emoji (which includes country flags) or any character followed by the Variation Selector-16
+	// Requires "v" flag which is only available in modern browsers
+	emojiRegex = new RegExp(String.raw`(?:(?:\p{RGI_Emoji}|\p{Extended_Pictographic})(?!\uFE0F)|.\uFE0F)+`, "gv");
+} catch {
+	try {
+		emojiRegex = new RegExp(String.raw`(?:\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
+		console.warn("Using legacy emoji regex. Some emoji may be missing in the items table.");
+	} catch {
+		emojiRegex = null;
+		console.warn("Emoji extraction disabled.");
+	}
+}
 
 // https://github.com/zotero/zotero/blob/d1d4065dae77786cf3312d88f86502182a63c3ee/chrome/content/zotero/xpcom/data/tags.js#L844
 const extractEmoji = str => {
-	try {
-		// Either match RGI_Emoji (which includes country flags) or any character followed by the Variation Selector-16
-		// Requires "v" flag which is only available in modern browsers
-		let re = new RegExp(String.raw`(?:(?:\p{RGI_Emoji}|\p{Extended_Pictographic})(?!\uFE0F)|.\uFE0F)+`, "gv");
-		return str.match(re)?.[0] ?? '';
-	} catch {
-		// Fallback for older browsers; will not extract country flags
-		let re = new RegExp(String.raw`(?:\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
-		return str.match(re)?.[0] ?? '';
+	if(!emojiRegex) {
+		return '';
 	}
+	return str.match(emojiRegex)?.[0] ?? '';
 };
 
 const containsEmoji = str => {
