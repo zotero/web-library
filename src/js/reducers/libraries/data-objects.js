@@ -265,7 +265,7 @@ const dataObjects = (state = {}, action, { bestAttachmentReverseLookup, meta, ta
 		case RECEIVE_DELETE_TAGS:
 			return mapObject(state, (itemKey, item) => [
 				itemKey,
-				{
+				item[Symbol.for('type')] === 'collection' ? item : {
 					...item,
 					version: item.tags.some(t => action.tags.includes(t.tag)) ? action.response.getVersion() : item.version, //deleted a tag on this item, update version of the item
 					tags: item.tags.filter(t => !action.tags.includes(t.tag))

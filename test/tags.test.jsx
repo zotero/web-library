@@ -268,6 +268,43 @@ describe('Tags', () => {
 		expect(await screen.findByRole('menuitem', { name: 'Assign Color' })).toBeDisabled();
 	});
 
+	test('Delete a tag from the dot menu', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasBeenDeleted = false;
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/tags', () => {
+				return HttpResponse.json(testUserManageTags, {
+					headers: { 'Total-Results': '8' }
+				});
+			}),
+			http.delete('https://api.zotero.org/users/1/tags', ({request}) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('tag')).toEqual('pathfinding');
+				expect(request.headers.get('If-Unmodified-Since-Version')).toEqual('394');
+				hasBeenDeleted = true;
+				return new HttpResponse(null, {
+					status: 204,
+					headers: { 'Last-Modified-Version': '395' }
+				});
+			})
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Tag Selector Options' }));
+		const manageTagsOpt = await screen.findByRole('menuitem', { name: 'Manage Tags' });
+		await user.click(manageTagsOpt);
+		const manageTagsModal = await screen.findByRole('dialog', { name: 'Manage Tags' });
+		const list = await findByRole(manageTagsModal, 'list', { name: 'Tags' });
+		const tagItem = await findByRole(list, 'listitem', { name: 'pathfinding' });
+		const moreButton = getByRole(tagItem, 'button', { name: 'More' });
+		await user.click(moreButton);
+		const deleteTagOpt = await screen.findByRole('menuitem', { name: 'Delete Tag' });
+		await user.click(deleteTagOpt);
+		expect(hasBeenDeleted).toBe(true);
+	});
+
 	test('Duplicate tags are omitted in the tag manager', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();
