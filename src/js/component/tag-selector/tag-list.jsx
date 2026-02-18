@@ -17,35 +17,33 @@ import ReactWindowList from '../common/react-window-list';
 
 const PAGESIZE = 100;
 
-const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen }) => {
+const TagDotMenu = memo(({ onDotMenuToggle, onToggleTagManager, hasColor, isDotMenuOpen, tagName }) => {
 	const dispatch = useDispatch()
 	const tagColorsLength = useSelector(state => state.libraries?.[state.current.libraryKey]?.tagColors?.value?.length ?? 0);
 	const currentlySelectedTags = useSelector(state => state.current.tags);
 
-	const handleRemoveColorClick = useCallback((ev) => {
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
-		dispatch(removeTagColor(tag));
-	}, [dispatch]);
+	const handleRemoveColorClick = useCallback(() => {
+		dispatch(removeTagColor(tagName));
+	}, [dispatch, tagName]);
 
-	const handleAssignColorClick = useCallback(ev => {
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
-		onToggleTagManager(tag);
-	}, [onToggleTagManager]);
+	const handleAssignColorClick = useCallback(() => {
+		onToggleTagManager(tagName);
+	}, [onToggleTagManager, tagName]);
 
-	const handleDeleteTagClick = useCallback(ev => {
-		const tag = ev.currentTarget.closest('[data-tag]').dataset.tag;
-		dispatch(removeColorAndDeleteTag(tag));
-		if(tag && currentlySelectedTags.includes(tag)) {
-			dispatch(navigate({ tags: currentlySelectedTags.filter(t => t !== tag) }));
+	const handleDeleteTagClick = useCallback(() => {
+		dispatch(removeColorAndDeleteTag(tagName));
+		if(tagName && currentlySelectedTags.includes(tagName)) {
+			dispatch(navigate({ tags: currentlySelectedTags.filter(t => t !== tagName) }));
 		}
-	}, [currentlySelectedTags, dispatch]);
-
+	}, [currentlySelectedTags, dispatch, tagName]);
 
 	return (
 		<Dropdown
 			isOpen={ isDotMenuOpen }
 			onToggle={ onDotMenuToggle }
 			placement="bottom-end"
+			portal={ true }
+			strategy="fixed"
 		>
 			<DropdownToggle
 				tabIndex={ -3 }
@@ -85,6 +83,7 @@ TagDotMenu.propTypes = {
 	onToggleTagManager: PropTypes.func,
 	hasColor: PropTypes.bool,
 	isDotMenuOpen: PropTypes.bool,
+	tagName: PropTypes.string,
 };
 
 TagDotMenu.displayName = 'TagDotMenu';
@@ -155,6 +154,7 @@ const TagListItem = memo(props => {
 				{ tag && tag.tag }
 			</div>
 			{ isManager && tag && <TagDotMenu
+				tagName={ tag.tag }
 				hasColor={ !!tag.color }
 				isDotMenuOpen={ tag.tag === dotMenuFor }
 				onDotMenuToggle={ onDotMenuToggle }
@@ -257,14 +257,14 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 
 	const handleLoadMore = useCallback((_startIndex, stopIndex) => {
 		// @NOTE: Pagination only happens if filtering disabled
-		// @NOTE: Fetches entire pages of results, paralleled as needed, rather than what
+		// @NOTE: Fetches entire pages of results, parallelled as needed, rather than what
 		// 		  InfiniteLoader requested.
-		// @NOTE: Adding duplicatesCount here is a band-aid rather than a proper fix. Tags, as
+		// @NOTE: Adding duplicatesCount here is a Band-Aid rather than a proper fix. Tags, as
 		// 		  returned by api, contain duplicates. These are counted and removed from the
-		// 		  displayed list, which creates disrepentancy between list index and remote index so
-		// 		  when infinite scroll asks for rows n through m, we actaully fetch n through m +
-		// 		  duplicates count to be on the safe side. This works for as long as m + duplicates
-		// 		  is less than maximum page allowed by the API.
+		// 		  displayed list, which creates a discrepancy between list index and remote index, so
+		// 		  when infinite scroll asks for rows n through m, we actually fetch n through m +
+		// 		  duplicates count to be on the safe side. This works for as long as `m + duplicates`
+		// 		  is less than the maximum page allowed by the API.
 
 		// prepare batches from pointer to stopIndex + duplicatesCount
 		let maxWanted = stopIndex + duplicatesCount;

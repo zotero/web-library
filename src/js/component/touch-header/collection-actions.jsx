@@ -35,7 +35,6 @@ const CollectionActions = props => {
 		<Dropdown
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
-			className="new-item-selector"
 			placement="bottom-end"
 		>
 			<DropdownToggle

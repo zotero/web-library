@@ -1,11 +1,10 @@
 @use "../abstracts/mixins/breakpoints";
 @use "../abstracts/mixins/dropdown";
 @use "../abstracts/mixins/selectors";
+@use "../abstracts/variables";
 @use "../themes/common";
 
 .dropdown {
-	position: relative;
-
 	.dropdown-toggle {
 		&.btn-icon {
 			vertical-align: top;
@@ -29,27 +28,34 @@
 			}
 		}
 	}
+}
 
-	.dropdown-menu {
-		@include dropdown.dropdown-menu;
+.dropdown-menu {
+	@include dropdown.dropdown-menu;
 
-		@include selectors.state(".dropdown.show") {
-			display: block;
+	&.show {
+		display: block;
+	}
+
+	&.portal {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: variables.$z-index-modal-dropdown;
+	}
+}
+
+.dropdown-item {
+	@include dropdown.dropdown-item;
+
+	.keyboard & {
+		&:focus {
+			color: var(--primary-on-accent);
+			background-color: var(--color-accent);
 		}
 	}
+}
 
-	.dropdown-item {
-		@include dropdown.dropdown-item;
-
-		.keyboard & {
-			&:focus {
-				color: var(--primary-on-accent);
-				background-color: var(--color-accent);
-			}
-		}
-	}
-
-	.dropdown-divider {
-		@include dropdown.dropdown-divider;
-	}
+.dropdown-divider {
+	@include dropdown.dropdown-divider;
 }

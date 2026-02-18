@@ -21,7 +21,11 @@ const TouchSideFooter = memo(() => {
 		<footer className="touch-footer darker">
 			<Toolbar>
 				<div className="toolbar-left">
-					<Button className="btn-icon" onClick={ handleClick }>
+					<Button
+						className="btn-icon"
+						onClick={ handleClick }
+						title="Open Tag Selector"
+					>
 						<Icon
 							type="24/tag"
 							symbol={ selectedTagNames.length === 0 ? 'tag' : 'tag-block' }

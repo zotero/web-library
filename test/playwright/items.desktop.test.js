@@ -2,6 +2,7 @@ import { getServer, closeServer, makeCustomHandler } from '../utils/fixed-state-
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { wait, waitForLoad } from '../utils/common.js';
 import itemsInCollectionDogs from '../fixtures/response/test-user-get-items-in-collection-dogs.json' assert { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 
 test.describe('Desktop Snapshots', () => {
 	let server;
@@ -77,6 +78,31 @@ test.describe('Desktop Snapshots', () => {
 		await page.waitForFunction(() => document.querySelector('.bibliography-modal').classList.contains('ReactModal__Content--after-open'));
 		await wait(500); // avoid flaky screenshot with missing icons
 		await expect(page).toHaveScreenshot(`desktop-item-bibliography.png`);
+		await page.close();
+	});
+
+	test('should render tag manager dot menu dropdown', async ({ page, serverPort }) => {
+		const tagsHandler = makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: 8 });
+		server = await getServer('desktop-test-user-item-view', serverPort, tagsHandler);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
+		await waitForLoad(page);
+
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.manage-tags').classList.contains('ReactModal__Content--after-open'));
+
+		const list = modal.getByRole('list', { name: 'Tags' });
+		await expect(list.getByRole('listitem').first()).toBeVisible();
+
+		const tagItem = list.getByRole('listitem', { name: 'to read' });
+		await tagItem.getByRole('button', { name: 'More' }).click();
+
+		await expect(page.getByRole('menuitem', { name: 'Assign Color' })).toBeVisible();
+		await wait(500);
+		await expect(page).toHaveScreenshot('desktop-tag-manager-dot-menu.png');
 		await page.close();
 	});
 

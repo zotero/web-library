@@ -32,7 +32,7 @@ const TouchTagselectorActions = memo(() => {
 	}, [dispatch]);
 
 	return (
-        <Dropdown
+		<Dropdown
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
 			className="new-item-selector"
@@ -40,6 +40,7 @@ const TouchTagselectorActions = memo(() => {
 			<DropdownToggle
 				color={ null }
 				className="btn-link btn-icon dropdown-toggle"
+				title="Tag Selector Options"
 			>
 				<Icon
 					type="24/options"

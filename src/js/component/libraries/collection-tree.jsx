@@ -443,10 +443,11 @@ const DotMenu = memo(props => {
 	}, [collection.key, dispatch, parentLibraryKey]);
 
 	return (
-        <Dropdown
+		<Dropdown
 			isOpen={ isOpen }
 			onToggle={ handleToggle }
 			placement="bottom-end"
+			strategy="fixed"
 		>
 			<DropdownToggle
 				tabIndex={ -3 }

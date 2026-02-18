@@ -2,6 +2,7 @@ import { getServer, closeServer, makeCustomHandler } from '../utils/fixed-state-
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { waitForLoad, wait, isSingleColumn } from '../utils/common.js';
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 
 test.describe('Mobile Snapshots', () => {
 	let server;
@@ -56,6 +57,37 @@ test.describe('Mobile Snapshots', () => {
 		await expect(page.getByRole(role, { name: 'Delete Permanently' })).toBeVisible();
 		await wait(500); // avoid flaky screenshot with missing icons
 		await expect(page).toHaveScreenshot(`mobile-trash-collection-details.png`);
+		await page.close();
+	});
+
+	test('should render tag manager dot menu dropdown', async ({ page, serverPort }) => {
+		const tagsHandler = makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: 8 });
+		server = await getServer('mobile-test-user-item-list-view', serverPort, tagsHandler);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/item-list`);
+		await waitForLoad(page);
+
+		if (isSingleColumn(test.info())) {
+			await page.getByRole('button', { name: 'Toggle tag selector' }).click();
+		} else {
+			await page.getByRole('button', { name: 'Open Tag Selector' }).click();
+		}
+
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.manage-tags').classList.contains('ReactModal__Content--after-open'));
+
+		const list = modal.getByRole('list', { name: 'Tags' });
+		await expect(list.getByRole('listitem').first()).toBeVisible();
+
+		const tagItem = list.getByRole('listitem', { name: 'to read' });
+		await tagItem.getByRole('button', { name: 'More' }).click();
+
+		await expect(page.getByRole('menuitem', { name: 'Assign Color' })).toBeVisible();
+		await wait(500);
+		await expect(page).toHaveScreenshot('mobile-tag-manager-dot-menu.png');
 		await page.close();
 	});
 

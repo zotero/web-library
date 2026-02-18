@@ -14,7 +14,6 @@ var initialPadding;
 const Modal = forwardRef((props, ref) => {
 	const { children, className, isBusy, isOpen, onAfterOpen, overlayClassName, contentRef: propContentRef, ...rest } = props;
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const containterClassName = useSelector(state => state.config.containterClassName);
 	const wasOpen = usePrevious(isOpen);
 	const contentRef = useRef(null);
 
@@ -61,14 +60,14 @@ const Modal = forwardRef((props, ref) => {
 			<div className={cx('ReactModal__Overlay modal-backdrop loading') }>
 				<Spinner className="large" />
 			</div>
-		</div>, document.querySelector(`.${containterClassName}`)
+		</div>, document.body
 	) : (
 		<ReactModal
 			role="dialog"
 			onAfterOpen={ handleModalAfterOpen }
 			contentRef= { setContentRef }
 			appElement= { document.querySelector('.library-container') }
-			parentSelector={ () => document.querySelector(`.${containterClassName}`) }
+			parentSelector={ () => document.body }
 			className={cx('modal modal-content', className) }
 			overlayClassName={cx('modal-backdrop', overlayClassName) }
 			isOpen={ isOpen }

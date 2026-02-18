@@ -108,7 +108,6 @@ const MoreActionsDropdownDesktop = memo(props => {
 
 	return (
 		<Dropdown
-			className="new-item-selector"
 			isOpen={isOpen}
 			onToggle={handleToggleDropdown}
 		>
