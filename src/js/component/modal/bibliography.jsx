@@ -310,6 +310,7 @@ const BibliographyModal = () => {
 							isOpen={isDropdownOpen}
 							onToggle={handleDropdownToggle}
 							className={cx('btn-group', { 'success': isClipboardCopied })}
+							placement="bottom-end"
 						>
 							<Button
 								type="button"

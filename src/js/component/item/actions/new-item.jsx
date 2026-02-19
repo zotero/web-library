@@ -75,11 +75,12 @@ const NewItemSelector = props => {
 	}, [onFocusNext, onFocusPrev]);
 
 	return (
-        <Dropdown
+		<Dropdown
 			className="new-item-selector"
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
 			maxHeight={ 300 }
+			strategy="fixed"
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"

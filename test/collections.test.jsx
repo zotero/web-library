@@ -79,7 +79,7 @@ describe('Test User: Collections', () => {
 
 		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
 		await userEvent.click(getByRole(dogsTreeItem, 'button', { name: 'More' }));
-		const renameOpt = await findByRole(dogsTreeItem, 'menuitem', { name: 'Rename' });
+		const renameOpt = await screen.findByRole('menuitem', { name: 'Rename' });
 
 		// there is a 100ms delay between clicking "Rename" and actually opening the rename box
 		await user.click(renameOpt, 'Zotero');
@@ -137,7 +137,7 @@ describe('Test User: Collections', () => {
 
 		const collectionTreeItem = screen.getByRole('treeitem', { name: 'Algorithms' });
 		await user.click(getByRole(collectionTreeItem, 'button', { name: 'More' }));
-		const deleteOpt = await findByRole(collectionTreeItem, 'menuitem', { name: 'Delete' });
+		const deleteOpt = await screen.findByRole('menuitem', { name: 'Delete' });
 
 		let hasBeenTrashed = false;
 		server.use(

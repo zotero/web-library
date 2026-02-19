@@ -135,6 +135,7 @@ const Note = memo(props => {
 					isOpen={ isDropdownOpen }
 					onToggle={ handleToggleDropdown }
 					placement="bottom-end"
+					strategy="fixed"
 				>
 					<DropdownToggle
 						tabIndex={ -3 }

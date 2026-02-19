@@ -80,6 +80,7 @@ const ColumnSelector = props => {
 			className="column-selector"
 			placement="bottom-end"
 			maxHeight={ true }
+			strategy="fixed"
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"

@@ -33,6 +33,7 @@ const CollectionTrashOptions = ({ isSingleColumn, shouldHideNav, }) => {
 						onToggle={handleToggleDropdown}
 						className="collection-trash-options"
 						placement="bottom-end"
+						strategy="fixed"
 					>
 						<DropdownToggle
 							title="Collection Trash Options"

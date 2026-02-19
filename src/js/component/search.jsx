@@ -11,7 +11,7 @@ const modes = {
 };
 
 const SearchDropdown = memo(({ currentMode, modes, onKeyDown, onSelectMode }) => (
-	<UncontrolledDropdown>
+	<UncontrolledDropdown placement="bottom-start" strategy="fixed">
 		<DropdownToggle
 			color={ null }
 			className="btn-icon dropdown-toggle"

@@ -58,6 +58,7 @@ const ExportActions = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
 			placement="bottom-start"
+			strategy="fixed"
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"

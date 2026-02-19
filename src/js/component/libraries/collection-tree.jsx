@@ -382,13 +382,12 @@ const DotMenu = memo(props => {
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
-		const upNode = collection.parentCollection ?
-			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${collection.parentCollection}"`) :
-			null;
-		const rootNode = ev.currentTarget.closest('.level-root').querySelector(`[data-key=${parentLibraryKey}]`);
+		const selector = collection.parentCollection ?
+			`[data-collection-key="${collection.parentCollection}"]` :
+			`[data-key="${parentLibraryKey}"]`;
 
 		setTimeout(() => {
-			focusBySelector(upNode ?? rootNode);
+			focusBySelector(selector);
 		}, 0);
 
 		dispatch(updateCollectionsTrash([collection.key], parentLibraryKey, 1));
@@ -448,6 +447,7 @@ const DotMenu = memo(props => {
 			onToggle={ handleToggle }
 			placement="bottom-end"
 			strategy="fixed"
+			portal={ true }
 		>
 			<DropdownToggle
 				tabIndex={ -3 }

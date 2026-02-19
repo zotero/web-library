@@ -139,6 +139,8 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 						isOpen={ isDropdownOpen }
 						onToggle={ handleToggleDropdown }
 						className="btn-group"
+						placement="bottom-end"
+						portal={ true }
 					>
 						<a
 							className="btn btn-default"

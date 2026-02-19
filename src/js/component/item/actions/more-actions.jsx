@@ -110,6 +110,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 		<Dropdown
 			isOpen={isOpen}
 			onToggle={handleToggleDropdown}
+			strategy="fixed"
 		>
 			<DropdownToggle
 				className="btn-icon dropdown-toggle"
@@ -160,6 +161,7 @@ const MoreActionsDropdownTouch = memo(() => {
 		<Dropdown
 			isOpen={isOpen}
 			onToggle={handleDropdownToggle}
+			strategy="fixed"
 		>
 			<DropdownToggle
 				disabled={!hasAnyAction}

@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { getAllByRole, getByRole, findByRole, screen, waitFor, queryByRole } from '@testing-library/react';
+import { getAllByRole, getByRole, screen, waitFor, queryByRole } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -88,7 +88,7 @@ describe('Trash', () => {
 
 		const collectionTreeItem = screen.getByRole('treeitem', { name: 'Algorithms' });
 		await user.click(getByRole(collectionTreeItem, 'button', { name: 'More' }));
-		const deleteOpt = await findByRole(collectionTreeItem, 'menuitem', { name: 'Delete' });
+		const deleteOpt = await screen.findByRole('menuitem', { name: 'Delete' });
 
 		let hasBeenTrashed = false;
 		await user.click(deleteOpt);
@@ -171,7 +171,7 @@ describe('Trash', () => {
 
 		const collectionTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
 		await user.click(getByRole(collectionTreeItem, 'button', { name: 'More' }));
-		const deleteOpt = await findByRole(collectionTreeItem, 'menuitem', { name: 'Delete' });
+		const deleteOpt = await screen.findByRole('menuitem', { name: 'Delete' });
 
 		let hasBeenTrashed = false;
 		await user.click(deleteOpt);

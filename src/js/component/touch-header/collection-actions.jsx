@@ -36,6 +36,7 @@ const CollectionActions = props => {
 			isOpen={ isOpen }
 			onToggle={ handleToggleDropdown }
 			placement="bottom-end"
+			strategy="fixed"
 		>
 			<DropdownToggle
 				className="btn-link btn-icon dropdown-toggle"

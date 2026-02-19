@@ -93,7 +93,7 @@ const TagSelector = () => {
 					placeholder="Filter Tags"
 					aria-label="Filter Tags"
 				/>
-				<UncontrolledDropdown placement="top-end">
+				<UncontrolledDropdown placement="top-end" strategy="fixed">
 						<DropdownToggle
 							className="btn-icon dropdown-toggle tag-selector-actions"
 							onKeyDown={ handleKeyDown }

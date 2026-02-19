@@ -59,6 +59,7 @@ const ItemActionsTouch = memo(() => {
 				isOpen={isOpen}
 				onToggle={handleDropdownToggle}
 				disabled={isActionsDisabled}
+				strategy="fixed"
 			>
 				<DropdownToggle
 					disabled={isActionsDisabled}
