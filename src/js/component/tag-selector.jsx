@@ -1,8 +1,8 @@
 import { useDebounce } from "use-debounce";
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import cx from 'classnames';
-import { Fragment, useCallback, useRef, memo } from 'react';
-import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
+import { Fragment, useCallback, useRef, useState, memo } from 'react';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useFocusManager  } from 'web-common/hooks';
 
 import Input from './form/input';
@@ -55,12 +55,22 @@ const TagSelector = () => {
 		dispatch(toggleHideAutomaticTags());
 	}, [dispatch])
 
-	const handleManageTagsClick = useCallback(() => {
-		dispatch(toggleModal(MANAGE_TAGS, true))
+	const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+
+	const handleOptionsToggle = useCallback(() => {
+		setIsOptionsOpen(isOpen => !isOpen);
+	}, []);
+
+	const handleManageTagsClick = useCallback(ev => {
+		// Hide dropdown immediately to prevent focus theft from modal input
+		// (instead of relying on DropdownItem's default handler)
+		ev.preventDefault();
+		setIsOptionsOpen(false);
+		dispatch(toggleModal(MANAGE_TAGS, true));
 	}, [dispatch]);
 
 	return (
-        <nav
+		<nav
 			aria-label="tag selector"
 			id={ id.current }
 			className={ cx('tag-selector', { 'collapsed': !isTagSelectorOpen }) }
@@ -93,7 +103,12 @@ const TagSelector = () => {
 					placeholder="Filter Tags"
 					aria-label="Filter Tags"
 				/>
-				<UncontrolledDropdown placement="top-end" strategy="fixed">
+				<Dropdown
+					isOpen={ isOptionsOpen }
+					onToggle={ handleOptionsToggle }
+					placement="top-end"
+					strategy="fixed"
+				>
 						<DropdownToggle
 							className="btn-icon dropdown-toggle tag-selector-actions"
 							onKeyDown={ handleKeyDown }
@@ -117,16 +132,16 @@ const TagSelector = () => {
 							{ !isLibraryReadOnly && (
 								<Fragment>
 									<DropdownItem divider />
-									<DropdownItem  onClick={ handleManageTagsClick } >
+									<DropdownItem onClick={ handleManageTagsClick } >
 										Manage Tags
 									</DropdownItem>
 								</Fragment>
 							) }
 						</DropdownMenu>
-				</UncontrolledDropdown>
+				</Dropdown>
 			</div>
 		</nav>
-    );
+	);
 };
 
 export default memo(TagSelector);

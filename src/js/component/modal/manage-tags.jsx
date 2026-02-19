@@ -21,8 +21,10 @@ const ManageTagsModal = () => {
 	const wasOpen = usePrevious(isOpen);
 	const inputRef = useRef(null);
 	const modalRef = useRef(null);
+	const tagListRef = useRef(null);
 	const tagColorManagerRef = useRef(null);
 	const fadeOverlayRef = useRef(null);
+	const tagBeingClosedRef = useRef(null);
 	const [tagBeingManaged, setTagBeingManaged] = useState(null);
 	const prevTagBeingManaged = usePrevious(tagBeingManaged);
 
@@ -48,6 +50,12 @@ const ManageTagsModal = () => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch, resetTagSearch]);
 
+	const handleAfterOpen = useCallback(() => {
+		requestAnimationFrame(() => {
+			inputRef.current.focus();
+		});
+	}, []);
+
 	const handleToggleTagManager = useCallback((tag) => {
 		setTagBeingManaged(tag);
 	}, []);
@@ -62,17 +70,29 @@ const ManageTagsModal = () => {
 			dispatch(filterTags(''));
 		} else if(!isOpen && !wasOpen) {
 			resetTagSearch();
-
 		}
 	}, [isOpen, wasOpen, dispatch, resetTagSearch, tagsSearchString]);
 
 	useEffect(() => {
 		if(tagBeingManaged === null && prevTagBeingManaged) {
-			if(modalRef.current) {
-				modalRef.current.focus();
-			}
+			tagBeingClosedRef.current = prevTagBeingManaged;
 		}
 	}, [prevTagBeingManaged, tagBeingManaged]);
+
+	const handleTagColorManagerExited = useCallback(() => {
+		if(tagBeingClosedRef.current) {
+			const tagName = tagBeingClosedRef.current;
+			tagBeingClosedRef.current = null;
+			// Defer focus to the next frame so React can unmount the TagColorManager first,
+			// otherwise its blur handler steals focus back
+			requestAnimationFrame(() => {
+				const btn = document.querySelector(`.manage-tags [data-tag="${CSS.escape(tagName)}"] [title="More"]`);
+				if(btn) {
+					btn.focus();
+				}
+			});
+		}
+	}, []);
 
 	return (
 		<Modal
@@ -80,6 +100,7 @@ const ManageTagsModal = () => {
 			contentLabel="Manage Tags"
 			isOpen={ isOpen }
 			onRequestClose={ handleCancel }
+			onAfterOpen={ handleAfterOpen }
 			overlayClassName="modal-full-height"
 			ref={ modalRef }
 		>
@@ -100,6 +121,7 @@ const ManageTagsModal = () => {
 				in={ tagBeingManaged !== null }
 				timeout={ 500 }
 				nodeRef={ tagColorManagerRef }
+				onExited={ handleTagColorManagerExited }
 			>
 				<TagColorManager
 					ref={ tagColorManagerRef }
@@ -159,7 +181,7 @@ const ManageTagsModal = () => {
 							)}
 						</div>
 					</div>
-					{ isOpen && <TagList isManager={ true } onToggleTagManager={ handleToggleTagManager } /> }
+					{ isOpen && <TagList ref={ tagListRef } isManager={ true } onToggleTagManager={ handleToggleTagManager } /> }
 				</div>
 			</div>
 		</Modal>

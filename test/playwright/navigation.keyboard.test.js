@@ -1,5 +1,6 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, loadFixtureState, makeTextHandler} from "../utils/fixed-state-server.js";
+import {closeServer, loadFixtureState, makeCustomHandler, makeTextHandler} from "../utils/fixed-state-server.js";
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 
 
 test.describe('Navigate through the UI using keyboard', () => {
@@ -244,5 +245,59 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await page.getByRole('button', {name: 'cute'}).focus();
 		await page.keyboard.press('ArrowRight');
 		await expect(page.getByRole('button', {name: 'to read'})).toBeFocused();
+	});
+
+	test('Focus management in tag manager modal', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: testUserManageTags.length }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Open tag manager modal
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		await expect(modal).toBeVisible();
+
+		// Focus is automatically put on the first focusable element inside the modal
+		await expect(modal.getByRole('searchbox', { name: 'Filter Tags' })).toBeFocused();
+
+		// Focus is trapped within the modal
+		await page.keyboard.press('Shift+Tab');
+		await page.keyboard.press('Shift+Tab');
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Manage Tags"]');
+			return modal?.contains(document.activeElement);
+		})).toBe(true);
+	});
+
+	test('Focus returns to trigger button after closing tag color manager', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: testUserManageTags.length }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Open tag manager modal
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		await expect(modal).toBeVisible();
+
+		const tagList = modal.getByRole('list', { name: 'Tags' });
+		const tagItem = tagList.getByRole('listitem', { name: 'to read' });
+		await expect(tagItem).toBeVisible();
+
+		// Open dot menu for the tag, then open tag color manager
+		await tagItem.getByRole('button', { name: 'More' }).click();
+		await page.getByRole('menuitem', { name: 'Assign Color' }).click();
+		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
+
+		// Close the tag color manager
+		await page.getByRole('button', { name: 'Cancel' }).click();
+
+		// Focus should return to the "More" button that triggered the edit
+		await expect(tagItem.getByRole('button', { name: 'More' })).toBeFocused();
 	});
 });
