@@ -219,6 +219,25 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(page.getByRole('button', {name: 'Search Mode'})).toBeFocused();
 	});
 
+	test('Navigate through the toolbar in trash view using keyboard', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-trash-view', serverPort, page);
+
+		// Tab through: searchbox -> collection tree -> collapse tag selector -> tag selector -> filter tags -> toolbar
+		// In trash view, all toolbar buttons before "More" are disabled (no item selected), so focus lands on "More"
+		await page.keyboard.press('Tab');
+		await page.keyboard.press('Tab');
+		await page.keyboard.press('Tab');
+		await page.keyboard.press('Tab');
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('button', {name: 'More'})).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByRole('button', {name: 'Column Selector'})).toBeFocused();
+
+		await page.keyboard.press('ArrowLeft');
+		await expect(page.getByRole('button', {name: 'More'})).toBeFocused();
+	});
+
 	test('Navigate through tag selector using keyboard', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 
