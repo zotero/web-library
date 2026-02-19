@@ -83,7 +83,8 @@ test.describe('Desktop Snapshots', () => {
 
 	test('should render tag manager dot menu dropdown', async ({ page, serverPort }) => {
 		const tagsHandler = makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: 8 });
-		server = await getServer('desktop-test-user-item-view', serverPort, tagsHandler);
+		const collectionTagsHandler = makeCustomHandler('/api/users/1/collections/WTTJ2J56/items/top/tags', [], { totalResults: 0 } );
+		server = await getServer('desktop-test-user-item-view', serverPort, [tagsHandler, collectionTagsHandler]);
 		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
 		await waitForLoad(page);
 

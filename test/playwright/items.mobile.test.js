@@ -62,7 +62,8 @@ test.describe('Mobile Snapshots', () => {
 
 	test('should render tag manager dot menu dropdown', async ({ page, serverPort }) => {
 		const tagsHandler = makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: 8 });
-		server = await getServer('mobile-test-user-item-list-view', serverPort, tagsHandler);
+		const handler = makeCustomHandler('/api/users/1/collections/WTTJ2J56/items/top/tags', [], { totalResults: 0 } );
+		server = await getServer('mobile-test-user-item-list-view', serverPort, [tagsHandler, handler]);
 		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/item-list`);
 		await waitForLoad(page);
 
