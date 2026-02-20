@@ -1,4 +1,4 @@
-[*.{js,jsx}]
+[*.{js,jsx,mjs,cjs}]
 indent_style = tab
 trim_trailing_whitespace = true
 insert_final_newline = true
@@ -12,5 +12,6 @@ indent_style = tab
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.svg]
+[*.json]
 indent_style = tab
+
