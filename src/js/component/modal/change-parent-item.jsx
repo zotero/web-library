@@ -19,6 +19,7 @@ import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
 import { isEPUBAttachment, isPDFAttachment, isRegularItem, isWebAttachment } from '../../common/item.js';
 import { pluralize } from '../../common/format.js';
+import FocusTrap from '../focus-trap';
 
 const ChangeParentItemModal = () => {
 	const dispatch = useDispatch();
@@ -96,6 +97,14 @@ const ChangeParentItemModal = () => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
 
+	const handleAfterOpen = useCallback(() => {
+		// Use setTimeout to ensure focus is set after any dropdown close handler
+		// that may also use setTimeout to restore focus to its trigger button
+		setTimeout(() => {
+			searchRef.current?.focus();
+		}, 0);
+	}, []);
+
 	const handleSearchModeToggle = useCallback(() => {
 		if(isSearchMode) {
 			// cancel search and reset the navigation state to the current library and collection
@@ -145,9 +154,11 @@ const ChangeParentItemModal = () => {
 			contentLabel="Change Parent Item"
 			isBusy={isBusy}
 			isOpen={isOpen}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleCancel}
 			overlayClassName="modal-slide modal-full-height modal-centered modal-contains-picker"
 		>
+			<FocusTrap>
 			<div className="modal-header">
 				{isTouchOrSmall ? (
 					<Fragment>
@@ -273,6 +284,7 @@ const ChangeParentItemModal = () => {
 					</div>
 				</Fragment>
 			)}
+			</FocusTrap>
 		</Modal>
 	);
 }

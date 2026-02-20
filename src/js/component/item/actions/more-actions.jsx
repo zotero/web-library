@@ -33,6 +33,12 @@ const MoreActionsItems = ({ divider = false }) => {
 		}
 	}, [doi, url]);
 
+	const handleChangeParentItemDropdownClick = useCallback((ev) => {
+		// Prevent DropdownItem's default async close handler to avoid focus theft from modal
+		ev.preventDefault();
+		handleChangeParentItemModalOpen();
+	}, [handleChangeParentItemModalOpen]);
+
 	return (
 		<Fragment>
 			{isViewFile && (
@@ -67,7 +73,7 @@ const MoreActionsItems = ({ divider = false }) => {
 				</DropdownItem>
 			)}
 			{ canReparent && (
-				<DropdownItem onClick={handleChangeParentItemModalOpen}>
+				<DropdownItem onClick={handleChangeParentItemDropdownClick}>
 					Change Parent Item
 				</DropdownItem>
 			)}

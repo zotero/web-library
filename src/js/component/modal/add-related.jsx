@@ -17,6 +17,7 @@ import Modal from '../ui/modal';
 import Search from '../search';
 import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
+import FocusTrap from '../focus-trap';
 
 const AddRelatedModal = () => {
 	const dispatch = useDispatch();
@@ -123,6 +124,7 @@ const AddRelatedModal = () => {
 			onRequestClose={handleCancel}
 			overlayClassName="modal-slide modal-full-height modal-centered modal-contains-picker"
 		>
+			<FocusTrap>
 			<div className="modal-header">
 				{isTouchOrSmall ? (
 					<Fragment>
@@ -231,6 +233,7 @@ const AddRelatedModal = () => {
 					</div>
 				</Fragment>
 			)}
+			</FocusTrap>
 		</Modal>
 	);
 }

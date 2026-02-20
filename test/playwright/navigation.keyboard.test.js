@@ -289,7 +289,7 @@ test.describe('Navigate through the UI using keyboard', () => {
 		const tagItem = tagList.getByRole('listitem', { name: 'to read' });
 		await expect(tagItem).toBeVisible();
 
-		// Open dot menu for the tag, then open tag color manager
+		// Open the dot menu for the tag, then open the tag color manager
 		await tagItem.getByRole('button', { name: 'More' }).click();
 		await page.getByRole('menuitem', { name: 'Assign Color' }).click();
 		await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
@@ -299,5 +299,85 @@ test.describe('Navigate through the UI using keyboard', () => {
 
 		// Focus should return to the "More" button that triggered the edit
 		await expect(tagItem.getByRole('button', { name: 'More' })).toBeFocused();
+	});
+
+	test('Focus is trapped within Change Parent Item modal', async ({ page, serverPort }) => {
+		const handlers = [
+			makeTextHandler('/api/users/1/items/37V7V4NT/file/view/url', 'https://files.zotero.net/abcdefgh/18726.html'),
+			makeTextHandler('/api/users/1/items/K24TUDDL/file/view/url', 'https://files.zotero.net/abcdefgh/Silver%20-%202005%20-%20Cooperative%20pathfinding.pdf'),
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-attachment-in-collection-view', serverPort, page, handlers);
+
+		// Navigate to the Attachments tab and open the Change Parent Item modal via Snapshot's dropdown
+		await page.getByRole('tab', { name: 'Attachments' }).click();
+		const snapshot = page.getByRole('listitem', { name: 'Snapshot' });
+		await snapshot.getByRole('button', { name: 'Attachment Options' }).click();
+		await page.getByRole('menuitem', { name: 'Change Parent Item' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Change Parent Item' });
+		await expect(modal).toBeVisible();
+
+		// Focus should be inside the modal
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Change Parent Item"]');
+			return modal?.contains(document.activeElement);
+		})).toBe(true);
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Change Parent Item"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Change Parent Item"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is trapped within Add Related modal', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/collections/WTTJ2J56/items/top', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Navigate to the Related tab and open the Add Related modal
+		await page.getByRole('tab', { name: 'Related' }).click();
+		await page.getByRole('button', { name: 'Add Related Item' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Add Related Items' });
+		await expect(modal).toBeVisible();
+
+		// Focus should be inside the modal
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Add Related Items"]');
+			return modal?.contains(document.activeElement);
+		})).toBe(true);
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Add Related Items"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Add Related Items"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
 	});
 });

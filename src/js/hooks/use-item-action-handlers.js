@@ -103,7 +103,7 @@ const useItemActionHandlers = () => {
 		handleNewItemCreate, handleNewItemModalOpen, handleNewStandaloneNote, handlePermanentlyDelete,
 		handleRemoveFromCollection, handleRetrieveMetadata, handleSortModalOpen, handleSortOrderToggle,
 		handleTrash, handleUndelete, handleUnrecognize, handleChangeParentItemModalOpen
-    };
+	};
 }
 
 export { useItemActionHandlers }
