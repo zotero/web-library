@@ -288,7 +288,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 			setDotMenuFor(null);
 			return;
 		}
-		const tag = ev.currentTarget?.closest ? ev.currentTarget.closest('[data-tag]').dataset.tag : null;
+		const tag = ev.currentTarget?.closest?.('[data-tag]')?.dataset.tag ?? null;
 		setDotMenuFor(tag === dotMenuFor ? null : tag);
 		ev.stopPropagation();
 	}, [dotMenuFor]);
