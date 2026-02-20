@@ -9,6 +9,7 @@ import { BIBLIOGRAPHY } from '../../constants/modals';
 import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, fetchItemKeys, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
 import CitationOptions from '../citation-options';
+import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
 
@@ -46,6 +47,7 @@ const BibliographyModal = () => {
 	const wasDropdownOpen = usePrevious(isDropdownOpen);
 
 	const copyDataInclude = useRef(null);
+	const copyToClipboardRef = useRef(null);
 	const dropdownTimer = useRef(null);
 
 	const makeOutput = useCallback(async () => {
@@ -81,8 +83,8 @@ const BibliographyModal = () => {
 		}
 	}, []);
 
-	//@NOTE: handles both click and keydown explicitely because "click" is
-	//		 also handled in containing element (Dropdown)  where
+	//@NOTE: handles both click and keydown explicitly because "click" is
+	//		 also handled in containing an element (Dropdown) where
 	//		 `preventDefault` is called on this event, hence stopping
 	//		 the browser from triggering synthetic click on relevant keydowns
 	const handleCopyToClipboardInteraction = useCallback(ev => {
@@ -125,6 +127,12 @@ const BibliographyModal = () => {
 		setOutput('');
 	}, [dispatch, itemKeys, libraryKey]);
 
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => {
+			copyToClipboardRef.current?.focus();
+		}, 0);
+	}, []);
+
 	const handleBibliographyClick = useCallback(() => {
 		dispatch(toggleModal(BIBLIOGRAPHY, false, { itemKeys, libraryKey }));
 		dispatch(toggleModal('COPY_CITATION', true, { itemKeys, libraryKey }));
@@ -162,6 +170,13 @@ const BibliographyModal = () => {
 			makeOutput();
 		}
 	}, [citationStyle, isItemsReady, makeOutput, prevCitationStyle, prevStyleXml, styleXml]);
+
+	// reset output when modal opens so it shows the backdrop spinner until output is ready
+	useEffect(() => {
+		if (isOpen && !wasOpen) {
+			setOutput(null);
+		}
+	}, [isOpen, wasOpen]);
 
 	// regenerate bibliography when modal re-opens with style already fetched
 	useEffect(() => {
@@ -217,11 +232,13 @@ const BibliographyModal = () => {
 		<Modal
 			className={className}
 			contentLabel={'Bibliography'}
-			isBusy={!isItemsReady || !!collectionKey /* show only spinner if collectionKey is set, while we fetch keys and re-open modal with itemKeys set instead */ }
+			isBusy={!isItemsReady || !!collectionKey || (isOpen && output === null)}
 			isOpen={isOpen}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
+			<FocusTrap>
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
@@ -316,14 +333,16 @@ const BibliographyModal = () => {
 								type="button"
 								disabled={isUpdating}
 								className='btn btn-lg btn-secondary copy-to-clipboard'
+								title="Copy to Clipboard"
 								onClick={handleCopyToClipboardInteraction}
 								onKeyDown={handleCopyToClipboardInteraction}
+								ref={copyToClipboardRef}
 							>
 								<span className={cx('inline-feedback', { 'active': isClipboardCopied })}>
-									<span className="default-text" aria-hidden={!isClipboardCopied}>
+									<span className="default-text" aria-hidden={isClipboardCopied}>
 										Copy to Clipboard
 									</span>
-									<span className="shorter feedback" aria-hidden={isClipboardCopied}>
+									<span className="shorter feedback" aria-hidden={!isClipboardCopied}>
 										Copied!
 									</span>
 								</span>
@@ -340,10 +359,10 @@ const BibliographyModal = () => {
 									className="btn clipboard-trigger"
 								>
 									<span className={cx('inline-feedback', { 'active': isHtmlCopied })}>
-										<span className="default-text" aria-hidden={!isHtmlCopied}>
+										<span className="default-text" aria-hidden={isHtmlCopied}>
 											Copy HTML
 										</span>
-										<span className="shorter feedback" aria-hidden={isHtmlCopied}>
+										<span className="shorter feedback" aria-hidden={!isHtmlCopied}>
 											Copied!
 										</span>
 									</span>
@@ -353,6 +372,7 @@ const BibliographyModal = () => {
 					</div>
 				</div>
 			)}
+			</FocusTrap>
 		</Modal>
 	);
 }

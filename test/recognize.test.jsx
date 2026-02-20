@@ -15,6 +15,7 @@ import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import stateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view.json';
 import bitcoinStateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view-2.json';
+import recognizerResponseAttention from './fixtures/response/recognizer-response-attention.json';
 import searchByIdentifier from './fixtures/response/search-by-identifier-recognize.json';
 import responseAddByIdentifier from './fixtures/response/test-user-add-by-identifier-recognize.json';
 import bitcoinResponseAddByIdentifier from './fixtures/response/test-user-add-by-identifier-recognize-2.json';
@@ -92,19 +93,15 @@ describe('Metadata Retrieval', () => {
 		let version = state.libraries.u1.sync.version;
 
 		server.use(
-			http.post('https://recognizer.zotero.org/recognize', async ({ request }) => {
+			http.post('https://localhost/recognize/recognize', async ({ request }) => {
 				const inputData = await request.json();
 				expect(inputData.fileName).toBe('attention-is-all-you-need.pdf');
 				expect(inputData.totalPages).toBe(15);
 				hasPostedToRecognizeService = true;
 				await delay(100);
-				return HttpResponse.json({
-					"type": "journal-article",
-					"authors": [],
-					"arxiv": "1706.03762",
-				});
+				return HttpResponse.json(recognizerResponseAttention);
 			}),
-			http.post('https://translate-server.zotero.org/Prod/search', async ({ request }) => {
+			http.post('https://localhost/translate/search', async ({ request }) => {
 				const identifier = await request.text();
 				expect(identifier).toMatch(/arxiv:\s+1706.03762/i);
 				hasBeenSearched = true;
@@ -255,7 +252,7 @@ describe('Metadata Retrieval', () => {
 		let version = state.libraries.u1.sync.version;
 
 		server.use(
-			http.post('https://recognizer.zotero.org/recognize', async ({ request }) => {
+			http.post('https://localhost/recognize/recognize', async ({ request }) => {
 				const inputData = await request.json();
 				expect(inputData.fileName).toBe('bitcoin.pdf');
 				expect(inputData.totalPages).toBe(9);

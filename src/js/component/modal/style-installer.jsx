@@ -1,11 +1,12 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { Fragment, useCallback, useEffect, useState, memo } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 import { omit } from 'web-common/utils';
 
+import FocusTrap from '../focus-trap';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import SearchWorker from 'web-worker:../../style-search.worker.js';
@@ -116,6 +117,7 @@ const StyleInstallerModal = () => {
 	const isOpen = useSelector(state => state.modal.id === STYLE_INSTALLER);
 	const fromData = useSelector(state => state.modal.from);
 
+	const searchInputRef = useRef(null);
 	const [isWorkerReady, setIsWorkerReady] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
 	const [hasResults, setHasResults] = useState(false);
@@ -160,6 +162,12 @@ const StyleInstallerModal = () => {
 			setSelectedIndex(null);
 		}, 300);
 	}, [dispatch, fromData]);
+
+	const handleAfterOpen = useCallback(() => {
+		requestAnimationFrame(() => {
+			searchInputRef.current?.focus();
+		});
+	}, []);
 
 	const handleFilterInputChange = useCallback(newValue => {
 		setFilterInputValue(newValue);
@@ -211,8 +219,10 @@ const StyleInstallerModal = () => {
 			contentLabel="Citation Style Installer"
 			isBusy={!isReady}
 			isOpen={isOpen}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleClose}
 		>
+			<FocusTrap>
 			<div className="modal-header">
 				{
 					isTouchOrSmall ? (
@@ -248,14 +258,15 @@ const StyleInstallerModal = () => {
 					)
 				}
 			</div>
-			<div className="modal-body" tabIndex={0}>
+			<div className="modal-body">
 				<div className="style-search">
 					<Input
-						autoFocus
+						aria-label="Search Citation Styles"
 						className="form-control form-control-lg style-search-input"
 						isBusy={isSearching}
 						onChange={handleFilterInputChange}
 						placeholder="Search"
+						ref={searchInputRef}
 						tabIndex={0}
 						type="text"
 						value={filterInputValue}
@@ -286,6 +297,7 @@ const StyleInstallerModal = () => {
 					}
 				</ul>
 			</div>
+			</FocusTrap>
 		</Modal>
 	);
 }

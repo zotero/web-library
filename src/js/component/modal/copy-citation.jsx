@@ -473,6 +473,8 @@ const reducer = (state, action) => {
 			return { ...state, isUpdating: false, citationsHTML: action.citationsHTML, citationsPlain: action.citationsPlain, shouldUpdate: false };
 		case 'ERROR_UPDATE':
 			return { ...state, isUpdating: false, shouldUpdate: false };
+		case 'RESET_OUTPUT':
+			return { ...state, citationsHTML: null, citationsPlain: null };
 		case 'UPDATE_MODIFIERS':
 			return { ...state, modifiers: action.modifiers, shouldUpdate: true };
 		case 'OPEN_POPOVER':
@@ -525,6 +527,7 @@ const CopyCitationModal = () => {
 	const citationsTouchRef = useRef(null);
 	const copyDataInclude = useRef(null);
 	const copyTimeout = useRef(null);
+	const copyButtonRef = useRef(null);
 	const { receiveBlur, receiveFocus, focusNext, focusPrev } = useFocusManager(bubblesRef);
 
 	const [state, dispatchState] = useReducer(reducer, {
@@ -685,6 +688,12 @@ const CopyCitationModal = () => {
 		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
 	}, [dispatch, itemKeys, libraryKey]);
 
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => {
+			copyButtonRef.current?.focus();
+		}, 0);
+	}, []);
+
 	useEffect(() => {
 		if (!state.isItemsReady && hasMissingItems && requestsPending === 0) {
 			const missingKeys = itemKeys.filter(key => !(key in itemsLookup));
@@ -721,7 +730,14 @@ const CopyCitationModal = () => {
 		}
 	}, [citationStyle, updatePreview, prevCitationStyle, prevStyleXml, styleXml]);
 
-	// regenerate citations when modal re-opens with style already fetched
+	// reset output when modal opens so it shows the backdrop spinner until output is ready
+	useEffect(() => {
+		if (isOpen && !wasOpen) {
+			dispatchState({ type: 'RESET_OUTPUT' });
+		}
+	}, [isOpen, wasOpen]);
+
+	// regenerate citations when modal re-opens with the style already fetched
 	useEffect(() => {
 		if (isOpen && !wasOpen && styleXml) {
 			updatePreview();
@@ -771,10 +787,12 @@ const CopyCitationModal = () => {
 			className={className}
 			contentLabel={title}
 			isOpen={isOpen}
-			isBusy={!state.isItemsReady || isFetchingStyle}
+			isBusy={!state.isItemsReady || isFetchingStyle || (isOpen && state.citationsHTML === null)}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleCancel}
 			overlayClassName={cx({ 'modal-centered modal-slide': isTouchOrSmall })}
 		>
+			<FocusTrap>
 			{isTouchOrSmall && (
 				<CitationTouchEditor
 					isOpen={state.popoverOpenFor !== null}
@@ -900,12 +918,18 @@ const CopyCitationModal = () => {
 						</Button>
 					</div>
 					<div className="modal-footer-right">
-						<Button onClick={handleCopyClick} className="btn btn-lg btn-secondary" disabled={state.isUpdating}>
+						<Button
+							onClick={handleCopyClick}
+							className="btn btn-lg btn-secondary"
+							disabled={state.isUpdating}
+							ref={copyButtonRef}
+							title={title}
+						>
 							<span className={cx('inline-feedback', { 'active': state.isCopied })}>
-								<span className="default-text" aria-hidden={!state.isCopied}>
+								<span className="default-text" aria-hidden={state.isCopied}>
 									{title}
 								</span>
-								<span className="shorter feedback" aria-hidden={state.isCopied}>
+								<span className="shorter feedback" aria-hidden={!state.isCopied}>
 									Copied!
 								</span>
 							</span>
@@ -913,6 +937,7 @@ const CopyCitationModal = () => {
 					</div>
 				</div>
 			)}
+			</FocusTrap>
 		</Modal>
 	);
 };

@@ -1,0 +1,42 @@
+[
+	{
+		"key": "LM4XQKR9",
+		"version": 0,
+		"itemType": "journalArticle",
+		"creators": [
+			{ "firstName": "Helena", "lastName": "Novak", "creatorType": "author" }
+		],
+		"tags": [],
+		"title": "Obstruction classes and local Euler characteristics",
+		"publicationTitle": "Ann. of Math.",
+		"volume": "118",
+		"pages": "315-330",
+		"date": "1986"
+	},
+	{
+		"key": "QW7BNTP2",
+		"version": 0,
+		"itemType": "conferencePaper",
+		"creators": [
+			{ "firstName": "Martin", "lastName": "Krieger", "creatorType": "author" },
+			{ "firstName": "Yuki", "lastName": "Tanaka", "creatorType": "author" }
+		],
+		"tags": [],
+		"title": "Stratified Morse theory and applications",
+		"proceedingsTitle": "Geometry and Topology Proceedings, Lecture Notes in Mathematics",
+		"date": "1992"
+	},
+	{
+		"key": "RJ6PHNS8",
+		"version": 0,
+		"itemType": "thesis",
+		"creators": [
+			{ "firstName": "Ana", "lastName": "Rodrigues", "creatorType": "author" }
+		],
+		"tags": [],
+		"thesisType": "PhD Thesis",
+		"title": "Characteristic cycles and index theorems",
+		"university": "Columbia",
+		"date": "1994"
+	}
+]

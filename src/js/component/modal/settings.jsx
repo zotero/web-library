@@ -3,6 +3,7 @@ import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 
+import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import { preferenceChange, toggleModal } from '../../actions';
 import { SETTINGS } from '../../constants/modals';
@@ -30,6 +31,8 @@ const SettingsModal = () => {
 	const isOpen = useSelector(state => state.modal.id === SETTINGS);
 	const colorSchemeInputId = useRef(getUniqueId());
 	const densityInputId = useRef(getUniqueId());
+	const densitySelectRef = useRef(null);
+	const colorSchemeSelectRef = useRef(null);
 
 	const handleChange = useCallback(() => true, []);
 
@@ -45,14 +48,23 @@ const SettingsModal = () => {
 		() => dispatch(toggleModal(SETTINGS, false)),
 	[dispatch]);
 
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => {
+			const ref = isSmall ? colorSchemeSelectRef : densitySelectRef;
+			ref.current?.focus();
+		}, 0);
+	}, [isSmall]);
+
 	return (
 		<Modal
 			className="modal-touch modal-settings"
 			contentLabel="Settings"
 			isOpen={isOpen}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleClose}
 			overlayClassName="modal-centered modal-slide"
 		>
+			<FocusTrap>
 			<div className="modal-header">
 				<div className="modal-header-left">
 				</div>
@@ -84,6 +96,7 @@ const SettingsModal = () => {
 						</label>
 						<div className="col">
 							<Select
+								ref={densitySelectRef}
 								isDisabled={isSmall}
 								aria-labelledby={isTouchOrSmall ? null : `${densityInputId.current}-label` }
 								id={densityInputId.current}
@@ -106,6 +119,7 @@ const SettingsModal = () => {
 						</label>
 						<div className="col">
 							<Select
+								ref={colorSchemeSelectRef}
 								aria-labelledby={isTouchOrSmall ? null : `${colorSchemeInputId.current}-label`}
 								id={colorSchemeInputId.current}
 								className="form-control form-control-sm"
@@ -119,6 +133,7 @@ const SettingsModal = () => {
 					</div>
 				</div>
 			</div>
+			</FocusTrap>
 		</Modal>
     );
 }

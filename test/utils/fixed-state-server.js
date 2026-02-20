@@ -24,9 +24,16 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 		await fs.readFile(join(ROOT, 'test', 'fixtures', 'state', `${stateRawOrName}.json`), 'utf-8') :
 		stateRawOrName;
 
-	const statePatched = getPatchedState(JSON.parse(stateRaw), 'config.apiConfig', { apiAuthorityPart: `localhost:${port}`, apiPath: 'api/', apiScheme: 'http' });
+	let statePatched = getPatchedState(JSON.parse(stateRaw), 'config.apiConfig', {
+		apiAuthorityPart: `localhost:${port}`, apiPath: 'api/', apiScheme: 'http'
+	});
+	statePatched = getPatchedState(statePatched, 'config', {
+		translateUrl: `http://localhost:${port}/_translate`,
+		recognizerUrl: `http://localhost:${port}/_recognize`,
+		stylesSourceUrl: `http://localhost:${port}/_styles`
+	});
 
-	const serve = serveStatic(join(ROOT, 'build'), { 'index': false });
+	const serve = serveStatic(join(ROOT, 'build'), {'index': false});
 	const handler = (req, resp) => {
 		const fallback = () => {
 			resp.setHeader('Content-Type', 'text/html');
@@ -45,12 +52,12 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 				root.render(createElement(MainWithState, { state }, null))
 			</script></body></html>`);
 		};
-		for(let customHandler of customHandlers) {
+		for (let customHandler of customHandlers) {
 			if (customHandler(req, resp)) {
 				return;
 			}
 		}
-		if(req.url.startsWith('/api')) {
+		if (req.url.startsWith('/api')) {
 			console.warn(`Potentially unhandled API request: ${req.url}`);
 		}
 		serve(req, resp, fallback);
@@ -74,12 +81,12 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 	return server;
 }
 
-export async function loadFixtureState(stateName, serverPort, page, ...rest){
-	if(typeof stateName !== 'string') {
+export async function loadFixtureState(stateName, serverPort, page, ...rest) {
+	if (typeof stateName !== 'string') {
 		throw new Error('loadFixtureState expects a string state name');
 	}
 	const path = fixturePathLookup.get(stateName);
-	if(!path) {
+	if (!path) {
 		throw new Error(`No fixture found for state ${stateName}`);
 	}
 	const server = await getServer(stateName, serverPort, ...rest);
@@ -115,7 +122,7 @@ function setCommonHeaders(resp) {
 	resp.setHeader('Access-Control-Expose-Headers', '*');
 }
 
-export function makeCustomHandler(url, jsonResponse, { totalResults = null, version = 10^6 } = {}) {
+export function makeCustomHandler(url, jsonResponse, {totalResults = null, version = 10 ^ 6} = {}) {
 	return (req, resp) => {
 		if (req.url.startsWith(url)) {
 			setCommonHeaders(resp);

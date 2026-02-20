@@ -62,7 +62,7 @@ describe('Create Parent Item', () => {
 		let version = state.libraries.u1.sync.version;
 
 		server.use(
-			http.post('https://translate-server.zotero.org/Prod/search', async ({ request }) => {
+			http.post('https://localhost/translate/search', async ({ request }) => {
 				const identifier = await request.text();
 				expect(identifier).toEqual('1706.03762');
 				hasBeenSearched = true;

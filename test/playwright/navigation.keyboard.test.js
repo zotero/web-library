@@ -1,6 +1,7 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, loadFixtureState, makeCustomHandler, makeTextHandler} from "../utils/fixed-state-server.js";
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
+import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' assert { type: 'json' };
 
 
 test.describe('Navigate through the UI using keyboard', () => {
@@ -264,12 +265,21 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(modal.getByRole('searchbox', { name: 'Filter Tags' })).toBeFocused();
 
 		// Focus is trapped within the modal
-		await page.keyboard.press('Shift+Tab');
-		await page.keyboard.press('Shift+Tab');
-		expect(await page.evaluate(() => {
-			const modal = document.querySelector('[role="dialog"][aria-label="Manage Tags"]');
-			return modal?.contains(document.activeElement);
-		})).toBe(true);
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Manage Tags"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Manage Tags"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
 	});
 
 	test('Focus returns to trigger button after closing tag color manager', async ({ page, serverPort }) => {
@@ -379,5 +389,341 @@ test.describe('Navigate through the UI using keyboard', () => {
 				return modal?.contains(document.activeElement);
 			})).toBe(true);
 		}
+	});
+
+	test('Focus is trapped within Bibliography modal', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Open the Bibliography modal
+		await page.getByRole('button', { name: 'Create Bibliography' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Bibliography' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.bibliography-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the "Copy to Clipboard" button
+		await expect(modal.getByRole('button', { name: 'Copy to Clipboard' })).toBeFocused();
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Bibliography"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Bibliography"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is trapped within Copy Citation modal', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Open the Copy Citation modal
+		await page.getByRole('button', { name: 'Create Citations' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Copy Citation' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.copy-citation-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the copy button in the footer
+		await expect(modal.getByRole('button', { name: 'Copy Citation' })).toBeFocused();
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Copy Citation"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Copy Citation"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is trapped within Settings modal', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Open the Settings modal
+		await page.getByRole('button', { name: 'Open Settings' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Settings' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.modal-settings').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the first select (UI Density)
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Settings"]');
+			const select = modal?.querySelector('.form-group:first-child .select');
+			return select?.contains(document.activeElement);
+		})).toBe(true);
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Settings"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Settings"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is trapped within Select Collection modal opened via keyboard', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Focus the collection tree and navigate to "AI" collection
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByTitle('More').first()).toBeFocused();
+
+		// Open the dropdown with Enter
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Move Collection' })).toBeVisible();
+
+		// Navigate to "Move Collection" and activate it
+		await page.getByRole('menuitem', { name: 'Move Collection' }).focus();
+		await page.keyboard.press('Enter');
+
+		// The "Select Collection" modal should open
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.collection-select-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the collection tree inside the modal
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+			const tree = modal?.querySelector('[aria-label="collection tree"]');
+			return tree === document.activeElement || tree?.contains(document.activeElement);
+		})).toBe(true);
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is trapped within Add To Collection modal', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Click an item to select it
+		await page.getByRole('row', {
+			name: 'Effects of diet restriction on life span and age-related changes in dogs'
+		}).click();
+
+		// Click the "Add To Collection" toolbar button
+		await page.getByRole('button', { name: 'Add To Collection' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.collection-select-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the collection tree inside the modal
+		expect(await page.evaluate(() => {
+			const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+			const tree = modal?.querySelector('[aria-label="collection tree"]');
+			return tree === document.activeElement || tree?.contains(document.activeElement);
+		})).toBe(true);
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is placed on input when Add By Identifier dialog opens', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Click the "Add By Identifier" toolbar button
+		await page.getByRole('button', { name: 'Add By Identifier' }).click();
+
+		// The dialog should be visible
+		const dialog = page.getByRole('dialog', { name: 'Add By Identifier' });
+		await expect(dialog).toBeVisible();
+
+		// Focus should be on the input which has an accessible label via a <label> element
+		await expect(dialog.getByRole('textbox', { name: /Enter a URL/ })).toBeFocused();
+	});
+
+	test('Focus is placed on search input in Style Installer modal and focus is trapped', async ({ page, serverPort }) => {
+		const stylesData = [
+			{ name: 'style-one', title: 'First Test Style' },
+			{ name: 'style-two', title: 'Second Test Style' },
+			{ name: 'style-three', title: 'Third Test Style' },
+		];
+		const handlers = [
+			makeCustomHandler('/_styles', stylesData),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Open the Bibliography modal
+		await page.getByRole('button', { name: 'Create Bibliography' }).click();
+		const bibModal = page.getByRole('dialog', { name: 'Bibliography' });
+		await expect(bibModal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.bibliography-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Click on the Citation Style select to open the dropdown
+		const styleCombobox = bibModal.getByRole('combobox', { name: 'Citation Style' });
+		await styleCombobox.click();
+
+		// Select the "N+ other styles available" option
+		await page.getByRole('option', { name: /other styles available/ }).click();
+
+		// Wait for the Style Installer modal to appear (styles data loads from mock endpoint)
+		const styleModal = page.getByRole('dialog', { name: 'Citation Style Installer' });
+		await expect(styleModal).toBeVisible();
+
+		// Focus should be on the search input
+		const searchInput = styleModal.getByRole('textbox', { name: 'Search Citation Styles' });
+		await expect(searchInput).toBeFocused();
+
+		// Search for fixture styles and verify they appear in the list
+		await searchInput.fill('Test Style');
+		await expect(styleModal.getByText('First Test Style')).toBeVisible();
+		await expect(styleModal.getByText('Second Test Style')).toBeVisible();
+		await expect(styleModal.getByText('Third Test Style')).toBeVisible();
+
+		// Clear search to return to default list before testing focus trap
+		await searchInput.fill('');
+
+		// Focus is trapped within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Citation Style Installer"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Citation Style Installer"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Focus is placed in Metadata Retrieval modal and focus is trapped', async ({ page, serverPort }) => {
+		const handlers = [
+			makeTextHandler('/api/users/1/items/UMPPCXU4/file/view/url', 'http://localhost/attention.pdf'),
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top/tags', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, handlers);
+
+		// Click the "Retrieve Metadata" toolbar button
+		await page.getByRole('button', { name: 'Retrieve Metadata' }).click();
+
+		// The Metadata Retrieval modal should open
+		const modal = page.getByRole('dialog', { name: 'Metadata Retrieval' });
+		await expect(modal).toBeVisible();
+
+		// The attachment should appear in the list and be focused
+		const firstRow = modal.getByRole('row', { name: 'attention-is-all-you-need.pdf' });
+		await expect(firstRow).toBeVisible();
+		await expect(firstRow).toBeFocused();
+
+		// Focus is trapped within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Metadata Retrieval"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Metadata Retrieval"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
+	test('Identifier picker shows results and focuses Add button after search', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/_translate/web', identifierSearchResults),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Click the "Add By Identifier" toolbar button
+		await page.getByRole('button', { name: 'Add By Identifier' }).click();
+		const dialog = page.getByRole('dialog', { name: 'Add By Identifier' });
+		await expect(dialog).toBeVisible();
+		const identifierInput = dialog.getByRole('textbox', { name: /Enter a URL/ });
+		await expect(identifierInput).toBeFocused();
+
+		// Type a URL and submit
+		await identifierInput.fill('https://example.com/database.bib');
+		await page.keyboard.press('Enter');
+
+		// The identifier picker modal should open with results
+		const modal = page.locator('.identifier-picker-modal');
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() =>
+			document.querySelector('.identifier-picker-modal')?.classList.contains('ReactModal__Content--after-open')
+		);
+
+		// Verify the results list contains all 3 items
+		await expect(modal.getByText('Obstruction classes and local Euler characteristics')).toBeVisible();
+		await expect(modal.getByText('Stratified Morse theory and applications')).toBeVisible();
+		await expect(modal.getByText('Characteristic cycles and index theorems')).toBeVisible();
+
+		// Focus should be on the "Add 3 Items" button (all items auto-selected for MULTIPLE result)
+		await expect(modal.getByRole('button', { name: 'Add 3 Items' })).toBeFocused();
 	});
 });

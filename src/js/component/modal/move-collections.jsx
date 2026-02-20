@@ -1,9 +1,10 @@
 import { Button, Icon } from 'web-common/components';
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import deepEqual from 'deep-equal';
+import FocusTrap from '../focus-trap';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';
@@ -24,6 +25,7 @@ const MoveCollectionsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const [isBusy, setIsBusy] = useState(false);
 	const [picked, setPicked] = useState([]);
+	const librariesRef = useRef(null);
 	const { navState, touchHeaderPath, handleNavigation, resetNavState } = useNavigationState(PICKS_SINGLE_COLLECTION);
 
 	// @TODO: to prevent re-renders we memoize as much of a "device" as TouchHeader requires.
@@ -64,15 +66,23 @@ const MoveCollectionsModal = () => {
 
 	const handleCancel = useCallback(() => dispatch(toggleModal(MOVE_COLLECTION, false)), [dispatch]);
 
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => {
+			librariesRef.current?.focus();
+		}, 0);
+	}, []);
+
 	return (
         <Modal
 			className="modal-touch collection-select-modal"
 			contentLabel="Select Collection"
 			isBusy={ isBusy }
 			isOpen={ isOpen }
+			onAfterOpen={ handleAfterOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-centered modal-full-height modal-slide"
 		>
+			<FocusTrap>
 			<div className="modal-body">
 			{ isTouchOrSmall ? (
 				<TouchHeader
@@ -100,6 +110,7 @@ const MoveCollectionsModal = () => {
 				</Fragment>
 			) }
 				<Libraries
+					ref={ librariesRef }
 					{...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view'])}
 					pickerAllowRoot={ true }
 					pickerMode={ PICKS_SINGLE_COLLECTION }
@@ -152,6 +163,7 @@ const MoveCollectionsModal = () => {
 					</div>
 				</Fragment>
 			) }
+			</FocusTrap>
 		</Modal>
     );
 }

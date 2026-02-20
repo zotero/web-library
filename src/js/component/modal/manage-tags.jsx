@@ -10,6 +10,7 @@ import TagList from '../tag-selector/tag-list';
 import TagColorManager from '../tag-selector/tag-color-manager';
 import { MANAGE_TAGS } from '../../constants/modals';
 import { filterTags, toggleModal } from '../../actions';
+import FocusTrap from '../focus-trap';
 
 
 const ManageTagsModal = () => {
@@ -104,6 +105,7 @@ const ManageTagsModal = () => {
 			overlayClassName="modal-full-height"
 			ref={ modalRef }
 		>
+			<FocusTrap>
 			<CSSTransition
 				in={ tagBeingManaged !== null }
 				mountOnEnter
@@ -184,6 +186,7 @@ const ManageTagsModal = () => {
 					{ isOpen && <TagList ref={ tagListRef } isManager={ true } onToggleTagManager={ handleToggleTagManager } /> }
 				</div>
 			</div>
+			</FocusTrap>
 		</Modal>
 	);
 }

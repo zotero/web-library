@@ -1,11 +1,12 @@
 import deepEqual from 'deep-equal';
 import PropTypes from 'prop-types';
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
 import { usePrevious } from 'web-common/hooks';
 import { pick } from 'web-common/utils';
 
+import FocusTrap from '../focus-trap';
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';
@@ -36,6 +37,7 @@ const AddItemsToCollectionsModal = () => {
 
 	const [isBusy, setBusy] = useState(!isItemsReady);
 	const [picked, setPicked] = useState([]);
+	const librariesRef = useRef(null);
 
 	const pickerSkipCollections = useMemo(() => {
 		const result = [];
@@ -100,15 +102,23 @@ const AddItemsToCollectionsModal = () => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
 
+	const handleAfterOpen = useCallback(() => {
+		setTimeout(() => {
+			librariesRef.current?.focus();
+		}, 0);
+	}, []);
+
 	return (
-        <Modal
+		<Modal
 			className="modal-touch collection-select-modal"
 			contentLabel="Select Collection"
 			isBusy={ isBusy }
 			isOpen={ isOpen }
+			onAfterOpen={ handleAfterOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-slide modal-full-height modal-centered"
 		>
+			<FocusTrap>
 			<div className="modal-body">
 				<Fragment>
 				{ isTouchOrSmall ? (
@@ -137,6 +147,7 @@ const AddItemsToCollectionsModal = () => {
 					</Fragment>
 				) }
 				<Libraries
+					ref={ librariesRef }
 					{ ...pick(navState, ['libraryKey', 'collectionKey', 'itemsSource', 'view']) }
 					picked={ picked }
 					pickerAllowRoot={ true }
@@ -193,6 +204,7 @@ const AddItemsToCollectionsModal = () => {
 					</div>
 				</Fragment>
 			) }
+			</FocusTrap>
 		</Modal>
     );
 }

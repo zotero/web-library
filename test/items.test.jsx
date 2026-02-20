@@ -116,7 +116,7 @@ describe('Items', () => {
 		let hasBeenCreated = false;
 
 		server.use(
-			http.post('https://translate-server.zotero.org/Prod/search', async ({request}) => {
+			http.post('https://localhost/translate/search', async ({request}) => {
 				const identifier = await request.text();
 				expect(identifier).toEqual('0312558066');
 				hasBeenSearched = true;
