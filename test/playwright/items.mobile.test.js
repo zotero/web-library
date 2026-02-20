@@ -81,9 +81,8 @@ test.describe('Mobile Snapshots', () => {
 		await page.waitForFunction(() => document.querySelector('.manage-tags').classList.contains('ReactModal__Content--after-open'));
 
 		const list = modal.getByRole('list', { name: 'Tags' });
-		await expect(list.getByRole('listitem').first()).toBeVisible();
-
 		const tagItem = list.getByRole('listitem', { name: 'to read' });
+		await expect(tagItem).toBeVisible();
 		await tagItem.getByRole('button', { name: 'More' }).click();
 
 		await expect(page.getByRole('menuitem', { name: 'Assign Color' })).toBeVisible();
