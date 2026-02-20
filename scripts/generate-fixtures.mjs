@@ -197,6 +197,8 @@ async function makeFixture(stateURL, name, callback) {
 	state = state.replaceAll(secret.apiKey, 'zzzzzzzzzzzzzzzzzzzzzzzz');
 	state = state.replaceAll(secret.userName, 'testuser');
 	state = state.replaceAll(secret.userId, '1');
+	state = state.replaceAll(secret.translateServerUrl, 'https://localhost/translate');
+	state = state.replaceAll(secret.recognizerServerUrl, 'https://localhost/recognize');
 	let stateJSON = JSON.parse(state);
 	try {
 		stateJSON.config.libraries.find(l => l.key === 'g5119976').isReadOnly = false;
