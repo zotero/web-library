@@ -386,6 +386,36 @@
 		}
 	}
 
+	// When the "More" button is focused inside a selected collection,
+	// change the collection background to grey and make the button blue
+	@include breakpoints.mouse-keyboard-and-bp-up(md) {
+		&:focus-within li.selected > .item-container:has(.dropdown-toggle:focus) {
+			background-color: var(--color-quarternary-on-sidepane);
+
+			> .truncate {
+				color: var(--color-primary);
+			}
+
+			> .icon:not(.icon-spin) {
+				color: var(--accent-blue);
+			}
+
+			.twisty .icon-triangle {
+				color: var(--color-shade-6);
+			}
+
+			.dropdown-toggle {
+				background-color: var(--color-accent);
+				box-shadow: none;
+				border-radius: variables.$border-radius-sm;
+
+				.icon {
+					color: var(--primary-on-accent);
+				}
+			}
+		}
+	}
+
 	@include breakpoints.mouse-and-bp-up(md) {
 		@for $i from 1 through variables.$collection-tree-max-levels {
 			$sel: if(sass($i == 1): "ul"; else: selector.nest($sel, "ul"));

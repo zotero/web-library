@@ -106,6 +106,32 @@ test.describe('Desktop Snapshots', () => {
 		await page.close();
 	});
 
+	test('should render selected collection with focused More button', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-item-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details`);
+		await waitForLoad(page);
+		await page.waitForLoadState('networkidle');
+		// Tab to activate keyboard mode and focus the collection tree
+		await page.keyboard.press('Tab');
+		// Navigate down to the collection "Dogs" (selected)
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'Dogs' })).toBeFocused();
+		// Press ArrowRight to open the subtree ("Dogs" collection has subcollections)
+		await page.keyboard.press('ArrowRight');
+		// Press ArrowRight again to focus on the "More" button
+		await page.keyboard.press('ArrowRight');
+		await expect(page
+			.getByRole('treeitem', { name: 'Dogs' })
+			.getByRole('button', { name: 'More' })
+		).toBeFocused();
+		await wait(500);
+		await expect(page).toHaveScreenshot('desktop-collection-tree-more-focused.png');
+		await page.close();
+	});
+
 	test('should render flags, symbols and emoji in the items table', async ({ page, serverPort }) => {
 		server = await getServer('item-with-emoji-and-flags', serverPort);
 		await page.goto(`http://localhost:${serverPort}/testuser/collections/4VM2BFHN/items/IY45CHYB/collection`);
