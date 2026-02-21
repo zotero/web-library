@@ -248,6 +248,13 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 		}
 	}));
 
+	const handleRWListRef = useCallback(r => {
+		// The overflow list is made focusable by default in most browsers, and to prevent this, we
+		// need to set `tabIndex` to -1. However, since this element is rendered by react-window, we
+		// cannot pass it as a prop. As a workaround, we set the tabIndex attribute directly here.
+		r?.element?.setAttribute?.('tabindex', '-1');
+	}, []);
+
 	const handleIsItemLoaded = useCallback(index => {
 		if(tags && !!tags[index]) {
 			return true; // loaded
@@ -359,7 +366,7 @@ const TagList = forwardRef(({ toggleTag = noop, isManager = false, ...rest }, re
 								}
 								rowHeight={ isTouchOrSmall ? 43 : 28 }
 								onRowsRendered={onRowsRendered}
-								listRef={ ref }
+								listRef={ handleRWListRef }
 								style={{ width, height }}
 							/>
 						</div>

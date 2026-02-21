@@ -280,6 +280,29 @@ test.describe('Navigate through the UI using keyboard', () => {
 				return modal?.contains(document.activeElement);
 			})).toBe(true);
 		}
+
+		// The react-window scroll container should not be a tab stop (tabIndex=-1)
+		await modal.getByRole('searchbox', { name: 'Filter Tags' }).focus();
+		await expect(modal.getByRole('searchbox', { name: 'Filter Tags' })).toBeFocused();
+
+		// Wait for tags to load in the list
+		const tagList = modal.getByRole('list', { name: 'Tags' });
+		await expect(tagList.locator('li.tag').first()).toBeVisible();
+
+		// The react-window overflow container should have tabIndex=-1 to prevent it from being
+		// an extra tab stop
+		expect(await page.evaluate(() => {
+			return document.querySelector('.tag-selector-list')?.getAttribute('tabindex');
+		})).toBe('-1');
+
+		// Tab from search input goes to the tag list, Shift+Tab goes back to the input
+		// without any extra focus stops
+		await page.keyboard.press('Tab');
+		expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('LI');
+		expect(await page.evaluate(() => document.activeElement?.classList.contains('tag'))).toBe(true);
+
+		await page.keyboard.press('Shift+Tab');
+		await expect(modal.getByRole('searchbox', { name: 'Filter Tags' })).toBeFocused();
 	});
 
 	test('Focus returns to trigger button after closing tag color manager', async ({ page, serverPort }) => {
