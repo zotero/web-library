@@ -694,6 +694,44 @@ test.describe('Navigate through the UI using keyboard', () => {
 		}
 	});
 
+	test('Focus is placed on input in Create Parent Item dialog and focus is trapped', async ({ page, serverPort }) => {
+		const handlers = [
+			makeTextHandler('/api/users/1/items/UMPPCXU4/file/view/url', 'http://localhost/attention.pdf'),
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top/tags', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, handlers);
+
+		// Open the "More" dropdown in the toolbar and click "Create Parent Item"
+		await page.getByRole('button', { name: 'More' }).click();
+		await page.getByRole('menuitem', { name: 'Create Parent Item' }).click();
+
+		// The Create Parent Item dialog should open
+		const modal = page.getByRole('dialog', { name: 'Create Parent Item' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.create-parent-item-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Focus should be on the input
+		await expect(modal.getByRole('textbox', { name: /Enter a DOI/ })).toBeFocused();
+
+		// Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Create Parent Item"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+
+		// Shift+Tab multiple times -- focus should stay within the modal
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Shift+Tab');
+			expect(await page.evaluate(() => {
+				const modal = document.querySelector('[role="dialog"][aria-label="Create Parent Item"]');
+				return modal?.contains(document.activeElement);
+			})).toBe(true);
+		}
+	});
+
 	test('Identifier picker shows results and focuses Add button after search', async ({ page, serverPort }) => {
 		const handlers = [
 			makeCustomHandler('/_translate/web', identifierSearchResults),

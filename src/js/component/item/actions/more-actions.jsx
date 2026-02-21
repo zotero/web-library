@@ -33,6 +33,12 @@ const MoreActionsItems = ({ divider = false }) => {
 		}
 	}, [doi, url]);
 
+	const handleCreateParentItemDropdownClick = useCallback((ev) => {
+		// Prevent DropdownItem's default async close handler to avoid focus theft from modal
+		ev.preventDefault();
+		handleCreateParentItem();
+	}, [handleCreateParentItem]);
+
 	const handleChangeParentItemDropdownClick = useCallback((ev) => {
 		// Prevent DropdownItem's default async close handler to avoid focus theft from modal
 		ev.preventDefault();
@@ -68,7 +74,7 @@ const MoreActionsItems = ({ divider = false }) => {
 				</DropdownItem>
 			)}
 			{canCreateParent && (
-				<DropdownItem onClick={handleCreateParentItem}>
+				<DropdownItem onClick={handleCreateParentItemDropdownClick}>
 					{selectedCount === 1 ? "Create Parent Item" : "Create Parent Items"}
 				</DropdownItem>
 			)}
