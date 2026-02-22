@@ -703,7 +703,7 @@ const CollectionNode = memo(props => {
 	}, [collection.key, renaming, prevRenaming]);
 
 	return (
-        <Node
+		<Node
 			className={ cx({
 				'open': derivedData[collection.key].isOpen,
 				'selected': isSelected,

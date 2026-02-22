@@ -149,6 +149,32 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(page.getByRole('treeitem', {name: 'AI'})).toBeFocused();
 	});
 
+	test('Focus returns to dropdown toggle on Escape in collection tree', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Wait for the page to be ready, then tab into the collection tree
+		await expect(page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button
+		await page.keyboard.press('ArrowRight');
+		const moreButton = page.getByTitle('More').first();
+		await expect(moreButton).toBeFocused();
+
+		// Open the dropdown with Enter
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Move Collection' })).toBeVisible();
+
+		// Close the dropdown with Escape
+		await page.keyboard.press('Escape');
+
+		// Focus should return to the "More" toggle button
+		await expect(moreButton).toBeFocused();
+	});
+
 	test('Navigate through items table using keyboard', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 
@@ -540,12 +566,14 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(modal).toBeVisible();
 		await page.waitForFunction(() => document.querySelector('.collection-select-modal').classList.contains('ReactModal__Content--after-open'));
 
-		// Focus should be on the collection tree inside the modal
-		expect(await page.evaluate(() => {
+		// Focus should be on the collection tree inside the modal.
+		// Use waitForFunction because the modal's onAfterOpen uses setTimeout(0) to set focus,
+		// which may not have fired yet on Firefox when opened via keyboard through a dropdown.
+		await page.waitForFunction(() => {
 			const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
 			const tree = modal?.querySelector('[aria-label="collection tree"]');
 			return tree === document.activeElement || tree?.contains(document.activeElement);
-		})).toBe(true);
+		});
 
 		// Tab multiple times -- focus should stay within the modal
 		for (let i = 0; i < 5; i++) {
