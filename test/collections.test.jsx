@@ -70,6 +70,7 @@ describe('Test User: Collections', () => {
 		await user.type(newCollectionTextBox, 'Irish Setter{enter}', { skipClick: true });
 		expect(await screen.findByRole('treeitem', { name: 'Irish Setter' })).toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(screen.getByRole('treeitem', { name: 'Irish Setter' })).toHaveFocus());
 	});
 
 	test('Cancel adding a subcollection restores focus to More button', async () => {
@@ -107,6 +108,48 @@ describe('Test User: Collections', () => {
 		expect(screen.queryByRole('textbox', { name: 'New Collection' })).not.toBeInTheDocument();
 
 		await waitFor(() => expect(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' })).toHaveFocus());
+	});
+
+	test('Add a top-level collection focuses the new collection', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const myLibraryTreeItem = screen.getByRole('treeitem', { name: 'My Library' });
+		await user.click(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' }));
+
+		const newCollectionTextBox = await screen.findByRole('textbox', { name: 'New Collection' });
+		expect(newCollectionTextBox).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			http.post('https://api.zotero.org/users/1/collections', async ({request}) => {
+				const collections = await request.json();
+				expect(collections[0].name).toBe('Physics');
+				expect(collections[0].parentCollection).toBeFalsy();
+				hasBeenPosted = true;
+				return HttpResponse.json({
+					successful: {
+						"0": {
+							key: "NEWCOL01",
+							version: 158,
+							library: { type: "user", id: 1, name: "testuser", links: { alternate: { href: "https://www.zotero.org/testuser", type: "text/html" } } },
+							links: { self: { href: "https://api.zotero.org/users/1/collections/NEWCOL01", type: "application/json" }, alternate: { href: "https://www.zotero.org/testuser/collections/NEWCOL01", type: "text/html" } },
+							meta: { numCollections: 0, numItems: 0 },
+							data: { key: "NEWCOL01", version: 158, name: "Physics", parentCollection: false, relations: {} }
+						}
+					},
+					success: { "0": "NEWCOL01" },
+					unchanged: {},
+					failed: {}
+				});
+			}),
+		);
+
+		await user.type(newCollectionTextBox, 'Physics{enter}', { skipClick: true });
+		expect(await screen.findByRole('treeitem', { name: 'Physics' })).toBeInTheDocument();
+		expect(hasBeenPosted).toBe(true);
+		await waitFor(() => expect(screen.getByRole('treeitem', { name: 'Physics' })).toHaveFocus());
 	});
 
 	test('Rename a collection using "More" menu', async () => {

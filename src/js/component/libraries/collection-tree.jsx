@@ -155,16 +155,14 @@ const VirtualCollectionNode = memo(props => {
 	parentLibraryKey, virtual, } = props;
 	const shouldIgnoreNextBlur = useRef(false);
 
-	const handleEditableCommit = useCallback((newValue, hasChanged, ev) => {
-		const upNode = parentCollectionKey ?
-			ev.currentTarget.closest('.level-root').querySelector(`[data-collection-key="${parentCollectionKey}"`) :
-			null;
-		const rootNode = ev.currentTarget.closest('.level-root').querySelector(`[data-key=${parentLibraryKey}]`);
-		commitAdd(parentLibraryKey, parentCollectionKey, newValue);
+	const handleEditableCommit = useCallback(async (newValue) => {
 		shouldIgnoreNextBlur.current = true;
-		focusBySelector(upNode ?? rootNode);
-		shouldIgnoreNextBlur.current = false;
-
+		const newCollection = await commitAdd(parentLibraryKey, parentCollectionKey, newValue);
+		if (newCollection) {
+			setTimeout(() => {
+				focusBySelector(`[data-collection-key="${newCollection.key}"]`);
+			}, 0);
+		}
 	}, [focusBySelector, commitAdd, parentCollectionKey, parentLibraryKey]);
 
 	const handleBlur = useCallback(() => {

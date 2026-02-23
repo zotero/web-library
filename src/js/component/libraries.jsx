@@ -257,7 +257,8 @@ const Libraries = forwardRef((props, ref) => {
 
 		setVirtual({ ...virtual, isBusy: true });
 		try {
-			await dispatch(createCollection({ name, parentCollection }, libraryKey));
+			const collection = await dispatch(createCollection({ name, parentCollection }, libraryKey));
+			return collection;
 		} finally {
 			setVirtual(null);
 		}
