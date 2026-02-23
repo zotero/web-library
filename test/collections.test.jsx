@@ -72,6 +72,43 @@ describe('Test User: Collections', () => {
 		expect(hasBeenPosted).toBe(true);
 	});
 
+	test('Cancel adding a subcollection restores focus to More button', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs', expanded: false });
+		await user.click(getByRole(dogsTreeItem, 'button', { name: 'More' }));
+		const newSubCollectionOpt = await screen.findByRole('menuitem', { name: 'New Subcollection' });
+		await user.click(newSubCollectionOpt);
+
+		const newCollectionTextBox = await screen.findByRole('textbox', { name: 'New Collection' });
+		expect(newCollectionTextBox).toHaveFocus();
+
+		await user.keyboard('{Escape}');
+		expect(screen.queryByRole('textbox', { name: 'New Collection' })).not.toBeInTheDocument();
+
+		const dogsTreeItemAfter = screen.getByRole('treeitem', { name: 'Dogs' });
+		await waitFor(() => expect(getByRole(dogsTreeItemAfter, 'button', { name: 'More' })).toHaveFocus());
+	});
+
+	test('Cancel adding a top-level collection restores focus to Add Collection button', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const myLibraryTreeItem = screen.getByRole('treeitem', { name: 'My Library' });
+		await user.click(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' }));
+
+		const newCollectionTextBox = await screen.findByRole('textbox', { name: 'New Collection' });
+		expect(newCollectionTextBox).toHaveFocus();
+
+		await user.keyboard('{Escape}');
+		expect(screen.queryByRole('textbox', { name: 'New Collection' })).not.toBeInTheDocument();
+
+		await waitFor(() => expect(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' })).toHaveFocus());
+	});
+
 	test('Rename a collection using "More" menu', async () => {
 		const user = userEvent.setup();
 		renderWithProviders(<MainZotero />, { preloadedState: state });

@@ -171,6 +171,43 @@ const VirtualCollectionNode = memo(props => {
 		return shouldIgnoreNextBlur.current;
 	}, []);
 
+	const handleCancel = useCallback((_hasChanged, ev) => {
+		const inputEl = ev.currentTarget;
+		const levelRoot = inputEl?.closest('.level-root');
+		let focusTarget = null;
+
+		if (levelRoot) {
+			if (parentCollectionKey) {
+				// Subcollection: focus the "More" dropdown toggle on parent collection
+				const parentNode = levelRoot.querySelector(
+					`[data-collection-key="${parentCollectionKey}"]`
+				);
+				focusTarget = parentNode?.querySelector('.dropdown-toggle');
+			} else {
+				// Top-level: focus the "+" button on library node
+				const libraryNode = levelRoot.querySelector(
+					`[data-key="${parentLibraryKey}"]`
+				);
+				focusTarget = libraryNode?.querySelector('.btn-icon-plus');
+			}
+		}
+
+		cancelAdd();
+
+		if (focusTarget) {
+			// Defer focus to after Input's Escape handler finishes setting
+			// hasBeenCancelled and calling blur(). Synchronous focus here would
+			// cause a re-entrant blur -> commit cycle.
+			// Visibility trick needed because these buttons are hidden when
+			// their parent .item-container lacks :focus-within.
+			setTimeout(() => {
+				focusTarget.style.setProperty('visibility', 'visible');
+				focusBySelector(focusTarget);
+				focusTarget.style.removeProperty('visibility');
+			}, 0);
+		}
+	}, [cancelAdd, focusBySelector, parentCollectionKey, parentLibraryKey]);
+
 	if (pickerMode || !virtual) {
 		return null;
 	}
@@ -192,7 +229,7 @@ const VirtualCollectionNode = memo(props => {
 				isActive={ true }
 				isBusy={ virtual.isBusy }
 				onBlur={ handleBlur }
-				onCancel={ cancelAdd }
+				onCancel={ handleCancel }
 				onCommit={ handleEditableCommit }
 				value=""
 			/>
