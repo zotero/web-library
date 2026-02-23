@@ -175,6 +175,49 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(moreButton).toBeFocused();
 	});
 
+	test('ArrowLeft inside open dropdown closes dropdown and returns focus to tree node', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Tab into collection tree, navigate to "AI"
+		await expect(page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByTitle('More').first()).toBeFocused();
+
+		// Open the dropdown with Enter
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Rename' })).toBeVisible();
+
+		// Press ArrowLeft -- should close dropdown and focus the tree node
+		await page.keyboard.press('ArrowLeft');
+		await expect(page.getByRole('menuitem', { name: 'Rename' })).not.toBeVisible();
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+	});
+
+	test('ArrowLeft from dropdown toggle moves focus back to tree node', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Tab into collection tree, navigate to "AI"
+		await expect(page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button (without opening)
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByTitle('More').first()).toBeFocused();
+
+		// Press ArrowLeft -- should move focus back to tree node
+		await page.keyboard.press('ArrowLeft');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+	});
+
 	test('Navigate through items table using keyboard', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 

@@ -380,13 +380,14 @@ const DotMenu = memo(props => {
 
 	const isOpen = dotMenuFor === collection.key;
 
-	const closeOnXArrowKey = useCallback(ev => {
-		if(ev.type === 'keydown' && (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight')) {
+	const handleDropdownMenuKeyDown = useCallback(ev => {
+		if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
+			ev.preventDefault();
+			ev.stopPropagation();
 			setDotMenuFor(null);
-			return true;
+			focusBySelector(`[data-collection-key="${collection.key}"]`);
 		}
-		return false;
-	}, [setDotMenuFor])
+	}, [collection.key, focusBySelector, setDotMenuFor]);
 
 	const handleToggle = useCallback(ev => {
 		setDotMenuFor(isOpen ? null : collection.key);
@@ -396,9 +397,6 @@ const DotMenu = memo(props => {
 	}, [collection.key, isOpen, setDotMenuFor]);
 
 	const handleRenameClick = useCallback(ev => {
-		if(closeOnXArrowKey(ev)) {
-			return;
-		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
@@ -410,12 +408,9 @@ const DotMenu = memo(props => {
 				setRenaming(collection.key);
 			}, 100);
 		}
-	}, [closeOnXArrowKey, collection, dispatch, isTouchOrSmall, setRenaming]);
+	}, [collection, dispatch, isTouchOrSmall, setRenaming]);
 
 	const handleDeleteClick = useCallback(ev => {
-		if(closeOnXArrowKey(ev)) {
-			return;
-		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
@@ -436,12 +431,9 @@ const DotMenu = memo(props => {
 				dispatch(navigate({ library: currentLibraryKey }, true));
 			}
 		}
-	}, [closeOnXArrowKey, dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
+	}, [dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
-		if(closeOnXArrowKey(ev)) {
-			return;
-		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
@@ -457,19 +449,16 @@ const DotMenu = memo(props => {
 			});
 			addVirtual(parentLibraryKey, collection.key);
 		}
-	}, [addVirtual, closeOnXArrowKey, collection.key, dispatch, isTouchOrSmall, opened, parentLibraryKey, setDotMenuFor, setOpened]);
+	}, [addVirtual, collection.key, dispatch, isTouchOrSmall, opened, parentLibraryKey, setDotMenuFor, setOpened]);
 
 	const handleMoveCollectionClick = useCallback(ev => {
-		if(closeOnXArrowKey(ev)) {
-			return;
-		}
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
 		setModalFocusRestore(toggleRef.current);
 		setDotMenuFor(null);
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	}, [closeOnXArrowKey, collection, dispatch, parentLibraryKey, setDotMenuFor]);
+	}, [collection, dispatch, parentLibraryKey, setDotMenuFor]);
 
 	// disabled, because of 100 items limit https://github.com/zotero/web-library/issues/367
 	// const handleExportClick = useCallback(() => {
@@ -501,14 +490,13 @@ const DotMenu = memo(props => {
 				<Icon type={ '24/options-sm' } width="24" height="24" className="touch" />
 				<Icon type={ '16/options' } width="16" height="16" className="mouse" />
 			</DropdownToggle>
-			<DropdownMenu>
+			<DropdownMenu onKeyDown={handleDropdownMenuKeyDown}>
 				<Fragment>
 				<DropdownItem
 					disabled={isReadOnly}
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleRenameClick }
-					onKeyDown={ handleRenameClick }
 				>
 					Rename
 				</DropdownItem>
@@ -517,7 +505,6 @@ const DotMenu = memo(props => {
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
-					onKeyDown={ handleSubcollectionClick }
 				>
 					New Subcollection
 				</DropdownItem>
@@ -526,7 +513,6 @@ const DotMenu = memo(props => {
 					onBlur={ stopPropagation }
 					onMouseDown={ stopPropagation }
 					onClick={ handleMoveCollectionClick }
-					onKeyDown={ handleMoveCollectionClick }
 				>
 					Move Collection
 				</DropdownItem>
@@ -536,7 +522,6 @@ const DotMenu = memo(props => {
 					onBlur={stopPropagation}
 					onMouseDown={stopPropagation}
 					onClick={handleDeleteClick}
-					onKeyDown={handleDeleteClick}
 				>
 					Delete
 				</DropdownItem>
@@ -546,7 +531,6 @@ const DotMenu = memo(props => {
 						onBlur={stopPropagation}
 						onMouseDown={stopPropagation}
 						onClick={handleBibliographyClick}
-						onKeyDown={handleBibliographyClick}
 					>
 						Create Bibliography
 					</DropdownItem>
