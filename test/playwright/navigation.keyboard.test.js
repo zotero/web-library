@@ -859,6 +859,40 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(modal.getByRole('button', { name: 'Add 3 Items' })).toBeFocused();
 	});
 
+	test('Dropdown focuses first item on every opening in collection tree', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Tab into collection tree, navigate to "AI"
+		await expect(page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button
+		await page.keyboard.press('ArrowRight');
+		const moreButton = page.getByRole('treeitem', { name: 'AI' }).getByTitle('More');
+		await expect(moreButton).toBeFocused();
+
+		// First opening: open the dropdown with Enter
+		await page.keyboard.press('Enter');
+		const renameItem = page.getByRole('menuitem', { name: 'Rename' });
+		await expect(renameItem).toBeVisible();
+		// The first non-disabled item ("Rename") should be focused
+		await expect(renameItem).toBeFocused();
+
+		// Close the dropdown with Escape
+		await page.keyboard.press('Escape');
+		await expect(renameItem).not.toBeVisible();
+		await expect(moreButton).toBeFocused();
+
+		// Second opening: open the dropdown again with Enter
+		await page.keyboard.press('Enter');
+		await expect(renameItem).toBeVisible();
+		// The first non-disabled item ("Rename") should be focused again
+		await expect(renameItem).toBeFocused();
+	});
+
 	test('Focus returns to toggle button after closing Move Collection modal', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 

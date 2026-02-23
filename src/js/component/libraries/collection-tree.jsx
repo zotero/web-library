@@ -389,6 +389,14 @@ const DotMenu = memo(props => {
 		}
 	}, [collection.key, focusBySelector, setDotMenuFor]);
 
+	// Stop blur propagation only when focus stays within the dropdown menu.
+	const handleDropdownItemBlur = useCallback(ev => {
+		const menu = ev.currentTarget.closest('[role="menu"]');
+		if (menu?.contains(ev.relatedTarget)) {
+			ev.stopPropagation();
+		}
+	}, []);
+
 	const handleToggle = useCallback(ev => {
 		setDotMenuFor(isOpen ? null : collection.key);
 		if(ev.type === 'click') {
@@ -494,7 +502,7 @@ const DotMenu = memo(props => {
 				<Fragment>
 				<DropdownItem
 					disabled={isReadOnly}
-					onBlur={ stopPropagation }
+					onBlur={ handleDropdownItemBlur }
 					onMouseDown={ stopPropagation }
 					onClick={ handleRenameClick }
 				>
@@ -502,7 +510,7 @@ const DotMenu = memo(props => {
 				</DropdownItem>
 				<DropdownItem
 					disabled={isReadOnly}
-					onBlur={ stopPropagation }
+					onBlur={ handleDropdownItemBlur }
 					onMouseDown={ stopPropagation }
 					onClick={ handleSubcollectionClick }
 				>
@@ -510,7 +518,7 @@ const DotMenu = memo(props => {
 				</DropdownItem>
 				<DropdownItem
 					disabled={isReadOnly}
-					onBlur={ stopPropagation }
+					onBlur={ handleDropdownItemBlur }
 					onMouseDown={ stopPropagation }
 					onClick={ handleMoveCollectionClick }
 				>
@@ -519,8 +527,8 @@ const DotMenu = memo(props => {
 				<DropdownItem divider />
 				<DropdownItem
 					disabled={isReadOnly}
-					onBlur={stopPropagation}
-					onMouseDown={stopPropagation}
+					onBlur={ handleDropdownItemBlur }
+					onMouseDown={ stopPropagation }
 					onClick={handleDeleteClick}
 				>
 					Delete
@@ -528,8 +536,8 @@ const DotMenu = memo(props => {
 				<DropdownItem divider />
 					<DropdownItem
 						disabled={!hasItems}
-						onBlur={stopPropagation}
-						onMouseDown={stopPropagation}
+						onBlur={ handleDropdownItemBlur }
+						onMouseDown={ stopPropagation }
 						onClick={handleBibliographyClick}
 					>
 						Create Bibliography
