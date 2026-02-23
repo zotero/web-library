@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Fragment, memo, useCallback, useState } from 'react';
+import { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,8 +7,9 @@ import { getDOIURL } from '../../../utils';
 import { currentGoToSubscribeUrl, pickBestItemAction, pickBestAttachmentItemAction } from '../../../actions';
 import { useItemActionHandlers, useItemsActions } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
+import { setModalFocusRestore } from '../../../common/modal-focus-restore';
 
-const MoreActionsItems = ({ divider = false }) => {
+const MoreActionsItems = ({ divider = false, toggleRef }) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem, handleChangeParentItemModalOpen } = useItemActionHandlers();
@@ -33,17 +34,19 @@ const MoreActionsItems = ({ divider = false }) => {
 		}
 	}, [doi, url]);
 
-	const handleCreateParentItemDropdownClick = useCallback((ev) => {
-		// Prevent DropdownItem's default async close handler to avoid focus theft from modal
-		ev.preventDefault();
+	const handleCreateParentItemDropdownClick = useCallback(() => {
+		if (toggleRef?.current) {
+			setModalFocusRestore(toggleRef.current);
+		}
 		handleCreateParentItem();
-	}, [handleCreateParentItem]);
+	}, [handleCreateParentItem, toggleRef]);
 
-	const handleChangeParentItemDropdownClick = useCallback((ev) => {
-		// Prevent DropdownItem's default async close handler to avoid focus theft from modal
-		ev.preventDefault();
+	const handleChangeParentItemDropdownClick = useCallback(() => {
+		if (toggleRef?.current) {
+			setModalFocusRestore(toggleRef.current);
+		}
 		handleChangeParentItemModalOpen();
-	}, [handleChangeParentItemModalOpen]);
+	}, [handleChangeParentItemModalOpen, toggleRef]);
 
 	return (
 		<Fragment>
@@ -96,6 +99,7 @@ const MoreActionsItems = ({ divider = false }) => {
 const MoreActionsDropdownDesktop = memo(props => {
 	const { tabIndex, onFocusNext, onFocusPrev } = props;
 	const dispatch = useDispatch();
+	const toggleRef = useRef(null);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleToggleDropdown = useCallback(() => {
@@ -125,6 +129,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 			strategy="fixed"
 		>
 			<DropdownToggle
+				ref={toggleRef}
 				className="btn-icon dropdown-toggle"
 				onKeyDown={handleKeyDown}
 				tabIndex={tabIndex}
@@ -138,7 +143,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 				// unnecesary overhead
 				isOpen && (
 					<DropdownMenu>
-						<MoreActionsItems divider />
+						<MoreActionsItems divider toggleRef={toggleRef} />
 						<DropdownItem onClick={handleSubscribeClick}>
 							Subscribe To Feed
 						</DropdownItem>
@@ -151,6 +156,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 
 MoreActionsItems.propTypes = {
 	divider: PropTypes.bool,
+	toggleRef: PropTypes.object,
 };
 
 MoreActionsDropdownDesktop.propTypes = {

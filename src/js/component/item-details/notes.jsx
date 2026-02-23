@@ -16,6 +16,7 @@ import { useItemsState, usePrepForUnmount } from 'hooks';
 import { deleteItem, deleteUnusedEmbeddedImages, createItem, updateItem, fetchChildItems,
 	fetchItemTemplate, moveItemsToTrash, navigate, toggleModal } from 'actions';
 import { CHANGE_PARENT_ITEM } from 'constants/modals';
+import { setModalFocusRestore } from 'common/modal-focus-restore';
 
 const PAGE_SIZE = 100;
 
@@ -23,6 +24,7 @@ const Note = memo(props => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { isReadOnly, noteKey, onDelete, onDuplicate, onSelect, onKeyDown } = props;
+	const toggleRef = useRef(null);
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
 	const note = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'items', noteKey], {}));
 	const isSelected = useSelector(state => noteKey === state.current.noteKey);
@@ -66,6 +68,7 @@ const Note = memo(props => {
 		// Hide dropdown immediately to prevent focus theft from modal input
 		// (instead of relying on DropdownItem's default handler)
 		ev.preventDefault();
+		setModalFocusRestore(toggleRef.current);
 		setDropdownOpen(false);
 		dispatch(toggleModal(CHANGE_PARENT_ITEM, true, { keys: [note.key] }));
 	}, [dispatch, note]);
@@ -141,6 +144,7 @@ const Note = memo(props => {
 					strategy="fixed"
 				>
 					<DropdownToggle
+						ref={ toggleRef }
 						tabIndex={ -3 }
 						onClick={ stopPropagation }
 						className={ cx('dropdown-toggle', {

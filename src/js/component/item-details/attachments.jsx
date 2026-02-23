@@ -12,6 +12,7 @@ import { noop, isTriggerEvent, pick } from 'web-common/utils';
 import AddLinkedUrlForm from './add-linked-url-form';
 import AttachmentDetails from './attachment-details';
 import { ADD_LINKED_URL_TOUCH, CHANGE_PARENT_ITEM } from '../../constants/modals';
+import { setModalFocusRestore } from '../../common/modal-focus-restore';
 import { ATTACHMENT } from '../../constants/dnd';
 import { READER_CONTENT_TYPES } from '../../constants/reader.js';
 import {
@@ -56,6 +57,7 @@ AttachmentIcon.propTypes = {
 const AttachmentActions = memo(props => {
 	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading } = props;
 	const dispatch = useDispatch();
+	const toggleRef = useRef(null);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const collectionKey = useSelector(state => state.current.collectionKey);
@@ -119,6 +121,7 @@ const AttachmentActions = memo(props => {
 		// Hide dropdown immediately to prevent focus theft from modal input
 		// (instead of relying on DropdownItem's default handler)
 		ev.preventDefault();
+		setModalFocusRestore(toggleRef.current);
 		setDropdownOpen(false);
 		dispatch(toggleModal(CHANGE_PARENT_ITEM, true, { keys: [attachment.key] }));
 	}, [dispatch, attachment]);
@@ -234,6 +237,7 @@ const AttachmentActions = memo(props => {
 					strategy="fixed"
 				>
 					<DropdownToggle
+						ref={toggleRef}
 						tabIndex={-3}
 						onClick={stopPropagation}
 						className={cx('dropdown-toggle', {

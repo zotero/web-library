@@ -9,6 +9,8 @@ import { usePrevious } from 'web-common/hooks';
 import { getScrollbarWidth, pick } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
 
+import { executeModalFocusRestore } from '../../common/modal-focus-restore';
+
 var initialPadding;
 
 const Modal = forwardRef((props, ref) => {
@@ -42,6 +44,12 @@ const Modal = forwardRef((props, ref) => {
 			propContentRef(newRef);
 		}
 	}, [propContentRef]);
+
+	useEffect(() => {
+		if (wasOpen && !isOpen) {
+			executeModalFocusRestore();
+		}
+	}, [isOpen, wasOpen]);
 
 	useEffect(() => { // correct for scrollbars
 		if(typeof(wasOpen) === 'undefined') {

@@ -11,6 +11,7 @@ import Editable from '../editable';
 import Node from './node';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
 import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate } from '../../actions';
+import { setModalFocusRestore } from '../../common/modal-focus-restore';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
 
@@ -336,6 +337,7 @@ const DotMenu = memo(props => {
 	const { collection, dotMenuFor, focusBySelector, isReadOnly, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
 		addVirtual } = props;
 	const dispatch = useDispatch();
+	const toggleRef = useRef(null);
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
 	const currentCollectionKey = useSelector(state => state.current.collectionKey);
 	const hasItems = useSelector(state => (state.libraries[parentLibraryKey]?.itemsByCollection?.[collection.key]?.totalResults ?? Infinity) > 0); // This should always be known but if we somehow don't know, we assume collection has items
@@ -429,8 +431,10 @@ const DotMenu = memo(props => {
 		if(!isTriggerEvent(ev)) {
 			return;
 		}
+		setModalFocusRestore(toggleRef.current);
+		setDotMenuFor(null);
 		dispatch(toggleModal( MOVE_COLLECTION, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	}, [closeOnXArrowKey, collection, dispatch, parentLibraryKey]);
+	}, [closeOnXArrowKey, collection, dispatch, parentLibraryKey, setDotMenuFor]);
 
 	// disabled, because of 100 items limit https://github.com/zotero/web-library/issues/367
 	// const handleExportClick = useCallback(() => {
@@ -438,8 +442,10 @@ const DotMenu = memo(props => {
 	// });
 
 	const handleBibliographyClick = useCallback(() => {
+		setModalFocusRestore(toggleRef.current);
+		setDotMenuFor(null);
 		dispatch(toggleModal(BIBLIOGRAPHY, true, { collectionKey: collection.key, libraryKey: parentLibraryKey } ));
-	}, [collection.key, dispatch, parentLibraryKey]);
+	}, [collection.key, dispatch, parentLibraryKey, setDotMenuFor]);
 
 	return (
 		<Dropdown
@@ -450,6 +456,7 @@ const DotMenu = memo(props => {
 			portal={ true }
 		>
 			<DropdownToggle
+				ref={ toggleRef }
 				tabIndex={ -3 }
 				className="btn-icon dropdown-toggle"
 				title="More"

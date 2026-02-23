@@ -815,4 +815,118 @@ test.describe('Navigate through the UI using keyboard', () => {
 		// Focus should be on the "Add 3 Items" button (all items auto-selected for MULTIPLE result)
 		await expect(modal.getByRole('button', { name: 'Add 3 Items' })).toBeFocused();
 	});
+
+	test('Focus returns to toggle button after closing Move Collection modal', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Navigate to "AI" collection
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// Press ArrowRight to reach the "More" button, open the dropdown
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByTitle('More').first()).toBeFocused();
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Move Collection' })).toBeVisible();
+
+		// Activate "Move Collection"
+		await page.getByRole('menuitem', { name: 'Move Collection' }).focus();
+		await page.keyboard.press('Enter');
+
+		// The modal should open
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+
+		// Close the modal with Escape
+		await page.keyboard.press('Escape');
+		await expect(modal).not.toBeVisible();
+
+		// Toggle button should be focused
+		await expect(page.getByRole('treeitem', { name: 'AI' }).getByTitle('More')).toBeFocused();
+	});
+
+	test('Focus returns to toggle button after closing Bibliography modal', async ({ page, serverPort }) => {
+		const handlers = [
+			makeTextHandler('/api/users/1/collections/I6WUED2Y/items/top', ''),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Navigate to "AI" collection and open DotMenu
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// Click the "More" button on AI's treeitem to open the DotMenu
+		await page.getByRole('treeitem', { name: 'AI' }).getByTitle('More').click();
+		await expect(page.getByRole('menuitem', { name: 'Create Bibliography' })).toBeVisible();
+
+		// Click "Create Bibliography"
+		await page.getByRole('menuitem', { name: 'Create Bibliography' }).click();
+
+		// The Bibliography modal should open
+		const modal = page.getByRole('dialog', { name: 'Bibliography' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() => document.querySelector('.bibliography-modal').classList.contains('ReactModal__Content--after-open'));
+
+		// Close the modal with Escape
+		await page.keyboard.press('Escape');
+		await expect(modal).not.toBeVisible();
+
+		// Toggle button should be focused
+		await expect(page.getByRole('treeitem', { name: 'AI' }).getByTitle('More')).toBeFocused();
+	});
+
+	test('Focus returns to toggle button after closing Manage Tags modal', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: testUserManageTags.length }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Open the tag selector options dropdown
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await expect(page.getByRole('menuitem', { name: 'Manage Tags' })).toBeVisible();
+
+		// Click "Manage Tags" to open the modal
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		await expect(modal).toBeVisible();
+
+		// Close the modal with Escape
+		await page.keyboard.press('Escape');
+		await expect(modal).not.toBeVisible();
+
+		// Toggle button should be focused
+		await expect(page.getByRole('button', { name: 'Tag Selector Options' })).toBeFocused();
+	});
+
+	test('Focus returns to toggle button after closing Change Parent Item modal (notes)', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-note-view', serverPort, page, handlers);
+
+		// Navigate to the Notes tab and open the dropdown for the note
+		await page.getByRole('tab', { name: 'Notes' }).click();
+		const noteItem = page.locator('.note').first();
+		await expect(noteItem).toBeVisible();
+
+		// Open the note's dropdown
+		await noteItem.getByRole('button', { name: 'Note Options' }).click();
+		await expect(page.getByRole('menuitem', { name: 'Change Parent Item' })).toBeVisible();
+
+		// Click "Change Parent Item"
+		await page.getByRole('menuitem', { name: 'Change Parent Item' }).click();
+		const modal = page.getByRole('dialog', { name: 'Change Parent Item' });
+		await expect(modal).toBeVisible();
+
+		// Close the modal with Escape
+		await page.keyboard.press('Escape');
+		await expect(modal).not.toBeVisible();
+
+		// Toggle button should be focused
+		await expect(noteItem.getByRole('button', { name: 'Note Options' })).toBeFocused();
+	});
 });

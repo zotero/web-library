@@ -11,6 +11,7 @@ import { filterTags, navigate, toggleModal, toggleHideAutomaticTags, toggleTagSe
 import { useTags } from '../hooks';
 import { getUniqueId } from '../utils';
 import { MANAGE_TAGS } from '../constants/modals';
+import { setModalFocusRestore } from '../common/modal-focus-restore';
 
 
 const TagSelector = () => {
@@ -55,6 +56,7 @@ const TagSelector = () => {
 		dispatch(toggleHideAutomaticTags());
 	}, [dispatch])
 
+	const optionsToggleRef = useRef(null);
 	const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
 	const handleOptionsToggle = useCallback(() => {
@@ -65,6 +67,7 @@ const TagSelector = () => {
 		// Hide dropdown immediately to prevent focus theft from modal input
 		// (instead of relying on DropdownItem's default handler)
 		ev.preventDefault();
+		setModalFocusRestore(optionsToggleRef.current);
 		setIsOptionsOpen(false);
 		dispatch(toggleModal(MANAGE_TAGS, true));
 	}, [dispatch]);
@@ -110,6 +113,7 @@ const TagSelector = () => {
 					strategy="fixed"
 				>
 						<DropdownToggle
+							ref={ optionsToggleRef }
 							className="btn-icon dropdown-toggle tag-selector-actions"
 							onKeyDown={ handleKeyDown }
 							tabIndex={ -2 }
