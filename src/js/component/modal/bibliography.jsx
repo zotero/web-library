@@ -286,9 +286,7 @@ const BibliographyModal = () => {
 				className={cx(
 					'modal-body',
 					{ loading: !isTouchOrSmall && isUpdating }
-				)}
-				tabIndex={!isTouchOrSmall ? 0 : null}
-			>
+					)}>
 				<div className="form">
 					<CitationOptions />
 					{isTouchOrSmall && (
