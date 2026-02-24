@@ -43,7 +43,7 @@ const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) =>
 			}
 		}
 
-		if(c.parentCollection) {
+		if(c.parentCollection && !c.deleted) {
 			childLookup[c.parentCollection] ?
 				childLookup[c.parentCollection].push(c.key) :
 				childLookup[c.parentCollection] = [c.key];
@@ -692,7 +692,7 @@ const CollectionNode = memo(props => {
 
 	const usesItemsNode = (!pickerMode && isSingleColumn) || [PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS].includes(pickerMode);
 
-	const collections = allCollections.filter(c => c.parentCollection === collection.key );
+	const collections = allCollections.filter(c => c.parentCollection === collection.key && !c.deleted);
 	const hasSubCollections = collections.length > 0;
 	const hasSubCollectionsOrItemsNode = hasSubCollections || usesItemsNode;
 	const { selectedDepth } = derivedData[collection.key];

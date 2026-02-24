@@ -287,6 +287,15 @@ describe('Test User: Collections', () => {
 		expect(screen.queryByRole('treeitem', { name: 'Board Games' })).toBeInTheDocument();
 	});
 
+	test('Collection with all subcollections trashed does not show expand arrow', async () => {
+		let modifiedState = getPatchedState(state, 'libraries.u1.dataObjects.HNLXYCXS', { deleted: 1 });
+		modifiedState = getPatchedState(modifiedState, 'libraries.u1.dataObjects.9WZDZ7YA', { deleted: 1 });
+		renderWithProviders(<MainZotero />, { preloadedState: modifiedState });
+		await waitForPosition();
+		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
+		expect(dogsTreeItem).not.toHaveAttribute('aria-expanded');
+	});
+
 	["Windows", "MacOS"].forEach((platform) => {
 		test(`Should highlight collection in which the item is present on ${platform}`, async () => {
 			let userAgent, key, wrongKey;
