@@ -979,6 +979,23 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(page.getByRole('button', { name: 'Tag Selector Options' })).toBeFocused();
 	});
 
+	test('Column Selector dropdown focuses first column option', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Focus the Column Selector button
+		const columnSelector = page.getByRole('button', { name: 'Column Selector' });
+		await columnSelector.focus();
+		await expect(columnSelector).toBeFocused();
+
+		// Open the dropdown via keyboard
+		await page.keyboard.press('Enter');
+
+		// The first menuitemcheckbox (Creator) should be focused
+		const creatorOption = page.getByRole('menuitemcheckbox', { name: 'Creator' });
+		await expect(creatorOption).toBeVisible();
+		await expect(creatorOption).toBeFocused();
+	});
+
 	test('Focus returns to toggle button after closing Change Parent Item modal (notes)', async ({ page, serverPort }) => {
 		const handlers = [
 			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', [], { totalResults: 0 }),
