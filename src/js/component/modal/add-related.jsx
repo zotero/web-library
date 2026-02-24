@@ -2,7 +2,7 @@ import { Button, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePrevious } from 'web-common/hooks';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -37,8 +37,10 @@ const AddRelatedModal = () => {
 	const [isSearchMode, setIsSearchMode] = useState(false); // on mobile need to toggle search mode on/off
 	const wasOpen = usePrevious(isOpen);
 	const searchRef = useRef(null);
+	const rightRef = useRef(null);
 	const beforeSearchView = useRef(null);
 	const prevNavState = usePrevious(navState);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(rightRef, { initialQuerySelector: 'input[type="search"]' });
 
 	const sharedProps = {
 		columnsKey,
@@ -71,6 +73,23 @@ const AddRelatedModal = () => {
 	const handleCancel = useCallback(() => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
+
+	const handleAfterOpen = useCallback(() => {
+		// Use setTimeout to ensure focus is set after any dropdown close handler
+		// that may also use setTimeout to restore focus to its trigger button
+		setTimeout(() => {
+			searchRef.current?.focus();
+		}, 0);
+	}, []);
+
+	const handleHeaderKeyDown = useCallback(ev => {
+		if (ev.target !== ev.currentTarget) return;
+		if (ev.key === 'ArrowRight') {
+			focusNext(ev);
+		} else if (ev.key === 'ArrowLeft') {
+			focusPrev(ev);
+		}
+	}, [focusNext, focusPrev]);
 
 	const handleSearchModeToggle = useCallback(() => {
 		if(isSearchMode) {
@@ -121,6 +140,7 @@ const AddRelatedModal = () => {
 			contentLabel="Add Related Items"
 			isBusy={isBusy}
 			isOpen={isOpen}
+			onAfterOpen={handleAfterOpen}
 			onRequestClose={handleCancel}
 			overlayClassName="modal-slide modal-full-height modal-centered modal-contains-picker"
 		>
@@ -164,9 +184,11 @@ const AddRelatedModal = () => {
 						<h4 className="modal-title truncate">
 							Add Related Items
 						</h4>
-						<div className="right">
+						<div className="right" onBlur={receiveBlur} onFocus={receiveFocus} ref={rightRef} tabIndex={0}>
 							<Search
 								ref={ searchRef }
+								onFocusNext={focusNext}
+								onFocusPrev={focusPrev}
 								onSearch={handleSearch}
 								qmode={navState.qmode}
 								search={navState.search}
@@ -175,6 +197,8 @@ const AddRelatedModal = () => {
 								icon
 								className="close"
 								onClick={handleCancel}
+								onKeyDown={handleHeaderKeyDown}
+								tabIndex={-2}
 								title="Close Dialog"
 							>
 								<Icon type={'16/close'} width="16" height="16" />

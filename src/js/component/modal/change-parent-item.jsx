@@ -2,7 +2,7 @@ import { Button, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePrevious } from 'web-common/hooks';
+import { useFocusManager, usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -54,8 +54,13 @@ const ChangeParentItemModal = () => {
 	const [isSearchMode, setIsSearchMode] = useState(false); // on mobile need to toggle search mode on/off
 	const wasOpen = usePrevious(isOpen);
 	const searchRef = useRef(null);
+	const rightRef = useRef(null);
+	const footerRef = useRef(null);
 	const beforeSearchView = useRef(null);
 	const prevNavState = usePrevious(navState);
+	const { receiveFocus, receiveBlur, focusNext, focusPrev } = useFocusManager(rightRef, { initialQuerySelector: 'input[type="search"]' });
+	const { receiveFocus: receiveFooterFocus, receiveBlur: receiveFooterBlur,
+		focusNext: focusFooterNext, focusPrev: focusFooterPrev } = useFocusManager(footerRef, { initialQuerySelector: '.modal-footer-right button' });
 	const unparentLabel = `Convert to Standalone ${(!isTouchOrSmall && allNotes) ?
 		pluralize('Note', affectedItemKeys.length) : (!isTouchOrSmall && allAttachments) ?
 		pluralize('Attachment', affectedItemKeys.length) : '' }`;
@@ -104,6 +109,24 @@ const ChangeParentItemModal = () => {
 			searchRef.current?.focus();
 		}, 0);
 	}, []);
+
+	const handleHeaderKeyDown = useCallback(ev => {
+		if (ev.target !== ev.currentTarget) return;
+		if (ev.key === 'ArrowRight') {
+			focusNext(ev);
+		} else if (ev.key === 'ArrowLeft') {
+			focusPrev(ev);
+		}
+	}, [focusNext, focusPrev]);
+
+	const handleFooterKeyDown = useCallback(ev => {
+		if (ev.target !== ev.currentTarget) return;
+		if (ev.key === 'ArrowRight') {
+			focusFooterNext(ev);
+		} else if (ev.key === 'ArrowLeft') {
+			focusFooterPrev(ev);
+		}
+	}, [focusFooterNext, focusFooterPrev]);
 
 	const handleSearchModeToggle = useCallback(() => {
 		if(isSearchMode) {
@@ -198,9 +221,11 @@ const ChangeParentItemModal = () => {
 						<h4 className="modal-title truncate">
 							Change Parent Item
 						</h4>
-						<div className="right">
+						<div className="right" onBlur={receiveBlur} onFocus={receiveFocus} ref={rightRef} tabIndex={0}>
 							<Search
 								ref={ searchRef }
+								onFocusNext={focusNext}
+								onFocusPrev={focusPrev}
 								onSearch={handleSearch}
 								qmode={navState.qmode}
 								search={navState.search}
@@ -209,6 +234,8 @@ const ChangeParentItemModal = () => {
 								icon
 								className="close"
 								onClick={handleCancel}
+								onKeyDown={handleHeaderKeyDown}
+								tabIndex={-2}
 								title="Close Dialog"
 							>
 								<Icon type={'16/close'} width="16" height="16" />
@@ -261,12 +288,14 @@ const ChangeParentItemModal = () => {
 				</Fragment>
 			) : (
 				<Fragment>
-					<div className="modal-footer">
+					<div className="modal-footer" onBlur={receiveFooterBlur} onFocus={receiveFooterFocus} ref={footerRef} tabIndex={0}>
 						<div className="modal-footer-left">
 						{canBeMovedOutOfParent && (
 							<Button
 								className="btn-link"
 								onClick={handleUnparent}
+								onKeyDown={handleFooterKeyDown}
+								tabIndex={-2}
 							>
 								{unparentLabel}
 							</Button>
@@ -277,6 +306,8 @@ const ChangeParentItemModal = () => {
 								disabled={!isValidTarget}
 								className="btn-link"
 								onClick={handleSelectItems}
+								onKeyDown={handleFooterKeyDown}
+								tabIndex={-2}
 							>
 								Select
 							</Button>

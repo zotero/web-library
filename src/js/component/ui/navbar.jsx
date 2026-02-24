@@ -53,7 +53,7 @@ const Navbar = memo(({ entries = [] }) => {
 	}, [dispatch]);
 
 	return (
-        <header
+		<header
 			className="navbar"
 			onBlur={ receiveBlur }
 			onFocus={ receiveFocus }

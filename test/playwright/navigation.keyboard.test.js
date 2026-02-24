@@ -2,6 +2,7 @@ import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, loadFixtureState, makeCustomHandler, makeTextHandler} from "../utils/fixed-state-server.js";
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' assert { type: 'json' };
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
 
 
 test.describe('Navigate through the UI using keyboard', () => {
@@ -407,14 +408,15 @@ test.describe('Navigate through the UI using keyboard', () => {
 		const handlers = [
 			makeTextHandler('/api/users/1/items/37V7V4NT/file/view/url', 'https://files.zotero.net/abcdefgh/18726.html'),
 			makeTextHandler('/api/users/1/items/K24TUDDL/file/view/url', 'https://files.zotero.net/abcdefgh/Silver%20-%202005%20-%20Cooperative%20pathfinding.pdf'),
-			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', [], { totalResults: 0 }),
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top', itemsInCollectionAlgorithms),
 		];
 		server = await loadFixtureState('desktop-test-user-attachment-in-collection-view', serverPort, page, handlers);
 
-		// Navigate to the Attachments tab and open the Change Parent Item modal via Snapshot's dropdown
+		// Navigate to the Attachments tab and open the Change Parent Item modal via Full Text's dropdown.
+		// Full Text is a PDF web attachment, so "Convert to Standalone Attachment" button is available.
 		await page.getByRole('tab', { name: 'Attachments' }).click();
-		const snapshot = page.getByRole('listitem', { name: 'Snapshot' });
-		await snapshot.getByRole('button', { name: 'Attachment Options' }).click();
+		const fullText = page.getByRole('listitem', { name: 'Full Text' });
+		await fullText.getByRole('button', { name: 'Attachment Options' }).click();
 		await page.getByRole('menuitem', { name: 'Change Parent Item' }).click();
 
 		const modal = page.getByRole('dialog', { name: 'Change Parent Item' });
@@ -443,6 +445,60 @@ test.describe('Navigate through the UI using keyboard', () => {
 				return modal?.contains(document.activeElement);
 			})).toBe(true);
 		}
+
+		// Tab from the header into the collection tree, then Shift+Tab back.
+		// Shift+Tab should return focus to the search input, not the dropdown toggle.
+		await modal.getByRole('searchbox').focus();
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		await page.keyboard.press('Tab');
+		expect(await page.evaluate(() => {
+			const nav = document.querySelector('[role="dialog"][aria-label="Change Parent Item"] nav.collection-tree');
+			return nav?.contains(document.activeElement);
+		})).toBe(true);
+
+		await page.keyboard.press('Shift+Tab');
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		// Arrow key navigation within the header
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: 'Search Mode' })).toBeFocused();
+
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: 'Close Dialog' })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: 'Search Mode' })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: 'Close Dialog' })).toBeFocused();
+
+		// Footer focus management tests.
+		// Tab through: searchbox → collection tree → items table → footer.
+		// Tabbing through the items table auto-selects the first item, enabling the Select button.
+		// The footer's initialQuerySelector targets '.modal-footer-right button' (Select).
+		await modal.getByRole('searchbox').focus();
+		await page.keyboard.press('Tab'); // → collection tree
+		await page.keyboard.press('Tab'); // → items table
+		await page.keyboard.press('Tab'); // → footer
+
+		await expect(modal.getByRole('button', { name: 'Select' })).toBeFocused();
+
+		// Arrow key navigation between footer buttons
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: /Convert to Standalone/ })).toBeFocused();
+
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: 'Select' })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: /Convert to Standalone/ })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: 'Select' })).toBeFocused();
 	});
 
 	test('Focus is trapped within Add Related modal', async ({ page, serverPort }) => {
@@ -481,6 +537,36 @@ test.describe('Navigate through the UI using keyboard', () => {
 				return modal?.contains(document.activeElement);
 			})).toBe(true);
 		}
+
+		// Tab from the header into the collection tree, then Shift+Tab back.
+		// Shift+Tab should return focus to the search input, not the dropdown toggle.
+		await modal.getByRole('searchbox').focus();
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		await page.keyboard.press('Tab');
+		expect(await page.evaluate(() => {
+			const nav = document.querySelector('[role="dialog"][aria-label="Add Related Items"] nav.collection-tree');
+			return nav?.contains(document.activeElement);
+		})).toBe(true);
+
+		await page.keyboard.press('Shift+Tab');
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		// Arrow key navigation within the header
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: 'Search Mode' })).toBeFocused();
+
+		await page.keyboard.press('ArrowLeft');
+		await expect(modal.getByRole('button', { name: 'Close Dialog' })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: 'Search Mode' })).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('searchbox')).toBeFocused();
+
+		await page.keyboard.press('ArrowRight');
+		await expect(modal.getByRole('button', { name: 'Close Dialog' })).toBeFocused();
 	});
 
 	test('Focus is trapped within Bibliography modal', async ({ page, serverPort }) => {

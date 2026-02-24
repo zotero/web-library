@@ -29,10 +29,22 @@ const FocusTrap = ({ children, disabled = false }) => {
 
 	}, []);
 
+	// Prevent react-modal's scopeTab from intercepting Tab key events when the focused element
+	// has a negative tabIndex. On Safari, react-modal manually manages Tab navigation but its
+	// tabbable list only includes elements with tabIndex >= 0. When the focused element has
+	// tabIndex=-2 (used by useFocusManager), scopeTab can't find it in the list and jumps to
+	// the wrong target. By stopping propagation only for negative-tabIndex elements, we let the
+	// browser handle Tab natively while preserving react-modal's wrap-around for normal elements.
+	const handleKeyDown = useCallback((ev) => {
+		if(ev.key === 'Tab' && document.activeElement?.tabIndex < 0) {
+			ev.stopPropagation();
+		}
+	}, []);
+
 	return (
 		<Fragment>
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-before onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
-			{ children }
+			{ disabled ? children : <div onKeyDown={ handleKeyDown } style={ { display: 'contents' } }>{ children }</div> }
 			{ !disabled && <div tabIndex={ 0 } data-focus-trap-after onFocus={ handleFocus } style={ { position: 'absolute', opacity: 0 } } /> }
 		</Fragment>
 	);
