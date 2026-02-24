@@ -219,6 +219,38 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
 	});
 
+	test('Focus returns to collection node after cancelling rename with Escape', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Tab into collection tree, navigate to "AI"
+		await expect(page.getByRole('searchbox', { name: 'Title, Creator, Year' })).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('treeitem', { name: 'My Library' })).toBeFocused();
+		await page.keyboard.press('ArrowDown');
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+
+		// ArrowRight to reach the "More" button, open the dropdown
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByTitle('More').first()).toBeFocused();
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Rename' })).toBeVisible();
+
+		// Activate "Rename"
+		await page.getByRole('menuitem', { name: 'Rename' }).focus();
+		await page.keyboard.press('Enter');
+
+		// The rename input should appear and be focused
+		const renameInput = page.getByRole('textbox', { name: 'Rename Collection' });
+		await expect(renameInput).toBeVisible();
+		await expect(renameInput).toBeFocused();
+
+		// Press Escape to cancel the rename
+		await page.keyboard.press('Escape');
+
+		// Focus should return to the collection treeitem
+		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+	});
+
 	test('Navigate through items table using keyboard', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 

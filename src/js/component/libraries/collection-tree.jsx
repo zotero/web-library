@@ -638,8 +638,17 @@ const CollectionNode = memo(props => {
 		setRenaming(collection.key);
 	}, [collection, pickerMode, isReadOnly, isTouchOrSmall, setRenaming]);
 
-	const handleRenameCancel = useCallback(() => {
+	const handleRenameCancel = useCallback((_hasChanged, ev) => {
+		const collectionNode = ev?.currentTarget?.closest('[data-collection-key]');
 		setRenaming(null);
+		if (collectionNode) {
+			// Defer focus to after Input's Escape handler finishes setting
+			// hasBeenCancelled and calling blur(). Synchronous focus here would
+			// cause a re-entrant blur -> commit cycle.
+			setTimeout(() => {
+				collectionNode.focus();
+			}, 0);
+		}
 	}, [setRenaming]);
 
 	const handleRenameCommit = useCallback((newValue, hasChanged, ev) => {
