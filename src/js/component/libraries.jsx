@@ -189,7 +189,7 @@ const Libraries = forwardRef((props, ref) => {
 	const treeRef = useRef();
 	const mouseDownTracker = useRef(false);
 	const prevLibraryKey = usePrevious(libraryKey);
-	const { focusBySelector, focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(treeRef);
+	const { focusBySelector, focusNext, focusPrev, receiveBlur, receiveFocus } = useFocusManager(treeRef, { isCarousel: false });
 
 	const filteredLibraries = useMemo(
 		() => (includeLibraries || excludeLibraries) ?

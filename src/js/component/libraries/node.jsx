@@ -9,7 +9,7 @@ import {Icon} from 'web-common/components';
 import {useFocusManager} from 'web-common/hooks'
 
 import {ATTACHMENT, COLLECTION, ITEM} from '../../constants/dnd';
-import {stopPropagation} from '../../utils';
+import {getScrollContainerPageCount, stopPropagation} from '../../utils';
 
 const Node = props => {
 	const { className, children, dndData, isOpen, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, onOpen = noop, onRename =
@@ -153,6 +153,16 @@ const Node = props => {
 			ev.target === ev.currentTarget && onFocusNext(ev);
 		} else if(ev.key === "ArrowUp") {
 			ev.target === ev.currentTarget && onFocusPrev(ev);
+		} else if(ev.key === "PageDown") {
+			if(ev.target === ev.currentTarget) {
+				const containerEl = ev.currentTarget.closest('nav');
+				onFocusNext(ev, { offset: getScrollContainerPageCount(ev.currentTarget, containerEl) });
+			}
+		} else if(ev.key === "PageUp") {
+			if(ev.target === ev.currentTarget) {
+				const containerEl = ev.currentTarget.closest('nav');
+				onFocusPrev(ev, { offset: getScrollContainerPageCount(ev.currentTarget, containerEl) });
+			}
 		} else if(isTriggerEvent(ev)) {
 			ev.target === ev.currentTarget && onSelect(ev);
 		}
