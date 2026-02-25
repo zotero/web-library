@@ -3,6 +3,8 @@ import {closeServer, loadFixtureState, makeCustomHandler, makeTextHandler} from 
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' assert { type: 'json' };
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
+import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' assert { type: 'json' };
+import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' assert { type: 'json' };
 
 
 test.describe('Navigate through the UI using keyboard', () => {
@@ -1112,6 +1114,50 @@ test.describe('Navigate through the UI using keyboard', () => {
 		const creatorOption = page.getByRole('menuitemcheckbox', { name: 'Creator' });
 		await expect(creatorOption).toBeVisible();
 		await expect(creatorOption).toBeFocused();
+	});
+
+	test('Focus remains in toolbar after Remove From Collection', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/items', testUserRemoveItemFromCollection),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Focus the "Remove From Collection" button and activate with Enter
+		const removeButton = page.getByRole('button', { name: 'Remove From Collection' });
+		await removeButton.focus();
+		await expect(removeButton).toBeFocused();
+		await page.keyboard.press('Enter');
+
+		// After the item is removed from the collection, the button becomes disabled
+		await expect(removeButton).toBeDisabled();
+
+		// Focus should remain within the toolbar, not be lost to the body
+		expect(await page.evaluate(() => {
+			const toolbar = document.querySelector('[aria-label="items toolbar"]');
+			return toolbar?.contains(document.activeElement);
+		})).toBe(true);
+	});
+
+	test('Focus remains in toolbar after Move To Trash', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/items', testUserTrashItem),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		// Focus the "Move To Trash" button and activate with Enter
+		const trashButton = page.getByRole('button', { name: 'Move To Trash' });
+		await trashButton.focus();
+		await expect(trashButton).toBeFocused();
+		await page.keyboard.press('Enter');
+
+		// After the item is trashed, the button becomes disabled
+		await expect(trashButton).toBeDisabled();
+
+		// Focus should remain within the toolbar, not be lost to the body
+		expect(await page.evaluate(() => {
+			const toolbar = document.querySelector('[aria-label="items toolbar"]');
+			return toolbar?.contains(document.activeElement);
+		})).toBe(true);
 	});
 
 	test('Focus returns to toggle button after closing Change Parent Item modal (notes)', async ({ page, serverPort }) => {

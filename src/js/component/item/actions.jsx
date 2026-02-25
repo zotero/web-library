@@ -125,7 +125,7 @@ const ItemActionsTouch = memo(() => {
 ItemActionsTouch.displayName = 'ItemActionsTouch';
 
 const ItemActionsDesktop = memo(props => {
-	const { onFocusNext, onFocusPrev } = props;
+	const { onFocusNext, onFocusPrev, onFocusBySelector } = props;
 	const itemsSource = useSelector(state => state.current.itemsSource);
 	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
@@ -156,6 +156,20 @@ const ItemActionsDesktop = memo(props => {
 			onFocusPrev(ev);
 		}
 	}, [onFocusNext, onFocusPrev]);
+
+	const focusFirstToolbarButton = useCallback(() => {
+		setTimeout(() => onFocusBySelector('[tabIndex="-2"]:not([disabled]):not(.offscreen)'));
+	}, [onFocusBySelector]);
+
+	const handleRemoveFromCollectionAndFocus = useCallback(async () => {
+		await handleRemoveFromCollection();
+		focusFirstToolbarButton();
+	}, [handleRemoveFromCollection, focusFirstToolbarButton]);
+
+	const handleTrashAndFocus = useCallback(async () => {
+		await handleTrash();
+		focusFirstToolbarButton();
+	}, [handleTrash, focusFirstToolbarButton]);
 
 	return (
 		<Fragment>
@@ -235,7 +249,7 @@ const ItemActionsDesktop = memo(props => {
 									<Button
 										disabled={selectedCount === 0}
 										icon
-										onClick={handleRemoveFromCollection}
+										onClick={handleRemoveFromCollectionAndFocus}
 										onKeyDown={handleKeyDown}
 										tabIndex={-2}
 										title="Remove From Collection"
@@ -249,7 +263,7 @@ const ItemActionsDesktop = memo(props => {
 							<Button
 								disabled={selectedCount === 0}
 								icon
-								onClick={handleTrash}
+								onClick={handleTrashAndFocus}
 								onKeyDown={handleKeyDown}
 								tabIndex={-2}
 								title="Move To Trash"
@@ -324,6 +338,7 @@ const ItemActionsDesktop = memo(props => {
 });
 
 ItemActionsDesktop.propTypes = {
+	onFocusBySelector: PropTypes.func.isRequired,
 	onFocusNext: PropTypes.func.isRequired,
 	onFocusPrev: PropTypes.func.isRequired
 };

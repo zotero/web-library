@@ -7,7 +7,7 @@ import { Toolbar } from '../../ui/toolbars';
 
 const ItemsTableToolbar = () => {
 	const ref = useRef();
-	const { focusNext, focusPrev, receiveFocus, receiveBlur } = useFocusManager(ref);
+	const { focusNext, focusPrev, focusBySelector, receiveFocus, receiveBlur } = useFocusManager(ref);
 
 	return (
 		<header className="hidden-sm-down">
@@ -20,7 +20,7 @@ const ItemsTableToolbar = () => {
 				ref={ref}
 			>
 				<div className="toolbar-left">
-					<ItemActionsDesktop onFocusNext={focusNext} onFocusPrev={focusPrev} />
+					<ItemActionsDesktop onFocusNext={focusNext} onFocusPrev={focusPrev} onFocusBySelector={focusBySelector} />
 				</div>
 				<div className="toolbar-right">
 					<ColumnSelector tabIndex={-2} onFocusNext={focusNext} onFocusPrev={focusPrev} />
