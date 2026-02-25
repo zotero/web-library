@@ -20,6 +20,10 @@ const StandaloneNote = ({ id, isActive, isReadOnly, ...rest }) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
 
+	const handleEditorFocusBack = useCallback(() => {
+		document.querySelector('[aria-label="Item Details"]')?.focus();
+	}, []);
+
 	usePrepForUnmount(([lastSeenNoteKey, lastSeenIsReadOnly]) => {
 		if (!lastSeenIsReadOnly) {
 			dispatch(deleteUnusedEmbeddedImages(lastSeenNoteKey));
@@ -38,6 +42,7 @@ const StandaloneNote = ({ id, isActive, isReadOnly, ...rest }) => {
 				id={ item.key }
 				isReadOnly={ isReadOnly }
 				onChange={ handleNoteChange }
+				onFocusBack={ handleEditorFocusBack }
 				value={ item.note }
 			/>
 		</TabPane>

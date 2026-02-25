@@ -399,7 +399,7 @@ Attachment.propTypes = {
 
 Attachment.displayName = 'Attachment';
 
-const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
+const AttachmentDetailsWrap = memo(({ isReadOnly, onEditorFocusBack }) => {
 	const attachmentKey = useSelector(state => state.current.attachmentKey);
 
 	if (attachmentKey) {
@@ -408,6 +408,7 @@ const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
 				<AttachmentDetails
 					isReadOnly={isReadOnly}
 					attachmentKey={attachmentKey}
+					onEditorFocusBack={onEditorFocusBack}
 				/>
 			</div>
 		);
@@ -423,7 +424,8 @@ const AttachmentDetailsWrap = memo(({ isReadOnly }) => {
 AttachmentDetailsWrap.displayName = 'AttachmentDetailsWrap';
 
 AttachmentDetailsWrap.propTypes = {
-	isReadOnly: PropTypes.bool
+	isReadOnly: PropTypes.bool,
+	onEditorFocusBack: PropTypes.func,
 };
 
 const PAGE_SIZE = 100;
@@ -534,6 +536,10 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 			ev.preventDefault();
 		}
 	}, [focusBySelector]);
+
+	const handleEditorFocusBack = useCallback(() => {
+		scrollContainerRef.current?.focus();
+	}, []);
 
 	const handleAddLinkedUrlTouchClick = useCallback(() => {
 		dispatch(toggleModal(ADD_LINKED_URL_TOUCH, true));
@@ -682,7 +688,7 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 			</div>
 			{
 				(!isTouchOrSmall && attachments.length > 0) && (
-					<AttachmentDetailsWrap isReadOnly={isReadOnly} />
+					<AttachmentDetailsWrap isReadOnly={isReadOnly} onEditorFocusBack={handleEditorFocusBack} />
 				)
 			}
 		</TabPane>

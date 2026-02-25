@@ -311,6 +311,10 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 		}
 	}, [focusBySelector, focusNext, focusPrev]);
 
+	const handleEditorFocusBack = useCallback(() => {
+		notesEl.current?.focus();
+	}, []);
+
 	const handleButtonKeyDown = useCallback(ev => {
 		if(ev.key === 'ArrowDown') {
 			notesEl.current.focus();
@@ -441,6 +445,7 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 					isReadOnly={ isReadOnly }
 					onChange={ handleChangeNote }
 					onEdit={ handleEditNote }
+					onFocusBack={ handleEditorFocusBack }
 					ref={ editorRef }
 					value={ selectedNote.note }
 				/>

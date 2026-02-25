@@ -14,7 +14,7 @@ import { extraFields } from '../../constants/item';
 import Boxfields from './boxfields';
 import { getFileData } from '../../common/event';
 
-const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
+const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => {
 	const dispatch = useDispatch();
 	const timeoutRef = useRef(null);
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
@@ -72,6 +72,14 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 	const handleChangeNote = useCallback((newContent, key) => {
 		dispatch(updateItem(key, { note: newContent }));
 	}, [dispatch]);
+
+	const handleEditorFocusBack = useCallback(() => {
+		if (onEditorFocusBack) {
+			onEditorFocusBack();
+		} else {
+			downloadOptionsRef.current?.focus();
+		}
+	}, [onEditorFocusBack]);
 
 	const handleExport = useCallback(async (ev) => {
 		ev.preventDefault();
@@ -254,6 +262,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 			isReadOnly={ isReadOnly }
 			value={ attachment.note }
 			onChange={ handleChangeNote }
+			onFocusBack={ handleEditorFocusBack }
 		/>
 		</Fragment>
     );
@@ -262,6 +271,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly }) => {
 AttachmentDetails.propTypes = {
 	attachmentKey: PropTypes.string.isRequired,
 	isReadOnly: PropTypes.bool,
+	onEditorFocusBack: PropTypes.func,
 }
 
 export default memo(AttachmentDetails);

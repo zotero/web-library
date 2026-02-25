@@ -10,7 +10,7 @@ import { getItemFromCanonicalUrl, parseBase64File } from '../utils';
 import { extensionLookup  } from '../common/mime';
 
 const RichEditor = memo(forwardRef((props, ref) => {
-	const { autoresize, isAttachmentNote = false, id, isReadOnly, onChange, onEdit = noop, value } = props;
+	const { autoresize, isAttachmentNote = false, id, isReadOnly, onChange, onEdit = noop, onFocusBack, value } = props;
 	const wantsFocus = useRef(false);
 	const editorReady = useRef(false);
 	const lastSeenValue = useRef(value);
@@ -130,10 +130,16 @@ const RichEditor = memo(forwardRef((props, ref) => {
 				dispatch(openInReader({ items: itemKey, library: libraryKey, location: { position } }));
 				break;
 			}
+			case 'focusBack':
+				// Blur the iframe first -- Firefox won't let .focus() move focus
+				// away from an iframe that still holds internal focus
+				iframeRef.current?.blur();
+				onFocusBack?.();
+				break;
 			default:
 				break;
 		}
-	}, [isReadOnly, handleSubscription, handleImportImages, handleShowCitationItem, onEdit, changeIfDifferent, focusEditor, dispatch]);
+	}, [isReadOnly, handleSubscription, handleImportImages, handleShowCitationItem, onEdit, onFocusBack, changeIfDifferent, focusEditor, dispatch]);
 
 	// handles iframe loaded once, installed on mount, never updated, doesn't need useCallback deps
 	const handleIframeLoaded = useCallback(() => {
@@ -167,7 +173,6 @@ const RichEditor = memo(forwardRef((props, ref) => {
 			}
 		}
 	}, [handleIframeMessage]);
-
 
 	useEffect(() => {
 		iframeRef.current.contentWindow.postMessage({
@@ -231,6 +236,7 @@ RichEditor.propTypes = {
 	isReadOnly: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 	onEdit: PropTypes.func,
+	onFocusBack: PropTypes.func,
 	value: PropTypes.string,
 };
 

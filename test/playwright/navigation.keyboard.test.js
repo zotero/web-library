@@ -1187,4 +1187,70 @@ test.describe('Navigate through the UI using keyboard', () => {
 		// Toggle button should be focused
 		await expect(noteItem.getByRole('button', { name: 'Note Options' })).toBeFocused();
 	});
+
+	test('Shift+Tab from note editor iframe should move focus back to notes list', async ({ page, browserName, serverPort }) => {
+		// Playwright's Firefox handles iframe focus entry differently than a real
+		// browser -- Shift+Tab cycles through internal iframe elements instead of
+		// exiting. Verified working manually in Firefox.
+		test.skip(browserName === 'firefox', 'Firefox iframe Tab handling differs in Playwright vs real browser');
+		server = await loadFixtureState('desktop-test-user-note-view', serverPort, page);
+
+		// Navigate to the Notes tab
+		const notesTab = page.getByRole('tab', { name: 'Notes' });
+		await notesTab.click();
+
+		// Locate the notes tab panel and its note list
+		const notesPanel = page.getByRole('tabpanel', { name: 'Notes' });
+		await expect(notesPanel).toBeVisible();
+		const notesList = notesPanel.locator('.scroll-container-mouse');
+		await expect(notesList).toBeVisible();
+
+		// Select the first note
+		const noteItem = notesPanel.locator('.note').first();
+		await expect(noteItem).toBeVisible();
+		await noteItem.click();
+
+		// Wait for the note editor iframe to appear
+		const editorIframe = notesPanel.locator('.rich-editor iframe');
+		await expect(editorIframe).toBeVisible();
+
+		// Tab from the notes list into the note editor iframe
+		await notesList.focus();
+		await expect(notesList).toBeFocused();
+		await page.keyboard.press('Tab');
+
+		// The iframe should now be focused
+		await expect(editorIframe).toBeFocused();
+
+		// Shift+Tab from the iframe should move focus back to the notes list
+		await page.keyboard.press('Shift+Tab');
+		await expect(noteItem).toBeFocused();
+	});
+
+	test('Shift+Tab from standalone attachment note editor iframe should move focus back to download options', async ({ page, browserName, serverPort }) => {
+		test.skip(browserName === 'firefox', 'Firefox iframe Tab handling differs in Playwright vs real browser');
+		const handlers = [
+			makeTextHandler('/api/users/1/items/UMPPCXU4/file/view/url', 'https://files.zotero.net/abcdefgh/test.pdf')
+		];
+		server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, handlers);
+
+		// The standalone attachment tab should be active
+		const attachmentPanel = page.locator('.tab-pane.standalone-attachment');
+		await expect(attachmentPanel).toBeVisible();
+
+		// Wait for the editor iframe to initialize
+		const editorIframe = attachmentPanel.locator('.rich-editor iframe');
+		await expect(editorIframe).toBeVisible();
+		await expect(attachmentPanel.locator('.editor-container.initialized')).toBeVisible();
+
+		// Focus the download options (directly before the iframe), then Tab into it
+		const downloadOptions = attachmentPanel.locator('.download-options');
+		await downloadOptions.focus();
+		await page.keyboard.press('Tab');
+		await expect(editorIframe).toBeFocused();
+
+		// Shift+Tab from the iframe should move focus back to the download options
+		await page.keyboard.press('Shift+Tab');
+		await expect(downloadOptions.getByRole('button', { name: 'Open' })).toBeFocused();
+	});
 });
