@@ -52,6 +52,9 @@ export const bibliographyFromItems = (itemKeys, libraryKey) => {
 			localesPath: state.config.localesURL,
 			supportedLocales,
 			useCiteprocJS: true,
+			// skip error checking and allow incomplete bibliographies
+			// (items may be omitted if they cause errors or are empty, matching client's behavior)
+			skipErrorChecking: true,
 		});
 		citeproc.includeUncited("All");
 		citeproc.insertReferences(itemsCSL);
@@ -96,6 +99,7 @@ export const citationFromItems = (itemKeys, modifiers, libraryKey) => {
 			localesPath: state.config.localesURL,
 			supportedLocales,
 			useCiteprocJS: true,
+			skipErrorChecking: true,
 		});
 
 		citeproc.includeUncited("All");
