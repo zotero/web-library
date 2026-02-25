@@ -2,7 +2,6 @@ import * as path from 'path';
 
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import filesize from 'rollup-plugin-filesize';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
@@ -54,7 +53,7 @@ const config = {
 	plugins: [
 		webWorkerLoader({
 			targetPlatform: 'browser',
-			skipPlugins: ['resolve', 'json', 'commonjs', 'babel', 'sizes', 'filesize']
+			skipPlugins: ['resolve', 'json', 'commonjs', 'babel', 'sizes']
 		}),
 		resolve({
 			modulePaths: [path.join(process.cwd(), 'src', 'js'), path.join(process.cwd(), 'modules')],
@@ -93,7 +92,6 @@ const config = {
 			],
 			babelHelpers: 'bundled'
 		}),
-		filesize({ showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG }),
 	]
 };
 
