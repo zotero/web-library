@@ -109,7 +109,7 @@ $metadata-separator-color: $shade-3;
 // Notes list
 $notes-toolbar-border-color: $shade-3;
 $note-active-bg: $shade-3;
-$note-focus-color: $shade-0;
+$note-focus-color: var(--primary-on-accent);
 $note-focus-bg: var(--accent-blue);
 $note-border-color: $shade-3;
 $note-list-chevron-color: $shade-4;

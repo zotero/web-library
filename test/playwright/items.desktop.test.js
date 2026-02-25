@@ -132,6 +132,28 @@ test.describe('Desktop Snapshots', () => {
 		await page.close();
 	});
 
+	test('should render note with dropdown focused and opened', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-note-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/CSB4KZUU/items/BLVYJQMH/note/GNVWD3U4`);
+		await waitForLoad(page);
+		await page.waitForLoadState('networkidle');
+
+		const note = page.locator('.note.selected');
+		await note.focus();
+
+		// Move focus to the "Note Options" dropdown toggle
+		await page.keyboard.press('ArrowRight');
+		await expect(note.getByRole('button', { name: 'Note Options' })).toBeFocused();
+
+		// Open the dropdown
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('menuitem', { name: 'Duplicate' })).toBeVisible();
+
+		await wait(500);
+		await expect(page).toHaveScreenshot('desktop-note-dropdown-focused.png');
+		await page.close();
+	});
+
 	test('should render flags, symbols and emoji in the items table', async ({ page, serverPort }) => {
 		server = await getServer('item-with-emoji-and-flags', serverPort);
 		await page.goto(`http://localhost:${serverPort}/testuser/collections/4VM2BFHN/items/IY45CHYB/collection`);
