@@ -233,8 +233,13 @@ const MetadataRetrievalModal = () => {
 				requestAnimationFrame(focusFirstRow);
 			}
 		};
-		requestAnimationFrame(focusFirstRow);
-	}, []);
+		// on touch, wait for the slide animation to finish before focusing
+		if (isTouchOrSmall) {
+			setTimeout(focusFirstRow, 200);
+		} else {
+			requestAnimationFrame(focusFirstRow);
+		}
+	}, [isTouchOrSmall]);
 
 	const getItemData = useCallback((index) => {
 		const item = recognizedEntries[index] ?? {};

@@ -49,11 +49,12 @@ const SettingsModal = () => {
 	[dispatch]);
 
 	const handleAfterOpen = useCallback(() => {
+		// on touch, wait for the slide animation to finish before focusing
 		setTimeout(() => {
 			const ref = isSmall ? colorSchemeSelectRef : densitySelectRef;
 			ref.current?.focus();
-		}, 0);
-	}, [isSmall]);
+		}, isTouchOrSmall ? 200 : 0);
+	}, [isSmall, isTouchOrSmall]);
 
 	return (
 		<Modal

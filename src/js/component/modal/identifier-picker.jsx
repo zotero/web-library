@@ -222,8 +222,9 @@ const IdentifierPicker = () => {
 	}, [focusNext, focusPrev]);
 
 	const handleAfterOpen = useCallback(() => {
-		setTimeout(() => footerRef.current.focus(), 0);
-	}, []);
+		// on touch, wait for the slide animation to finish before focusing
+		setTimeout(() => footerRef.current.focus(), isTouchOrSmall ? 200 : 0);
+	}, [isTouchOrSmall]);
 
 	useEffect(() => {
 		if(wasSearchingMultiple && !isSearchingMultiple) {

@@ -76,11 +76,12 @@ const AddRelatedModal = () => {
 
 	const handleAfterOpen = useCallback(() => {
 		// Use setTimeout to ensure focus is set after any dropdown close handler
-		// that may also use setTimeout to restore focus to its trigger button
+		// that may also use setTimeout to restore focus to its trigger button.
+		// On touch, wait for the slide animation to finish before focusing
 		setTimeout(() => {
 			searchRef.current?.focus();
-		}, 0);
-	}, []);
+		}, isTouchOrSmall ? 200 : 0);
+	}, [isTouchOrSmall]);
 
 	const handleHeaderKeyDown = useCallback(ev => {
 		if (ev.target !== ev.currentTarget) return;

@@ -689,10 +689,11 @@ const CopyCitationModal = () => {
 	}, [dispatch, itemKeys, libraryKey]);
 
 	const handleAfterOpen = useCallback(() => {
+		// on touch, wait for the slide animation to finish before focusing
 		setTimeout(() => {
 			copyButtonRef.current?.focus();
-		}, 0);
-	}, []);
+		}, isTouchOrSmall ? 200 : 0);
+	}, [isTouchOrSmall]);
 
 	useEffect(() => {
 		if (!state.isItemsReady && hasMissingItems && requestsPending === 0) {

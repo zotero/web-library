@@ -103,10 +103,11 @@ const AddItemsToCollectionsModal = () => {
 	}, [dispatch]);
 
 	const handleAfterOpen = useCallback(() => {
+		// on touch, wait for the slide animation to finish before focusing
 		setTimeout(() => {
 			librariesRef.current?.focus();
-		}, 0);
-	}, []);
+		}, isTouchOrSmall ? 200 : 0);
+	}, [isTouchOrSmall]);
 
 	return (
 		<Modal
