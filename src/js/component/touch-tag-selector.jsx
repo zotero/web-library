@@ -143,21 +143,15 @@ const TouchTagSelector = () => {
 		}
 	}, [dispatch]);
 
+	const handleEntered = useCallback(() => {
+		inputRef.current.focus();
+	}, [])
+
 	useEffect(() => {
 		if(isManaging) {
 			dispatch(toggleTouchTagSelector(false));
 		}
 	}, [dispatch, isManaging]);
-
-	useEffect(() => {
-		if(isOpen && !wasOpen) {
-			lastFocus.current = document.activeElement;
-			inputRef.current.focus({ preventScroll: true });
-		} else if(wasOpen && !isOpen && lastFocus.current && 'focus' in lastFocus.current) {
-			lastFocus.current.focus({ preventScroll: true });
-			lastFocus.current = null;
-		}
-	}, [isOpen, wasOpen]);
 
 	useEffect(() => {
 		if(prevSelectedTagsLength < selectedTagsLength && selectedListRef.current) {
@@ -173,7 +167,6 @@ const TouchTagSelector = () => {
 	}, [tags.length, prevTagsCount])
 
 	return (
-        <FocusTrap disabled={ !isOpen }>
 		<CSSTransition
 			in={ isOpen }
 			timeout={ 600 }
@@ -183,7 +176,9 @@ const TouchTagSelector = () => {
 			nodeRef={ touchTagSelectorRef }
 			enter={ !isEmbedded }
 			exit={ !isEmbedded }
+			onEntered={ handleEntered }
 		>
+			<FocusTrap disabled={ !isOpen }>
 				<div ref={ touchTagSelectorRef } onKeyDown={ handleKeyDown } className="touch-tag-selector">
 					{ !isEmbedded && (
 						<header className="touch-header">
@@ -278,9 +273,9 @@ const TouchTagSelector = () => {
 						</Toolbar>
 					</footer>
 				</div>
+			</FocusTrap>
 		</CSSTransition>
-		</FocusTrap>
-    );
+	);
 }
 
 export default memo(TouchTagSelector);
