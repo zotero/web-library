@@ -213,12 +213,23 @@ async function makeFixture(stateURL, name, callback) {
 }
 
 
+const requestedFixture = process.argv[2] || null;
+
+if (requestedFixture && !fixtures.some(([, name]) => name === requestedFixture)) {
+	const available = fixtures.map(([, name]) => `  ${name}`).join('\n');
+	console.error(`Unknown fixture: "${requestedFixture}"\n\nAvailable fixtures:\n${available}`);
+	process.exit(1);
+}
+
 (async () => {
 	await configureIndex();
 	var currentFixtureName;
 	try {
 		await checkOrStartServer();
-		for (const [url, name, ...rest] of fixtures) {
+		const selected = requestedFixture
+			? fixtures.filter(([, name]) => name === requestedFixture)
+			: fixtures;
+		for (const [url, name, ...rest] of selected) {
 			currentFixtureName = name;
 			await makeFixture(url, name, rest.length > 0 ? rest[0] : undefined);
 		}
