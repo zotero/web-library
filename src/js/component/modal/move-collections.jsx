@@ -9,6 +9,7 @@ import Libraries from '../libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';
 import { MOVE_COLLECTION } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { toggleModal, updateCollection } from '../../actions';
 import { useNavigationState } from '../../hooks';
 import { PICKS_SINGLE_COLLECTION } from '../../constants/picker-modes.js';
@@ -66,11 +67,10 @@ const MoveCollectionsModal = () => {
 
 	const handleCancel = useCallback(() => dispatch(toggleModal(MOVE_COLLECTION, false)), [dispatch]);
 
-	const handleAfterOpen = useCallback(() => {
-		// on touch, wait for the slide animation to finish before focusing
-		setTimeout(() => {
-			librariesRef.current?.focus();
-		}, isTouchOrSmall ? 200 : 0);
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			librariesRef.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	return (

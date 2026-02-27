@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import { CHANGE_PARENT_ITEM } from '../../constants/modals';
 import { toggleModal, querySecondary, chunkedChangeParentItem } from '../../actions';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { PICKS_SINGLE_ITEM } from '../../constants/picker-modes';
 import { useNavigationState } from '../../hooks';
 import ItemsList from '../item/items/list';
@@ -102,13 +103,10 @@ const ChangeParentItemModal = () => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
 
-	const handleAfterOpen = useCallback(() => {
-		// Use setTimeout to ensure focus is set after any dropdown close handler
-		// that may also use setTimeout to restore focus to its trigger button.
-		// On touch, wait for the slide animation to finish before focusing
-		setTimeout(() => {
-			searchRef.current?.focus();
-		}, isTouchOrSmall ? 200 : 0);
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			searchRef.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	const handleHeaderKeyDown = useCallback(ev => {

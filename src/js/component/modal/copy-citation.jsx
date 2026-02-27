@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 
 import { citationFromItems, fetchCSLStyle, fetchItemsByKeys, toggleModal } from '../../actions';
 import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { locatorShortForms, locators } from '../../constants/locators';
 import FocusTrap from '../focus-trap';
 import Input from '../form/input';
@@ -688,11 +689,10 @@ const CopyCitationModal = () => {
 		dispatch(toggleModal(BIBLIOGRAPHY, true, { itemKeys, libraryKey }));
 	}, [dispatch, itemKeys, libraryKey]);
 
-	const handleAfterOpen = useCallback(() => {
-		// on touch, wait for the slide animation to finish before focusing
-		setTimeout(() => {
-			copyButtonRef.current?.focus();
-		}, isTouchOrSmall ? 200 : 0);
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			copyButtonRef.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	useEffect(() => {

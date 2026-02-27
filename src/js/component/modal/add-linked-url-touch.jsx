@@ -5,6 +5,7 @@ import { Button } from 'web-common/components';
 import AddLinkedUrlForm from '../item-details/add-linked-url-form';
 import Modal from '../ui/modal';
 import { ADD_LINKED_URL_TOUCH } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { toggleModal } from '../../actions';
 
 const AddLinkedUrlTouchModal = () => {
@@ -16,6 +17,12 @@ const AddLinkedUrlTouchModal = () => {
 	const handleClose = useCallback(() => {
 		dispatch(toggleModal(null, false));
 	}, [dispatch]);
+
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, true, () => {
+			formRef.current?.focusUrlInput();
+		});
+	}, []);
 
 	const handleCreateClick = useCallback(() => {
 		setIsBusy(true);
@@ -34,6 +41,7 @@ const AddLinkedUrlTouchModal = () => {
 			className="modal-touch"
 			contentLabel="Add Linked URL Attachment"
 			isOpen={ isOpen }
+			onAfterOpen={ handleAfterOpen }
 			onRequestClose={ handleClose }
 			overlayClassName="modal-slide modal-centered"
 		>

@@ -5,6 +5,7 @@ import { Button, Icon } from 'web-common/components';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { COLLECTION_ADD } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { getUniqueId } from '../../utils';
 import { toggleModal, createCollection } from '../../actions';
 
@@ -17,8 +18,10 @@ const NewCollectionModal = () => {
 		shallowEqual
 	);
 
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isOpen = useSelector(state => state.modal.id === COLLECTION_ADD);
 	const inputId = useRef(getUniqueId());
+	const inputRef = useRef(null);
 
 	const handleCollectionUpdate = useCallback(() => {
 		if(name.length === 0) {
@@ -36,6 +39,12 @@ const NewCollectionModal = () => {
 	const handleChange = useCallback(newName => setName(newName), []);
 	const handleCancel = useCallback(() => dispatch(toggleModal(COLLECTION_ADD, false)), [dispatch]);
 
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			inputRef.current?.focus({ preventScroll: true });
+		});
+	}, [isTouchOrSmall]);
+
 	useEffect(() => {
 		if(!isOpen) {
 			setName('');
@@ -47,6 +56,7 @@ const NewCollectionModal = () => {
 			className="modal-touch modal-form new-collection"
 			contentLabel="Add a New Collection"
 			isOpen={ isOpen }
+			onAfterOpen={ handleAfterOpen }
 			onRequestClose={ handleCancel }
 			overlayClassName="modal-centered modal-slide"
 		>
@@ -85,7 +95,7 @@ const NewCollectionModal = () => {
 							<Icon type="28/folder" width="28" height="28" />
 						</label>
 						<Input
-							autoFocus
+							ref={ inputRef }
 							id={ inputId.current }
 							onBlur={ handleInputBlur }
 							onChange={ handleChange }

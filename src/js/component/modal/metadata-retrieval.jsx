@@ -9,6 +9,7 @@ import {pick} from 'web-common/utils';
 import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import {METADATA_RETRIEVAL} from '../../constants/modals';
+import {focusOnModalOpen} from '../../common/modal-focus';
 import {currentRetrieveMetadata, navigate, navigateToItemInSharedCollection, toggleModal} from '../../actions';
 import Items from '../common/items';
 import {default as Cell, GenericDataCell} from '../common/table-cell';
@@ -224,21 +225,16 @@ const MetadataRetrievalModal = () => {
 		dispatch(toggleModal());
 	}, [backgroundTaskId, dispatch, isDone, isTouchOrSmall, recognizedEntries]);
 
-	const handleAfterOpen = useCallback(() => {
+	const handleAfterOpen = useCallback(({ contentEl }) => {
 		const focusFirstRow = () => {
 			const firstRow = modalBodyRef.current?.querySelector('[role="row"][data-index]');
 			if (firstRow) {
-				firstRow.focus();
+				firstRow.focus({ preventScroll: true });
 			} else {
 				requestAnimationFrame(focusFirstRow);
 			}
 		};
-		// on touch, wait for the slide animation to finish before focusing
-		if (isTouchOrSmall) {
-			setTimeout(focusFirstRow, 200);
-		} else {
-			requestAnimationFrame(focusFirstRow);
-		}
+		focusOnModalOpen(contentEl, isTouchOrSmall, focusFirstRow);
 	}, [isTouchOrSmall]);
 
 	const getItemData = useCallback((index) => {

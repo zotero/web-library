@@ -7,6 +7,7 @@ import { usePrevious, useFocusManager } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { currentAddMultipleTranslatedItems, searchIdentifierMore, reportIdentifierNoResults, toggleModal } from '../../actions';
 import { useBufferGate } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
@@ -221,9 +222,10 @@ const IdentifierPicker = () => {
 		}
 	}, [focusNext, focusPrev]);
 
-	const handleAfterOpen = useCallback(() => {
-		// on touch, wait for the slide animation to finish before focusing
-		setTimeout(() => footerRef.current.focus(), isTouchOrSmall ? 200 : 0);
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			footerRef.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	useEffect(() => {

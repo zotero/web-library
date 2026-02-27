@@ -8,6 +8,7 @@ import { getZotero } from 'web-common/zotero';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { CREATE_PARENT_ITEM } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import {
 	createEmptyParentItems, createParentItemFromIdentifier, dismissErrorByTag, navigate,
 	reportIdentifierNoResults, toggleModal, triggerSelectMode
@@ -131,9 +132,10 @@ const CreateParentItemModal = () => {
 		}
 	}, [focusNext, focusPrev]);
 
-	const handleModalAfterOpen = useCallback(() => {
-		// on touch, wait for the animation to finish before focusing the input
-		setTimeout(() => { inputEl.current?.focus(); }, isTouchOrSmall ? 200 : 0);
+	const handleModalAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			inputEl.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	useEffect(() => {

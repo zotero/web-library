@@ -1,9 +1,9 @@
-import { defineConfig, devices } from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
-const commonContextDesc = { 
-	locale: 'en-US', 
-	timezoneId: 'America/New_York', 
-	geolocation: { longitude: -73.935242, latitude: 40.730610 }, 
+const commonContextDesc = {
+	locale: 'en-US',
+	timezoneId: 'America/New_York',
+	geolocation: {longitude: -73.935242, latitude: 40.730610},
 };
 
 export default defineConfig({
@@ -50,18 +50,18 @@ export default defineConfig({
 			testMatch: /.*\.desktop\.test\.js/,
 			use: {
 				...devices['Desktop Chrome'],
-				viewport: { width: 1024, height: 768 },
+				viewport: {width: 1024, height: 768},
 				...commonContextDesc,
 			},
 		},
-        {
-            name: 'Desktop Firefox',
-            testMatch: /.*\.keyboard\.test\.js/,
-            use: {
-                ...devices['Desktop Firefox'],
-                ...commonContextDesc,
-            },
-        },
+		{
+			name: 'Desktop Firefox',
+			testMatch: /.*\.keyboard\.test\.js/,
+			use: {
+				...devices['Desktop Firefox'],
+				...commonContextDesc,
+			},
+		},
 		{
 			name: 'Mobile iPhone',
 			testMatch: /.*\.mobile\.test\.js/,

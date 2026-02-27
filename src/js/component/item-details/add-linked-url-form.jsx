@@ -74,6 +74,7 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
 	const [title, setTitle] = useState('');
 	const [isValid, setIsValid] = useState(true);
 	const innerRef = useRef(null);
+	const urlInputRef = useRef(null);
 
 	const submit = useCallback(() => {
 		var cleanedUrl = cleanURL(url, true);
@@ -89,6 +90,7 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
 	// Allow submiting form by parent, but return innerRef so that CSSTransition can mount and animate
 	useImperativeHandle(outerRef, () => {
 		innerRef.current.submit = submit;
+		innerRef.current.focusUrlInput = () => urlInputRef.current?.focus({ preventScroll: true });
 		return innerRef.current;
 	}, [submit]);
 
@@ -118,8 +120,9 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
 				<label className="col-form-label" htmlFor="linked-url-form-url">Link</label>
 				<div className="col">
 					<Input
+						ref={ urlInputRef }
+						autoFocus={ !isTouchOrSmall }
 						aria-invalid={ !isValid }
-						autoFocus
 						className={ cx('form-control') }
 						id="linked-url-form-url"
 						onChange={ handleUrlChange }

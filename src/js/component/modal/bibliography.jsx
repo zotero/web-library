@@ -6,6 +6,7 @@ import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 
 import { BIBLIOGRAPHY } from '../../constants/modals';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, fetchItemKeys, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
 import CitationOptions from '../citation-options';
@@ -127,11 +128,10 @@ const BibliographyModal = () => {
 		setOutput('');
 	}, [dispatch, itemKeys, libraryKey]);
 
-	const handleAfterOpen = useCallback(() => {
-		// on touch, wait for the slide animation to finish before focusing
-		setTimeout(() => {
-			copyToClipboardRef.current?.focus();
-		}, isTouchOrSmall ? 200 : 0);
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
+			copyToClipboardRef.current?.focus({ preventScroll: true });
+		});
 	}, [isTouchOrSmall]);
 
 	const handleBibliographyClick = useCallback(() => {

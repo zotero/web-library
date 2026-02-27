@@ -5,6 +5,7 @@ import { Button, Icon } from 'web-common/components';
 
 import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
+import { focusOnModalOpen } from '../../common/modal-focus';
 import { preferenceChange, toggleModal } from '../../actions';
 import { SETTINGS } from '../../constants/modals';
 import Select from '../form/select';
@@ -48,12 +49,11 @@ const SettingsModal = () => {
 		() => dispatch(toggleModal(SETTINGS, false)),
 	[dispatch]);
 
-	const handleAfterOpen = useCallback(() => {
-		// on touch, wait for the slide animation to finish before focusing
-		setTimeout(() => {
+	const handleAfterOpen = useCallback(({ contentEl }) => {
+		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
 			const ref = isSmall ? colorSchemeSelectRef : densitySelectRef;
-			ref.current?.focus();
-		}, isTouchOrSmall ? 200 : 0);
+			ref.current?.focus({ preventScroll: true });
+		});
 	}, [isSmall, isTouchOrSmall]);
 
 	return (
