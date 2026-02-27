@@ -705,12 +705,14 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(modal).toBeVisible();
 		await page.waitForFunction(() => document.querySelector('.modal-settings').classList.contains('ReactModal__Content--after-open'));
 
-		// Focus should be on the first select (UI Density)
-		expect(await page.evaluate(() => {
+		// Focus should be on the first select (UI Density).
+		// Use waitForFunction because focusOnModalOpen defers focus via requestAnimationFrame,
+		// which may not have fired yet when the --after-open class is already present.
+		await page.waitForFunction(() => {
 			const modal = document.querySelector('[role="dialog"][aria-label="Settings"]');
 			const select = modal?.querySelector('.form-group:first-child .select');
 			return select?.contains(document.activeElement);
-		})).toBe(true);
+		});
 
 		// Tab multiple times -- focus should stay within the modal
 		for (let i = 0; i < 5; i++) {
@@ -800,12 +802,14 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(modal).toBeVisible();
 		await page.waitForFunction(() => document.querySelector('.collection-select-modal').classList.contains('ReactModal__Content--after-open'));
 
-		// Focus should be on the collection tree inside the modal
-		expect(await page.evaluate(() => {
+		// Focus should be on the collection tree inside the modal.
+		// Use waitForFunction because focusOnModalOpen defers focus via requestAnimationFrame,
+		// which may not have fired yet when the --after-open class is already present.
+		await page.waitForFunction(() => {
 			const modal = document.querySelector('[role="dialog"][aria-label="Select Collection"]');
 			const tree = modal?.querySelector('[aria-label="collection tree"]');
 			return tree === document.activeElement || tree?.contains(document.activeElement);
-		})).toBe(true);
+		});
 
 		// Tab multiple times -- focus should stay within the modal
 		for (let i = 0; i < 5; i++) {
