@@ -137,6 +137,34 @@ test.describe('Navigate through the UI using keyboard', () => {
 		await expect(listItem.getByRole('button', { name: 'Attachment Options' })).toBeFocused();
 	})
 
+	test('Focus management when opening and closing Add Linked URL form', async ({ page, serverPort }) => {
+		const handlers = [
+			makeTextHandler('/api/users/1/items/37V7V4NT/file/view/url', 'https://files.zotero.net/abcdefgh/18726.html'),
+			makeTextHandler('/api/users/1/items/K24TUDDL/file/view/url', 'https://files.zotero.net/abcdefgh/Silver%20-%202005%20-%20Cooperative%20pathfinding.pdf')
+		];
+		server = await loadFixtureState('desktop-test-user-attachment-in-collection-view', serverPort, page, handlers);
+
+		// Click the "Add Linked URL" button
+		const addLinkedUrlButton = page.getByRole('button', { name: 'Add Linked URL' });
+		await addLinkedUrlButton.click();
+
+		// Wait for the slide-down animation to complete and the URL input to be visible
+		const urlInput = page.locator('#linked-url-form-url');
+		await expect(urlInput).toBeVisible();
+
+		// Focus should be on the URL input (autoFocus)
+		await expect(urlInput).toBeFocused();
+
+		// Press Escape to close the form
+		await page.keyboard.press('Escape');
+
+		// Wait for the exit animation to complete (form unmounts after 500ms transition)
+		await expect(urlInput).not.toBeVisible();
+
+		// Focus should return to the "Add Linked URL" button
+		await expect(addLinkedUrlButton).toBeFocused();
+	});
+
 	test('Navigate through collections tree using keyboard', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 

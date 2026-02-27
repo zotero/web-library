@@ -554,6 +554,10 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 		setIsAddingLinkedUrl(false);
 	}, []);
 
+	const handleLinkedFileExited = useCallback(() => {
+		addLinkedUrlButtonRef.current?.focus();
+	}, []);
+
 	useEffect(() => {
 		if (isActive && !isFetching && !isFetched) {
 			const start = pointer || 0;
@@ -577,6 +581,7 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 				exit={!isTouchOrSmall}
 				in={!isTouchOrSmall && isAddingLinkedUrl}
 				nodeRef={addLinkUrlFormRef}
+				onExited={handleLinkedFileExited}
 				timeout={500}
 				mountOnEnter
 				unmountOnExit
