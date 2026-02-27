@@ -65,9 +65,9 @@
     "test:all": "concurrently --group --prefixColors auto --prefix '[{name}]' -n JEST,PLAYWRIGHT \"npm:test:jest\" \"npm:test:playwright\"",
     "test:jest": "jest --silent",
     "test:playwright": "npx playwright install --with-deps && npx playwright test",
-    "test:playwright-docker": "docker run --rm -it -v \"$PWD:/work\" -w /work mcr.microsoft.com/playwright:v1.57.0-noble bash -lc \"npm ci && npx playwright install --with-deps && npx playwright test\"",
+    "test:playwright-docker": "docker run --rm -it -v \"$PWD:/work\" -w /work mcr.microsoft.com/playwright:v1.58.2-noble bash -lc \"npm ci && npx playwright install --with-deps && npx playwright test\"",
     "test:update-snapshots": "playwright test --update-snapshots",
-    "test:update-snapshots-docker": "docker run --rm -it -v \"$PWD:/work\" -w /work mcr.microsoft.com/playwright:v1.57.0-noble bash -lc \"npm ci && npx playwright install --with-deps && npx playwright test --update-snapshots\"",
+    "test:update-snapshots-docker": "docker run --rm -it -v \"$PWD:/work\" -w /work mcr.microsoft.com/playwright:v1.58.2-noble bash -lc \"npm ci && npx playwright install --with-deps && npx playwright test --update-snapshots\"",
     "fixed-state-server": "node scripts/fixed-state-server.mjs",
     "add-license": "node scripts/add-license.mjs",
     "compile-zotero-icons": "node scripts/compile-zotero-icons.mjs"

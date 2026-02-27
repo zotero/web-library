@@ -1,6 +1,6 @@
 name: CI
 on: [push]
-jobs:  
+jobs:
   test-jest:
     name: Test (Jest)
     runs-on: ubuntu-latest
@@ -14,13 +14,13 @@ jobs:
           node-version: 'lts/jod'
       - run: npm ci
       - run: npm run build:tests
-      - run: npm run test:jest  
+      - run: npm run test:jest
   test-playwright:
     name: Test (Playwright in Docker)
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.57.0-noble
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
       options: --user 1001
       env:
         CI: "true"
