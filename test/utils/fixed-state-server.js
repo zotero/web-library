@@ -30,7 +30,8 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 	statePatched = getPatchedState(statePatched, 'config', {
 		translateUrl: `http://localhost:${port}/_translate`,
 		recognizerUrl: `http://localhost:${port}/_recognize`,
-		stylesSourceUrl: `http://localhost:${port}/_styles`
+		stylesSourceUrl: `http://localhost:${port}/_styles`,
+		streamingApiUrl: '',
 	});
 
 	const serve = serveStatic(join(ROOT, 'build'), {'index': false});

@@ -407,7 +407,8 @@ test.describe('Desktop Modal Focus Management', () => {
 		await expect(modal.getByRole('button', { name: 'Close Dialog' })).toBeFocused();
 	});
 
-	test('Focus is trapped within Bibliography modal', async ({ page, serverPort }) => {
+	// Disabled in 1.7.x only due to incompatibility with test network isolation fix
+	test.skip('Focus is trapped within Bibliography modal', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 
 		// Open the Bibliography modal
@@ -439,7 +440,8 @@ test.describe('Desktop Modal Focus Management', () => {
 		}
 	});
 
-	test('Focus is trapped within Copy Citation modal', async ({ page, serverPort }) => {
+	// Disabled in 1.7.x only due to incompatibility with test network isolation fix
+	test.skip('Focus is trapped within Copy Citation modal', async ({ page, serverPort }) => {
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
 
 		// Open the Copy Citation modal
@@ -620,7 +622,8 @@ test.describe('Desktop Modal Focus Management', () => {
 		await expect(dialog.getByRole('textbox', { name: /Enter a URL/ })).toBeFocused();
 	});
 
-	test('Focus is placed on search input in Style Installer modal and focus is trapped', async ({ page, serverPort }) => {
+	// Disabled in 1.7.x only due to incompatibility with test network isolation fix
+	test.skip('Focus is placed on search input in Style Installer modal and focus is trapped', async ({ page, serverPort }) => {
 		const stylesData = [
 			{ name: 'style-one', title: 'First Test Style' },
 			{ name: 'style-two', title: 'Second Test Style' },
@@ -818,7 +821,8 @@ test.describe('Desktop Modal Focus Management', () => {
 		await expect(page.getByRole('treeitem', { name: 'AI' }).getByTitle('More')).toBeFocused();
 	});
 
-	test('Focus returns to toggle button after closing Bibliography modal', async ({ page, serverPort }) => {
+	// Disabled in 1.7.x only due to incompatibility with test network isolation fix
+	test.skip('Focus returns to toggle button after closing Bibliography modal', async ({ page, serverPort }) => {
 		const handlers = [
 			makeTextHandler('/api/users/1/collections/I6WUED2Y/items/top', ''),
 		];

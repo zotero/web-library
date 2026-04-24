@@ -335,7 +335,7 @@ test.describe('Mobile Modals', () => {
 					}),
 				});
 			} else {
-				route.continue();
+				route.fallback();
 			}
 		});
 

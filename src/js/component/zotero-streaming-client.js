@@ -104,7 +104,7 @@ const ZoteroStreamingClient = () => {
 	}, [handleClose, handleError, handleMessage, streamingApiUrl]);
 
 	useEffect(() => {
-		if(ws.current === null) {
+		if(ws.current === null && streamingApiUrl) {
 			connect();
 			return () => {
 				isTearDown.current = true;
