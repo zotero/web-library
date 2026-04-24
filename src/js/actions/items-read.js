@@ -113,71 +113,41 @@ const fetchItemDetails = (itemKey, queryOptions, overrides) => {
 	};
 }
 
+// Paginated since-fetch for items. The returned promise resolves only after
+// every page succeeds or the retry budget is exhausted, so `remoteLibraryUpdate`
+// can await completion via `Promise.allSettled`.
 const fetchAllItemsSince = (version, queryOptions, overrides) => {
 	return async (dispatch, getState) => {
-		var pointer = 0;
 		const limit = 100;
-		var hasMore = false;
+		let pointer = 0;
+		let errorRetries = 0;
+		const maxRetries = 3;
 
-		const state = getState();
+		while(true) {
+			const requestId = requestTracker.id++;
+			await dispatch(
+				fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId)
+			);
 
-		if('FETCH_ITEMS' in state.traffic &&
-			Array.isArray(state.traffic['FETCH_ITEMS'].ongoing) &&
-			state.traffic['FETCH_ITEMS'].ongoing.length > 0) {
-				setTimeout(() => dispatch(fetchAllItemsSince(version, queryOptions, overrides), 1000));
+			const traffic = get(getState(), ['traffic', 'FETCH_ITEMS'], {});
+			const { totalResults } = traffic.last ?? {};
+
+			if(typeof totalResults === 'undefined') {
+				// request errored or was dropped before a RECEIVE landed
+				if((traffic.errorCount ?? 0) > 0 && errorRetries < maxRetries) {
+					errorRetries++;
+					continue;
+				}
+				dispatch(connectionIssues());
 				return;
-		}
+			}
 
-		const checkForNextBatch = (requestId) => {
-			return async (dispatch, getState) => {
-				const state = getState();
-				const { totalResults } = get(state, ['traffic', 'FETCH_ITEMS', 'last'], {});
-
-				if(typeof(totalResults) === 'undefined') {
-					if('FETCH_ITEMS' in state.traffic &&
-						Array.isArray(state.traffic['FETCH_ITEMS'].ongoing) &&
-						state.traffic['FETCH_ITEMS'].ongoing.includes(requestId)
-					) {
-						// request was delayed, recheck later
-						setTimeout(() => dispatch(checkForNextBatch(requestId)), 1000);
-						return;
-					}
-
-					if('FETCH_ITEMS' in state.traffic &&
-						state.traffic['FETCH_ITEMS'].errorCount > 0 &&
-						state.traffic['FETCH_ITEMS'].errorCount < 3) {
-						// request errored, rerun up to 3 times
-						const requestId = requestTracker.id++;
-						await dispatch(
-							fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
-						);
-						dispatch(checkForNextBatch(requestId));
-						return;
-					}
-
-					// request was dropped, report connection issues, clean up, give up
-					dispatch(connectionIssues());
-					return;
-				}
-
-
-				hasMore = totalResults > pointer + limit;
-				pointer += limit;
-
-				if(hasMore) {
-					const requestId = requestTracker.id++;
-					await dispatch(
-						fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
-					);
-					dispatch(checkForNextBatch(requestId));
-				}
+			errorRetries = 0;
+			pointer += limit;
+			if(totalResults <= pointer) {
+				return;
 			}
 		}
-		const requestId = requestTracker.id++;
-		await dispatch(
-			fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId )
-		);
-		dispatch(checkForNextBatch(requestId));
 	}
 }
 

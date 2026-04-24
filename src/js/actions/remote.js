@@ -1,25 +1,58 @@
-import { STREAMING_REMOTE_LIBRARY_UPDATE } from '../constants/actions';
+import {
+	BEGIN_CATCHUP,
+	COMPLETE_CATCHUP,
+	STREAMING_REMOTE_LIBRARY_UPDATE,
+	UPDATE_CATCHUP_TARGET,
+} from '../constants/actions';
 import { get } from '../utils';
 import { getLastPageIndexSettingKey } from '../common/item';
 import { fetchDeletedContentSince, fetchAllCollectionsSince, fetchAllItemsSince, fetchLibrarySettings } from '.';
 
+// Per-library leading-edge + trailing-edge coalesce: the first event starts a
+// catch-up; overlapping events only bump `pendingTarget`; on completion, one
+// trailing catch-up fires if the response's `Last-Modified-Version` did not
+// cover the latest observed target.
 const remoteLibraryUpdate = (libraryKey, version) => {
 	return async (dispatch, getState) => {
+		const sync = get(getState(), ['libraries', libraryKey, 'sync']);
+		if(!sync?.version) {
+			return;
+		}
+		if(sync.version >= version) {
+			return;
+		}
+
+		if(sync.isCatchingUp) {
+			dispatch({ type: UPDATE_CATCHUP_TARGET, libraryKey, version });
+			return;
+		}
+
+		const oldVersion = sync.version;
+		dispatch({ type: BEGIN_CATCHUP, libraryKey, version });
+		dispatch({ type: STREAMING_REMOTE_LIBRARY_UPDATE, libraryKey, version });
+		dispatch(fetchLibrarySettings(libraryKey, 'tagColors'));
+
 		const state = getState();
-		const oldVersion = get(state, ['libraries', libraryKey, 'sync', 'version']);
-		if(oldVersion && oldVersion < version) {
-			dispatch({ type: STREAMING_REMOTE_LIBRARY_UPDATE, libraryKey, version });
-			dispatch(fetchLibrarySettings(libraryKey, 'tagColors'));
-			dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } }));
-			dispatch(fetchAllCollectionsSince(oldVersion, libraryKey));
-			dispatch(fetchDeletedContentSince(oldVersion, libraryKey));
-			if (state.current.view === 'reader') {
-				dispatch(fetchLibrarySettings(libraryKey, 'readerCustomThemes'));
-				const readerItemKey = state.current.attachmentKey || state.current.itemKey;
-				if(readerItemKey) {
-					const pageIndexSettingKey = getLastPageIndexSettingKey(readerItemKey, state.current.libraryKey);
-					dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
-				}
+		if(state.current.view === 'reader') {
+			dispatch(fetchLibrarySettings(libraryKey, 'readerCustomThemes'));
+			const readerItemKey = state.current.attachmentKey || state.current.itemKey;
+			if(readerItemKey) {
+				const pageIndexSettingKey = getLastPageIndexSettingKey(readerItemKey, state.current.libraryKey);
+				dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
+			}
+		}
+
+		try {
+			await Promise.allSettled([
+				dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } })),
+				dispatch(fetchAllCollectionsSince(oldVersion, libraryKey)),
+				dispatch(fetchDeletedContentSince(oldVersion, libraryKey)),
+			]);
+		} finally {
+			const after = get(getState(), ['libraries', libraryKey, 'sync']);
+			dispatch({ type: COMPLETE_CATCHUP, libraryKey });
+			if(after?.pendingTarget && after.pendingTarget > after.version) {
+				dispatch(remoteLibraryUpdate(libraryKey, after.pendingTarget));
 			}
 		}
 	}
