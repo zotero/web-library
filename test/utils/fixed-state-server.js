@@ -140,6 +140,38 @@ export function makeCustomHandler(url, jsonResponse, {totalResults = null, versi
 	};
 }
 
+// Gate for use with makeGatedHandler. Requests arrive at the server
+// immediately, but responses are held until gate.release() is called. Use to
+// make tests deterministic instead of relying on wall-clock latency.
+export function makeGate() {
+	let release;
+	const ready = new Promise(resolve => { release = resolve; });
+	return { ready, release: () => release() };
+}
+
+// Like makeCustomHandler, but defers the response body until gate.ready
+// resolves. The HTTP request still reaches the server (observable via
+// page.waitForRequest); only the response is held.
+export function makeGatedHandler(url, jsonResponse, gate, {totalResults = null, version = 10 ^ 6} = {}) {
+	return (req, resp) => {
+		if (!req.url.startsWith(url)) {
+			return false;
+		}
+		setCommonHeaders(resp);
+		if (req.method === 'OPTIONS') {
+			resp.end();
+			return true;
+		}
+		gate.ready.then(() => {
+			resp.setHeader('Content-Type', 'application/json');
+			resp.setHeader('Total-Results', `${totalResults ?? jsonResponse.length ?? 0}`);
+			resp.setHeader('Last-Modified-Version', version);
+			resp.end(JSON.stringify(jsonResponse));
+		});
+		return true;
+	};
+}
+
 export function makeTextHandler(url, textResponse) {
 	return (req, resp) => {
 		if (req.url.startsWith(url)) {

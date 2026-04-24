@@ -1,7 +1,16 @@
+import {
+	BEGIN_CATCHUP,
+	COMPLETE_CATCHUP,
+	STREAMING_REMOTE_LIBRARY_UPDATE,
+	UPDATE_CATCHUP_TARGET,
+} from '../../constants/actions';
+
 const defaultState = {
 	version: 0,
 	isSynced: true,
 	requestsPending: 0,
+	isCatchingUp: false,
+	pendingTarget: null,
 };
 
 const sync = (state = defaultState, action) => {
@@ -30,8 +39,15 @@ const sync = (state = defaultState, action) => {
 		}
 	} else if(action.type && action.type.startsWith('DROP_')) {
 		newState.requestsPending--;
-	} else if(action.type === 'STREAMING_REMOTE_LIBRARY_UPDATE') {
+	} else if(action.type === STREAMING_REMOTE_LIBRARY_UPDATE) {
 		newState.version = Math.max(action.version, state.version);
+	} else if(action.type === BEGIN_CATCHUP) {
+		newState.isCatchingUp = true;
+		newState.pendingTarget = null;
+	} else if(action.type === COMPLETE_CATCHUP) {
+		newState.isCatchingUp = false;
+	} else if(action.type === UPDATE_CATCHUP_TARGET) {
+		newState.pendingTarget = Math.max(state.pendingTarget ?? 0, action.version);
 	}
 	return newState;
 };

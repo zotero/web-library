@@ -38,7 +38,7 @@ const runRequest = async (dispatch, request, { id, type, payload }, requestOpts 
 }
 
 const dropRequest = (dispatch, type) => {
-	const { id, payload, timeout } = requestsWaiting[type];
+	const { id, payload, timeout, resolve } = requestsWaiting[type];
 
 	dispatch({
 		type: `DROP_${type}`,
@@ -47,10 +47,15 @@ const dropRequest = (dispatch, type) => {
 	});
 	clearTimeout(timeout);
 	delete requestsWaiting[type];
+	// Release the waiting caller; the outcome is "dropped", i.e. undefined.
+	resolve(undefined);
 }
 
 const runRequestWaiting = type => {
 	return async (dispatch, getState) => {
+		if(!(type in requestsWaiting)) {
+			return;
+		}
 		const state = getState();
 		const lastError = get(state, ['traffic', type, 'lastError']);
 		const errorCount = get(state, ['traffic', type, 'errorCount'], 0);
@@ -58,14 +63,17 @@ const runRequestWaiting = type => {
 		const requestScheduleIndex = Math.min(requestSchedule.length - 1, errorCount);
 		const nextRequestDelay = requestSchedule[requestScheduleIndex] * 1000;
 		const timeSinceLastError = Date.now() - lastError;
-		if(type in requestsWaiting && timeSinceLastError >= nextRequestDelay) {
-			// if there is a request waiting and ready, run it
-			const { id, payload, request, timeout } = requestsWaiting[type];
+
+		if(timeSinceLastError >= nextRequestDelay) {
+			// request is ready, run it and resolve the caller's awaited promise
+			// with the outcome so callers observe actual completion, not scheduling.
+			const { id, payload, request, timeout, resolve } = requestsWaiting[type];
 			clearTimeout(timeout);
-			runRequest(dispatch, request, { id, type, payload });
 			delete requestsWaiting[type];
-		} else if(type in requestsWaiting) {
-			// if request is not ready, reschedule
+			const outcome = await runRequest(dispatch, request, { id, type, payload });
+			resolve(outcome);
+		} else {
+			// not ready yet, reschedule the poll
 			const nextCheck = (nextRequestDelay - timeSinceLastError) + 200;
 			requestsWaiting[type] = {
 				...requestsWaiting[type],
@@ -75,37 +83,44 @@ const runRequestWaiting = type => {
 	}
 }
 
-//NOTE: if requests is backing off, this function resolves with undefined before the request actually executes
+// Returns a promise that resolves with the request's outcome when it actually
+// completes or with `undefined` if the request was dropped by a newer request
+// for the same type while waiting in the backoff queue.
 const requestWithBackoff = (request, { id, type, payload }) => {
 	return async (dispatch, getState) => {
 		const state = getState();
 		const lastError = get(state, ['traffic', type, 'lastError']);
 		const errorCount = get(state, ['traffic', type, 'errorCount'], 0);
 
-		if(lastError) {
-			const requestScheduleIndex = Math.min(requestSchedule.length - 1, errorCount);
-			const nextRequestDelay = requestSchedule[requestScheduleIndex] * 1000;
-			const timeSinceLastError = Date.now() - lastError;
-			if(timeSinceLastError < nextRequestDelay) {
-				// queue the request, dropping anything in the queue already
-				const nextCheck = (nextRequestDelay - timeSinceLastError) + 200;
-				if(type in requestsWaiting) {
-					dropRequest(dispatch, type);
-				}
-				requestsWaiting[type] = {
-					id, request, payload,
-					timeout: setTimeout(() => { dispatch(runRequestWaiting(type)) }, nextCheck)
-				};
-			} else {
-				// run the request, if anything is in the queue, drop it
-				if(type in requestsWaiting) {
-					dropRequest(dispatch, type);
-				}
-				return await runRequest(dispatch, request, { id, type, payload });
-			}
-		} else {
+		if(!lastError) {
 			return await runRequest(dispatch, request, { id, type, payload });
 		}
+
+		const requestScheduleIndex = Math.min(requestSchedule.length - 1, errorCount);
+		const nextRequestDelay = requestSchedule[requestScheduleIndex] * 1000;
+		const timeSinceLastError = Date.now() - lastError;
+
+		if(timeSinceLastError >= nextRequestDelay) {
+			// past the backoff window -- run now, dropping anything queued
+			if(type in requestsWaiting) {
+				dropRequest(dispatch, type);
+			}
+			return await runRequest(dispatch, request, { id, type, payload });
+		}
+
+		// still inside the backoff window -- queue the request. The returned
+		// promise resolves when either runRequestWaiting fires it, or a newer
+		// request for the same type drops it via dropRequest.
+		if(type in requestsWaiting) {
+			dropRequest(dispatch, type);
+		}
+		const nextCheck = (nextRequestDelay - timeSinceLastError) + 200;
+		return await new Promise(resolve => {
+			requestsWaiting[type] = {
+				id, request, payload, resolve,
+				timeout: setTimeout(() => { dispatch(runRequestWaiting(type)) }, nextCheck)
+			};
+		});
 	}
 }
 
