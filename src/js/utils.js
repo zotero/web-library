@@ -522,10 +522,10 @@ let emojiRegex;
 try {
 	// Either match RGI_Emoji (which includes country flags) or any character followed by the Variation Selector-16
 	// Requires "v" flag which is only available in modern browsers
-	emojiRegex = new RegExp(String.raw`(?:(?:\p{RGI_Emoji}|\p{Extended_Pictographic})(?!\uFE0F)|.\uFE0F)+`, "gv");
+	emojiRegex = new RegExp(String.raw`(?:(?:\p{RGI_Emoji}|[\p{Extended_Pictographic}--[©®™]])(?!\uFE0F)|.\uFE0F)+`, "gv");
 } catch {
 	try {
-		emojiRegex = new RegExp(String.raw`(?:\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
+		emojiRegex = new RegExp(String.raw`(?:(?![©®™])\p{Extended_Pictographic}(?!\uFE0F)|.\uFE0F)+`, "gu");
 		console.warn("Using legacy emoji regex. Some emoji may be missing in the items table.");
 	} catch {
 		emojiRegex = null;
