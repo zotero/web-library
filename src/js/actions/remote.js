@@ -28,26 +28,32 @@ const remoteLibraryUpdate = (libraryKey, version) => {
 		}
 
 		const oldVersion = sync.version;
+		const state = getState();
+		const isReader = state.current.view === 'reader';
+
 		dispatch({ type: BEGIN_CATCHUP, libraryKey, version });
 		dispatch({ type: STREAMING_REMOTE_LIBRARY_UPDATE, libraryKey, version });
 		dispatch(fetchLibrarySettings(libraryKey, 'tagColors'));
 
-		const state = getState();
-		if(state.current.view === 'reader') {
-			dispatch(fetchLibrarySettings(libraryKey, 'readerCustomThemes'));
-			const readerItemKey = state.current.attachmentKey || state.current.itemKey;
-			if(readerItemKey) {
-				const pageIndexSettingKey = getLastPageIndexSettingKey(readerItemKey, state.current.libraryKey);
-				dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey));
-			}
-		}
-
 		try {
-			await Promise.allSettled([
-				dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } })),
-				dispatch(fetchAllCollectionsSince(oldVersion, libraryKey)),
-				dispatch(fetchDeletedContentSince(oldVersion, libraryKey)),
-			]);
+			if(isReader) {
+				// Reader doesn't render items/collections, only the open attachment's settings.
+				// Awaiting the fetches keeps isCatchingUp set so overlapping topic updates
+				// coalesce via the same pendingTarget mechanism used by the library branch.
+				const readerItemKey = state.current.attachmentKey || state.current.itemKey;
+				const readerFetches = [dispatch(fetchLibrarySettings(libraryKey, 'readerCustomThemes'))];
+				if(readerItemKey) {
+					const pageIndexSettingKey = getLastPageIndexSettingKey(readerItemKey, state.current.libraryKey);
+					readerFetches.push(dispatch(fetchLibrarySettings(libraryKey, pageIndexSettingKey)));
+				}
+				await Promise.allSettled(readerFetches);
+			} else {
+				await Promise.allSettled([
+					dispatch(fetchAllItemsSince(oldVersion, { includeTrashed: 1 }, { current: { libraryKey } })),
+					dispatch(fetchAllCollectionsSince(oldVersion, libraryKey)),
+					dispatch(fetchDeletedContentSince(oldVersion, libraryKey)),
+				]);
+			}
 		} finally {
 			const after = get(getState(), ['libraries', libraryKey, 'sync']);
 			dispatch({ type: COMPLETE_CATCHUP, libraryKey });
