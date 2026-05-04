@@ -76,6 +76,7 @@ const config = (state = defaultState, action) => {
 			return {
 				...state,
 				...pick(action, Object.keys(defaults)),
+				userId: action.userId ? Number(action.userId) : action.userId,
 				defaultLibraryKey: determineDefaultLibraryKey(action),
 				includeMyLibrary: action.libraries.includeMyLibrary,
 				includeUserGroups: action.libraries.includeUserGroups,
