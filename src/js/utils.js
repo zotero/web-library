@@ -1,4 +1,4 @@
-import { getZotero } from 'web-common/zotero';
+import { configureZoteroShim, getZotero } from 'web-common/zotero';
 
 import columnProperties from './constants/column-properties';
 
@@ -594,6 +594,11 @@ function maxByKey(arrOfObjects, key) {
 
 const alwaysTrue = () => true;
 
+const configureZotero = schema => {
+	const mockIntl = { locale: navigator?.language || 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
+	configureZoteroShim(schema, mockIntl);
+};
+
 export {
 	alwaysTrue,
 	applyChangesToVisibleColumns,
@@ -603,6 +608,7 @@ export {
 	cleanURL,
 	compare,
 	compareItem,
+	configureZotero,
 	containsEmoji,
 	deduplicate,
 	deduplicateByHash,

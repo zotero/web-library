@@ -1,10 +1,9 @@
 import schema from 'zotero-schema/schema.json';
 import { REQUEST_SCHEMA, RECEIVE_SCHEMA, CONFIGURE } from '../constants/actions';
-import { configureZoteroShim } from 'web-common/zotero';
+import { configureZotero } from '../utils';
 
 const initialize = () => {
-	const mockIntl = { locale: navigator?.language || 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
-	configureZoteroShim(schema, mockIntl);
+	configureZotero(schema);
 
 	return async (dispatch) => {
 		dispatch({ type: REQUEST_SCHEMA });
