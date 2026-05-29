@@ -1,3 +1,5 @@
+import { normalizeLocale } from 'web-common/utils';
+
 import { getItemTitle } from './item';
 
 const entityToChar = str => {
@@ -21,8 +23,17 @@ const noteSummary = note => {
 const creator = creator => 'lastName' in creator ?
 	[creator.lastName, creator.firstName].filter(s => s.trim().length).join(', ') : creator.name;
 
-const dateLocalized = date => (date instanceof Date && !isNaN(date)) ?
-	date.toLocaleString(navigator.language || navigator.userLanguage) : '';
+const dateLocalized = date => {
+	if (!(date instanceof Date) || isNaN(date)) {
+		return '';
+	}
+	const locale = normalizeLocale(navigator.language || navigator.userLanguage || 'en-US');
+	try {
+		return date.toLocaleString(locale);
+	} catch {
+		return date.toLocaleString('en-US');
+	}
+};
 
 //@TODO: figure out better place for this
 const itemsSourceLabel = itemsSource => {
