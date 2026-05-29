@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { configureZoteroShim } from 'web-common/zotero';
 import schema from 'zotero-schema/schema.json';
 
 import { setupStore } from '../../src/js/store'
+import { configureZotero } from '../../src/js/utils'
 
 export function renderWithProviders(
 	ui,
@@ -13,8 +13,7 @@ export function renderWithProviders(
 	} = {}
 ) {
 	const store = setupStore(preloadedState);
-	const mockIntl = { locale: navigator?.language || 'en-US', formatMessage: ({ id, defaultMessage }) => defaultMessage || id };
-	configureZoteroShim(schema, mockIntl);
+	configureZotero(schema);
 	// eslint-disable-next-line react/prop-types
 	function Wrapper({ children }) {
 		return (
