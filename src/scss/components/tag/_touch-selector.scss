@@ -24,6 +24,11 @@
 		@include hairline.hairline-disabled(right);
 	}
 
+	.tag-selector-list-container {
+		display: flex;
+		flex: 1 1 auto;
+	}
+
 }
 
 .touch-tag-selector, .tag-manager-container {
