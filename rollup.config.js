@@ -24,6 +24,9 @@ const stubdnd = `
 const isProduction = process.env.NODE_ENV?.startsWith('prod');
 const isTesting = process.env.NODE_ENV?.startsWith('test');
 
+// SOURCEMAP=1 to force source map generation for a production build
+const forceSourcemap = !!process.env.SOURCEMAP;
+
 const config = {
 	input: './src/js/main.js',
 	external: [
@@ -35,7 +38,7 @@ const config = {
 	output: {
 		file: `./build/static/web-library/zotero-web-library.js` ,
 		format: 'iife',
-		sourcemap: !isProduction,
+		sourcemap: forceSourcemap || !isProduction,
 		compact: isProduction
 	},
 	treeshake: {
