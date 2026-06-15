@@ -127,7 +127,7 @@ describe('Metadata Retrieval', () => {
 			http.post('https://api.zotero.org/users/1/items/UMPPCXU4/file', async ({ request }) => {
 				const bodyParams = (await request.text()).split('&');
 				if(renameCounter === 0) {
-					expect(bodyParams).toContain('filename=Vaswani et al. - 2023 - Attention Is All You Need.pdf');
+					expect(bodyParams).toContain('filename=Vaswani%20et%20al.%20-%202023%20-%20Attention%20Is%20All%20You%20Need.pdf');
 					expect(bodyParams).toContain('md5=18e1b007a1dab45b30cc861ba2dfda25');
 				} else {
 					expect(bodyParams).toContain('filename=attention-is-all-you-need.pdf');
@@ -280,7 +280,7 @@ describe('Metadata Retrieval', () => {
 			// rename attachment file
 			http.post('https://api.zotero.org/users/1/items/ZKT5WURW/file', async ({ request }) => {
 				const bodyParams = (await request.text()).split('&');
-				expect(bodyParams).toContain('filename=Nakamoto - Bitcoin A Peer-to-Peer Electronic Cash System.pdf');
+				expect(bodyParams).toContain('filename=Nakamoto%20-%20Bitcoin%20A%20Peer-to-Peer%20Electronic%20Cash%20System.pdf');
 				expect(bodyParams).toContain('md5=d56d71ecadf2137be09d8b1d35c6c042');
 				hasRenamed = true;
 				return HttpResponse.json({ 'exists': 1 });

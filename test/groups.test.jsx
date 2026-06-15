@@ -112,7 +112,7 @@ describe('Group libraries', () => {
 			}),
 			http.post('https://api.zotero.org/groups/5119976/items/ERER8Z7M/file', async ({request}) => {
 				fileUploadRequests++;
-				expect(await request.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy et al. - 2002 - Effects of diet restriction on life span and age-r.pdf&filesize=248058&mtime=1673607166000');
+				expect(await request.text()).toEqual('md5=39bf1f4635fb0a4b2b9de876ed865f89&filename=Kealy%20et%20al.%20-%202002%20-%20Effects%20of%20diet%20restriction%20on%20life%20span%20and%20age-r.pdf&filesize=248058&mtime=1673607166000');
 				return HttpResponse.json({ exists: 1 }, {
 					headers: { 'Last-Modified-Version': ++groupLibVersion },
 				});
