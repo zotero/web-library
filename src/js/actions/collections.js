@@ -362,21 +362,11 @@ const deleteCollection = (collection, libraryKey) => {
 	};
 }
 
-const deleteCollections = (collectionKeys, libraryKey, recursively = true) => {
-	return async (dispatch, getState) => {
+// Deletes exactly the collections passed; callers must expand the selection to
+// include descendants beforehand (see chunkedDeleteCollections);
+const deleteCollections = (collectionKeys, libraryKey) => {
+	return async (dispatch) => {
 		const id = requestTracker.id++;
-		const state = getState();
-		const collections = state.libraries[libraryKey].collections.keys.map(key => state.libraries[libraryKey].dataObjects[key]);
-
-		if (recursively) {
-			// at this point child map should be memoized
-			const childMap = makeChildMap(collections);
-			const childKeys = [];
-			for(const key of collectionKeys) {
-				childKeys.push(...getDescendants(key, childMap));
-			}
-			collectionKeys.push(...childKeys);
-		}
 
 		dispatch({
 			type: PRE_DELETE_COLLECTIONS,
@@ -394,7 +384,23 @@ const deleteCollections = (collectionKeys, libraryKey, recursively = true) => {
 	};
 }
 
-const chunkedDeleteCollections = (...args) => chunkedAction(deleteCollections, ...args);
+// Expands a list of collection keys to include all their descendants
+const expandWithDescendants = (state, libraryKey, collectionKeys) => {
+	const collections = state.libraries[libraryKey].collections.keys.map(key => state.libraries[libraryKey].dataObjects[key]);
+	const childMap = makeChildMap(collections);
+	const allKeys = [...collectionKeys];
+	for (const key of collectionKeys) {
+		allKeys.push(...getDescendants(key, childMap));
+	}
+	return [...new Set(allKeys)];
+}
+
+const chunkedDeleteCollections = (collectionKeys, libraryKey) => {
+	return async (dispatch, getState) => {
+		const uniqueKeys = expandWithDescendants(getState(), libraryKey, collectionKeys);
+		return await dispatch(chunkedAction(deleteCollections, uniqueKeys, libraryKey));
+	};
+}
 
 const queueDeleteCollections = (collectionKeys, libraryKey, id, resolve, reject) => {
 	return {
@@ -439,24 +445,15 @@ const queueDeleteCollections = (collectionKeys, libraryKey, id, resolve, reject)
 	};
 }
 
-const updateCollectionsTrash = (collectionKeys, libraryKey, deleted, recursively = true) => {
-	return async (dispatch, useState) => {
+// Sets the trashed flag on exactly the collections passed in; callers
+// must expand the selection to include descendants beforehand (see
+// chunkedUpdateCollectionsTrash);
+const updateCollectionsTrash = (collectionKeys, libraryKey, deleted) => {
+	return async (dispatch) => {
 		const id = requestTracker.id++;
-		const state = useState();
-		const collections = state.libraries[libraryKey].collections.keys.map(key => state.libraries[libraryKey].dataObjects[key]);
 
 		if (deleted !== 0 && deleted !== 1) {
 			throw new Error('deleted must be 0 or 1');
-		}
-
-		if (recursively) {
-			// at this point child map should be memoized
-			const childMap = makeChildMap(collections);
-			const childKeys = [];
-			for (const key of collectionKeys) {
-				childKeys.push(...getDescendants(key, childMap));
-			}
-			collectionKeys.push(...childKeys);
 		}
 
 		dispatch({
@@ -467,15 +464,23 @@ const updateCollectionsTrash = (collectionKeys, libraryKey, deleted, recursively
 			id
 		});
 
-		dispatch(
-			queueUpdateCollectionsTrash(collectionKeys, libraryKey, deleted, id)
-		);
+		const promise = new Promise((resolve, reject) => {
+			dispatch(
+				queueUpdateCollectionsTrash(collectionKeys, libraryKey, deleted, id, resolve, reject)
+			);
+		});
+		return promise;
 	};
 }
 
-const chunkedUpdateCollectionsTrash = (...args) => chunkedAction(updateCollectionsTrash, ...args);
+const chunkedUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted) => {
+	return async (dispatch, getState) => {
+		const uniqueKeys = expandWithDescendants(getState(), libraryKey, collectionKeys);
+		return await dispatch(chunkedAction(updateCollectionsTrash, uniqueKeys, libraryKey, deleted));
+	};
+}
 
-const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id) => {
+const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -516,6 +521,7 @@ const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id) =>
 					response,
 					id
 				});
+				resolve(response);
 			} catch(error) {
 				dispatch({
 						type: ERROR_UPDATE_COLLECTIONS_TRASH,
@@ -525,7 +531,7 @@ const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id) =>
 						deleted,
 						id
 					});
-				throw error;
+				reject(error);
 			} finally {
 				next();
 			}
@@ -534,16 +540,16 @@ const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id) =>
 }
 
 export {
-    chunkedUpdateCollectionsTrash,
-    createCollection,
-    createCollections,
-    deleteCollection,
-    deleteCollections,
-    fetchAllCollections,
-    fetchAllCollectionsSince,
-    fetchCollections,
-    queueUpdateCollection,
-    updateCollection,
-    updateCollectionsTrash,
+	chunkedUpdateCollectionsTrash,
+	createCollection,
+	createCollections,
+	deleteCollection,
+	deleteCollections,
+	fetchAllCollections,
+	fetchAllCollectionsSince,
+	fetchCollections,
+	queueUpdateCollection,
+	updateCollection,
+	updateCollectionsTrash,
 	chunkedDeleteCollections
 };

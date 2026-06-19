@@ -10,7 +10,7 @@ import { isTriggerEvent, noop, omit, pick } from 'web-common/utils';
 import Editable from '../editable';
 import Node from './node';
 import { BIBLIOGRAPHY, COLLECTION_RENAME, COLLECTION_ADD, MOVE_COLLECTION } from '../../constants/modals';
-import { createAttachmentsFromDropped, toggleModal, updateCollection, updateCollectionsTrash, navigate } from '../../actions';
+import { createAttachmentsFromDropped, toggleModal, updateCollection, chunkedUpdateCollectionsTrash, navigate } from '../../actions';
 import { setModalFocusRestore } from '../../common/modal-focus-restore';
 import { stopPropagation, getUniqueId } from '../../utils.js';
 import { PICKS_SINGLE_COLLECTION, PICKS_MULTIPLE_COLLECTIONS, PICKS_SINGLE_ITEM, PICKS_MULTIPLE_ITEMS } from '../../constants/picker-modes';
@@ -430,7 +430,7 @@ const DotMenu = memo(props => {
 			focusBySelector(selector);
 		}, 0);
 
-		dispatch(updateCollectionsTrash([collection.key], parentLibraryKey, 1));
+		dispatch(chunkedUpdateCollectionsTrash([collection.key], parentLibraryKey, 1));
 
 		if(currentLibraryKey === parentLibraryKey && collection.key === currentCollectionKey) {
 			if(collection.parentCollection) {
