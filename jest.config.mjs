@@ -25,8 +25,13 @@ export default {
 	testMatch: [
 		"<rootDir>/test/*.test.js?(x)",
 	],
+	transform: {
+		// Same as Jest's default, but also routes `.mjs` through babel-jest so that
+		// ESM-only dependencies (e.g. `rettime`, pulled in by msw) can be transpiled.
+		"^.+\\.m?[jt]sx?$": "babel-jest",
+	},
 	transformIgnorePatterns: [
-		"/node_modules/(?!until-async|balanced-match|react-dnd|dnd-core|@react-dnd|dnd-multi-backend|rdndmb-html5-to-touch)",
+		"/node_modules/(?!until-async|balanced-match|react-dnd|dnd-core|@react-dnd|dnd-multi-backend|rdndmb-html5-to-touch|rettime|@open-draft/deferred-promise)",
 		"\\.pnp\\.[^\\/]+$"
 	],
 };
