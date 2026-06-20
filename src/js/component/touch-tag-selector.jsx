@@ -1,11 +1,10 @@
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, FocusTrap, Icon } from 'web-common/components';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
-import FocusTrap from './focus-trap';
 import TagList, { TagListItem } from './tag-selector/tag-list';
 import { filterTags, navigate, toggleHideAutomaticTags, toggleModal, toggleTouchTagSelector } from '../actions';
 import { MANAGE_TAGS } from '../constants/modals';

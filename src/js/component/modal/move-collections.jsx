@@ -1,10 +1,9 @@
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import deepEqual from 'fast-deep-equal';
-import FocusTrap from '../focus-trap';
 import Libraries from '../libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';

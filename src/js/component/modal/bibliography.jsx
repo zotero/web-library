@@ -1,4 +1,4 @@
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
+import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, FocusTrap, Icon, Spinner } from 'web-common/components';
 import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -10,7 +10,6 @@ import { focusOnModalOpen } from '../../common/modal-focus';
 import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, fetchItemKeys, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
 import CitationOptions from '../citation-options';
-import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import RadioSet from '../form/radio-set';
 

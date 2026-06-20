@@ -1,12 +1,11 @@
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import {Fragment, memo, useCallback, useEffect, useId, useRef, useState} from 'react';
-import {Button, Icon} from 'web-common/components';
+import {Button, FocusTrap, Icon} from 'web-common/components';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {usePrevious} from 'web-common/hooks';
 import {pick} from 'web-common/utils';
 
-import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import {METADATA_RETRIEVAL} from '../../constants/modals';
 import {focusOnModalOpen} from '../../common/modal-focus';

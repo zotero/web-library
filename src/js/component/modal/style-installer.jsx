@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { omit } from 'web-common/utils';
 
-import FocusTrap from '../focus-trap';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import SearchWorker from 'web-worker:../../style-search.worker.js';

@@ -1,9 +1,8 @@
 import cx from 'classnames';
 import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 
-import FocusTrap from '../focus-trap';
 import Modal from '../ui/modal';
 import { focusOnModalOpen } from '../../common/modal-focus';
 import { preferenceChange, toggleModal } from '../../actions';

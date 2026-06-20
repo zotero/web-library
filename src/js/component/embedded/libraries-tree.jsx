@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { usePrevious } from 'web-common/hooks';
 import { isTriggerEvent } from 'web-common/utils';
 
 import Libraries from '../libraries';
 import { EMBEDDED_LIBRARIES_TREE } from '../../constants/modals';
 import { toggleModal } from '../../actions';
-import FocusTrap from '../focus-trap';
 
 const EmbeddedLibrariesTreeModal = () => {
 	const dispatch = useDispatch();
@@ -48,7 +47,7 @@ const EmbeddedLibrariesTreeModal = () => {
 	}, [isOpen, wasOpen]);
 
 	return isOpen ? (
-		<FocusTrap targetRef={ librariesRef }>
+		<FocusTrap>
 			<div className="embedded-collection-tree" onKeyDown={ handleKeyDown } ref={ ref }>
 				<Libraries ref={ librariesRef } onNodeSelected={ handleNodeSelected } />
 				<Button icon className="close" onKeyDown={ handleClose } onClick={ handleClose } >

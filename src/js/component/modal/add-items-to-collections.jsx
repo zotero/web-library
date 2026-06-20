@@ -2,11 +2,10 @@ import deepEqual from 'fast-deep-equal';
 import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { usePrevious } from 'web-common/hooks';
 import { pick } from 'web-common/utils';
 
-import FocusTrap from '../focus-trap';
 import Libraries from '../../component/libraries';
 import Modal from '../ui/modal';
 import TouchHeader from '../touch-header.jsx';

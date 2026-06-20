@@ -1,4 +1,4 @@
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +18,6 @@ import Modal from '../ui/modal';
 import Search from '../search';
 import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
-import FocusTrap from '../focus-trap';
 
 const AddRelatedModal = () => {
 	const dispatch = useDispatch();

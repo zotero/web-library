@@ -85,7 +85,7 @@
 @use "components/modal/modal-item-picker";
 @use "components/drag-layer";
 @use "components/rich-editor";
-@use "components/popover";
+@use "../../modules/web-common/scss/popover";
 @use "components/messages";
 @use "components/ongoing";
 @use "components/new-item-selector";

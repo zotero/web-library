@@ -1,4 +1,4 @@
-import { Button, Icon } from 'web-common/components';
+import { Button, FocusTrap, Icon } from 'web-common/components';
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,6 @@ import TouchHeader from '../touch-header.jsx';
 import SearchBar from '../touch-header/searchbar';
 import { isEPUBAttachment, isPDFAttachment, isRegularItem, isWebAttachment } from '../../common/item.js';
 import { pluralize } from '../../common/format.js';
-import FocusTrap from '../focus-trap';
 
 const ChangeParentItemModal = () => {
 	const dispatch = useDispatch();

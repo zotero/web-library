@@ -1,7 +1,5 @@
-import { arrow, shift, useFloating } from '@floating-ui/react-dom';
-import { Button, Icon, Spinner } from 'web-common/components';
-import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useReducer } from 'react';
-import { isTriggerEvent } from 'web-common/utils';
+import { Button, FocusTrap, Icon, Popover, PopoverBody, PopoverDialog, PopoverTrigger, Spinner } from 'web-common/components';
+import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useRef, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
@@ -14,7 +12,6 @@ import { citationFromItems, fetchCSLStyle, fetchItemsByKeys, toggleModal } from 
 import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
 import { focusOnModalOpen } from '../../common/modal-focus';
 import { locatorShortForms, locators } from '../../constants/locators';
-import FocusTrap from '../focus-trap';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import Select from '../form/select';
@@ -219,98 +216,64 @@ const Bubble = memo((props => {
 	const { isOpen, item, index, modifier, onModifierChange, onOpenPopover, onReorderPreview, onReorderCommit, onReorderCancel } = props;
 	const { locator, label, mode, prefix, suffix } = modifier;
 	const shortLabel = locatorShortForms[label] || label;
-	const id = useId();
-	const wasOpen = usePrevious(isOpen);
 	const ref = useRef(null);
-	const popoverRef = useRef(null);
-	const arrowRef = useRef(null);
-	const formRef = useRef(null);
-	const middleware = [shift({ padding: 8 }), arrow({ element: arrowRef })];
-	const { x, y, refs, strategy, update, middlewareData } = useFloating({ placement: 'bottom', middleware });
 	const { dragRef, dropRef, isDragging, isOver, canDrop } = useSortable(
 		ref, CITATION, { key: item.key }, index, onReorderPreview, onReorderCommit, onReorderCancel, HORIZONTAL
 	);
 
 	dragRef(dropRef(ref));
 
-	const handleClick = useCallback((ev) => {
-		if (isOpen) {
-			onOpenPopover(null);
-		} else {
-			onOpenPopover(ev.currentTarget.dataset.key);
-		}
-	}, [isOpen, onOpenPopover]);
+	const handleToggle = useCallback(() => {
+		onOpenPopover(isOpen ? null : item.key);
+	}, [isOpen, item.key, onOpenPopover]);
 
 	const handleDone = useCallback(() => {
 		ref.current.focus();
 		onOpenPopover(null);
 	}, [onOpenPopover]);
 
-	const handleKeyDown = useCallback((ev) => {
-		if (isTriggerEvent(ev) || (ev.type === 'keydown' && ev.key === 'ArrowDown')) {
-			ev.preventDefault();
-			onOpenPopover(ev.currentTarget.dataset.key);
-		}
-	}, [onOpenPopover]);
-
-
-	useLayoutEffect(() => {
-		if (isOpen && !wasOpen) {
-			update();
-			formRef.current?.focus();
-		}
-	}, [isOpen, update, wasOpen]);
-
 	const classNames = cx('bubble',
 		{ 'open': isOpen, 'dnd-target': isOver && canDrop, 'dnd-source': isDragging }
 	);
 
 	return (
-		<Fragment>
-			<Button
+		// Dismissal, Escape handling and focus return are managed by the parent modal
+		// (it shares the open state with the touch editor), so the popover only owns
+		// positioning and the focus trap.
+		<Popover
+			isOpen={isOpen}
+			onToggle={handleToggle}
+			placement="bottom"
+			shift={{ padding: 8 }}
+			trapFocus
+			dismissOnOutsideClick={false}
+			dismissOnEscape={false}
+		>
+			<PopoverTrigger
 				className={classNames}
 				data-key={item.key}
-				aria-controls={`${id}-dialog`}
 				icon
-				id={id}
-				onClick={handleClick}
-				onKeyDown={handleKeyDown}
 				tabIndex={-2}
-				ref={r => { refs.setReference(r); ref.current = r; }}
+				ref={ref}
 			>
 				{buildBubbleString(item, shortLabel, locator, prefix, suffix)}
 				<Icon type="16/chevron-7" className="dropmarker" width="16" height="16" />
-			</Button>
-			<FocusTrap disabled={!isOpen}>
-				<div
-					inert={!isOpen}
-					aria-label="Citation Options"
-					aria-hidden={!isOpen}
-					id={`${id}-dialog`}
-					role="dialog"
-					ref={r => { refs.setFloating(r); popoverRef.current = r; }}
-					className={cx('bubble-popover', 'popover', 'popover-bottom', { show: isOpen })}
-					style={{ position: strategy, transform: isOpen ? `translate3d(${x}px, ${y}px, 0px)` : '' }}
-				>
-					<div className="popover-inner" role="tooltip">
-						<div className="popover-body">
-							<CitationForm
-								itemKey={item.key}
-								label={label}
-								locator={locator}
-								mode={mode}
-								prefix={prefix}
-								suffix={suffix}
-								onClose={handleDone}
-								onModifierChange={onModifierChange}
-								ref={formRef}
-							/>
-						</div>
-					</div>
-					<span className="popover-arrow" ref={arrowRef} style={{ left: middlewareData?.arrow?.x }}></span>
-				</div>
-			</FocusTrap>
-		</Fragment>
+			</PopoverTrigger>
+			<PopoverDialog className="bubble-popover" aria-label="Citation Options">
+				<PopoverBody>
+					<CitationForm
+						itemKey={item.key}
+						label={label}
+						locator={locator}
+						mode={mode}
+						prefix={prefix}
+						suffix={suffix}
+						onClose={handleDone}
+						onModifierChange={onModifierChange}
+					/>
+				</PopoverBody>
+			</PopoverDialog>
+		</Popover>
 	);
 }));
 
