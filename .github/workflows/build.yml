@@ -8,11 +8,11 @@ jobs:
     name: Build, Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/krypton'
       - run: npm ci
@@ -22,6 +22,6 @@ jobs:
           mv build ${{ github.event.repository.name }}-${{ github.ref_name }}
           zip -9r ${{ github.event.repository.name }}-${{ github.ref_name }}.zip ${{ github.event.repository.name }}-${{ github.ref_name }}
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ${{ github.event.repository.name }}-${{ github.ref_name }}.zip
