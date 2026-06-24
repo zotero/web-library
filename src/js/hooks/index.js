@@ -1,4 +1,5 @@
 export * from './use-edit-mode';
+export * from './use-fulltext-status';
 export * from './use-items-state';
 export * from './use-navigation-state';
 export * from './state';

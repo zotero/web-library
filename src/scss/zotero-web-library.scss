@@ -33,6 +33,7 @@
 // Components
 @use "../../modules/web-common/scss/select";
 @use "../../modules/web-common/scss/icon";
+@use "../../modules/web-common/scss/progress-ring";
 @use "components/button";
 @use "components/bibliography";
 @use "components/citation-options";
@@ -49,6 +50,7 @@
 @use "components/touch-nav";
 @use "components/search";
 @use "components/searchbar";
+@use "components/fulltext-reindexing";
 @use "components/auto-resizer";
 @use "components/color-picker";
 @use "components/library";

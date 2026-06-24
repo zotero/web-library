@@ -40,7 +40,8 @@ const fetchItems = (
 			}
 			const items = extractItems(response, state);
 			const totalResults = response.getTotalResults();
-			return { items, response, totalResults };
+			const isFulltextReindexing = response.response?.headers?.get('Zotero-Full-Text-Reindexing') === '1';
+			return { items, response, totalResults, isFulltextReindexing };
 		}
 
 		const payload = { libraryKey, ...queryConfig, queryOptions };

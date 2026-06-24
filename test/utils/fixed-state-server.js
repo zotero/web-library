@@ -274,3 +274,59 @@ export function makePaginatedHandler(urlPath, allItems) {
 		return true;
 	};
 }
+
+// Paired handlers for the full-text reindexing flow: every `qmode=everything` search
+// carries the `Zotero-Full-Text-Reindexing` header until polled `sequence` reports "indexed".
+export function makeFulltextReindexingHandlers({ indexUrl, items, sequence, totalResults = null, version = 1000000 }) {
+	let pollCount = 0;
+	let itemsCount = 0;
+	let done = false;
+
+	const itemsHandler = (req, resp) => {
+		// Match the everything-mode items search whether scoped to the library
+		// root or a collection. The tags request uses `itemQMode`, so it is excluded.
+		if (!req.url.includes('qmode=everything')) {
+			return false;
+		}
+		setCommonHeaders(resp);
+		if (req.method === 'OPTIONS') {
+			resp.end();
+			return true;
+		}
+		itemsCount++;
+		resp.setHeader('Content-Type', 'application/json');
+		resp.setHeader('Total-Results', `${totalResults ?? items.length ?? 0}`);
+		resp.setHeader('Last-Modified-Version', version);
+		if (!done) {
+			resp.setHeader('Zotero-Full-Text-Reindexing', '1');
+		}
+		resp.end(JSON.stringify(items));
+		return true;
+	};
+
+	const indexHandler = (req, resp) => {
+		if (!req.url.startsWith(indexUrl)) {
+			return false;
+		}
+		setCommonHeaders(resp);
+		if (req.method === 'OPTIONS') {
+			resp.end();
+			return true;
+		}
+		const body = sequence[Math.min(pollCount, sequence.length - 1)];
+		pollCount++;
+		if (body.status === 'indexed') {
+			done = true;
+		}
+		resp.setHeader('Content-Type', 'application/json');
+		resp.end(JSON.stringify(body));
+		return true;
+	};
+
+	return {
+		handlers: [indexHandler, itemsHandler],
+		getPollCount: () => pollCount,
+		getItemsCount: () => itemsCount,
+		isDone: () => done,
+	};
+}

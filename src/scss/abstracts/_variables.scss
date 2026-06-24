@@ -13,7 +13,7 @@
 	$error: var(--accent-red),
 	$warning: var(--accent-yellow),
 	$info: var(--accent-blue),
-	$focus-color: var(--accent-blue),
+	$secondary: var(--accent-blue),
 	$link-color: var(--accent-blue),
 	$shade-0: var(--color-shade-0),
 	$shade-1: var(--color-shade-1),
@@ -34,16 +34,12 @@
 	$menu-item-selected-hover-bg: var(--color-accent),
 	$btn-light-color: var(--color-shade-6),
 	$btn-success-color: var(--accent-green),
-	$input-focus-color: var(--accent-blue),
 	$placeholder-color: var(--color-shade-5),
-	$checkbox-checked-bg-touch: var(--accent-blue),
 	$icon-color: var(--color-shade-6),
-	$editable-border-color: var(--accent-blue),
 	$editable-hover-bg: var(--color-editable-hover-bg),
 	$editable-backdrop-hover-bg: var(--color-editable-backdrop-hover-bg),
-	$spinner-color: var(--accent-blue),
-	$tab-active-color: var(--accent-blue),
 	$tab-inactive-color: var(--color-shade-8),
+	$popover-border-color: var(--color-border),
 );
 @forward "../../../modules/web-common/scss/abstracts/defaults";
 @use "../../../modules/web-common/scss/abstracts/defaults" as *;
@@ -590,9 +586,10 @@ $popover-body-color: $text-color;
 $popover-header-bg: $body-bg;
 $popover-header-color: $shade-8;
 $popover-header-border-color: $shade-2;
-$popover-box-shadow: 0 0 0 1px rgb(0 0 0 / 8%), 0 3px 8px rgb(0 0 0 / 20%);
+// $popover-box-shadow and $popover-arrow-outer-color derive from
+// $popover-border-color (set to var(--color-border) in the defaults `with()` above),
+// so the body hairline and arrow share one theme-aware edge.
 $popover-arrow-color: $body-bg;
-$popover-arrow-outer-color: rgb(0 0 0 / 20%);
 
 // Oncoing
 $ongoing-border-color: $shade-3;

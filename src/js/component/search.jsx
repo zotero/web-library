@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { Button, DropdownToggle, DropdownMenu, DropdownItem, Icon, UncontrolledDropdown } from 'web-common/components';
 import { noop } from 'web-common/utils';
 
+import FulltextReindexingProgress from './fulltext-reindexing-progress';
+
 const modes = {
 	titleCreatorYear: "Title, Creator, Year",
 	everything: "Title, Creator, Year + Full-Text Content"
@@ -204,6 +206,7 @@ const Search = memo(forwardRef((props, ref) => {
 					<Icon type={ '10/x' } width="10" height="10" />
 				</Button>
 			)}
+			<FulltextReindexingProgress />
 		</div>
 	);
 }));

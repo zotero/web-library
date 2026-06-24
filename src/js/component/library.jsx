@@ -12,6 +12,7 @@ import CustomDragLayer from '../component/drag-layer';
 import ItemDetails from '../component/item/details';
 import CurrentItems from '../component/item/current-items';
 import CurrentLibraries from '../component/current-libraries';
+import FulltextReindexingManager from './fulltext-reindexing-manager';
 import Messages from '../component/messages';
 import MobileNav from './ui/mobile-nav';
 import ModalManager from './modal-manager';
@@ -214,6 +215,7 @@ const Library = () => {
 			<TitleUpdater />
 			<ZoteroStreamingClient />
 			<PreferencesObserver />
+			<FulltextReindexingManager />
 		</Fragment>
     );
 }

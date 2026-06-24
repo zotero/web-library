@@ -6,6 +6,7 @@ import { usePrevious } from 'web-common/hooks';
 import CurrentItems from './item/current-items';
 import ItemDetails from './item/details';
 import ZoteroStreamingClient from './zotero-streaming-client';
+import FulltextReindexingManager from './fulltext-reindexing-manager';
 import { get } from '../utils';
 import EmbeddedHeader from './embedded/header';
 import EmbeddedFooter from './embedded/footer';
@@ -144,6 +145,7 @@ const Library = () => {
 			</div>
 			<ItemsSortModal />
 			<ZoteroStreamingClient />
+			<FulltextReindexingManager />
 		</Fragment>
     );
 }

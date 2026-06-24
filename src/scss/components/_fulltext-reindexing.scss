@@ -1,0 +1,65 @@
+@use "../abstracts/variables";
+
+.input-group.search {
+	.fulltext-reindexing-progress {
+		position: absolute;
+		top: 50%;
+		// Sit 8px to the left of the clear button, whose left edge is
+		// ($space-xs + border + $space-md) in from the search box's right edge.
+		right: variables.$space-xs + variables.$border-width + variables.$space-md + variables.$space-xs;
+		transform: translateY(-50%);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: variables.$space-md;
+		height: variables.$space-md;
+		padding: 0;
+		border: none;
+		background: none;
+
+		.icon-tick {
+			color: var(--accent-blue);
+		}
+
+		// `.icon-spin` on touch is 24px. Pin it to 16px everywhere to match the ring/tick icon.
+		.icon-spin {
+			width: variables.$space-md;
+			height: variables.$space-md;
+			color: var(--accent-blue);
+		}
+	}
+
+	// Reserve room for the indicator, which sits alongside the clear button
+	// while the index is being rebuilt. The trailing $space-min keeps the text
+	// clear of the indicator now that it sits 4px further left.
+	&:has(.fulltext-reindexing-progress) {
+		.with-dropdown {
+			html:not(.specifity) & {
+				padding-right: variables.$space-xl + variables.$space-md + variables.$space-min;
+			}
+		}
+	}
+}
+
+.popover.fulltext-reindexing-popover {
+	max-width: 200px;
+
+	.popover-inner {
+		position: relative;
+	}
+
+	.btn-icon.close {
+		position: absolute;
+		// Align with the first line of body text.
+		top: variables.$space-xs;
+		right: variables.$space-min;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	// The wider right inset keeps the text clear of the close button in the corner.
+	.popover-body {
+		padding: variables.$space-xs variables.$space-lg variables.$space-xs variables.$space-xs;
+	}
+}

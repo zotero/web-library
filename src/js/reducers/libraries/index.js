@@ -5,6 +5,7 @@ import attachmentsUrl from './attachments-url';
 import bestAttachmentReverseLookup from './best-attachment-reverse-lookup';
 import dataObjects from './data-objects';
 import collections from './collections';
+import fulltext from './fulltext';
 import itemsAndCollectionsTrash from './items-and-collections-trash';
 import deleting from './deleting';
 import creating from './creating';
@@ -45,6 +46,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 				creating: creating(state[action.libraryKey]?.creating, action),
 				dataObjects: dataObjectsState,
 				deleting: deleting(get(state, [action.libraryKey, 'deleting']), action),
+				fulltext: fulltext(get(state, [action.libraryKey, 'fulltext']), action),
 				items: dataObjectsState, // TODO: remove all uses of .items and remove this line
 				itemsByCollection: itemsByCollection(get(state, [action.libraryKey, 'itemsByCollection']), action, {
 					items: (state[action.libraryKey] || {}).items, meta

@@ -8,6 +8,7 @@ export * from "./attachments";
 export * from "./cite";
 export * from "./collections";
 export * from "./deleted";
+export * from "./fulltext";
 export * from "./groups";
 export * from "./identifier";
 export * from "./init";
