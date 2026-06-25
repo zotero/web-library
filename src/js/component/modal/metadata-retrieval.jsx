@@ -73,7 +73,7 @@ const MetadataRetrievalTitleCell = memo(props => {
 	return (
 		<Cell
 			columnName={columnName}
-			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
+			{...pick(props, ['colIndex', 'width', 'isLastColumn'])}
 		>
 			<Icon
 				className="metadata-status-icon"
@@ -103,7 +103,6 @@ MetadataRetrievalTitleCell.propTypes = {
 	labelledById: PropTypes.string,
 	colIndex: PropTypes.number,
 	width: PropTypes.string,
-	isFirstColumn: PropTypes.bool,
 	isLastColumn: PropTypes.bool
 }
 
@@ -147,7 +146,6 @@ const MetadataRetrievalTableRow = memo(props => {
 				<MetadataRetrievalTitleCell
 					key={c.field}
 					colIndex={colIndex}
-					isFirstColumn={colIndex === 0}
 					isLastColumn={colIndex === columns.length - 1}
 					labelledById={labelledById}
 					columnName={c.field}
@@ -158,7 +156,6 @@ const MetadataRetrievalTableRow = memo(props => {
 				<GenericDataCell
 					key={c.field}
 					colIndex={colIndex}
-					isFirstColumn={colIndex === 0}
 					isLastColumn={colIndex === columns.length - 1}
 					columnName={c.field}
 					itemData={itemData}

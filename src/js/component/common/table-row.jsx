@@ -83,7 +83,6 @@ const TableRow = props => {
 						labelledById={labelledById}
 						key={c.field}
 						colIndex={colIndex}
-						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
 						isSelected={isSelected}
@@ -94,7 +93,6 @@ const TableRow = props => {
 					<AttachmentCell
 						key={c.field}
 						colIndex={colIndex}
-						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
 						isSelected={isSelected}
@@ -105,7 +103,6 @@ const TableRow = props => {
 					<GenericDataCell
 						key={c.field}
 						colIndex={colIndex}
-						isFirstColumn={colIndex === 0}
 						isLastColumn={colIndex === columns.length - 1}
 						columnName={c.field}
 						itemData={itemData}
@@ -116,7 +113,6 @@ const TableRow = props => {
 				key={c.field}
 				width={`var(--col-${colIndex}-width)`}
 				colIndex={colIndex}
-				isFirstColumn={colIndex === 0}
 				isLastColumn={colIndex === columns.length - 1}
 				columnName={c.field}
 			/>)}

@@ -33,6 +33,49 @@ test.describe('Desktop Layout', () => {
 		expect(detailsBox.x + detailsBox.width).toBeLessThanOrEqual(1200);
 	});
 
+	test('Items table column content left-aligns with header labels', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		// Ensure the body has rendered item rows before measuring
+		await expect(page.locator('.items-table-body .item').first()).toBeVisible();
+
+		const columns = await page.evaluate(() => {
+			const firstRow = document.querySelector('.items-table-body .item');
+			return [...document.querySelectorAll('.items-table-head .column-header')].map(headerCell => {
+				const name = headerCell.dataset.columnName;
+				const headerLabel = headerCell.querySelector('.header-label');
+				const bodyContent = firstRow.querySelector(`.metadata[data-column-name="${name}"] .truncate`);
+				return {
+					name,
+					headerLabelLeft: headerLabel ? headerLabel.getBoundingClientRect().left : null,
+					bodyContentLeft: bodyContent ? bodyContent.getBoundingClientRect().left : null,
+				};
+			});
+		});
+
+		const nonTitle = columns.filter(c =>
+			c.name && c.name !== 'title' && c.headerLabelLeft !== null && c.bodyContentLeft !== null
+		);
+
+		// Sanity check: we actually measured the data columns (creator, date, ...)
+		expect(nonTitle.length).toBeGreaterThan(0);
+
+		// Every non-title column's content must line up with its header label, not
+		// with the column separator. Regression guard for the first-column width
+		// reduction that used to shift all following columns 8px to the left.
+		for (const col of nonTitle) {
+			expect(
+				Math.abs(col.bodyContentLeft - col.headerLabelLeft),
+				`column "${col.name}" body content should align with its header label`
+			).toBeLessThanOrEqual(1);
+		}
+
+		// The title column is intentionally exempt: the item type icon pushes its
+		// content to the right of the header label, so it must NOT be aligned.
+		const title = columns.find(c => c.name === 'title');
+		expect(title.bodyContentLeft).toBeGreaterThan(title.headerLabelLeft + 1);
+	});
+
 	test('Layout switches from 3-column to 2-column when crossing lg/md breakpoint', async ({ page, serverPort }) => {
 		await page.setViewportSize({ width: 1300, height: 800 });
 		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);

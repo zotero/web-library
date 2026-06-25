@@ -8,8 +8,11 @@ import { Icon } from 'web-common/components';
 import colorNames from '../../constants/color-names';
 import { renderItemTitle } from '../../common/format';
 
-const Cell = ({ children, className, columnName, index, isFirstColumn, isLastColumn, width, style = {}, ...rest }) => {
-	width = rest['aria-role'] === 'columnheader' ? width : (isFirstColumn || isLastColumn) ? `calc(${width} - 8px)` : width;
+const Cell = ({ children, className, columnName, index, isLastColumn, width, style = {}, ...rest }) => {
+	// Only the last column is narrowed to leave room for the scrollbar gutter.
+	// The first column must keep its full width, otherwise every following
+	// column is shifted left of its header and content no longer lines up.
+	width = rest['aria-role'] === 'columnheader' ? width : isLastColumn ? `calc(${width} - 8px)` : width;
 
 	return (
 		<div
@@ -32,7 +35,6 @@ Cell.propTypes = {
 	className: PropTypes.string,
 	columnName: PropTypes.string,
 	index: PropTypes.number,
-	isFirstColumn: PropTypes.bool,
 	isLastColumn: PropTypes.bool,
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	style: PropTypes.object,
@@ -107,7 +109,7 @@ export const TitleCell = memo(props => {
 	return (
 		<Cell
 			columnName={columnName}
-			{...pick(rest, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
+			{...pick(rest, ['colIndex', 'width', 'isLastColumn'])}
 		>
 			<TableCellIcon
 				iconName={itemData.iconName}
@@ -134,7 +136,6 @@ TitleCell.displayName = 'TitleCell';
 TitleCell.propTypes = {
 	colIndex: PropTypes.number,
 	columnName: PropTypes.string.isRequired,
-	isFirstColumn: PropTypes.bool,
 	isLastColumn: PropTypes.bool,
 	isSelected: PropTypes.bool,
 	itemData: PropTypes.object,
@@ -150,7 +151,7 @@ export const AttachmentCell = memo(props => {
 		<Cell
 			aria-label={itemData.attachmentTypeLabel}
 			columnName={columnName}
-			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
+			{...pick(props, ['colIndex', 'width', 'isLastColumn'])}
 		>
 			<div className="truncate">
 				{itemData[columnName]}
@@ -175,7 +176,6 @@ AttachmentCell.propTypes = {
 	itemData: PropTypes.object,
 	colIndex: PropTypes.number,
 	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-	isFirstColumn: PropTypes.bool,
 	isLastColumn: PropTypes.bool,
 };
 
@@ -185,7 +185,7 @@ export const GenericDataCell = memo(props => {
 	return (
 		<Cell
 			columnName={columnName}
-			{...pick(props, ['colIndex', 'width', 'isFirstColumn', 'isLastColumn'])}
+			{...pick(props, ['colIndex', 'width', 'isLastColumn'])}
 		>
 			<div className="truncate">
 				{itemData[columnName]}
@@ -208,7 +208,7 @@ export const PlaceholderCell = props => {
 	const { columnName } = props;
 	return (
 		<Cell
-			{...pick(props, ['colIndex', 'columnName', 'width', 'isFirstColumn', 'isLastColumn'])}
+			{...pick(props, ['colIndex', 'columnName', 'width', 'isLastColumn'])}
 		>
 			{columnName === 'title' && <div className="placeholder-icon" />}
 			<div className="placeholder" />
