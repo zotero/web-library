@@ -41,20 +41,20 @@ Cell.propTypes = {
 };
 
 
-const TableCellIcon = ({ iconName, suffix = "white", ...rest }) => {
+const TableCellIcon = ({ className, iconName, suffix = "white", ...rest }) => {
 	// Render two icons: one for the focused+selected state and one for the
 	// unfocused state. Visibility is controlled via CSS.
 	return (
 		<>
 			<Icon
 				{...rest}
-				className="focused-selected-icon"
+				className={cx('focused-selected-icon', className)}
 				symbol={`${iconName}-${suffix}`}
 				useColorScheme={false}
 			/>
 			<Icon
 				{...rest}
-				className="unfocused-icon"
+				className={cx('unfocused-icon', className)}
 				symbol={iconName}
 				useColorScheme={true}
 			/>
@@ -63,8 +63,30 @@ const TableCellIcon = ({ iconName, suffix = "white", ...rest }) => {
 }
 
 TableCellIcon.propTypes = {
+	className: PropTypes.string,
 	iconName: PropTypes.string.isRequired,
 	suffix: PropTypes.string,
+}
+
+const TableCellItemTypeIcon = ({ itemData }) => {
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+
+	return (
+		<TableCellIcon
+			className="item-type-icon"
+			iconName={itemData.iconName}
+			label={`${itemData.itemType} icon`}
+			type={`16/item-type/${itemData.iconName}`}
+			usePixelRatio={true}
+			colorScheme={colorScheme}
+			width="16"
+			height="16"
+		/>
+	);
+}
+
+TableCellItemTypeIcon.propTypes = {
+	itemData: PropTypes.object.isRequired,
 }
 
 const TableCellTagCircles = ({ itemData }) => {
@@ -104,22 +126,12 @@ export const TitleCell = memo(props => {
 	const formattedSpan = document.createElement('span');
 	renderItemTitle(itemData[columnName], formattedSpan);
 
-	const colorScheme = useSelector(state => state.preferences.colorScheme);
-
 	return (
 		<Cell
 			columnName={columnName}
 			{...pick(rest, ['colIndex', 'width', 'isLastColumn'])}
 		>
-			<TableCellIcon
-				iconName={itemData.iconName}
-				label={`${itemData.itemType} icon`}
-				type={`16/item-type/${itemData.iconName}`}
-				usePixelRatio={true}
-				colorScheme={colorScheme}
-				width="16"
-				height="16"
-			/>
+			{props.colIndex === 0 && <TableCellItemTypeIcon itemData={itemData} />}
 			<div className="truncate" id={labelledById} dangerouslySetInnerHTML={{ __html: formattedSpan.outerHTML }} />
 			<div className="tag-colors">
 				{(itemData?.emojis ?? []).map(emoji => {
@@ -153,6 +165,7 @@ export const AttachmentCell = memo(props => {
 			columnName={columnName}
 			{...pick(props, ['colIndex', 'width', 'isLastColumn'])}
 		>
+			{props.colIndex === 0 && <TableCellItemTypeIcon itemData={itemData} />}
 			<div className="truncate">
 				{itemData[columnName]}
 			</div>
@@ -187,6 +200,7 @@ export const GenericDataCell = memo(props => {
 			columnName={columnName}
 			{...pick(props, ['colIndex', 'width', 'isLastColumn'])}
 		>
+			{props.colIndex === 0 && <TableCellItemTypeIcon itemData={itemData} />}
 			<div className="truncate">
 				{itemData[columnName]}
 			</div>
@@ -205,12 +219,11 @@ GenericDataCell.propTypes = {
 
 
 export const PlaceholderCell = props => {
-	const { columnName } = props;
 	return (
 		<Cell
 			{...pick(props, ['colIndex', 'columnName', 'width', 'isLastColumn'])}
 		>
-			{columnName === 'title' && <div className="placeholder-icon" />}
+			{props.colIndex === 0 && <div className="placeholder-icon" />}
 			<div className="placeholder" />
 		</Cell>
 	);

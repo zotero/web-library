@@ -1,5 +1,35 @@
+import fs from 'fs/promises';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
 import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, loadFixtureState} from "../utils/fixed-state-server.js";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+// Seed localStorage with a reordered column list (plus the current app version)
+// before boot, since column order comes from preferences, not the fixture state.
+const seedColumnOrder = async (page, leftMostColumnName) => {
+	const fixture = JSON.parse(
+		await fs.readFile(join(ROOT, 'test/fixtures/state/desktop-test-user-item-view.json'), 'utf-8')
+	);
+	const {version} = JSON.parse(await fs.readFile(join(ROOT, 'data/version.json'), 'utf-8'));
+	const columns = [...fixture.preferences.columns];
+	const from = columns.findIndex(c => c.field === leftMostColumnName);
+	columns.unshift(columns.splice(from, 1)[0]);
+	await page.addInitScript(({columns, version}) => {
+		window.localStorage.setItem('zotero-web-library-prefs', JSON.stringify({columns, version}));
+	}, {columns, version});
+};
+
+const probeItemTypeIcon = page => page.evaluate(() => {
+	const firstRow = document.querySelector('.items-table-body .item');
+	const columnOrder = [...firstRow.querySelectorAll('.metadata')].map(m => m.dataset.columnName);
+	return {
+		columnOrder,
+		iconInTitle: !!firstRow.querySelector('.metadata.title .item-type-icon'),
+		iconInCreator: !!firstRow.querySelector('.metadata.creator .item-type-icon'),
+	};
+});
 
 test.describe('Desktop Layout', () => {
 	let server;
@@ -74,6 +104,33 @@ test.describe('Desktop Layout', () => {
 		// content to the right of the header label, so it must NOT be aligned.
 		const title = columns.find(c => c.name === 'title');
 		expect(title.bodyContentLeft).toBeGreaterThan(title.headerLabelLeft + 1);
+	});
+
+	test('Item type icon renders in the title column when it is left-most (default order)', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+		await expect(page.locator('.items-table-body .item').first()).toBeVisible();
+
+		const { columnOrder, iconInTitle, iconInCreator } = await probeItemTypeIcon(page);
+
+		// Sanity check: default order really does put title first
+		expect(columnOrder[0]).toBe('title');
+		expect(iconInTitle).toBe(true);
+		expect(iconInCreator).toBe(false);
+	});
+
+	test('Item type icon follows the left-most column when columns are reordered', async ({ page, serverPort }) => {
+		// Move the creator column ahead of the title column
+		await seedColumnOrder(page, 'creator');
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+		await expect(page.locator('.items-table-body .item').first()).toBeVisible();
+
+		const { columnOrder, iconInTitle, iconInCreator } = await probeItemTypeIcon(page);
+
+		// The icon is injected into whichever column is left-most, so it must move
+		// to the creator column and must NOT stay with the title column.
+		expect(columnOrder[0]).toBe('creator');
+		expect(iconInCreator).toBe(true);
+		expect(iconInTitle).toBe(false);
 	});
 
 	test('Layout switches from 3-column to 2-column when crossing lg/md breakpoint', async ({ page, serverPort }) => {

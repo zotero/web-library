@@ -329,11 +329,13 @@
 			padding-right: variables.$default-padding-x;
 		}
 
-		&.title {
-			> .icon {
-				margin-right: variables.$space-xs;
-			}
+		// The item-type icon is injected into the left-most column (not necessarily
+		// the title column), so the spacing is keyed off the icon, not the column.
+		> .item-type-icon {
+			margin-right: variables.$space-xs;
+		}
 
+		&.title {
 			.truncate {
 				flex: 1 10000 auto; // Shrink before tag-colors
 			}
