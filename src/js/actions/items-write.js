@@ -5,7 +5,7 @@ import { getZotero } from 'web-common/zotero';
 import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
 import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
-import { get, getItemCanonicalUrl, getUniqueId, mergeItemKeysRelations, removeRelationByItemKey, reverseMap } from '../utils';
+import { get, getItemCanonicalUrl, getUniqueId, mapItemKeysToRelations, mergeItemKeysRelations, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
 import { getToggledTags, TOGGLE_TOGGLE } from '../common/tags';
 import { parseDescriptiveString } from '../common/format';
@@ -22,6 +22,7 @@ import {
 	ERROR_CREATE_ITEMS,
 	ERROR_DELETE_ITEM,
 	ERROR_DELETE_ITEMS,
+	ERROR_MIGRATE_ATTACHMENT_NOTE,
 	ERROR_MOVE_ITEMS_TRASH,
 	ERROR_PATCH_ATTACHMENT,
 	ERROR_RECOVER_ITEMS_TRASH,
@@ -49,6 +50,7 @@ import {
 	RECEIVE_CREATE_ITEMS,
 	RECEIVE_DELETE_ITEM,
 	RECEIVE_DELETE_ITEMS,
+	RECEIVE_MIGRATE_ATTACHMENT_NOTE,
 	RECEIVE_MOVE_ITEMS_TRASH,
 	RECEIVE_PATCH_ATTACHMENT,
 	RECEIVE_RECOVER_ITEMS_TRASH,
@@ -64,6 +66,7 @@ import {
 	REQUEST_CREATE_ITEMS,
 	REQUEST_DELETE_ITEM,
 	REQUEST_DELETE_ITEMS,
+	REQUEST_MIGRATE_ATTACHMENT_NOTE,
 	REQUEST_MOVE_ITEMS_TRASH,
 	REQUEST_PATCH_ATTACHMENT,
 	REQUEST_RECOVER_ITEMS_TRASH,
@@ -1454,6 +1457,71 @@ const changeParentItem = (itemKeys, newParentItem) => {
 	}
 }
 
+const migrateAttachmentNote = (attachmentKey, libraryKey) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		if (libraryKey === undefined) {
+			libraryKey = state.current.libraryKey;
+		}
+		const attachment = get(state, ['libraries', libraryKey, 'items', attachmentKey]);
+
+		// Nothing to migrate, or a migration for this attachment is already in flight
+		if (!attachment || !attachment.note
+			|| get(state, ['libraries', libraryKey, 'attachmentsMigrateNote', attachmentKey, 'isMigrating'], false)) {
+			return;
+		}
+
+		const id = getUniqueId();
+		dispatch({
+			id,
+			data: { count: 1 },
+			kind: 'migrate-attachment-note',
+			libraryKey,
+			type: BEGIN_ONGOING,
+		});
+		dispatch({
+			type: REQUEST_MIGRATE_ATTACHMENT_NOTE,
+			attachmentKey,
+			libraryKey,
+		});
+
+		try {
+			const noteTemplate = await dispatch(fetchItemTemplate('note'));
+			const newNote = {
+				...noteTemplate,
+				note: attachment.note,
+				// a child note cannot belong to collections, mirroring the invariant enforced in changeParentItem
+				collections: attachment.parentItem ? [] : [...(attachment.collections ?? [])],
+				relations: mapItemKeysToRelations([attachmentKey], libraryKey),
+				...(attachment.parentItem ? { parentItem: attachment.parentItem } : {}),
+			};
+			const createdNote = await dispatch(createItem(newNote, libraryKey));
+			await dispatch(updateItem(attachmentKey, {
+				note: '',
+				relations: mergeItemKeysRelations(attachment.relations ?? {}, [createdNote.key], libraryKey),
+			}, libraryKey));
+
+			dispatch({
+				type: RECEIVE_MIGRATE_ATTACHMENT_NOTE,
+				attachmentKey,
+				libraryKey,
+				note: createdNote,
+			});
+			return createdNote;
+		} catch (error) {
+			dispatch({
+				type: ERROR_MIGRATE_ATTACHMENT_NOTE,
+				attachmentKey,
+				libraryKey,
+				error,
+				silent: true,
+			});
+		} finally {
+			dispatch({ id, type: CLEAR_ONGOING }); // auto-dismiss
+		}
+	}
+}
+
 const chunkedAddToCollection = (itemKeys, ...args) => chunkedAction(addToCollection, itemKeys, ...args);
 
 const chunkedToggleTagsOnItems = (itemKeys, ...args) => chunkedAction(toggleTagsOnItems, itemKeys, ...args);
@@ -1747,6 +1815,7 @@ export {
     createLinkedUrlAttachments,
     deleteItem,
     deleteItems,
+    migrateAttachmentNote,
     moveItemsToTrash,
     patchAttachment,
     recoverItemsFromTrash,

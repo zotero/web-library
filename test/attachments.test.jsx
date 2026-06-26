@@ -22,6 +22,8 @@ import testUserAddNewLinkedURLAttachment from './fixtures/response/test-user-add
 import topLevelAttachmentStateRaw from './fixtures/state/desktop-test-user-top-level-attachment-view.json';
 import itemsInCollectionAlgorithms from './fixtures/response/test-user-get-items-in-collection-algorithms.json';
 import responseUpdateAttachment from './fixtures/response/test-user-update-top-level-attachment-set-parent.json';
+import newItemNote from './fixtures/response/new-item-note.json';
+import testUserAddNewItemNote from './fixtures/response/test-user-add-new-item-note.json';
 
 // need to mock structuredClone, otherwise web library hides export/open related to reader/pdf.js. See #548
 global.structuredClone = jest.fn();
@@ -277,5 +279,192 @@ describe('Attachments', () => {
 		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Change Parent Item' })).not.toBeInTheDocument());
 
 		expect(getByRole(await screen.findByRole('row', { name: 'Marching in Squares' }), 'gridcell', { name: 'Has PDF Attachment' })).toBeInTheDocument();
+	});
+
+	test('Migrate an attachment note to a standalone note', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+
+		const createdNoteKey = testUserAddNewItemNote.successful['0'].key; // 'BBCCDDEE'
+		// The migrated note is standalone here, so strip parentItem/up-link from the canned response
+		const noteCreateResponse = JSON.parse(JSON.stringify(testUserAddNewItemNote));
+		delete noteCreateResponse.successful['0'].data.parentItem;
+		delete noteCreateResponse.successful['0'].links.up;
+
+		let notePosted = false;
+		let attachmentPatched = false;
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/UMPPCXU4/file/view/url', () => {
+				return HttpResponse.text('https://files.zotero.net/attention-is-all-you-need.pdf');
+			}),
+			http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top', () => {
+				return HttpResponse.json(itemsInCollectionAlgorithms, {
+					headers: { 'Total-Results': '23' }
+				});
+			}),
+			http.get('https://api.zotero.org/items/new', ({ request }) => {
+				const url = new URL(request.url);
+				expect(url.searchParams.get('itemType')).toBe('note');
+				return HttpResponse.json(newItemNote);
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items).toHaveLength(1);
+				expect(items[0].itemType).toBe('note');
+				// note body is copied verbatim from the attachment
+				expect(items[0].note).toBe('<div data-schema-version="9"><p>This is an attachment note</p>\n</div>');
+				// standalone attachment -> standalone note in the same collection(s), no parent
+				expect(items[0].collections).toEqual(['CSB4KZUU']);
+				expect(items[0].parentItem).toBeUndefined();
+				// new note is related back to the original attachment
+				expect(items[0].relations['dc:relation']).toBe('http://zotero.org/users/1/items/UMPPCXU4');
+				notePosted = true;
+				return HttpResponse.json(noteCreateResponse);
+			}),
+			http.patch('https://api.zotero.org/users/1/items/UMPPCXU4', async ({ request }) => {
+				const patch = await request.json();
+				// the deprecated attachment note is cleared and related to the new note
+				expect(patch.note).toBe('');
+				expect(patch.relations['dc:relation']).toBe(`http://zotero.org/users/1/items/${createdNoteKey}`);
+				attachmentPatched = true;
+				return new HttpResponse(null, { status: 204 });
+			}),
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: topLevelAttachmentState });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		const migrateBtn = await screen.findByRole('button', { name: 'Migrate to Standalone Note' });
+		await user.click(migrateBtn);
+
+		await waitFor(() => expect(notePosted).toBe(true));
+		await waitFor(() => expect(attachmentPatched).toBe(true));
+
+		// once migrated, the now-empty attachment note editor and its migrate button disappear
+		await waitFor(() => expect(
+			screen.queryByRole('button', { name: 'Migrate to Standalone Note' })
+		).not.toBeInTheDocument());
+	});
+
+	test('Disables the migrate button and prevents duplicate notes while a migration is in flight', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+
+		const noteCreateResponse = JSON.parse(JSON.stringify(testUserAddNewItemNote));
+		delete noteCreateResponse.successful['0'].data.parentItem;
+		delete noteCreateResponse.successful['0'].links.up;
+
+		let notePostCount = 0;
+		let attachmentPatchCount = 0;
+		let releaseNotePost;
+		const notePostGate = new Promise(resolve => { releaseNotePost = resolve; });
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/UMPPCXU4/file/view/url', () => {
+				return HttpResponse.text('https://files.zotero.net/attention-is-all-you-need.pdf');
+			}),
+			http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top', () => {
+				return HttpResponse.json(itemsInCollectionAlgorithms, {
+					headers: { 'Total-Results': '23' }
+				});
+			}),
+			http.get('https://api.zotero.org/items/new', () => {
+				return HttpResponse.json(newItemNote);
+			}),
+			http.post('https://api.zotero.org/users/1/items', async () => {
+				notePostCount++;
+				// keep the migration in flight until the test releases it
+				await notePostGate;
+				return HttpResponse.json(noteCreateResponse);
+			}),
+			http.patch('https://api.zotero.org/users/1/items/UMPPCXU4', () => {
+				attachmentPatchCount++;
+				return new HttpResponse(null, { status: 204 });
+			}),
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: topLevelAttachmentState });
+		await waitForPosition();
+		// disable the pointer-events guard so the second (no-op) click on the disabled button is attempted
+		const user = userEvent.setup({ pointerEventsCheck: 0 });
+
+		const migrateBtn = await screen.findByRole('button', { name: 'Migrate to Standalone Note' });
+		await user.click(migrateBtn);
+
+		// while the migration is in flight the button is disabled, guarding against re-entry
+		await waitFor(() => expect(migrateBtn).toBeDisabled());
+
+		// the multi-request migration is registered as an ongoing process (spinner + before-unload guard)
+		expect(await screen.findByText('Migrating attachment note')).toBeInTheDocument();
+
+		// a second click while in flight must not start another migration
+		await user.click(migrateBtn);
+
+		// let the in-flight note creation (and the follow-up attachment patch) complete
+		releaseNotePost();
+
+		await waitFor(() => expect(
+			screen.queryByRole('button', { name: 'Migrate to Standalone Note' })
+		).not.toBeInTheDocument());
+
+		// the ongoing process is auto-dismissed once the migration settles
+		await waitFor(() => expect(screen.queryByText('Migrating attachment note')).not.toBeInTheDocument());
+
+		// exactly one note was created and the attachment was patched once -- no duplicates
+		expect(notePostCount).toBe(1);
+		expect(attachmentPatchCount).toBe(1);
+	});
+
+	test('Surfaces an error and keeps the attachment note when migration fails', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+
+		let noteCreateAttempted = false;
+		let patchAttempted = false;
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items/UMPPCXU4/file/view/url', () => {
+				return HttpResponse.text('https://files.zotero.net/attention-is-all-you-need.pdf');
+			}),
+			http.get('https://api.zotero.org/users/1/collections/CSB4KZUU/items/top', () => {
+				return HttpResponse.json(itemsInCollectionAlgorithms, {
+					headers: { 'Total-Results': '23' }
+				});
+			}),
+			http.get('https://api.zotero.org/items/new', () => {
+				return HttpResponse.json(newItemNote);
+			}),
+			// creating the note fails (400 is non-transient, so the api client throws immediately
+			// instead of retrying a 5xx with backoff)
+			http.post('https://api.zotero.org/users/1/items', () => {
+				noteCreateAttempted = true;
+				return new HttpResponse(null, { status: 400 });
+			}),
+			http.patch('https://api.zotero.org/users/1/items/UMPPCXU4', () => {
+				patchAttempted = true;
+				return new HttpResponse(null, { status: 204 });
+			}),
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: topLevelAttachmentState });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		const migrateBtn = await screen.findByRole('button', { name: 'Migrate to Standalone Note' });
+		await user.click(migrateBtn);
+
+		await waitFor(() => expect(noteCreateAttempted).toBe(true));
+
+		// the failure is surfaced to the user ...
+		await waitFor(() => expect(document.querySelector('.message.error')).toBeInTheDocument());
+
+		// ... the original attachment is never patched, so there is no data loss ...
+		expect(patchAttempted).toBe(false);
+
+		// ... and the editor + migrate button remain, with the button re-enabled so the user can retry
+		const retryBtn = await screen.findByRole('button', { name: 'Migrate to Standalone Note' });
+		await waitFor(() => expect(retryBtn).not.toBeDisabled());
+
+		// ... and the ongoing process is cleared even on failure, so no spinner or unload guard lingers
+		await waitFor(() => expect(screen.queryByText('Migrating attachment note')).not.toBeInTheDocument());
 	});
 });

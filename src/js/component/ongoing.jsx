@@ -36,6 +36,10 @@ const PROCESSES = {
 		title: 'Copying Items',
 		getMessage: process => `${process.completed ? 'Copied' : 'Copying'} ${process.data.count} ${pluralize('item', process.data.count)}`,
 	},
+	'migrate-attachment-note': {
+		title: 'Migrating Note',
+		getMessage: process => `${process.completed ? 'Migrated' : 'Migrating'} attachment note`,
+	},
 	'metadata-retrieval': {
 		title: 'Retrieving Metadata',
 		skipSpinner: true,

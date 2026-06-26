@@ -1,6 +1,7 @@
 import { omit } from 'web-common/utils';
 
 import attachmentsExportPDF from './attachments-export-pdf';
+import attachmentsMigrateNote from './attachments-migrate-note';
 import attachmentsUrl from './attachments-url';
 import bestAttachmentReverseLookup from './best-attachment-reverse-lookup';
 import dataObjects from './data-objects';
@@ -40,6 +41,7 @@ const libraries = (state = {}, action, { itemsPublications, meta } = {})  => {
 			...state,
 			[action.libraryKey]: {
 				attachmentsExportPDF: attachmentsExportPDF(state[action.libraryKey]?.attachmentsExportPDF, action),
+				attachmentsMigrateNote: attachmentsMigrateNote(state[action.libraryKey]?.attachmentsMigrateNote, action),
 				attachmentsUrl: attachmentsUrl(get(state, [action.libraryKey, 'attachmentsUrl']), action),
 				bestAttachmentReverseLookup: bestAttachmentReverseLookup(state[action.libraryKey]?.bestAttachmentReverseLookup, action),
 				collections: collectionsState,

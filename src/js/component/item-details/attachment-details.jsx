@@ -7,7 +7,7 @@ import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 
 import RichEditor from 'component/rich-editor';
 import { isReaderCompatibleBrowser, get } from 'utils';
-import { getAttachmentUrl, updateAttachment, exportAttachmentWithAnnotations } from 'actions';
+import { exportAttachmentWithAnnotations, getAttachmentUrl, migrateAttachmentNote, updateAttachment } from 'actions';
 import { makePath }from '../../common/navigation';
 import { READER_CONTENT_TYPES } from '../../constants/reader';
 import { extraFields } from '../../constants/item';
@@ -27,6 +27,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 	const isUploading = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'isUploading'], false));
 	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'timestamp'], 0));
+	const isMigratingNote = useSelector(state => state.libraries[libraryKey]?.attachmentsMigrateNote?.[attachmentKey]?.isMigrating ?? false);
 	const isPreppingPDF = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.isFetching);
 	const preppedPDFURL = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.blobURL);
 	const preppedPDFFileName = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.fileName);
@@ -105,6 +106,10 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 		target.value = ''; // clear the invisible input so that onChange is triggered even if the same file is selected again
 		clearTimeout(timeoutRef.current); // prevent any URL refreshes during the upload. Once it completes, another effect dispatches `getAttachmentUrl`
 		await dispatch(updateAttachment(attachmentKey, fileData, libraryKey));
+	}, [attachmentKey, dispatch, libraryKey]);
+
+	const handleMigrateNote = useCallback(() => {
+		dispatch(migrateAttachmentNote(attachmentKey, libraryKey));
 	}, [attachmentKey, dispatch, libraryKey]);
 
 	useEffect(() => {
@@ -252,15 +257,26 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 			</div>
 		) }
 		{ attachment.note && (
-			<RichEditor
-				autoresize={ !shouldUseTabs }
-				id={ attachment.key }
-				isAttachmentNote={ true }
-				isReadOnly={ true }
-				value={ attachment.note }
-				onChange={ noop }
-				onFocusBack={ handleEditorFocusBack }
-			/>
+			<Fragment>
+				<RichEditor
+					autoresize={ !shouldUseTabs }
+					id={ attachment.key }
+					isAttachmentNote={ true }
+					isReadOnly={ true }
+					value={ attachment.note }
+					onChange={ noop }
+					onFocusBack={ handleEditorFocusBack }
+				/>
+				{ !isReadOnly && (
+					<Button
+						className="btn btn-default"
+						disabled={ isMigratingNote }
+						onClick={ handleMigrateNote }
+					>
+						{ attachment.parentItem ? 'Migrate to Item Note' : 'Migrate to Standalone Note' }
+					</Button>
+				) }
+			</Fragment>
 		) }
 		</Fragment>
 	);
