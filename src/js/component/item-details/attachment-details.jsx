@@ -7,7 +7,7 @@ import { useFocusManager, useForceUpdate } from 'web-common/hooks';
 
 import RichEditor from 'component/rich-editor';
 import { isReaderCompatibleBrowser, get } from 'utils';
-import { getAttachmentUrl, updateItem, updateAttachment, exportAttachmentWithAnnotations } from 'actions';
+import { getAttachmentUrl, updateAttachment, exportAttachmentWithAnnotations } from 'actions';
 import { makePath }from '../../common/navigation';
 import { READER_CONTENT_TYPES } from '../../constants/reader';
 import { extraFields } from '../../constants/item';
@@ -68,10 +68,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 		...(itemTypeFields.attachment.filter(f => !['title', 'url', 'filename', 'accessDate'].includes(f.field))), // hide accessDate and fields already included
 		extraFields.find(f => f.field === 'dateModified'),
 	];
-
-	const handleChangeNote = useCallback((newContent, key) => {
-		dispatch(updateItem(key, { note: newContent }));
-	}, [dispatch]);
 
 	const handleEditorFocusBack = useCallback(() => {
 		if (onEditorFocusBack) {
@@ -255,17 +251,19 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 				) }
 			</div>
 		) }
-		<RichEditor
-			autoresize={ !shouldUseTabs }
-			id={ attachment.key }
-			isAttachmentNote={ true }
-			isReadOnly={ isReadOnly }
-			value={ attachment.note }
-			onChange={ handleChangeNote }
-			onFocusBack={ handleEditorFocusBack }
-		/>
+		{ attachment.note && (
+			<RichEditor
+				autoresize={ !shouldUseTabs }
+				id={ attachment.key }
+				isAttachmentNote={ true }
+				isReadOnly={ true }
+				value={ attachment.note }
+				onChange={ noop }
+				onFocusBack={ handleEditorFocusBack }
+			/>
+		) }
 		</Fragment>
-    );
+	);
 }
 
 AttachmentDetails.propTypes = {
