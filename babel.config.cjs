@@ -1,8 +1,6 @@
 const presets = [
 	["@babel/preset-env", {
 		"debug": !!process.env.DEBUG || false,
-		"corejs": { version: 3 },
-		"useBuiltIns": "usage",
 	}],
 	['@babel/preset-react', {
 		'runtime': 'automatic',
@@ -12,6 +10,12 @@ const presets = [
 ];
 
 const plugins = [
+	// Babel 8 removed preset-env's `useBuiltIns`/`corejs` options; core-js
+	// usage-based polyfilling now lives in babel-plugin-polyfill-corejs3.
+	["babel-plugin-polyfill-corejs3", {
+		"method": "usage-global",
+		"version": "3.49",
+	}],
 	"babel-plugin-transform-import-meta",
 	"@babel/plugin-syntax-import-attributes"
 ];
