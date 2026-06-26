@@ -70,29 +70,31 @@ export class PDFWorker {
 			if (message.id) {
 				let respData = null;
 				try {
-					if (message.action === 'FetchBuiltInCMap') {
-						const response = await fetch(this.config.pdfReaderCMapsURL + message.data + '.bcmap');
-						const arrayBuffer = await response.arrayBuffer();
-						respData = {
-							isCompressed: true,
-							cMapData: new Uint8Array(arrayBuffer)
-						};
-					}
-				}
-				catch (e) {
-					console.log('Failed to fetch CMap data:');
-					console.log(e);
-				}
-
-				try {
-					if (message.action === 'FetchStandardFontData') {
-						const response = await fetch(this.config.pdfReaderStandardFontsURL + message.data);
+					if (message.action === 'FetchData') {
+						// pdf-worker requests all bundled data (cmaps, standard_fonts, wasm,
+						// iccs, images) through a single action with a path relative to the
+						// reader's pdf data directory, e.g. 'cmaps/Adobe-Japan1-0.bcmap'.
+						// The worker wraps the raw bytes itself (e.g. into a cMap object), so
+						// respond with a plain Uint8Array.
+						const path = message.data;
+						let url;
+						if (path.startsWith('cmaps/')) {
+							url = this.config.pdfReaderCMapsURL + path.slice('cmaps/'.length);
+						}
+						else if (path.startsWith('standard_fonts/')) {
+							url = this.config.pdfReaderStandardFontsURL + path.slice('standard_fonts/'.length);
+						}
+						else {
+							// wasm/, iccs/, images/ etc. share the reader's pdf data directory
+							url = this.config.pdfReaderCMapsURL.replace(/cmaps\/$/, '') + path;
+						}
+						const response = await fetch(url);
 						const arrayBuffer = await response.arrayBuffer();
 						respData = new Uint8Array(arrayBuffer);
 					}
 				}
 				catch (e) {
-					console.log('Failed to fetch standard font data:');
+					console.log('Failed to fetch data:');
 					console.log(e);
 				}
 
@@ -132,7 +134,7 @@ export class PDFWorker {
 				});
 			}
 			try {
-				var res = await this._query('export', { buf, annotations }, [buf]);
+				var res = await this._query('pdf.writeAnnotations', { buf, annotations }, [buf]);
 			}
 			catch (e) {
 				let error = new Error(`Worker 'export' failed: ${JSON.stringify({
@@ -162,7 +164,7 @@ export class PDFWorker {
 	async import(buf, isPriority) {
 		return this._enqueue(async () => {
 			try {
-				var { imported } = await this._query('import', { buf, existingAnnotations: [] }, [buf]);
+				var { imported } = await this._query('pdf.importAnnotations', { buf, existingAnnotations: [] }, [buf]);
 			}
 			catch (e) {
 				let error = new Error(`Worker 'import' failed: ${JSON.stringify({ error: e.message })}`);
@@ -198,7 +200,7 @@ export class PDFWorker {
 	async rotatePages(buf, pageIndexes, degrees, isPriority, password) {
 		return this._enqueue(async () => {
 			try {
-				var { buf: modifiedBuf } = await this._query('rotatePages', {
+				var { buf: modifiedBuf } = await this._query('pdf.rotatePages', {
 					buf, pageIndexes, degrees, password
 				}, [buf]);
 			}
@@ -228,7 +230,7 @@ export class PDFWorker {
 	async getRecognizerData(buf, isPriority, password) {
 		return this._enqueue(async () => {
 			try {
-				var result = await this._query('getRecognizerData', { buf, password }, [buf]);
+				var result = await this._query('pdf.getRecognizerData', { buf, password }, [buf]);
 			}
 			catch (e) {
 				let error = new Error(`Worker 'getRecognizerData' failed: ${JSON.stringify({ error: e.message })}`);
