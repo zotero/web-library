@@ -53,6 +53,8 @@ const index = await fs.readFile(join(ROOT, 'src', 'html', 'index.html'), 'utf8')
 let subprocess;
 let indexChanged = false;
 let interrupted = false;
+const startupLog = [];    // ring buffer of recent `npm start` output, surfaced if startup fails
+let startExitCode = null; // set if `npm start` exits before the server is ready
 
 process.on('SIGINT', function () {
 	interrupted = true;
@@ -84,7 +86,7 @@ async function checkOrStartServer() {
 	try {
 		const response = await fetch(URL);
 		const text = await response.text();
-		if (new RegExp(`apiKey: "${secret.apiKey}"`, 'g').test(text)) {
+		if (new RegExp(`"apiKey":\\s*"${secret.apiKey}"`, 'g').test(text)) {
 			return true;
 		}
 		throw new MisconfiguredServer("Server is running, but not with correct config. Either change the config or stop the server and run this script again.");
@@ -95,11 +97,31 @@ async function checkOrStartServer() {
 		}
 		console.log('Server does not seem to be running, running "npm start"');
 		subprocess = child_process.spawn("sh", ["-c", "npm start"], { cwd: ROOT });
+		// Since stdio isn't a TTY, the task-runner streams plain build logs here.
+		// Drain them so the pipe can't fill (which would block the build) and keep
+		// the last lines around so we can surface them if startup fails.
+		const captureOutput = data => {
+			for (const line of data.toString().split('\n')) {
+				if (line.trim().length === 0) {
+					continue;
+				}
+				startupLog.push(line);
+				if (startupLog.length > 50) {
+					startupLog.shift();
+				}
+			}
+		};
+		subprocess.stdout?.on('data', captureOutput);
+		subprocess.stderr?.on('data', captureOutput);
+		subprocess.on('exit', code => { startExitCode = code; });
 		const start = Date.now();
 		let jsFileFound = false;
 		do {
 			if (interrupted) {
 				throw new Error("Interrupted");
+			}
+			if (startExitCode !== null) {
+				throw new Error(`"npm start" exited (code ${startExitCode}) before the server was ready:\n${startupLog.join('\n')}`);
 			}
 			process.stdout.write(`Waiting for server to start (${((Date.now() - start) / 1000).toFixed(1)}s/${NPMST_TIMEOUT / 1000}s)...`);
 			await new Promise(resolve => setTimeout(resolve, 100));
@@ -126,9 +148,9 @@ async function checkOrStartServer() {
 			}
 		} while (Date.now() - start < NPMST_TIMEOUT);
 		if (jsFileFound) {
-			throw new Error("Server did not start in time");
+			throw new Error(`Server did not start in time:\n${startupLog.join('\n')}`);
 		} else {
-			throw new Error("npmst failed to build zotero-web-library.js");
+			throw new Error(`npmst failed to build zotero-web-library.js:\n${startupLog.join('\n')}`);
 		}
 	}
 }

@@ -13,6 +13,13 @@ export const CLEAR = '\x1b[2J\x1b[H';
 
 const MAX_BUFFER = 1000;
 
+// Fall back to plain, append-only line logging for non-TTY sessions.
+const INTERACTIVE = !!(process.stdin.isTTY && process.stdout.isTTY);
+
+function logLine(msg) {
+	process.stdout.write(`${msg}\n`);
+}
+
 // ── Shared helpers ──────────────────────────────────────────────────────
 
 function truncate(str, len) {
@@ -69,6 +76,9 @@ function appendOutput(task, data, draw) {
 		if (trimmed.length === 0) continue;
 		task.buffer.push(trimmed);
 		task.lastLine = trimmed;
+		if (!INTERACTIVE) {
+			logLine(`${DIM}[${task.label}]${RESET} ${trimmed}`);
+		}
 	}
 	if (task.buffer.length > MAX_BUFFER) {
 		task.buffer = task.buffer.slice(-MAX_BUFFER);
@@ -76,7 +86,9 @@ function appendOutput(task, data, draw) {
 	if (task.status === 'starting') {
 		task.status = 'running';
 	}
-	draw();
+	if (INTERACTIVE) {
+		draw();
+	}
 }
 
 function spawnTask(task, env, draw) {
@@ -92,6 +104,10 @@ function spawnTask(task, env, draw) {
 }
 
 function setupInput(tasks, draw, getActiveTask, setActiveTask, onCtrlC) {
+	if (!INTERACTIVE) {
+		// No raw-mode key handling without a TTY; SIGINT/SIGTERM cover shutdown.
+		return () => {};
+	}
 	process.stdin.setRawMode(true);
 	process.stdin.resume();
 	const onData = key => {
@@ -109,6 +125,9 @@ function setupInput(tasks, draw, getActiveTask, setActiveTask, onCtrlC) {
 }
 
 function teardownInput(onData) {
+	if (!INTERACTIVE) {
+		return;
+	}
 	process.stdin.removeListener('data', onData);
 	process.stdin.setRawMode(false);
 	process.stdin.pause();
@@ -134,7 +153,14 @@ export function runBatch(label, taskDefs) {
 
 		const hint = `${DIM}Press ${keyRange(tasks)} to view output, Esc to go back${RESET}`;
 
+		if (!INTERACTIVE) {
+			logLine(`${BOLD}${label}${RESET}`);
+		}
+
 		function draw() {
+			if (!INTERACTIVE) {
+				return;
+			}
 			if (activeTask !== null) {
 				drawTaskOutput(tasks[activeTask]);
 			} else {
@@ -149,11 +175,16 @@ export function runBatch(label, taskDefs) {
 				task.proc = null;
 				if (code !== 0) failed = true;
 				completed++;
+				if (!INTERACTIVE) {
+					logLine(`  ${statusIcon(task.status)} ${task.label}`);
+				}
 				draw();
 				if (completed === total) {
 					teardownInput(onData);
-					// Show final overview without key hints
-					drawOverview(label, '', tasks, false);
+					if (INTERACTIVE) {
+						// Show final overview without key hints
+						drawOverview(label, '', tasks, false);
+					}
 					if (failed) {
 						reject(new Error(`${label} failed`));
 					} else {
@@ -227,6 +258,9 @@ export function runInteractive(title, subtitle, taskDefs) {
 	}));
 
 	function draw() {
+		if (!INTERACTIVE) {
+			return;
+		}
 		if (activeTask !== null) {
 			drawTaskOutput(tasks[activeTask]);
 		} else {
@@ -249,11 +283,18 @@ export function runInteractive(title, subtitle, taskDefs) {
 		}, 3000);
 	}
 
+	if (!INTERACTIVE) {
+		logLine(`${BOLD}${title}${RESET}${subtitle ? `  ${CYAN}${subtitle}${RESET}` : ''}`);
+	}
+
 	for (const task of tasks) {
 		const proc = spawnTask(task, { FORCE_COLOR: '1' }, draw);
 		proc.on('close', code => {
 			task.status = code === 0 ? 'stopped' : `exited (${code})`;
 			task.proc = null;
+			if (!INTERACTIVE) {
+				logLine(`  ${statusIcon(task.status)} ${task.label} ${DIM}(${task.status})${RESET}`);
+			}
 			draw();
 		});
 	}
