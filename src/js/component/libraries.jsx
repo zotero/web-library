@@ -26,6 +26,7 @@ const LibraryNode = props => {
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const id = useRef(getUniqueId('library-'));
+	const subtreeGroupId = useRef(getUniqueId('library-group-'));
 	const hasChecked = totalResults !== null;
 	const shouldShowSpinner = !isTouchOrSmall && isFetchingAll;
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === libraryKey && !c);
@@ -104,6 +105,7 @@ const LibraryNode = props => {
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
 			aria-level={ 1 }
+			aria-owns={ shouldUseSubtree && isOpen ? subtreeGroupId.current : undefined }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			isFileUploadAllowed={ isFileUploadAllowed }
 			isOpen={ isOpen && !shouldShowSpinner }
@@ -112,7 +114,7 @@ const LibraryNode = props => {
 			onSelect={ handleSelect }
 			onFileDrop={ isTouchOrSmall ? null : handleFileDrop }
 			showTwisty={ shouldUseSubtree }
-			subtree={ shouldUseSubtree ? isOpen ? <CollectionTree {...getTreeProps()} /> : null : null  }
+			subtree={ shouldUseSubtree ? isOpen ? <CollectionTree {...getTreeProps()} groupId={ subtreeGroupId.current } /> : null : null  }
 			data-key={ libraryKey }
 			dndData={isReadOnly ? {} : { 'targetType': 'library', libraryKey: libraryKey, isFileUploadAllowed } }
 			{ ...pick(props, ['onFocusNext', 'onFocusPrev'])}
@@ -346,10 +348,10 @@ const Libraries = forwardRef((props, ref) => {
 		>
 			<div className={ `level-root ${isRootActive ? 'active' : ''}` }>
 				<div className="scroll-container-touch" role="tree">
-					<section>
+					<section role="presentation">
 						{ myLibraries.length > 0 && (
-							<div className={ cx('level', 'level-0') }>
-								<ul className="nav" role="group">
+							<div role="presentation" className={ cx('level', 'level-0') }>
+								<ul className="nav" role="group" aria-label="My Library">
 									{ myLibraries.map(lib =>
 										<LibraryNode key={ lib.key } isMyLibrary={ true } { ...getNodeProps(lib) } />
 									) }
@@ -358,9 +360,9 @@ const Libraries = forwardRef((props, ref) => {
 						)}
 						{ myGroupLibraries.length > 0 && (
 							<Fragment>
-								<h4>{ otherGroupLibraries.length > 0 ? 'My ' : '' }Group Libraries</h4>
-								<div className={ cx('level', 'level-0') }>
-									<ul className="nav" role="group">
+								<h4 role="presentation" aria-hidden="true">{ otherGroupLibraries.length > 0 ? 'My ' : '' }Group Libraries</h4>
+								<div role="presentation" className={ cx('level', 'level-0') }>
+									<ul className="nav" role="group" aria-label={ `${otherGroupLibraries.length > 0 ? 'My ' : ''}Group Libraries` }>
 										{ myGroupLibraries.map(lib =>
 											<LibraryNode key={ lib.key } { ...getNodeProps(lib) } />
 										) }
@@ -370,9 +372,9 @@ const Libraries = forwardRef((props, ref) => {
 						)}
 						{ otherGroupLibraries.length > 0 && (
 							<Fragment>
-								<h4>Other Group Libraries</h4>
-								<div className={cx('level', 'level-0')}>
-									<ul className="nav" role="group">
+								<h4 role="presentation" aria-hidden="true">Other Group Libraries</h4>
+								<div role="presentation" className={cx('level', 'level-0')}>
+									<ul className="nav" role="group" aria-label="Other Group Libraries">
 										{otherGroupLibraries.map(lib =>
 											<LibraryNode key={lib.key} {...getNodeProps(lib)} />
 										)}
@@ -382,9 +384,9 @@ const Libraries = forwardRef((props, ref) => {
 						)}
 						{ otherLibraries.length > 0 && (
 							<Fragment>
-								<h4>Other Libraries</h4>
-								<div className={ cx('level', 'level-0') }>
-									<ul className="nav" role="group">
+								<h4 role="presentation" aria-hidden="true">Other Libraries</h4>
+								<div role="presentation" className={ cx('level', 'level-0') }>
+									<ul className="nav" role="group" aria-label="Other Libraries">
 										{ otherLibraries.map(lib =>
 											<LibraryNode key={ lib.key } { ...getNodeProps(lib) } />
 										) }

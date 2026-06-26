@@ -201,12 +201,13 @@ const Node = props => {
 		// NOTE: Node can end up having both 'focus' and 'focused' classes.
 		// Former is when node has a keyboard focus, latter is when collection
 		// tree is focused. Admittedly, naming could be better.
-		<li ref={ref} className={ cx(className, { focus: isFocused }) }>
+		// role="presentation" so the <li> does not break WebKit's isTreeValid()
+		<li ref={ref} role="presentation" className={ cx(className, { focus: isFocused }) }>
 			<div
 				{ ...pick(rest, propName => propName.startsWith('data-') ||
 					propName.startsWith('aria-') || propName === 'tabIndex') }
 				className={ cx('item-container', { 'dnd-target': isOver && canDrop }) }
-				role="treeitem button"
+				role="treeitem"
 				aria-expanded={ (subtree || showTwisty) ? isOpen : null }
 				onMouseDown={ handleMouseDown }
 				onDoubleClick={ handleDoubleClick }

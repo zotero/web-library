@@ -346,12 +346,12 @@ TrashNode.propTypes = {
 
 TrashNode.displayName = 'TrashNode';
 
-const LevelWrapper = forwardRef(({ children, level, hasOpen, isLastLevel }, ref) => {
+const LevelWrapper = forwardRef(({ children, level, hasOpen, isLastLevel, groupId }, ref) => {
 	return (
-		<div ref={ ref } className={ cx('level', `level-${level}`, {
+		<div ref={ ref } role="presentation" className={ cx('level', `level-${level}`, {
 			'has-open': hasOpen, 'level-last': isLastLevel
 		}) }>
-			<ul className="nav" role="group">
+			<ul className="nav" role="group" id={ groupId }>
 				{ children }
 			</ul>
 		</div>
@@ -362,6 +362,7 @@ LevelWrapper.displayName = 'LevelWrapper';
 
 LevelWrapper.propTypes = {
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+	groupId: PropTypes.string,
 	hasOpen: PropTypes.bool,
 	isLastLevel: PropTypes.bool,
 	level: PropTypes.number,
@@ -601,6 +602,7 @@ const CollectionNode = memo(props => {
 		pickerMode, pickerPick, pickerSkipCollections, ...rest }  = props;
 	const dispatch = useDispatch();
 	const id = useRef(getUniqueId('tree-node-'));
+	const subtreeGroupId = useRef(getUniqueId('tree-group-'));
 	const updating = useSelector(state => parentLibraryKey in state.libraries ? state.libraries[parentLibraryKey].updating.collections : {});
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
@@ -737,6 +739,9 @@ const CollectionNode = memo(props => {
 		(!isTouchOrSmall && derivedData[collection.key].isOpen)
 	);
 
+	// the subtree (and thus the owned group) is only in the DOM when this is true
+	const hasRenderedSubtree = (shouldRenderSubtree && (hasSubCollectionsOrItemsNode || hasVirtual));
+
 	const isPicked = picked.some(({ collectionKey: c, libraryKey: l }) => l === parentLibraryKey && c === collection.key);
 
 	useEffect(() => {
@@ -759,6 +764,7 @@ const CollectionNode = memo(props => {
 			aria-labelledby={ id.current }
 			aria-selected={ isSelected }
 			aria-level={ level }
+			aria-owns={ hasRenderedSubtree ? subtreeGroupId.current : undefined }
 			data-collection-key={ collection.key }
 			aria-disabled={pickerMode && (isPickerSkip || isDisabled) }
 			dndData={{ 'targetType': 'collection', collectionKey: collection.key, libraryKey: parentLibraryKey, getParents, isFileUploadAllowed } }
@@ -776,8 +782,8 @@ const CollectionNode = memo(props => {
 			showTwisty={ hasSubCollections && !isDisabled }
 			tabIndex={ shouldBeTabbable ? "-2" : null }
 			{ ...pick(rest, ['onFocusNext', 'onFocusPrev']) }
-			subtree={ (shouldRenderSubtree && (hasSubCollectionsOrItemsNode || hasVirtual)) ? (
-				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel }>
+			subtree={ hasRenderedSubtree ? (
+				<LevelWrapper hasOpen={ hasOpen } level={ level } isLastLevel={ isLastLevel } groupId={ subtreeGroupId.current }>
 					<CollectionsNodeList
 						{ ...omit(props, ['level', 'collection', 'shouldBeTabbable']) }
 						collections = { collections }
@@ -918,7 +924,7 @@ CollectionsNodeList.displayName = 'CollectionsNodeList';
 
 const CollectionTree = props => {
 	const { onNodeSelected = noop, parentLibraryKey, collectionKey: currentCollectionKey,
-		itemsSource, pickerMode, pickerNavigate = noop, ...rest } = props;
+		itemsSource, pickerMode, pickerNavigate = noop, groupId, ...rest } = props;
 	const dispatch = useDispatch();
 	const levelWrapperRef = useRef(null);
 	const dataObjects = useSelector(state => state.libraries[parentLibraryKey]?.dataObjects);
@@ -1093,7 +1099,7 @@ const CollectionTree = props => {
 		// On touch we allow animating into next level and render a spinner
 		if(isTouchOrSmall) {
 			return (
-				<div className="level level-1 level-last loading">
+				<div role="presentation" className="level level-1 level-last loading">
 					<Spinner className="large" />
 				</div>
 			);
@@ -1103,7 +1109,7 @@ const CollectionTree = props => {
 	}
 
 	return (
-		<LevelWrapper ref={ levelWrapperRef } level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel }>
+		<LevelWrapper ref={ levelWrapperRef } level={ 1 } hasOpen={ hasOpen } isLastLevel={ isLastLevel } groupId={ groupId }>
 			<CollectionsNodeList
 				allCollections={ allCollections }
 				collections={ topLevelCollections }
@@ -1156,6 +1162,7 @@ const CollectionTree = props => {
 
 CollectionTree.propTypes = {
 	collectionKey: PropTypes.string,
+	groupId: PropTypes.string,
 	isMyPublications: PropTypes.bool,
 	isTrash: PropTypes.bool,
 	itemsSource: PropTypes.string,
