@@ -118,7 +118,7 @@ const fetchItemDetails = (itemKey, queryOptions, overrides) => {
 // every page succeeds or the retry budget is exhausted, so `remoteLibraryUpdate`
 // can await completion via `Promise.allSettled`.
 const fetchAllItemsSince = (version, queryOptions, overrides) => {
-	return async (dispatch, getState) => {
+	return async (dispatch) => {
 		const limit = 100;
 		let pointer = 0;
 		let errorRetries = 0;
@@ -126,16 +126,13 @@ const fetchAllItemsSince = (version, queryOptions, overrides) => {
 
 		while(true) {
 			const requestId = requestTracker.id++;
-			await dispatch(
+			const outcome = await dispatch(
 				fetchItems('FETCH_ITEMS', {}, { ...queryOptions, start: pointer, limit, since: version }, overrides, requestId)
 			);
 
-			const traffic = get(getState(), ['traffic', 'FETCH_ITEMS'], {});
-			const { totalResults } = traffic.last ?? {};
-
-			if(typeof totalResults === 'undefined') {
-				// request errored or was dropped before a RECEIVE landed
-				if((traffic.errorCount ?? 0) > 0 && errorRetries < maxRetries) {
+			if(!outcome) {
+				// requestWithBackoff resolves with undefined when the request errors
+				if(errorRetries < maxRetries) {
 					errorRetries++;
 					continue;
 				}
@@ -145,7 +142,7 @@ const fetchAllItemsSince = (version, queryOptions, overrides) => {
 
 			errorRetries = 0;
 			pointer += limit;
-			if(totalResults <= pointer) {
+			if(outcome.totalResults <= pointer) {
 				return;
 			}
 		}

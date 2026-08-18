@@ -88,18 +88,14 @@ const doResilientParallelisedCollectionsFetching = async (dispatch, getState, li
 		};
 	}
 
-	// subsequent pages are requested in parallel. Any request dropped or errored is re-requested
+	// subsequent pages are requested in parallel. Any request that errored is re-requested
 	// this will respect the request schedule (see request.js), but it will never give up.
 	while(remainingRequestsNumber > 0) {
 		const promises = Object.values(requests).map(r => r.promise);
 		await Promise.allSettled(promises);
 		const errored = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'errored'], null);
-		const dropped = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'dropped'], null);
 
-		let hasScheduledNewRequest = false;
-
-		hasScheduledNewRequest = hasScheduledNewRequest || rescheduleBadRequests(errored, requests, dispatch, libraryKey, args);
-		hasScheduledNewRequest = hasScheduledNewRequest || rescheduleBadRequests(dropped, requests, dispatch, libraryKey, args);
+		const hasScheduledNewRequest = rescheduleBadRequests(errored, requests, dispatch, libraryKey, args);
 
 		const ongoing = get(getState(), ['traffic', 'COLLECTIONS_IN_LIBRARY', 'ongoing'], null);
 
