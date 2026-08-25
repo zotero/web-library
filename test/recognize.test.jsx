@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event'
 import { PDFWorker } from '../src/js/common/pdf-worker.js';
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getPachtedStateMultiple } from './utils/state';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
@@ -42,6 +42,13 @@ jest.mock('../src/js/common/pdf-worker.js');
 
 const state = JSONtoState(stateRaw);
 const bitcoinState = JSONtoState(bitcoinStateRaw);
+
+// State fixtures are generated from a live library that has no top-level attachment with a link mode
+// other than imported_file, so these are derived from the imported_file fixture instead.
+const getStateWithLinkMode = linkMode => getPachtedStateMultiple(state, [
+	['libraries.u1.dataObjects.UMPPCXU4', { linkMode, url: 'https://example.com/attention-is-all-you-need.pdf' }],
+	['libraries.u1.items.UMPPCXU4', { linkMode, url: 'https://example.com/attention-is-all-you-need.pdf' }],
+]);
 
 describe('Metadata Retrieval', () => {
 	const handlers = [
@@ -334,6 +341,24 @@ describe('Metadata Retrieval', () => {
 		await user.click(screen.getByRole('button', { name: 'Close Dialog' }));
 		expect(await screen.findByRole('row', { name: 'Bitcoin: A Peer-to-Peer Electronic Cash System' })).toBeInTheDocument();
 		expect(screen.queryByRole('row', { name: 'bitcoin.pdf' })).not.toBeInTheDocument();
+	});
+
+	test('Offer Retrieve Metadata for a PDF stored from a URL', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithLinkMode('imported_url') });
+		await waitForPosition();
+
+		expect(screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' })).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByRole('button', { name: 'Retrieve Metadata' })).toBeEnabled();
+	});
+
+	test('Do not offer Retrieve Metadata for a linked PDF', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/CSB4KZUU/items/UMPPCXU4' });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithLinkMode('linked_file') });
+		await waitForPosition();
+
+		expect(screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' })).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByRole('button', { name: 'Retrieve Metadata' })).toBeDisabled();
 	});
 
 });

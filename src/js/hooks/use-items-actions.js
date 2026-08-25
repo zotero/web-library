@@ -10,7 +10,7 @@ const useCanRecognize = () => {
 	const selectedCount = useSelector(state => state.current.itemKeys.length);
 	const selectedItemsAreStoredPDFs = useSelector(state => state.current.itemKeys.every(
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
-			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.linkMode === 'imported_file'
+			&& ['imported_file', 'imported_url'].includes(state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.linkMode)
 			&& state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.contentType === 'application/pdf'
 	));
 	const canRecognize = !isTrash && !isMyPublications && !isReadOnly && selectedCount > 0 && selectedItemsAreStoredPDFs;
