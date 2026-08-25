@@ -8,11 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const fonts = [
-    'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.eot',
-    'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.woff',
     'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.woff2',
-    'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.ttf',
-    'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.svg',
+    'https://www.zotero.org/static/web-library/fonts/36AC02_5_0.woff',
 ];
 
 let count = 0;
