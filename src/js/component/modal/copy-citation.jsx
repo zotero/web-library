@@ -3,13 +3,13 @@ import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativ
 import { useDispatch, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
+import { copyWithHtml } from 'web-common/utils';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 
 import { citationFromItems, fetchCSLStyle, fetchItemsByKeys, toggleModal } from '../../actions';
 import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
-import { copyWithHtml } from '../../common/clipboard';
 import { focusOnModalOpen } from '../../common/modal-focus';
 import { locatorShortForms, locators } from '../../constants/locators';
 import Input from '../form/input';

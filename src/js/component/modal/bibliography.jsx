@@ -2,11 +2,11 @@ import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, FocusTrap
 import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
+import { copyWithHtml } from 'web-common/utils';
 import copy from 'copy-to-clipboard';
 import cx from 'classnames';
 
 import { BIBLIOGRAPHY } from '../../constants/modals';
-import { copyWithHtml } from '../../common/clipboard';
 import { focusOnModalOpen } from '../../common/modal-focus';
 import { stripTagsUsingDOM } from '../../common/format';
 import { toggleModal, fetchItemKeys, fetchCSLStyle, bibliographyFromItems, triggerSelectMode, fetchItemsByKeys } from '../../actions';
