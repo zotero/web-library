@@ -7,8 +7,8 @@ import { usePrevious } from 'web-common/hooks';
 
 import Input from '../../form/input';
 import { IDENTIFIER_PICKER } from '../../../constants/modals';
-import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
-import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../../constants/identifier-result-types';
+import { currentAddTranslatedItem, searchIdentifier, toggleModal, reportIdentifierLookupFailed, reportIdentifierNoResults, resetIdentifier } from '../../../actions';
+import { EMPTY, ERROR, CHOICE_EXHAUSTED, MULTIPLE } from 'web-common/utils';
 
 const AddByIdentifier = props => {
 	const { onKeyDown } = props;
@@ -93,7 +93,7 @@ const AddByIdentifier = props => {
 	}, [addItem, isOpen, item, prevItem]);
 
 	useEffect(() => {
-		if (isOpen && items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
+		if (isOpen && items && prevItems === null && [CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 			setIsOpen(false);
 			dispatch(toggleModal(IDENTIFIER_PICKER, true));
 		}
@@ -104,6 +104,8 @@ const AddByIdentifier = props => {
 			setIdentifier('');
 			if(result === EMPTY) {
 				dispatch(reportIdentifierNoResults(message));
+			} else if(result === ERROR) {
+				dispatch(reportIdentifierLookupFailed(message));
 			} else {
 				ref.current.focus();
 				setIsOpen(false);

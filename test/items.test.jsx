@@ -146,6 +146,340 @@ describe('Items', () => {
 		expect(hasBeenCreated).toBe(true);
 	});
 
+	test('Show a message when the identifier is not recognized by the translation server', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		let hasBeenSearched = false;
+
+		server.use(
+			http.post('https://localhost/translate/search', async ({ request }) => {
+				const identifier = await request.text();
+				expect(identifier).toEqual('0312558066');
+				hasBeenSearched = true;
+				return HttpResponse.text('No items returned from any translator', { status: 501 });
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, '0312558066{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		expect(await screen.findByText(
+			'Zotero could not recognize the specified identifier. Please verify the identifier and try again.'
+		)).toBeInTheDocument();
+		expect(hasBeenSearched).toBe(true);
+	});
+
+	test('Show a message when some of the identifiers are not recognized by the translation server', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		const searchedIdentifiers = [];
+		let hasBeenCreated = false;
+
+		server.use(
+			http.post('https://localhost/translate/search', async ({ request }) => {
+				const identifier = await request.text();
+				searchedIdentifiers.push(identifier);
+				if (identifier === '0312558066') {
+					return HttpResponse.json(searchByIdentifier);
+				}
+				return HttpResponse.text('No items returned from any translator', { status: 501 });
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items).toHaveLength(1);
+				expect(items[0].ISBN).toBe('9780312558062');
+				hasBeenCreated = true;
+				return HttpResponse.json(responseAddByIdentifier);
+			}),
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesBook);
+			}),
+			http.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsBook);
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, '0312558066 9780262033848{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+		await screen.findByRole('row', { name: 'Hachiko waits' });
+
+		expect(await screen.findByText(
+			'Zotero could not recognize the following identifier: 9780262033848.'
+		)).toBeInTheDocument();
+		expect(searchedIdentifiers.sort()).toEqual(['0312558066', '9780262033848']);
+		expect(hasBeenCreated).toBe(true);
+	});
+
+	test('Show a message when none of the identifiers are recognized by the translation server', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		const searchedIdentifiers = [];
+		let hasBeenCreated = false;
+
+		server.use(
+			http.post('https://localhost/translate/search', async ({ request }) => {
+				searchedIdentifiers.push(await request.text());
+				return HttpResponse.text('No items returned from any translator', { status: 501 });
+			}),
+			http.post('https://api.zotero.org/users/1/items', () => {
+				hasBeenCreated = true;
+				return HttpResponse.json([]);
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, '0312558066 9780262033848{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		expect(await screen.findByText(
+			'Zotero could not recognize any of the specified identifiers. Please verify the identifiers and try again.'
+		)).toBeInTheDocument();
+		expect(searchedIdentifiers.sort()).toEqual(['0312558066', '9780262033848']);
+		expect(hasBeenCreated).toBe(false);
+	});
+
+	test('Show separate messages for unrecognized identifiers and failed lookups', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		let hasBeenCreated = false;
+
+		server.use(
+			http.post('https://localhost/translate/search', async ({ request }) => {
+				const identifier = await request.text();
+				if (identifier === '0312558066') {
+					return HttpResponse.json(searchByIdentifier);
+				}
+				if (identifier === '9780262033848') {
+					return HttpResponse.text('No items returned from any translator', { status: 501 });
+				}
+				return HttpResponse.text(
+					'An error occurred during translation. Please check translation with the Zotero client.',
+					{ status: 500 }
+				);
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items).toHaveLength(1);
+				expect(items[0].ISBN).toBe('9780312558062');
+				hasBeenCreated = true;
+				return HttpResponse.json(responseAddByIdentifier);
+			}),
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesBook);
+			}),
+			http.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsBook);
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, '0312558066 9780262033848 9780131103627{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+		await screen.findByRole('row', { name: 'Hachiko waits' });
+
+		expect(await screen.findByText(
+			'Zotero could not recognize the following identifier: 9780262033848.'
+		)).toBeInTheDocument();
+		expect(await screen.findByText(
+			'An error occurred while looking up the following identifier: 9780131103627. Please try again later.'
+		)).toBeInTheDocument();
+		expect(hasBeenCreated).toBe(true);
+	});
+
+	test('Add items picked from a URL with multiple results', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		let sessionRequest = null;
+		let hasBeenCreated = false;
+
+		server.use(
+			http.post('https://localhost/translate/web', async ({ request }) => {
+				if (request.headers.get('content-type').startsWith('application/json')) {
+					sessionRequest = await request.json();
+					return HttpResponse.json(searchByIdentifier);
+				}
+				expect(await request.text()).toEqual('https://example.com/books');
+				return HttpResponse.json({
+					url: 'https://example.com/books',
+					session: 'SESSION1',
+					items: { '0': 'First choice', '1': 'Second choice' }
+				}, { status: 300 });
+			}),
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const items = await request.json();
+				expect(items).toHaveLength(1);
+				expect(items[0].ISBN).toBe('9780312558062');
+				hasBeenCreated = true;
+				return HttpResponse.json(responseAddByIdentifier);
+			}),
+			http.get('https://api.zotero.org/itemTypeCreatorTypes', () => {
+				return HttpResponse.json(itemTypeCreatorTypesBook);
+			}),
+			http.get('https://api.zotero.org/itemTypeFields', () => {
+				return HttpResponse.json(itemTypeFieldsBook);
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, 'https://example.com/books{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		await screen.findByText('First choice');
+		await userEvent.click(screen.getByRole('button', { name: 'Select All' }));
+		await userEvent.click(screen.getByRole('button', { name: 'Add 2 Items' }));
+		await waitForPosition();
+		await screen.findByRole('row', { name: 'Hachiko waits' });
+
+		expect(sessionRequest).toEqual({
+			items: { '0': 'First choice', '1': 'Second choice' },
+			url: 'https://example.com/books',
+			session: 'SESSION1'
+		});
+		expect(hasBeenCreated).toBe(true);
+	});
+
+	test('Show the server message when a URL selection is rejected', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		let hasBeenCreated = false;
+
+		server.use(
+			http.post('https://localhost/translate/web', async ({ request }) => {
+				if (request.headers.get('content-type').startsWith('application/json')) {
+					return HttpResponse.text('Items specified do not match items available', { status: 409 });
+				}
+				return HttpResponse.json({
+					url: 'https://example.com/books',
+					session: 'SESSION1',
+					items: { '0': 'First choice', '1': 'Second choice' }
+				}, { status: 300 });
+			}),
+			http.post('https://api.zotero.org/users/1/items', () => {
+				hasBeenCreated = true;
+				return HttpResponse.json([]);
+			}),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, 'https://example.com/books{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		await screen.findByText('First choice');
+		await userEvent.click(screen.getByRole('button', { name: 'Select All' }));
+		await userEvent.click(screen.getByRole('button', { name: 'Add 2 Items' }));
+		await waitForPosition();
+
+		expect(await screen.findByText('Items specified do not match items available')).toBeInTheDocument();
+		expect(hasBeenCreated).toBe(false);
+	});
+
+	test('Show a message when the translation server cannot be reached for an identifier', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		server.use(
+			http.post('https://localhost/translate/search', () => HttpResponse.error()),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, '0312558066{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		expect(await screen.findByText(
+			'An error occurred while looking up the specified identifier. Please try again later.'
+		)).toBeInTheDocument();
+	});
+
+	test('Show a message when the translation server cannot be reached for a URL', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		server.use(
+			http.post('https://localhost/translate/web', () => HttpResponse.error()),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, 'https://example.com/books{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		expect(await screen.findByText(
+			'Unable to communicate with Zotero servers. Please check your connection and try again.'
+		)).toBeInTheDocument();
+		expect(screen.getByRole('dialog', { name: 'Add By Identifier' })).toBeInTheDocument();
+	});
+
 	test('Add item to a collection using modal', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();

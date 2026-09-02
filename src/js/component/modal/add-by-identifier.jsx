@@ -7,8 +7,8 @@ import { usePrevious } from 'web-common/hooks';
 import Input from '../form/input';
 import Modal from '../ui/modal';
 import { ADD_BY_IDENTIFIER, IDENTIFIER_PICKER } from '../../constants/modals';
-import { EMPTY, CHOICE, CHOICE_EXHAUSTED, MULTIPLE } from '../../constants/identifier-result-types';
-import { currentAddTranslatedItem, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
+import { EMPTY, ERROR, CHOICE_EXHAUSTED, MULTIPLE } from 'web-common/utils';
+import { currentAddTranslatedItem, reportIdentifierLookupFailed, reportIdentifierNoResults, resetIdentifier, searchIdentifier, toggleModal } from '../../actions';
 
 const AddByIdentifierModal = () => {
 	const dispatch = useDispatch();
@@ -97,9 +97,11 @@ const AddByIdentifierModal = () => {
 			setIdentifier('');
 			if(result === EMPTY) {
 				dispatch(reportIdentifierNoResults(message));
+			} else if(result === ERROR) {
+				dispatch(reportIdentifierLookupFailed(message));
 			} else {
 				dispatch(toggleModal(ADD_BY_IDENTIFIER, false));
-				if(items && prevItems === null && [CHOICE, CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
+				if(items && prevItems === null && [CHOICE_EXHAUSTED, MULTIPLE].includes(result)) {
 					dispatch(toggleModal(IDENTIFIER_PICKER, true));
 				}
 			}

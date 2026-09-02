@@ -1,4 +1,4 @@
-import { pick } from 'web-common/utils';
+import { pick, NOT_FOUND } from 'web-common/utils';
 import { getItemFromIdentifier } from '../common/identifiers';
 import {
 	BEGIN_CREATE_EMPTY_PARENT_ITEMS, BEGIN_CREATE_PARENT_ITEM_FROM_IDENTIFIER, BEGIN_ONGOING, CLEAR_ONGOING,
@@ -82,7 +82,15 @@ const createParentItemFromIdentifier = (itemKey, identifier, libraryKey) => {
 			dispatch({ type: COMPLETE_CREATE_PARENT_ITEM_FROM_IDENTIFIER, itemKeys: [itemKey], libraryKey, parentItemKey: itemFromIdentifier.key });
 			return parentItem;
 		} catch (error) {
-			dispatch({ type: ERROR_CREATE_PARENT_ITEM_FROM_IDENTIFIER, itemKeys: [itemKey], libraryKey, error });
+			const isTranslationError = 'reason' in error;
+			dispatch({
+				type: ERROR_CREATE_PARENT_ITEM_FROM_IDENTIFIER,
+				itemKeys: [itemKey],
+				libraryKey,
+				error: isTranslationError ? error.message : error,
+				errorType: error.reason === NOT_FOUND ? 'info' : undefined,
+				errorTag: isTranslationError ? 'identifier' : undefined,
+			});
 			throw error;
 		} finally {
 			dispatch({ id, type: CLEAR_ONGOING }); // auto-dismiss

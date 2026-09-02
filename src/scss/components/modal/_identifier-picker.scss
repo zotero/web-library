@@ -100,15 +100,4 @@
 			align-items: center;
 		}
 	}
-
-	.more-button-wrap {
-		align-items: center;
-		display: flex;
-		justify-content: center;
-		margin-top: variables.$space-lg;
-
-		@include breakpoints.mouse-and-bp-up(md) {
-			margin-top: 0;
-		}
-	}
 }

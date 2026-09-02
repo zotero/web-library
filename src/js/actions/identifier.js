@@ -1,26 +1,13 @@
-import { pick } from 'web-common/utils';
+import { pick, requestTranslation, EMPTY, ERROR, CHOICE, CHOICE_EXHAUSTED, MULTIPLE, NOT_FOUND } from 'web-common/utils';
 import { getZotero } from 'web-common/zotero';
 
 import { isLikeURL } from '../utils';
+import { pluralize } from '../common/format';
+import { getTranslationMessage } from '../common/identifiers';
 import { BEGIN_SEARCH_MULTIPLE_IDENTIFIERS, COMPLETE_SEARCH_MULTIPLE_IDENTIFIERS,
-	ERROR_IDENTIFIER_NO_RESULT, ERROR_ADD_BY_IDENTIFIER, REQUEST_ADD_BY_IDENTIFIER,
-	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER, REQUEST_IDENTIFIER_MORE,
-	RECEIVE_IDENTIFIER_MORE, ERROR_IDENTIFIER_MORE } from '../constants/actions';
+	ERROR_IDENTIFIER_LOOKUP_FAILED, ERROR_IDENTIFIER_NO_RESULT, REQUEST_ADD_BY_IDENTIFIER,
+	RECEIVE_ADD_BY_IDENTIFIER, RESET_ADD_BY_IDENTIFIER } from '../constants/actions';
 import { createItem, createItems, navigate } from '.';
-import { EMPTY, CHOICE , CHOICE_EXHAUSTED, MULTIPLE } from '../constants/identifier-result-types';
-
-const getNextLinkFromResponse = response => {
-	let next = null;
-	if(response.headers.has('link')) {
-		const links = response.headers.get('link');
-		const matches = links.match(/<(.*?)>;\s+rel="next"/i);
-
-		if(matches && matches.length > 1) {
-			next = matches[1];
-		}
-	}
-	return next;
-}
 
 const importFromFile = fileData => {
 	return searchIdentifier(fileData.file, { shouldImport: true });
@@ -41,7 +28,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 			if(matchDOI) {
 				identifier = matchDOI[1];
 			}
-			const identifierIsUrl = isLikeURL(identifier);
+			identifierIsUrl = isLikeURL(identifier);
 			if(!identifierIsUrl) {
 				const identifierObjects = getZotero().Utilities.extractIdentifiers(identifier);
 				if(identifierObjects.length === 0) {
@@ -59,68 +46,37 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 
 		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, import: shouldImport });
 
-		try {
-			const response = await fetch(url, {
-				method: 'post',
-				mode: 'cors',
-				headers: { 'content-type': 'text/plain' },
-				body: identifier
-			});
-
-			if (response.status === 501 || response.status === 400) {
-				const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
-			} else if (response.status === 413) {
-				const message = 'Selected file is too large.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message });
-			} else if (response.status === 300) {
-				const data = await response.json();
-				const items = 'items' in data && 'session' in data ? data.items : data;
-				const next = getNextLinkFromResponse(response);
-
-				dispatch({
-					type: RECEIVE_ADD_BY_IDENTIFIER,
-					result: next ? CHOICE : CHOICE_EXHAUSTED,
-					session: data.session,
-					next,
-					identifierIsUrl,
-					identifier,
-					items,
-					import: shouldImport,
-					response
-				});
-				return items;
-			} else if (response.status === 500 && response.headers.get('content-type').startsWith('text/plain')) {
-				const message = await response.text();
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
-			} else if(response.status !== 200) {
-				const message = `Unexpected response from the server (${response.status}).`;
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
-			} else if (!response.headers.get('content-type').startsWith('application/json')) {
-				const message = 'Unexpected response from the server.';
-				dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
-			} else {
-				const json = await response.json();
-				if (!json.length) {
-					const message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
-					dispatch({ type: RECEIVE_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, result: EMPTY, message, import: shouldImport });
-				} else {
-					dispatch({
-						type: RECEIVE_ADD_BY_IDENTIFIER,
-						result: MULTIPLE,
-						items: json,
-						identifierIsUrl,
-						identifier,
-						import: shouldImport,
-						response
-					});
-					return json;
-				}
-			}
-		} catch(error) {
-			dispatch({ type: ERROR_ADD_BY_IDENTIFIER, error, identifier, import: shouldImport });
-		}
+		const outcome = await requestTranslation(url, identifier);
+		const { result, items, session, response } = outcome;
+		dispatch({
+			type: RECEIVE_ADD_BY_IDENTIFIER,
+			result: result === CHOICE ? CHOICE_EXHAUSTED : result,
+			message: getTranslationMessage(outcome),
+			items,
+			session,
+			response,
+			identifier,
+			identifierIsUrl,
+			import: shouldImport
+		});
+		return items;
 	}
+}
+
+const getUnrecognizedIdentifiersMessage = (unrecognized, total) => {
+	if(unrecognized.length < total) {
+		return `Zotero could not recognize the following ${pluralize('identifier', unrecognized.length)}: ${unrecognized.join(', ')}.`;
+	}
+	return total === 1
+		? 'Zotero could not recognize the specified identifier. Please verify the identifier and try again.'
+		: 'Zotero could not recognize any of the specified identifiers. Please verify the identifiers and try again.';
+}
+
+const getFailedIdentifiersMessage = (failed, total) => {
+	if(failed.length < total) {
+		return `An error occurred while looking up the following ${pluralize('identifier', failed.length)}: ${failed.join(', ')}. Please try again later.`;
+	}
+	return `An error occurred while looking up the specified ${pluralize('identifier', total)}. Please try again later.`;
 }
 
 const currentAddMultipleTranslatedItems = identifiers => {
@@ -141,30 +97,44 @@ const currentAddMultipleTranslatedItems = identifiers => {
 			if(result === MULTIPLE) {
 				translatedItems = identifiers.map(identifierId => items[parseInt(identifierId)]);
 			} else if(identifierIsUrl && session) {
-				const url = `${translateUrl}/web`;
-				const selectedItems = pick(items, identifiers);
-				const response = await fetch(url, {
-					method: 'post',
-					mode: 'cors',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({
-						items: selectedItems,
-						url: state.identifier.identifier,
-						session,
-					})
+				const outcome = await requestTranslation(`${translateUrl}/web`, {
+					items: pick(items, identifiers),
+					url: state.identifier.identifier,
+					session,
 				});
-				const data = await response.json();
-				translatedItems = data.filter(item => !item.parentItem);
+				if(outcome.result === MULTIPLE) {
+					translatedItems = outcome.items.filter(item => !item.parentItem);
+				} else {
+					const report = outcome.result === ERROR ? reportIdentifierLookupFailed : reportIdentifierNoResults;
+					dispatch(report(getTranslationMessage(outcome)));
+				}
 			} else if(!identifierIsUrl) {
 				const url = `${translateUrl}/search`;
-				const promises = identifiers.map(identifier => fetch(url, {
-					method: 'post',
-					mode: 'cors',
-					headers: { 'Content-Type': 'text/plain' },
-					body: identifier
-				}).then(async r => (await r.json())[0]).catch(() => null));
+				const outcomes = await Promise.all(identifiers.map(identifier => requestTranslation(url, identifier)));
+				const unrecognized = [];
+				const failed = [];
 
-				translatedItems = (await Promise.all(promises)).filter(Boolean);
+				outcomes.forEach(({ result }, index) => {
+					if(result === MULTIPLE) {
+						return;
+					}
+					if(result === EMPTY) {
+						unrecognized.push(identifiers[index]);
+					} else {
+						failed.push(identifiers[index]);
+					}
+				});
+
+				translatedItems = outcomes
+					.filter(({ result }) => result === MULTIPLE)
+					.map(({ items }) => items[0]);
+
+				if(unrecognized.length) {
+					dispatch(reportIdentifierNoResults(getUnrecognizedIdentifiersMessage(unrecognized, identifiers.length)));
+				}
+				if(failed.length) {
+					dispatch(reportIdentifierLookupFailed(getFailedIdentifiersMessage(failed, identifiers.length)));
+				}
 			}
 
 			if(translatedItems && translatedItems.length) {
@@ -224,54 +194,17 @@ const currentAddTranslatedItem = translatedItem => {
 	}
 }
 
-const searchIdentifierMore = () => {
-	return async (dispatch, getState) => {
-		const state = getState();
-		const { identifier, next, result } = state.identifier;
-		if(!identifier || result !== CHOICE) {
-			return;
-		}
+const reportIdentifierLookupFailed = message => ({
+	type: ERROR_IDENTIFIER_LOOKUP_FAILED,
+	error: message,
+	errorTag: 'identifier'
+});
 
-		dispatch({ type: REQUEST_IDENTIFIER_MORE, identifier });
-
-		try {
-			const response = await fetch(next, {
-				method: 'post',
-				mode: 'cors',
-				headers: { 'Content-Type': 'text/plain' },
-				body: identifier
-			});
-
-			if (response.status === 300) {
-				const data = await response.json();
-				const items = 'items' in data && 'session' in data ? data.items : data;
-				const next = getNextLinkFromResponse(response)
-				dispatch({
-					type: RECEIVE_IDENTIFIER_MORE,
-					result: next ? CHOICE : CHOICE_EXHAUSTED,
-					next,
-					identifier,
-					items,
-					response
-				});
-			} else {
-				dispatch({
-					type: RECEIVE_IDENTIFIER_MORE,
-					result: CHOICE_EXHAUSTED
-				});
-			}
-		} catch(error) {
-			dispatch({ type: ERROR_IDENTIFIER_MORE, error, identifier });
-			throw error;
-		}
-	}
-}
-
-const reportIdentifierNoResults = (message = 'Zotero could not find any identifiers in your input. Please verify your input and try again.') => ({
+const reportIdentifierNoResults = (message = getTranslationMessage({ reason: NOT_FOUND })) => ({
 	type: ERROR_IDENTIFIER_NO_RESULT,
 	error: message,
 	errorType: 'info',
 	errorTag: 'identifier'
 });
 
-export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, importFromFile, resetIdentifier, searchIdentifier, searchIdentifierMore, reportIdentifierNoResults };
+export { currentAddTranslatedItem, currentAddMultipleTranslatedItems, importFromFile, resetIdentifier, searchIdentifier, reportIdentifierLookupFailed, reportIdentifierNoResults };

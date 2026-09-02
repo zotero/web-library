@@ -36,17 +36,20 @@ const CreateParentItemModal = () => {
 	const addFromIdentifier = useCallback(async (newIdentifier) => {
 		const identifiers = getZotero().Utilities.extractIdentifiers(newIdentifier);
 		if (identifiers.length === 1) {
+			setIsBusy(true);
 			try {
-				setIsBusy(true);
 				const identifierValue = Object.values(identifiers[0])[0];
 				const parentItem = await dispatch(createParentItemFromIdentifier(itemKey, identifierValue, libraryKey));
-				if (parentItem) {
-					dispatch(triggerSelectMode(false));
-					dispatch(navigate({ items: [parentItem.key], noteKey: null, attachmentKey: null, view: 'item-details' }, false));
+				dispatch(triggerSelectMode(false));
+				dispatch(navigate({ items: [parentItem.key], noteKey: null, attachmentKey: null, view: 'item-details' }, false));
+			} catch (error) {
+				if ('reason' in error) {
+					// translation failed, keep the modal open so the identifier can be corrected or retried
+					setIsBusy(false);
+					return;
 				}
-			} finally {
-				dispatch(toggleModal(CREATE_PARENT_ITEM, false));
 			}
+			dispatch(toggleModal(CREATE_PARENT_ITEM, false));
 		} else if (identifiers.length > 1) {
 			dispatch(reportIdentifierNoResults('Too many identifiers. Please enter one identifier and try again.'))
 		} else {

@@ -105,6 +105,48 @@ describe('Create Parent Item', () => {
 		expect(hasPatchedAttachmentItem).toBe(true);
 	});
 
+	test('Shows an info message when the identifier is not recognized', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+		let hasBeenSearched = false;
+
+		server.use(
+			http.post('https://localhost/translate/search', async ({ request }) => {
+				const identifier = await request.text();
+				expect(identifier).toEqual('1706.03762');
+				hasBeenSearched = true;
+				await delay(100);
+				return HttpResponse.text('No items returned from any translator', { status: 501 });
+			}),
+			http.post('https://api.zotero.org/users/1/items', () => {
+				throw new Error('No item should be created when the identifier is not recognized');
+			}),
+		);
+
+		const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
+		await user.click(getByRole(toolbar, 'button', { name: 'More' }));
+		await waitForPosition();
+		await user.click(screen.getByRole('menuitem', { name: 'Create Parent Item' }));
+		const dialog = await screen.findByRole('dialog', { name: 'Create Parent Item' });
+		const input = getByRole(dialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, arXiv ID, or ADS Bibcode to identify this file:' });
+		await waitFor(() => expect(input).toHaveFocus());
+		await user.type(input, '1706.03762{enter}', { skipClick: true });
+
+		const toast = await screen.findByText(
+			'Zotero could not find any identifiers in your input. Please verify your input and try again.'
+		);
+		expect(toast).toHaveClass('message', 'info');
+		expect(toast.querySelector('header')).toHaveTextContent('Info');
+		expect(hasBeenSearched).toBe(true);
+
+		// modal stays open so the identifier can be corrected or retried
+		const reopenedDialog = await screen.findByRole('dialog', { name: 'Create Parent Item' });
+		const retryInput = getByRole(reopenedDialog, 'textbox', { name: 'Enter a DOI, ISBN, PMID, arXiv ID, or ADS Bibcode to identify this file:' });
+		await waitFor(() => expect(retryInput).toHaveFocus());
+		expect(retryInput).toHaveValue('1706.03762');
+	});
+
 	test('Creates empty parent item', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();

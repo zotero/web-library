@@ -1,18 +1,17 @@
 import { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
-import { Button, Icon, Spinner } from 'web-common/components';
+import { Button, Icon } from 'web-common/components';
 import { usePrevious, useFocusManager } from 'web-common/hooks';
 
 import Modal from '../ui/modal';
 import { IDENTIFIER_PICKER } from '../../constants/modals';
 import { focusOnModalOpen } from '../../common/modal-focus';
-import { currentAddMultipleTranslatedItems, searchIdentifierMore, reportIdentifierNoResults, toggleModal } from '../../actions';
+import { currentAddMultipleTranslatedItems, reportIdentifierLookupFailed, reportIdentifierNoResults, toggleModal } from '../../actions';
 import { useBufferGate } from '../../hooks';
 import { getUniqueId, processIdentifierMultipleItems } from '../../utils';
 import { getBaseMappedValue } from '../../common/item';
-import { CHOICE, EMPTY, MULTIPLE } from '../../constants/identifier-result-types';
+import { EMPTY, ERROR, MULTIPLE } from 'web-common/utils';
 import { pluralize } from '../../common/format';
 
 const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
@@ -178,10 +177,6 @@ const IdentifierPicker = () => {
 		dispatch(currentAddMultipleTranslatedItems(selectedKeys));
 	}, [dispatch, selectedKeys]);
 
-	const handleSearchMore = useCallback(() => {
-		dispatch(searchIdentifierMore());
-	}, [dispatch]);
-
 	const handleSelectAll = useCallback(() => {
 		if (Array.isArray(processedItems)) {
 			setSelectedKeys(processedItems.map(i => i.key));
@@ -236,10 +231,11 @@ const IdentifierPicker = () => {
 
 	useEffect(() => {
 		if(!wasReady && isReady) {
-			if (identifierResult === EMPTY) {
+			if (identifierResult === EMPTY || identifierResult === ERROR) {
 				dispatch(toggleModal(IDENTIFIER_PICKER, false));
 				if (identifierMessage) {
-					dispatch(reportIdentifierNoResults(identifierMessage));
+					const report = identifierResult === ERROR ? reportIdentifierLookupFailed : reportIdentifierNoResults;
+					dispatch(report(identifierMessage));
 				}
 			} else if (isImport && processedItems?.length) {
 				// Skip the selection step if we're importing
@@ -330,18 +326,6 @@ const IdentifierPicker = () => {
 						Clear Selection
 					</Button>
 				</div>
-					{ identifierResult === CHOICE && (
-						<div className="modal-footer-center">
-							{ isSearching ? <Spinner /> : (
-							<Button
-								className={cx("btn more-button", { 'btn-link': isTouchOrSmall, 'btn-lg btn-secondary': !isTouchOrSmall }) }
-								onClick={ handleSearchMore }
-							>
-								More
-							</Button>
-							) }
-						</div>
-					) }
 				{ !isTouchOrSmall && (
 					<div className="modal-footer-right">
 						<Button
