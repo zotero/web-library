@@ -664,12 +664,12 @@ const CopyCitationModal = () => {
 		}
 	}, [citationLocale, updatePreview, prevCitationLocale, styleXml]);
 
-	// fetch style when modal is first opened. This will trigger effect below that actually generates bibliography.
+	// fetch style when the modal opens, unless already loaded or being fetched. This will trigger effect below that actually generates citations.
 	useEffect(() => {
-		if (!isFetchingStyle && styleXml === null) {
+		if (isOpen && !wasOpen && !isFetchingStyle && styleXml === null) {
 			dispatch(fetchCSLStyle(citationStyle));
 		}
-	}, [citationStyle, dispatch, isFetchingStyle, styleXml]);
+	}, [citationStyle, dispatch, isFetchingStyle, isOpen, styleXml, wasOpen]);
 
 	// regenerate citations when styleXml changes (e.g., when style is fetched for the first time or after a change)
 	useEffect(() => {

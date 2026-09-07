@@ -1,39 +1,103 @@
 import { CiteprocWrapper, fetchAndParseIndependentStyle, formatBib, formatFallback, getStyleProperties } from 'web-common/cite';
 import { BEGIN_FETCH_STYLE, COMPLETE_FETCH_STYLE, ERROR_FETCH_STYLE } from '../constants/actions';
+import { BIBLIOGRAPHY, COPY_CITATION } from '../constants/modals';
 import { getZotero } from 'web-common/zotero';
+import { requestSchedule } from './request';
+import { toggleModal } from './triggers';
+import { cede } from '../utils';
 
 import localeData from '../../../data/locale-data.json';
+import { coreCitationStyles } from '../../../data/citation-styles-data.json';
 
 const supportedLocales = localeData.map(locale => locale.value);
+const defaultCitationStyle = coreCitationStyles.find(cs => cs.isDefault);
+const MAX_STYLE_FETCH_RETRIES = 3;
+let currentStyleRequest = null;
 
-export const fetchCSLStyle = (styleName) => {
-	return async (dispatch, getState) => {
-		const { stylesBaseUrl } = getState().config;
-		dispatch({
-			type: BEGIN_FETCH_STYLE,
-			styleName,
-		});
-
+const fetchStyleWithRetries = async (styleName, stylesBaseUrl, isSuperseded) => {
+	for (let attempt = 0; ; attempt++) {
 		try {
-			const { styleXml, parentStyleXml } = await fetchAndParseIndependentStyle(styleName, stylesBaseUrl);
-			const relevantStyleXml = parentStyleXml ?? styleXml;
-			const styleProperties = getStyleProperties(relevantStyleXml);
-
-			dispatch({
-				type: COMPLETE_FETCH_STYLE,
-				styleName,
-				styleXml: relevantStyleXml,
-				styleProperties,
-			});
+			return await fetchAndParseIndependentStyle(styleName, stylesBaseUrl);
 		} catch (error) {
-			dispatch({
-				type: ERROR_FETCH_STYLE,
-				styleName,
-				error: error.message,
-			});
-			throw error;
+			if (attempt >= MAX_STYLE_FETCH_RETRIES) {
+				throw error;
+			}
+			await cede(requestSchedule[Math.min(attempt, requestSchedule.length - 1)] * 1000);
+			if (isSuperseded()) {
+				throw error;
+			}
 		}
 	}
+};
+
+const getStyleTitle = (styleName, installedCitationStyles = []) =>
+	[...coreCitationStyles, ...installedCitationStyles].find(cs => cs.name === styleName)?.title ?? styleName;
+
+const getStyleErrorMessage = (styleTitle, { isFallback, canFallback }) => {
+	if (isFallback) {
+		return `The default citation style “${styleTitle}” could not be downloaded either. Please try again later.`;
+	}
+	if (canFallback) {
+		return `Citation style “${styleTitle}” could not be downloaded. The default style “${defaultCitationStyle.title}” has been temporarily selected instead.`;
+	}
+	return `Citation style “${styleTitle}” could not be downloaded.`;
+};
+
+const fetchStyle = async (dispatch, getState, styleName, { isFallback = false } = {}) => {
+	const request = Symbol(styleName);
+	currentStyleRequest = request;
+	const isSuperseded = () => currentStyleRequest !== request;
+	const { stylesBaseUrl } = getState().config;
+
+	dispatch({
+		type: BEGIN_FETCH_STYLE,
+		styleName,
+	});
+
+	try {
+		const { styleXml, parentStyleXml } = await fetchStyleWithRetries(styleName, stylesBaseUrl, isSuperseded);
+		if (isSuperseded()) {
+			return;
+		}
+		const relevantStyleXml = parentStyleXml ?? styleXml;
+		const styleProperties = getStyleProperties(relevantStyleXml);
+
+		dispatch({
+			type: COMPLETE_FETCH_STYLE,
+			styleName,
+			styleXml: relevantStyleXml,
+			styleProperties,
+		});
+	} catch (error) {
+		if (isSuperseded()) {
+			return;
+		}
+		console.error(error);
+		const canFallback = styleName !== defaultCitationStyle.name;
+		const styleTitle = getStyleTitle(styleName, getState().preferences.installedCitationStyles);
+
+		dispatch({
+			type: ERROR_FETCH_STYLE,
+			styleName,
+			error: getStyleErrorMessage(styleTitle, { isFallback, canFallback }),
+		});
+
+		if (canFallback) {
+			return fetchStyle(dispatch, getState, defaultCitationStyle.name, { isFallback: true });
+		}
+
+		// nothing can be rendered without a style, close the modal that requested it
+		const { id: modalId, itemKeys, libraryKey } = getState().modal;
+		if ([BIBLIOGRAPHY, COPY_CITATION].includes(modalId)) {
+			dispatch(toggleModal(modalId, false, { itemKeys, libraryKey }));
+		}
+	}
+};
+
+// Fetches the style, retrying on failure. If the style still cannot be fetched, falls back to the
+// default style for the current session only -- the user's preference is left untouched.
+export const fetchCSLStyle = (styleName) => {
+	return (dispatch, getState) => fetchStyle(dispatch, getState, styleName);
 };
 
 export const bibliographyFromItems = (itemKeys, libraryKey) => {

@@ -2,6 +2,7 @@ import { BEGIN_FETCH_STYLE, COMPLETE_FETCH_STYLE, ERROR_FETCH_STYLE } from '../c
 
 const defaultState = {
 	itemKeys: [],
+	styleName: null, // style currently loaded or being fetched, may differ from the preference when falling back
 	styleXml: null,
 	styleProperties: null,
 	isFetchingStyle: false,
@@ -12,6 +13,7 @@ export default (state = defaultState, action) => {
 		case BEGIN_FETCH_STYLE:
 			return {
 				...state,
+				styleName: action.styleName,
 				styleXml: null,
 				styleProperties: null,
 				isFetchingStyle: true,
@@ -19,9 +21,10 @@ export default (state = defaultState, action) => {
 		case COMPLETE_FETCH_STYLE:
 			return {
 				...state,
+				styleName: action.styleName,
 				styleXml: action.styleXml,
 				styleProperties: action.styleProperties,
-				isFetchingStyle: false
+				isFetchingStyle: false,
 			};
 		case ERROR_FETCH_STYLE:
 			return {

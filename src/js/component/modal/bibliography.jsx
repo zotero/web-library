@@ -134,12 +134,12 @@ const BibliographyModal = () => {
 		}
 	}, [citationLocale, isItemsReady, makeOutput, prevCitationLocale, styleXml]);
 
-	// fetch style when modal is first opened. This will trigger effect below that actually generates bibliography.
+	// fetch style when the modal opens, unless already loaded or being fetched. This will trigger effect below that actually generates bibliography.
 	useEffect(() => {
-		if (!isFetchingStyle && styleXml === null) {
+		if (isOpen && !wasOpen && !isFetchingStyle && styleXml === null) {
 			dispatch(fetchCSLStyle(citationStyle));
 		}
-	}, [citationStyle, dispatch, isFetchingStyle, styleXml]);
+	}, [citationStyle, dispatch, isFetchingStyle, isOpen, styleXml, wasOpen]);
 
 	// regenerate bibliography when style changes.
 	useEffect(() => {

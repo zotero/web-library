@@ -62,7 +62,6 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 				resp.setHeader('Content-Type', 'application/vnd.citationstyles.style+xml');
 				resp.end(module.default);
 			}).catch(() => {
-				console.error(`No CSL fixture for style "${styleName}", returning 404`);
 				resp.statusCode = 404;
 				resp.end('Not Found');
 			});

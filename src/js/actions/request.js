@@ -211,4 +211,4 @@ const requestWithCache = async (dispatch, request, { id, type, payload }) => {
 }
 
 export { abortAllRequests, abortRequest, apiCheckCache, apiResetCache, connectionIssues,
-	requestTracker, requestWithBackoff, requestWithCache, requestWithCacheAndBackoff };
+	requestSchedule, requestTracker, requestWithBackoff, requestWithCache, requestWithCacheAndBackoff };
