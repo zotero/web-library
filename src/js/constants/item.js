@@ -1,5 +1,7 @@
 'use strict';
 
+import { getUserDisplayName } from '../utils';
+
 export const hideFields = [
 	'mimeType',
 	'linkMode',
@@ -37,6 +39,6 @@ export const hideIfEmptyFields = [
 export const extraFields = [
 	{ field: 'dateAdded', localized: 'Date Added' },
 	{ field: 'dateModified', localized: 'Date Modified' },
-	{ field: 'createdByUser', path: [Symbol.for('meta'), 'createdByUser', 'username'], localized: 'Added By' },
-	{ field: 'lastModifiedByUser', path: [Symbol.for('meta'), 'lastModifiedByUser', 'username'], localized: 'Modified By' },
+	{ field: 'createdByUser', getValue: item => getUserDisplayName(item[Symbol.for('meta')]?.createdByUser), localized: 'Added By' },
+	{ field: 'lastModifiedByUser', getValue: item => getUserDisplayName(item[Symbol.for('meta')]?.lastModifiedByUser), localized: 'Modified By' },
 ];

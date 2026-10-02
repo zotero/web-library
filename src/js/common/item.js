@@ -1,6 +1,6 @@
 import { getZotero } from 'web-common/zotero';
 
-import { cleanURL, get, extractEmoji } from '../utils';
+import { cleanURL, get, extractEmoji, getUserDisplayName } from '../utils';
 import { dateLocalized } from './format';
 import { itemTypesWithIcons } from '../../../data/item-types-with-icons.json';
 
@@ -165,9 +165,7 @@ const getDerivedData = (mappings, item, itemTypes, tagColors) => {
 		}
 	});
 
-	const createdByUser = item[Symbol.for('meta')] && item[Symbol.for('meta')].createdByUser ?
-		item[Symbol.for('meta')].createdByUser.username :
-		'';
+	const createdByUser = getUserDisplayName(item[Symbol.for('meta')]?.createdByUser) ?? '';
 	const itemTypeName = (itemTypes.find(({ itemType }) => itemType === item.itemType) || { localized: item.itemType }).localized;
 	const iconName = (!item.itemType && item.name) ? 'folder' : item.itemType === 'attachment' ? getAttachmentIcon(item) : getItemTypeIcon(item.itemType);
 

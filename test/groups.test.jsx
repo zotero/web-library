@@ -9,8 +9,9 @@ import { getAllByRole, getByRole, screen, waitFor } from '@testing-library/react
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState, getPachtedStateMultiple, getPatchedStateArray } from './utils/state';
+import { JSONtoState, getPachtedStateMultiple, getPatchedState, getPatchedStateArray } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
+import { getDerivedData } from '../src/js/common/item';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -34,6 +35,10 @@ describe('Group libraries', () => {
 
 	beforeEach(() => {
 		delete window.location;
+	});
+
+	afterEach(() => {
+		localStorage.clear();
 	});
 
 	test('should copy an item to a group library', async () => {
@@ -193,5 +198,74 @@ describe('Group libraries', () => {
 		expect(getByRole(rows[1], 'gridcell', { name: 'HELLO TESTS' })).toHaveTextContent('HELLO TESTS');
 		expect(getByRole(rows[2], 'gridcell', { name: 'testuser' })).toHaveTextContent('testuser');
 		expect(getByRole(rows[3], 'gridcell', { name: 'zotero' })).toHaveTextContent('zotero');
+	});
+
+	test('should display name in the Added By column, falling back to username, but sort locally by username', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/groups/5119976/animals/items/X9WEHDAN/item-list' });
+		const user = userEvent.setup();
+		const patchedState = getPachtedStateMultiple(stateGroup, [
+			['libraries.g5119976.dataObjects.RQW7ZKYL.@@meta@@.createdByUser', { username: 'zotero', name: 'Alice' }],
+			['libraries.g5119976.dataObjects.CWHXG6QF.@@meta@@.createdByUser', { username: 'garfield', name: 'Zelda' }],
+			['libraries.g5119976.dataObjects.6ELC3UWC.@@meta@@.createdByUser', { username: 'bob', name: '' }],
+		]);
+		// fixture state contains pre-computed derived data, recalculate it from the patched items
+		const { mappings, itemTypes } = patchedState.meta;
+		const { dataObjects, tagColors } = patchedState.libraries.g5119976;
+		const stateWithDerived = getPachtedStateMultiple(patchedState,
+			['X9WEHDAN', '6ELC3UWC', 'CWHXG6QF', 'RQW7ZKYL'].map(key => [
+				`libraries.g5119976.dataObjects.${key}.@@derived@@`,
+				getDerivedData(mappings, dataObjects[key], itemTypes, tagColors)
+			])
+		);
+		// at runtime `items` is the same object as `dataObjects`, fixture state has separate copies
+		const preloadedState = getPatchedState(stateWithDerived, 'libraries.g5119976', {
+			items: stateWithDerived.libraries.g5119976.dataObjects
+		});
+
+		renderWithProviders(<MainZotero />, { preloadedState });
+
+		await user.click(await screen.findByRole('button', { name: 'Column Selector' }));
+		await user.click(screen.getByRole('menuitemcheckbox', { name: 'Added By' }));
+		const addedByHeader = await screen.findByRole('columnheader', { name: 'Added By' });
+		const grid = screen.getByRole('grid', { name: 'items' });
+		const gridBody = getByRole(grid, 'rowgroup');
+
+		const getAddedByCells = () => getAllByRole(gridBody, 'row').map(
+			row => getAllByRole(row, 'gridcell')[getAllByRole(grid, 'columnheader').indexOf(addedByHeader)]
+		);
+
+		await user.click(addedByHeader);
+		await waitFor(() => expect(addedByHeader).toHaveAttribute('aria-sort', 'ascending'));
+		// usernames: bob, garfield, testuser, zotero
+		expect(getAddedByCells().map(c => c.textContent)).toEqual(['bob', 'Zelda', 'testuser', 'Alice']);
+
+		await user.click(addedByHeader);
+		await waitFor(() => expect(addedByHeader).toHaveAttribute('aria-sort', 'descending'));
+		expect(getAddedByCells().map(c => c.textContent)).toEqual(['Alice', 'testuser', 'Zelda', 'bob']);
+	});
+
+	test('should show username for Added By and Modified By in item details when name is not set', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/groups/5119976/animals/items/X9WEHDAN/item-details' });
+		const preloadedState = getPachtedStateMultiple(stateGroup, [
+			['libraries.g5119976.items.X9WEHDAN.@@meta@@.lastModifiedByUser', { id: 2, username: 'otheruser', name: '' }],
+		]);
+		renderWithProviders(<MainZotero />, { preloadedState });
+		await waitForPosition();
+
+		expect(screen.getByRole('textbox', { name: 'Added By' })).toHaveTextContent('testuser');
+		expect(screen.getByRole('textbox', { name: 'Modified By' })).toHaveTextContent('otheruser');
+	});
+
+	test('should show name for Added By and Modified By in item details when set', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/groups/5119976/animals/items/X9WEHDAN/item-details' });
+		const preloadedState = getPachtedStateMultiple(stateGroup, [
+			['libraries.g5119976.items.X9WEHDAN.@@meta@@.createdByUser', { name: 'Test User' }],
+			['libraries.g5119976.items.X9WEHDAN.@@meta@@.lastModifiedByUser', { id: 2, username: 'otheruser', name: 'Other User' }],
+		]);
+		renderWithProviders(<MainZotero />, { preloadedState });
+		await waitForPosition();
+
+		expect(screen.getByRole('textbox', { name: 'Added By' })).toHaveTextContent('Test User');
+		expect(screen.getByRole('textbox', { name: 'Modified By' })).toHaveTextContent('Other User');
 	});
 });

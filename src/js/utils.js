@@ -167,6 +167,9 @@ const removeRelationByItemKey = (itemKey, relations, libraryKey, relationType='d
 const isUndefinedOrNull = value =>
 	typeof value === 'undefined' || value === null;
 
+// API returns `name` as an empty string for users who haven't set one
+const getUserDisplayName = user => user?.name || user?.username;
+
 const getSortKeyForItemType = (mappings, sortKey, itemType) => {
 	return itemType in mappings && sortKey in mappings[itemType] ?
 		mappings[itemType][sortKey] : sortKey;
@@ -195,7 +198,8 @@ const getSortKeyValue = (mappings, item, sortBy = 'title') => {
 		return (item[Symbol.for('meta')] || {})['parsedDate'];
 	}
 	if(sortBy === 'addedBy') {
-		return item[Symbol.for('meta')]?.['createdByUser']?.['username'];
+		// sorted by username rather than display name to match API `sort=addedBy`
+		return item[Symbol.for('meta')]?.createdByUser?.username;
 	}
 
 	const sortKey = getSortKeyForItemType(mappings, sortBy, item.itemType);
@@ -631,6 +635,7 @@ export {
 	getScrollContainerPageCount,
 	getSortKeyValue,
 	getUniqueId,
+	getUserDisplayName,
 	indexByGeneratedKey,
 	indexByKey,
 	isLikeURL,

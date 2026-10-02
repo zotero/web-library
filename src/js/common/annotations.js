@@ -1,5 +1,7 @@
 // https://github.com/zotero/zotero/blob/master/chrome/content/zotero/xpcom/annotations.js
 
+import { getUserDisplayName } from '../utils';
+
 // const ANNOTATION_POSITION_MAX_SIZE = 65000;
 
 /**
@@ -21,10 +23,10 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 		}
 	}
 	else if (!o.isExternal && isGroup) {
-		o.authorName = createdByUser?.name || createdByUser?.username;
+		o.authorName = getUserDisplayName(createdByUser);
 		o.isAuthorNameAuthoritative = true;
 		if (lastModifiedByUser) {
-			o.lastModifiedByUser = lastModifiedByUser?.name || lastModifiedByUser?.username;
+			o.lastModifiedByUser = getUserDisplayName(lastModifiedByUser);
 		}
 	}
 	o.readOnly = isReadOnly || o.isExternal || !isAuthor;

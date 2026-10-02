@@ -23,7 +23,7 @@ const makeFields = ({fields, item, pendingChanges, itemTypeOptions, isReadOnly})
 		isReadOnly: isReadOnly ? true : noEditFields.includes(f.field),
 		processing: (pendingChanges || []).some(({ patch }) => f.field in patch),
 		display: getFieldDisplayValue(itemWithPendingChanges, f.field),
-		value: get(itemWithPendingChanges, 'path' in f ? f.path : f.field, null),
+		value: 'getValue' in f ? (f.getValue(itemWithPendingChanges) ?? null) : get(itemWithPendingChanges, f.field, null),
 		placeholder: f.field === 'accessDate' ? 'YYYY-MM-DD[ hh:mm:ss]' : null,
 		title: f.field === 'url' ? itemWithPendingChanges[f.field] || null : null
 	})).filter(f => !(f.value === null && hideIfEmptyFields.includes(f.key)))
