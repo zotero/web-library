@@ -1565,6 +1565,15 @@ const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 	}
 }
 
+// EDTF dates (e.g. ranges, circa or BCE dates) and quoted literal dates are stored as typed, the
+// same as in the desktop client, because strToISO() would reduce them to a plain year or date
+const isDateKeptAsTyped = value => {
+	const Zotero = getZotero();
+	return /^["“].+["”]$/.test(value.trim())
+		|| !!Zotero.Date.parseEDTF(value)
+		|| Zotero.Date.looksLikeEDTF(value);
+};
+
 const updateItemWithMapping = (item, fieldKey, newValue) => {
 	var patch = {
 		[fieldKey]: newValue
@@ -1626,12 +1635,16 @@ const updateItemWithMapping = (item, fieldKey, newValue) => {
 		else if(fieldKey === 'accessDate' || fieldKey === 'date'||
 			(item.itemType in mappings && 'date' in mappings[item.itemType] && fieldKey === mappings[item.itemType]['date'])
 		) {
-			const isoDate = getZotero().Date.strToISO(patch[fieldKey]);
-			if (isoDate) {
-				patch[fieldKey] = isoDate;
-			} else {
-				// if parsing fails, try check for descriptive string e.g. "today"
-				patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+			if (fieldKey === 'accessDate' || !isDateKeptAsTyped(patch[fieldKey])) {
+				const isoDate = getZotero().Date.strToISO(patch[fieldKey]);
+				// strToISO() leaves an era marker in the year (e.g. "20BC-01" for "January 20BC"), which
+				// isn't ISO and is misread when citing, so such dates are stored as typed
+				if (isoDate && /^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$/.test(isoDate)) {
+					patch[fieldKey] = isoDate;
+				} else {
+					// if parsing fails, try check for descriptive string e.g. "today"
+					patch[fieldKey] = parseDescriptiveString(patch[fieldKey]);
+				}
 			}
 
 			if(fieldKey === 'accessDate' && patch[fieldKey].match(/^([0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9])$/)) {

@@ -13,6 +13,7 @@ import { JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
+import { makeSuccessResponse } from './utils/response';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import testUserUpdateDateDMY from './fixtures/response/test-user-update-date-dmy.json';
 import testUserUpdateDateMDY from './fixtures/response/test-user-update-date-mdy.json';
@@ -185,6 +186,46 @@ describe('Item info', () => {
 		await waitFor(() => expect(screen.getByRole('textbox',
 			{ name: 'Date' })
 		).toHaveTextContent('2021-10-04'));
+
+		expect(hasBeenPosted).toBe(true);
+	});
+
+	test.each([
+		'1995-1996',
+		'circa 1995',
+		'2004-06~',
+		'-429',
+		'1000-900 BCE',
+		'"May 2021"',
+		'January 20BC',
+		'March 15, 44 BC',
+	])('It saves date %s as typed', async (date) => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		await user.click(screen.getByRole('textbox', { name: 'Date' }));
+		expect(await screen.findByRole('textbox', { name: 'Date' })).toHaveFocus();
+
+		let hasBeenPosted = false;
+		server.use(
+			http.post('https://api.zotero.org/users/1/items', async ({request}) => {
+				const items = await request.json();
+				expect(items[0].key).toBe('VR82JUX8');
+				expect(items[0].date).toBe(date);
+				hasBeenPosted = true;
+				return HttpResponse.json(makeSuccessResponse(['VR82JUX8'], state.libraries.u1.dataObjects, 375, { date }));
+			}),
+		);
+
+		await user.type(
+			screen.getByRole('textbox', { name: 'Date' }),
+			`${date}{enter}`, { skipClick: true }
+		);
+
+		await waitFor(() => expect(screen.getByRole('textbox',
+			{ name: 'Date' })
+		).toHaveTextContent(date));
 
 		expect(hasBeenPosted).toBe(true);
 	});
