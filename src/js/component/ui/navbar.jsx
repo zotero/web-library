@@ -16,6 +16,7 @@ const Navbar = memo(({ entries = [] }) => {
 	const { receiveFocus, receiveBlur, focusNext, focusPrev, registerAutoFocus } = useFocusManager(ref);
 	const isLibrariesView = useSelector(state => state.current.view === 'libraries');
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
+	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
 	const handleSearchButtonClick = useCallback(() => {
@@ -121,7 +122,12 @@ const Navbar = memo(({ entries = [] }) => {
 					onKeyDown={handleKeyDown}
 					tabIndex={-2}
 				>
-					<Icon type={'16/cog'} width="24" height="24" />
+					<Icon
+						type={ isTouchOrSmall ? '24/cog' : '16/cog' }
+						usePixelRatio={ !isTouchOrSmall }
+						width={ isTouchOrSmall ? 24 : 16 }
+						height={ isTouchOrSmall ? 24 : 16 }
+					/>
 				</Button>
 			<Button
 				icon
