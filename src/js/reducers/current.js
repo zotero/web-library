@@ -202,7 +202,7 @@ const current = (state = stateDefault, action, { config = {}, device = {}, prefe
 			return {
 				...state,
 				editingItemKey: (preferences.density ? preferences.density : action.userType) === 'mouse' && !device.xxs && !device.xs &&
-					!device.sm && !device.md ? null : state.editingItemKey
+					!device.sm && !device.md && preferences.layout !== 'stacked' ? null : state.editingItemKey
 			}
 		case TRIGGER_HIGHLIGHTED_COLLECTIONS:
 			return {

@@ -18,7 +18,7 @@
 		padding-bottom: 15px - 7px;
 	}
 
-	@include breakpoints.mouse-and-bp-only(lg) {
+	@include breakpoints.mouse-side-by-side {
 		border-top: 1px solid common.$metadata-separator-color;
 	}
 
@@ -51,11 +51,11 @@
 			}
 		}
 
-		@include breakpoints.mouse-and-bp-only(md) {
+		@include breakpoints.mouse-stacked {
 			padding-top: 14px;
 		}
 
-		@include breakpoints.mouse-and-bp-only(lg) {
+		@include breakpoints.mouse-side-by-side {
 			padding-top: 9px; // metadata-list spacing
 		}
 	}
@@ -107,7 +107,7 @@
 		padding-bottom: 2px;
 	}
 
-	@include breakpoints.mouse-and-bp-only(lg) {
+	@include breakpoints.mouse-side-by-side {
 		margin-top: 15px - 8px;
 		margin-bottom: 0;
 		padding-bottom: 2px;

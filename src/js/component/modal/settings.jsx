@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, ColorSchemeSwitcher, FocusTrap, Icon, Switcher } from 'web-common/components';
@@ -14,11 +15,14 @@ const SettingsModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 	const isDesktopUIPreferred = useSelector(state => state.preferences.density === 'mouse');
+	const isStackedLayoutPreferred = useSelector(state => state.preferences.layout === 'stacked');
+	const isTouchUser = useSelector(state => state.device.isTouchUser);
 	const isSmall = useSelector(state => state.device.xxs || state.device.xs || state.device.sm);
 	const isOpen = useSelector(state => state.modal.id === SETTINGS);
 	const systemColorScheme = useSystemColorScheme();
 	const colorSchemeInputId = useRef(getUniqueId());
 	const densityInputId = useRef(getUniqueId());
+	const layoutInputId = useRef(getUniqueId());
 	const colorSchemeSwitchRef = useRef(null);
 
 	const handleToggleColorScheme = useCallback((newColorScheme) => {
@@ -27,6 +31,10 @@ const SettingsModal = () => {
 
 	const handleToggleDesktopUI = useCallback((isChecked) => {
 		dispatch(preferenceChange('density', isChecked ? 'mouse' : null));
+	}, [dispatch]);
+
+	const handleToggleStackedLayout = useCallback((isChecked) => {
+		dispatch(preferenceChange('layout', isChecked ? 'stacked' : null));
 	}, [dispatch]);
 
 	const handleClose = useCallback(
@@ -107,6 +115,30 @@ const SettingsModal = () => {
 									checked={isDesktopUIPreferred}
 									id={densityInputId.current}
 									onToggle={handleToggleDesktopUI}
+								/>
+							</div>
+						</div>
+					)}
+					{!isSmall && (
+						<div className={cx('form-group', { disabled: isTouchUser })}>
+							<label
+								id={`${layoutInputId.current}-label`}
+								className="col-form-label"
+								htmlFor={layoutInputId.current}
+							>
+								Stacked Layout
+							</label>
+							<span id={`${layoutInputId.current}-description`} className="offscreen">
+								On shows item details below the item list
+							</span>
+							<div className="switcher-container">
+								<Switcher
+									aria-describedby={`${layoutInputId.current}-description`}
+									aria-labelledby={`${layoutInputId.current}-label`}
+									checked={isStackedLayoutPreferred}
+									disabled={isTouchUser}
+									id={layoutInputId.current}
+									onToggle={handleToggleStackedLayout}
 								/>
 							</div>
 						</div>

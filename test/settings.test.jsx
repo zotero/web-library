@@ -14,9 +14,11 @@ import { getLSItem, setLSItem } from '../src/js/common/local-storage';
 import { applyAdditionalJestTweaks } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import stateLibraryView from './fixtures/state/desktop-test-user-library-view.json';
+import stateItemView from './fixtures/state/desktop-test-user-item-view.json';
 import { mockMatchMedia } from './mocks/matchmedia';
 
 const libraryViewState = JSONtoState(stateLibraryView);
+const itemViewState = JSONtoState(stateItemView);
 applyAdditionalJestTweaks();
 
 const getStoredPreference = name => JSON.parse(getLSItem('zotero-web-library-prefs'))[name];
@@ -120,7 +122,75 @@ describe('Settings', () => {
 		expect(document.documentElement).toHaveClass('mouse');
 	});
 
-	test('Prefer Desktop UI switch is hidden on small screens', async () => {
+	test('Stacked Layout switch stacks item details below the items on wide screens', async () => {
+		const user = userEvent.setup();
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/items/VR82JUX8/item-details' });
+		renderWithProviders(<MainZotero />, { preloadedState: itemViewState });
+		await user.click(await screen.findByRole('button', { name: 'Open Settings' }));
+		const stackedLayoutSwitch = await screen.findByRole('switch', { name: 'Stacked Layout' });
+
+		expect(stackedLayoutSwitch).toHaveAccessibleDescription('On shows item details below the item list');
+		expect(stackedLayoutSwitch).toBeEnabled();
+		expect(stackedLayoutSwitch).not.toBeChecked();
+		expect(document.documentElement).not.toHaveClass('stacked-layout');
+		// The app is aria-hidden while the modal is open
+		expect(screen.queryByRole('button', { name: 'Show Empty Fields', hidden: true })).not.toBeInTheDocument();
+
+		await user.click(stackedLayoutSwitch);
+		await waitFor(() => expect(getStoredPreference('layout')).toBe('stacked'));
+		expect(stackedLayoutSwitch).toBeChecked();
+		expect(document.documentElement).toHaveClass('stacked-layout');
+		expect(screen.getByRole('button', { name: 'Show Empty Fields', hidden: true })).toBeInTheDocument();
+
+		await user.click(stackedLayoutSwitch);
+		await waitFor(() => expect(getStoredPreference('layout')).toBeUndefined());
+		expect(stackedLayoutSwitch).not.toBeChecked();
+		expect(document.documentElement).not.toHaveClass('stacked-layout');
+		expect(screen.queryByRole('button', { name: 'Show Empty Fields', hidden: true })).not.toBeInTheDocument();
+	});
+
+	test('Stacked Layout switch reflects a stored preference', async () => {
+		const user = userEvent.setup();
+		setLSItem('zotero-web-library-prefs', JSON.stringify({ version: '1.5.4', layout: 'stacked' }));
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
+		await user.click(await screen.findByRole('button', { name: 'Open Settings' }));
+
+		expect(await screen.findByRole('switch', { name: 'Stacked Layout' })).toBeChecked();
+		expect(document.documentElement).toHaveClass('stacked-layout');
+	});
+
+	test('Stacked Layout switch is disabled on touch devices unless Prefer Desktop UI is on', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
+		await user.click(await screen.findByRole('button', { name: 'Open Settings' }));
+		const desktopUISwitch = await screen.findByRole('switch', { name: 'Prefer Desktop UI' });
+		const stackedLayoutSwitch = await screen.findByRole('switch', { name: 'Stacked Layout' });
+
+		await act(async () => {
+			fireEvent.touchStart(desktopUISwitch);
+			fireEvent.touchEnd(desktopUISwitch);
+		});
+		expect(document.documentElement).toHaveClass('touch');
+		expect(stackedLayoutSwitch).toBeDisabled();
+
+		// fireEvent.click skips mousedown, which would switch to the mouse interface on its own
+		fireEvent.click(desktopUISwitch);
+		await waitFor(() => expect(getStoredPreference('density')).toBe('mouse'));
+		expect(stackedLayoutSwitch).toBeEnabled();
+
+		fireEvent.click(stackedLayoutSwitch);
+		await waitFor(() => expect(getStoredPreference('layout')).toBe('stacked'));
+		expect(document.documentElement).toHaveClass('stacked-layout');
+
+		fireEvent.click(desktopUISwitch);
+		await waitFor(() => expect(getStoredPreference('density')).toBeUndefined());
+		expect(document.documentElement).toHaveClass('touch');
+		expect(document.documentElement).not.toHaveClass('stacked-layout');
+		expect(stackedLayoutSwitch).toBeDisabled();
+		expect(stackedLayoutSwitch).toBeChecked();
+	});
+
+	test('Prefer Desktop UI and Stacked Layout switches are hidden on small screens', async () => {
 		const user = userEvent.setup();
 		const originalInnerWidth = window.innerWidth;
 		window.innerWidth = 600;
@@ -131,6 +201,8 @@ describe('Settings', () => {
 			expect(await screen.findByRole('switch', { name: 'Color Scheme' })).toBeInTheDocument();
 			expect(screen.queryByRole('switch', { name: 'Prefer Desktop UI' })).not.toBeInTheDocument();
 			expect(screen.queryByText('Prefer Desktop UI')).not.toBeInTheDocument();
+			expect(screen.queryByRole('switch', { name: 'Stacked Layout' })).not.toBeInTheDocument();
+			expect(screen.queryByText('Stacked Layout')).not.toBeInTheDocument();
 		} finally {
 			window.innerWidth = originalInnerWidth;
 		}

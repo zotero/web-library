@@ -74,6 +74,12 @@
 				}
 			}
 
+			@include breakpoints.stacked-and-bp-up(lg) {
+				@include selectors.state(".panel:not(.editing) .metadata-list") {
+					display: none;
+				}
+			}
+
 			.read-only & {
 				display: none;
 			}

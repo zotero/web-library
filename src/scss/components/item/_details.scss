@@ -132,18 +132,18 @@
 		}
 	}
 
-	@include breakpoints.mouse-and-bp-only(md) {
+	@include breakpoints.mouse-stacked {
 		flex: 0 0 50%;
 		padding-top: variables.$border-width;
 	}
 
-	@include breakpoints.mouse-and-bp-only(md) {
+	@include breakpoints.mouse-stacked {
 		padding-top: 0;
 		box-shadow: 0 -1px rgba(#000, 0.1);
 		position: relative; // Above odd rows
 	}
 
-	@include breakpoints.bp-up-normalized(lg) {
+	@include breakpoints.side-by-side {
 		flex: 0 0 variables.$item-details-width-lg;
 		min-width: 0; // Fix truncation
 	}
@@ -154,7 +154,7 @@
 		@include hairline.hairline(left, "color-shade-4");
 	}
 
-	@include breakpoints.mouse-and-bp-only(lg) {
+	@include breakpoints.mouse-side-by-side {
 		border-left: var(--material-border-quarternary);
 	}
 
@@ -194,8 +194,8 @@
 		}
 	}
 
-	// Two column layout for md screens
-	@include breakpoints.mouse-and-bp-only(md) {
+	// Two column layout for the stacked layout
+	@include breakpoints.mouse-stacked {
 		// Optimize tabs layout
 		.tabs.compact {
 			li {

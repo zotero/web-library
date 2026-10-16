@@ -13,7 +13,11 @@
 		padding-bottom: variables.$space-lg - 14px;
 	}
 
-	@include breakpoints.mouse-and-bp-only(md) {
+	@include breakpoints.stacked-and-bp-up(lg) {
+		padding-bottom: variables.$space-lg - 14px;
+	}
+
+	@include breakpoints.mouse-stacked {
 		position: relative;
 		min-height: 100%;
 

@@ -177,4 +177,47 @@ test.describe('Desktop Layout', () => {
 		// Item details should be within the viewport
 		expect(detailsBox.y + detailsBox.height).toBeLessThanOrEqual(800);
 	});
+
+	test('Stacked Layout setting stacks item details below the items on wide screens', async ({ page, serverPort }) => {
+		await page.setViewportSize({ width: 1300, height: 800 });
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page);
+
+		const items = page.locator('section.items');
+		const itemsContainer = page.locator('.items-container');
+		const itemDetails = page.locator('.item-details');
+		const emptyField = itemDetails.locator('.metadata-list .metadata.empty').first();
+		const modal = page.getByRole('dialog', { name: 'Settings' });
+		const stackedLayoutSwitch = modal.getByRole('switch', { name: 'Stacked Layout' });
+		const toggleStackedLayout = async () => {
+			await page.getByRole('button', { name: 'Open Settings' }).click();
+			await stackedLayoutSwitch.click();
+			await modal.getByRole('button', { name: 'Close Dialog' }).click();
+			await expect(modal).toBeHidden();
+		};
+
+		expect(await items.evaluate(el => getComputedStyle(el).flexDirection)).toBe('row');
+		await expect(emptyField).toBeVisible();
+
+		await toggleStackedLayout();
+		await expect(page.locator('html')).toHaveClass(/stacked-layout/);
+		expect(await items.evaluate(el => getComputedStyle(el).flexDirection)).toBe('column');
+
+		const containerBox = await itemsContainer.boundingBox();
+		const detailsBox = await itemDetails.boundingBox();
+		expect(detailsBox.y).toBeGreaterThanOrEqual(containerBox.y + containerBox.height - 1);
+		expect(detailsBox.y + detailsBox.height).toBeLessThanOrEqual(800);
+
+		// Empty fields are hidden behind a toggle, as on md screens
+		await expect(emptyField).toBeHidden();
+		await page.getByRole('button', { name: 'Show Empty Fields' }).click();
+		await expect(emptyField).toBeVisible();
+
+		// The navbar keeps its wide screen layout
+		await expect(page.getByRole('button', { name: 'Toggle navigation' })).toBeHidden();
+
+		await toggleStackedLayout();
+		await expect(page.locator('html')).not.toHaveClass(/stacked-layout/);
+		expect(await items.evaluate(el => getComputedStyle(el).flexDirection)).toBe('row');
+		await expect(page.getByRole('button', { name: 'Hide Empty Fields' })).toHaveCount(0);
+	});
 });

@@ -227,3 +227,39 @@
 		@content;
 	}
 }
+
+// Stacked layout -- item details below the items. Mouse UI always stacks on md screens and on
+// larger screens when the user prefers it. `html.stacked-layout` is only ever set for mouse users.
+@mixin stacked-and-bp-up($name, $breakpoints: variables.$grid-breakpoints) {
+	@include bp-up($name, $breakpoints: variables.$grid-breakpoints) {
+		html.stacked-layout & {
+			@content;
+		}
+	}
+}
+
+@mixin mouse-stacked {
+	@include mouse-and-bp-only(md) {
+		@content;
+	}
+
+	@include stacked-and-bp-up(lg) {
+		@content;
+	}
+}
+
+@mixin side-by-side {
+	@include bp-up(lg) {
+		html:not(.stacked-layout) & {
+			@content;
+		}
+	}
+}
+
+@mixin mouse-side-by-side {
+	html:not(.touch, .stacked-layout) & {
+		@include bp-up(lg) {
+			@content;
+		}
+	}
+}

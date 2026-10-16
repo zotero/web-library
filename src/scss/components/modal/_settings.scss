@@ -12,6 +12,15 @@
 			padding: variables.$space-xs 0;
 			margin-bottom: 0;
 		}
+
+		&.disabled .col-form-label {
+			opacity: 0.5;
+		}
+	}
+
+	.switcher:disabled {
+		opacity: 0.5;
+		cursor: default;
 	}
 
 	.switcher-container {

@@ -108,7 +108,7 @@
 	}
 
 	.rich-editor {
-		@include breakpoints.mouse-and-bp-up(lg) {
+		@include breakpoints.mouse-side-by-side {
 			&:not(:only-child) {
 				border-top: variables.$border-width solid common.$editor-border-color;
 			}

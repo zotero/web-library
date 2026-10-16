@@ -140,6 +140,10 @@
 		flex-direction: column;
 	}
 
+	@include breakpoints.stacked-and-bp-up(lg) {
+		flex-direction: column;
+	}
+
 	@include breakpoints.bp-up(md) {
 		display: flex;
 	}
@@ -178,12 +182,12 @@
 		flex-direction: column;
 	}
 
-	@include breakpoints.mouse-and-bp-only(md) {
+	@include breakpoints.mouse-stacked {
 		flex: 0 0 50%;
 		min-height: 0;
 	}
 
-	@include breakpoints.bp-up-normalized(lg) {
+	@include breakpoints.side-by-side {
 		flex: 1 1 auto;
 		min-width: 0;
 	}
