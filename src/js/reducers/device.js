@@ -15,6 +15,7 @@ const getDefaultState = () => {
 	const isWindows = navigator.userAgent.indexOf("Windows") >= 0;
 	const isInitiallyMouse = typeof (window.matchMedia) === 'function' ? (window.matchMedia('(pointer:fine)').matches || (isWindows && window.matchMedia('(any-pointer:fine)'))) : null;
 	const isInitiallyTouch = !isInitiallyMouse && (typeof(window.matchMedia) === 'function' ? window.matchMedia('(pointer:coarse)').matches : null);
+	const userType = isInitiallyTouch ? 'touch' : 'mouse';
 
 	return {
 		isKeyboardUser: false,
@@ -22,12 +23,13 @@ const getDefaultState = () => {
 		isSingleColumn: false,
 		isTouchOrSmall: false,
 		isTouchUser: isInitiallyTouch,
+		lastDetectedUserType: userType,
 		scrollbarWidth: getScrollbarWidth(),
 		shouldUseEditMode: false,
 		shouldUseModalCreatorField: false,
 		shouldUseSidebar: false,
 		shouldUseTabs: false,
-		userType: isInitiallyTouch ? 'touch' : 'mouse',
+		userType,
 		...getViewport(process.env.NODE_ENV === 'test' ? {} : window.innerWidth)
 	}
 };
@@ -53,7 +55,7 @@ const getUserType = (state, action, preferences) => {
 		return preferences.density;
 	}
 
-	if(action.type === TRIGGER_USER_TYPE_CHANGE) {
+	if(action.type === TRIGGER_USER_TYPE_CHANGE && action.userType) {
 		return action.userType;
 	}
 
@@ -80,8 +82,9 @@ const device = (state = getDefaultState(), action, { config, preferences } = {})
 				...getUserTypeBooleans(state, action, userType),
 				...getDevice(userType, viewport, config),
 				...viewport,
-				lastDetectedUserType: action.type === TRIGGER_USER_TYPE_CHANGE ? action.userType : state.lastDetectedUserType,
-				scrollbarWidth: state.userType === 'touch' && userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth
+				lastDetectedUserType: action.type === TRIGGER_USER_TYPE_CHANGE && action.userType ? action.userType : state.lastDetectedUserType,
+				scrollbarWidth: state.userType === 'touch' && userType === 'mouse' ? getScrollbarWidth() : state.scrollbarWidth,
+				userType,
 			}
 		}
 		default:

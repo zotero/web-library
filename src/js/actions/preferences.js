@@ -26,6 +26,13 @@ const getColumnsWithRecalculatedFractions = (userColumns) => {
 const preferencesLoad = () => {
 	var userPreferences = JSONTryParse(getLSItem('zotero-web-library-prefs'));
 	var preferences;
+
+	// Settings only offer a "mouse" density override, drop a stored "touch" so the UI is automatic
+	if(userPreferences?.density === 'touch') {
+		delete userPreferences.density;
+		setLSItem('zotero-web-library-prefs', JSON.stringify(userPreferences));
+	}
+
 	try {
 		if(userPreferences && userPreferences.version !== version) {
 			if(!('version' in userPreferences)) {

@@ -1,47 +1,32 @@
-import cx from 'classnames';
 import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, FocusTrap, Icon } from 'web-common/components';
+import { Button, ColorSchemeSwitcher, FocusTrap, Icon, Switcher } from 'web-common/components';
 
 import Modal from '../ui/modal';
 import { focusOnModalOpen } from '../../common/modal-focus';
 import { preferenceChange, toggleModal } from '../../actions';
 import { SETTINGS } from '../../constants/modals';
-import Select from '../form/select';
+import { useSystemColorScheme } from '../../hooks';
 import { getUniqueId } from '../../utils';
-
-const colorSchemeOptions = [
-	{ label: 'Automatic', value: '' },
-	{ label: 'Light', value: 'light' },
-	{ label: 'Dark', value: 'dark' },
-];
-
-const densityOptions = [
-	{ label: 'Automatic', value: '' },
-	{ label: 'Mouse', value: 'mouse' },
-	{ label: 'Touch', value: 'touch' },
-];
 
 const SettingsModal = () => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
-	const colorScheme = useSelector(state => state.preferences.colorScheme ?? '');
-	const density = useSelector(state => state.preferences.density ?? '');
+	const colorScheme = useSelector(state => state.preferences.colorScheme);
+	const isDesktopUIPreferred = useSelector(state => state.preferences.density === 'mouse');
 	const isSmall = useSelector(state => state.device.xxs || state.device.xs || state.device.sm);
 	const isOpen = useSelector(state => state.modal.id === SETTINGS);
+	const systemColorScheme = useSystemColorScheme();
 	const colorSchemeInputId = useRef(getUniqueId());
 	const densityInputId = useRef(getUniqueId());
-	const densitySelectRef = useRef(null);
-	const colorSchemeSelectRef = useRef(null);
+	const colorSchemeSwitchRef = useRef(null);
 
-	const handleChange = useCallback(() => true, []);
+	const handleToggleColorScheme = useCallback((newColorScheme) => {
+		dispatch(preferenceChange('colorScheme', newColorScheme === systemColorScheme ? '' : newColorScheme));
+	}, [dispatch, systemColorScheme]);
 
-	const handleSelectColorScheme = useCallback((newColorScheme) => {
-		dispatch(preferenceChange('colorScheme', newColorScheme));
-	}, [dispatch]);
-
-	const handleSelectDensity = useCallback((newDensity) => {
-		dispatch(preferenceChange('density', newDensity));
+	const handleToggleDesktopUI = useCallback((isChecked) => {
+		dispatch(preferenceChange('density', isChecked ? 'mouse' : null));
 	}, [dispatch]);
 
 	const handleClose = useCallback(
@@ -50,10 +35,9 @@ const SettingsModal = () => {
 
 	const handleAfterOpen = useCallback(({ contentEl }) => {
 		focusOnModalOpen(contentEl, isTouchOrSmall, () => {
-			const ref = isSmall ? colorSchemeSelectRef : densitySelectRef;
-			ref.current?.focus({ preventScroll: true });
+			colorSchemeSwitchRef.current?.focus({ preventScroll: true });
 		});
-	}, [isSmall, isTouchOrSmall]);
+	}, [isTouchOrSmall]);
 
 	return (
 		<Modal
@@ -86,56 +70,52 @@ const SettingsModal = () => {
 			</div>
 			<div className="modal-body">
 				<div className="form">
-					<div className={cx("form-group", { disabled: isSmall })}>
-						<label
-							id={`${densityInputId.current}-label`}
-							className="col-form-label"
-							htmlFor={isTouchOrSmall ? densityInputId.current : null}
-						>
-							UI Density
-						</label>
-						<div className="col">
-							<Select
-								ref={densitySelectRef}
-								isDisabled={isSmall}
-								aria-labelledby={isTouchOrSmall ? null : `${densityInputId.current}-label` }
-								id={densityInputId.current}
-								className="form-control form-control-sm"
-								onChange={handleChange}
-								onCommit={handleSelectDensity}
-								options={densityOptions}
-								value={isSmall ? 'touch' : density}
-								searchable={false}
-							/>
-						</div>
-					</div>
 					<div className="form-group">
 						<label
 							id={`${colorSchemeInputId.current}-label`}
 							className="col-form-label"
-							htmlFor={isTouchOrSmall ? colorSchemeInputId.current : null}
+							htmlFor={colorSchemeInputId.current}
 						>
 							Color Scheme
 						</label>
-						<div className="col">
-							<Select
-								ref={colorSchemeSelectRef}
-								aria-labelledby={isTouchOrSmall ? null : `${colorSchemeInputId.current}-label`}
+						<span id={`${colorSchemeInputId.current}-description`} className="offscreen">
+							On uses the dark scheme
+						</span>
+						<div className="switcher-container">
+							<ColorSchemeSwitcher
+								ref={colorSchemeSwitchRef}
+								aria-describedby={`${colorSchemeInputId.current}-description`}
+								aria-labelledby={`${colorSchemeInputId.current}-label`}
 								id={colorSchemeInputId.current}
-								className="form-control form-control-sm"
-								onChange={handleChange}
-								onCommit={handleSelectColorScheme}
-								options={colorSchemeOptions}
-								value={colorScheme}
-								searchable={false}
+								mode={colorScheme || systemColorScheme}
+								onToggle={handleToggleColorScheme}
 							/>
 						</div>
 					</div>
+					{!isSmall && (
+						<div className="form-group">
+							<label
+								id={`${densityInputId.current}-label`}
+								className="col-form-label"
+								htmlFor={densityInputId.current}
+							>
+								Prefer Desktop UI
+							</label>
+							<div className="switcher-container">
+								<Switcher
+									aria-labelledby={`${densityInputId.current}-label`}
+									checked={isDesktopUIPreferred}
+									id={densityInputId.current}
+									onToggle={handleToggleDesktopUI}
+								/>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 			</FocusTrap>
 		</Modal>
-    );
+	);
 }
 
 export default memo(SettingsModal);

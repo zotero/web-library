@@ -481,14 +481,9 @@ test.describe('Desktop Modal Focus Management', () => {
 		await expect(modal).toBeVisible();
 		await page.waitForFunction(() => document.querySelector('.modal-settings').classList.contains('ReactModal__Content--after-open'));
 
-		// Focus should be on the first select (UI Density).
-		// Use waitForFunction because focusOnModalOpen defers focus via requestAnimationFrame,
-		// which may not have fired yet when the --after-open class is already present.
-		await page.waitForFunction(() => {
-			const modal = document.querySelector('[role="dialog"][aria-label="Settings"]');
-			const select = modal?.querySelector('.form-group:first-child .select');
-			return select?.contains(document.activeElement);
-		});
+		// Focus should be on the first switch (Color Scheme). focusOnModalOpen defers focus via
+		// requestAnimationFrame, toBeFocused retries until it lands.
+		await expect(modal.getByRole('switch', { name: 'Color Scheme' })).toBeFocused();
 
 		// Tab multiple times -- focus should stay within the modal
 		for (let i = 0; i < 5; i++) {

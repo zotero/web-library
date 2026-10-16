@@ -1,3 +1,26 @@
+@use "../../abstracts/mixins/breakpoints";
+@use "../../abstracts/variables";
+
 .modal-settings {
 	overflow: visible;
+
+	.form-group {
+		display: flex;
+		align-items: center;
+
+		@include breakpoints.mouse-and-bp-up(md) {
+			padding: variables.$space-xs 0;
+			margin-bottom: 0;
+		}
+	}
+
+	.switcher-container {
+		flex: 0 0 auto;
+		display: flex;
+		margin-left: auto;
+
+		@include breakpoints.touch-or-bp-down(sm) {
+			padding-right: variables.$input-btn-padding-x-touch;
+		}
+	}
 }

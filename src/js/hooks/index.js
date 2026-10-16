@@ -9,3 +9,4 @@ export * from './use-tracked-settings-key';
 export * from './use-items-actions';
 export * from './use-tags';
 export * from './use-sortable';
+export * from './use-system-color-scheme';

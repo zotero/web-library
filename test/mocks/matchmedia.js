@@ -1,4 +1,4 @@
-export function mockMatchMedia({ isTouch = false, isMouse = true, isPrimaryTouch = null, isPrimaryMouse = null }) {
+export function mockMatchMedia({ isTouch = false, isMouse = true, isPrimaryTouch = null, isPrimaryMouse = null, isDark = false }) {
 	isPrimaryTouch = isPrimaryTouch ?? isTouch;
 	isPrimaryMouse = isPrimaryMouse ?? isMouse;
 
@@ -27,6 +27,9 @@ export function mockMatchMedia({ isTouch = false, isMouse = true, isPrimaryTouch
 			}
 			if (query === '(any-pointer:coarse)') {
 				return { ...queryResult, matches: isTouch };
+			}
+			if (query === '(prefers-color-scheme: dark)') {
+				return { ...queryResult, matches: isDark };
 			}
 			return { ...queryResult, matches: false };
 		}),

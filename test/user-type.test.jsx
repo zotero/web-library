@@ -4,13 +4,13 @@
 
 import '@testing-library/jest-dom'
 import { setupServer } from 'msw/node'
-import { act, fireEvent, getByRole, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
 import { JSONtoState, getStateWithout } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
-import { setLSItem } from '../src/js/common/local-storage';
+import { getLSItem, setLSItem } from '../src/js/common/local-storage';
 import { applyAdditionalJestTweaks, waitForPosition } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import stateLibraryView from './fixtures/state/desktop-test-user-library-view.json';
@@ -72,50 +72,43 @@ describe('User Type', () => {
 		expect(window.document.documentElement).not.toHaveClass('touch');
 	});
 
-	test('Ignore pointing device used if density preference is set to touch', async () => {
-		setLSItem('zotero-web-library-prefs', JSON.stringify({ version: '1.5.4', density: 'touch' }));
+	test('Drop a stored touch density preference and follow the pointing device used', async () => {
+		setLSItem('zotero-web-library-prefs', JSON.stringify({ version: '1.5.4', density: 'touch', colorScheme: 'dark' }));
 		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
 		const searchBoxEl = await screen.findByRole('searchbox', { name: 'Title, Creator, Year' });
 
-		expect(window.document.documentElement).toHaveClass('touch');
+		const storedPreferences = JSON.parse(getLSItem('zotero-web-library-prefs'));
+		expect(storedPreferences).not.toHaveProperty('density');
+		expect(storedPreferences.colorScheme).toBe('dark');
+		expect(window.document.documentElement).toHaveClass('mouse');
+		expect(window.document.documentElement).not.toHaveClass('touch');
 
-		await userEvent.click(searchBoxEl);
+		await act(async () => {
+			fireEvent['touchStart'](searchBoxEl);
+			fireEvent['touchEnd'](searchBoxEl);
+		});
 
 		expect(window.document.documentElement).toHaveClass('touch');
 		expect(window.document.documentElement).not.toHaveClass('mouse');
 	});
 
-	test("Switch density after preference change to touch", async () => {
-		const user = userEvent.setup();
-		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
-		expect(window.document.documentElement).toHaveClass('mouse');
-		const settingsButtonEl = await screen.findByRole('button', { name: 'Open Settings' });
-		await user.click(settingsButtonEl);
-		const densityComboBox = await screen.findByRole('combobox', { name: 'UI Density' });
-		await user.click(densityComboBox);
-		await user.selectOptions(getByRole(densityComboBox, 'listbox'), 'Touch');
-		expect(window.document.documentElement).toHaveClass('touch');
-	});
-
-	test("Switch density after preference change to mouse", async () => {
-		setLSItem('zotero-web-library-prefs', JSON.stringify({ version: '1.5.4', density: 'touch' }));
-		renderWithProviders(<MainZotero />, { preloadedState: libraryViewState });
-
+	test("Switch to mouse interface when Prefer Desktop UI is switched on and back when switched off", async () => {
+		mockMatchMedia({ isTouch: true, isMouse: false });
+		renderWithProviders(<MainZotero />, { preloadedState: getStateWithout(libraryViewState, 'device') });
+		await waitForPosition();
 		expect(window.document.documentElement).toHaveClass('touch');
 
-		const settingsButtonEl = await screen.findByRole('button', { name: 'Open Settings' });
-		await act(async () => {
-			fireEvent['touchStart'](settingsButtonEl);
-			fireEvent['touchEnd'](settingsButtonEl);
-			fireEvent['click'](settingsButtonEl);
-		});
+		// fireEvent.click skips mousedown, which would switch to the mouse interface on its own
+		fireEvent['click'](await screen.findByRole('button', { name: 'Open Settings' }));
+		const desktopUISwitch = await screen.findByRole('switch', { name: 'Prefer Desktop UI' });
 
-		expect(window.document.documentElement).toHaveClass('touch');
+		await act(async () => fireEvent['click'](desktopUISwitch));
+		await waitFor(() => expect(window.document.documentElement).toHaveClass('mouse'));
+		expect(window.document.documentElement).not.toHaveClass('touch');
 
-		const densityComboBox = await screen.findByRole('combobox', { name: 'UI Density' });
-
-		await userEvent.selectOptions(densityComboBox, 'Mouse');
-		expect(window.document.documentElement).toHaveClass('mouse');
+		await act(async () => fireEvent['click'](desktopUISwitch));
+		await waitFor(() => expect(window.document.documentElement).toHaveClass('touch'));
+		expect(window.document.documentElement).not.toHaveClass('mouse');
 	});
 
 	test("It should opt for touch interface on device that reports touch pointer", async () => {
