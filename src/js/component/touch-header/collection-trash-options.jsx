@@ -1,6 +1,5 @@
 import { Fragment, memo, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
 import { ToolGroup } from '../ui/toolbars';
@@ -88,9 +87,5 @@ const CollectionTrashOptions = ({ isSingleColumn, shouldHideNav, }) => {
 		)
 	)
 }
-CollectionTrashOptions.propTypes = {
-	isSingleColumn: PropTypes.bool.isRequired,
-	shouldHideNav: PropTypes.bool.isRequired,
-};
 
 export default memo(CollectionTrashOptions);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import deepEqual from 'fast-deep-equal';
@@ -82,24 +81,6 @@ const TagPickerItem = memo(({ isReadOnly, onCancel, onChange, onCommit, onDelete
 });
 
 TagPickerItem.displayName = 'TagPickerItem';
-
-TagPickerItem.propTypes = {
-	isReadOnly: PropTypes.bool.isRequired,
-	onCancel: PropTypes.func.isRequired,
-	onChange: PropTypes.func.isRequired,
-	onCommit: PropTypes.func.isRequired,
-	onDelete: PropTypes.func.isRequired,
-	onEdit: PropTypes.func.isRequired,
-	onEditableBlur: PropTypes.func.isRequired,
-	onKeyDown: PropTypes.func.isRequired,
-	suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
-	tag: PropTypes.shape({
-		id: PropTypes.number.isRequired,
-		tag: PropTypes.string.isRequired,
-	}).isRequired,
-	tagColors: PropTypes.object,
-	tagRedacted: PropTypes.string,
-}
 
 const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 	const dispatch = useDispatch();
@@ -350,12 +331,6 @@ const TagPicker = ({ itemKey, libraryKey, isReadOnly }) => {
 			</div>
 		</>
 	);
-}
-
-TagPicker.propTypes = {
-	isReadOnly: PropTypes.bool,
-	itemKey: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string.isRequired,
 }
 
 export default memo(TagPicker);

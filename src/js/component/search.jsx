@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useSelector } from 'react-redux';
@@ -43,13 +42,6 @@ const SearchDropdown = memo(({ currentMode, modes, onKeyDown, onSelectMode }) =>
 ));
 
 SearchDropdown.displayName = 'SearchDropdown';
-
-SearchDropdown.propTypes = {
-	currentMode: PropTypes.string.isRequired,
-	modes: PropTypes.object,
-	onSelectMode: PropTypes.func,
-	onKeyDown: PropTypes.func,
-};
 
 const Search = memo(forwardRef((props, ref) => {
 	const { debounce = 300, onFocusNext = noop, onFocusPrev = noop, autoFocus, registerAutoFocus = noop,
@@ -212,20 +204,5 @@ const Search = memo(forwardRef((props, ref) => {
 }));
 
 Search.displayName = 'Search';
-
-Search.propTypes = {
-	debounce: PropTypes.number,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	autoFocus: PropTypes.bool,
-	registerAutoFocus: PropTypes.func,
-	search: PropTypes.string,
-	searchState: PropTypes.object,
-	qmode: PropTypes.string,
-	isAdvancedSearch: PropTypes.bool,
-	onSearch: PropTypes.func,
-	onToggleAdvancedSearch: PropTypes.func,
-	onResetQuery: PropTypes.func,
-}
 
 export default Search;

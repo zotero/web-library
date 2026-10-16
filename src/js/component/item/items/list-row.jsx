@@ -1,6 +1,5 @@
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Icon } from 'web-common/components';
 
@@ -203,21 +202,5 @@ const ListRow = memo(props => {
 });
 
 ListRow.displayName = 'ListRow';
-
-ListRow.propTypes = {
-	collectionKey: PropTypes.string,
-	data: PropTypes.object,
-	getItemData: PropTypes.func,
-	index: PropTypes.number,
-	isSelectMode: PropTypes.bool,
-	libraryKey: PropTypes.string,
-	pickerMode: PropTypes.string,
-	pickerNavigate: PropTypes.func,
-	q: PropTypes.string,
-	qmode: PropTypes.string,
-	selectedItemKeys: PropTypes.array,
-	style: PropTypes.object,
-	view: PropTypes.string,
-};
 
 export default ListRow;

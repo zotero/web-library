@@ -6,7 +6,6 @@ import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { copyWithHtml } from 'web-common/utils';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 
 import { citationFromItems, fetchCSLStyle, fetchItemsByKeys, toggleModal } from '../../actions';
 import { BIBLIOGRAPHY, COPY_CITATION } from '../../constants/modals';
@@ -199,18 +198,6 @@ const CitationForm = memo(forwardRef((props, ref) => {
 
 CitationForm.displayName = 'CitationForm';
 
-CitationForm.propTypes = {
-	formRef: PropTypes.object,
-	itemKey: PropTypes.string.isRequired,
-	label: PropTypes.string,
-	locator: PropTypes.string,
-	mode: PropTypes.string,
-	onClose: PropTypes.func.isRequired,
-	onModifierChange: PropTypes.func.isRequired,
-	prefix: PropTypes.string,
-	suffix: PropTypes.string,
-};
-
 // Inspired by https://github.com/zotero/zotero/blob/8df8182f01d4294482e33031567db0359cd145c3/chrome/content/zotero/elements/bubbleInput.js
 const Bubble = memo((props => {
 	const { isOpen, item, index, modifier, onModifierChange, onOpenPopover, onReorderPreview, onReorderCommit, onReorderCancel } = props;
@@ -279,26 +266,6 @@ const Bubble = memo((props => {
 
 Bubble.displayName = 'Bubble';
 
-Bubble.propTypes = {
-	isOpen: PropTypes.bool.isRequired,
-	index: PropTypes.number.isRequired,
-	item: PropTypes.shape({
-		key: PropTypes.string.isRequired
-	}).isRequired,
-	modifier: PropTypes.shape({
-		locator: PropTypes.string,
-		label: PropTypes.string,
-		mode: PropTypes.string,
-		prefix: PropTypes.string,
-		suffix: PropTypes.string
-	}).isRequired,
-	onModifierChange: PropTypes.func.isRequired,
-	onOpenPopover: PropTypes.func.isRequired,
-	onReorderCancel: PropTypes.func.isRequired,
-	onReorderCommit: PropTypes.func.isRequired,
-	onReorderPreview: PropTypes.func.isRequired,
-};
-
 const CitationTouch = memo(props => {
 	const { isOpen, item, index, modifier, onOpenTouchEditor, onReorderPreview, onReorderCommit, onReorderCancel } = props;
 	const { locator, label, prefix, suffix } = modifier;
@@ -343,25 +310,6 @@ const CitationTouch = memo(props => {
 });
 
 CitationTouch.displayName = 'CitationTouch';
-
-CitationTouch.propTypes = {
-	isOpen: PropTypes.bool.isRequired,
-	item: PropTypes.shape({
-		key: PropTypes.string.isRequired
-	}).isRequired,
-	index: PropTypes.number.isRequired,
-	modifier: PropTypes.shape({
-		locator: PropTypes.string,
-		label: PropTypes.string,
-		mode: PropTypes.string,
-		prefix: PropTypes.string,
-		suffix: PropTypes.string
-	}).isRequired,
-	onOpenTouchEditor: PropTypes.func.isRequired,
-	onReorderCancel: PropTypes.func.isRequired,
-	onReorderCommit: PropTypes.func.isRequired,
-	onReorderPreview: PropTypes.func.isRequired,
-};
 
 const CitationTouchEditor = memo(({ modifier, item, onClose, onModifierChange, isOpen }) => {
 	const formRef = useRef(null);
@@ -414,20 +362,6 @@ const CitationTouchEditor = memo(({ modifier, item, onClose, onModifierChange, i
 });
 
 CitationTouchEditor.displayName = 'CitationTouchEditor';
-
-CitationTouchEditor.propTypes = {
-	modifier: PropTypes.shape({
-		label: PropTypes.string,
-		locator: PropTypes.string,
-		mode: PropTypes.string,
-		prefix: PropTypes.string,
-		suffix: PropTypes.string
-	}).isRequired,
-	isOpen: PropTypes.bool.isRequired,
-	item: PropTypes.object.isRequired,
-	onClose: PropTypes.func.isRequired,
-	onModifierChange: PropTypes.func.isRequired,
-};
 
 const reducer = (state, action) => {
 	switch (action.type) {

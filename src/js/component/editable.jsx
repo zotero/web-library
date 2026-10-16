@@ -1,5 +1,4 @@
 import { Fragment, forwardRef, memo, useImperativeHandle, useRef } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { noop, pick } from 'web-common/utils';
 
@@ -68,20 +67,5 @@ const Editable = memo(forwardRef((props, ref) => {
 }));
 
 Editable.displayName = 'Editable';
-
-Editable.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-	className: PropTypes.string,
-	input: PropTypes.element,
-	inputComponent: PropTypes.elementType,
-	isActive: PropTypes.bool,
-	isBusy: PropTypes.bool,
-	isDisabled: PropTypes.bool,
-	isSelect: PropTypes.bool,
-	isTextArea: PropTypes.bool,
-	onClick: PropTypes.func,
-	onFocus: PropTypes.func,
-	tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-};
 
 export default Editable;

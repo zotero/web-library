@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import fileSaver from 'file-saver';
@@ -23,14 +22,6 @@ const ExportActionsItem = ({ format }) => {
 		</DropdownItem>
 	);
 }
-
-ExportActionsItem.propTypes = {
-	format: PropTypes.shape({
-		key: PropTypes.string.isRequired,
-		label: PropTypes.string.isRequired,
-		extension: PropTypes.string
-	}).isRequired
-};
 
 
 const ExportActions = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
@@ -77,12 +68,5 @@ const ExportActions = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 		</Dropdown>
 	);
 }
-
-ExportActions.propTypes = {
-	disabled: PropTypes.bool,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	tabIndex: PropTypes.number
-};
 
 export default memo(ExportActions);

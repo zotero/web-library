@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -28,9 +27,5 @@ const ItemBox = ({ isReadOnly }) => {
 		isReadOnly={ isReadOnly }
 	/>);
 }
-
-ItemBox.propTypes = {
-	isReadOnly: PropTypes.bool,
-};
 
 export default memo(ItemBox);

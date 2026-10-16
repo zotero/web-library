@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDrop } from 'react-dnd';
@@ -51,12 +50,6 @@ const Tag = memo(props => {
 });
 
 Tag.displayName = 'Tag';
-
-Tag.propTypes = {
-	tag: PropTypes.object,
-	onClick: PropTypes.func,
-	onKeyDown: PropTypes.func,
-};
 
 const TagSelectorItems = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);

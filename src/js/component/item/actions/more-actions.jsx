@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -153,17 +152,6 @@ const MoreActionsDropdownDesktop = memo(props => {
 		</Dropdown>
 	);
 });
-
-MoreActionsItems.propTypes = {
-	divider: PropTypes.bool,
-	toggleRef: PropTypes.object,
-};
-
-MoreActionsDropdownDesktop.propTypes = {
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	tabIndex: PropTypes.number,
-};
 
 MoreActionsDropdownDesktop.displayName = 'MoreActionsDropdownDesktop';
 

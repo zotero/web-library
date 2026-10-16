@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, DropdownItem, Icon } from 'web-common/components';
@@ -89,12 +88,5 @@ const ImportAction = ({ disabled, onFocusNext, onFocusPrev, tabIndex }) => {
 		</div>
 	);
 }
-
-ImportAction.propTypes = {
-	disabled: PropTypes.bool,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	tabIndex: PropTypes.number
-};
 
 export default memo(ImportAction);

@@ -4,7 +4,6 @@ import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 
 import { CHANGE_PARENT_ITEM } from '../../constants/modals';
 import { toggleModal, querySecondary, chunkedChangeParentItem } from '../../actions';
@@ -316,10 +315,6 @@ const ChangeParentItemModal = () => {
 			</FocusTrap>
 		</Modal>
 	);
-}
-
-ChangeParentItemModal.propTypes = {
-	items: PropTypes.array,
 }
 
 export default memo(ChangeParentItemModal);

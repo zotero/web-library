@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState, } from 'react';
 import { useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -125,25 +124,5 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 }));
 
 TextAreaInput.displayName = 'TextAreaInput';
-TextAreaInput.propTypes = {
-		className: PropTypes.string,
-		form: PropTypes.string,
-		inputGroupClassName: PropTypes.string,
-		isBusy: PropTypes.bool,
-		isDisabled: PropTypes.bool,
-		isReadOnly: PropTypes.bool,
-		isRequired: PropTypes.bool,
-		isSingleLine: PropTypes.bool,
-		onBlur: PropTypes.func,
-		onCancel: PropTypes.func,
-		onChange: PropTypes.func,
-		onCommit: PropTypes.func,
-		onFocus: PropTypes.func,
-		onKeyDown: PropTypes.func,
-		onKeyUp: PropTypes.func,
-		resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-		selectOnFocus: PropTypes.bool,
-		value: PropTypes.string,
-}
 
 export default TextAreaInput;

@@ -1,6 +1,5 @@
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Icon } from 'web-common/components';
 import { noop } from 'web-common/utils';
@@ -170,19 +169,5 @@ const ListRow = props => {
 };
 
 ListRow.displayName = 'ListRow';
-
-ListRow.propTypes = {
-	data: PropTypes.shape({
-			isSelectMode: PropTypes.bool,
-			selectedIndexes: PropTypes.arrayOf(PropTypes.number),
-			getItemData: PropTypes.func.isRequired,
-			onSelect: PropTypes.func,
-			onTriggerSelectMode: PropTypes.func,
-			tabIndex: PropTypes.number
-		}).isRequired,
-	index: PropTypes.number.isRequired,
-	style: PropTypes.object,
-	className: PropTypes.string
-};
 
 export default memo(ListRow);

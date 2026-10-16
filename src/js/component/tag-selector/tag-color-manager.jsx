@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { useCallback, useEffect, useId, useRef, useState, memo, forwardRef, useImperativeHandle } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
 import { useFocusManager } from 'web-common/hooks';
@@ -153,10 +152,5 @@ const TagColorManager = forwardRef(({ onToggleTagManager, tag }, outerRef) => {
 });
 
 TagColorManager.displayName = 'TagColorManager';
-
-TagColorManager.propTypes = {
-	tag: PropTypes.string,
-	onToggleTagManager: PropTypes.func,
-};
 
 export default memo(TagColorManager);

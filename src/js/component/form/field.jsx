@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Children, forwardRef, memo, useRef } from 'react';
 import { noop, pick } from 'web-common/utils';
 import { Icon } from 'web-common/components';
@@ -33,15 +32,6 @@ const SimpleField = memo(forwardRef((props, ref) => {
 }));
 
 SimpleField.displayName = 'SimpleField';
-
-SimpleField.propTypes = {
-	children: PropTypes.array.isRequired,
-	className: PropTypes.string,
-	dragHandle: PropTypes.element,
-	onClick: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	tabIndex: PropTypes.number,
-};
 
 const SortableField = memo(forwardRef((props, outerRef) => {
 	const { className, index, onReorder = noop, onReorderCancel = noop, onReorderCommit = noop,
@@ -77,24 +67,11 @@ const SortableField = memo(forwardRef((props, outerRef) => {
 
 SortableField.displayName = 'SortableField';
 
-SortableField.propTypes = {
-	className: PropTypes.string,
-	index: PropTypes.number,
-	onReorder: PropTypes.func,
-	onReorderCancel: PropTypes.func,
-	onReorderCommit: PropTypes.func,
-	raw: PropTypes.object,
-};
-
 const Field = memo(forwardRef(({ isSortable, ...rest }, ref) => isSortable ?
 	<SortableField ref={ ref } { ...rest } /> :
 	<SimpleField ref={ ref } { ...rest } />));
 
 Field.displayName = 'Field';
-
-Field.propTypes = {
-	isSortable: PropTypes.bool,
-};
 
 export { SimpleField, SortableField };
 export default Field;

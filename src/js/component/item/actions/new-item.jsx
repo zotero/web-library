@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 import { useSelector } from 'react-redux';
@@ -22,11 +21,6 @@ const DropdownItemType = props => {
 		</DropdownItem>
 	);
 }
-
-DropdownItemType.propTypes = {
-	itemTypeOption: PropTypes.object,
-	onNewItemCreate: PropTypes.func,
-};
 
 const NewItemSelector = props => {
 	const { disabled, onFocusNext = noop, onFocusPrev = noop, onNewItemCreate = noop, tabIndex } = props;
@@ -124,18 +118,5 @@ const NewItemSelector = props => {
 		</Dropdown>
     );
 }
-
-DropdownItemType.propTypes = {
-	itemTypeSpec: PropTypes.object,
-	onNewItemCreate: PropTypes.func,
-};
-
-NewItemSelector.propTypes = {
-	disabled: PropTypes.bool,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	onNewItemCreate: PropTypes.func,
-	tabIndex: PropTypes.number,
-};
 
 export default memo(NewItemSelector);

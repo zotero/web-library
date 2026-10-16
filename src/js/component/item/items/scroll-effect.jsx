@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
-import PropTypes from 'prop-types';
 
 import { findRowIndexInSource } from '../../../actions';
 import { useItemsKeys } from '../../../hooks';
@@ -57,15 +56,6 @@ const ScrollEffectComponent = memo(({ listRef, setScrollToRow, libraryKey, colle
 	}, [selectedItemKeys, keys, listRef, previousSelectedItemKeys]);
 	return null;
 });
-
-ScrollEffectComponent.propTypes = {
-	collectionKey: PropTypes.string,
-	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string,
-	listRef: PropTypes.object.isRequired,
-	setScrollToRow: PropTypes.func.isRequired,
-	selectedItemKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
 
 ScrollEffectComponent.displayName = "ScrollEffectComponent";
 

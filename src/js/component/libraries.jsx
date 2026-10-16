@@ -2,7 +2,6 @@ import { Fragment, forwardRef, memo, useCallback, useState, useEffect, useImpera
 	useMemo, useRef, } from 'react';
 import { flushSync } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Button, Icon, Spinner } from 'web-common/components';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { noop, pick } from 'web-common/utils';
@@ -158,29 +157,6 @@ const LibraryNode = props => {
 		</Node>
 	);
 }
-
-LibraryNode.propTypes = {
-	addVirtual: PropTypes.func,
-	isFileUploadAllowed: PropTypes.bool,
-	isMyLibrary: PropTypes.bool,
-	isOpen: PropTypes.bool,
-	pickerMode: PropTypes.number,
-	isReadOnly: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	libraryKey: PropTypes.string,
-	name: PropTypes.string,
-	onNodeSelected: PropTypes.func,
-	picked: PropTypes.array,
-	pickerAllowRoot: PropTypes.bool,
-	pickerNavigate: PropTypes.func,
-	pickerSkipLibraries: PropTypes.array,
-	pickerPick: PropTypes.func,
-	pickerRequireFileUpload: PropTypes.bool,
-	pickerState: PropTypes.object,
-	shouldBeTabbable: PropTypes.bool,
-	toggleOpen: PropTypes.func,
-	virtual: PropTypes.object,
-};
 
 const Libraries = forwardRef((props, ref) => {
 	const { excludeLibraries, includeLibraries, pickerMode, libraryKey,
@@ -402,16 +378,5 @@ const Libraries = forwardRef((props, ref) => {
 });
 
 Libraries.displayName = 'Libraries';
-
-Libraries.propTypes = {
-	collectionKey: PropTypes.string,
-	excludeLibraries: PropTypes.array,
-	includeLibraries: PropTypes.array,
-	itemsSource: PropTypes.string,
-	libraryKey: PropTypes.string,
-	pickerMode: PropTypes.number,
-	pickerState: PropTypes.object,
-	view: PropTypes.string,
-}
 
 export default memo(Libraries);

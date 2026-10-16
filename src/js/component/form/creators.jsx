@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import deepEqual from 'fast-deep-equal';
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, createRef } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { useSelector } from 'react-redux';
@@ -247,14 +246,5 @@ const Creators = props => {
 		</Fragment>
     );
 }
-
-Creators.propTypes = {
-	isForm: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	itemType: PropTypes.string.isRequired,
-	name: PropTypes.string,
-	onSave: PropTypes.func,
-	value: PropTypes.array,
-};
 
 export default memo(Creators);

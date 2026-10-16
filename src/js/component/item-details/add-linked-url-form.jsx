@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Fragment, forwardRef, memo, useCallback, useImperativeHandle, useRef, useState, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -59,11 +58,6 @@ const AddLinkedUrlFormToolbar = props => {
 			</div>
 		</Toolbar>
 	);
-}
-
-AddLinkedUrlFormToolbar.propTypes = {
-	onClose: PropTypes.func.isRequired,
-	onSubmit: PropTypes.func.isRequired,
 }
 
 const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
@@ -152,9 +146,5 @@ const AddLinkedUrlForm = forwardRef(({ onClose }, outerRef) => {
 });
 
 AddLinkedUrlForm.displayName = 'AddLinkedUrlForm';
-
-AddLinkedUrlForm.propTypes = {
-	onClose: PropTypes.func.isRequired
-}
 
 export default memo(AddLinkedUrlForm);

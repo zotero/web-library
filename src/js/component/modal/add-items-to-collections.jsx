@@ -1,5 +1,4 @@
 import deepEqual from 'fast-deep-equal';
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, FocusTrap, Icon } from 'web-common/components';
@@ -207,10 +206,6 @@ const AddItemsToCollectionsModal = () => {
 			</FocusTrap>
 		</Modal>
     );
-}
-
-AddItemsToCollectionsModal.propTypes = {
-	items: PropTypes.array,
 }
 
 export default memo(AddItemsToCollectionsModal);

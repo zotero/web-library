@@ -1,5 +1,4 @@
 import { memo, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Select from './form/select';
 import { citationStylesCount } from '../../../data/citation-styles-data.json';
@@ -33,14 +32,6 @@ const StyleSelector = props => {
 			onCommit={ onStyleChange }
 		/>
 	);
-}
-
-StyleSelector.propTypes = {
-	citationStyle: PropTypes.string,
-	citationStyles: PropTypes.array,
-	className: PropTypes.string,
-	id: PropTypes.string,
-	onStyleChange: PropTypes.func
 }
 
 export default memo(StyleSelector);

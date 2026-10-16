@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useContext, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, } from 'react';
 import { useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -32,11 +31,6 @@ const AutoResizerInput = memo(forwardRef((props, ref) => props.resize ? (
 	)
 ));
 
-AutoResizerInput.propTypes = {
-	resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-	value: PropTypes.string
-};
-
 const Suggestions = memo(props => {
 	const { highlighted, id, onMousedown, refs, show, strategy, suggestions, suggestionsRef, x, y } = props;
 	return (
@@ -68,18 +62,6 @@ const Suggestions = memo(props => {
 });
 
 Suggestions.displayName = 'Suggestions';
-Suggestions.propTypes = {
-	highlighted: PropTypes.number.isRequired,
-	id: PropTypes.string.isRequired,
-	onMousedown: PropTypes.func.isRequired,
-	refs: PropTypes.object.isRequired,
-	show: PropTypes.bool.isRequired,
-	strategy: PropTypes.string.isRequired,
-	suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
-	suggestionsRef: PropTypes.object.isRequired,
-	x: PropTypes.number.isRequired,
-	y: PropTypes.number.isRequired,
-};
 
 const Input = memo(forwardRef((props, ref) => {
 	const { className = 'form-control', inputGroupClassName, isBusy, isDisabled, isReadOnly, isRequired, onBlur = noop,
@@ -262,25 +244,5 @@ const Input = memo(forwardRef((props, ref) => {
 }));
 
 Input.displayName = 'Input';
-
-Input.propTypes = {
-	className: PropTypes.string,
-	inputGroupClassName: PropTypes.string,
-	isBusy: PropTypes.bool,
-	isDisabled: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	isRequired: PropTypes.bool,
-	onBlur: PropTypes.func,
-	onCancel: PropTypes.func,
-	onChange: PropTypes.func,
-	onCommit: PropTypes.func,
-	onFocus: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	resize: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-	selectOnFocus: PropTypes.bool,
-	suggestions: PropTypes.array,
-	validationError: PropTypes.string,
-	value: PropTypes.string,
-};
 
 export default Input;

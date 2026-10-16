@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { TabPane } from 'web-common/components';
 import { pick } from 'web-common/utils';
@@ -75,12 +74,6 @@ const Info = ({ isActive, isReadOnly, id, ...rest }) => {
 			</div>
 		</TabPane>
 	);
-}
-
-Info.propTypes = {
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default memo(Info);

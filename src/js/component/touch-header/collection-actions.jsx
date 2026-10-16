@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
@@ -57,11 +56,6 @@ const CollectionActions = props => {
 			</DropdownMenu>
 		</Dropdown>
 	);
-}
-
-CollectionActions.propTypes = {
-	collectionHasChildren: PropTypes.bool,
-	collectionKey: PropTypes.string,
 }
 
 export default memo(CollectionActions);

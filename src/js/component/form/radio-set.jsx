@@ -1,5 +1,4 @@
 import { useCallback, useId, memo } from 'react';
-import PropTypes from 'prop-types';
 import { noop } from 'web-common/utils';
 
 const RadioSet = props => {
@@ -31,11 +30,5 @@ const RadioSet = props => {
 		</fieldset>
 	);
 }
-
-RadioSet.propTypes = {
-	onChange: PropTypes.func.isRequired,
-	options: PropTypes.array.isRequired,
-	value: PropTypes.string,
-};
 
 export default memo(RadioSet);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -66,10 +65,6 @@ const CreatorDragPreview = memo(({ creator }) => {
 
 CreatorDragPreview.displayName = 'CreatorDragPreview';
 
-CreatorDragPreview.propTypes = {
-	creator: PropTypes.object,
-};
-
 const CitationDragPreview = memo(({ bubbleString }) => {
 	return(
 		<div className="citation-touch drag-preview">
@@ -91,10 +86,6 @@ const CitationDragPreview = memo(({ bubbleString }) => {
 
 CitationDragPreview.displayName = 'CitationDragPreview';
 
-CitationDragPreview.propTypes = {
-	bubbleString: PropTypes.string,
-};
-
 const SingleItemDragPreview = memo(({ itemData }) => {
 	return (
 		<div className="items-drag-indicator single">
@@ -112,10 +103,6 @@ const SingleItemDragPreview = memo(({ itemData }) => {
 
 SingleItemDragPreview.displayName = 'SingleItemDragPreview';
 
-SingleItemDragPreview.propTypes = {
-	itemData: PropTypes.object,
-};
-
 const MultiItemsDragPreview = memo(({ selectedItemKeysLength }) => {
 	return (
 		<div className="items-drag-indicator multiple">
@@ -132,10 +119,6 @@ const MultiItemsDragPreview = memo(({ selectedItemKeysLength }) => {
 });
 
 MultiItemsDragPreview.displayName = 'MultiItemsDragPreview';
-
-MultiItemsDragPreview.propTypes = {
-	selectedItemKeysLength: PropTypes.number
-};
 
 const CustomDragLayer = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);

@@ -1,6 +1,5 @@
 import { Provider } from 'react-redux';
 import { StaticContext } from 'web-common/components';
-import PropTypes from 'prop-types';
 
 import ErrorBoundary from './error-boundry'
 import Loader from './loader';
@@ -28,10 +27,6 @@ const Main = ({ store }) => {
 			</Provider>
 		</ErrorBoundary>
 	);
-}
-
-Main.propTypes = {
-	store: PropTypes.object.isRequired,
 }
 
 export default Main;

@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, memo, forwardRef, useMemo, useState, useCallback, useRef, useEffect, } from 'react';
 import { flushSync } from 'react-dom';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
@@ -137,16 +136,6 @@ const ItemsNode = memo(props => {
 	);
 });
 
-ItemsNode.propTypes = {
-	pickerMode: PropTypes.number,
-    itemsSource: PropTypes.string,
-    level: PropTypes.number,
-    parentCollectionKey: PropTypes.string,
-    selectedCollectionKey: PropTypes.string,
-    selectNode: PropTypes.func,
-    shouldBeTabbable: PropTypes.bool
-}
-
 ItemsNode.displayName = 'ItemsNode';
 
 
@@ -235,17 +224,6 @@ const VirtualCollectionNode = memo(props => {
 	);
 });
 
-VirtualCollectionNode.propTypes = {
-	cancelAdd: PropTypes.func,
-	commitAdd: PropTypes.func,
-	focusBySelector: PropTypes.func,
-	pickerMode: PropTypes.number,
-	level: PropTypes.number,
-	parentCollectionKey: PropTypes.string,
-	parentLibraryKey: PropTypes.string,
-	virtual: PropTypes.object,
-};
-
 VirtualCollectionNode.displayName = 'VirtualCollectionNode';
 
 const PublicationsNode = memo(({ isMyLibrary, pickerMode, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
@@ -288,16 +266,6 @@ const PublicationsNode = memo(({ isMyLibrary, pickerMode, isSelected, level, sho
 	);
 });
 
-PublicationsNode.propTypes = {
-    isMyLibrary: PropTypes.bool,
-	pickerMode: PropTypes.number,
-    isSelected: PropTypes.bool,
-    level: PropTypes.number,
-    parentLibraryKey: PropTypes.string,
-    selectNode: PropTypes.func,
-    shouldBeTabbable: PropTypes.bool
-};
-
 PublicationsNode.displayName = 'PublicationsNode';
 
 const TrashNode = memo(({ pickerMode, isReadOnly, isSelected, level, shouldBeTabbable, parentLibraryKey, selectNode, ...rest }) => {
@@ -334,16 +302,6 @@ const TrashNode = memo(({ pickerMode, isReadOnly, isSelected, level, shouldBeTab
 	);
 });
 
-TrashNode.propTypes = {
-	pickerMode: PropTypes.number,
-    isReadOnly: PropTypes.bool,
-    isSelected: PropTypes.bool,
-    level: PropTypes.number,
-    parentLibraryKey: PropTypes.string,
-    selectNode: PropTypes.func,
-    shouldBeTabbable: PropTypes.bool
-};
-
 TrashNode.displayName = 'TrashNode';
 
 const LevelWrapper = forwardRef(({ children, level, hasOpen, isLastLevel, groupId }, ref) => {
@@ -359,14 +317,6 @@ const LevelWrapper = forwardRef(({ children, level, hasOpen, isLastLevel, groupI
 });
 
 LevelWrapper.displayName = 'LevelWrapper';
-
-LevelWrapper.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-	groupId: PropTypes.string,
-	hasOpen: PropTypes.bool,
-	isLastLevel: PropTypes.bool,
-	level: PropTypes.number,
-};
 
 
 const DotMenu = memo(props => {
@@ -549,19 +499,6 @@ const DotMenu = memo(props => {
     );
 });
 
-DotMenu.propTypes = {
-	addVirtual: PropTypes.func,
-	collection: PropTypes.object,
-	dotMenuFor: PropTypes.string,
-	focusBySelector: PropTypes.func,
-	isReadOnly: PropTypes.bool,
-	opened: PropTypes.array,
-	parentLibraryKey: PropTypes.string,
-	setDotMenuFor: PropTypes.func,
-	setOpened: PropTypes.func,
-	setRenaming: PropTypes.func,
-};
-
 DotMenu.displayName = 'DotMenu';
 
 const PickerCheckbox = memo(({ collectionKey, pickerPick, picked, parentLibraryKey }) => {
@@ -585,13 +522,6 @@ const PickerCheckbox = memo(({ collectionKey, pickerPick, picked, parentLibraryK
 		/>
 	);
 });
-
-PickerCheckbox.propTypes = {
-	collectionKey: PropTypes.string,
-	parentLibraryKey: PropTypes.string,
-	picked: PropTypes.array,
-	pickerPick: PropTypes.func,
-};
 
 PickerCheckbox.displayName = 'PickerCheckbox';
 
@@ -849,30 +779,6 @@ const CollectionNode = memo(props => {
     );
 });
 
-CollectionNode.propTypes = {
-	allCollections: PropTypes.array,
-	collection: PropTypes.object,
-	derivedData: PropTypes.object,
-	disabledCollections: PropTypes.array,
-	getParents: PropTypes.func,
-	isCurrentLibrary: PropTypes.bool,
-	isFileUploadAllowed: PropTypes.bool,
-	pickerMode: PropTypes.number,
-	isReadOnly: PropTypes.bool,
-	level: PropTypes.number,
-	onOpen: PropTypes.func,
-	parentLibraryKey: PropTypes.string,
-	picked: PropTypes.array,
-	pickerPick: PropTypes.func,
-	pickerSkipCollections: PropTypes.array,
-	renaming: PropTypes.string,
-	selectedCollectionKey: PropTypes.string,
-	selectNode: PropTypes.func,
-	setRenaming: PropTypes.func,
-	shouldBeTabbable: PropTypes.bool,
-	virtual: PropTypes.object,
-};
-
 CollectionNode.displayName = 'CollectionNode';
 
 const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest }) => {
@@ -914,11 +820,6 @@ const CollectionsNodeList = memo(({ collections, parentCollectionKey, ...rest })
 		</Fragment>
     );
 });
-
-CollectionsNodeList.propTypes = {
-	collections: PropTypes.array,
-	parentCollectionKey: PropTypes.string,
-};
 
 CollectionsNodeList.displayName = 'CollectionsNodeList';
 
@@ -1158,19 +1059,6 @@ const CollectionTree = props => {
 			/>
 		</LevelWrapper>
 	);
-};
-
-CollectionTree.propTypes = {
-	collectionKey: PropTypes.string,
-	groupId: PropTypes.string,
-	isMyPublications: PropTypes.bool,
-	isTrash: PropTypes.bool,
-	itemsSource: PropTypes.string,
-	libraryKey: PropTypes.string,
-	onNodeSelected: PropTypes.func,
-	parentLibraryKey: PropTypes.string,
-	pickerMode: PropTypes.number,
-	pickerNavigate: PropTypes.func,
 };
 
 export default memo(CollectionTree);

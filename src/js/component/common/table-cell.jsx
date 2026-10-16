@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { memo } from 'react';
-import PropTypes from 'prop-types';
 import { pick } from 'web-common/utils';
 import { useSelector } from 'react-redux';
 import { Icon } from 'web-common/components';
@@ -30,16 +29,6 @@ const Cell = ({ children, className, columnName, index, isLastColumn, width, sty
 	)
 }
 
-Cell.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-	className: PropTypes.string,
-	columnName: PropTypes.string,
-	index: PropTypes.number,
-	isLastColumn: PropTypes.bool,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-	style: PropTypes.object,
-};
-
 
 const TableCellIcon = ({ className, iconName, suffix = "white", ...rest }) => {
 	// Render two icons: one for the focused+selected state and one for the
@@ -62,12 +51,6 @@ const TableCellIcon = ({ className, iconName, suffix = "white", ...rest }) => {
 	);
 }
 
-TableCellIcon.propTypes = {
-	className: PropTypes.string,
-	iconName: PropTypes.string.isRequired,
-	suffix: PropTypes.string,
-}
-
 const TableCellItemTypeIcon = ({ itemData }) => {
 	const colorScheme = useSelector(state => state.preferences.colorScheme);
 
@@ -83,10 +66,6 @@ const TableCellItemTypeIcon = ({ itemData }) => {
 			height="16"
 		/>
 	);
-}
-
-TableCellItemTypeIcon.propTypes = {
-	itemData: PropTypes.object.isRequired,
 }
 
 const TableCellTagCircles = ({ itemData }) => {
@@ -117,10 +96,6 @@ const TableCellTagCircles = ({ itemData }) => {
 	)
 }
 
-TableCellTagCircles.propTypes = {
-	itemData: PropTypes.object.isRequired,
-};
-
 export const TitleCell = memo(props => {
 	const { columnName, labelledById, itemData, ...rest } = props;
 	const formattedSpan = document.createElement('span');
@@ -144,16 +119,6 @@ export const TitleCell = memo(props => {
 });
 
 TitleCell.displayName = 'TitleCell';
-
-TitleCell.propTypes = {
-	colIndex: PropTypes.number,
-	columnName: PropTypes.string.isRequired,
-	isLastColumn: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	itemData: PropTypes.object,
-	labelledById: PropTypes.string,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
 
 export const AttachmentCell = memo(props => {
 	const { columnName, itemData } = props;
@@ -184,14 +149,6 @@ export const AttachmentCell = memo(props => {
 
 AttachmentCell.displayName = 'AttachmentCell';
 
-AttachmentCell.propTypes = {
-	columnName: PropTypes.string.isRequired,
-	itemData: PropTypes.object,
-	colIndex: PropTypes.number,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-	isLastColumn: PropTypes.bool,
-};
-
 export const GenericDataCell = memo(props => {
 	const { columnName, itemData } = props;
 
@@ -210,13 +167,6 @@ export const GenericDataCell = memo(props => {
 
 GenericDataCell.displayName = 'GenericDataCell';
 
-GenericDataCell.propTypes = {
-	colIndex: PropTypes.number,
-	columnName: PropTypes.string,
-	itemData: PropTypes.object,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
-
 
 export const PlaceholderCell = props => {
 	return (
@@ -228,11 +178,5 @@ export const PlaceholderCell = props => {
 		</Cell>
 	);
 }
-
-PlaceholderCell.propTypes = {
-	colIndex: PropTypes.number,
-	columnName: PropTypes.string,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
 
 export default Cell;

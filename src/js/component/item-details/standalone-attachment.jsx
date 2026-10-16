@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { TabPane } from 'web-common/components';
 import { pick } from 'web-common/utils';
@@ -21,12 +20,6 @@ const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly, ...rest }) => {
 			/>
 		</TabPane>
 	);
-}
-
-StandaloneAttachmentTabPane.propTypes = {
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default StandaloneAttachmentTabPane;

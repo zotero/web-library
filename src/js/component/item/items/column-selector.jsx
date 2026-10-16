@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
@@ -136,12 +135,6 @@ const ColumnSelector = props => {
 			</DropdownMenu>
 		</Dropdown>
 	);
-}
-
-ColumnSelector.propTypes = {
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	tabIndex: PropTypes.number,
 }
 
 export default memo(ColumnSelector);

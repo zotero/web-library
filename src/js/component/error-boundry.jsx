@@ -1,5 +1,4 @@
 import { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { forumsUrl } from '../constants/defaults';
 
 const CrashHandler = ({ error = {}, info = {} }) => (
@@ -20,11 +19,6 @@ const CrashHandler = ({ error = {}, info = {} }) => (
 	</div>
 );
 
-CrashHandler.propTypes = {
-	error: PropTypes.object,
-	info: PropTypes.object,
-}
-
 class ErrorBoundary extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -40,10 +34,6 @@ class ErrorBoundary extends PureComponent {
 			<CrashHandler error={ this.state.error } info={ this.state.info } /> :
 			this.props.children;
 	}
-}
-
-ErrorBoundary.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 }
 
 export default ErrorBoundary;

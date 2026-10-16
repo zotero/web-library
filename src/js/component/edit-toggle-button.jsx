@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useCallback, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
@@ -29,11 +28,6 @@ const EditToggleButton = props => {
 			{ label }
 		</Button>
 	) : null;
-}
-
-EditToggleButton.propTypes = {
-	className: PropTypes.string,
-	isReadOnly: PropTypes.bool,
 }
 
 export default memo(EditToggleButton);

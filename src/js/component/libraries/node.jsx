@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import {memo, useCallback, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {NativeTypes} from 'react-dnd-html5-backend';
@@ -234,27 +233,6 @@ const Node = props => {
 			{ subtree }
 		</li>
 	);
-}
-
-Node.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-	className: PropTypes.string,
-	dndData: PropTypes.object,
-	isFileUploadAllowed: PropTypes.bool,
-	isOpen: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	onFileDrop: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	onNodeDrop: PropTypes.func,
-	onOpen: PropTypes.func,
-	onRename: PropTypes.func,
-	onRenameCancel: PropTypes.func,
-	onSelect: PropTypes.func,
-	shouldBeDraggable: PropTypes.bool,
-	showTwisty: PropTypes.bool,
-	subtree: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 }
 
 export default memo(Node);

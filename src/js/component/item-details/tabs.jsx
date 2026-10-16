@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Spinner, Tab, Tabs } from 'web-common/components';
@@ -338,10 +337,6 @@ const ItemDetailsTabs = () => {
 
 		</Panel>
     );
-};
-
-ItemDetailsTabs.propTypes = {
-	device: PropTypes.object,
 };
 
 export default ItemDetailsTabs;

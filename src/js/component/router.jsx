@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import { routeRegexp, redirectRegexes } from '../routes';
 import { useForceUpdate } from 'web-common/hooks';
@@ -63,10 +62,6 @@ const Router = (props) => {
 	}
 	return <>{children}</>;
 }
-
-Router.propTypes = {
-	children: PropTypes.node,
-};
 
 
 export default Router;

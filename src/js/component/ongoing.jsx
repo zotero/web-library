@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { memo, useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { pluralize } from '../common/format';
 import { Button, Spinner } from 'web-common/components';
@@ -84,15 +83,6 @@ const OngoingProcessDescription = ({ process }) => {
 		</li>
 	);
 }
-
-OngoingProcessDescription.propTypes = {
-	process: PropTypes.shape({
-		id: PropTypes.string.isRequired,
-		kind: PropTypes.string.isRequired,
-		completed: PropTypes.bool.isRequired,
-		data: PropTypes.object,
-	}).isRequired
-};
 
 const Ongoing = () => {
 	const dispatch = useDispatch();

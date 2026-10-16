@@ -4,7 +4,6 @@ import { pick } from 'web-common/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 
 import { ADD_RELATED } from '../../constants/modals';
 import { addRelatedItems, toggleModal, querySecondary } from '../../actions';
@@ -258,10 +257,6 @@ const AddRelatedModal = () => {
 			</FocusTrap>
 		</Modal>
 	);
-}
-
-AddRelatedModal.propTypes = {
-	items: PropTypes.array,
 }
 
 export default memo(AddRelatedModal);

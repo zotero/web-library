@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -47,12 +46,6 @@ const AttachmentIcon = memo(({ isActive, item, size }) => {
 });
 
 AttachmentIcon.displayName = 'AttachmentIcon';
-
-AttachmentIcon.propTypes = {
-	isActive: PropTypes.bool,
-	item: PropTypes.object.isRequired,
-	size: PropTypes.string.isRequired,
-};
 
 const AttachmentActions = memo(props => {
 	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading } = props;
@@ -274,14 +267,6 @@ const AttachmentActions = memo(props => {
 
 AttachmentActions.displayName = 'AttachmentDownloadIcon';
 
-AttachmentActions.propTypes = {
-	attachment: PropTypes.object,
-	focusBySelector: PropTypes.func.isRequired,
-	isReadOnly: PropTypes.bool,
-	isUploading: PropTypes.bool,
-	itemKey: PropTypes.string,
-};
-
 const Attachment = memo(props => {
 	const { attachment, focusBySelector, itemKey, isReadOnly, isUploading, onKeyDown } = props;
 	const dispatch = useDispatch();
@@ -391,15 +376,6 @@ const Attachment = memo(props => {
 	);
 });
 
-Attachment.propTypes = {
-	attachment: PropTypes.object,
-	focusBySelector: PropTypes.func.isRequired,
-	isReadOnly: PropTypes.bool,
-	isUploading: PropTypes.bool,
-	itemKey: PropTypes.string,
-	onKeyDown: PropTypes.func.isRequired,
-};
-
 Attachment.displayName = 'Attachment';
 
 const AttachmentDetailsWrap = memo(({ isReadOnly, onEditorFocusBack }) => {
@@ -425,11 +401,6 @@ const AttachmentDetailsWrap = memo(({ isReadOnly, onEditorFocusBack }) => {
 });
 
 AttachmentDetailsWrap.displayName = 'AttachmentDetailsWrap';
-
-AttachmentDetailsWrap.propTypes = {
-	isReadOnly: PropTypes.bool,
-	onEditorFocusBack: PropTypes.func,
-};
 
 const PAGE_SIZE = 100;
 
@@ -701,12 +672,6 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 			}
 		</TabPane>
 	);
-};
-
-Attachments.propTypes = {
-	id: PropTypes.string,
-	isReadOnly: PropTypes.bool,
-	isActive: PropTypes.bool,
 };
 
 export default memo(Attachments);

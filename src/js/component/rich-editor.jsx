@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, forwardRef, useCallback, useRef, useState, useImperativeHandle, useEffect, useLayoutEffect, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
@@ -228,17 +227,6 @@ const RichEditor = memo(forwardRef((props, ref) => {
 		</div>
 	);
 }));
-
-RichEditor.propTypes = {
-	autoresize: PropTypes.bool,
-	isAttachmentNote: PropTypes.bool,
-	id: PropTypes.string,
-	isReadOnly: PropTypes.bool,
-	onChange: PropTypes.func.isRequired,
-	onEdit: PropTypes.func,
-	onFocusBack: PropTypes.func,
-	value: PropTypes.string,
-};
 
 RichEditor.displayName = 'RichEditor';
 

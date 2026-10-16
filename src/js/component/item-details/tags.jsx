@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { TabPane } from 'web-common/components';
 import { useSelector } from 'react-redux';
@@ -21,12 +20,6 @@ const Tags = ({ id, isActive, isReadOnly, ...rest }) => {
 			<TagPicker itemKey={itemKey} libraryKey={libraryKey} isReadOnly={ isReadOnly } />
 		</TabPane>
 	)
-}
-
-Tags.propTypes = {
-	id: PropTypes.string.isRequired,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default memo(Tags);

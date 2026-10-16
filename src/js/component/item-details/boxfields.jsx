@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -141,12 +140,5 @@ const BoxFields = ({ className, fields, isReadOnly, item }) => {
 		</ol>
 	);
 }
-
-BoxFields.propTypes = {
-    className: PropTypes.string,
-    fields: PropTypes.array,
-    isReadOnly: PropTypes.bool,
-    item: PropTypes.object
-};
 
 export default memo(BoxFields);

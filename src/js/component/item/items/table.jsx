@@ -6,7 +6,6 @@ import { useDrop } from 'react-dnd';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { isTriggerEvent, noop } from 'web-common/utils';
 import { Spinner } from 'web-common/components';
-import PropTypes from 'prop-types';
 
 import columnProperties from '../../../constants/column-properties';
 import TableRow from './table-row';
@@ -518,23 +517,6 @@ const ItemsTable = props => {
 				</div>
 			)}
 	</Table>
-};
-
-ItemsTable.propTypes = {
-	collectionKey: PropTypes.string,
-	columnsKey: PropTypes.string.isRequired,
-	isAdvancedSearch: PropTypes.bool,
-	isMyPublications: PropTypes.bool,
-	isTrash: PropTypes.bool,
-	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string,
-	pickerMode: PropTypes.number,
-	pickerNavigate: PropTypes.func,
-	pickerPick: PropTypes.func,
-	q: PropTypes.string,
-	qmode: PropTypes.string,
-	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
-	tags: PropTypes.array,
 };
 
 export default memo(ItemsTable);

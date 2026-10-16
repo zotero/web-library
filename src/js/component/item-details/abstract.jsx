@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { pick } from 'web-common/utils';
@@ -91,9 +90,5 @@ const Abstract = ({ isReadOnly, ...rest }) => {
 		/>
 	);
 }
-
-Abstract.propTypes = {
-	isReadOnly: PropTypes.bool,
-};
 
 export default memo(Abstract);

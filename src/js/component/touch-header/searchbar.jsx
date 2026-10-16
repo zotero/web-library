@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
@@ -46,12 +45,6 @@ const SearchBar = ({ isActive, onCancel, search }) => {
 			</div>
 		</CSSTransition>
 	);
-}
-
-SearchBar.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	onCancel: PropTypes.func.isRequired,
-	search: PropTypes.node,
 }
 
 export default memo(SearchBar);

@@ -14,7 +14,6 @@ export function renderWithProviders(
 ) {
 	const store = setupStore(preloadedState);
 	configureZotero(schema);
-	// eslint-disable-next-line react/prop-types
 	function Wrapper({ children }) {
 		return (
 			<Provider store={store}>

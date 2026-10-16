@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from 'web-common/components';
@@ -43,17 +42,6 @@ const Messages = () => {
 			}
 		</ul>
 	);
-}
-
-Message.propTypes = {
-	cta: PropTypes.object,
-	id: PropTypes.number,
-	message :PropTypes.string,
-	type: PropTypes.string,
-}
-
-Messages.propTypes = {
-	errors: PropTypes.array,
 }
 
 export default Messages;

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -26,11 +25,5 @@ const Items = memo(({ listContainerClassName, tableContainerClassName, container
 });
 
 Items.displayName = 'Items';
-
-Items.propTypes = {
-	listContainerClassName: PropTypes.string,
-	tableContainerClassName: PropTypes.string,
-	containerClassName: PropTypes.string,
-}
 
 export default Items;

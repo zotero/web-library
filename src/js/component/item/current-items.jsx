@@ -1,5 +1,4 @@
 import { Fragment, memo } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import ItemsTableToolbar from 'component/item/items/toolbar';
@@ -58,9 +57,5 @@ const CurrentItems = props => {
 		</div>
 	);
 };
-
-CurrentItems.propTypes = {
-	isSearchModeTransitioning: PropTypes.bool,
-}
 
 export default memo(CurrentItems);

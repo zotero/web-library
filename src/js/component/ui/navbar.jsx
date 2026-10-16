@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, MenuEntry } from 'web-common/components';
@@ -154,9 +153,5 @@ const Navbar = memo(({ entries = [] }) => {
 });
 
 Navbar.displayName = 'Navbar';
-
-Navbar.propTypes = {
-	entries: PropTypes.array,
-}
 
 export default Navbar;

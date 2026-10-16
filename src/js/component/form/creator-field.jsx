@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, forwardRef, memo, useImperativeHandle, useMemo, useCallback, useRef, useState, } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Icon, SelectDivider, SelectOption } from 'web-common/components';
@@ -82,20 +81,6 @@ const CreatorTypeSelector = memo(forwardRef((props, ref) => {
 }));
 
 CreatorTypeSelector.displayName = 'CreatorTypeSelector';
-
-CreatorTypeSelector.propTypes = {
-	creatorsCount: PropTypes.number,
-	index: PropTypes.number,
-	isActive: PropTypes.bool,
-	isDisabled: PropTypes.bool,
-	onCancel: PropTypes.func,
-	onClick: PropTypes.func,
-	onCommit: PropTypes.func,
-	onFocus: PropTypes.func,
-	onReorder: PropTypes.func,
-	options: PropTypes.array,
-	value: PropTypes.string,
-};
 
 const CreatorFieldModal = memo(props => {
 	const { active, creator, creatorLabel, creatorsCount, creatorTypes, index, isDual, isForm,
@@ -197,26 +182,6 @@ const CreatorFieldModal = memo(props => {
 });
 
 CreatorFieldModal.displayName = 'CreatorFieldModal';
-CreatorFieldModal.propTypes = {
-	active: PropTypes.string,
-	creator: PropTypes.object,
-	creatorLabel: PropTypes.string,
-	creatorsCount: PropTypes.number,
-	creatorTypes: PropTypes.array,
-	index: PropTypes.number,
-	isDual: PropTypes.bool,
-	isForm: PropTypes.bool,
-	isModalVisible: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	onCancel: PropTypes.func,
-	onClose: PropTypes.func,
-	onCreatorRemove: PropTypes.func,
-	onCreatorTypeSwitch: PropTypes.func,
-	onEditableCommit: PropTypes.func,
-	onFieldClick: PropTypes.func,
-	onFieldFocus: PropTypes.func,
-	onReorder: PropTypes.func,
-};
 
 
 const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
@@ -287,21 +252,6 @@ const CreatorFieldInputWrap = memo(forwardRef((props, ref) => {
 
 
 CreatorFieldInputWrap.displayName = 'CreatorFieldInputWrap';
-CreatorFieldInputWrap.propTypes = {
-	active: PropTypes.string,
-	creator: PropTypes.object,
-	index: PropTypes.number,
-	inModal: PropTypes.bool,
-	isForm: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	label: PropTypes.string,
-	name: PropTypes.string,
-	onAddMany: PropTypes.func,
-	onCancel: PropTypes.func,
-	onEditableCommit: PropTypes.func,
-	onFieldClick: PropTypes.func,
-	onFieldFocus: PropTypes.func,
-};
 
 const CreatorField = forwardRef((props, outerRef) => {
 	const { className, creator, creatorsCount, creatorTypes, index, isCreateAllowed,
@@ -570,27 +520,5 @@ const CreatorField = forwardRef((props, outerRef) => {
 });
 
 CreatorField.displayName = 'CreatorField';
-CreatorField.propTypes = {
-	className: PropTypes.string,
-	creator: PropTypes.object,
-	creatorTypes: PropTypes.array,
-	creatorsCount: PropTypes.number,
-	index: PropTypes.number,
-	isCreateAllowed: PropTypes.bool,
-	isDeleteAllowed: PropTypes.bool,
-	isForm: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	isSingle: PropTypes.bool,
-	isVirtual: PropTypes.bool,
-	onAddMany: PropTypes.func,
-	onChange: PropTypes.func,
-	onCreatorAdd: PropTypes.func,
-	onCreatorRemove: PropTypes.func,
-	onCreatorTypeSwitch: PropTypes.func,
-	onReorder: PropTypes.func,
-	onReorderCancel: PropTypes.func,
-	onReorderCommit: PropTypes.func,
-	shouldPreOpenModal: PropTypes.bool,
-};
 
 export default memo(CreatorField);

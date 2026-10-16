@@ -1,5 +1,4 @@
 import { Fragment, memo, useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
@@ -337,11 +336,6 @@ const ItemActionsDesktop = memo(props => {
 	);
 });
 
-ItemActionsDesktop.propTypes = {
-	onFocusBySelector: PropTypes.func.isRequired,
-	onFocusNext: PropTypes.func.isRequired,
-	onFocusPrev: PropTypes.func.isRequired
-};
 ItemActionsDesktop.displayName = 'ItemActionsDesktop';
 
 export { ItemActionsTouch, ItemActionsDesktop };

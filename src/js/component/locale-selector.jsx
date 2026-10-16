@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import Select from './form/select';
 import localeData from '../../../data/locale-data.json';
@@ -25,14 +24,6 @@ const LocaleSelector = props => {
 			value={defaultLocale ? defaultLocale : citationLocale }
 		/>
 	);
-}
-
-LocaleSelector.propTypes = {
-	citationLocale: PropTypes.string,
-	className: PropTypes.string,
-	id: PropTypes.string,
-	onLocaleChange: PropTypes.func,
-	styleProperties: PropTypes.object,
 }
 
 export default memo(LocaleSelector);

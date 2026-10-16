@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Icon } from 'web-common/components';
@@ -63,11 +62,6 @@ const BoxFieldLabel = memo(({ field, id }) => {
 
 BoxFieldLabel.displayName = 'BoxFieldLabel';
 
-BoxFieldLabel.propTypes = {
-	field: PropTypes.object,
-	id: PropTypes.string,
-};
-
 const BoxFieldInputEditable = memo(props => {
 	const { field, id, isEditing, isForm, onClick, isActive, onFocus, onBlur } = props;
 	const shouldUseEditMode = useSelector(state => state.device.shouldUseEditMode);
@@ -114,17 +108,6 @@ const BoxFieldInputEditable = memo(props => {
 });
 
 BoxFieldInputEditable.displayName = 'BoxFieldInputEditable';
-
-BoxFieldInputEditable.propTypes = {
-	field: PropTypes.object,
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isEditing: PropTypes.bool,
-	isForm: PropTypes.bool,
-	onBlur: PropTypes.func,
-	onClick: PropTypes.func,
-	onFocus: PropTypes.func,
-};
 
 const BoxFieldInput = memo(props => {
 	const { field, id, isForm, onCancel, onCommit, onClick, onFocus, onBlur, onKeyDown, onKeyUp } = props;
@@ -190,20 +173,6 @@ const BoxFieldInput = memo(props => {
 
 BoxFieldInput.displayName = 'BoxFieldInput';
 
-BoxFieldInput.propTypes = {
-	field: PropTypes.object,
-	id: PropTypes.string,
-	isEditing: PropTypes.bool,
-	isForm: PropTypes.bool,
-	onBlur: PropTypes.func,
-	onCancel: PropTypes.func,
-	onClick: PropTypes.func,
-	onCommit: PropTypes.func,
-	onFocus: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	onKeyUp: PropTypes.func,
-};
-
 const BoxField = props => {
 	const { field, isActive, isForm } = props;
 	const id = useId();
@@ -251,11 +220,5 @@ const BoxField = props => {
 		</Field>
 	);
 }
-
-BoxField.propTypes = {
-	field: PropTypes.object,
-	isActive: PropTypes.bool,
-	isForm: PropTypes.bool,
-};
 
 export default memo(BoxField);

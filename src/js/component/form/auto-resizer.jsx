@@ -1,7 +1,5 @@
 import cx from 'classnames';
 
-import { bool, element, number, oneOfType, string } from 'prop-types';
-
 const AutoResizer = props => {
 	const { vertical, children, content } = props;
 	return (
@@ -10,12 +8,6 @@ const AutoResizer = props => {
 			{ children }
 		</div>
 	)
-}
-
-AutoResizer.propTypes = {
-	children: element.isRequired,
-	content: oneOfType([string, number]),
-	vertical: bool,
 }
 
 export default AutoResizer;

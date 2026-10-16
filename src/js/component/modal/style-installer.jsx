@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
@@ -93,16 +92,6 @@ const StyleItem = memo(props => {
 		</li>
 	);
 });
-
-StyleItem.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	isCore: PropTypes.bool.isRequired,
-	isSelected: PropTypes.bool.isRequired,
-	isInstalled: PropTypes.bool.isRequired,
-	onDelete: PropTypes.func.isRequired,
-	onInstall: PropTypes.func.isRequired,
-	style: PropTypes.object.isRequired
-};
 
 StyleItem.displayName = 'StyleItem';
 

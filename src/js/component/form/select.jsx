@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState, } from 'react';
 import { useSelector } from 'react-redux';
 import { Select, Spinner } from 'web-common/components';
@@ -110,27 +109,5 @@ const SelectInput = forwardRef((props, ref) => {
 });
 
 SelectInput.displayName = 'SelectInput';
-
-SelectInput.propTypes = {
-	autoFocus: PropTypes.bool,
-	className: PropTypes.string,
-	clearable: PropTypes.bool,
-	id: PropTypes.string,
-	inputGroupClassName: PropTypes.string,
-	isBusy: PropTypes.bool,
-	isDisabled: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
-	isRequired: PropTypes.bool,
-	onBlur: PropTypes.func,
-	onCancel: PropTypes.func,
-	onChange: PropTypes.func.isRequired,
-	onCommit: PropTypes.func.isRequired,
-	onFocus: PropTypes.func,
-	options: PropTypes.array.isRequired,
-	placeholder: PropTypes.string,
-	searchable: PropTypes.bool,
-	tabIndex: PropTypes.number,
-	value: PropTypes.string.isRequired,
-};
 
 export default memo(SelectInput);

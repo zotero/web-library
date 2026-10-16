@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import ReactModal from 'react-modal';
 import { createPortal} from 'react-dom';
@@ -86,16 +85,6 @@ const Modal = forwardRef((props, ref) => {
 		</ReactModal>
 	);
 });
-
-Modal.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-	className: PropTypes.string,
-	contentRef: PropTypes.func,
-	isBusy: PropTypes.bool,
-	isOpen: PropTypes.bool,
-	onAfterOpen: PropTypes.func,
-	overlayClassName: PropTypes.string,
-};
 
 Modal.displayName = 'Modal';
 

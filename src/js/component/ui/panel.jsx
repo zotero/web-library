@@ -1,5 +1,4 @@
 import { cloneElement, useRef } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
 
@@ -53,26 +52,6 @@ const Panel = props => {
 			</CSSTransition>
 		</section>
 	);
-}
-
-Panel.propTypes = {
-	bodyClassName: PropTypes.string,
-	children: PropTypes.node,
-	className: PropTypes.string,
-	headerClassName: PropTypes.string,
-	isBackdrop: PropTypes.bool,
-	onClick: PropTypes.func,
-	onKeyDown: PropTypes.func,
-};
-
-PanelBody.propTypes = {
-	children: PropTypes.node,
-	className: PropTypes.string,
-}
-
-PanelHeader.propTypes = {
-	children: PropTypes.node,
-	className: PropTypes.string,
 }
 
 export default Panel;

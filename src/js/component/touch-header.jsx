@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { Fragment, memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from 'web-common/components';
@@ -111,26 +110,5 @@ const TouchHeader = props => {
 		</header>
     );
 }
-
-TouchHeader.propTypes = {
-	className: PropTypes.string,
-	collectionHasChildren: PropTypes.bool,
-	collectionKey: PropTypes.string,
-	isEditing: PropTypes.bool,
-	isModal: PropTypes.bool,
-	isSelectMode: PropTypes.bool,
-	navigationName: PropTypes.string,
-	onNavigate: PropTypes.func,
-	onSelectModeToggle: PropTypes.func,
-	path: PropTypes.array,
-	searchBar: PropTypes.node,
-	selectedItemsCount: PropTypes.number,
-	shouldHideNav: PropTypes.bool,
-	shouldHandleSelectMode: PropTypes.bool,
-	shouldIncludeCollectionOptions: PropTypes.bool,
-	shouldIncludeEditButton: PropTypes.bool,
-	shouldIncludeItemListOptions: PropTypes.bool,
-	shouldIncludeCollectionTrashOptions: PropTypes.bool,
-};
 
 export default memo(TouchHeader);

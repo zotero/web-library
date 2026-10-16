@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { pick } from 'web-common/utils';
 
@@ -34,17 +33,5 @@ const EditableContent = props => {
 		</div>
 	);
 }
-
-EditableContent.propTypes = {
-	display: PropTypes.string,
-	id: PropTypes.string,
-	input: PropTypes.element,
-	inputComponent: PropTypes.elementType,
-	labelId: PropTypes.string,
-	options: PropTypes.array,
-	placeholder: PropTypes.string,
-	title: PropTypes.string,
-	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
 
 export default memo(EditableContent);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useCallback, useRef } from 'react';
 import { List as UpstreamReactWindowList } from 'react-window';
 import { clamp } from 'web-common/utils';
@@ -68,15 +67,6 @@ const ReactWindowList = ({ initialScrollToRow, listRef: listRefFromProps, onRows
 };
 
 ReactWindowList.displayName = 'ReactWindowList';
-ReactWindowList.propTypes = {
-	initialScrollToRow: PropTypes.number,
-	listRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.any }),
-	]),
-	onRowsRendered: PropTypes.func,
-	rowCount: PropTypes.number,
-};
 
 export default ReactWindowList;
 

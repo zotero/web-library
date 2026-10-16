@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, TabPane } from 'web-common/components';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
@@ -184,16 +183,6 @@ const Note = memo(props => {
 });
 
 Note.displayName = 'Note';
-
-Note.propTypes = {
-	isReadOnly: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	noteKey: PropTypes.string,
-	onDelete: PropTypes.func,
-	onDuplicate: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	onSelect: PropTypes.func,
-}
 
 const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
@@ -458,12 +447,6 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 			) }
 		</TabPane>
 	);
-}
-
-Notes.propTypes = {
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default memo(Notes);

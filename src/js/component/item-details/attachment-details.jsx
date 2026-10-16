@@ -1,6 +1,5 @@
 import { memo, Fragment, useCallback, useEffect, useRef, useId, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon, Spinner } from 'web-common/components';
 import { noop } from 'web-common/utils';
 import { useFocusManager, useForceUpdate } from 'web-common/hooks';
@@ -280,12 +279,6 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 		) }
 		</Fragment>
 	);
-}
-
-AttachmentDetails.propTypes = {
-	attachmentKey: PropTypes.string.isRequired,
-	isReadOnly: PropTypes.bool,
-	onEditorFocusBack: PropTypes.func,
 }
 
 export default memo(AttachmentDetails);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -242,11 +241,6 @@ TouchHeaderWrap.variants = {
 	SOURCE: 'SOURCE',
 	SOURCE_AND_ITEM: 'SOURCE_AND_ITEM',
 	ITEM: 'ITEM'
-};
-
-TouchHeaderWrap.propTypes = {
-	className: PropTypes.string,
-	variant: PropTypes.oneOf(Object.values(TouchHeaderWrap.variants)),
 };
 
 export default TouchHeaderWrap;

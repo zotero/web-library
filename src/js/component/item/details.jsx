@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -68,10 +67,5 @@ const ItemDetails = props => {
 		</section>
 	);
 }
-
-ItemDetails.propTypes = {
-	active: PropTypes.bool,
-	device: PropTypes.object,
-};
 
 export default memo(ItemDetails);

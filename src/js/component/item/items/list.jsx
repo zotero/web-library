@@ -4,7 +4,6 @@ import { Spinner } from 'web-common/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'web-common/hooks';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 
 import { abortAllRequests, connectionIssues, fetchSource } from '../../../actions';
 import { get, getRequestTypeFromItemsSource } from '../../../utils';
@@ -159,25 +158,5 @@ const ItemsList = memo(props => {
 });
 
 ItemsList.displayName = 'ItemsList';
-
-ItemsList.propTypes = {
-	collectionKey: PropTypes.string,
-	columnsKey: PropTypes.string,
-	isSearchMode: PropTypes.bool,
-	isSearchModeTransitioning: PropTypes.bool,
-	isSelectMode: PropTypes.bool,
-	itemsSource: PropTypes.string.isRequired,
-	libraryKey: PropTypes.string,
-	selectedItemKeys: PropTypes.arrayOf(PropTypes.string),
-	view: PropTypes.string,
-	pickerNavigate: PropTypes.func,
-	pickerPick: PropTypes.func,
-	pickerMode: PropTypes.number,
-	isTrash: PropTypes.bool,
-	isMyPublications: PropTypes.bool,
-	q: PropTypes.string,
-	qmode: PropTypes.string,
-	tags: PropTypes.array
-};
 
 export default memo(ItemsList);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { forwardRef, memo, useCallback, useEffect, useRef } from 'react';
 import { isTriggerEvent } from 'web-common/utils';
 import { Icon } from 'web-common/components';
@@ -130,20 +129,5 @@ const HeaderRow = memo(forwardRef((props, ref) => {
 }));
 
 HeaderRow.displayName = 'HeaderRow';
-
-HeaderRow.propTypes = {
-	columns: PropTypes.array,
-	handleFocusNext: PropTypes.func,
-	handleFocusPrev: PropTypes.func,
-	isReordering: PropTypes.bool,
-	isResizing: PropTypes.bool,
-	onReorder: PropTypes.func,
-	onResize: PropTypes.func,
-	reorderTarget: PropTypes.object,
-	width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-	onChangeSortOrder: PropTypes.func,
-	sortBy: PropTypes.string,
-	sortDirection: PropTypes.string,
-};
 
 export default HeaderRow;

@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { AutoSizer } from 'react-virtualized-auto-sizer';
 import { useInfiniteLoader } from "react-window-infinite-loader";
@@ -81,28 +80,5 @@ const List = props => {
 		</div>
 	);
 }
-
-List.propTypes = {
-	ariaLabel: PropTypes.string,
-	children: PropTypes.node,
-	containerClassName: PropTypes.string,
-	extraItemData: PropTypes.object,
-	getItemData: PropTypes.func.isRequired,
-	isItemLoaded: PropTypes.func,
-	isReady: PropTypes.bool,
-	itemCount: PropTypes.number.isRequired,
-	listClassName: PropTypes.string,
-	listItemComponent: PropTypes.elementType,
-	listRef: PropTypes.shape({
-		current: PropTypes.object,
-	}),
-	onDoubleClick: PropTypes.func,
-	onLoadMore: PropTypes.func,
-	onSelect: PropTypes.func,
-	role: PropTypes.string,
-	scrollToRow: PropTypes.number,
-	selectedIndexes: PropTypes.array,
-	totalResults: PropTypes.number.isRequired,
-};
 
 export default memo(List);

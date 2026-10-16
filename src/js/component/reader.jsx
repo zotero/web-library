@@ -7,7 +7,6 @@ import { pick, noop } from 'web-common/utils';
 import { getLastPageIndexSettingKey } from '../common/item';
 import { Spinner } from 'web-common/components';
 import { useFloating, flip, shift } from '@floating-ui/react-dom';
-import PropTypes from 'prop-types';
 
 import { annotationItemToJSON } from '../common/annotations';
 import { ERROR_PROCESSING_ANNOTATIONS } from '../constants/actions';
@@ -95,14 +94,6 @@ const PopupPortal = memo(({ anchor, children, onClose }) => {
 });
 
 PopupPortal.displayName = 'PopupPortal';
-PopupPortal.propTypes = {
-	anchor: PropTypes.shape({
-		x: PropTypes.number.isRequired,
-		y: PropTypes.number.isRequired,
-	}),
-	children: PropTypes.node,
-	onClose: PropTypes.func.isRequired,
-};
 
 const readerReducer = (state, action) => {
 	switch (action.type) {

@@ -1,7 +1,6 @@
 export { createElement } from 'react';
 export { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux'
-import PropTypes from 'prop-types';
 import schema from 'zotero-schema/schema.json';
 
 import { JSONtoState } from '../utils/state';
@@ -26,10 +25,3 @@ export const MainWithState = ({ state = {} }) => {
 		</Provider>
 	)
 }
-
-MainWithState.propTypes = {
-	state: PropTypes.oneOfType([
-		PropTypes.object,
-		PropTypes.string
-	])
-};

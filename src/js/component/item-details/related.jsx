@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, TabPane } from 'web-common/components';
@@ -87,12 +86,6 @@ const RelatedItem = memo(props => {
 });
 
 RelatedItem.displayName = 'RelatedItem';
-
-RelatedItem.propTypes = {
-	parentItemKey: PropTypes.string,
-	relatedItem: PropTypes.object,
-	onKeyDown: PropTypes.func,
-}
 
 const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
@@ -233,12 +226,6 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 			</div>
 		</TabPane>
 	);
-}
-
-Related.propTypes = {
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default memo(Related);

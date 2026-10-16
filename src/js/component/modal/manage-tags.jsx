@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/cjs/CSSTransition';
@@ -188,10 +187,6 @@ const ManageTagsModal = () => {
 			</FocusTrap>
 		</Modal>
 	);
-}
-
-ManageTagsModal.propTypes = {
-	items: PropTypes.array,
 }
 
 export default memo(ManageTagsModal);

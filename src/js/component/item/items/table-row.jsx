@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { getEmptyImage, NativeTypes } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
@@ -257,25 +256,6 @@ const TableRow = props => {
 			/>)}
 		</div>
 	);
-};
-
-TableRow.propTypes = {
-	collectionKey: PropTypes.string,
-	columns: PropTypes.array,
-	data: PropTypes.shape({
-		onFileHoverOnRow: PropTypes.func,
-		columns: PropTypes.array,
-	}),
-	index: PropTypes.number,
-	itemsSource: PropTypes.string,
-	libraryKey: PropTypes.string,
-	onFileHoverOnRow: PropTypes.func,
-	pickerMode: PropTypes.bool,
-	pickerNavigate: PropTypes.func,
-	q: PropTypes.string,
-	qmode: PropTypes.string,
-	selectedItemKeys: PropTypes.array,
-	style: PropTypes.object,
 };
 
 export default memo(TableRow);

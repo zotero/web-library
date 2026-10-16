@@ -1,5 +1,4 @@
 import { createContext, useRef, useCallback, memo } from 'react';
-import PropTypes from 'prop-types';
 import { noop } from 'web-common/utils';
 
 export const PortalContext = createContext({});
@@ -27,10 +26,5 @@ const Portal = memo(({ onClose = noop, children }) => {
 });
 
 Portal.displayName = 'Portal';
-
-Portal.propTypes = {
-	onClose: PropTypes.func,
-	children: PropTypes.node.isRequired,
-};
 
 export default Portal;

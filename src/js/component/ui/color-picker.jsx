@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useRef, useState } from 'react';
 import { useFloating, shift } from '@floating-ui/react-dom';
 import { Button, Icon } from 'web-common/components';
@@ -137,15 +136,5 @@ const ColorPicker = props => {
 	</div>
 	);
 }
-
-ColorPicker.propTypes = {
-    colors: PropTypes.array,
-    gridCols: PropTypes.number,
-    onColorPicked: PropTypes.func,
-    onKeyDown: PropTypes.func,
-    selectedColor: PropTypes.string,
-    tabIndex: PropTypes.number,
-	useTagColorLookup: PropTypes.bool
-};
 
 export default memo(ColorPicker);

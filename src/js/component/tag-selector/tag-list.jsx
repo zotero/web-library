@@ -1,6 +1,5 @@
 import {AutoSizer} from 'react-virtualized-auto-sizer';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import {forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useRef, useState,} from 'react';
 import {useDebounce} from "use-debounce";
 import {useDispatch, useSelector} from 'react-redux';
@@ -77,14 +76,6 @@ const TagDotMenu = memo(({onDotMenuToggle, onToggleTagManager, hasColor, isDotMe
 		</Dropdown>
 	);
 });
-
-TagDotMenu.propTypes = {
-	onDotMenuToggle: PropTypes.func,
-	onToggleTagManager: PropTypes.func,
-	hasColor: PropTypes.bool,
-	isDotMenuOpen: PropTypes.bool,
-	tagName: PropTypes.string,
-};
 
 TagDotMenu.displayName = 'TagDotMenu';
 
@@ -193,21 +184,6 @@ const TagListItem = memo(props => {
 
 TagListItem.displayName = 'TagListItem';
 
-TagListItem.propTypes = {
-	className: PropTypes.string,
-	dotMenuFor: PropTypes.string,
-	index: PropTypes.number.isRequired,
-	isManager: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	onDotMenuToggle: PropTypes.func,
-	onFocusJump: PropTypes.func,
-	onFocusNext: PropTypes.func,
-	onFocusPrev: PropTypes.func,
-	style: PropTypes.object,
-	tag: PropTypes.object,
-	toggleTag: PropTypes.func,
-};
-
 const TagListRow = memo(({index, tags, ...rest}) => (
 	<TagListItem
 		index={index}
@@ -219,11 +195,6 @@ const TagListRow = memo(({index, tags, ...rest}) => (
 ));
 
 TagListRow.displayName = 'TagListRow';
-
-TagListRow.propTypes = {
-	tags: PropTypes.array,
-	index: PropTypes.number.isRequired,
-};
 
 // TagList is used in the ManageTags modal and in TouchTagSelector
 const TagList = forwardRef(({toggleTag = noop, isManager = false, ...rest}, ref) => {
@@ -473,11 +444,6 @@ const TagList = forwardRef(({toggleTag = noop, isManager = false, ...rest}, ref)
 });
 
 TagList.displayName = 'TagList';
-
-TagList.propTypes = {
-	isManager: PropTypes.bool,
-	toggleTag: PropTypes.func,
-}
 
 export default memo(TagList);
 export {TagListItem};

@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import {Fragment, memo, useCallback, useEffect, useId, useRef, useState} from 'react';
 import {Button, FocusTrap, Icon} from 'web-common/components';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
@@ -58,14 +57,6 @@ const MetadataRetrievalListItem = props => {
 	);
 }
 
-MetadataRetrievalListItem.propTypes = {
-	className: PropTypes.string,
-	data: PropTypes.object.isRequired,
-	getItemData: PropTypes.func,
-	index: PropTypes.number.isRequired,
-	style: PropTypes.object.isRequired
-};
-
 
 const MetadataRetrievalTitleCell = memo(props => {
 	const {columnName, itemData, labelledById} = props;
@@ -93,18 +84,6 @@ const MetadataRetrievalTitleCell = memo(props => {
 });
 
 MetadataRetrievalTitleCell.displayName = 'MetadataRetrievalTitleCell';
-
-MetadataRetrievalTitleCell.propTypes = {
-	columnName: PropTypes.string.isRequired,
-	itemData: PropTypes.shape({
-		title: PropTypes.string,
-		iconName: PropTypes.string
-	}).isRequired,
-	labelledById: PropTypes.string,
-	colIndex: PropTypes.number,
-	width: PropTypes.string,
-	isLastColumn: PropTypes.bool
-}
 
 const MetadataRetrievalTableRow = memo(props => {
 	const dispatch = useDispatch();
@@ -167,16 +146,6 @@ const MetadataRetrievalTableRow = memo(props => {
 });
 
 MetadataRetrievalTableRow.displayName = 'MetadataRetrievalTableRow';
-MetadataRetrievalTableRow.propTypes = {
-	columns: PropTypes.array,
-	data: PropTypes.object.isRequired,
-	getItemData: PropTypes.func.isRequired,
-	index: PropTypes.number.isRequired,
-	style: PropTypes.object.isRequired,
-	onSelect: PropTypes.func.isRequired,
-	onCancel: PropTypes.func.isRequired,
-	selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired
-}
 
 
 const MetadataRetrievalModal = () => {

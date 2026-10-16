@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { AutoSizer } from 'react-virtualized-auto-sizer';
 import { useInfiniteLoader } from "react-window-infinite-loader";
 import { noop } from 'web-common/utils';
@@ -322,44 +321,5 @@ const Table = props => {
 		</div>
 	)
 }
-
-Table.propTypes = {
-	ariaLabel: PropTypes.string,
-	bodyClassName: PropTypes.string,
-	children: PropTypes.node,
-	columns: PropTypes.arrayOf(PropTypes.shape({
-		field: PropTypes.string.isRequired,
-		fraction: PropTypes.number.isRequired,
-		minFraction: PropTypes.number
-	})).isRequired,
-	containerClassName: PropTypes.string,
-	drop: PropTypes.func,
-	extraItemData: PropTypes.object,
-	getItemData: PropTypes.func.isRequired,
-	handleKeyDown: PropTypes.func,
-	headerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	isItemLoaded: PropTypes.func,
-	isReady: PropTypes.bool,
-	itemCount: PropTypes.number.isRequired,
-	listRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	onChangeSortOrder: PropTypes.func,
-	onColumnsReorder: PropTypes.func,
-	onColumnsResize: PropTypes.func,
-	onDoubleClick: PropTypes.func,
-	onKeyDown: PropTypes.func,
-	onLoadMore: PropTypes.func,
-	onReceiveBlur: PropTypes.func,
-	onReceiveFocus: PropTypes.func,
-	onSelect: PropTypes.func,
-	rowComponent: PropTypes.elementType,
-	sortBy: PropTypes.string,
-	sortDirection: PropTypes.oneOf(['asc', 'desc', null]),
-	scrollToRow: PropTypes.number,
-	selectedIndexes: PropTypes.arrayOf(PropTypes.number),
-	tableClassName: PropTypes.string,
-	tableRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-	totalResults: PropTypes.number.isRequired,
-};
 
 export default memo(Table);

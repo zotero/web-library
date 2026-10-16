@@ -1,6 +1,5 @@
 import { useCallback, useEffect, memo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Button, Icon } from 'web-common/components';
 import { usePrevious, useFocusManager } from 'web-common/hooks';
 
@@ -81,14 +80,6 @@ const Item = memo(({ onChange, identifierIsUrl, isPicked, item, mappings }) => {
 
 Item.displayName = 'Item';
 
-Item.propTypes = {
-	onChange: PropTypes.func.isRequired,
-	identifierIsUrl: PropTypes.bool.isRequired,
-	isPicked: PropTypes.bool.isRequired,
-	item: PropTypes.object.isRequired,
-	mappings: PropTypes.object.isRequired
-};
-
 const IdentifierList = ({ selectedKeys, setSelectedKeys, processedItems }) => {
 	const listRef = useRef(null);
 	const identifierIsUrl = useSelector(state => state.identifier.identifierIsUrl);
@@ -139,12 +130,6 @@ const IdentifierList = ({ selectedKeys, setSelectedKeys, processedItems }) => {
 		</ul>
 	);
 }
-
-IdentifierList.propTypes = {
-	selectedKeys: PropTypes.array.isRequired,
-	setSelectedKeys: PropTypes.func.isRequired,
-	processedItems: PropTypes.array
-};
 
 const IdentifierPicker = () => {
 	const dispatch = useDispatch();

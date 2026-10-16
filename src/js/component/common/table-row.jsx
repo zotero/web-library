@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { memo, useCallback, useId, useRef } from 'react';
 import { TitleCell, AttachmentCell, GenericDataCell, PlaceholderCell } from './table-cell';
 
@@ -118,28 +117,6 @@ const TableRow = props => {
 			/>)}
 		</div>
 	);
-};
-
-TableRow.propTypes = {
-	className: PropTypes.string,
-	columns: PropTypes.arrayOf(PropTypes.shape({
-		field: PropTypes.string.isRequired
-	})).isRequired,
-	data: PropTypes.shape({
-		columns: PropTypes.arrayOf(PropTypes.shape({
-			field: PropTypes.string.isRequired
-		})).isRequired,
-		selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
-		getItemData: PropTypes.func.isRequired,
-		onSelect: PropTypes.func,
-		onDoubleClick: PropTypes.func
-	}).isRequired,
-	getItemData: PropTypes.func.isRequired,
-	index: PropTypes.number.isRequired,
-	onDoubleClick: PropTypes.func,
-	onSelect: PropTypes.func,
-	selectedIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
-	style: PropTypes.object
 };
 
 export default memo(TableRow);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { memo, useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useDispatch, useSelector } from 'react-redux';
@@ -157,10 +156,6 @@ const AddByIdentifier = props => {
 			</PopoverDialog>
 		</Popover>
 	);
-}
-
-AddByIdentifier.propTypes = {
-	onKeyDown: PropTypes.func,
 }
 
 export default memo(AddByIdentifier);

@@ -45,6 +45,8 @@ export default [
 			// React Hooks recommended
 			"react-hooks/rules-of-hooks": "error",
 			"react-hooks/exhaustive-deps": "warn",
+
+			"react/prop-types": "off",
 		},
 	},
 	// Jest settings for tests
@@ -62,6 +64,7 @@ export default [
 		rules: {
 			...(reactPlugin.configs?.recommended?.rules ?? {}),
 			...(jestDom.configs?.recommended?.rules ?? {}),
+			"react/prop-types": "off",
 		},
 	},
 	// Build tools (/scripts)

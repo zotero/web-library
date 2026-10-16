@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { TabPane } from 'web-common/components';
 import { pick } from 'web-common/utils';
 
@@ -47,12 +46,6 @@ const StandaloneNote = ({ id, isActive, isReadOnly, ...rest }) => {
 			/>
 		</TabPane>
 	);
-}
-
-StandaloneNote.propTypes = {
-	id: PropTypes.string,
-	isActive: PropTypes.bool,
-	isReadOnly: PropTypes.bool,
 }
 
 export default StandaloneNote;
