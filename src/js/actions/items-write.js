@@ -1169,6 +1169,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 				const newItem = newItems[index];
 				const skipChildItems = newItem.itemType === 'annotation'
 					|| newItem.linkMode === 'embedded_image'
+					|| newItem.linkMode === 'linked_url'
 					|| (newItem.itemType === 'attachment' && !Object.keys(READER_CONTENT_TYPES).includes(newItem.contentType));
 
 				if (skipChildItems) {
