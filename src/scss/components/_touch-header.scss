@@ -24,4 +24,13 @@
 			margin-left: variables.$space-md;
 		}
 	}
+
+	// A long previous title can extend underneath the empty part of the right toolbar
+	.toolbar-right {
+		pointer-events: none;
+
+		> * {
+			pointer-events: auto;
+		}
+	}
 }

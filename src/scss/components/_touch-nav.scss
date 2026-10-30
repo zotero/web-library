@@ -3,6 +3,11 @@
 @use "../themes/common";
 
 .touch-nav {
+	// Read by touch-navigation.jsx to lay out the current and previous titles
+	--touch-nav-edge: #{variables.$default-padding-x-touch};
+	--touch-nav-gap: #{variables.$space-sm};
+	--touch-nav-previous-offset: #{variables.$default-padding-x-touch + variables.$space-md};
+
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -38,7 +43,36 @@
 		transform: translate3d(-50%, 0, 0);
 		display: flex;
 		align-items: center;
-		max-width: calc((100% - 4 * #{variables.$default-padding-x-touch}) / 3 - 4px); // Todo: see #73
+	}
+
+	.title {
+		position: relative;
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	.label,
+	.back-label {
+		transition: opacity variables.$nav-transition;
+
+		.search-cancel & {
+			transition: none;
+		}
+	}
+
+	.back-label,
+	.collapsed .label {
+		position: absolute;
+		left: 0;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.collapsed .back-label {
+		position: static;
+		opacity: 1;
+		pointer-events: auto;
 	}
 
 	.center-axis,
@@ -82,7 +116,7 @@
 		color: common.$touch-header-link-color;
 
 		.center-axis {
-			transform: translate3d((variables.$default-padding-x-touch + variables.$space-md), 0, 0);
+			transform: translate3d(var(--touch-nav-previous-offset), 0, 0);
 		}
 
 		.inner {
@@ -91,13 +125,25 @@
 		}
 	}
 
+	// The outgoing title fades out with a short lateral movement and only then moves out of view.
+	// Leaving this slot, `.title` snaps back into place while still invisible.
 	.next {
 		transform: translate3d(100%, 0, 0);
 		opacity: 0;
-		transition: transform variables.$nav-transition, opacity variables.$nav-transition;
+		pointer-events: none;
+		transition: transform 0s variables.$nav-transition-duration, opacity variables.$nav-transition;
 
 		.search-cancel & {
 			transition: none;
+		}
+
+		.title {
+			transform: translate3d(variables.$space-xl, 0, 0);
+			transition: transform variables.$nav-transition;
+
+			.search-cancel & {
+				transition: none;
+			}
 		}
 	}
 
@@ -125,5 +171,9 @@
 		.icon {
 			vertical-align: top;
 		}
+	}
+
+	&.no-transition * {
+		transition: none;
 	}
 }

@@ -16,7 +16,7 @@ export function getPort(increment = 0) {
 	return (process.env.PORT ?? 8100) + increment;
 }
 
-export async function getServer(stateRawOrName, port, customHandlers = []) {
+export async function getServer(stateRawOrName, port, customHandlers = [], { patchState = state => state } = {}) {
 	if (typeof customHandlers === 'function') {
 		customHandlers = [customHandlers];
 	}
@@ -24,7 +24,7 @@ export async function getServer(stateRawOrName, port, customHandlers = []) {
 		await fs.readFile(join(ROOT, 'test', 'fixtures', 'state', `${stateRawOrName}.json`), 'utf-8') :
 		stateRawOrName;
 
-	let statePatched = getPatchedState(JSON.parse(stateRaw), 'config.apiConfig', {
+	let statePatched = getPatchedState(patchState(JSON.parse(stateRaw)), 'config.apiConfig', {
 		apiAuthorityPart: `localhost:${port}`, apiPath: 'api/', apiScheme: 'http'
 	});
 	statePatched = getPatchedState(statePatched, 'config', {

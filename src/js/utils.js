@@ -397,6 +397,13 @@ const getScrollContainerPageCount = (itemEl, containerEl) => {
 	return Math.floor(containerHeight / itemHeight);
 }
 
+// Reads a px value, e.g. a custom property, from a CSSStyleDeclaration, 0 if it's missing
+const readPx = (style, property) => parseFloat(style.getPropertyValue(property)) || 0;
+
+// Natural width of an element's text, 0 if there is no element. scrollWidth is rounded, the extra
+// pixel keeps text with a fractional width from being truncated.
+const getTextWidth = element => element ? element.scrollWidth + 1 : 0;
+
 // https://github.com/zotero/zotero/blob/5bb2486040fa1fc617c81b4aea756ba338584f6b/chrome/content/zotero/bindings/itembox.xml#L428-L440
 const getDOIURL = doi => 'https://doi.org/'
 									// Encode some characters that are technically valid in DOIs,
@@ -634,6 +641,7 @@ export {
 	getRequestTypeFromItemsSource,
 	getScrollContainerPageCount,
 	getSortKeyValue,
+	getTextWidth,
 	getUniqueId,
 	getUserDisplayName,
 	indexByGeneratedKey,
@@ -649,6 +657,7 @@ export {
 	openDelayedURL,
 	parseBase64File,
 	processIdentifierMultipleItems,
+	readPx,
 	removeRelationByItemKey,
 	resizeVisibleColumns,
 	reverseMap,
