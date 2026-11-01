@@ -63,10 +63,11 @@ export default defineConfig({
 			},
 		},
 		{
-			name: 'Mobile iPad Pro Landscape',
+			name: 'Mobile iPad Pro 12.9 Landscape',
 			testMatch: /.*\.mobile\.test\.js/,
 			use: {
 				...devices['iPad Pro 11 landscape'],
+				viewport: {width: 1366, height: 1024},
 				...commonContextDesc,
 			},
 		},

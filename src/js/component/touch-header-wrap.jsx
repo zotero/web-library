@@ -191,7 +191,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 		break;
 	}
 
-	const shouldHideNav = (shouldIncludeEditButton && isEditing) ||
+	const shouldHideNav = (shouldIncludeEditButton && isEditing && !drilldownNode) ||
 		(shouldHandleSelectMode && isSelectMode) ||
 		(shouldIncludeCollectionTrashOptions && variant === TouchHeaderWrap.variants.ITEM);
 

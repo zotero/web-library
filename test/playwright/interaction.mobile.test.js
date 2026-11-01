@@ -4,6 +4,18 @@ import { isSingleColumn } from '../utils/common.js';
 
 const DOGS_COLLECTION_KEY = 'WTTJ2J56';
 
+// Phones, tablets and large tablets each render the item touch header in a differently named navigation.
+// Large tablets also show a separate "Items" navigation next to it.
+const getItemNavigation = page => {
+	if(isSingleColumn(test.info())) {
+		return page.getByRole('navigation', { name: 'Main' });
+	}
+	if(page.viewportSize().width >= 1200) {
+		return page.getByRole('navigation', { name: 'Item Details' });
+	}
+	return page.getByRole('navigation', { name: 'Items' });
+};
+
 const withDogsCollectionName = name => ({
 	patchState: state => {
 		state.libraries.u1.dataObjects[DOGS_COLLECTION_KEY].name = name;
@@ -128,4 +140,32 @@ test.describe('Mobile Interaction', () => {
 		expect(currentBox.x).toBeGreaterThan(previousBox.x + previousBox.width);
 		expect(currentBox.x + currentBox.width / 2).toBeGreaterThan(navBox.x + navBox.width / 2);
 	});
+
+	for (const { type, fixture, key, label } of [
+		{ type: 'note', fixture: 'mobile-test-user-item-with-notes-edit', key: 'WEH38V9X', label: 'Note' },
+		{ type: 'attachment', fixture: 'mobile-test-user-item-details-view-edit', key: '37V7V4NT', label: 'Attachment' },
+	]) {
+		test(`Touch header shows "Back" when ${type} is opened in edit mode`, async ({ page, serverPort }) => {
+			server = await loadFixtureState(fixture, serverPort, page);
+
+			const nav = getItemNavigation(page);
+			const doneButton = page.getByRole('button', { name: 'Done' });
+			await expect(doneButton).toBeVisible();
+			await expect(nav).not.toBeVisible();
+
+			const row = page.locator(`.${type}[data-key="${key}"]`);
+			await row.scrollIntoViewIfNeeded();
+			await row.tap();
+			await expect(page).toHaveURL(new RegExp(`/${type}/${key}/`));
+
+			await expect(nav.locator('.previous .label')).toHaveText('Back');
+			await expect(nav.locator('.current .label')).toHaveText(label);
+			await expect(doneButton).toBeVisible();
+
+			await nav.locator('.previous .title').tap();
+			await expect(page).not.toHaveURL(new RegExp(`/${type}/`));
+			await expect(doneButton).toBeVisible();
+			await expect(nav).not.toBeVisible();
+		});
+	}
 });
