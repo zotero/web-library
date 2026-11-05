@@ -441,13 +441,6 @@
 				transform: translate3d(0, 0, 0);
 			}
 
-			// Always translate root level on phones
-			.view-item-list-active & {
-				@include breakpoints.bp-down(xs) {
-					transform: translate3d(-25%, 0, 0);
-				}
-			}
-
 			.scroll-container-touch {
 				overflow: hidden; // Prevent scrolling of inactive levels
 				height: 100%;
@@ -455,6 +448,14 @@
 				@include selectors.state(".level-root.active") {
 					overflow: scroll;
 				}
+			}
+		}
+
+		// On phones, slide the visible level out as the item list slides in. Root level is never active in this view
+		// and nested levels move with it, so this doubles its offset.
+		@include selectors.state(".view-item-list-active .collection-tree") {
+			@include breakpoints.bp-down-normalized(xs) {
+				transform: translate3d(-50%, 0, 0);
 			}
 		}
 	}

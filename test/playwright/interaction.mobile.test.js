@@ -85,6 +85,19 @@ test.describe('Mobile Interaction', () => {
 		await expect(menuItem).not.toBeVisible();
 	});
 
+	test('Collection tree level slides out as the item list slides in', async ({ page, serverPort }) => {
+		test.skip(!isSingleColumn(test.info()), 'Item list covers the collection tree only on phones');
+		server = await loadFixtureState('mobile-test-user-library-view', serverPort, page);
+
+		const level = page.locator('.collection-tree .level-1');
+		const getLevelX = () => level.evaluate(element => element.getBoundingClientRect().x);
+		await expect.poll(getLevelX).toBe(0);
+
+		await page.getByRole('treeitem', { name: 'All Items' }).tap();
+		await expect(page).toHaveURL(/\/item-list$/);
+		await expect.poll(getLevelX).toBeCloseTo(-page.viewportSize().width / 4, 0);
+	});
+
 	test('Item details renders as sections without tab semantics', async ({ page, serverPort }) => {
 		server = await loadFixtureState('mobile-test-user-item-details-view', serverPort, page);
 		await expect(page.getByRole('heading', { name: 'Cooperative pathfinding' })).toBeVisible();
