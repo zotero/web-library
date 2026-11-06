@@ -79,6 +79,9 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 				if(ev.shiftKey || isSingleLine) {
 					hasBeenCommitted.current = true;
 					onCommit(value, value !== initialValue, ev);
+				} else {
+					// line break, not a commit -- keep it away from ancestors that act on Enter
+					ev.stopPropagation();
 				}
 			break;
 		default:

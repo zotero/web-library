@@ -110,9 +110,10 @@ const ItemDetailsTabs = () => {
 				ev.preventDefault();
 			}
 		}
-		if(ev.key === 'Escape') {
+		// Escape anywhere, or Enter that commits an editable, returns focus to the items table
+		if(ev.key === 'Escape' || (ev.key === 'Enter' && ev.target.classList.contains('editable-control'))) {
 			//@TODO: do this in a more elegant way
-			document.querySelector('.items-table[tabIndex="0"]').focus();
+			document.querySelector('.items-table[tabIndex="0"]')?.focus();
 		}
 	}, []);
 

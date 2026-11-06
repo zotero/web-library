@@ -102,6 +102,69 @@ test.describe('Desktop Interaction', () => {
 		await expect(page.getByRole('tab', {name: 'Tags'})).toBeFocused();
 	});
 
+	for (const fieldKey of ['url', 'publisher']) {
+		test(`Enter commit in the ${fieldKey} field returns focus to the items table`, async ({ page, serverPort }) => {
+			const gate = makeGate();
+			const patchHandler = (req, resp) => {
+				if (req.method !== 'PATCH' || !req.url.startsWith('/api/users/1/items/VR82JUX8')) {
+					return false;
+				}
+				gate.ready.then(() => {
+					resp.statusCode = 204;
+					resp.setHeader('Last-Modified-Version', '100000');
+					resp.end();
+				});
+				return true;
+			};
+			server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [patchHandler]);
+			const field = page.locator(`[data-key="${fieldKey}"]`);
+			const row = page.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' });
+
+			await field.locator('.editable').click();
+			await expect(field.locator('.editable-control')).toBeFocused();
+			await page.keyboard.type('Example');
+
+			const patchRequest = page.waitForRequest(req => req.method() === 'PATCH');
+			await page.keyboard.press('Enter');
+			await patchRequest;
+			await expect(row).toBeFocused();
+
+			gate.release();
+			await expect(field.locator('.editable-control')).toHaveCount(0);
+			await expect(row).toBeFocused();
+		});
+	}
+
+	test('Enter in a multi-line item pane field inserts a line break, Shift+Enter commits', async ({ page, serverPort }) => {
+		const patchHandler = (req, resp) => {
+			if (req.method !== 'PATCH' || !req.url.startsWith('/api/users/1/items/VR82JUX8')) {
+				return false;
+			}
+			resp.statusCode = 204;
+			resp.setHeader('Last-Modified-Version', '100000');
+			resp.end();
+			return true;
+		};
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [patchHandler]);
+		const textarea = page.locator('[data-key="extra"] textarea');
+		const row = page.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' });
+		const patchRequests = [];
+		page.on('request', req => req.method() === 'PATCH' && patchRequests.push(req));
+
+		await page.locator('[data-key="extra"] .editable').click();
+		await expect(textarea).toBeFocused();
+		await textarea.evaluate(el => el.setSelectionRange(el.value.length, el.value.length));
+		await page.keyboard.press('Enter');
+		await page.keyboard.type('Second line');
+		await expect(textarea).toBeFocused();
+		await expect(textarea).toHaveValue('Publisher: Am Vet Med Assoc\nSecond line');
+
+		await page.keyboard.press('Shift+Enter');
+		await expect(row).toBeFocused();
+		await expect(textarea).toHaveCount(0);
+		expect(patchRequests).toHaveLength(1);
+	});
+
 	test('Navigate through attachments pane using keyboard', async ({ page, serverPort }) => {
 		const handlers = [
 			makeTextHandler('/api/users/1/items/37V7V4NT/file/view/url', 'https://files.zotero.net/abcdefgh/18726.html'),
