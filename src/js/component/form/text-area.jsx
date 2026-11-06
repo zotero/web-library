@@ -70,15 +70,15 @@ const TextAreaInput = memo(forwardRef((props, ref) => {
 	}, [onFocus, selectOnFocus]);
 
 	const handleKeyDown = useCallback(ev => {
-		switch (event.key) {
+		switch (ev.key) {
 			case 'Escape':
 				onCancel(value !== initialValue, ev);
 				hasBeenCancelled.current = true;
 			break;
 			case 'Enter':
-				if(event.shiftKey || isSingleLine) {
-					onCommit(value, value !== initialValue, ev);
+				if(ev.shiftKey || isSingleLine) {
 					hasBeenCommitted.current = true;
+					onCommit(value, value !== initialValue, ev);
 				}
 			break;
 		default:

@@ -163,6 +163,7 @@ const Input = memo(forwardRef((props, ref) => {
 				if(suggestions && suggestions.length && !hasCancelledSuggestions) {
 					const newValue = suggestions[highlighted] || value;
 					setValue(newValue);
+					hasBeenCommitted.current = true;
 					onCommit(newValue, newValue !== initialValue, ev, inputRef.current);
 				} else {
 					hasBeenCommitted.current = true;

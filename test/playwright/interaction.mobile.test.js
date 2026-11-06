@@ -181,4 +181,31 @@ test.describe('Mobile Interaction', () => {
 			await expect(nav).not.toBeVisible();
 		});
 	}
+
+	test('Pressing Enter in a text field in edit mode saves the item once', async ({ page, serverPort }) => {
+		const patches = [];
+		const patchHandler = (req, resp) => {
+			if (req.method !== 'PATCH' || !req.url.startsWith('/api/users/1/items/3JCLFUG4')) {
+				return false;
+			}
+			patches.push(req.url);
+			resp.statusCode = 204;
+			resp.setHeader('Last-Modified-Version', `${410 + patches.length}`);
+			resp.end();
+			return true;
+		};
+		server = await loadFixtureState('mobile-test-user-item-details-view-edit', serverPort, page, patchHandler);
+
+		const title = page.locator('[data-key="title"] textarea');
+		await title.tap();
+		await title.fill('Cooperative pathfinding revisited');
+		const patchRequest = page.waitForRequest(req => req.method() === 'PATCH');
+		await title.press('Enter');
+		await patchRequest;
+
+		// Every queued save keeps the field busy, so a duplicate save would be sent before it settles
+		await expect(page.locator('[data-key="title"] .busy')).toHaveCount(0);
+		expect(patches).toHaveLength(1);
+		await expect(title).toHaveValue('Cooperative pathfinding revisited');
+	});
 });
