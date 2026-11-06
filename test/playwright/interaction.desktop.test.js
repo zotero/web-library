@@ -1,5 +1,6 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
+import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
+import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' assert { type: 'json' };
 import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' assert { type: 'json' };
 import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' assert { type: 'json' };
 
@@ -285,6 +286,39 @@ test.describe('Desktop Interaction', () => {
 
 		// Focus should return to the collection treeitem
 		await expect(page.getByRole('treeitem', { name: 'AI' })).toBeFocused();
+	});
+
+	test('Tabbing away while a new subcollection is saving does not cancel it', async ({ page, serverPort }) => {
+		const gate = makeGate();
+		let postCount = 0;
+		page.on('request', request => {
+			if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/users/1/collections') {
+				postCount++;
+			}
+		});
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [
+			makeGatedHandler('/api/users/1/collections', testUserAddCollection, gate)
+		]);
+
+		const dogsTreeItem = page.getByRole('treeitem', { name: 'Dogs' });
+		await dogsTreeItem.hover();
+		await dogsTreeItem.getByTitle('More').first().click();
+		await page.getByRole('menuitem', { name: 'New Subcollection' }).click();
+		const newCollectionInput = page.locator('.new-collection input');
+		await expect(newCollectionInput).toBeFocused();
+
+		await page.keyboard.type('Irish Setter');
+		await page.keyboard.press('Enter');
+		await expect.poll(() => postCount).toBe(1);
+
+		await page.keyboard.press('Tab');
+		await expect(newCollectionInput).toBeAttached();
+		await expect(newCollectionInput).not.toBeFocused();
+
+		gate.release();
+		await expect(page.locator('[data-collection-key="COL12345"]')).toBeFocused();
+		await expect(newCollectionInput).not.toBeAttached();
+		expect(postCount).toBe(1);
 	});
 
 	test('Navigate through items table using keyboard', async ({ page, serverPort }) => {

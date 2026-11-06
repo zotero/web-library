@@ -142,21 +142,19 @@ ItemsNode.displayName = 'ItemsNode';
 const VirtualCollectionNode = memo(props => {
 	const { cancelAdd, commitAdd, focusBySelector, pickerMode, level, parentCollectionKey,
 	parentLibraryKey, virtual, } = props;
-	const shouldIgnoreNextBlur = useRef(false);
 
 	const handleEditableCommit = useCallback(async (newValue) => {
-		shouldIgnoreNextBlur.current = true;
+		// Input commits again on blur or a repeated Enter while the request is in flight
+		if (virtual?.isBusy) {
+			return;
+		}
 		const newCollection = await commitAdd(parentLibraryKey, parentCollectionKey, newValue);
 		if (newCollection) {
 			setTimeout(() => {
 				focusBySelector(`[data-collection-key="${newCollection.key}"]`);
 			}, 0);
 		}
-	}, [focusBySelector, commitAdd, parentCollectionKey, parentLibraryKey]);
-
-	const handleBlur = useCallback(() => {
-		return shouldIgnoreNextBlur.current;
-	}, []);
+	}, [focusBySelector, commitAdd, parentCollectionKey, parentLibraryKey, virtual]);
 
 	const handleCancel = useCallback((_hasChanged, ev) => {
 		const inputEl = ev.currentTarget;
@@ -215,7 +213,6 @@ const VirtualCollectionNode = memo(props => {
 				autoFocus
 				isActive={ true }
 				isBusy={ virtual.isBusy }
-				onBlur={ handleBlur }
 				onCancel={ handleCancel }
 				onCommit={ handleEditableCommit }
 				value=""

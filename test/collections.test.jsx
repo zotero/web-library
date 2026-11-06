@@ -20,6 +20,22 @@ import testuserAddCollection from './fixtures/response/test-user-add-collection.
 const state = JSONtoState(stateRaw);
 const stateSearch = JSONtoState(stateSearchRaw);
 
+const makeAddCollectionResponse = (key, name) => ({
+	successful: {
+		"0": {
+			key,
+			version: 158,
+			library: { type: "user", id: 1, name: "testuser", links: {} },
+			links: {},
+			meta: { numCollections: 0, numItems: 0 },
+			data: { key, version: 158, name, parentCollection: false, relations: {} }
+		}
+	},
+	success: { "0": key },
+	unchanged: {},
+	failed: {}
+});
+
 describe('Test User: Collections', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
@@ -140,6 +156,66 @@ describe('Test User: Collections', () => {
 		expect(await screen.findByRole('treeitem', { name: 'Physics' })).toBeInTheDocument();
 		expect(hasBeenPosted).toBe(true);
 		await waitFor(() => expect(screen.getByRole('treeitem', { name: 'Physics' })).toHaveFocus());
+	});
+
+	test('Blur or repeated Enter while a new collection is saving neither cancels nor posts again', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const myLibraryTreeItem = screen.getByRole('treeitem', { name: 'My Library' });
+		await user.click(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' }));
+		const newCollectionTextBox = await screen.findByRole('textbox', { name: 'New Collection' });
+
+		let postCount = 0;
+		let release;
+		const gate = new Promise(resolve => { release = resolve; });
+		server.use(
+			http.post('https://api.zotero.org/users/1/collections', async () => {
+				postCount++;
+				await gate;
+				return HttpResponse.json(makeAddCollectionResponse('NEWCOL01', 'Physics'));
+			}),
+		);
+
+		await user.type(newCollectionTextBox, 'Physics{enter}', { skipClick: true });
+		await waitFor(() => expect(postCount).toBe(1));
+		await user.keyboard('{enter}');
+		await user.tab();
+		expect(newCollectionTextBox).not.toHaveFocus();
+		expect(newCollectionTextBox).toBeInTheDocument();
+
+		release();
+		await waitFor(() => expect(screen.queryByRole('textbox', { name: 'New Collection' })).not.toBeInTheDocument());
+		await waitFor(() => expect(screen.getByRole('treeitem', { name: 'Physics' })).toHaveFocus());
+		expect(postCount).toBe(1);
+	});
+
+	test('New collection commits on blur after another collection has been added', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const postedNames = [];
+		server.use(
+			http.post('https://api.zotero.org/users/1/collections', async ({ request }) => {
+				const [collection] = await request.json();
+				postedNames.push(collection.name);
+				return HttpResponse.json(makeAddCollectionResponse(`NEWCOL0${postedNames.length}`, collection.name));
+			}),
+		);
+
+		const myLibraryTreeItem = screen.getByRole('treeitem', { name: 'My Library' });
+		await user.click(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' }));
+		await user.type(await screen.findByRole('textbox', { name: 'New Collection' }), 'Physics{enter}', { skipClick: true });
+		await waitFor(() => expect(screen.getByRole('treeitem', { name: 'Physics' })).toHaveFocus());
+
+		await user.click(getByRole(myLibraryTreeItem, 'button', { name: 'Add Collection' }));
+		await user.type(await screen.findByRole('textbox', { name: 'New Collection' }), 'Chemistry', { skipClick: true });
+		await user.tab();
+		await waitFor(() => expect(screen.queryByRole('textbox', { name: 'New Collection' })).not.toBeInTheDocument());
+		expect(screen.getByRole('treeitem', { name: 'Chemistry' })).toBeInTheDocument();
+		expect(postedNames).toEqual(['Physics', 'Chemistry']);
 	});
 
 	test('Rename a collection using "More" menu', async () => {
