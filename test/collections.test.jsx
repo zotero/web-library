@@ -36,6 +36,15 @@ const makeAddCollectionResponse = (key, name) => ({
 	failed: {}
 });
 
+const makeEmptyTopItemsHandlers = baseUrl => [
+	http.get(`${baseUrl}/items/top`, () => {
+		return HttpResponse.json([], { headers: { 'Total-Results': '0' } });
+	}),
+	http.get(`${baseUrl}/items/top/tags`, () => {
+		return HttpResponse.json([], { headers: { 'Total-Results': '0' } });
+	}),
+];
+
 describe('Test User: Collections', () => {
 	const handlers = [];
 	const server = setupServer(...handlers)
@@ -360,6 +369,50 @@ describe('Test User: Collections', () => {
 		await waitForPosition();
 		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
 		expect(dogsTreeItem).not.toHaveAttribute('aria-expanded');
+	});
+
+	test('Selected collection in trash, with all its siblings in trash, renders the tree', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/HNLXYCXS/item-list' });
+		server.use(...makeEmptyTopItemsHandlers('https://api.zotero.org/users/1/collections/HNLXYCXS'));
+		let modifiedState = getPatchedState(state, 'libraries.u1.dataObjects.HNLXYCXS', { deleted: 1 });
+		modifiedState = getPatchedState(modifiedState, 'libraries.u1.dataObjects.9WZDZ7YA', { deleted: 1 });
+		renderWithProviders(<MainZotero />, { preloadedState: modifiedState });
+		await waitForPosition();
+		expect(screen.getByRole('treeitem', { name: 'Dogs' })).toBeInTheDocument();
+		expect(screen.queryByRole('treeitem', { name: 'Border Collie' })).not.toBeInTheDocument();
+	});
+
+	test('Trash a collection while its subcollection is selected', async () => {
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/HNLXYCXS/item-list' });
+		server.use(...makeEmptyTopItemsHandlers('https://api.zotero.org/users/1/collections/HNLXYCXS'));
+		const libVer = state.libraries.u1.sync.version;
+		const user = userEvent.setup();
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const dogsTreeItem = screen.getByRole('treeitem', { name: 'Dogs' });
+		await user.click(getByRole(dogsTreeItem, 'button', { name: 'More' }));
+		const deleteOpt = await screen.findByRole('menuitem', { name: 'Delete' });
+
+		server.use(
+			http.post('https://api.zotero.org/users/1/collections', async ({ request }) => {
+				const collections = await request.json();
+				expect(collections.map(c => c.key).sort()).toEqual(['9WZDZ7YA', 'HNLXYCXS', 'WTTJ2J56']);
+				const success = {}, successful = {};
+				collections.forEach(({ key }, index) => {
+					success[index] = key;
+					successful[index] = { key, version: libVer, data: { ...state.libraries.u1.dataObjects[key], deleted: 1 } };
+				});
+				return HttpResponse.json({ success, successful });
+			}),
+			...makeEmptyTopItemsHandlers('https://api.zotero.org/users/1'),
+		);
+
+		await user.click(deleteOpt);
+		await waitFor(() => expect(screen.queryByRole('treeitem', { name: 'Dogs' })).not.toBeInTheDocument());
+		expect(screen.getByRole('treeitem', { name: 'Algorithms' })).toBeInTheDocument();
+		expect(screen.getByRole('treeitem', { name: 'My Library', selected: true })).toBeInTheDocument();
+		expect(window.location.pathname).toBe('/testuser');
 	});
 
 	["Windows", "MacOS"].forEach((platform) => {

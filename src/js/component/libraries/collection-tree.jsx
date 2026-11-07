@@ -59,7 +59,8 @@ const makeDerivedData = (collections = {}, path = [], opened, isTouchOrSmall) =>
 	}, {});
 
 	if(selectedParentKey) {
-		const selectedSiblingKeys = childLookup[selectedParentKey];
+		// trashed collections are not in the lookup, so the selected one may have no live siblings
+		const selectedSiblingKeys = childLookup[selectedParentKey] ?? [];
 		selectedSiblingKeys.forEach(siblingKey => derivedData[siblingKey].selectedDepth = 0);
 	}
 
@@ -317,8 +318,8 @@ LevelWrapper.displayName = 'LevelWrapper';
 
 
 const DotMenu = memo(props => {
-	const { collection, dotMenuFor, focusBySelector, isReadOnly, opened, parentLibraryKey, setDotMenuFor, setOpened, setRenaming,
-		addVirtual } = props;
+	const { collection, dotMenuFor, focusBySelector, getParents, isReadOnly, opened, parentLibraryKey, setDotMenuFor, setOpened,
+		setRenaming, addVirtual } = props;
 	const dispatch = useDispatch();
 	const toggleRef = useRef(null);
 	const currentLibraryKey = useSelector(state => state.current.libraryKey);
@@ -380,14 +381,18 @@ const DotMenu = memo(props => {
 
 		dispatch(chunkedUpdateCollectionsTrash([collection.key], parentLibraryKey, 1));
 
-		if(currentLibraryKey === parentLibraryKey && collection.key === currentCollectionKey) {
+		// subcollections are trashed along with the collection
+		const isCurrentCollectionTrashed = currentLibraryKey === parentLibraryKey &&
+			[currentCollectionKey, ...getParents(currentCollectionKey)].includes(collection.key);
+
+		if(isCurrentCollectionTrashed) {
 			if(collection.parentCollection) {
 				dispatch(navigate({ library: currentLibraryKey, collection: collection.parentCollection }, true));
 			} else {
 				dispatch(navigate({ library: currentLibraryKey }, true));
 			}
 		}
-	}, [dispatch, focusBySelector, collection, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
+	}, [dispatch, focusBySelector, collection, getParents, parentLibraryKey, currentLibraryKey, currentCollectionKey]);
 
 	const handleSubcollectionClick = useCallback(ev => {
 		if(!isTriggerEvent(ev)) {
@@ -761,6 +766,7 @@ const CollectionNode = memo(props => {
 						{pickerMode ? null : (
 							<DotMenu
 								collection = { collection }
+								getParents = { getParents }
 								setRenaming = { setRenaming }
 								parentLibraryKey = { parentLibraryKey }
 								isReadOnly={isReadOnly}
