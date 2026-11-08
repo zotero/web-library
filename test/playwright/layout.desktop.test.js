@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, loadFixtureState} from "../utils/fixed-state-server.js";
+import {closeServer, loadFixtureState, makeCustomHandler} from "../utils/fixed-state-server.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -19,6 +19,28 @@ const seedColumnOrder = async (page, leftMostColumnName) => {
 	await page.addInitScript(({columns, version}) => {
 		window.localStorage.setItem('zotero-web-library-prefs', JSON.stringify({columns, version}));
 	}, {columns, version});
+};
+
+// Seed localStorage with the "Stacked Layout" preference (plus the current app version) before boot
+const seedStackedLayout = async page => {
+	const {version} = JSON.parse(await fs.readFile(join(ROOT, 'data/version.json'), 'utf-8'));
+	await page.addInitScript(({version}) => {
+		window.localStorage.setItem('zotero-web-library-prefs', JSON.stringify({layout: 'stacked', version}));
+	}, {version});
+};
+
+// Underscores offer no line break opportunity, so the filename can only wrap anywhere
+const longFilename = 'Attention_Is_All_You_Need_Vaswani_Shazeer_Parmar_Uszkoreit_Jones_Gomez_Kaiser_Polosukhin_NeurIPS_2017.pdf';
+const veryLongTitle = 'A very long attachment title that keeps going and going to describe every single detail of the document it belongs to, including the conference, the authors, the year, the edition, the chapter and a few more words for good measure so that it wraps over many lines';
+
+const getBottom = async locator => {
+	const box = await locator.boundingBox();
+	return box.y + box.height;
+};
+
+const getRight = async locator => {
+	const box = await locator.boundingBox();
+	return box.x + box.width;
 };
 
 const probeItemTypeIcon = page => page.evaluate(() => {
@@ -219,5 +241,154 @@ test.describe('Desktop Layout', () => {
 		await expect(page.locator('html')).not.toHaveClass(/stacked-layout/);
 		expect(await items.evaluate(el => getComputedStyle(el).flexDirection)).toBe('row');
 		await expect(page.getByRole('button', { name: 'Hide Empty Fields' })).toHaveCount(0);
+	});
+
+	for (const { layout, width, isStackedLayoutPreferred } of [
+		{ layout: 'md screens', width: 1150, isStackedLayoutPreferred: false },
+		{ layout: 'wide screens with Stacked Layout', width: 1300, isStackedLayoutPreferred: true },
+	]) {
+		test(`Standalone attachment note fits the item pane on ${layout}`, async ({ page, serverPort }) => {
+			await page.setViewportSize({ width, height: 800 });
+			if (isStackedLayoutPreferred) {
+				await seedStackedLayout(page);
+			}
+			server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, [], {
+				patchState: state => {
+					state.libraries.u1.items[state.current.itemKey].filename = longFilename;
+					state.libraries.u1.dataObjects[state.current.itemKey].filename = longFilename;
+					return state;
+				}
+			});
+			if (isStackedLayoutPreferred) {
+				await expect(page.locator('html')).toHaveClass(/stacked-layout/);
+			}
+
+			const panelBody = page.locator('.item-details .panel-body');
+			const metadata = page.locator('.standalone-attachment .metadata-list');
+			const editor = page.locator('.standalone-attachment .rich-editor');
+			const migrateButton = page.getByRole('button', { name: 'Migrate to Standalone Note' });
+			await expect(migrateButton).toBeVisible();
+			await expect(metadata.getByText(longFilename)).toBeVisible();
+
+			// The item pane doesn't scroll, the note and the button below it must fit
+			const panelBodyBottom = await getBottom(panelBody);
+			expect(await getBottom(editor)).toBeLessThanOrEqual(panelBodyBottom);
+			expect(await getBottom(migrateButton)).toBeLessThanOrEqual(panelBodyBottom);
+
+			// The note is shown next to the attachment metadata, in columns of equal width
+			const metadataBox = await metadata.boundingBox();
+			const editorBox = await editor.boundingBox();
+			expect(editorBox.x).toBeGreaterThanOrEqual(metadataBox.x + metadataBox.width - 1);
+			expect(Math.abs(editorBox.width - metadataBox.width)).toBeLessThanOrEqual(1);
+			expect(await getRight(editor)).toBeLessThanOrEqual(await getRight(panelBody) + 1);
+		});
+	}
+
+	test('Child attachment note fits the item pane on md screens', async ({ page, serverPort }) => {
+		await page.setViewportSize({ width: 1024, height: 768 });
+		server = await loadFixtureState('desktop-test-user-attachment-in-collection-view', serverPort, page, [], {
+			patchState: state => {
+				const attachmentKey = state.current.attachmentKey;
+				for (const objects of [state.libraries.u1.items, state.libraries.u1.dataObjects]) {
+					objects[attachmentKey].note = '<p>Attachment note</p>';
+					objects[attachmentKey].filename = longFilename;
+				}
+				return state;
+			}
+		});
+
+		const panelBody = page.locator('.item-details .panel-body');
+		const tabPanel = page.getByRole('tabpanel', { name: 'Attachments' });
+		const migrateButton = tabPanel.getByRole('button', { name: 'Migrate to Item Note' });
+		await expect(migrateButton).toBeVisible();
+		await expect(tabPanel.getByText(longFilename)).toBeVisible();
+		expect(await getBottom(migrateButton)).toBeLessThanOrEqual(await getBottom(panelBody));
+		expect(await getRight(migrateButton)).toBeLessThanOrEqual(await getRight(panelBody) + 1);
+
+		// The attachment list starts right below the toolbar (allowing for the permanent-scrollbar padding)
+		const toolbarBottom = await getBottom(tabPanel.getByRole('toolbar'));
+		const listBox = await tabPanel.getByRole('list', { name: 'Attachments' }).boundingBox();
+		expect(listBox.y - toolbarBottom).toBeGreaterThanOrEqual(0);
+		expect(listBox.y - toolbarBottom).toBeLessThanOrEqual(4);
+	});
+
+	for (const { name, fixture, getAttachmentKey, tabName, migrateLabel } of [
+		{
+			name: 'Standalone',
+			fixture: 'desktop-test-user-top-level-attachment-view',
+			getAttachmentKey: state => state.current.itemKey,
+			tabName: 'Info',
+			migrateLabel: 'Migrate to Standalone Note',
+		},
+		{
+			name: 'Child',
+			fixture: 'desktop-test-user-attachment-in-collection-view',
+			getAttachmentKey: state => state.current.attachmentKey,
+			tabName: 'Attachments',
+			migrateLabel: 'Migrate to Item Note',
+		},
+	]) {
+		const loadWithVeryLongMetadata = (page, serverPort, note) => loadFixtureState(fixture, serverPort, page, [], {
+			patchState: state => {
+				const attachmentKey = getAttachmentKey(state);
+				for (const objects of [state.libraries.u1.items, state.libraries.u1.dataObjects]) {
+					objects[attachmentKey].title = veryLongTitle;
+					objects[attachmentKey].filename = longFilename;
+					objects[attachmentKey].note = note;
+				}
+				return state;
+			}
+		});
+
+		test(`${name} attachment metadata taller than the item pane scrolls on md screens`, async ({ page, serverPort }) => {
+			await page.setViewportSize({ width: 1024, height: 768 });
+			server = await loadWithVeryLongMetadata(page, serverPort, '<p>Attachment note</p>');
+
+			const panelBodyBottom = await getBottom(page.locator('.item-details .panel-body'));
+			const tabPanel = page.getByRole('tabpanel', { name: tabName });
+			const metadata = tabPanel.locator('.metadata-list');
+			const migrateButton = tabPanel.getByRole('button', { name: migrateLabel });
+			await expect(migrateButton).toBeVisible();
+
+			// Scrolled with the mouse wheel, as clipped (overflow: hidden) content can still be scrolled from a script
+			await metadata.hover();
+			await page.mouse.wheel(0, 200);
+			await expect.poll(() => metadata.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+
+			// The buttons and the note editor stay in the pane while the metadata scrolls
+			expect(await getBottom(tabPanel.locator('.download-options'))).toBeLessThanOrEqual(panelBodyBottom);
+			expect(await getBottom(migrateButton)).toBeLessThanOrEqual(panelBodyBottom);
+			expect((await tabPanel.locator('.rich-editor').boundingBox()).height).toBeGreaterThan(50);
+		});
+
+		test(`${name} attachment metadata without a note is not limited to half the item pane on md screens`, async ({ page, serverPort }) => {
+			await page.setViewportSize({ width: 1024, height: 768 });
+			server = await loadWithVeryLongMetadata(page, serverPort, '');
+
+			const panelBodyBox = await page.locator('.item-details .panel-body').boundingBox();
+			const tabPanel = page.getByRole('tabpanel', { name: tabName });
+			await expect(tabPanel.locator('.metadata-list')).toBeVisible();
+			await expect(tabPanel.locator('.rich-editor')).toHaveCount(0);
+
+			expect((await tabPanel.locator('.metadata-list').boundingBox()).height).toBeGreaterThan(panelBodyBox.height / 2);
+			expect(await getBottom(tabPanel.locator('.download-options'))).toBeLessThanOrEqual(panelBodyBox.y + panelBodyBox.height);
+		});
+	}
+
+	test('Notes and Attachments toolbars span the item pane on md screens when there are no child items', async ({ page, serverPort }) => {
+		await page.setViewportSize({ width: 1150, height: 800 });
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [
+			makeCustomHandler('/api/', [], { totalResults: 0 })
+		]);
+
+		const panelBodyWidth = (await page.locator('.item-details .panel-body').boundingBox()).width;
+
+		for (const [tabName, counter] of [['Notes', '0 notes'], ['Attachments', '0 attachments']]) {
+			await page.getByRole('tab', { name: tabName }).click();
+			const toolbar = page.getByRole('tabpanel', { name: tabName }).getByRole('toolbar');
+			await expect(toolbar).toContainText(counter);
+			const toolbarWidth = (await toolbar.boundingBox()).width;
+			expect(Math.abs(toolbarWidth - panelBodyWidth), `${tabName} toolbar should span the item pane`).toBeLessThanOrEqual(1);
+		}
 	});
 });

@@ -5,8 +5,9 @@
 
 .tab-pane.notes {
 	@include breakpoints.mouse-stacked {
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: min-content auto;
+		grid-template-columns: minmax(0, 1fr);
+		grid-auto-columns: minmax(0, 1fr); // Note column, absent when there are no notes
+		grid-template-rows: min-content 1fr;
 		grid-auto-flow: column;
 		height: 100%;
 

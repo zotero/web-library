@@ -60,6 +60,30 @@ test.describe('Desktop Snapshots', () => {
 		await page.close();
 	});
 
+	test('should render standalone attachment with a note and a long filename', async ({ page, serverPort }) => {
+		// Underscores offer no line break opportunity, so the filename can only wrap anywhere
+		const filename = 'Attention_Is_All_You_Need_Vaswani_Shazeer_Parmar_Uszkoreit_Jones_Gomez_Kaiser_Polosukhin_NeurIPS_2017.pdf';
+		server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, [], {
+			patchState: state => {
+				state.libraries.u1.items[state.current.itemKey].filename = filename;
+				state.libraries.u1.dataObjects[state.current.itemKey].filename = filename;
+				return state;
+			}
+		});
+
+		const pane = page.getByRole('tabpanel', { name: 'Info' });
+		await expect(pane.getByText(filename)).toBeVisible();
+		await expect(pane.locator('.editor-container.initialized')).toBeVisible();
+		await expect(pane.frameLocator('iframe').getByText('This is an attachment note')).toBeVisible();
+		await wait(500); // avoid flaky screenshot with missing icons
+		// A column pushed out of the pane changes little more than glyphs, as the editor and pane
+		// backgrounds fall within the colour threshold, hence the tighter ratio on the pane alone
+		await expect(page.locator('.item-details')).toHaveScreenshot('desktop-standalone-attachment-note.png', {
+			maxDiffPixelRatio: 0.005,
+		});
+		await page.close();
+	});
+
 	test('should render flags, symbols and emoji in the items table', async ({ page, serverPort }) => {
 		server = await loadFixtureState('item-with-emoji-and-flags', serverPort, page);
 		await wait(500); // avoid flaky screenshot with missing icons

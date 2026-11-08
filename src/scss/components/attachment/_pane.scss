@@ -7,8 +7,9 @@
 	position: relative;
 
 	@include breakpoints.mouse-stacked {
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: min-content auto;
+		grid-template-columns: minmax(0, 1fr);
+		grid-auto-columns: minmax(0, 1fr); // Attachment details column, absent when there are no attachments
+		grid-template-rows: min-content 1fr;
 		grid-auto-flow: column;
 		height: 100%;
 
@@ -79,6 +80,12 @@
 			justify-content: center;
 			align-items: center;
 		}
+
+		&:has(> .rich-editor) > .metadata-list {
+			@include breakpoints.mouse-stacked {
+				max-height: 50%; // Leaves the other half to the note editor
+			}
+		}
 	}
 
 	.placeholder {
@@ -90,6 +97,46 @@
 		@include breakpoints.mouse-and-bp-up(md) {
 			border-top: variables.$border-width solid common.$editor-border-color;
 		}
+	}
+}
+
+.tab-pane.standalone-attachment {
+	@include breakpoints.mouse-stacked {
+		grid-template-columns: minmax(0, 1fr);
+		grid-auto-columns: minmax(0, 1fr); // Note column, absent when the attachment has no note
+		grid-template-rows: minmax(0, auto) min-content 1fr min-content;
+		grid-auto-flow: column;
+		height: 100%;
+
+		&.active:not(.loading) {
+			display: grid;
+		}
+	}
+
+	.rich-editor {
+		@include breakpoints.mouse-stacked {
+			border-left: variables.$border-width solid common.$editor-border-color;
+			grid-column: 2;
+			grid-row: 1 / 4;
+		}
+	}
+
+	> .btn {
+		@include breakpoints.mouse-stacked {
+			grid-column: 2;
+			grid-row: 4;
+		}
+	}
+}
+
+.tab-pane.standalone-attachment > .metadata-list,
+.tab-pane.attachments .attachment-details > .metadata-list {
+	@include breakpoints.mouse-stacked {
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 15px - 8px;
+		padding-bottom: 15px - 7px;
+		overflow-y: auto;
 	}
 }
 
