@@ -6,6 +6,7 @@ import { Button } from 'web-common/components';
 import CollectionActions from './touch-header/collection-actions';
 import EditToggleButton from './edit-toggle-button';
 import { ItemActionsTouch } from './item/actions';
+import ItemOptions from './touch-header/item-options';
 import { MainSearchBar } from './touch-header/searchbar';
 import TouchNavigation from './touch-header/touch-navigation';
 import { pluralize } from '../common/format';
@@ -15,7 +16,7 @@ import { Toolbar, ToolGroup } from './ui/toolbars';
 const TouchHeader = props => {
 	const { className, collectionKey, collectionHasChildren, isModal, isSelectMode, navigationName,
 		onNavigate, onSelectModeToggle, path = [], shouldHideNav, shouldIncludeEditButton,
-		shouldIncludeItemListOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
+		shouldIncludeItemListOptions, shouldIncludeItemOptions, shouldIncludeCollectionOptions, shouldHandleSelectMode,
 		shouldIncludeCollectionTrashOptions, searchBar, selectedItemsCount } = props;
 
 	const isSingleColumn = useSelector(state => state.device.isSingleColumn);
@@ -70,10 +71,11 @@ const TouchHeader = props => {
 					)
 				}
 				{
-					shouldIncludeEditButton && (
+					(shouldIncludeEditButton || shouldIncludeItemOptions) && (
 						<div className="toolbar-right">
 							<ToolGroup>
-								<EditToggleButton className="btn-link" />
+								{ shouldIncludeEditButton && <EditToggleButton className="btn-link" /> }
+								{ shouldIncludeItemOptions && <ItemOptions /> }
 							</ToolGroup>
 						</div>
 					)

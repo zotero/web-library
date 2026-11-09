@@ -9,7 +9,7 @@ import { getByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
-import { JSONtoState } from './utils/state';
+import { JSONtoState, getPatchedStateArray } from './utils/state';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import { setupStore } from '../src/js/store';
 import { MainZotero } from '../src/js/component/main';
@@ -198,6 +198,21 @@ describe('Create Parent Item', () => {
 
 		expect(hasCreatedParentItem).toBe(true);
 		expect(hasPatchedAttachmentItem).toBe(true);
+	});
+
+	test('Does not offer creating a parent item in a read-only library', async () => {
+		renderWithProviders(<MainZotero />, {
+			preloadedState: getPatchedStateArray(state, 'config.libraries', 0, { isReadOnly: true })
+		});
+		await waitForPosition();
+		const user = userEvent.setup();
+
+		expect(screen.getByRole('row', { name: 'attention-is-all-you-need.pdf' })).toHaveAttribute('aria-selected', 'true');
+		const toolbar = screen.getByRole('toolbar', { name: 'items toolbar' });
+		await user.click(getByRole(toolbar, 'button', { name: 'More' }));
+		await waitForPosition();
+		expect(screen.getByRole('menuitem', { name: 'Subscribe To Feed' })).toBeInTheDocument();
+		expect(screen.queryByRole('menuitem', { name: 'Create Parent Item' })).not.toBeInTheDocument();
 	});
 });
 

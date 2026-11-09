@@ -8,7 +8,7 @@ import { useItemActionHandlers, useItemsActions } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 import { setModalFocusRestore } from '../../../common/modal-focus-restore';
 
-const MoreActionsItems = ({ divider = false, toggleRef }) => {
+const MoreActionsItems = ({ divider = false, leadingDivider = false, toggleRef }) => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem, handleChangeParentItemModalOpen } = useItemActionHandlers();
@@ -16,6 +16,8 @@ const MoreActionsItems = ({ divider = false, toggleRef }) => {
 		isViewOnline, item, selectedCount, url } = useItemsActions();
 
 	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
+	const canRetrieveMetadata = isTouchOrSmall && isRecognizerAvailable && canRecognize;
+	const hasAnyItem = isViewFile || isViewOnline || canDuplicate || canRetrieveMetadata || canCreateParent || canReparent || canUnregonize;
 
 	const handleViewFileClick = useCallback(() => {
 		if (item.itemType === 'attachment') {
@@ -49,6 +51,7 @@ const MoreActionsItems = ({ divider = false, toggleRef }) => {
 
 	return (
 		<Fragment>
+			{leadingDivider && hasAnyItem && <DropdownItem divider />}
 			{isViewFile && (
 				<DropdownItem onClick={handleViewFileClick}>
 					View {Object.keys(READER_CONTENT_TYPES).includes(attachmentContentType) ? READER_CONTENT_TYPES_HUMAN_READABLE[attachmentContentType] : 'File'}
@@ -70,7 +73,7 @@ const MoreActionsItems = ({ divider = false, toggleRef }) => {
 
 			{canDuplicate && (canRecognize || canCreateParent || canUnregonize) && <DropdownItem divider />}
 
-			{(isTouchOrSmall && isRecognizerAvailable && canRecognize) && (
+			{canRetrieveMetadata && (
 				<DropdownItem onClick={handleRetrieveMetadata}>
 					Retrieve Metadata
 				</DropdownItem>
@@ -90,7 +93,7 @@ const MoreActionsItems = ({ divider = false, toggleRef }) => {
 					Undo Retrieve Metadata
 				</DropdownItem>
 			)}
-			{divider && (isViewFile || isViewOnline || canDuplicate || (isTouchOrSmall && isRecognizerAvailable && canRecognize) || canCreateParent || canUnregonize) && <DropdownItem divider />}
+			{divider && hasAnyItem && <DropdownItem divider />}
 		</Fragment>
 	);
 }

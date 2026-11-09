@@ -18,12 +18,13 @@ const useCanRecognize = () => {
 };
 
 const useCanCreateParent = () => {
+	const isReadOnly = useSelector(state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly);
 	const isTrash = useSelector(state => state.current.isTrash);
 	const isMyPublications = useSelector(state => state.current.isMyPublications);
 	const selectedItemsAreAllAttachments = useSelector(state => state.current.itemKeys.length > 0 && state.current.itemKeys.every(
 		key => state.libraries[state.current.libraryKey]?.dataObjects?.[key]?.itemType === 'attachment'
 	));
-	const canCreateParent = !isTrash && !isMyPublications && selectedItemsAreAllAttachments;
+	const canCreateParent = !isReadOnly && !isTrash && !isMyPublications && selectedItemsAreAllAttachments;
 	return canCreateParent;
 };
 

@@ -38,6 +38,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 	const tags = useSelector(state => state.current.tags);
 	const isSelectMode = useSelector(state => state.current.isSelectMode);
 	const libraryConfig = useSelector(state => state.config.libraries.find(l => l.key === libraryKey) || {});
+	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const itemKeys = useSelector(state => state.current.itemKeys);
 	// collections are prefetched so if item is null, it's not a collection
 	const isCollection = item?.[Symbol.for('type')] === 'collection';
@@ -138,7 +139,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 
 	const selectedNode = isLastNodeCurrentlySelectedCollection ? path[path.length - 1] : itemsSourceNode;
 
-	var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions,
+	var touchHeaderPath, shouldIncludeEditButton, shouldIncludeItemListOptions, shouldIncludeItemOptions,
 			shouldIncludeCollectionOptions, shouldHandleSelectMode, shouldIncludeCollectionTrashOptions = false;
 	let navigationName = '';
 
@@ -152,6 +153,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 				drilldownNode
 			];
 			shouldIncludeEditButton = !isCollection && !isReadOnly && view === 'item-details';
+			shouldIncludeItemOptions = !isCollection && !isEmbedded && !isEditing && !drilldownNode && !!item && view === 'item-details';
 			shouldIncludeItemListOptions = view === 'item-list' && !isSelectMode;
 			shouldHandleSelectMode = view === 'item-list';
 			shouldIncludeCollectionOptions = view !== 'libraries' &&
@@ -180,12 +182,14 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 			shouldIncludeItemListOptions = !item && !isSelectMode;
 			shouldHandleSelectMode = true;
 			shouldIncludeEditButton = !isCollection && !isReadOnly && !isSelectMode && !!item;
+			shouldIncludeItemOptions = !isCollection && !isEditing && !drilldownNode && !isSelectMode && !!item;
 			shouldIncludeCollectionTrashOptions = isCollection && !isReadOnly && !isSelectMode && isTrash;
 			navigationName = 'Items';
 		break;
 		case TouchHeaderWrap.variants.ITEM:
 			touchHeaderPath = [ itemNode, drilldownNode ];
 			shouldIncludeEditButton = !isCollection && !isReadOnly && !isSelectMode && !!item;
+			shouldIncludeItemOptions = !isCollection && !isEditing && !drilldownNode && !isSelectMode && !!item;
 			shouldIncludeCollectionTrashOptions = isCollection && !isReadOnly && !isSelectMode && isTrash;
 			navigationName = 'Item Details';
 		break;
@@ -223,6 +227,7 @@ const TouchHeaderWrap = memo(({ className, variant }) => {
 			onSelectModeToggle={ onSelectModeToggle }
 			shouldIncludeEditButton={ shouldIncludeEditButton }
 			shouldIncludeItemListOptions={ shouldIncludeItemListOptions }
+			shouldIncludeItemOptions={ shouldIncludeItemOptions }
 			shouldIncludeCollectionOptions={ shouldIncludeCollectionOptions }
 			shouldHandleSelectMode={ shouldHandleSelectMode }
 			shouldIncludeCollectionTrashOptions={ shouldIncludeCollectionTrashOptions }
