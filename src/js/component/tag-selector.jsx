@@ -8,6 +8,7 @@ import { useFocusManager  } from 'web-common/hooks';
 import Input from './form/input';
 import TagSelectorItems from './tag-selector/tag-selector-items';
 import { filterTags, navigate, toggleModal, toggleHideAutomaticTags, toggleTagSelector } from '../actions';
+import { pluralize } from '../common/format';
 import { useTags } from '../hooks';
 import { getUniqueId } from '../utils';
 import { MANAGE_TAGS } from '../constants/modals';
@@ -123,7 +124,7 @@ const TagSelector = () => {
 						</DropdownToggle>
 						<DropdownMenu right>
 							<DropdownItem disabled>
-								{ selectedTags.length } tag selected
+								{ selectedTags.length } { pluralize('tag', selectedTags.length) } selected
 							</DropdownItem>
 							<DropdownItem onClick={ handleDeselectClick } >
 								Deselect All
