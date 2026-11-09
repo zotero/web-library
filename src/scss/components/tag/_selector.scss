@@ -59,6 +59,12 @@
 			height: 100%;
 			font-size: variables.$font-size-small;
 			padding: 1px (variables.$default-padding-x - 7px) variables.$space-min (variables.$space-md - 7px);
+
+			&.selected-tags {
+				height: auto;
+				padding-bottom: variables.$space-min;
+				border-bottom: var(--material-border-quarternary);
+			}
 		}
 
 		.tag {

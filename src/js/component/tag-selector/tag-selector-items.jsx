@@ -54,15 +54,15 @@ Tag.displayName = 'Tag';
 const TagSelectorItems = () => {
 	const tagsSearchString = useSelector(state => state.current.tagsSearchString);
 	const tagsHideAutomatic = useSelector(state => state.current.tagsHideAutomatic);
-	const selectedTags = useSelector(state => state.current.tags, shallowEqual);
-	const prevSelectedTagsLength = usePrevious(selectedTags.length);
+	const selectedTagNames = useSelector(state => state.current.tags, shallowEqual);
+	const prevSelectedTagsLength = usePrevious(selectedTagNames.length);
 	const dispatch = useDispatch();
 	const tagContainerRef = useRef(null);
 	const { receiveBlur, receiveFocus, focusNext, focusPrev, focusBySelector } = useFocusManager(tagContainerRef, { isCarousel: false });
 	const containerRef = useRef(null);
 	const listRef = useRef(null);
 	const tagFocusNext = useRef({ tag: null, isQueryChanged: false });
-	const { duplicatesCount, hasMoreItems, isFetching, isFetchingColoredTags, pointer, tags, totalResults, hasChecked,
+	const { duplicatesCount, hasMoreItems, isFetching, isFetchingColoredTags, pointer, tags, selectedTags, totalResults, hasChecked,
 	hasCheckedColoredTags } = useTags();
 	const tagColors = useSelector(state => get(state, ['libraries', state.current.libraryKey, 'tagColors', 'lookup']), shallowEqual);
 	const prevTagColors = usePrevious(tagColors);
@@ -96,15 +96,16 @@ const TagSelectorItems = () => {
 	}, [dispatch, isFetching, isFiltering, pointer, totalResults]);
 
 	const toggleTag = useCallback(tagName => {
-		const index = selectedTags.indexOf(tagName);
+		const nextSelectedTags = [...selectedTagNames];
+		const index = nextSelectedTags.indexOf(tagName);
 		if(index > -1) {
-			selectedTags.splice(index, 1);
+			nextSelectedTags.splice(index, 1);
 		} else {
-			selectedTags.push(tagName);
+			nextSelectedTags.push(tagName);
 		}
 
-		dispatch(navigate({ tags: selectedTags, items: null }));
-	}, [dispatch, selectedTags]);
+		dispatch(navigate({ tags: nextSelectedTags, items: null }));
+	}, [dispatch, selectedTagNames]);
 
 	const handleClick = useCallback(ev => {
 		const tag = ev.currentTarget.dataset.tag;
@@ -171,10 +172,10 @@ const TagSelectorItems = () => {
 	}, [dispatch, errorCount, prevErrorCount]);
 
 	useEffect(() => {
-		if (selectedTags.length !== prevSelectedTagsLength && tagFocusNext.current) {
+		if (selectedTagNames.length !== prevSelectedTagsLength && tagFocusNext.current) {
 			tagFocusNext.current.isQueryChanged = true;
 		}
-	}, [selectedTags.length, prevSelectedTagsLength]);
+	}, [selectedTagNames.length, prevSelectedTagsLength]);
 
 	// on every render try to re-focus the tag that was focused before tag query changed
 	// See #372 and #507
@@ -203,11 +204,18 @@ const TagSelectorItems = () => {
 				tabIndex={ 0 }
 				aria-label="tag selector"
 			>
+				{ selectedTags.length > 0 && (
+					<ul className="tag-selector-list selected-tags">
+						{ selectedTags.map(tag => (
+							<Tag key={ tag.tag } tag={ tag } onClick={ handleClick } onKeyDown={ handleKeyDown } />
+						)) }
+					</ul>
+				) }
 				<ul
 					ref={ listRef }
 					className="tag-selector-list"
 				>
-					{ tags.filter(t => t && t.tag).map(tag => (
+					{ tags.filter(t => t && t.tag && !t.selected).map(tag => (
 						<Tag key={ tag.tag } tag={ tag } onClick={ handleClick } onKeyDown={ handleKeyDown } />
 					)) }
 				</ul>

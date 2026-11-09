@@ -50,7 +50,8 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 			tag: tagName,
 			color: (tagColors || {})[tagName] || null,
 			selected: true,
-			disabled: !coloredTags.includes(tagName)
+			// selected tags stay clickable so they can be deselected
+			disabled: false
 		}));
 		tags.sort((a, b) => {
 			if (a.color && !b.color) { return -1; }
@@ -58,7 +59,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 			return a.tag.localeCompare(b.tag, { sensitivity: 'accent' });
 		});
 		return tags;
-	}, [selectedTagNames, tagColors, coloredTags]);
+	}, [selectedTagNames, tagColors]);
 
 
 	const tags = useMemo(() => {

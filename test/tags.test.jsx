@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, waitFor } from '@testing-library/react';
+import { findAllByRole, findByRole, getByRole, screen, queryAllByRole, queryByRole, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from './utils/render';
@@ -17,6 +17,7 @@ import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
 import testUserTagsSuggestions from './fixtures/response/test-user-tags-suggestions.json';
 import testUserTagsForItem from './fixtures/response/test-user-tags-for-item.json';
 import testUserManageTags from './fixtures/response/test-user-manage-tags.json';
+import testUserCollectionItemsTags from './fixtures/response/test-user-collection-items-tags.json';
 import { maxColoredTags } from '../src/js/constants/constants';
 
 const state = JSONtoState(stateRaw);
@@ -128,6 +129,37 @@ describe('Tags', () => {
 		expect(await findByRole(list2, 'listitem', { name: 'to read' })).toBeInTheDocument();
 		expect(await findByRole(list2, 'listitem', { name: 'today' })).toBeInTheDocument();
 		expect(screen.getByText('2 tags')).toBeInTheDocument();
+	});
+
+	test('Pre-selected tag is shown first in the desktop tag selector and not duplicated', async () => {
+		delete window.location;
+		window.jsdom.reconfigure({ url: 'http://localhost/testuser/collections/WTTJ2J56/tags/Philosophy%20of%20Music/item-list' });
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top/tags', () => {
+				return HttpResponse.json(testUserCollectionItemsTags, {
+					headers: { 'Total-Results': String(testUserCollectionItemsTags.length) }
+				});
+			}),
+			http.get('https://api.zotero.org/users/1/collections/WTTJ2J56/items/top', () => {
+				return HttpResponse.json([], { headers: { 'Total-Results': '0' } });
+			})
+		);
+
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		// Wait for the filtered tag list to load, then grab the two lists in the selector
+		await screen.findByRole('button', { name: 'Political Theory' });
+		const selectedList = document.querySelector('.tag-selector-list.selected-tags');
+		const mainList = document.querySelector('.tag-selector-container .tag-selector-list:not(.selected-tags)');
+
+		// The selected tag appears in a dedicated row at the top of the selector ...
+		expect(getByRole(selectedList, 'button', { name: 'Philosophy of Music' })).toBeInTheDocument();
+
+		// ... and is not duplicated among the remaining tags.
+		expect(getByRole(mainList, 'button', { name: 'Political Theory' })).toBeInTheDocument();
+		expect(queryByRole(mainList, 'button', { name: 'Philosophy of Music' })).not.toBeInTheDocument();
 	});
 
 	test('Add a color to a tag', async () => {
