@@ -4,6 +4,59 @@ import { isSingleColumn } from '../utils/common.js';
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
 
+// Selects the first item in the list, opens the "Add to Collection" modal for it and navigates
+// into the "Dogs" collection. Returns the modal.
+const openAddToCollectionInDogs = async (page, testInfo) => {
+	// Enter select mode
+	if (isSingleColumn(testInfo)) {
+		const dropdownToggle = page.locator('.item-actions-touch').first();
+		await expect(dropdownToggle).toBeVisible();
+		await dropdownToggle.tap();
+
+		const selectItems = page.getByRole('menuitem', { name: 'Select Items' });
+		await expect(selectItems).toBeVisible();
+		await selectItems.tap();
+	} else {
+		const selectButton = page.getByRole('button', { name: 'Select', exact: true });
+		await expect(selectButton).toBeVisible();
+		await selectButton.tap();
+	}
+
+	// Select the first item in the list
+	const firstItem = page.getByRole('option').first();
+	await expect(firstItem).toBeVisible();
+	await firstItem.tap();
+
+	// Tap the "Add to Collection" button in the touch footer
+	const addToCollectionButton = page.locator('.touch-footer button:has(.icon-add-to-collection)');
+	await expect(addToCollectionButton).toBeVisible();
+	await addToCollectionButton.tap();
+
+	// Wait for the modal to appear and settle
+	const modal = page.getByRole('dialog', { name: 'Select Collection' });
+	await expect(modal).toBeVisible();
+	await page.waitForFunction(() =>
+		document.querySelector('.collection-select-modal')?.classList.contains('ReactModal__Content--after-open')
+	);
+
+	// Wait for the slide transition to complete
+	await page.waitForTimeout(600);
+
+	// Navigate into "My Library"
+	const myLibrary = modal.getByRole('treeitem', { name: 'My Library' });
+	await expect(myLibrary).toBeVisible();
+	await myLibrary.tap();
+
+	// Navigate into the "Dogs" collection
+	// force: true -- Dogs is disabled (items already belong to it) but tapping
+	// still navigates into its subcollections in drill-down mode
+	const dogs = modal.getByRole('treeitem', { name: 'Dogs' });
+	await expect(dogs).toBeVisible();
+	await dogs.tap({ force: true });
+
+	return modal;
+};
+
 test.describe('Mobile Modals', () => {
 	let server;
 
@@ -256,60 +309,15 @@ test.describe('Mobile Modals', () => {
 	test('Add item to a collection using modal', async ({ page, serverPort }, testInfo) => {
 		const handlers = [
 			makeCustomHandler('/api/users/1/settings/tagColors', { value: [] }),
-			makeCustomHandler('/api/users/1/items', []),
 		];
 		server = await loadFixtureState('mobile-test-user-item-list-view', serverPort, page, handlers);
 
-		// Enter select mode
-		if (isSingleColumn(testInfo)) {
-			const dropdownToggle = page.locator('.item-actions-touch').first();
-			await expect(dropdownToggle).toBeVisible();
-			await dropdownToggle.tap();
-
-			const selectItems = page.getByRole('menuitem', { name: 'Select Items' });
-			await expect(selectItems).toBeVisible();
-			await selectItems.tap();
-		} else {
-			const selectButton = page.getByRole('button', { name: 'Select', exact: true });
-			await expect(selectButton).toBeVisible();
-			await selectButton.tap();
-		}
-
-		// Select the first item in the list
-		const firstItem = page.getByRole('option').first();
-		await expect(firstItem).toBeVisible();
-		await firstItem.tap();
-
-		// Tap the "Add to Collection" button in the touch footer
-		const addToCollectionButton = page.locator('.touch-footer button:has(.icon-add-to-collection)');
-		await expect(addToCollectionButton).toBeVisible();
-		await addToCollectionButton.tap();
-
-		// Wait for the modal to appear and settle
-		const modal = page.getByRole('dialog', { name: 'Select Collection' });
-		await expect(modal).toBeVisible();
-		await page.waitForFunction(() =>
-			document.querySelector('.collection-select-modal')?.classList.contains('ReactModal__Content--after-open')
-		);
-
-		// Wait for the slide transition to complete
-		await page.waitForTimeout(600);
-
-		// Navigate into "My Library"
-		const myLibrary = modal.getByRole('treeitem', { name: 'My Library' });
-		await expect(myLibrary).toBeVisible();
-		await myLibrary.tap();
-
-		// Navigate into the "Dogs" collection
-		// force: true -- Dogs is disabled (items already belong to it) but tapping
-		// still navigates into its subcollections in drill-down mode
-		const dogs = modal.getByRole('treeitem', { name: 'Dogs' });
-		await expect(dogs).toBeVisible();
-		await dogs.tap({ force: true });
+		const modal = await openAddToCollectionInDogs(page, testInfo);
 
 		// Assert that subcollections are visible
 		const borderCollie = modal.getByRole('treeitem', { name: 'Border Collie' });
 		await expect(borderCollie).toBeVisible();
+		await expect(borderCollie).toBeEnabled();
 
 		// Pick "Border Collie" as the target collection
 		const borderCollieCheckbox = borderCollie.getByRole('checkbox');
@@ -323,20 +331,23 @@ test.describe('Mobile Modals', () => {
 		const requestPromise = page.waitForRequest(
 			req => req.url().includes('/api/users/1/items') && req.method() === 'POST'
 		);
-		await page.route('**/api/users/1/items', route => {
-			if (route.request().method() === 'POST') {
-				route.fulfill({
-					status: 200,
-					contentType: 'application/json',
-					body: JSON.stringify({
-						successful: { '0': {} },
-						unchanged: {},
-						failed: {}
-					}),
-				});
-			} else {
-				route.fallback();
+		// Fulfil the write as successful. Matched by pathname, as the request URL carries a query string.
+		await page.route(url => url.pathname === '/api/users/1/items', route => {
+			if (route.request().method() !== 'POST') {
+				return route.fallback();
 			}
+			const patches = route.request().postDataJSON();
+			return route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				headers: { 'Last-Modified-Version': '411' },
+				body: JSON.stringify({
+					success: Object.fromEntries(patches.map((patch, index) => [index, patch.key])),
+					successful: Object.fromEntries(patches.map((patch, index) => [index, { key: patch.key, version: 411, data: patch }])),
+					unchanged: {},
+					failed: {},
+				}),
+			});
 		});
 
 		await addButton.tap();
@@ -349,6 +360,14 @@ test.describe('Mobile Modals', () => {
 		expect(body[0].collections).toContain('WTTJ2J56');
 		expect(body[0].collections).toContain('HNLXYCXS');
 		expect(body[0].collections).toHaveLength(2);
+
+		// Once the item belongs to Border Collie, reopening the modal for it shows Border Collie
+		// disabled and without a checkbox, and no error is shown
+		await expect(modal).toBeHidden();
+		await openAddToCollectionInDogs(page, testInfo);
+		await expect(borderCollie).toBeDisabled();
+		await expect(borderCollieCheckbox).toHaveCount(0);
+		await expect(page.locator('.message.error')).toHaveCount(0);
 
 		await page.close();
 	});
