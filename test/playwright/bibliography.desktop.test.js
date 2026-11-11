@@ -70,7 +70,7 @@ test.describe('Desktop Bibliography', () => {
 
 		// The unusable style should have been replaced with the default one in the selector only
 		const styleCombobox = modal.getByRole('combobox', { name: 'Citation Style' });
-		await expect(styleCombobox.locator('.select-value-label')).toHaveText(DEFAULT_STYLE.title);
+		await expect(styleCombobox).toHaveValue(DEFAULT_STYLE.title);
 		expect(await readStoredCitationStyle(page)).toBe(NONSENSE_STYLE);
 
 		// No further attempts are made once the fallback style is in use
@@ -138,8 +138,7 @@ test.describe('Desktop Bibliography', () => {
 		const modal = page.getByRole('dialog', { name: 'Bibliography' });
 		await expect(modal).toBeVisible();
 		const styleCombobox = modal.getByRole('combobox', { name: 'Citation Style' });
-		const selectedStyle = styleCombobox.locator('.select-value-label');
-		await expect(selectedStyle).toHaveText(DEFAULT_STYLE.title);
+		await expect(styleCombobox).toHaveValue(DEFAULT_STYLE.title);
 		const readBibliography = () => modal.locator('.bibliography').innerText();
 		const defaultBibliography = await readBibliography();
 
@@ -153,10 +152,10 @@ test.describe('Desktop Bibliography', () => {
 
 		// Switch away and back while the final retry is pending. This time the download succeeds.
 		await selectStyle(DEFAULT_STYLE.title);
-		await expect(selectedStyle).toHaveText(DEFAULT_STYLE.title);
+		await expect(styleCombobox).toHaveValue(DEFAULT_STYLE.title);
 		await selectStyle(TURABIAN_STYLE.title);
 		await expect.poll(() => turabianRequestsCount).toBe(EXPECTED_STYLE_REQUESTS + 1);
-		await expect(selectedStyle).toHaveText(TURABIAN_STYLE.title);
+		await expect(styleCombobox).toHaveValue(TURABIAN_STYLE.title);
 		await expect.poll(readBibliography, { timeout: RETRIES_TIMEOUT }).not.toBe(defaultBibliography);
 		const turabianBibliography = await readBibliography();
 
@@ -168,7 +167,7 @@ test.describe('Desktop Bibliography', () => {
 		await finalRetryResponse;
 		await page.waitForTimeout(1000);
 		await expect(page.locator('.messages .message.error')).toHaveCount(0);
-		await expect(selectedStyle).toHaveText(TURABIAN_STYLE.title);
+		await expect(styleCombobox).toHaveValue(TURABIAN_STYLE.title);
 		await expect(modal.locator('.bibliography')).toHaveText(turabianBibliography);
 		expect(turabianRequestsCount).toBe(EXPECTED_STYLE_REQUESTS + 1);
 	});

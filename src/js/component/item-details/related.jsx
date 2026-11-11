@@ -87,7 +87,7 @@ const RelatedItem = memo(props => {
 
 RelatedItem.displayName = 'RelatedItem';
 
-const Related = ({ id, isActive, isReadOnly, ...rest }) => {
+const Related = ({ asSections, id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 	const shouldUseTabs = useSelector(state => state.device.shouldUseTabs);
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -161,6 +161,7 @@ const Related = ({ id, isActive, isReadOnly, ...rest }) => {
 
 	return (
 		<TabPane
+			asSections={ asSections }
 			id={ id }
 			className="related"
 			isActive={ isActive }

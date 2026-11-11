@@ -20,6 +20,7 @@ const TagColorManager = forwardRef(({ onToggleTagManager, tag }, outerRef) => {
 	const dispatch = useDispatch();
 	const innerRef = useRef(null);
 	const id = useId();
+	const positionLabelId = useId();
 	const { value: tagColors } = useSelector(state => state.libraries[state.current.libraryKey].tagColors)
 	const { receiveFocus, receiveBlur } = useFocusManager(innerRef);
 
@@ -106,9 +107,10 @@ const TagColorManager = forwardRef(({ onToggleTagManager, tag }, outerRef) => {
 							useTagColorLookup={ true }
 						/>
 					</div>
-					<label className="col-form-label">Position</label>
+					<label id={ positionLabelId } className="col-form-label">Position</label>
 					<div className="col">
 						<Select
+							aria-labelledby={ positionLabelId }
 							inputGroupClassName={ cx('position-selector') }
 							clearable={ false }
 							searchable={ false }

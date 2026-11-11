@@ -55,7 +55,7 @@ describe('Unexpected Item Types', () => {
 		await userEvent.click(await findByRole(grid, 'row', { name: '' }));
 
 		expect(await screen.findByRole('combobox', { name: 'Item Type' }))
-			.toHaveTextContent('annotation');
+			.toHaveValue('annotation');
 	});
 
 	// this should never happen, but if it does, we should handle it gracefully
@@ -89,6 +89,6 @@ describe('Unexpected Item Types', () => {
 
 		await userEvent.click(row);
 		expect(await screen.findByRole('combobox', { name: 'Item Type' }))
-			.toHaveTextContent('badItemType');
+			.toHaveValue('badItemType');
 	});
 });

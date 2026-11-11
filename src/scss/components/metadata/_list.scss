@@ -483,14 +483,6 @@
 
 		@include breakpoints.mouse-and-bp-up(md) {
 			padding-left: variables.$metadata-list-gutter * 0.5;
-
-			.has-value {
-				.select-value {
-					// reduce internal select input padding to match the padding of the other inputs
-					padding-left: variables.$editable-padding;
-					padding-right: variables.$editable-padding;
-				}
-			}
 		}
 
 		// Edit mode

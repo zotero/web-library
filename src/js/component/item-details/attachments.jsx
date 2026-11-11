@@ -404,7 +404,7 @@ AttachmentDetailsWrap.displayName = 'AttachmentDetailsWrap';
 
 const PAGE_SIZE = 100;
 
-const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
+const Attachments = ({ asSections, id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 
 	const libraryKey = useSelector(state => state.current.libraryKey);
@@ -541,6 +541,7 @@ const Attachments = ({ id, isActive, isReadOnly, ...rest }) => {
 
 	return (
 		<TabPane
+			asSections={asSections}
 			id={id}
 			className={cx("attachments", { 'dnd-target': canDrop && isOver })}
 			isActive={isActive}

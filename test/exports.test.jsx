@@ -137,7 +137,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		const styleComboBox = screen.getByRole('combobox', { name: 'Citation Style' });
 		await userEvent.click(styleComboBox);
-		const option = getByRole(getByRole(styleComboBox, 'listbox'), 'option', { name: /Turabian/ });
+		const option = getByRole(screen.getByRole('listbox', { name: 'Citation Style' }), 'option', { name: /Turabian/ });
 		await userEvent.click(option);
 
 		expect(
@@ -146,7 +146,7 @@ describe('Test User: Export, bibliography, citations, subscribe to feed', () => 
 
 		const langComboBox = screen.getByRole('combobox', { name: 'Language' });
 		await userEvent.click(langComboBox);
-		await userEvent.selectOptions(getByRole(langComboBox, 'listbox'), 'Polish');
+		await userEvent.selectOptions(screen.getByRole('listbox', { name: 'Language' }), 'Polish');
 
 		expect(
 			await findByText(dialog, 'Foead, Daniel, Alifio Ghifari, Marchel Budi Kusuma, Novita Hanafiah, i Eric Gunawan. „A systematic literature review of A* pathfinding”.', { exact: false })

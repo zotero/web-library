@@ -108,6 +108,9 @@ test.describe('Mobile Interaction', () => {
 		await expect(itemDetails.getByRole('tablist', { includeHidden: true })).toHaveCount(0);
 		await expect(itemDetails.getByRole('tab', { includeHidden: true })).toHaveCount(0);
 		await expect(itemDetails.locator('.tabs .tab[aria-controls]')).toHaveCount(0);
+		await expect(itemDetails.locator('.tab-pane').first()).toBeAttached();
+		await expect(itemDetails.getByRole('tabpanel', { includeHidden: true })).toHaveCount(0);
+		await expect(itemDetails.locator('.tab-pane[aria-labelledby]')).toHaveCount(0);
 	});
 
 	test('Touch header replaces a previous title that does not fit with "Back"', async ({ page, serverPort }) => {

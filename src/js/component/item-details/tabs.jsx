@@ -263,6 +263,7 @@ const ItemDetailsTabs = () => {
 							!['attachment', 'note'].includes(item.itemType) && (
 								<Fragment>
 									<Info
+										asSections={ !shouldUseTabs }
 										aria-labelledby={ `${id}-info-tab` }
 										key={ 'info-' + item.key }
 										id={ `${id}-info` }
@@ -270,6 +271,7 @@ const ItemDetailsTabs = () => {
 										isReadOnly={ isReadOnly }
 									/>
 									{ shouldShowNotesTab && ( <Notes
+										asSections={ !shouldUseTabs }
 										aria-labelledby={ `${id}-notes-tab` }
 										key={ 'notes-' + item.key }
 										id={ `${id}-notes` }
@@ -284,6 +286,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'note' && (
 								<StandaloneNote
+									asSections={ !shouldUseTabs }
 									aria-labelledby={`${id}-standalone-note-tab`}
 									key={ 'standalone-note-' + item.key }
 									id={`${id}-standalone-note` }
@@ -295,6 +298,7 @@ const ItemDetailsTabs = () => {
 						{
 							item.itemType === 'attachment' && (
 								<StandaloneAttachmentTabPane
+									asSections={ !shouldUseTabs }
 									aria-labelledby={`${id}-standalone-attachment-tab`}
 									key={ 'standalone-attachment-' + item.key }
 									id={`${id}-standalone-attachment` }
@@ -305,6 +309,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowTagsTab && (
 							<Tags
+								asSections={ !shouldUseTabs }
 								aria-labelledby={ `${id}-tags-tab` }
 								key={ 'tags-' + item.key }
 								id={ `${id}-tags` }
@@ -315,6 +320,7 @@ const ItemDetailsTabs = () => {
 						{
 							shouldShowAttachmentsTab && !['attachment', 'note'].includes(item.itemType) && (
 								<Attachments
+									asSections={ !shouldUseTabs }
 									aria-labelledby={ `${id}-attachments-tab` }
 									key={ 'attachments-' + item.key }
 									id={ `${id}-attachments` }
@@ -325,6 +331,7 @@ const ItemDetailsTabs = () => {
 						}
 						{ shouldShowRelatedTab && (
 							<Related
+								asSections={ !shouldUseTabs }
 								aria-labelledby={`${id}-related-tab`}
 								key={ 'related-' + item.key }
 								id={ `${id}-related` }

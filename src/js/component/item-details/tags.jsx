@@ -6,11 +6,12 @@ import { pick } from 'web-common/utils';
 import TagPicker from './tag-picker';
 
 
-const Tags = ({ id, isActive, isReadOnly, ...rest }) => {
+const Tags = ({ asSections, id, isActive, isReadOnly, ...rest }) => {
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const itemKey = useSelector(state => state.current.itemKey);
 	return (
 		<TabPane
+			asSections={ asSections }
 			id={ id }
 			className="tags"
 			isActive={ isActive }

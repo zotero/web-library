@@ -68,6 +68,26 @@ test.describe('Desktop Modal Focus Management', () => {
 		await expect(modal.getByRole('searchbox', { name: 'Filter Tags' })).toBeFocused();
 	});
 
+	test('Color picker opens with focus on the current color', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: testUserManageTags.length }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		await page.getByRole('button', { name: 'Tag Selector Options' }).click();
+		await page.getByRole('menuitem', { name: 'Manage Tags' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Manage Tags' });
+		const tagItem = modal.getByRole('list', { name: 'Tags' }).getByRole('listitem', { name: 'cute' });
+		await tagItem.getByRole('button', { name: 'More' }).click();
+		await page.getByRole('menuitem', { name: 'Assign Color' }).click();
+
+		// "cute" is violet, which is not the first color in the picker
+		const colorPicker = page.getByRole('combobox', { name: 'Color' });
+		await colorPicker.click();
+		await expect(colorPicker.getByRole('option', { name: 'violet' })).toBeFocused();
+	});
+
 	test('Focus returns to trigger button after closing tag color manager', async ({ page, serverPort }) => {
 		const handlers = [
 			makeCustomHandler('/api/users/1/tags', testUserManageTags, { totalResults: testUserManageTags.length }),

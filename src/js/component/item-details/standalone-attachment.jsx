@@ -4,11 +4,12 @@ import { pick } from 'web-common/utils';
 
 import AttachmentDetails from './attachment-details';
 
-const StandaloneAttachmentTabPane = ({ id, isActive, isReadOnly, ...rest }) => {
+const StandaloneAttachmentTabPane = ({ asSections, id, isActive, isReadOnly, ...rest }) => {
 	const itemKey = useSelector(state => state.current.itemKey);
 
 	return (
 		<TabPane
+			asSections={ asSections }
 			id={ id }
 			className="standalone-attachment"
 			isActive={ isActive }

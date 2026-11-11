@@ -9,7 +9,7 @@ import Abstract from './abstract';
 import { getBaseMappedValue } from '../../common/item';
 import { get } from '../../utils';
 
-const Info = ({ isActive, isReadOnly, id, ...rest }) => {
+const Info = ({ asSections, isActive, isReadOnly, id, ...rest }) => {
 	const isLibraryReadOnly = useSelector(
 		state => (state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
 	);
@@ -26,6 +26,7 @@ const Info = ({ isActive, isReadOnly, id, ...rest }) => {
 
 	return (
 		<TabPane
+			asSections={ asSections }
 			id={ id }
 			className="info"
 			isActive={ isActive }

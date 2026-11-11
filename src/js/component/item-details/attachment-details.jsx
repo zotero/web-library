@@ -198,7 +198,7 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 											title="Download"
 											role="listitem"
 										>
-											{isPreppingPDF ? <Fragment><span>Preparing</span><Spinner small /></Fragment> : "Download"}
+											{isPreppingPDF ? <Fragment><span>Preparing</span><Spinner small label="" /></Fragment> : "Download"}
 										</DropdownItem>
 									)}
 								</>

@@ -263,7 +263,8 @@ label {
 			border: none;
 		}
 
-		&.is-disabled .select-value {
+		&.is-disabled .select-value,
+		&.is-disabled .select-input > input {
 			color: var(--color-text-disabled);
 		}
 	}

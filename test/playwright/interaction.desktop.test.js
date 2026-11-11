@@ -48,7 +48,7 @@ test.describe('Desktop Interaction', () => {
 		await expect(await page.getByRole('tab', {name: 'Info'})).toBeFocused();
 
 		await page.keyboard.press('Tab');
-		await expect(await page.getByRole('combobox', {name: 'Item Type'}).getByRole('textbox')).toBeFocused();
+		await expect(await page.getByRole('combobox', {name: 'Item Type'})).toBeFocused();
 
 		await page.keyboard.press('Tab');
 		await expect(await page.getByRole('textbox', {name: 'Title', exact: true })).toBeFocused();
@@ -64,7 +64,7 @@ test.describe('Desktop Interaction', () => {
 		await expect(await page.getByRole('textbox', {name: 'Title', exact: true})).toBeFocused();
 
 		await page.keyboard.press('Shift+Tab');
-		await expect(await page.getByRole('combobox', {name: 'Item Type'}).getByRole('textbox')).toBeFocused();
+		await expect(await page.getByRole('combobox', {name: 'Item Type'})).toBeFocused();
 
 		await page.keyboard.press('Shift+Tab');
 		await expect(await page.getByRole('tab', {name: 'Info'})).toBeFocused();

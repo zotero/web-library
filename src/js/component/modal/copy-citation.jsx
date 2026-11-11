@@ -300,7 +300,7 @@ const CitationTouch = memo(props => {
 							{bubbleString}
 						</Button>
 						<div className="drag-handle" ref={dragHandleRef} >
-							<Icon type="24/grip" role="presentation" width="24" height="24" />
+							<Icon type="24/grip" width="24" height="24" />
 						</div>
 					</div>
 				</div>

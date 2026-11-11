@@ -197,6 +197,7 @@ describe('Tags', () => {
 		await user.click(assignColorOpt);
 		const colorComboBox = screen.getByRole('combobox', { name: 'Color' });
 		await user.click(getByRole(colorComboBox, 'option', { name: 'violet' }));
+		expect(screen.getByRole('combobox', { name: 'Position' })).toHaveTextContent('5');
 		await userEvent.click(screen.getByRole('button', { name: 'Set Color' }));
 		expect(hasBeenPosted).toBe(true);
 	});

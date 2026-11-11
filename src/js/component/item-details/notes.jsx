@@ -184,7 +184,7 @@ const Note = memo(props => {
 
 Note.displayName = 'Note';
 
-const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
+const Notes = ({ asSections, id, isActive, isReadOnly, ...rest }) => {
 	const dispatch = useDispatch();
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const noteKey = useSelector(state => state.current.noteKey);
@@ -361,6 +361,7 @@ const Notes = ({ id, isActive, isReadOnly, ...rest }) => {
 
 	return (
 		<TabPane
+			asSections={ asSections }
 			id={ id }
 			className="notes"
 			isActive={ isActive }

@@ -237,10 +237,11 @@ describe('Item info', () => {
 
 		const itemTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
 		await user.click(itemTypeCombo);
-		const bookOpt = getByRole(itemTypeCombo, 'option', { name: 'Book' });
-		const journalArticleOpt = getByRole(itemTypeCombo, 'option', { name: 'Journal Article' });
-		const patentOpt = getByRole(itemTypeCombo, 'option', { name: 'Patent' });
-		const softwareOpt = getByRole(itemTypeCombo, 'option', { name: 'Software' });
+		const itemTypeListbox = screen.getByRole('listbox', { name: 'Item Type' });
+		const bookOpt = getByRole(itemTypeListbox, 'option', { name: 'Book' });
+		const journalArticleOpt = getByRole(itemTypeListbox, 'option', { name: 'Journal Article' });
+		const patentOpt = getByRole(itemTypeListbox, 'option', { name: 'Patent' });
+		const softwareOpt = getByRole(itemTypeListbox, 'option', { name: 'Software' });
 		expect(bookOpt).toBeInTheDocument();
 		expect(journalArticleOpt).toBeInTheDocument();
 		expect(patentOpt).toBeInTheDocument();
@@ -273,7 +274,7 @@ describe('Item info', () => {
 
 		const inputTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
 		await user.click(inputTypeCombo);
-		await user.selectOptions(getByRole(inputTypeCombo, 'listbox'), 'Radio Broadcast');
+		await user.selectOptions(screen.getByRole('listbox', { name: 'Item Type' }), 'Radio Broadcast');
 
 		expect(await screen.findByRole('textbox',
 			{ name: 'Program Title' })
@@ -340,7 +341,7 @@ describe('Item info', () => {
 
 		screen
 
-		expect(mapNodesToLabels(getAllByRole(getByRole(firstAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([
+		expect(mapNodesToLabels(getAllByRole(screen.getByRole('listbox', { name: 'Creator Type' }), 'option'))).toEqual(expect.arrayContaining([
 			'Author',
 			'Contributor',
 			'Editor',
@@ -351,21 +352,21 @@ describe('Item info', () => {
 
 		const itemTypeCombo = screen.getByRole('combobox', { name: 'Item Type' });
 		await user.click(itemTypeCombo);
-		await user.selectOptions(getByRole(itemTypeCombo, 'listbox'), 'Radio Broadcast');
+		await user.selectOptions(screen.getByRole('listbox', { name: 'Item Type' }), 'Radio Broadcast');
 
 		await waitFor(() => expect(screen.getByRole('textbox', { name: 'Program Title' })).toBeInTheDocument());
 		const expectedAuthorTypes = ['Director','Scriptwriter','Producer','Cast Member','Contributor','Guest',];
 
 		firstAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[0];
 		await user.click(firstAuthorTypeCombo);
-		expect(mapNodesToLabels(getAllByRole(getByRole(firstAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Down']));
+		expect(mapNodesToLabels(getAllByRole(screen.getByRole('listbox', { name: 'Creator Type' }), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Down']));
 
 		const secondAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[1];
 		await user.click(secondAuthorTypeCombo);
-		expect(mapNodesToLabels(getAllByRole(getByRole(secondAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move Down']));
+		expect(mapNodesToLabels(getAllByRole(screen.getByRole('listbox', { name: 'Creator Type' }), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move Down']));
 
 		const lastAuthorTypeCombo = screen.getAllByRole('combobox', { name: 'Creator Type' })[9];
 		await user.click(lastAuthorTypeCombo);
-		expect(mapNodesToLabels(getAllByRole(getByRole(lastAuthorTypeCombo, 'listbox'), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move to Top']));
+		expect(mapNodesToLabels(getAllByRole(screen.getByRole('listbox', { name: 'Creator Type' }), 'option'))).toEqual(expect.arrayContaining([...expectedAuthorTypes, 'Move Up', 'Move to Top']));
 	});
 });
