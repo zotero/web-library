@@ -104,8 +104,9 @@ const currentRecoverFromTrash = () => {
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
 
-		// unselect items before recovering them to avoid needless request for item details if one item is selected
-		await dispatch(navigate({ items: [] }));
+		// unselect items before recovering them to avoid needless request for item details if one item is selected.
+		// Replaces the history entry, so going back skips items that are no longer in the trash.
+		await dispatch(navigate({ items: [], noteKey: null, attachmentKey: null, view: 'item-list' }, false, false, true));
 		const itemsPromise = dispatch(chunkedRecoverItemsFromTrash(itemKeys));
 		const collectionsPromise = dispatch(chunkedUpdateCollectionsTrash(collectionKeys, libraryKey, 0));
 		return await Promise.all([itemsPromise, collectionsPromise]);
@@ -118,8 +119,9 @@ const currentDeletePermanently = () => {
 		const { itemKeys: keys, libraryKey } = state.current;
 		const { itemKeys, collectionKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
 
-		// unselect items before deleting them to avoid needless request for item details if one item is selected
-		await dispatch(navigate({ items: [] }));
+		// unselect items before deleting them to avoid needless request for item details if one item is selected.
+		// Replaces the history entry, so going back skips deleted items.
+		await dispatch(navigate({ items: [], noteKey: null, attachmentKey: null, view: 'item-list' }, false, false, true));
 		const itemsPromise = await dispatch(chunkedDeleteItems(itemKeys));
 		const collectionsPromise = await dispatch(chunkedDeleteCollections(collectionKeys, libraryKey));
 		return await Promise.all([itemsPromise, collectionsPromise]);
@@ -133,7 +135,9 @@ const currentTrashOrDelete = () => {
 		if (itemsSource === 'trash') {
 			return await dispatch(currentDeletePermanently());
 		} else {
-			return await dispatch(currentMoveToTrash());
+			const trashPromise = dispatch(currentMoveToTrash());
+			dispatch(navigate({ items: [], noteKey: null, attachmentKey: null }));
+			return await trashPromise;
 		}
 	}
 }

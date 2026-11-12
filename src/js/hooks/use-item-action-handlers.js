@@ -27,12 +27,12 @@ const useItemActionHandlers = () => {
 
 	const handlePermanentlyDelete = useCallback(async () => {
 		await dispatch(currentDeletePermanently());
-		dispatch(triggerSelectMode(false, true));
+		dispatch(triggerSelectMode(false));
 	}, [dispatch]);
 
 	const handleUndelete = useCallback(async () => {
 		await dispatch(currentRecoverFromTrash());
-		dispatch(triggerSelectMode(false, true));
+		dispatch(triggerSelectMode(false));
 	}, [dispatch]);
 
 	const handleBibliographyModalOpen = useCallback(() => {

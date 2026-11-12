@@ -202,7 +202,6 @@ const ItemsTable = props => {
 			direction = 1;
 		} else if (!pickerMode && isDelKeyDown(ev)) {
 			dispatch(currentTrashOrDelete());
-			dispatch(navigate({ items: [], noteKey: null, attachmentKey: null }));
 			return;
 		} else if (ev.key === 'Home') {
 			if(pickerMode && keys.length) {

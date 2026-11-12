@@ -19,6 +19,11 @@ const push = (path) => {
 	return locationChange(path);
 }
 
+const replace = (path) => {
+	window.history.replaceState({}, '', path);
+	return locationChange(path);
+}
+
 const currentToPath = current => ({
 	attachmentKey: current.attachmentKey,
 	collection: current.collectionKey,
@@ -42,23 +47,24 @@ const currentToPath = current => ({
  * @param {boolean} [isAbsolute=false] - Indicates whether the path is absolute or relative to the current path.
  * @param {boolean} [viewportChange=false] - Indicates whether a viewport change should be triggered after navigation.
  * This, for example, triggers table list to query for all item keys so that it can figure out where in the list target item is.
+ * @param {boolean} [isReplace=false] - Indicates whether the current history entry should be replaced instead of adding a new one.
  * @returns {Function} - The async action function.
  */
-const navigate = (path, isAbsolute = false, viewportChange = false) => {
+const navigate = (path, isAbsolute = false, viewportChange = false, isReplace = false) => {
 	return async (dispatch, getState) => {
 		const { config, current } = getState();
 		const isEmbedded = config.isEmbedded;
-		const pushFn = isEmbedded ? locationChange : push;
+		const updateHistory = isEmbedded ? locationChange : isReplace ? replace : push;
 		if(isAbsolute) {
 			const configuredPath = makePath(config, path);
-			dispatch(pushFn(configuredPath));
+			dispatch(updateHistory(configuredPath));
 		} else {
 			const updatedPath = {
 				...currentToPath(current),
 				...path
 			};
 			const configuredPath = makePath(config, updatedPath);
-			dispatch(pushFn(configuredPath));
+			dispatch(updateHistory(configuredPath));
 		}
 		if (viewportChange) {
 			dispatch({

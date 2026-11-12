@@ -36,7 +36,8 @@ const ItemDetails = props => {
 
 	useEffect(() => {
 		if(lastFetchItemDetailsNoResults) {
-			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }));
+			// replace, so that going back does not return to the missing item and redirect here again
+			dispatch(navigate({ items: null, attachmentKey: null, noteKey: null, view: 'item-list' }, false, false, true));
 		}
 	}, [dispatch, lastFetchItemDetailsNoResults]);
 

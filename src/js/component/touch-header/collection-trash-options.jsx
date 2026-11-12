@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Icon } from 'web-common/components';
 
 import { ToolGroup } from '../ui/toolbars';
-import { currentRecoverFromTrash, currentDeletePermanently, navigate } from '../../actions';
+import { currentRecoverFromTrash, currentDeletePermanently } from '../../actions';
 
 const CollectionTrashOptions = ({ isSingleColumn, shouldHideNav, }) => {
 	const dispatch = useDispatch();
@@ -15,12 +15,10 @@ const CollectionTrashOptions = ({ isSingleColumn, shouldHideNav, }) => {
 
 	const handleRestoreToLibrary = useCallback(() => {
 		dispatch(currentRecoverFromTrash());
-		dispatch(navigate({ items: [], view: 'item-list' }));
 	}, [dispatch]);
 
 	const handleDeletePermanently = useCallback(() => {
 		dispatch(currentDeletePermanently());
-		dispatch(navigate({ items: [], view: 'item-list' }));
 	}, [dispatch]);
 
 	return (

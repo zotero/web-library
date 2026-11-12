@@ -42,13 +42,14 @@ const ItemOptions = () => {
 		handleLeavingAction(currentMoveToTrash);
 	}, [handleLeavingAction]);
 
+	// currentRecoverFromTrash and currentDeletePermanently return to the item list themselves
 	const handleRestoreToLibraryClick = useCallback(() => {
-		handleLeavingAction(currentRecoverFromTrash);
-	}, [handleLeavingAction]);
+		dispatch(currentRecoverFromTrash());
+	}, [dispatch]);
 
 	const handleDeletePermanentlyClick = useCallback(() => {
-		handleLeavingAction(currentDeletePermanently);
-	}, [handleLeavingAction]);
+		dispatch(currentDeletePermanently());
+	}, [dispatch]);
 
 	const handleCiteClick = useCallback(() => {
 		setModalFocusRestore(toggleRef.current);
