@@ -17,7 +17,7 @@ const EMPTY_DND_STATE = { isOver: false, canDrop: false };
 const useDndNode = ({ ref, dndData, isReadOnly, isFileUploadAllowed, onFileDrop, onNodeDrop, shouldBeDraggable }) => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 
-	const [, dragRef] = useDrag({ // eslint-disable-line no-unused-vars
+	const [, dragRef] = useDrag({
 		type: COLLECTION,
 		canDrag: () => shouldBeDraggable,
 		item: () => dndData,
@@ -70,7 +70,7 @@ const useDndNode = ({ ref, dndData, isReadOnly, isFileUploadAllowed, onFileDrop,
 				const {
 					targetType,
 					collectionKey: targetCollectionKey,
-					libraryKey: targetLibraryKey, // eslint-disable-line no-unused-vars
+					libraryKey: targetLibraryKey,
 					getParents: targetGetParents,
 				} = dndData;
 

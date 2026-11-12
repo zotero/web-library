@@ -1,8 +1,8 @@
 import { closeServer, loadFixtureState, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { wait, isSingleColumn } from '../utils/common.js';
-import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
-import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
 
 test.describe('Mobile Modal Snapshots', () => {
 	let server;

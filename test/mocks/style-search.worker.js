@@ -1,7 +1,7 @@
 export default class SearchWorker {
-  postMessage (message) {
+  postMessage () {
   }
 
-  addEventListener (event, callback) {
+  addEventListener () {
   }
 }

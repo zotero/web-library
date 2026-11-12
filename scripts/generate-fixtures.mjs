@@ -216,7 +216,7 @@ async function makeFixture(stateURL, name, callback) {
 	let state = await page.evaluate(([stateToJSONString, stateProcessSymbolsString, stateHole]) => {
 		eval(stateProcessSymbolsString);
 		eval(stateToJSONString);
-		return stateToJSON(window.WebLibStore.getState(), stateHole);
+		return stateToJSON(window.WebLibStore.getState(), stateHole); // eslint-disable-line no-undef
 	}, [stateToJSONString, stateProcessSymbolsString, STATE_HOLE]);
 	state = state.replaceAll(secret.apiKey, 'zzzzzzzzzzzzzzzzzzzzzzzz');
 	state = state.replaceAll(secret.userName, 'testuser');
@@ -226,7 +226,7 @@ async function makeFixture(stateURL, name, callback) {
 	let stateJSON = JSON.parse(state);
 	try {
 		stateJSON.config.libraries.find(l => l.key === 'g5119976').isReadOnly = false;
-	} catch (e) {
+	} catch {
 		console.warn('Unable to find group library "g5119976", are you running correct config?');
 	}
 	state = JSON.stringify(stateJSON);
@@ -270,7 +270,7 @@ if (requestedFixture && !fixtures.some(([, name]) => name === requestedFixture))
 				children.forEach(function (p) {
 					try {
 						process.kill(p.PID, 'SIGINT');
-					} catch (e) {
+					} catch {
 						// ignore
 					}
 				});

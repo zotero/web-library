@@ -1,8 +1,8 @@
 import { closeServer, loadFixtureState, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { wait } from '../utils/common.js';
-import itemsInCollectionDogs from '../fixtures/response/test-user-get-items-in-collection-dogs.json' assert { type: 'json' };
-import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
+import itemsInCollectionDogs from '../fixtures/response/test-user-get-items-in-collection-dogs.json' with { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
 
 test.describe('Desktop Modal Snapshots', () => {
 	let server;

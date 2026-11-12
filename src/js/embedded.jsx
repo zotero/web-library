@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import './wdyr';
 import * as defaults from './constants/defaults';
+import { LOCATION_CHANGE } from './constants/actions';
 import createReducers from './reducers';
 import ErrorBoundary from './component/error-boundry';
 import Loader from './component/loader';

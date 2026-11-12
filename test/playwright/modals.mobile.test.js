@@ -1,8 +1,8 @@
 import { loadFixtureState, closeServer, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { isSingleColumn } from '../utils/common.js';
-import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
-import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
 
 // Selects the first item in the list, opens the "Add to Collection" modal for it and navigates
 // into the "Dogs" collection. Returns the modal.

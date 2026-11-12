@@ -14,7 +14,7 @@ import { getUniqueId } from '../../utils';
 const ExportModal = () => {
 	const dispatch = useDispatch();
 	const isOpen = useSelector(state => state.modal.id === EXPORT);
-	const itemKeys = useSelector(state => state.modal.itemKeys, shallowEqual) || [];
+	const itemKeys = useSelector(state => state.modal.itemKeys || [], shallowEqual);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const collectionKey = useSelector(state => state.modal.collectionKey);
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);

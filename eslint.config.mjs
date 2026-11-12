@@ -9,16 +9,30 @@ const languageOptions = {
 		...globals.browser,
 		...globals.node,
 	},
-	ecmaVersion: 14,
+	ecmaVersion: "latest",
 	sourceType: "module",
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 	},
 };
 
+const reactSettings = {
+	react: { version: "detect" },
+};
+
+const reactRules = {
+	// React recommended + JSX runtime presets
+	...(reactPlugin.configs?.recommended?.rules ?? {}),
+	...(reactPlugin.configs?.["jsx-runtime"]?.rules ?? {}),
+
+	"react/prop-types": "off",
+};
+
 export default [
-	// Ignore patterns
-	{ ignores: ["modules/**"] },
+	// Only lint scripts, application sources, tests and root config files
+	{
+		ignores: ["*", "!scripts/", "!src/", "src/*", "!src/js/", "!test/", "!*.config.{js,mjs,cjs}"],
+	},
 
 	// ESLint core recommended rules
 	js.configs.recommended,
@@ -27,55 +41,47 @@ export default [
 	{
 		files: ["src/js/**/*.{js,jsx}"],
 		languageOptions,
-
-		settings: {
-			react: { version: "detect" },
-		},
-
+		settings: reactSettings,
 		plugins: {
 			react: reactPlugin,
 			"react-hooks": reactHooks,
 		},
-
 		rules: {
-			// React recommended + JSX runtime presets
-			...(reactPlugin.configs?.recommended?.rules ?? {}),
-			...(reactPlugin.configs?.["jsx-runtime"]?.rules ?? {}),
+			...reactRules,
 
 			// React Hooks recommended
 			"react-hooks/rules-of-hooks": "error",
 			"react-hooks/exhaustive-deps": "warn",
-
-			"react/prop-types": "off",
 		},
 	},
-	// Jest settings for tests
+	// Jest and Playwright tests, test utilities and mocks
 	{
 		files: ["test/**/*.{js,jsx}"],
-		languageOptions,
-		globals: {
-			...globals.jest,
+		languageOptions: {
+			...languageOptions,
+			globals: {
+				...languageOptions.globals,
+				...globals.jest,
+			},
 		},
+		settings: reactSettings,
 		plugins: {
 			react: reactPlugin,
 			"jest-dom": jestDom,
 			"react-hooks": reactHooks,
 		},
 		rules: {
-			...(reactPlugin.configs?.recommended?.rules ?? {}),
+			...reactRules,
 			...(jestDom.configs?.recommended?.rules ?? {}),
-			"react/prop-types": "off",
 		},
 	},
-	// Build tools (/scripts)
+	// Build tools and config files
 	{
-		files: ["scripts/**/*.mjs", "playwright.config.mjs", "jest.config.mjs"],
+		files: ["scripts/**/*.mjs", "*.config.{js,mjs,cjs}"],
 		languageOptions: {
 			globals: {
 				...globals.node,
 			},
-			ecmaVersion: 14,
-			sourceType: "module",
-		}
-	}
+		},
+	},
 ];

@@ -745,7 +745,7 @@ describe('Items', () => {
 			http.get('https://api.zotero.org/users/475425/settings/tagColors', () => {
 				return HttpResponse.json({ "version": 1, "value": [{ "name": "green", "color": "#00FF00" }, { "name": "violet", "color": "#8A2BE2" }] });
 			}),
-			http.get('https://api.zotero.org/users/475425/collections', async ({ request }) => {
+			http.get('https://api.zotero.org/users/475425/collections', async () => {
 				return HttpResponse.json([], {
 					headers: { 'Total-Results': '0' },
 				});

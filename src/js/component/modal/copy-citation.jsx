@@ -1,6 +1,6 @@
 import { Button, FocusTrap, Icon, Popover, PopoverBody, PopoverDialog, PopoverTrigger, Spinner } from 'web-common/components';
 import { Fragment, forwardRef, memo, useCallback, useEffect, useId, useImperativeHandle, useRef, useReducer } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFocusManager, usePrevious } from 'web-common/hooks';
 import { copyWithHtml } from 'web-common/utils';
@@ -405,7 +405,7 @@ const CopyCitationModal = () => {
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
 	const isOpen = useSelector(state => state.modal.id === COPY_CITATION);
 	const wasOpen = usePrevious(isOpen);
-	const itemKeys = useSelector(state => state.modal.itemKeys || []);
+	const itemKeys = useSelector(state => state.modal.itemKeys || [], shallowEqual);
 	const prevItemKeys = usePrevious(itemKeys);
 	const libraryKey = useSelector(state => state.modal.libraryKey);
 	const requestsPending = useSelector(state => state.libraries[libraryKey]?.sync?.requestsPending);

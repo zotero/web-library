@@ -7,7 +7,7 @@ const NOTE_KEY = 'NOTE0001';
 // "Algorithms" has no standalone note, add one cloned from child note GNVWD3U4
 const patchState = state => {
 	const lib = state.libraries.u1;
-	const { parentItem: _parentItem, ...note } = lib.items.GNVWD3U4;
+	const { parentItem: _parentItem, ...note } = lib.items.GNVWD3U4; // eslint-disable-line no-unused-vars
 	const standaloneNote = { ...note, key: NOTE_KEY, collections: ['CSB4KZUU'] };
 	lib.items[NOTE_KEY] = standaloneNote;
 	lib.dataObjects[NOTE_KEY] = { ...standaloneNote };

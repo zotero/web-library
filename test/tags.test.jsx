@@ -121,7 +121,7 @@ describe('Tags', () => {
 		await findByRole(suggestions2, 'listitem', { name: 'today' });
 
 		// only one suggestion left (the other one is already added)
-		expect(queryAllByRole(suggestions2, 'listitem')).toHaveLength(1); // eslint-disable-line jest-dom/prefer-in-document
+		expect(queryAllByRole(suggestions2, 'listitem')).toHaveLength(1);
 		await user.keyboard('{arrowdown}{enter}');
 		expect(postCounter).toBe(2);
 
@@ -259,7 +259,7 @@ describe('Tags', () => {
 		expect(await findAllByRole(list, 'listitem')).toHaveLength(8);
 
 		await user.type(screen.getByRole('searchbox', { name: 'Filter Tags' }), 'read');
-		expect(await findAllByRole(list, 'listitem')).toHaveLength(1); // eslint-disable-line jest-dom/prefer-in-document
+		expect(await findAllByRole(list, 'listitem')).toHaveLength(1);
 	});
 
 	test('Assign color should be disabled if at max tag colors', async () => {

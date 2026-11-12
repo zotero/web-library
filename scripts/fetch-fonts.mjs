@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fetch from 'node-fetch';
 import fs from 'fs-extra';
 import path from 'path';

@@ -1,8 +1,8 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
-import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' assert { type: 'json' };
-import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' assert { type: 'json' };
-import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' assert { type: 'json' };
+import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' with { type: 'json' };
+import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' with { type: 'json' };
+import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' with { type: 'json' };
 
 // Generate Zotero API items covering the whole desktop-test-user-library-view item list, so that
 // indices 61-82 -- the unfetched range in that fixture -- can be served when the virtual list

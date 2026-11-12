@@ -3,7 +3,7 @@ import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
 import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, loadFixtureState} from "../utils/fixed-state-server.js";
-import citationStylesData from '../../data/citation-styles-data.json' assert { type: 'json' };
+import citationStylesData from '../../data/citation-styles-data.json' with { type: 'json' };
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const NONSENSE_STYLE = 'no-such-citation-style';

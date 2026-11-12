@@ -166,13 +166,13 @@ describe('Metadata Retrieval', () => {
 
 		expect(
 			getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-		).toHaveAttribute('aria-valuenow', '0');
+		).toHaveValue(0);
 
 		// Progress is 25% after PDFWorker.getRecognizerData returns data extracted from the PDF
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '25');
+			).toHaveValue(0.25);
 		});
 		expect(mockedGetRecognizerData).toHaveBeenCalledTimes(1);
 
@@ -180,7 +180,7 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '50');
+			).toHaveValue(0.5);
 		});
 		expect(hasPostedToRecognizeService).toBe(true);
 
@@ -188,7 +188,7 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '75');
+			).toHaveValue(0.75);
 		});
 		expect(hasBeenSearched).toBe(true);
 
@@ -196,7 +196,7 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '100');
+			).toHaveValue(1);
 		});
 		getByRole(recognizerDialogRow, 'status', { name: 'Completed' });
 		expect(hasCreatedParentItem).toBe(true);
@@ -309,13 +309,13 @@ describe('Metadata Retrieval', () => {
 
 		expect(
 			getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-		).toHaveAttribute('aria-valuenow', '0');
+		).toHaveValue(0);
 
 		// Progress is 25% after PDFWorker.getRecognizerData returns data extracted from the PDF
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '25');
+			).toHaveValue(0.25);
 		});
 		expect(mockedBitcoinGetRecognizerData).toHaveBeenCalledTimes(1);
 
@@ -323,7 +323,7 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '50');
+			).toHaveValue(0.5);
 		});
 		expect(hasPostedToRecognizeService).toBe(true);
 
@@ -331,7 +331,7 @@ describe('Metadata Retrieval', () => {
 		await waitFor(() => {
 			expect(
 				getByRole(dialog, 'progressbar', { name: 'Metadata retrieval progress' })
-			).toHaveAttribute('aria-valuenow', '100');
+			).toHaveValue(1);
 		});
 		getByRole(row, 'status', { name: 'Completed' });
 		expect(hasCreatedParentItem).toBe(true);

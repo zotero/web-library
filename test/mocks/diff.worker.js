@@ -1,7 +1,7 @@
 export default class DiffWorker {
-  postMessage (message) {
+  postMessage () {
   }
 
-  addEventListener (event, callback) {
+  addEventListener () {
   }
 }

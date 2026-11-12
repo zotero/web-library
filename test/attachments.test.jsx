@@ -462,7 +462,7 @@ describe('Attachments', () => {
 
 		// ... and the editor + migrate button remain, with the button re-enabled so the user can retry
 		const retryBtn = await screen.findByRole('button', { name: 'Migrate to Standalone Note' });
-		await waitFor(() => expect(retryBtn).not.toBeDisabled());
+		await waitFor(() => expect(retryBtn).toBeEnabled());
 
 		// ... and the ongoing process is cleared even on failure, so no spinner or unload guard lingers
 		await waitFor(() => expect(screen.queryByText('Migrating attachment note')).not.toBeInTheDocument());

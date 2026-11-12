@@ -13,6 +13,7 @@ async function findFreePort() {
 }
 
 export const test = baseTest.extend({
+	// eslint-disable-next-line no-empty-pattern -- Playwright requires a destructuring pattern for fixture arguments
 	serverPort: [async ({ }, use) => {
 		const port = await findFreePort();
 		await use(port);

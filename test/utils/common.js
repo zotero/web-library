@@ -63,7 +63,7 @@ export const applyAdditionalJestTweaks = ({ timeout = 30000, resolution = [1280,
 export const waitForLoad = async page => {
 	try {
 		await page.waitForLoadState('networkidle');
-	} catch (e) {
+	} catch {
 		console.warn('networkidle never triggered');
 		// ignore as there is a good chance that everything required for the screenshot has actually loaded.
 	}

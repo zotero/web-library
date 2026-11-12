@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { stripVTControlCharacters } from 'util';
 
 // ── ANSI codes ──────────────────────────────────────────────────────────
 
@@ -23,7 +24,7 @@ function logLine(msg) {
 // ── Shared helpers ──────────────────────────────────────────────────────
 
 function truncate(str, len) {
-	str = str.replace(/\x1b\[[0-9;]*m/g, '');
+	str = stripVTControlCharacters(str);
 	return str.length > len ? str.slice(0, len - 1) + '…' : str;
 }
 

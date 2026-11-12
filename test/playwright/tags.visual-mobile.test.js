@@ -1,7 +1,7 @@
 import { closeServer, loadFixtureState, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { wait, isSingleColumn } from '../utils/common.js';
-import collectionTags from '../fixtures/response/test-user-collection-items-tags.json' assert { type: 'json' };
+import collectionTags from '../fixtures/response/test-user-collection-items-tags.json' with { type: 'json' };
 
 test.describe('Mobile Tag Selector Snapshots', () => {
 	let server;

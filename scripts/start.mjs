@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { runBatch, runInteractive, BOLD, GREEN, RED, RESET } from './task-runner.mjs';
+import { runBatch, runInteractive, BOLD, RED, RESET } from './task-runner.mjs';
 
 const PREPARE_TASKS = [
 	{ label: 'Version', cmd: 'npm', args: ['run', 'build:version'] },

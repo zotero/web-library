@@ -1,8 +1,8 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
 import {closeServer, generateTestItems, generateTestTags, loadFixtureState, makeCustomHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
-import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' assert { type: 'json' };
-import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' assert { type: 'json' };
-import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
+import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
+import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' with { type: 'json' };
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
 
 test.describe('Desktop Modal Focus Management', () => {
 	let server;

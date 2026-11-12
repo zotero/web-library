@@ -198,7 +198,7 @@ const renderItemTitle = (title, targetNode) => {
 function getValidFileName(fileName, skipXML) {
 	// TODO: use space instead, and figure out what's doing extra
 	// URL encode when saving attachments that trigger this
-	fileName = fileName.replace(/[\/\\\?\*:|"<>]/g, '');
+	fileName = fileName.replace(/[/\\?*:|"<>]/g, '');
 	// Replace newlines and tabs (which shouldn't be in the string in the first place) with spaces
 	fileName = fileName.replace(/[\r\n\t]+/g, ' ');
 	// Replace various thin spaces

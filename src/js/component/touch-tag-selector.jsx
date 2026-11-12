@@ -82,8 +82,6 @@ const TouchTagSelector = () => {
 	const isManaging = useSelector(state => state.modal.id === MANAGE_TAGS);
 	const isEmbedded = useSelector(state => state.config.isEmbedded);
 	const { tags, selectedTags } = useTags();
-	const wasOpen = usePrevious(isOpen);
-	const lastFocus = useRef(null);
 	const selectedTagsLength = selectedTags.length;
 	const prevSelectedTagsLength = usePrevious(selectedTags.length);
 	const prevTagsCount = usePrevious(tags.count);

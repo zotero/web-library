@@ -1,7 +1,7 @@
 import { closeServer, getServer, loadFixtureState, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
 import { getMenuEntries, isSingleColumn, waitForLoad } from '../utils/common.js';
-import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
+import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
 
 const ITEM_KEY = '3JCLFUG4';
 const ALGORITHMS_COLLECTION_KEY = 'CSB4KZUU';
