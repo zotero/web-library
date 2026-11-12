@@ -100,3 +100,8 @@ export const wait = (ms = 0) => new Promise(resolve => {
 export const isSingleColumn = (testInfo) => {
 	return testInfo.project.name.includes('Mobile iPhone') || testInfo.project.name.includes('Mobile Android');
 }
+
+// Entries of a dropdown menu, with dividers as '-'
+export const getMenuEntries = menu => menu.locator('[role="menuitem"], [role="separator"]').evaluateAll(
+	entries => entries.map(entry => entry.getAttribute('role') === 'separator' ? '-' : entry.textContent.trim())
+);

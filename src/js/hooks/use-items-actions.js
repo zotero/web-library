@@ -71,9 +71,8 @@ const useItemsActions = () => {
 	const canRecognize = useCanRecognize();
 	const canUnregonize = useCanUnrecognize();
 
-	const hasAnyAction = isViewFile || isViewOnline || canDuplicate || canRecognize || canUnregonize || canCreateParent;
 	return {
-		attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi, hasAnyAction,
+		attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi,
 		isReadOnly, isViewFile, isTrash, isMyPublications, isViewOnline, item, selectedCount, url
 	};
 };

@@ -8,16 +8,13 @@ import { useItemActionHandlers, useItemsActions } from '../../../hooks';
 import { READER_CONTENT_TYPES, READER_CONTENT_TYPES_HUMAN_READABLE } from '../../../constants/reader';
 import { setModalFocusRestore } from '../../../common/modal-focus-restore';
 
-const MoreActionsItems = ({ divider = false, leadingDivider = false, toggleRef }) => {
+const useMoreActionsGroups = toggleRef => {
 	const dispatch = useDispatch();
 	const isTouchOrSmall = useSelector(state => state.device.isTouchOrSmall);
+	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
 	const { handleDuplicate, handleRetrieveMetadata, handleUnrecognize, handleCreateParentItem, handleChangeParentItemModalOpen } = useItemActionHandlers();
 	const { attachmentContentType, canDuplicate, canCreateParent, canRecognize, canReparent, canUnregonize, doi, isViewFile,
 		isViewOnline, item, selectedCount, url } = useItemsActions();
-
-	const isRecognizerAvailable = useSelector(state => state.config.isRecognizerAvailable);
-	const canRetrieveMetadata = isTouchOrSmall && isRecognizerAvailable && canRecognize;
-	const hasAnyItem = isViewFile || isViewOnline || canDuplicate || canRetrieveMetadata || canCreateParent || canReparent || canUnregonize;
 
 	const handleViewFileClick = useCallback(() => {
 		if (item.itemType === 'attachment') {
@@ -49,51 +46,48 @@ const MoreActionsItems = ({ divider = false, leadingDivider = false, toggleRef }
 		handleChangeParentItemModalOpen();
 	}, [handleChangeParentItemModalOpen, toggleRef]);
 
+	const fileTypeLabel = Object.keys(READER_CONTENT_TYPES).includes(attachmentContentType) ?
+		READER_CONTENT_TYPES_HUMAN_READABLE[attachmentContentType] : 'File';
+
+	// Groups are rendered with dividers between them; empty groups are dropped
+	return [
+		[
+			isViewFile && { key: 'view-file', label: `View ${fileTypeLabel}`, onClick: handleViewFileClick },
+			isViewOnline && { key: 'view-online', label: 'View Online', onClick: handleViewOnlineClick },
+		],
+		[
+			canDuplicate && { key: 'duplicate', label: 'Duplicate Item', onClick: handleDuplicate },
+		],
+		[
+			isTouchOrSmall && isRecognizerAvailable && canRecognize && { key: 'retrieve-metadata', label: 'Retrieve Metadata', onClick: handleRetrieveMetadata },
+			canCreateParent && { key: 'create-parent', label: selectedCount === 1 ? 'Create Parent Item' : 'Create Parent Items', onClick: handleCreateParentItemDropdownClick },
+			canReparent && { key: 'change-parent', label: 'Change Parent Item', onClick: handleChangeParentItemDropdownClick },
+			canUnregonize && { key: 'unrecognize', label: 'Undo Retrieve Metadata', onClick: handleUnrecognize },
+		],
+	].map(group => group.filter(Boolean)).filter(group => group.length > 0);
+};
+
+const MoreActionsItems = ({ divider = false, leadingDivider = false, toggleRef }) => {
+	const groups = useMoreActionsGroups(toggleRef);
+
+	if (groups.length === 0) {
+		return null;
+	}
+
 	return (
 		<Fragment>
-			{leadingDivider && hasAnyItem && <DropdownItem divider />}
-			{isViewFile && (
-				<DropdownItem onClick={handleViewFileClick}>
-					View {Object.keys(READER_CONTENT_TYPES).includes(attachmentContentType) ? READER_CONTENT_TYPES_HUMAN_READABLE[attachmentContentType] : 'File'}
-				</DropdownItem>
-			)}
-			{isViewOnline && (
-				<DropdownItem onClick={handleViewOnlineClick}>
-					View Online
-				</DropdownItem>
-			)}
-
-			{((isViewFile || isViewOnline)) && (canDuplicate) && <DropdownItem divider />}
-
-			{canDuplicate && (
-				<DropdownItem onClick={handleDuplicate}>
-					Duplicate Item
-				</DropdownItem>
-			)}
-
-			{canDuplicate && (canRecognize || canCreateParent || canUnregonize) && <DropdownItem divider />}
-
-			{canRetrieveMetadata && (
-				<DropdownItem onClick={handleRetrieveMetadata}>
-					Retrieve Metadata
-				</DropdownItem>
-			)}
-			{canCreateParent && (
-				<DropdownItem onClick={handleCreateParentItemDropdownClick}>
-					{selectedCount === 1 ? "Create Parent Item" : "Create Parent Items"}
-				</DropdownItem>
-			)}
-			{ canReparent && (
-				<DropdownItem onClick={handleChangeParentItemDropdownClick}>
-					Change Parent Item
-				</DropdownItem>
-			)}
-			{canUnregonize && (
-				<DropdownItem onClick={handleUnrecognize}>
-					Undo Retrieve Metadata
-				</DropdownItem>
-			)}
-			{divider && hasAnyItem && <DropdownItem divider />}
+			{leadingDivider && <DropdownItem divider />}
+			{groups.map((group, index) => (
+				<Fragment key={group[0].key}>
+					{index > 0 && <DropdownItem divider />}
+					{group.map(({ key, label, onClick }) => (
+						<DropdownItem key={key} onClick={onClick}>
+							{label}
+						</DropdownItem>
+					))}
+				</Fragment>
+			))}
+			{divider && <DropdownItem divider />}
 		</Fragment>
 	);
 }
@@ -159,7 +153,7 @@ const MoreActionsDropdownDesktop = memo(props => {
 MoreActionsDropdownDesktop.displayName = 'MoreActionsDropdownDesktop';
 
 const MoreActionsDropdownTouch = memo(() => {
-	const { hasAnyAction } = useItemsActions();
+	const hasAnyAction = useMoreActionsGroups().length > 0;
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleDropdownToggle = useCallback(() => {

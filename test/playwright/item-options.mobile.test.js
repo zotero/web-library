@@ -1,12 +1,13 @@
 import { closeServer, getServer, loadFixtureState, makeCustomHandler } from '../utils/fixed-state-server.js';
 import { test, expect } from '../utils/playwright-fixtures.js';
-import { isSingleColumn, waitForLoad } from '../utils/common.js';
+import { getMenuEntries, isSingleColumn, waitForLoad } from '../utils/common.js';
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' assert { type: 'json' };
 
 const ITEM_KEY = '3JCLFUG4';
 const ALGORITHMS_COLLECTION_KEY = 'CSB4KZUU';
 const AI_COLLECTION_KEY = 'I6WUED2Y';
 const TRASHED_ITEM_KEY = 'BPM2IS2N';
+const STANDALONE_PDF_KEY = 'UMPPCXU4';
 
 const readOnly = {
 	patchState: state => {
@@ -39,11 +40,6 @@ const routeItemsWrite = async page => {
 	});
 	return writes;
 };
-
-// Entries of the open menu, with dividers as '-'
-const getMenuEntries = menu => menu.locator('.dropdown-item, .dropdown-divider').evaluateAll(
-	entries => entries.map(entry => entry.classList.contains('dropdown-divider') ? '-' : entry.textContent.trim())
-);
 
 const openItemOptions = async page => {
 	const toggle = page.getByRole('button', { name: 'Item Options' });
@@ -148,6 +144,20 @@ test.describe('Item Options in item details', () => {
 
 		const menu = await openItemOptions(page);
 		await expect.poll(() => getMenuEntries(menu)).toEqual(['Create Citation', 'Export', '-', 'View PDF']);
+	});
+
+	test('separates the viewing and parent actions of a standalone PDF', async ({ page, serverPort }) => {
+		server = await getServer('mobile-test-user-item-details-view', serverPort);
+		await page.goto(`http://localhost:${serverPort}/testuser/collections/${ALGORITHMS_COLLECTION_KEY}/items/${STANDALONE_PDF_KEY}/item-details`);
+		await waitForLoad(page);
+
+		const menu = await openItemOptions(page);
+		await expect.poll(() => getMenuEntries(menu)).toEqual([
+			'Add To Collection', 'Remove From Collection', 'Move To Trash', '-',
+			'Create Citation', 'Export', '-',
+			'View PDF', '-',
+			'Retrieve Metadata', 'Create Parent Item', 'Change Parent Item',
+		]);
 	});
 
 	test('offers restoring and deleting in the trash', async ({ page, serverPort }) => {
