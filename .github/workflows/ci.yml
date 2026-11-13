@@ -1,6 +1,18 @@
 name: CI
 on: [push]
 jobs:
+  lint:
+    name: Lint
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/krypton'
+      - run: npm ci
+      - run: npm run lint
   test-jest:
     name: Test (Jest)
     timeout-minutes: 60
