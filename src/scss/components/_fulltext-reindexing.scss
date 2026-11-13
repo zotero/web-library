@@ -5,6 +5,7 @@
 	.fulltext-reindexing-progress {
 		position: absolute;
 		top: 50%;
+
 		// Sit 8px to the left of the clear button, whose left edge is
 		// ($space-xs + border + $space-md) in from the search box's right edge.
 		right: variables.$space-xs + variables.$border-width + variables.$space-md + variables.$space-xs;
@@ -57,6 +58,7 @@
 
 	.btn-icon.close {
 		position: absolute;
+
 		// Align with the first line of body text.
 		top: variables.$space-xs;
 		right: variables.$space-min;

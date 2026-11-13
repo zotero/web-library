@@ -38,7 +38,7 @@
 		display: flex;
 		flex-flow: row wrap;
 		gap: var(--bubble-rows-gap);
-		row-gap: var(--bubble-rows-gap);
+		row-gap: var(--bubble-rows-gap); // stylelint-disable-line declaration-block-no-redundant-longhand-properties -- Safari 11 support, see #536
 		max-height: calc(3.5 * (var(--bubble-height) + var(--bubble-rows-gap)));
 		padding: 8px 16px;
 		margin-bottom: 16px;

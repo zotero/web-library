@@ -101,7 +101,7 @@
 	// Textarea
 	&.textarea {
 		.editable-content {
-			word-wrap: break-word;
+			word-wrap: break-word; // stylelint-disable-line property-no-deprecated -- Safari 11 support, see #536
 
 			// Compensate border
 			margin-top: -1px;

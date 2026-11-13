@@ -1,6 +1,6 @@
 // CSL styles only work correctly with content-box
 .csl-entry {
-	word-wrap: break-word; // Break long URLs
+	word-wrap: break-word; // stylelint-disable-line property-no-deprecated -- Break long URLs; Safari 11 support, see #536
 	margin: 0 !important; // Override entry-spacing defined in CSL
 
 	&,
@@ -10,7 +10,7 @@
 }
 
 .csl-left-margin {
-	word-wrap: normal;
+	word-wrap: normal; // stylelint-disable-line property-no-deprecated -- Safari 11 support, see #536
 }
 
 .bibliography {

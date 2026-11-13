@@ -10,7 +10,7 @@
 	}
 
 	.color-picker-grid {
-		grid-gap: variables.$space-min;
+		grid-gap: variables.$space-min; // stylelint-disable-line property-no-deprecated -- Safari 11 support, see #536
 
 		@include breakpoints.touch-or-bp-down(sm) {
 			grid-template-columns: repeat(8, variables.$space-thumb);

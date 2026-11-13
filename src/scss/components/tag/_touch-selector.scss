@@ -14,7 +14,7 @@
 	@include hairline.hairline(right, "color-shade-4");
 
 	// Use a duplicate selector to override the `position: relative` set by the hairline mixin. A duplicate selector (which stylelint flags) is necessary; see #553.
-	& { // stylelint-disable-line no-duplicate-selectors
+	& { // stylelint-disable-line no-duplicate-selectors, block-no-redundant-nested-style-rules
 		position: absolute;
 	}
 

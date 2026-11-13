@@ -24,7 +24,7 @@
 
 		.textarea & {
 			white-space: pre-wrap;
-			word-wrap: break-word;
+			word-wrap: break-word; // stylelint-disable-line property-no-deprecated -- Safari 11 support, see #536
 
 			.editing & {
 				@include breakpoints.touch-or-bp-down(sm) {

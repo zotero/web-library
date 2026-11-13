@@ -69,7 +69,7 @@ $-colors-bg-lookup: (
 	$height: map.get(map.get($specs, $side), height);
 	$pseudo-element: if(sass($side == top or $side == left): "&::before"; else: "&::after");
 
-	& {
+	& { // stylelint-disable-line block-no-redundant-nested-style-rules
 		position: relative;
 	}
 
