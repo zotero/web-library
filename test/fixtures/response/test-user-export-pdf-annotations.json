@@ -1,0 +1,83 @@
+[
+    {
+        "key": "5MTLAY9D",
+        "version": 300,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser"
+        },
+        "meta": {},
+        "data": {
+            "key": "5MTLAY9D",
+            "version": 300,
+            "parentItem": "K24TUDDL",
+            "itemType": "annotation",
+            "annotationType": "highlight",
+            "annotationText": "",
+            "annotationComment": "",
+            "annotationColor": "#ffd400",
+            "annotationPageLabel": "14",
+            "annotationSortIndex": "00013|000000|00000",
+            "annotationPosition": "{\"rects\":[[57.022,86.218,555.949,96.181],[57.012,74.263,176.344,84.226]],\"pageIndex\":13}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2026-11-12T12:37:06Z",
+            "dateModified": "2026-11-12T12:37:06Z"
+        }
+    },
+    {
+        "key": "S8QRVQLS",
+        "version": 300,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser"
+        },
+        "meta": {},
+        "data": {
+            "key": "S8QRVQLS",
+            "version": 300,
+            "parentItem": "K24TUDDL",
+            "itemType": "annotation",
+            "annotationType": "highlight",
+            "annotationText": "",
+            "annotationComment": "",
+            "annotationColor": "#ffd400",
+            "annotationPageLabel": "5",
+            "annotationSortIndex": "00004|000000|00000",
+            "annotationPosition": "{\"rects\":[],\"pageIndex\":4}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2026-11-12T12:32:00Z",
+            "dateModified": "2026-11-12T12:32:00Z"
+        }
+    },
+    {
+        "key": "Y5GD4MSR",
+        "version": 300,
+        "library": {
+            "type": "user",
+            "id": 1,
+            "name": "testuser"
+        },
+        "meta": {},
+        "data": {
+            "key": "Y5GD4MSR",
+            "version": 300,
+            "parentItem": "K24TUDDL",
+            "itemType": "annotation",
+            "annotationType": "highlight",
+            "annotationText": "",
+            "annotationComment": "",
+            "annotationColor": "#ffd400",
+            "annotationPageLabel": "3",
+            "annotationSortIndex": "00002|000000|00000",
+            "annotationPosition": "{\"pageIndex\":2,\"rects\":[[312.347,463.447,349.199,473.41]]}",
+            "tags": [],
+            "relations": {},
+            "dateAdded": "2026-11-12T12:28:12Z",
+            "dateModified": "2026-11-12T12:28:12Z"
+        }
+    }
+]
