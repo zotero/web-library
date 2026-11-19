@@ -1,8 +1,9 @@
 import fs from "fs-extra";
-import {dirname, join} from "path";
+import {dirname, join, resolve, sep} from "path";
 import util from "util";
 import child_process from "child_process";
 import {fileURLToPath} from "url";
+import {unzipSync} from "fflate";
 
 const exec = util.promisify(child_process.exec);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -16,13 +17,7 @@ const modulesConfig = [
 		key: "pdfReader",
 		URLpath: "reader",
 		buildPath: ["build", "web"],
-		exec: (url, filename, tmpDir, targetDir) =>
-			`cd ${tmpDir}` +
-			` && (test -f ${filename} || curl -f ${url} -o ${filename})` +
-			` && mkdir -p ${targetDir}` +
-			` && unzip ${filename} web/* -d ${targetDir}` +
-			` && mv ${targetDir}/web/* ${targetDir}/` +
-			` && rm -r ${targetDir}/web`,
+		zipPrefix: "web/",
 	},
 	{
 		forceBuild: false,
@@ -30,11 +25,7 @@ const modulesConfig = [
 		key: "pdfWorker",
 		URLpath: "document-worker",
 		buildPath: ["build"],
-		exec: (url, filename, tmpDir, targetDir) =>
-			`cd ${tmpDir}` +
-			` && (test -f ${filename} || curl -f ${url} -o ${filename})` +
-			` && mkdir -p ${targetDir}` +
-			` && unzip -o ${filename} -d ${targetDir}`,
+		zipPrefix: "",
 	},
 	{
 		forceBuild: false,
@@ -42,24 +33,32 @@ const modulesConfig = [
 		key: "noteEditor",
 		URLpath: "note-editor",
 		buildPath: ["build", "web"],
-		exec: (url, filename, tmpDir, targetDir) =>
-			`cd ${tmpDir}` +
-			` && (test -f ${filename} || curl -f ${url} -o ${filename})` +
-			` && unzip ${filename} web/* -d ${targetDir}` +
-			` && mv ${join(targetDir, "web", "*")} ${targetDir}`,
+		zipPrefix: "web/",
 	},
 ];
 
-async function fetchModule({actualHash, moduleConfig, tmpDir, targetDir}) {
-	const filename = actualHash + ".zip";
-	const url = buildsURL + moduleConfig.URLpath + "/" + filename;
+async function fetchModule({actualHash, moduleConfig, targetDir}) {
+	const url = buildsURL + moduleConfig.URLpath + "/" + actualHash + ".zip";
 	console.log(`Fetching ${moduleConfig.name} from ${url}`);
 
 	await fs.remove(targetDir);
 	await fs.ensureDir(targetDir);
-	await fs.ensureDir(tmpDir);
 
-	await exec(moduleConfig.exec(url, filename, tmpDir, targetDir));
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error(`HTTP ${response.status} for ${url}`);
+	}
+	const {zipPrefix} = moduleConfig;
+	const files = unzipSync(new Uint8Array(await response.arrayBuffer()), {
+		filter: (file) => file.name.startsWith(zipPrefix) && !file.name.endsWith("/"),
+	});
+	for (const [name, data] of Object.entries(files)) {
+		const filePath = resolve(targetDir, name.slice(zipPrefix.length));
+		if (!filePath.startsWith(targetDir + sep)) {
+			throw new Error(`Refusing to extract ${name} outside ${targetDir}`);
+		}
+		await fs.outputFile(filePath, data);
+	}
 	console.log(`Obtained ${moduleConfig.name} from ${url}`);
 }
 
@@ -89,7 +88,6 @@ async function buildModule({moduleConfig, srcPath, targetDir}) {
 		const actualHash = stdout.trim();
 		const targetDir = join(ROOT, "src", "static", moduleConfig.name);
 		const targetDirExists = await fs.pathExists(targetDir);
-		const tmpDir = join(ROOT, "tmp", "builds", moduleConfig.name);
 		const envVar = `FORCE_BUILD_${moduleConfig.name.toUpperCase().replace(/-/g, "_")}`;
 		const forceBuild = moduleConfig.forceBuild || !!process.env[envVar];
 		if (forceBuild) {
@@ -102,15 +100,16 @@ async function buildModule({moduleConfig, srcPath, targetDir}) {
 					modulesData[moduleConfig.key] = actualHash;
 				} catch (e) {
 					console.error(`Error building ${moduleConfig.name}: ${e.message}`);
+					process.exitCode = 1;
 				}
 			} else {
 				// OK to fetch, but if it fails, build instead
 				try {
-					await fetchModule({actualHash, moduleConfig, tmpDir, targetDir});
+					await fetchModule({actualHash, moduleConfig, targetDir});
 					modulesData[moduleConfig.key] = actualHash;
-				} catch {
+				} catch (e) {
 					console.log(
-						`Unable to fetch ${moduleConfig.name}, will build instead...`,
+						`Unable to fetch ${moduleConfig.name} (${e.message}), will build instead...`,
 					);
 					try {
 						await buildModule({
@@ -122,9 +121,8 @@ async function buildModule({moduleConfig, srcPath, targetDir}) {
 						modulesData[moduleConfig.key] = actualHash;
 					} catch (e) {
 						console.error(`Error building ${moduleConfig.name}: ${e.message}`);
+						process.exitCode = 1;
 					}
-				} finally {
-					await fs.remove(tmpDir);
 				}
 			}
 		} else {
