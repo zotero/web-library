@@ -56,7 +56,7 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 	// Sort colored tags by position and other tags by name
 	tags.sort((a, b) => {
 		if (!a.color && !b.color) {
-			return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+			return a.name.localeCompare(b.name, undefined, { sensitivity: 'accent' });
 		}
 		if (!a.color && !b.color) { return -1 }
 		if (!a.color && b.color) { return 1 }

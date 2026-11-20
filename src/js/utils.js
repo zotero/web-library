@@ -256,11 +256,11 @@ const compare = (a, b) => {
 		return -1;
 	}
 
-	if(typeof(a) === 'number' && typeof('b') === 'number') {
+	if(typeof(a) === 'number' && typeof(b) === 'number') {
 		return a - b;
 	}
 
-	return a.localeCompare(b, { sensitivity: 'accent' });
+	return a.localeCompare(b, undefined, { sensitivity: 'accent' });
 }
 
 const sortByKey = (items, key, direction = 'asc') => {

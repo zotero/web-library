@@ -56,7 +56,7 @@ const useTags = (shouldSkipDisabledAndSelected = false) => {
 		tags.sort((a, b) => {
 			if (a.color && !b.color) { return -1; }
 			if (b.color && !a.color) { return 1; }
-			return a.tag.localeCompare(b.tag, { sensitivity: 'accent' });
+			return a.tag.localeCompare(b.tag, undefined, { sensitivity: 'accent' });
 		});
 		return tags;
 	}, [selectedTagNames, tagColors]);
