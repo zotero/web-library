@@ -117,6 +117,24 @@ const postItemsMultiPatch = async (getState, multiPatch, libraryKey = null) => {
 	};
 }
 
+// Selected keys may point at items that were never fetched (e.g. beyond the loaded range). Call from
+// within a queued callback, where no other write to the library is in flight, so the fetched copy is current.
+const getOrFetchItems = async (dispatch, getState, libraryKey, itemKeys) => {
+	const isMissing = key => !getState().libraries[libraryKey]?.items?.[key];
+	const missingKeys = itemKeys.filter(isMissing);
+
+	if(missingKeys.length > 0) {
+		await dispatch(fetchItemsByKeys(missingKeys, { includeTrashed: 1 }, { current: { libraryKey } }));
+	}
+
+	const stillMissingKeys = itemKeys.filter(isMissing);
+	if(stillMissingKeys.length > 0) {
+		throw new Error(`Items not found: ${stillMissingKeys.join(', ')}`);
+	}
+
+	return getState().libraries[libraryKey].items;
+}
+
 const createItems = (items, libraryKey = null) => {
 	return async (dispatch, getState) => {
 		libraryKey = libraryKey ?? getState().current.libraryKey;
@@ -379,8 +397,6 @@ const queueUpdateItem = (itemKey, patch, libraryKey, { resolve, reject, id }) =>
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
-			const itemVersion = item.version;
 			const libraryVersion = state.libraries[libraryKey].sync.version;
 
 			dispatch({
@@ -392,6 +408,8 @@ const queueUpdateItem = (itemKey, patch, libraryKey, { resolve, reject, id }) =>
 			});
 
 			try {
+				const item = get(state, ['libraries', libraryKey, 'items', itemKey]);
+				const itemVersion = item.version;
 				var updatedItem, response;
 
 				//@NOTE: When updating 'creators' or 'date' we send update using
@@ -904,23 +922,23 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
-			const state = getState();
-			const multiPatch = itemKeys.map(key => ({
-				key,
-				tags: getToggledTags(state.libraries[libraryKey].items[key].tags.map(t => t.tag), tagsToToggle, toggleAction)
-					.map(tag => ({ tag }))
-			}));
-
-			dispatch({
-				type: REQUEST_ADD_TAGS_TO_ITEMS,
-				itemKeys,
-				tagsToToggle,
-				libraryKey,
-				id
-			});
-
 			try {
-				const { response, itemKeys, items } = await postItemsMultiPatch(getState, multiPatch);
+				dispatch({
+					type: REQUEST_ADD_TAGS_TO_ITEMS,
+					itemKeys,
+					tagsToToggle,
+					libraryKey,
+					id
+				});
+
+				const stateItems = await getOrFetchItems(dispatch, getState, libraryKey, itemKeys);
+				const multiPatch = itemKeys.map(key => ({
+					key,
+					tags: getToggledTags(stateItems[key].tags.map(t => t.tag), tagsToToggle, toggleAction)
+						.map(tag => ({ tag }))
+				}));
+
+				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
 
 				if(!response.isSuccess()) {
@@ -929,7 +947,7 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 				dispatch({
 					type: RECEIVE_ADD_TAGS_TO_ITEMS,
 					libraryKey,
-					itemKeys,
+					itemKeys: updatedItemKeys,
 					itemKeysChanged,
 					tagsToToggle,
 					items,
@@ -975,30 +993,27 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
-			const state = getState();
-			const multiPatch = itemKeys.map(key => {
-				const item = state.libraries[libraryKey].items[key];
-				return {
+			try {
+				dispatch({
+					type: REQUEST_ADD_ITEMS_TO_COLLECTION,
+					itemKeys,
+					collectionKey,
+					libraryKey,
+					id
+				});
+
+				const stateItems = await getOrFetchItems(dispatch, getState, libraryKey, itemKeys);
+				const multiPatch = itemKeys.map(key => ({
 					key,
 					collections: [
 						...(new Set([
-							...(item.collections || []),
+							...(stateItems[key].collections || []),
 							collectionKey
 						]))
 					]
-				};
-			});
+				}));
 
-			dispatch({
-				type: REQUEST_ADD_ITEMS_TO_COLLECTION,
-				itemKeys,
-				collectionKey,
-				libraryKey,
-				id
-			});
-
-			try {
-				const { response, itemKeys, items } = await postItemsMultiPatch(getState, multiPatch);
+				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
 
 				if(!response.isSuccess()) {
@@ -1007,7 +1022,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				dispatch({
 					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
 					libraryKey,
-					itemKeys,
+					itemKeys: updatedItemKeys,
 					itemKeysChanged,
 					collectionKey,
 					items,
@@ -1237,29 +1252,30 @@ const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, 
 	return {
 		queue: sourceLibraryKey,
 		callback: async (next, dispatch, getState) => {
-			const multiPatch = itemKeys.map((ik, index) => {
-				const sourceItem = getState().libraries[sourceLibraryKey].items[ik];
-				const newItemKey = targetItemKeys[index];
-				return {
-					key: sourceItem.key,
-					version: sourceItem.version,
-						relations: {
-						...sourceItem.relations,
-						'owl:sameAs': getItemCanonicalUrl({ libraryKey: targetLibraryKey, itemKey: newItemKey })
-					}
-				}
-			});
-
-			dispatch({
-				type: REQUEST_STORE_RELATIONS_IN_SOURCE,
-				itemKeys,
-				libraryKey: sourceLibraryKey,
-				targetLibraryKey,
-				id,
-			});
-
 			try {
-				const { response } = await postItemsMultiPatch(getState, multiPatch);
+				dispatch({
+					type: REQUEST_STORE_RELATIONS_IN_SOURCE,
+					itemKeys,
+					libraryKey: sourceLibraryKey,
+					targetLibraryKey,
+					id,
+				});
+
+				const stateItems = await getOrFetchItems(dispatch, getState, sourceLibraryKey, itemKeys);
+				const multiPatch = itemKeys.map((ik, index) => {
+					const sourceItem = stateItems[ik];
+					const newItemKey = targetItemKeys[index];
+					return {
+						key: sourceItem.key,
+						version: sourceItem.version,
+						relations: {
+							...sourceItem.relations,
+							'owl:sameAs': getItemCanonicalUrl({ libraryKey: targetLibraryKey, itemKey: newItemKey })
+						}
+					}
+				});
+
+				const { response } = await postItemsMultiPatch(getState, multiPatch, sourceLibraryKey);
 				dispatch({
 					itemKeys,
 					libraryKey: sourceLibraryKey,
@@ -1307,25 +1323,22 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
-			const state = getState();
-			const multiPatch = itemKeys.map(key => {
-				const item = state.libraries[libraryKey].items[key];
-				return {
-					key,
-					collections: item.collections.filter(cKey => cKey !== collectionKey),
-				};
-			});
-
-			dispatch({
-				type: REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
-				itemKeys,
-				collectionKey,
-				libraryKey,
-				id
-			});
-
 			try {
-				const { response, itemKeys, items } = await postItemsMultiPatch(getState, multiPatch);
+				dispatch({
+					type: REQUEST_REMOVE_ITEMS_FROM_COLLECTION,
+					itemKeys,
+					collectionKey,
+					libraryKey,
+					id
+				});
+
+				const stateItems = await getOrFetchItems(dispatch, getState, libraryKey, itemKeys);
+				const multiPatch = itemKeys.map(key => ({
+					key,
+					collections: stateItems[key].collections.filter(cKey => cKey !== collectionKey),
+				}));
+
+				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
 
 				if(!response.isSuccess()) {
@@ -1334,7 +1347,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 				dispatch({
 					type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 					libraryKey,
-					itemKeys,
+					itemKeys: updatedItemKeys,
 					itemKeysChanged,
 					collectionKey,
 					items,

@@ -269,11 +269,6 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 		callback: async (next, dispatch, getState) => {
 			const state = getState();
 			const config = state.config;
-			const collection = state.libraries[libraryKey]?.dataObjects[collectionKey];
-			if (!collection) {
-				throw new Error(`Collection ${collectionKey} not found in library ${libraryKey}`);
-			}
-			const version = collection.version;
 
 			dispatch({
 				type: REQUEST_UPDATE_COLLECTION,
@@ -284,6 +279,11 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 			});
 
 			try {
+				const collection = state.libraries[libraryKey]?.dataObjects[collectionKey];
+				if (!collection) {
+					throw new Error(`Collection ${collectionKey} not found in library ${libraryKey}`);
+				}
+				const version = collection.version;
 				const response = await api(config.apiKey, config.apiConfig)
 					.library(libraryKey)
 					.collections(collectionKey)
