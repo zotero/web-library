@@ -83,16 +83,19 @@ const AddItemsToCollectionsModal = () => {
 
 		setBusy(true);
 
-		if(targetLibraryKey === libraryKey) {
-			await dispatch(
-				chunkedAddToCollection(sourceItemKeys, targetCollectionKey)
-			);
-		} else {
-			await dispatch(
-				chunkedCopyToLibrary(sourceItemKeys, libraryKey, targetLibraryKey, targetCollectionKey)
-			);
+		try {
+			if(targetLibraryKey === libraryKey) {
+				await dispatch(
+					chunkedAddToCollection(sourceItemKeys, targetCollectionKey)
+				);
+			} else {
+				await dispatch(
+					chunkedCopyToLibrary(sourceItemKeys, libraryKey, targetLibraryKey, targetCollectionKey)
+				);
+			}
+		} finally {
+			setBusy(false);
 		}
-		setBusy(false);
 		dispatch(toggleModal(null, false));
 		dispatch(triggerSelectMode(false, true));
 	}, [dispatch, sourceItemKeys, libraryKey, picked]);

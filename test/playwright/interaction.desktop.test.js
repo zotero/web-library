@@ -1,5 +1,5 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
+import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
 import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' with { type: 'json' };
 import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' with { type: 'json' };
 import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' with { type: 'json' };
@@ -604,6 +604,25 @@ test.describe('Desktop Interaction', () => {
 			const toolbar = document.querySelector('[aria-label="items toolbar"]');
 			return toolbar?.contains(document.activeElement);
 		})).toBe(true);
+	});
+
+	test('Selection is kept when Move To Trash fails', async ({ page, serverPort }) => {
+		const handlers = [
+			makeWriteHandler('/api/users/1/items', 'POST', testUserTrashItem, { failures: 1 }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		const row = page.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' });
+		const trashButton = page.getByRole('button', { name: 'Move To Trash' });
+		await trashButton.click();
+
+		await expect(page.getByText('Received error from Zotero server: Test failure.')).toBeVisible();
+		await expect(row).toHaveAttribute('aria-selected', 'true');
+		await expect(trashButton).toBeEnabled();
+
+		// Retrying succeeds and clears the selection
+		await trashButton.click();
+		await expect(trashButton).toBeDisabled();
 	});
 
 	test('Shift+Tab from note editor iframe should move focus back to notes list', async ({ page, browserName, serverPort }) => {

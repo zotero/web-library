@@ -202,6 +202,36 @@ export function makeTextHandler(url, textResponse) {
 	}
 }
 
+// Answers `method` requests to exactly `pathname` (query string ignored). The first `failures`
+// requests get HTTP 400 "Test failure" -- not 5xx, which the API client retries on its own. The
+// rest get `jsonResponse`, or an empty 204 when it is null. With a `gate`, responses are held
+// until gate.release() is called (see makeGate).
+export function makeWriteHandler(pathname, method, jsonResponse, { failures = 0, gate = null, version = 1000000 } = {}) {
+	let requestCount = 0;
+	return (req, resp) => {
+		if (new URL(req.url, 'http://localhost').pathname !== pathname || req.method !== method) {
+			return false;
+		}
+		const isFailure = requestCount++ < failures;
+		(gate?.ready ?? Promise.resolve()).then(() => {
+			setCommonHeaders(resp);
+			resp.setHeader('Last-Modified-Version', version);
+			if (isFailure) {
+				resp.statusCode = 400;
+				resp.setHeader('Content-Type', 'text/plain');
+				resp.end('Test failure');
+			} else if (jsonResponse === null) {
+				resp.statusCode = 204;
+				resp.end();
+			} else {
+				resp.setHeader('Content-Type', 'application/json');
+				resp.end(JSON.stringify(jsonResponse));
+			}
+		});
+		return true;
+	};
+}
+
 // Generate mock Zotero API items for testing. Useful for creating large item
 // sets that produce sparse arrays when served via makePaginatedHandler.
 export function generateTestItems(count, { keyPrefix = 'TEST', titlePrefix = 'Test Item', collections = [], startIndex = 0 } = {}) {

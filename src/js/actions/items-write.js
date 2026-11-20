@@ -614,21 +614,23 @@ const patchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey = null) => {
 		libraryKey = libraryKey ?? getState().current.libraryKey;
 		const id = requestTracker.id++;
 
-		dispatch({
-			type: PRE_PATCH_ATTACHMENT,
-			itemKey,
-			newFileBuf,
-			patchBuf,
-			libraryKey
-		});
+		return new Promise((resolve, reject) => {
+			dispatch({
+				type: PRE_PATCH_ATTACHMENT,
+				itemKey,
+				newFileBuf,
+				patchBuf,
+				libraryKey
+			});
 
-		dispatch(
-			queuePatchAttachment(itemKey, newFileBuf, patchBuf, libraryKey, id)
-		);
+			dispatch(
+				queuePatchAttachment(itemKey, newFileBuf, patchBuf, libraryKey, { resolve, reject, id })
+			);
+		});
 	};
 }
 
-const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => {
+const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, { resolve, reject, id }) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -662,6 +664,7 @@ const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => 
 					patchBuf,
 					id
 				});
+				resolve();
 			} catch (error) {
 				dispatch({
 					type: ERROR_PATCH_ATTACHMENT,
@@ -673,6 +676,7 @@ const queuePatchAttachment = (itemKey, newFileBuf, patchBuf, libraryKey, id) => 
 					patchBuf,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -771,13 +775,15 @@ const moveItemsToTrash = itemKeys => {
 			id
 		});
 
-		dispatch(
-			queueMoveItemsToTrash(itemKeys, libraryKey, id)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueMoveItemsToTrash(itemKeys, libraryKey, id, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
+const queueMoveItemsToTrash = (itemKeys, libraryKey, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -814,6 +820,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 				if(affectedParentItemKeys.length > 0) {
 					dispatch(fetchItemsByKeys(affectedParentItemKeys));
 				}
+				resolve();
 			} catch(error) {
 				dispatch({
 					type: ERROR_MOVE_ITEMS_TRASH,
@@ -822,6 +829,7 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id) => {
 					libraryKey,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -842,13 +850,15 @@ const recoverItemsFromTrash = itemKeys => {
 			id
 		});
 
-		dispatch(
-			queueRecoverItemsFromTrash(itemKeys, libraryKey, id)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueRecoverItemsFromTrash(itemKeys, libraryKey, id, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
+const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -883,6 +893,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 				if(affectedParentItemKeys.length > 0) {
 					dispatch(fetchItemsByKeys(affectedParentItemKeys));
 				}
+				resolve();
 			} catch(error) {
 				dispatch({
 					type: ERROR_RECOVER_ITEMS_TRASH,
@@ -891,6 +902,7 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id) => {
 					libraryKey,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -912,13 +924,15 @@ const toggleTagsOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction = TO
 			id
 		});
 
-		dispatch(
-			queueToggleTagOnItems(itemKeys, libraryKey, tagsToToggle, toggleAction, id)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueToggleTagOnItems(itemKeys, libraryKey, tagsToToggle, toggleAction, id, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction, id) => {
+const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -953,7 +967,8 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 					items,
 					response,
 					id,
-					});
+				});
+				resolve();
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_TAGS_TO_ITEMS,
@@ -963,6 +978,7 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 					tagsToToggle,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -976,20 +992,23 @@ const addToCollection = (itemKeys, collectionKey) => {
 		const { libraryKey } = getState().current;
 		const id = requestTracker.id++;
 
-		await dispatch({
-				type: PRE_ADD_ITEMS_TO_COLLECTION,
-				itemKeys,
-				collectionKey,
-				libraryKey,
-				id
-			});
-		await dispatch(
-			queueAddToCollection(itemKeys, collectionKey, libraryKey, id)
-		);
+		dispatch({
+			type: PRE_ADD_ITEMS_TO_COLLECTION,
+			itemKeys,
+			collectionKey,
+			libraryKey,
+			id
+		});
+
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueAddToCollection(itemKeys, collectionKey, libraryKey, id, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
+const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1029,6 +1048,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 					response,
 					id,
 				});
+				resolve();
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_ITEMS_TO_COLLECTION,
@@ -1037,6 +1057,7 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id) => {
 					libraryKey,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -1116,7 +1137,8 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 		if(shouldStoreRelationInSource) {
 			const targetItemKeys = newItems.filter(i => !['attachment', 'annotation'].includes(i.itemType)).map(i => i.key);
 			if (targetItemKeys.length) {
-				dispatch(storeRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey));
+				// a failure is reported by ERROR_STORE_RELATIONS_IN_SOURCE and must not stop the copy
+				await dispatch(storeRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey)).catch(() => {});
 			}
 		}
 
@@ -1242,13 +1264,15 @@ const storeRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, targe
 			id,
 		});
 
-		dispatch(
-			queueStoreRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueStoreRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id, resolve, reject)
+			);
+		});
 	}
 }
 
-const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id) => {
+const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey, id, resolve, reject) => {
 	return {
 		queue: sourceLibraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1284,6 +1308,7 @@ const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, 
 					type: RECEIVE_STORE_RELATIONS_IN_SOURCE,
 					id,
 				});
+				resolve();
 			} catch(error) {
 				dispatch({
 					error,
@@ -1292,6 +1317,7 @@ const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, 
 					type: ERROR_STORE_RELATIONS_IN_SOURCE,
 					id,
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();
@@ -1313,13 +1339,15 @@ const removeFromCollection = (itemKeys, collectionKey) => {
 				id
 			});
 
-		dispatch(
-			queueRemoveFromCollection(itemKeys, collectionKey, libraryKey, id)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueRemoveFromCollection(itemKeys, collectionKey, libraryKey, id, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
+const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -1354,6 +1382,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 					response,
 					id,
 				});
+				resolve();
 			} catch(error) {
 				dispatch({
 					type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,
@@ -1362,6 +1391,7 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id) => {
 					libraryKey,
 					id
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();

@@ -1,8 +1,9 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, generateTestItems, generateTestTags, loadFixtureState, makeCustomHandler, makePaginatedHandler, makeTextHandler} from "../utils/fixed-state-server.js";
+import {closeServer, generateTestItems, generateTestTags, loadFixtureState, makeCustomHandler, makeGate, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
 import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' with { type: 'json' };
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
+import testUserAddItemToCollection from '../fixtures/response/test-user-add-item-to-collection.json' with { type: 'json' };
 
 test.describe('Desktop Modal Focus Management', () => {
 	let server;
@@ -1129,5 +1130,84 @@ test.describe('Desktop Modal Clipboard', () => {
 		expect(types).toContain('text/html');
 		expect(html).toContain('Kealy');
 		expect(plain).toContain('Kealy');
+	});
+});
+
+test.describe('Desktop Modals -- waiting for writes', () => {
+	let server;
+
+	test.afterEach(async () => {
+		await closeServer(server);
+	});
+
+	const openAddToCollectionAndPickMusic = async page => {
+		await page.getByRole('button', { name: 'Add To Collection' }).click();
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+		await modal.getByRole('treeitem', { name: 'My Library' }).getByRole('button', { name: 'Expand' }).click();
+		await modal.getByRole('treeitem', { name: 'Music' }).click();
+		return modal;
+	};
+
+	const openMoveCollectionForAI = async page => {
+		const aiNode = page.getByRole('treeitem', { name: 'AI' });
+		await aiNode.hover();
+		await aiNode.getByTitle('More').click();
+		await page.getByRole('menuitem', { name: 'Move Collection' }).click();
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+		await modal.getByRole('treeitem', { name: 'My Library' }).getByRole('button', { name: 'Expand' }).click();
+		await modal.getByRole('treeitem', { name: 'Music' }).click();
+		return modal;
+	};
+
+	test('Add To Collection modal stays busy until the items are added', async ({ page, serverPort }) => {
+		const gate = makeGate();
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [
+			makeWriteHandler('/api/users/1/items', 'POST', testUserAddItemToCollection, { gate }),
+		]);
+
+		const modal = await openAddToCollectionAndPickMusic(page);
+		const writeRequest = page.waitForRequest(req => req.method() === 'POST' && new URL(req.url()).pathname === '/api/users/1/items');
+		await modal.getByRole('button', { name: 'Add' }).click();
+		await writeRequest;
+
+		await expect(page.locator('.modal-backdrop.loading')).toBeVisible();
+		gate.release();
+		await expect(page.locator('.modal-backdrop')).toHaveCount(0);
+		await expect(modal).toHaveCount(0);
+	});
+
+	test('Add To Collection modal stays open when adding fails', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [
+			makeWriteHandler('/api/users/1/items', 'POST', testUserAddItemToCollection, { failures: 1 }),
+		]);
+
+		const modal = await openAddToCollectionAndPickMusic(page);
+		await modal.getByRole('button', { name: 'Add' }).click();
+
+		await expect(page.getByText('Received error from Zotero server: Test failure.')).toBeVisible();
+		await expect(modal).toBeVisible();
+		await expect(page.locator('.modal-backdrop.loading')).toHaveCount(0);
+
+		// The picked collection is kept, so adding can be retried right away
+		await modal.getByRole('button', { name: 'Add' }).click();
+		await expect(modal).toHaveCount(0);
+	});
+
+	test('Move Collection modal stays open when moving fails', async ({ page, serverPort }) => {
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, [
+			makeWriteHandler('/api/users/1/collections/I6WUED2Y', 'PATCH', null, { failures: 1 }),
+		]);
+
+		const modal = await openMoveCollectionForAI(page);
+		await modal.getByRole('button', { name: 'Move' }).click();
+
+		await expect(page.getByText('Received error from Zotero server: Test failure.')).toBeVisible();
+		await expect(modal).toBeVisible();
+		await expect(page.locator('.modal-backdrop.loading')).toHaveCount(0);
+
+		await modal.getByRole('button', { name: 'Move' }).click();
+		await expect(modal).toHaveCount(0);
 	});
 });

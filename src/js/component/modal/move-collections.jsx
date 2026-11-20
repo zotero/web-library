@@ -57,8 +57,11 @@ const MoveCollectionsModal = () => {
 
 			setIsBusy(true);
 			const patch = { parentCollection: pickedCollectionKey };
-			await dispatch(updateCollection(collectionKey, patch, libraryKey));
-			setIsBusy(false);
+			try {
+				await dispatch(updateCollection(collectionKey, patch, libraryKey));
+			} finally {
+				setIsBusy(false);
+			}
 			dispatch(toggleModal(MOVE_COLLECTION, false));
 		}
 	}, [collectionKey, dispatch, libraryKey, picked]);

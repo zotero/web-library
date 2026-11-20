@@ -257,13 +257,15 @@ const updateCollection = (collectionKey, patch, libraryKey) => {
 			queueId
 		});
 
-		dispatch(
-			queueUpdateCollection(collectionKey, patch, libraryKey, queueId)
-		);
+		return new Promise((resolve, reject) => {
+			dispatch(
+				queueUpdateCollection(collectionKey, patch, libraryKey, queueId, resolve, reject)
+			);
+		});
 	};
 }
 
-const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
+const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId, resolve, reject) => {
 	return {
 		queue: libraryKey,
 		callback: async (next, dispatch, getState) => {
@@ -305,7 +307,7 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 					response
 				});
 
-				return updateCollection;
+				resolve(updatedCollection);
 			} catch(error) {
 				dispatch({
 					type: ERROR_UPDATE_COLLECTION,
@@ -315,6 +317,7 @@ const queueUpdateCollection = (collectionKey, patch, libraryKey, queueId) => {
 					patch,
 					queueId
 				});
+				reject(error);
 				throw error;
 			} finally {
 				next();

@@ -53,8 +53,7 @@ const chunkedAction = (action, keys, ...args) => {
 const splitItemAndCollectionKeys = (itemAndCollectionKeys, libraryKey, state) => {
 	const itemKeys = [];
 	const collectionKeys = [];
-	while (itemAndCollectionKeys.length > 0) {
-		const key = itemAndCollectionKeys.pop();
+	for (const key of itemAndCollectionKeys) {
 		if (state.libraries[libraryKey]?.dataObjects[key]?.[Symbol.for('type')] === 'collection') {
 			collectionKeys.push(key);
 		} else {
