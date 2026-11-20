@@ -21,7 +21,7 @@ import { useItemsState } from '../../../hooks';
 import { isDelKeyDown, isHighlightKeyDown } from '../../../common/event';
 import ScrollEffectComponent from './scroll-effect';
 import { ROW_HEIGHT } from '../../../constants/constants';
-import { selectItemsKeyboard } from '../../../common/selection';
+import { selectItemsKeyboard, selectItemsRange } from '../../../common/selection';
 import Table from '../../common/table';
 import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
@@ -183,6 +183,16 @@ const ItemsTable = props => {
 		setIsHoveringBetweenRows(isOverRow && dropZone !== null);
 	}, []);
 
+	const applyKeyboardSelection = useCallback((items, index) => {
+		if (pickerMode) {
+			pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode, items, view: 'item-list' });
+			// ScrollEffectComponent is not rendered in picker mode, so scroll explicitly
+			listRef.current?.scrollToRow?.({ index, align: 'smart' });
+		} else {
+			dispatch(navigate({ items, noteKey: null, attachmentKey: null }));
+		}
+	}, [collectionKey, dispatch, libraryKey, pickerMode, pickerNavigate, q, qmode]);
+
 	const handleKeyUp = useCallback(ev => {
 		if (!isHighlightKeyDown(ev)) {
 			dispatch(triggerHighlightedCollections(false));
@@ -193,6 +203,7 @@ const ItemsTable = props => {
 		const prevPendingIndex = pendingSelectionRef.current?.index ?? undefined;
 		pendingSelectionRef.current = null;
 		var direction, magnitude = 1;
+		const isShiftExtend = ev.getModifierState('Shift') && (!pickerMode || pickerMode === PICKS_MULTIPLE_ITEMS);
 		if (isEmbedded && isTriggerEvent(ev)) {
 			dispatch(navigate({ view: 'item-details' }));
 			return;
@@ -204,16 +215,16 @@ const ItemsTable = props => {
 			dispatch(currentTrashOrDelete());
 			return;
 		} else if (ev.key === 'Home') {
-			if(pickerMode && keys.length) {
+			const rangeKeys = isShiftExtend ? selectItemsRange(0, { keys, selectedItemKeys }) : undefined;
+			if (rangeKeys) {
+				applyKeyboardSelection(rangeKeys, 0);
+				focusRow(0);
+			} else if(pickerMode && keys.length) {
 				listRef.current?.scrollToRow?.({ index: 0, align: 'smart' });
 				if (keys[0]) {
 					pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode, items: [keys[0]], view: 'item-list' });
 				} else {
-					pendingSelectionRef.current = {
-						index: 0,
-						shiftKeys: ev.getModifierState('Shift') && pickerMode === PICKS_MULTIPLE_ITEMS
-							? selectedItemKeys : null
-					};
+					pendingSelectionRef.current = { index: 0, shiftKeys: isShiftExtend ? selectedItemKeys : null };
 				}
 				focusRow(0);
 			} else {
@@ -222,22 +233,22 @@ const ItemsTable = props => {
 					focusRow(index);
 				} else if (keys.length > 0) {
 					listRef.current?.scrollToRow?.({ index: 0, align: 'smart' });
-					pendingSelectionRef.current = { index: 0, shiftKeys: ev.getModifierState('Shift') ? selectedItemKeys : null };
+					pendingSelectionRef.current = { index: 0, shiftKeys: isShiftExtend ? selectedItemKeys : null };
 					focusRow(0);
 				}
 			}
 			return;
 		} else if (ev.key === 'End') {
-			if(pickerMode && keys.length) {
+			const rangeKeys = isShiftExtend ? selectItemsRange(keys.length - 1, { keys, selectedItemKeys }) : undefined;
+			if (rangeKeys) {
+				applyKeyboardSelection(rangeKeys, keys.length - 1);
+				focusRow(keys.length - 1);
+			} else if(pickerMode && keys.length) {
 				listRef.current?.scrollToRow?.({ index: keys.length - 1, align: 'smart' });
 				if (keys[keys.length - 1]) {
 					pickerNavigate({ library: libraryKey, collection: collectionKey, search: q, qmode, items: [keys[keys.length - 1]], view: 'item-list' });
 				} else {
-					pendingSelectionRef.current = {
-						index: keys.length - 1,
-						shiftKeys: ev.getModifierState('Shift') && pickerMode === PICKS_MULTIPLE_ITEMS
-							? selectedItemKeys : null
-					};
+					pendingSelectionRef.current = { index: keys.length - 1, shiftKeys: isShiftExtend ? selectedItemKeys : null };
 				}
 				focusRow(keys.length - 1);
 			} else {
@@ -246,7 +257,7 @@ const ItemsTable = props => {
 					focusRow(index);
 				} else if (keys.length > 0) {
 					listRef.current?.scrollToRow?.({ index: keys.length - 1, align: 'smart' });
-					pendingSelectionRef.current = { index: keys.length - 1, shiftKeys: ev.getModifierState('Shift') ? selectedItemKeys : null };
+					pendingSelectionRef.current = { index: keys.length - 1, shiftKeys: isShiftExtend ? selectedItemKeys : null };
 					focusRow(keys.length - 1);
 				}
 			}
@@ -277,7 +288,7 @@ const ItemsTable = props => {
 		ev.preventDefault();
 
 		const { nextKeys, cursorIndex } = pickerMode ?
-			selectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift') && pickerMode === PICKS_MULTIPLE_ITEMS, { keys, selectedItemKeys, overrideStartIndex: prevPendingIndex }) :
+			selectItemsKeyboard(direction, magnitude, isShiftExtend, { keys, selectedItemKeys, overrideStartIndex: prevPendingIndex }) :
 			await dispatch(navigateSelectItemsKeyboard(direction, magnitude, ev.getModifierState('Shift')));
 
 		if (pickerMode && nextKeys) {
@@ -291,14 +302,11 @@ const ItemsTable = props => {
 		// won't fire. Manually scroll to the target index.
 		if (typeof nextKeys === 'undefined' && cursorIndex >= 0) {
 			listRef.current?.scrollToRow?.({ index: cursorIndex, align: 'smart' });
-			const isShiftExtend = pickerMode
-				? ev.getModifierState('Shift') && pickerMode === PICKS_MULTIPLE_ITEMS
-				: ev.getModifierState('Shift');
 			pendingSelectionRef.current = { index: cursorIndex, shiftKeys: isShiftExtend ? selectedItemKeys : null };
 		}
 
 		focusRow(cursorIndex);
-	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, q, qmode, focusRow]);
+	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, q, qmode, focusRow, applyKeyboardSelection]);
 
 	const handleTableFocus = useCallback(async ev => {
 		const hasChangedFocused = receiveFocus(ev);
@@ -418,46 +426,12 @@ const ItemsTable = props => {
 		const pending = pendingSelectionRef.current;
 		if (pending !== null && keys[pending.index]) {
 			pendingSelectionRef.current = null;
-			let items = null;
-
-			if (pending.shiftKeys?.length > 0) {
-				// Shift was held -- try to extend selection from anchor to target
-				const anchorKey = pending.shiftKeys[0];
-				const anchorIndex = keys.findIndex(k => k && k === anchorKey);
-				if (anchorIndex !== -1) {
-					const startIndex = Math.min(anchorIndex, pending.index);
-					const endIndex = Math.max(anchorIndex, pending.index);
-					const rangeKeys = keys.slice(startIndex, endIndex + 1);
-					// Only use range if all items in between are fetched.
-					// Note: keys is a sparse array -- .every() skips empty
-					// slots, so use a for loop to detect holes reliably.
-					let hasHoles = false;
-					for (let i = 0; i < rangeKeys.length; i++) {
-						if (typeof rangeKeys[i] === 'undefined') {
-							hasHoles = true;
-							break;
-						}
-					}
-					if (!hasHoles) {
-						items = anchorIndex <= pending.index ? rangeKeys : [...rangeKeys].reverse();
-					}
-				}
-			}
-
-			// Fallback: select only the target item
-			if (!items) {
-				items = [keys[pending.index]];
-			}
-
-			if (pickerMode) {
-				pickerNavigate({ library: libraryKey, collection: collectionKey,
-					search: q, qmode, items, view: 'item-list' });
-				listRef.current?.scrollToRow?.({ index: pending.index, align: 'smart' });
-			} else {
-				dispatch(navigate({ items, noteKey: null, attachmentKey: null }));
-			}
+			// If Shift was held, extend the selection from the anchor when every item in between
+			// is fetched, otherwise select only the target item
+			const rangeKeys = pending.shiftKeys ? selectItemsRange(pending.index, { keys, selectedItemKeys: pending.shiftKeys }) : undefined;
+			applyKeyboardSelection(rangeKeys ?? [keys[pending.index]], pending.index);
 		}
-	}, [keys, dispatch, pickerMode, pickerNavigate, libraryKey, collectionKey, q, qmode]);
+	}, [applyKeyboardSelection, keys]);
 
 	// Clear stale pending selection when the view changes
 	useEffect(() => {

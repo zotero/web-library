@@ -359,6 +359,33 @@ test.describe('Desktop Modal Focus Management', () => {
 		expect(selectedIndices.length).toBeGreaterThan(0);
 	});
 
+	test('Shift+Home extends selection from anchor to the first item in Add Related modal', async ({ page, serverPort }) => {
+		const allItems = generateTestItems(83, { keyPrefix: 'RLAT', titlePrefix: 'Related Item', collections: ['WTTJ2J56'] });
+		const handlers = [
+			makePaginatedHandler('/api/users/1/collections/WTTJ2J56/items/top', allItems),
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-item-view', serverPort, page, handlers);
+
+		await page.getByRole('tab', { name: 'Related' }).click();
+		await page.getByRole('button', { name: 'Add Related Item' }).click();
+
+		const modal = page.getByRole('dialog', { name: 'Add Related Items' });
+		await expect(modal).toBeVisible();
+
+		const anchorRow = modal.locator('[role="row"][data-index="3"]');
+		await expect(anchorRow).toBeVisible();
+		await anchorRow.click();
+		await expect(anchorRow).toHaveAttribute('aria-selected', 'true');
+
+		await page.keyboard.press('Shift+Home');
+
+		await expect(modal.locator('[role="row"][aria-selected="true"]')).toHaveCount(4);
+		for (let i = 0; i <= 3; i++) {
+			await expect(modal.locator(`[role="row"][data-index="${i}"]`)).toHaveAttribute('aria-selected', 'true');
+		}
+	});
+
 	test('Focus is trapped within Add Related modal', async ({ page, serverPort }) => {
 		const handlers = [
 			makeCustomHandler('/api/users/1/collections/WTTJ2J56/items/top', [], { totalResults: 0 }),

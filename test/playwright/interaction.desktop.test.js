@@ -821,6 +821,60 @@ test.describe('Desktop Interaction', () => {
 		await expect(prevRow).toHaveAttribute('aria-selected', 'true');
 	});
 
+	test('Shift+Home extends selection from anchor to the first item', async ({ page, serverPort }) => {
+		const libraryItems = generateLibraryItems();
+		const handlers = [
+			makePaginatedHandler('/api/users/1/items/top', libraryItems),
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-library-view', serverPort, page, handlers);
+
+		const selectedRows = page.locator('.items-table [role="row"][aria-selected="true"]');
+		const anchorRow = page.locator('.items-table [role="row"][data-index="5"]');
+		await anchorRow.click();
+		await expect(anchorRow).toHaveAttribute('aria-selected', 'true');
+
+		await page.keyboard.press('Shift+Home');
+
+		await expect(selectedRows).toHaveCount(6);
+		for (let i = 0; i <= 5; i++) {
+			await expect(page.locator(`.items-table [role="row"][data-index="${i}"]`)).toHaveAttribute('aria-selected', 'true');
+		}
+		await page.waitForFunction(() => document.activeElement?.closest('[data-index]')?.dataset.index === '0');
+
+		// The anchor stays on row 5, so Shift+ArrowDown shrinks the selection from the top
+		await page.keyboard.press('Shift+ArrowDown');
+		await expect(selectedRows).toHaveCount(5);
+		await expect(page.locator('.items-table [role="row"][data-index="0"]')).not.toHaveAttribute('aria-selected', 'true');
+	});
+
+	test('Shift+End extends selection from anchor to the last item', async ({ page, serverPort }) => {
+		const libraryItems = generateLibraryItems();
+		const handlers = [
+			makePaginatedHandler('/api/users/1/items/top', libraryItems),
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-library-view', serverPort, page, handlers);
+
+		// Items 61-82 are not pre-fetched, End loads them
+		await page.locator('.items-table [role="row"][data-index="0"]').click();
+		await page.keyboard.press('End');
+		await expect(page.locator('.items-table [role="row"][data-index="82"]')).toHaveAttribute('aria-selected', 'true', { timeout: 10000 });
+
+		const selectedRows = page.locator('.items-table [role="row"][aria-selected="true"]');
+		const anchorRow = page.locator('.items-table [role="row"][data-index="78"]');
+		await anchorRow.click();
+		await expect(anchorRow).toHaveAttribute('aria-selected', 'true');
+
+		await page.keyboard.press('Shift+End');
+
+		await expect(selectedRows).toHaveCount(5);
+		for (let i = 78; i <= 82; i++) {
+			await expect(page.locator(`.items-table [role="row"][data-index="${i}"]`)).toHaveAttribute('aria-selected', 'true');
+		}
+		await page.waitForFunction(() => document.activeElement?.closest('[data-index]')?.dataset.index === '82');
+	});
+
 	test('Shift+Tab from standalone attachment note editor iframe should move focus back to download options', async ({ page, browserName, serverPort }) => {
 		test.skip(browserName === 'firefox', 'Firefox iframe Tab handling differs in Playwright vs real browser');
 		const handlers = [

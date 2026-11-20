@@ -29,6 +29,23 @@ export const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer, {
 	return nextKeys;
 }
 
+// Keys from the selection anchor (first selected key) to `targetIndex`, anchor first. Returns
+// undefined if nothing is selected or any item in the range has not been fetched yet.
+export const selectItemsRange = (targetIndex, { keys, selectedItemKeys }) => {
+	const anchorIndex = selectedItemKeys?.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : -1;
+	if (anchorIndex === -1) {
+		return undefined;
+	}
+	const rangeKeys = keys.slice(Math.min(anchorIndex, targetIndex), Math.max(anchorIndex, targetIndex) + 1);
+	// keys is a sparse array and .every() skips empty slots, so check each index
+	for (let i = 0; i < rangeKeys.length; i++) {
+		if (typeof rangeKeys[i] === 'undefined') {
+			return undefined;
+		}
+	}
+	return anchorIndex <= targetIndex ? rangeKeys : rangeKeys.reverse();
+}
+
 export const selectItemsKeyboard = (direction, magnitude, isMultiSelect, { keys, selectedItemKeys, overrideStartIndex }) => {
 	const vector = direction * magnitude;
 	let index;
