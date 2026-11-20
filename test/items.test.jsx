@@ -480,6 +480,54 @@ describe('Items', () => {
 		expect(screen.getByRole('dialog', { name: 'Add By Identifier' })).toBeInTheDocument();
 	});
 
+	test.each([
+		[500, () => HttpResponse.text('Internal Server Error', { status: 500 }),
+			'Zotero could not retrieve data from this URL. Please try again later.'],
+		[501, () => HttpResponse.text('No translators available', { status: 501 }),
+			'Zotero could not find any identifiers in your input. Please verify your input and try again.'],
+		[504, () => HttpResponse.json({ message: 'Endpoint request timed out' }, { status: 504 }),
+			'Zotero could not retrieve data from this URL. Please try again later.'],
+	])('Show a message when the translation server responds with %i for a URL', async (_status, respond, expectedMessage) => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		await userEvent.click(screen.getByRole('button', { name: 'Add By Identifier' }));
+		await waitForPosition();
+
+		server.use(
+			http.post('https://localhost/translate/web', respond),
+		);
+
+		const input = screen.getByRole('textbox',
+			{ name: 'Enter a URL, ISBNs, DOIs, PMIDs, arXiv IDs, or ADS Bibcodes to add to your library:' }
+		);
+
+		await userEvent.type(
+			input, 'https://example.com/books{enter}', { skipClick: true }
+		);
+		await waitForPosition();
+
+		expect(await screen.findByText(expectedMessage)).toBeInTheDocument();
+	});
+
+	test('Show a message when importing a file in an unrecognized format', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		server.use(
+			http.post('https://localhost/translate/import', () => HttpResponse.text('No suitable translators found', { status: 500 })),
+		);
+
+		const fileInput = screen.getAllByTitle('Import from a File (BibTeX, RIS, etc.)')
+			.find(el => el.matches('input[type="file"]'));
+		await userEvent.upload(fileInput, new File(['not a bibliography'], 'notes.txt', { type: 'text/plain' }));
+		await waitForPosition();
+
+		expect(await screen.findByText(
+			'Zotero could not recognize the format of the provided data.'
+		)).toBeInTheDocument();
+	});
+
 	test('Add item to a collection using modal', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();

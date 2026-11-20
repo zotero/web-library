@@ -9,6 +9,12 @@ const isDuplicate = (error, prevError) =>
 	error && prevError && error.message === prevError.message &&
 	error.type === prevError.type && !prevError.isDismissed;
 
+// API answers 503 with a human-readable message while it is read-only or disabled for maintenance
+const isMaintenanceResponse = error => {
+	const reason = error.response?.status === 503 ? error.reason?.trim() : null;
+	return !!reason && reason !== 'Service unavailable' && !reason.startsWith('<');
+}
+
 const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 	var message, cta;
 
@@ -32,6 +38,10 @@ const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 		} else if(error.reason?.includes('File would exceed quota')) {
 			message = 'File was not uploaded as it would exceed quota.';
 			cta = { type: 'url', label: 'Upgrade Storage', href: buyStorageUrl }
+		} else if(isMaintenanceResponse(error)) {
+			message = error.reason.trim();
+		} else if(error.response?.status >= 500) {
+			message = 'The Zotero server is temporarily unable to process this request. Please try again later.';
 		} else {
 			message = error.reason ?
 				`Received error from Zotero server: ${error.reason}.` :

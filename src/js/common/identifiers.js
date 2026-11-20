@@ -1,7 +1,19 @@
 import { requestTranslation, MULTIPLE, NOT_FOUND, TOO_LARGE, UNREACHABLE, SERVER_ERROR,
 	SESSION_REJECTED, UNEXPECTED_RESPONSE } from 'web-common/utils';
 
-const getTranslationMessage = ({ reason, serverMessage, response }) => {
+const serverFailureMessages = {
+	search: 'An error occurred while looking up the specified identifier. Please try again later.',
+	web: 'Zotero could not retrieve data from this URL. Please try again later.',
+};
+
+// `endpoint` is the translation server endpoint that produced the outcome: 'search', 'web' or 'import'
+const getTranslationMessage = ({ reason, serverMessage, response }, endpoint) => {
+	if (endpoint === 'import' && reason === SERVER_ERROR && serverMessage?.trim() === 'No suitable translators found') {
+		return 'Zotero could not recognize the format of the provided data.';
+	}
+	if ([SERVER_ERROR, UNEXPECTED_RESPONSE].includes(reason) && response?.status >= 500 && endpoint in serverFailureMessages) {
+		return serverFailureMessages[endpoint];
+	}
 	switch (reason) {
 		case NOT_FOUND:
 			return 'Zotero could not find any identifiers in your input. Please verify your input and try again.';
@@ -26,7 +38,7 @@ const getItemFromIdentifier = async (identifier, translateUrl) => {
 	if (outcome.result === MULTIPLE) {
 		return outcome.items[0];
 	}
-	const error = new Error(getTranslationMessage(outcome) ?? 'Failed to get item from identifier');
+	const error = new Error(getTranslationMessage(outcome, 'search') ?? 'Failed to get item from identifier');
 	error.reason = outcome.reason;
 	throw error;
 }

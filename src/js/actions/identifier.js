@@ -19,7 +19,7 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 		const { translateUrl } = config;
 
 		let identifierIsUrl = false;
-		let url;
+		let endpoint;
 
 		if(!shouldImport) {
 			identifier = identifier.trim();
@@ -39,19 +39,19 @@ const searchIdentifier = (identifier, { shouldImport = false } = {}) => {
 					return dispatch(currentAddMultipleTranslatedItems(identifierObjects.map(io => Object.values(io)[0])));
 				}
 			}
-			url = `${translateUrl}/${((identifierIsUrl ? 'web' : 'search'))}`;
+			endpoint = identifierIsUrl ? 'web' : 'search';
 		} else {
-			url = `${translateUrl}/import`;
+			endpoint = 'import';
 		}
 
 		dispatch({ type: REQUEST_ADD_BY_IDENTIFIER, identifier, identifierIsUrl, import: shouldImport });
 
-		const outcome = await requestTranslation(url, identifier);
+		const outcome = await requestTranslation(`${translateUrl}/${endpoint}`, identifier);
 		const { result, items, session, response } = outcome;
 		dispatch({
 			type: RECEIVE_ADD_BY_IDENTIFIER,
 			result: result === CHOICE ? CHOICE_EXHAUSTED : result,
-			message: getTranslationMessage(outcome),
+			message: getTranslationMessage(outcome, endpoint),
 			items,
 			session,
 			response,
@@ -106,7 +106,7 @@ const currentAddMultipleTranslatedItems = identifiers => {
 					translatedItems = outcome.items.filter(item => !item.parentItem);
 				} else {
 					const report = outcome.result === ERROR ? reportIdentifierLookupFailed : reportIdentifierNoResults;
-					dispatch(report(getTranslationMessage(outcome)));
+					dispatch(report(getTranslationMessage(outcome, 'web')));
 				}
 			} else if(!identifierIsUrl) {
 				const url = `${translateUrl}/search`;
