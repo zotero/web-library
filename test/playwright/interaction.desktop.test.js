@@ -1,9 +1,10 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
+import {closeServer, generateTestItems, getServer, loadFixtureState, makeCustomHandler, makeGate, makeGatedHandler, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
 import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' with { type: 'json' };
 import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' with { type: 'json' };
 import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' with { type: 'json' };
 import { getStateWithout } from '../utils/state.js';
+import { waitForLoad } from '../utils/common.js';
 
 // Generate Zotero API items covering the whole desktop-test-user-library-view item list, so that
 // indices 61-82 -- the unfetched range in that fixture -- can be served when the virtual list
@@ -624,6 +625,29 @@ test.describe('Desktop Interaction', () => {
 		// Retrying succeeds and clears the selection
 		await trashButton.click();
 		await expect(trashButton).toBeDisabled();
+	});
+
+	test('Delete Permanently removes the selected items when one was never fetched', async ({ page, serverPort }) => {
+		const errors = [];
+		page.on('pageerror', error => errors.push(error.message));
+		server = await getServer('desktop-test-user-trash-view', serverPort, [
+			makeWriteHandler('/api/users/1/items', 'DELETE', null),
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		]);
+		// With two keys in the URL, the second item is not fetched
+		await page.goto(`http://localhost:${serverPort}/testuser/trash/items/BPM2IS2N,UNFCH001`);
+		await waitForLoad(page);
+
+		const row = page.getByRole('row', { name: 'How to Tell If Your Cat Is Plotting to Kill You' });
+		await expect(row).toBeVisible();
+		// The unfetched item may have had tags, so the trash tags are fetched again
+		const trashTagsRequest = page.waitForRequest(request => new URL(request.url()).pathname === '/api/users/1/items/trash/tags');
+		await page.getByRole('button', { name: 'Delete Permanently' }).click();
+
+		await expect(row).toHaveCount(0);
+		await trashTagsRequest;
+		await expect(page.getByText('Some updates failed.')).toHaveCount(0);
+		expect(errors).toEqual([]);
 	});
 
 	test('Shift+Tab from note editor iframe should move focus back to notes list', async ({ page, browserName, serverPort }) => {

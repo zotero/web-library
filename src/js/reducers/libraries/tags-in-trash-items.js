@@ -50,7 +50,8 @@ const tagsInTrashItems = (state = {}, action, { items } = {}) => {
 		case RECEIVE_DELETE_ITEMS:
 		case RECEIVE_MOVE_ITEMS_TRASH:
 		case RECEIVE_RECOVER_ITEMS_TRASH:
-			return action.items.some(item => 'tags' in item && item.tags.length > 0) ?
+			// an item that was never fetched may have had tags
+			return action.items.some(item => !item || item.tags?.length > 0) ?
 				{} : state;
 		case RECEIVE_UPDATE_ITEM:
 			return action.item.deleted === 1 && 'tags' in action.patch ? {} : state;
