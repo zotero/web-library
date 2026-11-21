@@ -1,34 +1,5 @@
 import { clamp } from '../utils.js';
 
-export const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer, { keys, selectedItemKeys }) => {
-	let nextKeys;
-
-	if (isShiftModifer) {
-		let startIndex = selectedItemKeys.length ? keys.findIndex(key => key && key === selectedItemKeys[0]) : 0;
-		let endIndex = keys.findIndex(key => key && key === targetItemKey);
-		let isFlipped = false;
-		if (startIndex > endIndex) {
-			[startIndex, endIndex] = [endIndex, startIndex];
-			isFlipped = true;
-		}
-
-		endIndex++;
-		nextKeys = keys.slice(startIndex, endIndex);
-		if (isFlipped) {
-			nextKeys.reverse();
-		}
-	} else if (isCtrlModifer) {
-		if (selectedItemKeys.includes(targetItemKey)) {
-			nextKeys = selectedItemKeys.filter(key => key !== targetItemKey);
-		} else {
-			nextKeys = [...(new Set([...selectedItemKeys, targetItemKey]))];
-		}
-	} else {
-		nextKeys = [targetItemKey];
-	}
-	return nextKeys;
-}
-
 // Keys from the selection anchor (first selected key) to `targetIndex`, anchor first. Returns
 // undefined if nothing is selected or any item in the range has not been fetched yet.
 export const selectItemsRange = (targetIndex, { keys, selectedItemKeys }) => {
@@ -44,6 +15,27 @@ export const selectItemsRange = (targetIndex, { keys, selectedItemKeys }) => {
 		}
 	}
 	return anchorIndex <= targetIndex ? rangeKeys : rangeKeys.reverse();
+}
+
+export const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer, { keys, selectedItemKeys }) => {
+	let nextKeys;
+
+	if (isShiftModifer) {
+		// Without a selection, the range starts at the first row
+		const anchorKeys = selectedItemKeys.length ? selectedItemKeys : [keys[0]];
+		const targetIndex = keys.findIndex(key => key && key === targetItemKey);
+		// A range that includes items not fetched yet selects only the target
+		nextKeys = selectItemsRange(targetIndex, { keys, selectedItemKeys: anchorKeys }) ?? [targetItemKey];
+	} else if (isCtrlModifer) {
+		if (selectedItemKeys.includes(targetItemKey)) {
+			nextKeys = selectedItemKeys.filter(key => key !== targetItemKey);
+		} else {
+			nextKeys = [...(new Set([...selectedItemKeys, targetItemKey]))];
+		}
+	} else {
+		nextKeys = [targetItemKey];
+	}
+	return nextKeys;
 }
 
 export const selectItemsKeyboard = (direction, magnitude, isMultiSelect, { keys, selectedItemKeys, overrideStartIndex }) => {

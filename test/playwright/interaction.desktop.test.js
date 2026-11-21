@@ -3,6 +3,7 @@ import {closeServer, generateTestItems, loadFixtureState, makeCustomHandler, mak
 import testUserAddCollection from '../fixtures/response/test-user-add-collection.json' with { type: 'json' };
 import testUserRemoveItemFromCollection from '../fixtures/response/test-user-remove-item-from-collection.json' with { type: 'json' };
 import testUserTrashItem from '../fixtures/response/test-user-trash-item.json' with { type: 'json' };
+import { getStateWithout } from '../utils/state.js';
 
 // Generate Zotero API items covering the whole desktop-test-user-library-view item list, so that
 // indices 61-82 -- the unfetched range in that fixture -- can be served when the virtual list
@@ -838,6 +839,40 @@ test.describe('Desktop Interaction', () => {
 		await page.keyboard.press('ArrowUp');
 		const prevRow = page.locator('.items-table [role="row"][data-index="81"]');
 		await expect(prevRow).toHaveAttribute('aria-selected', 'true');
+	});
+
+	test('Shift+click across unfetched items falls back to selecting the clicked item', async ({ page, serverPort }) => {
+		const libraryItems = generateTestItems(1000, { keyPrefix: 'UNFCH', titlePrefix: 'Unfetched Item' });
+		const handlers = [
+			makePaginatedHandler('/api/users/1/items/top', libraryItems),
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		];
+		const errors = [];
+		page.on('pageerror', error => errors.push(error.message));
+		server = await loadFixtureState('desktop-test-user-library-view', serverPort, page, handlers, {
+			patchState: state => getStateWithout(state, 'libraries.u1.itemsTop'),
+		});
+
+		const firstRow = page.locator('.items-table [role="row"][data-index="0"]');
+		await firstRow.click();
+		await expect(firstRow).toHaveAttribute('aria-selected', 'true');
+
+		// Jumping to the bottom fetches only the rows around the viewport, most rows in between stay unfetched
+		await page.locator('.items-table-body').evaluate(el => { el.scrollTop = el.scrollHeight; });
+		const lastRow = page.locator('.items-table [role="row"][data-index="999"]');
+		await expect(lastRow).toContainText('Unfetched Item 999');
+
+		await lastRow.click({ modifiers: ['Shift'] });
+
+		await expect(lastRow).toHaveAttribute('aria-selected', 'true');
+		await expect(page.locator('.items-table [role="row"][aria-selected="true"]')).toHaveCount(1);
+		await expect(page).toHaveURL(/\/testuser\/items\/UNFCH999\/library$/);
+
+		// A range of fetched items still extends from the anchor
+		await page.locator('.items-table [role="row"][data-index="995"]').click({ modifiers: ['Shift'] });
+		await expect(page.locator('.items-table [role="row"][aria-selected="true"]')).toHaveCount(5);
+		await expect(page).toHaveURL(/\/testuser\/items\/UNFCH999,UNFCH998,UNFCH997,UNFCH996,UNFCH995\/library$/);
+		expect(errors).toEqual([]);
 	});
 
 	test('Shift+Home extends selection from anchor to the first item', async ({ page, serverPort }) => {
