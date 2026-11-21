@@ -37,10 +37,8 @@ describe('Item info', () => {
 		let relatedItemsFetched = false;
 		let hasBeenPosted = false;
 		server.use(
-			http.get('https://api.zotero.org/users/1/items', async ({ request }) => {
-				const url = new URL(request.url);
-				expect(url.searchParams.get('itemKey')).toBe('66LW9WRP,PEZF7SPI');
-				relatedItemsFetched	= true;
+			http.get('https://api.zotero.org/users/1/items', async () => {
+				relatedItemsFetched = true;
 				return HttpResponse.json(getRelatedItemsResponse, {
 					headers: { 'Total-Results': '2' }
 				});
@@ -93,10 +91,53 @@ describe('Item info', () => {
 		expect(relatedItems).toHaveLength(2);
 		expect(getByText(relatedTabPanel, "2 related items")).toBeInTheDocument();
 
-		expect(relatedItemsFetched).toBe(true);
+		// -- items picked in the dialog are already loaded
+		expect(relatedItemsFetched).toBe(false);
 		expect(hasBeenPosted).toBe(true);
 	});
 
+});
+
+describe('addRelatedItems with related items not loaded', () => {
+	const handlers = [];
+	const server = setupServer(...handlers);
+	setupMSWLifecycle(server);
+
+	test('Fetches the related items and adds the reciprocal relations', async () => {
+		const testState = JSONtoState(stateRaw);
+		for (const key of ['66LW9WRP', 'PEZF7SPI']) {
+			delete testState.libraries.u1.items[key];
+			delete testState.libraries.u1.dataObjects[key];
+		}
+
+		let requestedItemKeys = null;
+		let postedItems = null;
+
+		server.use(
+			http.get('https://api.zotero.org/users/1/items', ({ request }) => {
+				requestedItemKeys = new URL(request.url).searchParams.get('itemKey');
+				return HttpResponse.json(getRelatedItemsResponse, {
+					headers: { 'Total-Results': '2' }
+				});
+			}),
+
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				postedItems = await request.json();
+				return HttpResponse.json(postAddRelatedItemsResponse, {
+					headers: { 'Last-Modified-Version': ++testState.libraries.u1.sync.version }
+				});
+			}),
+		);
+
+		const store = setupStore(testState);
+		await store.dispatch(addRelatedItems('VR82JUX8', ['66LW9WRP', 'PEZF7SPI']));
+
+		expect(requestedItemKeys).toBe('66LW9WRP,PEZF7SPI');
+		expect(postedItems).toHaveLength(3);
+		expect(postedItems.find(item => item.key === 'VR82JUX8').relations['dc:relation']).toHaveLength(2);
+		expect(postedItems.find(item => item.key === '66LW9WRP').relations['dc:relation']).toBe('http://zotero.org/users/1/items/VR82JUX8');
+		expect(postedItems.find(item => item.key === 'PEZF7SPI').relations['dc:relation']).toBe('http://zotero.org/users/1/items/VR82JUX8');
+	});
 });
 
 describe('addRelatedItems chunking', () => {

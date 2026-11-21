@@ -117,8 +117,8 @@ const postItemsMultiPatch = async (getState, multiPatch, libraryKey = null) => {
 	};
 }
 
-// Selected keys may point at items that were never fetched (e.g. beyond the loaded range). Call from
-// within a queued callback, where no other write to the library is in flight, so the fetched copy is current.
+// Selected keys may point at items that were never fetched (e.g. beyond the loaded range). Inside a queued
+// callback no other write to the library is in flight, so the fetched copy is current.
 const getOrFetchItems = async (dispatch, getState, libraryKey, itemKeys) => {
 	const isMissing = key => !getState().libraries[libraryKey]?.items?.[key];
 	const missingKeys = itemKeys.filter(isMissing);
@@ -1449,26 +1449,13 @@ const removeRelatedItem = (itemKey, relatedItemKey) => {
 
 const addRelatedItems = (itemKey, relatedItemKeys) => {
 	return async (dispatch, getState) => {
-		let state = getState();
-		const { libraryKey } = state.current;
-		const item = get(state, ['libraries', libraryKey, 'items', itemKey], null);
-		const newRelations = mergeItemKeysRelations(item.relations, relatedItemKeys, libraryKey, 'dc:relation');
-		const unfetchedRelatedItemsKeys = relatedItemKeys.filter(relatedItemKey => {
-			return !!state.libraries[libraryKey]?.items?.[relatedItemKey];
-		});
-
-		if(unfetchedRelatedItemsKeys.length > 0) {
-			await dispatch(fetchItemsByKeys(unfetchedRelatedItemsKeys));
-			state = getState();
-		}
-
-		const relatedItemsPatches = unfetchedRelatedItemsKeys.map(relatedItemKey => {
-			const relatedItem = state.libraries[libraryKey]?.items?.[relatedItemKey];
-			return {
-				key: relatedItemKey,
-				relations: mergeItemKeysRelations(relatedItem.relations, [itemKey], libraryKey, 'dc:relation')
-			};
-		});
+		const { libraryKey } = getState().current;
+		const items = await getOrFetchItems(dispatch, getState, libraryKey, [itemKey, ...relatedItemKeys]);
+		const newRelations = mergeItemKeysRelations(items[itemKey].relations, relatedItemKeys, libraryKey, 'dc:relation');
+		const relatedItemsPatches = relatedItemKeys.map(relatedItemKey => ({
+			key: relatedItemKey,
+			relations: mergeItemKeysRelations(items[relatedItemKey].relations, [itemKey], libraryKey, 'dc:relation')
+		}));
 
 		const multiItemPatch = [
 			...relatedItemsPatches,
