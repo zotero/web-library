@@ -199,6 +199,11 @@ const ItemsTable = props => {
 		}
 	}, [dispatch]);
 
+	// The keyup of a key released in another window never arrives
+	const handleWindowBlur = useCallback(() => {
+		dispatch(triggerHighlightedCollections(false));
+	}, [dispatch]);
+
 	const handleKeyDown = useCallback(async ev => {
 		const prevPendingIndex = pendingSelectionRef.current?.index ?? undefined;
 		pendingSelectionRef.current = null;
@@ -397,10 +402,12 @@ const ItemsTable = props => {
 
 	useEffect(() => {
 		document.addEventListener('keyup', handleKeyUp);
+		window.addEventListener('blur', handleWindowBlur);
 		return () => {
 			document.removeEventListener('keyup', handleKeyUp)
+			window.removeEventListener('blur', handleWindowBlur);
 		}
-	}, [handleKeyUp]);
+	}, [handleKeyUp, handleWindowBlur]);
 
 	useEffect(() => {
 		if (errorCount > 0 && errorCount > prevErrorCount) {

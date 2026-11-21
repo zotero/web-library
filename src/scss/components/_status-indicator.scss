@@ -1,0 +1,12 @@
+@use "../abstracts/variables";
+@use "../themes/common";
+
+.status-indicator {
+	display: flex;
+	align-items: center;
+
+	.spinner {
+		margin-right: variables.$space-min;
+		color: common.$icon-color;
+	}
+}

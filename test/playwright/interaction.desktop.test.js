@@ -16,6 +16,26 @@ function generateLibraryItems() {
 	return generateTestItems(83, { keyPrefix: 'UNFCH', titlePrefix: 'Unfetched Item' });
 }
 
+// The highlight key is Control on Windows and Alt elsewhere. Desktop Chrome and Desktop Firefox report a
+// Windows user agent.
+function getHighlightKey(page) {
+	return page.evaluate(() => navigator.userAgent.includes('Windows') ? 'Control' : 'Alt');
+}
+
+// Selects C74GF3H6 and an item that is not fetched on load, both in the "Formatting" collection. The response
+// that fetches the second item is held until `gate` is released.
+async function loadWithUnfetchedSelectedItem(page, serverPort) {
+	const [unfetchedItem] = generateTestItems(1, { keyPrefix: 'UNFCH', titlePrefix: 'Unfetched Item', startIndex: 70, collections: ['5PB9WKTC'] });
+	const gate = makeGate();
+	const server = await getServer('desktop-test-user-library-view', serverPort, [
+		makeGatedHandler('/api/users/1/items?', [unfetchedItem], gate),
+	]);
+	// With two keys in the URL, the second item is not fetched
+	await page.goto(`http://localhost:${serverPort}/testuser/items/C74GF3H6,${unfetchedItem.key}`);
+	await waitForLoad(page);
+	return { server, gate, unfetchedItem };
+}
+
 test.describe('Desktop Interaction', () => {
 	let server;
 
@@ -896,6 +916,56 @@ test.describe('Desktop Interaction', () => {
 		await page.locator('.items-table [role="row"][data-index="995"]').click({ modifiers: ['Shift'] });
 		await expect(page.locator('.items-table [role="row"][aria-selected="true"]')).toHaveCount(5);
 		await expect(page).toHaveURL(/\/testuser\/items\/UNFCH999,UNFCH998,UNFCH997,UNFCH996,UNFCH995\/library$/);
+		expect(errors).toEqual([]);
+	});
+
+	test('Holding the highlight key fetches unfetched selected items, then highlights their collections', async ({ page, serverPort }) => {
+		const errors = [];
+		page.on('pageerror', error => errors.push(error.message));
+		let gate;
+		({ server, gate } = await loadWithUnfetchedSelectedItem(page, serverPort));
+
+		const status = page.getByRole('toolbar', { name: 'items toolbar' }).getByRole('status');
+		const formattingNode = page.getByRole('treeitem', { name: 'Formatting', exact: true }).locator('xpath=..');
+		const highlightKey = await getHighlightKey(page);
+		await page.locator('.items-table').focus();
+		await page.keyboard.down(highlightKey);
+		await expect(status).toContainText('Loading selected items');
+		await expect(formattingNode).not.toHaveClass(/highlighted/);
+
+		gate.release();
+		await expect(formattingNode).toHaveClass(/highlighted/);
+		await expect(status).toBeEmpty();
+
+		await page.keyboard.up(highlightKey);
+		await expect(formattingNode).not.toHaveClass(/highlighted/);
+		expect(errors).toEqual([]);
+	});
+
+	test('Releasing the highlight key before the selected items are fetched highlights nothing', async ({ page, serverPort }) => {
+		const errors = [];
+		page.on('pageerror', error => errors.push(error.message));
+		let gate, unfetchedItem;
+		({ server, gate, unfetchedItem } = await loadWithUnfetchedSelectedItem(page, serverPort));
+
+		const status = page.getByRole('toolbar', { name: 'items toolbar' }).getByRole('status');
+		const formattingNode = page.getByRole('treeitem', { name: 'Formatting', exact: true }).locator('xpath=..');
+		const highlightKey = await getHighlightKey(page);
+		await page.locator('.items-table').focus();
+		await page.keyboard.down(highlightKey);
+		await expect(status).toContainText('Loading selected items');
+		await page.keyboard.up(highlightKey);
+		await expect(status).toBeEmpty();
+
+		gate.release();
+		// Wait until the fetched item is in the store before checking that nothing was highlighted
+		await page.waitForFunction(key => !!window.WebLibStore.getState().libraries.u1.items[key], unfetchedItem.key);
+		await expect(formattingNode).not.toHaveClass(/highlighted/);
+
+		// The fetched item is used straight away the next time
+		await page.keyboard.down(highlightKey);
+		await expect(formattingNode).toHaveClass(/highlighted/);
+		await page.keyboard.up(highlightKey);
 		expect(errors).toEqual([]);
 	});
 

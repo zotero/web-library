@@ -1,12 +1,13 @@
 import { shallowEqual } from 'react-redux';
 
-import { DISMISS_ERROR, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
+import { BEGIN_STATUS, DISMISS_ERROR, END_STATUS, RESET_QUERY, TOGGLE_ADVANCED_SEARCH, TOGGLE_HIDE_AUTOMATIC_TAGS,
 	TOGGLE_MODAL, TOGGLE_NAVBAR, TOGGLE_TAG_SELECTOR, TOGGLE_TOUCH_TAG_SELECTOR, TOGGLE_TRANSITIONS,
 	TRIGGER_EDITING_ITEM, TRIGGER_HIGHLIGHTED_COLLECTIONS, TRIGGER_RESIZE_VIEWPORT,
 	TRIGGER_SEARCH_MODE, TRIGGER_SELECT_MODE, TRIGGER_USER_TYPE_CHANGE, } from
 	'../constants/actions';
-import { navigate, navigateExitSearch } from './';
-import { get } from '../utils';
+import { FETCH_SELECTED_ITEMS } from '../constants/status';
+import { fetchItemsByKeys, navigate, navigateExitSearch } from './';
+import { getUniqueId } from '../utils';
 
 const triggerEditingItem = (itemKey, toggleValue) => {
 	return async (dispatch, getState) => {
@@ -101,27 +102,66 @@ const dismissErrorByTag = tag => {
 	return { type: DISMISS_ERROR, errorTag: tag };
 }
 
+// Highlight waiting for the selected items to be fetched. Releasing the highlight key clears it, so a
+// fetch that completes afterwards highlights nothing.
+let pendingHighlight = null;
+
+const endPendingHighlight = dispatch => {
+	if(pendingHighlight) {
+		dispatch({ type: END_STATUS, id: pendingHighlight.id });
+		pendingHighlight = null;
+	}
+}
+
 const triggerHighlightedCollections = isOn => {
 	return async (dispatch, getState) => {
-		const state = getState();
-		const { highlightedCollections, itemKeys, libraryKey } = state.current;
+		const { itemKeys, libraryKey } = getState().current;
 		if(isOn && itemKeys.length > 0) {
-			const items = itemKeys.map(ik => get(state, ['libraries', libraryKey, 'items', ik], {}));
-			let collections = new Set([...items[0].collections]);
+			if(pendingHighlight) {
+				// repeated keydown while the selected items are being fetched
+				return;
+			}
+
+			const isMissing = key => !getState().libraries[libraryKey]?.items?.[key];
+			const missingKeys = itemKeys.filter(isMissing);
+			if(missingKeys.length > 0) {
+				const request = { id: getUniqueId() };
+				pendingHighlight = request;
+				dispatch({ type: BEGIN_STATUS, id: request.id, kind: FETCH_SELECTED_ITEMS });
+				await dispatch(fetchItemsByKeys(missingKeys, { includeTrashed: 1 }, { current: { libraryKey } }));
+				if(pendingHighlight !== request) {
+					return;
+				}
+				endPendingHighlight(dispatch);
+
+				// a failed fetch reports its own error
+				const current = getState().current;
+				if(current.libraryKey !== libraryKey || !shallowEqual(current.itemKeys, itemKeys) || itemKeys.some(isMissing)) {
+					return;
+				}
+			}
+
+			const state = getState();
+			// child items are not in collections and have no `collections`
+			const items = itemKeys.map(ik => state.libraries[libraryKey].items[ik]);
+			let collections = new Set(items[0].collections ?? []);
 			if(items.length > 1) {
 				for(var i = 1; i < items.length; i++) {
-					collections = new Set([...items[i].collections]
+					collections = new Set((items[i].collections ?? [])
 						.filter(x => collections.has(x)));
 				}
 			}
 			collections = [...collections];
 
-			if(!shallowEqual(collections, highlightedCollections)) {
+			if(!shallowEqual(collections, state.current.highlightedCollections)) {
 				dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections });
 			}
-		} else if(highlightedCollections.length !== 0) {
-			// skip dispatching if no collection has been highlighted previously
-			dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections: [] });
+		} else {
+			endPendingHighlight(dispatch);
+			if(getState().current.highlightedCollections.length !== 0) {
+				// skip dispatching if no collection has been highlighted previously
+				dispatch({ type: TRIGGER_HIGHLIGHTED_COLLECTIONS, collections: [] });
+			}
 		}
 	}
 }

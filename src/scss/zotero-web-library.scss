@@ -46,6 +46,7 @@
 @use "components/icon-extra";
 @use "components/panel";
 @use "components/tabs"; // "../../modules/web-common/scss/tabs" does not support scopedVariant and touch-specific shenanigans
+@use "components/status-indicator";
 @use "components/toolbar";
 @use "components/touch-header";
 @use "components/touch-footer";

@@ -2,6 +2,7 @@ import { memo, useRef } from 'react';
 import { useFocusManager } from 'web-common/hooks';
 
 import ColumnSelector from './column-selector';
+import StatusIndicator from './status-indicator';
 import { ItemActionsDesktop } from './../actions';
 import { Toolbar } from '../../ui/toolbars';
 
@@ -23,6 +24,7 @@ const ItemsTableToolbar = () => {
 					<ItemActionsDesktop onFocusNext={focusNext} onFocusPrev={focusPrev} onFocusBySelector={focusBySelector} />
 				</div>
 				<div className="toolbar-right">
+					<StatusIndicator />
 					<ColumnSelector tabIndex={-2} onFocusNext={focusNext} onFocusPrev={focusPrev} />
 				</div>
 			</Toolbar>

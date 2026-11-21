@@ -19,6 +19,7 @@ import query from './query';
 import queryAndCollectionsTrash from './query-and-collections-trash';
 import secondary from './secondary';
 import sources from './sources'
+import status from './status';
 import styles from './styles';
 import traffic from './traffic';
 
@@ -43,6 +44,7 @@ const createReducers = (extraReducers = {}) => (state, action) => {
 		query: query(state?.query, action, state),
 		secondary: secondary(state?.secondary, action, state),
 		sources: sources(state?.sources, action, state),
+		status: status(state?.status, action, state),
 		styles: styles(state?.styles, action, state),
 		traffic: traffic(state?.traffic, action, state),
 		...mapObject(extraReducers, (key, reducer) => [key, reducer(state?.[key], action, state)]),
