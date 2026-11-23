@@ -1,8 +1,9 @@
-import { SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL, QUERY_SECONDARY, SORT_ITEMS_SECONDARY } from '../constants/actions';
+import { BEGIN_STATUS, END_STATUS, SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL, QUERY_SECONDARY, SORT_ITEMS_SECONDARY } from '../constants/actions';
 import api from 'zotero-api-client';
 import { escapeBooleanSearches, extractItems, getApiForItems } from '../common/actions';
 import { getItemKeysPath } from '../common/state';
-import { get, getAbortController, mapRelationsToItemKeys } from '../utils';
+import { get, getAbortController, getUniqueId, mapRelationsToItemKeys } from '../utils';
+import { FETCH_SELECTED_ITEMS } from '../constants/status';
 import columnProperties from '../constants/column-properties';
 import { connectionIssues, requestTracker, requestWithBackoff } from '.';
 
@@ -99,6 +100,24 @@ const fetchItemsByKeys = (itemKeys, queryOptions, overrides) => {
 			)));
 		}
 		return Promise.all(promises);
+	}
+}
+
+// Fetches the selected items that are not loaded yet (e.g. beyond the loaded range) while the status
+// indicator shows a spinner. Resolves once done, also when the request fails.
+const fetchMissingSelectedItems = (itemKeys, libraryKey) => {
+	return async (dispatch, getState) => {
+		const missingKeys = itemKeys.filter(key => !getState().libraries[libraryKey]?.items?.[key]);
+		if(missingKeys.length === 0) {
+			return;
+		}
+		const id = getUniqueId();
+		dispatch({ type: BEGIN_STATUS, id, kind: FETCH_SELECTED_ITEMS });
+		try {
+			await dispatch(fetchItemsByKeys(missingKeys, { includeTrashed: 1 }, { current: { libraryKey } }));
+		} finally {
+			dispatch({ type: END_STATUS, id });
+		}
 	}
 }
 
@@ -401,6 +420,7 @@ export {
 	fetchItemsByKeys,
 	fetchItemsInCollection,
 	fetchItemsQuery,
+	fetchMissingSelectedItems,
 	fetchPublicationsItems,
 	fetchRelatedItems,
 	fetchSource,

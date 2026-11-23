@@ -945,10 +945,12 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 					id
 				});
 
+				// A function decides the action once this write's turn in the queue has come
+				const resolvedToggleAction = typeof toggleAction === 'function' ? await toggleAction() : toggleAction;
 				const stateItems = await getOrFetchItems(dispatch, getState, libraryKey, itemKeys);
 				const multiPatch = itemKeys.map(key => ({
 					key,
-					tags: getToggledTags(stateItems[key].tags.map(t => t.tag), tagsToToggle, toggleAction)
+					tags: getToggledTags(stateItems[key].tags.map(t => t.tag), tagsToToggle, resolvedToggleAction)
 						.map(tag => ({ tag }))
 				}));
 

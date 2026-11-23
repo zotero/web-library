@@ -11,6 +11,8 @@ import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from './utils/render';
 import { getPatchedState, JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
+import { setupStore } from '../src/js/store';
+import { currentToggleTagByIndex } from '../src/js/actions/current';
 import { applyAdditionalJestTweaks, waitForPosition, getAccessibleLabel } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -355,5 +357,21 @@ describe('Tags', () => {
 		// Even though the response contains 9 tags, duplicates should be ignored, so there should be 8 rows in the list with no empty rows.
 		expect(allListItems).toHaveLength(8);
 		expect(allListItems.map(getAccessibleLabel).filter(label => label.length === 0)).toHaveLength(0);
+	});
+});
+
+describe('Coloured tag keys', () => {
+	const server = setupServer();
+	setupMSWLifecycle(server);
+
+	test('Do nothing while the tag colours are not loaded', async () => {
+		const testState = JSONtoState(stateRaw);
+		testState.libraries.u1.tagColors = {};
+		const store = setupStore(testState);
+		const onStateChange = jest.fn();
+		store.subscribe(onStateChange);
+
+		await expect(store.dispatch(currentToggleTagByIndex(0))).resolves.toBeUndefined();
+		expect(onStateChange).not.toHaveBeenCalled();
 	});
 });

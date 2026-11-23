@@ -5,7 +5,7 @@ import {
 	chunkedAddToCollection, chunkedCopyToLibrary, chunkedDeleteCollections, chunkedDeleteItems,
 	chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash, chunkedRemoveFromCollection,
 	chunkedToggleTagsOnItems, chunkedUpdateCollectionsTrash, createItem, createItemOfType,
-	exportItems, navigate, retrieveMetadata, toggleModal, undoRetrieveMetadata
+	exportItems, fetchMissingSelectedItems, navigate, retrieveMetadata, toggleModal, undoRetrieveMetadata
 } from '.';
 import columnProperties from '../constants/column-properties';
 import { COPY_CITATION, BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
@@ -169,7 +169,8 @@ const currentAddTags = (newTags) => {
 const currentRemoveColoredTags = () => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { itemKeys, libraryKey } = state.current;
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
 		const coloredTagsNames = (state.libraries[libraryKey].tagColors?.value ?? []).map(tc => tc.name);
 		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, coloredTagsNames, TOGGLE_REMOVE));
 	}
@@ -178,18 +179,33 @@ const currentRemoveColoredTags = () => {
 const currentToggleTagByIndex = (tagPosition) => {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const { libraryKey, itemKeys } = state.current;
-		const items = state.libraries[libraryKey].items;
-		const tagColors = state.libraries[libraryKey].tagColors?.value;
+		const { itemKeys: keys, libraryKey } = state.current;
+		const { itemKeys } = splitItemAndCollectionKeys(keys, libraryKey, state);
+		const tagColors = state.libraries[libraryKey].tagColors?.value ?? [];
 		if (!tagColors[tagPosition]) {
 			return;
 		}
 		const tagToToggle = tagColors[tagPosition].name;
+		const hasTag = item => item.tags.some(t => t.tag === tagToToggle);
+		let toggleAction = null;
 
-		const isThereItemWithoutThisTag = itemKeys.some(ik => !items[ik].tags.some(t => t.tag === tagToToggle));
-		const toggleAction = isThereItemWithoutThisTag ? TOGGLE_ADD : TOGGLE_REMOVE;
+		// Runs inside the queued write, so the decision sees the results of earlier writes to the library.
+		// Later chunks reuse the first chunk's decision.
+		const decideToggleAction = async () => {
+			if (!toggleAction) {
+				await dispatch(fetchMissingSelectedItems(itemKeys, libraryKey));
+				const items = getState().libraries[libraryKey].items;
+				const missingKeys = itemKeys.filter(ik => !items[ik]);
+				if (missingKeys.length > 0) {
+					throw new Error(`Items not found: ${missingKeys.join(', ')}`);
+				}
+				// The tag is removed only if every selected item has it
+				toggleAction = itemKeys.every(ik => hasTag(items[ik])) ? TOGGLE_REMOVE : TOGGLE_ADD;
+			}
+			return toggleAction;
+		};
 
-		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, [tagToToggle], toggleAction));
+		dispatch(chunkedToggleTagsOnItems(itemKeys, libraryKey, [tagToToggle], decideToggleAction));
 	}
 }
 
