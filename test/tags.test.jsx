@@ -13,6 +13,9 @@ import { getPatchedState, JSONtoState } from './utils/state';
 import { MainZotero } from '../src/js/component/main';
 import { setupStore } from '../src/js/store';
 import { currentToggleTagByIndex } from '../src/js/actions/current';
+import { toggleTagsOnItems } from '../src/js/actions/items-write';
+import { PartialWriteError } from '../src/js/common/actions';
+import { TOGGLE_ADD } from '../src/js/common/tags';
 import { applyAdditionalJestTweaks, waitForPosition, getAccessibleLabel } from './utils/common';
 import { setupMSWLifecycle } from './utils/msw-lifecycle';
 import stateRaw from './fixtures/state/desktop-test-user-item-view.json';
@@ -373,5 +376,34 @@ describe('Coloured tag keys', () => {
 
 		await expect(store.dispatch(currentToggleTagByIndex(0))).resolves.toBeUndefined();
 		expect(onStateChange).not.toHaveBeenCalled();
+	});
+});
+
+describe('Partial tag writes', () => {
+	const server = setupServer();
+	setupMSWLifecycle(server);
+
+	test('Receive the items that were written when writing others fails', async () => {
+		const store = setupStore(JSONtoState(stateRaw));
+		server.use(
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				const [written, failed] = await request.json();
+				return HttpResponse.json({
+					successful: { 0: { key: written.key, version: 411, data: { ...written, version: 411 } } },
+					success: { 0: written.key },
+					unchanged: {},
+					failed: { 1: { key: failed.key, code: 400, message: 'Test failure' } },
+				}, { headers: { 'Last-Modified-Version': '411' } });
+			}),
+		);
+
+		await expect(store.dispatch(toggleTagsOnItems(['VR82JUX8', 'HHVQTHFT'], 'u1', ['cute'], TOGGLE_ADD)))
+			.rejects.toBeInstanceOf(PartialWriteError);
+		const { libraries, errors } = store.getState();
+		expect(libraries.u1.items.VR82JUX8.tags).toEqual([{ tag: 'cute' }]);
+		expect(libraries.u1.items.HHVQTHFT.tags).toEqual([{ tag: '⭐️' }]);
+		// -- the request ended with a single RECEIVE_ action
+		expect(libraries.u1.sync.requestsPending).toBe(0);
+		expect(errors[0].message).toBe('Some updates failed.');
 	});
 });

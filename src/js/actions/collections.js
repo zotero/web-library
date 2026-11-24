@@ -28,7 +28,7 @@ import {
 
 import { requestTracker, requestWithBackoff } from '.';
 import { cede, get } from '../utils';
-import { chunkedAction } from '../common/actions';
+import { chunkedAction, PartialWriteError } from '../common/actions';
 import { makeChildMap, getDescendants } from '../common/collection';
 
 const rescheduleBadRequests = (badRequestsArray, allRequestsArray, dispatch, libraryKey, args) => {
@@ -506,11 +506,19 @@ const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id, re
 				const collections = [];
 
 				collectionKeys.forEach((_, index) => {
+					if(index in response.raw.failed) {
+						return;
+					}
 					const updatedCollection = response.getEntityByIndex(index);
 					collections.push(updatedCollection);
 					updatedCollectionsKeys.push(updatedCollection.key);
 				});
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
+				if(partialError && updatedCollectionsKeys.length === 0) {
+					throw partialError;
+				}
+				// if some collections failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_UPDATE_COLLECTIONS_TRASH,
 					libraryKey,
@@ -518,9 +526,14 @@ const queueUpdateCollectionsTrash = (collectionKeys, libraryKey, deleted, id, re
 					collectionKeys: updatedCollectionsKeys,
 					deleted,
 					response,
+					partialError,
 					id
 				});
-				resolve(response);
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve(response);
+				}
 			} catch(error) {
 				dispatch({
 						type: ERROR_UPDATE_COLLECTIONS_TRASH,

@@ -183,21 +183,27 @@ const queueCreateItems = (items, libraryKey, id, resolve, reject) => {
 					.items()
 					.post(items);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(JSON.stringify(response.getErrors()), response);
+				const createdItems = extractItems(response, state).filter((_, index) => !(index in response.raw.failed));
+				const partialError = response.isSuccess() ? null : new PartialWriteError(JSON.stringify(response.getErrors()), response);
+
+				if(partialError && createdItems.length === 0) {
+					throw partialError;
 				}
-
-				const createdItems = extractItems(response, state);
-
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_CREATE_ITEMS,
 					libraryKey,
 					items: createdItems,
 					response,
+					partialError,
 					id
 				});
 
-				resolve(response.getData());
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve(response.getData());
+				}
 			} catch(error) {
 				dispatch({
 						type: ERROR_CREATE_ITEMS,
@@ -517,14 +523,27 @@ const queueUpdateMultipleItems = (multiPatch, libraryKey, id, resolve, reject) =
 					id
 				});
 				const result = await postItemsMultiPatch(getState, multiPatch, libraryKey);
+				const { response } = result;
+				const writtenPatch = multiPatch.filter((_, index) => !(index in response.raw.failed));
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
+
+				if(partialError && result.itemKeys.length === 0) {
+					throw partialError;
+				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_UPDATE_MULTIPLE_ITEMS,
 					...result,
 					libraryKey,
-					multiPatch,
+					multiPatch: writtenPatch,
+					partialError,
 					id
 				});
-				resolve(result);
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve(result);
+				}
 			} catch (error) {
 				dispatch({
 					type: ERROR_UPDATE_MULTIPLE_ITEMS,
@@ -803,15 +822,17 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id, resolve, reject) => {
 				const affectedParentItemKeys = itemKeys
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(response.getErrors(), response);
+				if(partialError && itemKeys.length === 0) {
+					throw partialError;
 				}
-
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_MOVE_ITEMS_TRASH,
 					libraryKey,
 					response,
+					partialError,
 					id,
 					itemKeys,
 					...itemsData,
@@ -820,7 +841,11 @@ const queueMoveItemsToTrash = (itemKeys, libraryKey, id, resolve, reject) => {
 				if(affectedParentItemKeys.length > 0) {
 					dispatch(fetchItemsByKeys(affectedParentItemKeys));
 				}
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_MOVE_ITEMS_TRASH,
@@ -878,14 +903,17 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id, resolve, reject) =
 				const affectedParentItemKeys = itemKeys
 					.map(ik => get(state, ['libraries', libraryKey, 'items', ik, 'parentItem']))
 					.filter(Boolean);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(response.getErrors(), response);
+				if(partialError && itemKeys.length === 0) {
+					throw partialError;
 				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_RECOVER_ITEMS_TRASH,
 					libraryKey,
 					response,
+					partialError,
 					id,
 					itemKeys,
 					...itemsData,
@@ -893,7 +921,11 @@ const queueRecoverItemsFromTrash = (itemKeys, libraryKey, id, resolve, reject) =
 				if(affectedParentItemKeys.length > 0) {
 					dispatch(fetchItemsByKeys(affectedParentItemKeys));
 				}
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_RECOVER_ITEMS_TRASH,
@@ -956,10 +988,12 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 
 				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(response.getErrors(), response);
+				if(partialError && updatedItemKeys.length === 0) {
+					throw partialError;
 				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_ADD_TAGS_TO_ITEMS,
 					libraryKey,
@@ -968,9 +1002,14 @@ const queueToggleTagOnItems = (itemKeys, libraryKey, tagsToToggle, toggleAction,
 					tagsToToggle,
 					items,
 					response,
+					partialError,
 					id,
 				});
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_TAGS_TO_ITEMS,
@@ -1036,10 +1075,12 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id, resolve, 
 
 				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(response.getErrors(), response);
+				if(partialError && updatedItemKeys.length === 0) {
+					throw partialError;
 				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_ADD_ITEMS_TO_COLLECTION,
 					libraryKey,
@@ -1048,9 +1089,14 @@ const queueAddToCollection = (itemKeys, collectionKey, libraryKey, id, resolve, 
 					collectionKey,
 					items,
 					response,
+					partialError,
 					id,
 				});
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_ADD_ITEMS_TO_COLLECTION,
@@ -1139,7 +1185,7 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 		if(shouldStoreRelationInSource) {
 			const targetItemKeys = newItems.filter(i => !['attachment', 'annotation'].includes(i.itemType)).map(i => i.key);
 			if (targetItemKeys.length) {
-				// a failure is reported by ERROR_STORE_RELATIONS_IN_SOURCE and must not stop the copy
+				// a failure is already shown as an error and must not stop the copy
 				await dispatch(storeRelationInSource(itemKeys, targetItemKeys, sourceLibraryKey, targetLibraryKey)).catch(() => {});
 			}
 		}
@@ -1301,16 +1347,27 @@ const queueStoreRelationInSource = (itemKeys, targetItemKeys, sourceLibraryKey, 
 					}
 				});
 
-				const { response } = await postItemsMultiPatch(getState, multiPatch, sourceLibraryKey);
+				const { response, itemKeys: updatedItemKeys } = await postItemsMultiPatch(getState, multiPatch, sourceLibraryKey);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
+
+				if(partialError && updatedItemKeys.length === 0) {
+					throw partialError;
+				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
-					itemKeys,
+					itemKeys: updatedItemKeys,
 					libraryKey: sourceLibraryKey,
 					response,
+					partialError,
 					targetLibraryKey,
 					type: RECEIVE_STORE_RELATIONS_IN_SOURCE,
 					id,
 				});
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					error,
@@ -1370,10 +1427,12 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id, reso
 
 				const { response, itemKeys: updatedItemKeys, items } = await postItemsMultiPatch(getState, multiPatch, libraryKey);
 				const itemKeysChanged = Object.values(response.raw.success);
+				const partialError = response.isSuccess() ? null : new PartialWriteError(response.getErrors(), response);
 
-				if(!response.isSuccess()) {
-					throw new PartialWriteError(response.getErrors(), response);
+				if(partialError && updatedItemKeys.length === 0) {
+					throw partialError;
 				}
+				// if some items failed to write, RECEIVE_ also carries the partial error
 				dispatch({
 					type: RECEIVE_REMOVE_ITEMS_FROM_COLLECTION,
 					libraryKey,
@@ -1382,9 +1441,14 @@ const queueRemoveFromCollection = (itemKeys, collectionKey, libraryKey, id, reso
 					collectionKey,
 					items,
 					response,
+					partialError,
 					id,
 				});
-				resolve();
+				if(partialError) {
+					reject(partialError);
+				} else {
+					resolve();
+				}
 			} catch(error) {
 				dispatch({
 					type: ERROR_REMOVE_ITEMS_FROM_COLLECTION,

@@ -301,7 +301,7 @@ describe('Test User: Collections', () => {
 				expect(collections[0].deleted).toBe(1);
 				expect(collections[0].key).toBe('CSB4KZUU');
 				hasBeenTrashed = true;
-				const responseBody = { success: { "0": 'CSB4KZUU' }, successful: { "0": { key: 'CSB4KZUU', version: libVer, data: { ...state.libraries.u1.dataObjects.CSB4KZUU, deleted: 1 } } } };
+				const responseBody = { success: { "0": 'CSB4KZUU' }, successful: { "0": { key: 'CSB4KZUU', version: libVer, data: { ...state.libraries.u1.dataObjects.CSB4KZUU, deleted: 1 } } }, unchanged: {}, failed: {} };
 				return HttpResponse.json(responseBody);
 			}),
 		);
@@ -403,7 +403,7 @@ describe('Test User: Collections', () => {
 					success[index] = key;
 					successful[index] = { key, version: libVer, data: { ...state.libraries.u1.dataObjects[key], deleted: 1 } };
 				});
-				return HttpResponse.json({ success, successful });
+				return HttpResponse.json({ success, successful, unchanged: {}, failed: {} });
 			}),
 			...makeEmptyTopItemsHandlers('https://api.zotero.org/users/1'),
 		);

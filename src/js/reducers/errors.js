@@ -2,6 +2,7 @@ import { CONNECTION_ISSUES, DISMISS_ERROR, ERROR_ADD_ITEMS_TO_COLLECTION, ERROR_
 	ERROR_CREATE_ITEMS, ERROR_DELETE_ITEMS, ERROR_RECOVER_ITEMS_TRASH, ERROR_REMOVE_ITEMS_FROM_COLLECTION, ERROR_TRASH_ITEMS,
 	RESET_LIBRARY } from '../constants/actions';
 import { buyStorageUrl } from '../constants/defaults';
+import { PartialWriteError } from '../common/actions';
 const ERRORS_STORED_COUNT = 10; //how many errors are stored before oldest are discarded
 var errorCounter = 0;
 
@@ -49,10 +50,10 @@ const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 		}
 	} else if(typeof error === 'string') {
 		message = error;
-	} else if (error !== null && [ERROR_ADD_ITEMS_TO_COLLECTION, ERROR_ADD_TAGS_TO_ITEMS, ERROR_CREATE_COLLECTIONS,
-		ERROR_CREATE_ITEMS, ERROR_DELETE_ITEMS, ERROR_RECOVER_ITEMS_TRASH,
+	} else if (error instanceof PartialWriteError || (error !== null && [ERROR_ADD_ITEMS_TO_COLLECTION, ERROR_ADD_TAGS_TO_ITEMS,
+		ERROR_CREATE_COLLECTIONS, ERROR_CREATE_ITEMS, ERROR_DELETE_ITEMS, ERROR_RECOVER_ITEMS_TRASH,
 		ERROR_REMOVE_ITEMS_FROM_COLLECTION, ERROR_TRASH_ITEMS
-	].includes(type)) {
+	].includes(type))) {
 		// `error` is an object where keys are indexes of the array of the original request
 		const firstError = Object.values(error).find(e => e.message);
 		message = `Some updates failed${firstError ? ': ' + firstError.message : ''}.`;
@@ -75,6 +76,20 @@ const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 	}
 }
 
+const addError = (state, processedError) => {
+	if(isDuplicate(processedError, state[0])) {
+		return [
+			{ ...state[0], timesOccurred: state[0].timesOccurred + 1 },
+			...state.slice(1, ERRORS_STORED_COUNT - 1)
+		];
+	}
+
+	return [
+		processedError,
+		...state.slice(0, ERRORS_STORED_COUNT - 1)
+	];
+}
+
 const errors = (state = [], action, { meta } = {}) => {
 	if(action.type === DISMISS_ERROR) {
 		return state.filter(error => {
@@ -93,19 +108,10 @@ const errors = (state = [], action, { meta } = {}) => {
 			return state;
 		}
 
-		const processedError = processError(action, meta);
-
-		if(isDuplicate(processedError, state[0])) {
-			return [
-				{ ...state[0], timesOccurred: state[0].timesOccurred + 1 },
-				...state.slice(1, ERRORS_STORED_COUNT - 1)
-			];
-		}
-
-		return [
-			processedError,
-			...state.slice(0, ERRORS_STORED_COUNT - 1)
-		];
+		return addError(state, processError(action, meta));
+	} else if(action.type && action.type.startsWith('RECEIVE_') && action.partialError) {
+		// a multi-object write that failed only for some objects ends with RECEIVE_, which carries the error
+		return addError(state, processError({ ...action, error: action.partialError }, meta));
 	} else if(action.type === RESET_LIBRARY) {
 		return [{
 				id: ++errorCounter,
