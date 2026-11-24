@@ -1,5 +1,6 @@
 import {test, expect} from "../utils/playwright-fixtures.js";
-import {closeServer, generateTestItems, generateTestTags, loadFixtureState, makeCustomHandler, makeGate, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
+import {closeServer, generateTestItems, generateTestTags, getServer, loadFixtureState, makeCustomHandler, makeGate, makePaginatedHandler, makeTextHandler, makeWriteHandler} from "../utils/fixed-state-server.js";
+import { waitForLoad } from "../utils/common.js";
 import testUserManageTags from '../fixtures/response/test-user-manage-tags.json' with { type: 'json' };
 import identifierSearchResults from '../fixtures/response/identifier-search-web-results.json' with { type: 'json' };
 import itemsInCollectionAlgorithms from '../fixtures/response/test-user-get-items-in-collection-algorithms.json' with { type: 'json' };
@@ -1210,4 +1211,80 @@ test.describe('Desktop Modals -- waiting for writes', () => {
 		await modal.getByRole('button', { name: 'Move' }).click();
 		await expect(modal).toHaveCount(0);
 	});
+});
+
+test.describe('Desktop Modals -- unfetched selected items', () => {
+	let server;
+
+	test.afterEach(async () => {
+		await closeServer(server);
+	});
+
+	// MCJ8XUBI is in "Algorithms". With more than one key in the URL the library does not fetch the
+	// selected items, so the second one stays unfetched.
+	const [unfetchedItem] = generateTestItems(1, { keyPrefix: 'UNFCH', titlePrefix: 'Unfetched Item', startIndex: 70, collections: ['CSB4KZUU'] });
+
+	// Answers the request for the unfetched selected item with `respond`
+	const makeSelectedItemsHandler = respond => (req, resp) => {
+		const url = new URL(req.url, 'http://localhost');
+		if (req.method !== 'GET' || url.pathname !== '/api/users/1/items' || !url.searchParams.has('itemKey')) {
+			return false;
+		}
+		respond(resp);
+		return true;
+	};
+
+	const respondWithItems = items => resp => {
+		resp.setHeader('Content-Type', 'application/json');
+		resp.setHeader('Total-Results', String(items.length));
+		resp.end(JSON.stringify(items));
+	};
+
+	const loadWithUnfetchedSelectedItem = async (page, serverPort, selectedItemsHandler) => {
+		server = await getServer('desktop-test-user-library-view', serverPort, [
+			selectedItemsHandler,
+			makeCustomHandler('/api/', [], { totalResults: 0 }),
+		]);
+		await page.goto(`http://localhost:${serverPort}/testuser/items/MCJ8XUBI,${unfetchedItem.key}`);
+		await waitForLoad(page);
+		await expect(page.getByText('2 items selected')).toBeVisible();
+	};
+
+	test('Add To Collection modal loads unfetched selected items', async ({ page, serverPort }) => {
+		const gate = makeGate();
+		await loadWithUnfetchedSelectedItem(page, serverPort, makeSelectedItemsHandler(
+			resp => gate.ready.then(() => respondWithItems([unfetchedItem])(resp))
+		));
+
+		await page.getByRole('button', { name: 'Add To Collection' }).click();
+		await expect(page.locator('.modal-backdrop.loading')).toBeVisible();
+		await expect(page.getByRole('toolbar', { name: 'items toolbar' }).getByRole('status')).toContainText('Loading selected items');
+
+		gate.release();
+		const modal = page.getByRole('dialog', { name: 'Select Collection' });
+		await expect(modal).toBeVisible();
+		await modal.getByRole('treeitem', { name: 'My Library' }).getByRole('button', { name: 'Expand' }).click();
+		// Both selected items are in "Algorithms", so it can't be picked
+		await expect(modal.getByRole('treeitem', { name: 'Algorithms' })).toHaveAttribute('aria-disabled', 'true');
+	});
+
+	const unloadableCases = [
+		['the request fails', resp => {
+			resp.statusCode = 400;
+			resp.end('Test failure');
+		}],
+		['the item no longer exists', respondWithItems([])],
+	];
+
+	for (const [name, respond] of unloadableCases) {
+		test(`Add To Collection modal closes when an unfetched selected item can't be loaded because ${name}`, async ({ page, serverPort }) => {
+			await loadWithUnfetchedSelectedItem(page, serverPort, makeSelectedItemsHandler(respond));
+
+			await page.getByRole('button', { name: 'Add To Collection' }).click();
+			await expect(page.getByText('Some of the selected items could not be loaded.')).toBeVisible();
+			// The modal closes as the message appears, not once it unmounts
+			expect(await page.locator('.modal-backdrop').count()).toBe(0);
+			await expect(page.getByRole('dialog', { name: 'Select Collection' })).toHaveCount(0);
+		});
+	}
 });
