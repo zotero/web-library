@@ -3,7 +3,7 @@ import { omit, pick } from 'web-common/utils';
 import { getZotero } from 'web-common/zotero';
 
 import { extractItems, chunkedAction, PartialWriteError } from '../common/actions';
-import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate } from '.';
+import { fetchItemsByKeys, fetchAllChildItems, fetchItemTemplate, loadSelectedItems } from '.';
 import { fetchLibrarySettings, requestTracker } from '.';
 import { get, getItemCanonicalUrl, getUniqueId, mapItemKeysToRelations, mergeItemKeysRelations, removeRelationByItemKey, reverseMap } from '../utils';
 import { getFilesData } from '../common/event';
@@ -1252,10 +1252,12 @@ const copyToLibrary = (itemKeys, sourceLibraryKey, targetLibraryKey, targetColle
 
 		const childItemsCopyPromises = itemKeys.map(async (ik, index) => {
 				const newItem = newItems[index];
+				// numChildren is left out where the API doesn't count children, e.g. annotations of EPUBs and snapshots
 				const skipChildItems = newItem.itemType === 'annotation'
 					|| newItem.linkMode === 'embedded_image'
 					|| newItem.linkMode === 'linked_url'
-					|| (newItem.itemType === 'attachment' && !Object.keys(READER_CONTENT_TYPES).includes(newItem.contentType));
+					|| (newItem.itemType === 'attachment' && !Object.keys(READER_CONTENT_TYPES).includes(newItem.contentType))
+					|| state.libraries[sourceLibraryKey].items[ik][Symbol.for('meta')]?.numChildren === 0;
 
 				if (skipChildItems) {
 					return;
@@ -1635,6 +1637,10 @@ const chunkedChangeParentItem = (itemKeys, ...args) => chunkedAction(changeParen
 
 const chunkedCopyToLibrary = (itemKeys, sourceLibraryKey, ...args) => {
 	return async dispatch => {
+		// nothing is copied unless every item can be loaded
+		if(!await dispatch(loadSelectedItems(itemKeys, sourceLibraryKey))) {
+			return;
+		}
 		const id = getUniqueId();
 
 		dispatch({

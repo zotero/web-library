@@ -1,4 +1,4 @@
-import { BEGIN_STATUS, END_STATUS, SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL, QUERY_SECONDARY, SORT_ITEMS_SECONDARY } from '../constants/actions';
+import { BEGIN_STATUS, END_STATUS, ERROR_FETCH_SELECTED_ITEMS, SORT_ITEMS, REQUEST_ATTACHMENT_URL, RECEIVE_ATTACHMENT_URL, ERROR_ATTACHMENT_URL, QUERY_SECONDARY, SORT_ITEMS_SECONDARY } from '../constants/actions';
 import api from 'zotero-api-client';
 import { escapeBooleanSearches, extractItems, getApiForItems } from '../common/actions';
 import { getItemKeysPath } from '../common/state';
@@ -118,6 +118,21 @@ const fetchMissingSelectedItems = (itemKeys, libraryKey) => {
 		} finally {
 			dispatch({ type: END_STATUS, id });
 		}
+	}
+}
+
+// Like fetchMissingSelectedItems, but shows an error if any of the items still isn't loaded, e.g. because
+// it no longer exists. Resolves to whether every item is loaded.
+const loadSelectedItems = (itemKeys, libraryKey) => {
+	return async (dispatch, getState) => {
+		await dispatch(fetchMissingSelectedItems(itemKeys, libraryKey));
+		const items = getState().libraries[libraryKey].items;
+		if(itemKeys.every(key => items[key])) {
+			return true;
+		}
+		// no libraryKey, as this ERROR_ ends no request and must not change the library's request count
+		dispatch({ type: ERROR_FETCH_SELECTED_ITEMS, error: 'Some of the selected items could not be loaded.' });
+		return false;
 	}
 }
 
@@ -428,6 +443,7 @@ export {
 	fetchTrashItems,
 	findRowIndexInSource,
 	getAttachmentUrl,
+	loadSelectedItems,
 	querySecondary,
 	sortItems,
 	sortItemsSecondary,

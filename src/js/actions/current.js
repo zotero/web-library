@@ -5,12 +5,13 @@ import {
 	chunkedAddToCollection, chunkedCopyToLibrary, chunkedDeleteCollections, chunkedDeleteItems,
 	chunkedMoveItemsToTrash, chunkedRecoverItemsFromTrash, chunkedRemoveFromCollection,
 	chunkedToggleTagsOnItems, chunkedUpdateCollectionsTrash, createItem, createItemOfType,
-	exportItems, fetchMissingSelectedItems, navigate, retrieveMetadata, toggleModal, undoRetrieveMetadata
+	exportItems, fetchMissingSelectedItems, loadSelectedItems, navigate, retrieveMetadata, toggleModal,
+	undoRetrieveMetadata
 } from '.';
 import columnProperties from '../constants/column-properties';
 import { COPY_CITATION, BIBLIOGRAPHY, COLLECTION_SELECT, EXPORT, NEW_ITEM } from '../constants/modals';
 import { TOGGLE_ADD, TOGGLE_REMOVE } from '../common/tags';
-import { BEGIN_ONGOING, COMPLETE_ONGOING, CLEAR_ONGOING, ERROR_FETCH_SELECTED_ITEMS } from '../constants/actions';
+import { BEGIN_ONGOING, COMPLETE_ONGOING, CLEAR_ONGOING } from '../constants/actions';
 import { getUniqueId } from '../utils';
 
 const currentDuplicateItem = () => {
@@ -68,12 +69,8 @@ const currentAddToCollectionModal = () => {
 		const { itemKeys, libraryKey } = getState().current;
 		dispatch(toggleModal(COLLECTION_SELECT, true, { items: itemKeys }));
 		// the modal stays busy until every selected item is loaded
-		await dispatch(fetchMissingSelectedItems(itemKeys, libraryKey));
-		const items = getState().libraries[libraryKey].items;
-		if(itemKeys.some(key => !items[key])) {
+		if(!await dispatch(loadSelectedItems(itemKeys, libraryKey))) {
 			dispatch(toggleModal(null, false));
-			// no libraryKey, as this ERROR_ ends no request and must not change the library's request count
-			dispatch({ type: ERROR_FETCH_SELECTED_ITEMS, error: 'Some of the selected items could not be loaded.' });
 		}
 	}
 }
