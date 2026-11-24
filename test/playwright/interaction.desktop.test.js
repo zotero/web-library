@@ -969,6 +969,20 @@ test.describe('Desktop Interaction', () => {
 		expect(errors).toEqual([]);
 	});
 
+	test('The first row shows as a single selected row when an unfetched item is also selected', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-library-view', serverPort, [makeCustomHandler('/api/', [], { totalResults: 0 })]);
+		// C74GF3H6 is the first row. With more than one key in the URL the library does not fetch the
+		// selected items, so UNFCH070 stays unfetched.
+		await page.goto(`http://localhost:${serverPort}/testuser/items/C74GF3H6,UNFCH070`);
+		await waitForLoad(page);
+		await expect(page.getByText('2 items selected')).toBeVisible();
+
+		const firstRow = page.locator('.items-table [role="row"][data-index="0"]');
+		await expect(firstRow).toHaveAttribute('aria-selected', 'true');
+		await expect(firstRow).toHaveClass(/\bfirst-active\b/);
+		await expect(firstRow).toHaveClass(/\blast-active\b/);
+	});
+
 	test('Shift+Home extends selection from anchor to the first item', async ({ page, serverPort }) => {
 		const libraryItems = generateLibraryItems();
 		const handlers = [

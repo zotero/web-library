@@ -17,9 +17,15 @@ import { PICKS_MULTIPLE_ITEMS } from '../../../constants/picker-modes';
 
 const DROP_MARGIN_EDGE = 5; // how many pixels from top/bottom of the row triggers "in-between" drop
 
+// A selected item that isn't loaded has no row, so it has no index
 const getSelectedIndexes = memoize((selectedItemKeys, keys) => {
-	const selectedIndexes = selectedItemKeys.map(k => keys.indexOf(k));
-	selectedIndexes.sort();
+	const selectedKeys = new Set(selectedItemKeys);
+	const selectedIndexes = new Set();
+	keys.forEach((key, index) => {
+		if (selectedKeys.has(key)) {
+			selectedIndexes.add(index);
+		}
+	});
 	return selectedIndexes;
 });
 
@@ -52,9 +58,9 @@ const TableRow = props => {
 
 	const selectedIndexes = getSelectedIndexes(selectedItemKeys, keys);
 	const selectedItemKeysLength = selectedItemKeys.length;
-	const isSelected = selectedItemKeys.includes(itemKey);
-	const isFirstRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index - 1);
-	const isLastRowOfSelectionBlock = selectedIndexes.includes(index) && !selectedIndexes.includes(index + 1);
+	const isSelected = selectedIndexes.has(index);
+	const isFirstRowOfSelectionBlock = isSelected && !selectedIndexes.has(index - 1);
+	const isLastRowOfSelectionBlock = isSelected && !selectedIndexes.has(index + 1);
 
 	// useDrag options must not be recreated or it will reset drag preview (which we set for empty image)
 	// causing two "ghosts" to appear - the native one (which we don't want) and the one web library renders
