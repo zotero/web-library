@@ -131,6 +131,29 @@ describe('Read-only', () => {
 		expect(secondItem).toHaveAttribute('aria-selected', 'false');
 	});
 
+	test('Write shortcuts in the items table do nothing', async () => {
+		renderWithProviders(<MainZotero />, { preloadedState: state });
+		await waitForPosition();
+
+		const user = userEvent.setup();
+		const writes = [];
+		server.use(
+			http.post('https://api.zotero.org/users/1/items', async ({ request }) => {
+				writes.push(await request.json());
+				return HttpResponse.json({ successful: {}, success: {}, unchanged: {}, failed: {} });
+			}),
+		);
+
+		const currentItem = screen.getByRole('row', { name: 'Effects of diet restriction on life span and age-related changes in dogs' });
+		await user.click(currentItem);
+		// Toggle the first coloured tag, remove all coloured tags, Move to Trash
+		await user.keyboard('10{Delete}');
+		await waitForPosition();
+
+		expect(writes).toEqual([]);
+		expect(currentItem).toHaveAttribute('aria-selected', 'true');
+	});
+
 	test('Open reader in a new tab with a double click', async () => {
 		renderWithProviders(<MainZotero />, { preloadedState: state });
 		await waitForPosition();

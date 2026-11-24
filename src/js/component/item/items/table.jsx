@@ -57,6 +57,9 @@ const ItemsTable = props => {
 	const isMyLibrary = useSelector(state =>
 		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isMyLibrary
 	);
+	const isReadOnly = useSelector(state =>
+		(state.config.libraries.find(l => l.key === state.current.libraryKey) || {}).isReadOnly
+	);
 	const isModalOpen = useSelector(state => state.modal.id);
 	const prevErrorCount = usePrevious(errorCount);
 	const isFileUploadAllowed = isFileUploadAllowedInLibrary && !['trash', 'publications'].includes(itemsSource);
@@ -216,7 +219,7 @@ const ItemsTable = props => {
 			direction = -1;
 		} else if (ev.key === 'ArrowDown') {
 			direction = 1;
-		} else if (!pickerMode && isDelKeyDown(ev)) {
+		} else if (!pickerMode && !isReadOnly && isDelKeyDown(ev)) {
 			dispatch(currentTrashOrDelete());
 			return;
 		} else if (ev.key === 'Home') {
@@ -275,10 +278,10 @@ const ItemsTable = props => {
 			direction = 1;
 			magnitude = Math.floor(outerRef.current.getBoundingClientRect().height / ROW_HEIGHT);
 			ev.preventDefault();
-		} else if (!pickerMode && Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
+		} else if (!pickerMode && !isReadOnly && Array.from({ length: 9 }, (_, i) => (i + 1).toString()).includes(ev.key)) {
 			dispatch(currentToggleTagByIndex(parseInt(ev.key) - 1));
 			return;
-		} else if (!pickerMode && ev.key === '0') {
+		} else if (!pickerMode && !isReadOnly && ev.key === '0') {
 			dispatch(currentRemoveColoredTags());
 			return;
 		} else if (!pickerMode && isHighlightKeyDown(ev)) {
@@ -311,7 +314,7 @@ const ItemsTable = props => {
 		}
 
 		focusRow(cursorIndex);
-	}, [isEmbedded, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, q, qmode, focusRow, applyKeyboardSelection]);
+	}, [isEmbedded, isReadOnly, pickerMode, keys, selectedItemKeys, dispatch, pickerNavigate, libraryKey, collectionKey, q, qmode, focusRow, applyKeyboardSelection]);
 
 	const handleTableFocus = useCallback(async ev => {
 		const hasChangedFocused = receiveFocus(ev);
