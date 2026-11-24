@@ -983,6 +983,44 @@ test.describe('Desktop Interaction', () => {
 		await expect(firstRow).toHaveClass(/\blast-active\b/);
 	});
 
+	test('Shift+Arrow extends the selection from a fetched item when an unfetched item is also selected', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-library-view', serverPort, [makeCustomHandler('/api/', [], { totalResults: 0 })]);
+		const selectedRows = page.locator('.items-table [role="row"][aria-selected="true"]');
+
+		for (const [key, expectedRowIndexes] of [['Shift+ArrowUp', ['4', '5']], ['Shift+ArrowDown', ['5', '6']]]) {
+			// 65WVZHGE is row 5. With more than one key in the URL the library does not fetch the
+			// selected items, so UNFCH070 stays unfetched.
+			await page.goto(`http://localhost:${serverPort}/testuser/items/65WVZHGE,UNFCH070`);
+			await waitForLoad(page);
+			await expect(page.getByText('2 items selected')).toBeVisible();
+			await page.locator('.items-table').focus();
+
+			await page.keyboard.press(key);
+			await expect(selectedRows).toHaveCount(2);
+			await expect(selectedRows.nth(0)).toHaveAttribute('data-index', expectedRowIndexes[0]);
+			await expect(selectedRows.nth(1)).toHaveAttribute('data-index', expectedRowIndexes[1]);
+		}
+	});
+
+	test('Shift+Arrow when none of the selected items is in the list', async ({ page, serverPort }) => {
+		server = await getServer('desktop-test-user-library-view', serverPort, [makeCustomHandler('/api/', [], { totalResults: 0 })]);
+		// Stands in for a link to several items that have since been deleted. Only a single missing item
+		// is redirected away from.
+		await page.goto(`http://localhost:${serverPort}/testuser/items/ZZZZ0001,ZZZZ0002`);
+		await waitForLoad(page);
+		await expect(page.getByText('2 items selected')).toBeVisible();
+		await page.locator('.items-table').focus();
+
+		// There is no row to extend the selection upwards from
+		await page.keyboard.press('Shift+ArrowUp');
+		await expect(page.getByText('2 items selected')).toBeVisible();
+
+		await page.keyboard.press('Shift+ArrowDown');
+		const firstRow = page.locator('.items-table [role="row"][data-index="0"]');
+		await expect(firstRow).toHaveAttribute('aria-selected', 'true');
+		await expect(page.locator('.items-table [role="row"][aria-selected="true"]')).toHaveCount(1);
+	});
+
 	test('Shift+Home extends selection from anchor to the first item', async ({ page, serverPort }) => {
 		const libraryItems = generateLibraryItems();
 		const handlers = [

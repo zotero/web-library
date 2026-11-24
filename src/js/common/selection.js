@@ -40,12 +40,24 @@ export const selectItemsMouse = (targetItemKey, isShiftModifer, isCtrlModifer, {
 
 export const selectItemsKeyboard = (direction, magnitude, isMultiSelect, { keys, selectedItemKeys, overrideStartIndex }) => {
 	const vector = direction * magnitude;
-	let index;
+	let index = -1;
 	if (typeof overrideStartIndex === 'number') {
 		index = overrideStartIndex;
 	} else {
-		const lastItemKey = selectedItemKeys[selectedItemKeys.length - 1];
-		index = keys.findIndex(key => key && key === lastItemKey);
+		// Start from the last selected item that has a row. A selected item that isn't loaded has none.
+		const keyIndexes = new Map();
+		keys.forEach((key, keyIndex) => keyIndexes.set(key, keyIndex));
+		for (let i = selectedItemKeys.length - 1; i >= 0; i--) {
+			if (keyIndexes.has(selectedItemKeys[i])) {
+				index = keyIndexes.get(selectedItemKeys[i]);
+				break;
+			}
+		}
+	}
+
+	// There is no row to extend the selection upwards from
+	if (index === -1 && isMultiSelect && direction === -1) {
+		return {};
 	}
 
 	let nextKeys;
@@ -63,17 +75,15 @@ export const selectItemsKeyboard = (direction, magnitude, isMultiSelect, { keys,
 		}
 		cursorIndex = nextIndex;
 		if (isMultiSelect) {
-			let counter = 1;
 			let alreadySelectedCounter = 0;
 			let newKeys = [];
 
-			while (index + counter * direction !== nextIndex + direction) {
-				const nextKey = keys[index + counter * direction];
+			for (let step = 1; step <= Math.abs(nextIndex - index); step++) {
+				const nextKey = keys[index + step * direction];
 				newKeys.push(nextKey);
 				if (selectedItemKeys.includes(nextKey)) {
 					alreadySelectedCounter++;
 				}
-				counter++;
 			}
 
 			const shouldUnselect = alreadySelectedCounter === magnitude;

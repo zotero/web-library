@@ -109,7 +109,7 @@ const ItemsTable = props => {
 
 		if (index === -1) {
 			focusBySelector('.items-table-head');
-		} else if (index !== null) {
+		} else if (typeof index === 'number') {
 			const selector = `[data-index="${index}"]`;
 			if (tableRef.current.querySelector(selector)) {
 				focusBySelector(selector);
