@@ -23,17 +23,20 @@ const NewItemModal = () => {
 
 	const handleNewItemCreate = useCallback(async () => {
 		setIsBusy(true);
-		const template = await dispatch(fetchItemTemplate(itemType));
-		const newItem = {
-			...template,
-			collections: itemsSource === 'collection' ? [collection.key] : []
-		};
-		const item = await dispatch(createItem(newItem, libraryKey));
+		try {
+			const template = await dispatch(fetchItemTemplate(itemType));
+			const newItem = {
+				...template,
+				collections: itemsSource === 'collection' ? [collection.key] : []
+			};
+			const item = await dispatch(createItem(newItem, libraryKey));
 
-		dispatch(toggleModal(NEW_ITEM, false));
-		dispatch(navigate({ items: [item.key], view: 'item-details' }));
-		dispatch(triggerEditingItem(item.key, true));
-		setIsBusy(false);
+			dispatch(toggleModal(NEW_ITEM, false));
+			dispatch(navigate({ items: [item.key], view: 'item-details' }));
+			dispatch(triggerEditingItem(item.key, true));
+		} finally {
+			setIsBusy(false);
+		}
 	}, [collection, dispatch, itemsSource, itemType, libraryKey]);
 
 	const handleChange = useCallback(() => true, []);

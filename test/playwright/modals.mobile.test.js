@@ -371,4 +371,46 @@ test.describe('Mobile Modals', () => {
 
 		await page.close();
 	});
+
+	test('New Item modal can be cancelled after creating the item fails', async ({ page, serverPort }) => {
+		const handlers = [
+			makeCustomHandler('/api/users/1/settings/tagColors', { value: [] }),
+		];
+		server = await loadFixtureState('mobile-test-user-item-list-view', serverPort, page, handlers);
+
+		// item templates are requested from the default API host
+		await page.route(url => url.hostname === 'api.zotero.org' && url.pathname === '/items/new', route => route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*' },
+			body: JSON.stringify({ itemType: 'book', title: '', creators: [], tags: [], collections: [], relations: {} }),
+		}));
+		await page.route(url => url.pathname === '/api/users/1/items', route => {
+			if (route.request().method() !== 'POST') {
+				return route.fallback();
+			}
+			return route.fulfill({ status: 400, contentType: 'text/plain', body: 'Invalid item' });
+		});
+
+		await page.locator('.item-actions-touch:visible').tap();
+		await page.getByRole('menuitem', { name: 'New Item' }).tap();
+
+		const modal = page.getByRole('dialog', { name: 'Create a New Item' });
+		await expect(modal).toBeVisible();
+		await page.waitForFunction(() =>
+			document.querySelector('[aria-label="Create a New Item"]')?.classList.contains('ReactModal__Content--after-open')
+		);
+		await page.waitForTimeout(600);
+
+		await modal.getByRole('button', { name: 'Create' }).tap();
+		const message = page.locator('.message.error');
+		await expect(message).toContainText('Invalid item');
+
+		// On narrow screens the message covers the dialog's header. The open modal hides the message
+		// from the accessibility tree, so its close button can't be found by role.
+		await message.locator('button').tap();
+		await modal.getByRole('button', { name: 'Cancel' }).tap();
+		await expect(modal).toBeHidden();
+		await expect(page.locator('.modal-backdrop.loading')).toHaveCount(0);
+	});
 });
