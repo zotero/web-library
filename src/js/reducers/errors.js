@@ -22,14 +22,12 @@ const processError = ({ type, error, errorType, errorTag = null }, meta) => {
 	if(error instanceof TypeError && (error.message === 'Failed to fetch' || error.message.startsWith('NetworkError'))) {
 		message = `Unable to communicate with Zotero server. Please check your connection.`;
 	} else if(typeof error === 'object' && 'getResponseType' in error && error.getResponseType() === 'ErrorResponse') {
-		if('options' in error && 'resource' in error.options && error.options.resource.fileUrl === null) {
-			// special case for attachment url requests failing with 404
-			message = 'Requested file is not available. It might not have been synced yet.';
-		}
-
 		const dateError = error.reason?.match(/^'([a-zA-Z0-9]*)' must be in ISO 8601 or UTC.*?\((.*?)\)$/);
 
-		if(dateError) {
+		// attachment file url requests have a null fileUrl resource
+		if(error.options?.resource?.fileUrl === null && error.response?.status === 404) {
+			message = 'Requested file is not available. It might not have been synced yet.';
+		} else if(dateError) {
 			const field = dateError[1];
 			const value = dateError[2];
 			const localized = meta?.itemFields?.find(metaData => metaData.field === field)?.localized;

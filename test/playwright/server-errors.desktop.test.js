@@ -63,6 +63,30 @@ test.describe('API server errors', () => {
 		});
 	}
 
+	const fileUrlCases = [
+		{ status: 404, body: 'Not found', message: 'Requested file is not available. It might not have been synced yet.' },
+		{ status: 403, body: 'Forbidden', message: 'Received error from Zotero server: Forbidden.' },
+	];
+
+	for (const { status, body, message } of fileUrlCases) {
+		test(`Show a message when requesting an attachment's file fails with ${status}`, async ({ page, serverPort }) => {
+			// the attachment details pane requests the file url as soon as the attachment is shown
+			await page.route(url => url.pathname === '/api/users/1/items/UMPPCXU4/file/view/url', route => route.fulfill({
+				status,
+				contentType: 'text/plain',
+				body,
+				headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Expose-Headers': '*' },
+			}));
+			const handlers = [
+				makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top/tags', [], { totalResults: 0 }),
+			];
+			server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, handlers);
+
+			await expect(page.locator('.messages .message'))
+				.toHaveText(new RegExp(`^Error\\s*${escapeRegExp(message)}$`));
+		});
+	}
+
 	test(`Attachment details don't request a file url again after it fails`, async ({ page, serverPort }) => {
 		let requestCount = 0;
 		await page.route(url => url.pathname === '/api/users/1/items/UMPPCXU4/file/view/url', route => {
