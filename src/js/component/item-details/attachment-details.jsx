@@ -24,7 +24,8 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 	const libraryKey = useSelector(state => state.current.libraryKey);
 	const isFetchingUrl = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'isFetching'], false));
 	const isUploading = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'isUploading'], false));
-	const url = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'url']));
+	const hasUrlRequestFailed = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'hasFailed'], false));
+	const url =useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'url']));
 	const timestamp = useSelector(state => get(state, ['libraries', libraryKey, 'attachmentsUrl', attachmentKey, 'timestamp'], 0));
 	const isMigratingNote = useSelector(state => state.libraries[libraryKey]?.attachmentsMigrateNote?.[attachmentKey]?.isMigrating ?? false);
 	const isPreppingPDF = useSelector(state => state.libraries[libraryKey]?.attachmentsExportPDF[attachmentKey]?.isFetching);
@@ -121,11 +122,12 @@ const AttachmentDetails = ({ attachmentKey, isReadOnly, onEditorFocusBack }) => 
 		return () => clearTimeout(timeoutRef.current);
 	}, [forceRerender, urlIsFresh, timestamp, attachmentKey, dispatch, isFetchingUrl]);
 
+	// a failed request is only repeated by another request for this url, e.g. opening the file
 	useEffect(() => {
-		if (!urlIsFresh && !isFetchingUrl && !isUploading && hasURL) {
+		if (!urlIsFresh && !isFetchingUrl && !isUploading && hasURL && !hasUrlRequestFailed) {
 			dispatch(getAttachmentUrl(attachmentKey));
 		}
-	}, [attachmentKey, isFetchingUrl, urlIsFresh, dispatch, hasURL, isUploading]);
+	}, [attachmentKey, isFetchingUrl, urlIsFresh, dispatch, hasURL, isUploading, hasUrlRequestFailed]);
 
 	return (
         <Fragment>

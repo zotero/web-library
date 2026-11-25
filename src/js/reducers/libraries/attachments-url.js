@@ -29,6 +29,7 @@ const settings = (state = {}, action) => {
 				[action.itemKey]: {
 					...(state[action.itemKey] || {}),
 					isFetching: false,
+					hasFailed: true,
 				}
 			}
 		case REQUEST_UPLOAD_ATTACHMENT:

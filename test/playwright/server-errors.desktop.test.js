@@ -62,4 +62,24 @@ test.describe('API server errors', () => {
 			expect(createAttempts).toBe(3);
 		});
 	}
+
+	test(`Attachment details don't request a file url again after it fails`, async ({ page, serverPort }) => {
+		let requestCount = 0;
+		await page.route(url => url.pathname === '/api/users/1/items/UMPPCXU4/file/view/url', route => {
+			requestCount++;
+			return route.fulfill({
+				status: 403,
+				contentType: 'text/plain',
+				body: 'Forbidden',
+				headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Expose-Headers': '*' },
+			});
+		});
+		const handlers = [
+			makeCustomHandler('/api/users/1/collections/CSB4KZUU/items/top/tags', [], { totalResults: 0 }),
+		];
+		server = await loadFixtureState('desktop-test-user-top-level-attachment-view', serverPort, page, handlers);
+
+		await expect(page.locator('.messages .message')).toHaveCount(1);
+		expect(requestCount).toBe(1);
+	});
 });
