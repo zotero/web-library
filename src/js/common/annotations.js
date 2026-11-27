@@ -58,7 +58,7 @@ const annotationItemToJSON = (item, { attachmentItem, currentUser, createdByUser
 		if (!a.color && !b.color) {
 			return a.name.localeCompare(b.name, undefined, { sensitivity: 'accent' });
 		}
-		if (!a.color && !b.color) { return -1 }
+		if (a.color && !b.color) { return -1 }
 		if (!a.color && b.color) { return 1 }
 		return a.position - b.position;
 	});
